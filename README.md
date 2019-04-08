@@ -5,7 +5,9 @@
 * Java 12
 * MariaDB 10.3.14
 * Springboot 2.1.4.RELEASE
+* Thymeleaf
 * Mybatis 
+* Bootstrap
 
 ## chap01
 * 스프링 부트 설정
@@ -14,3 +16,5 @@
 * gradle 라이브러리 버전 정보 정리
 * lombok = '1.18.6'
 * logback = '1.2.3'
+
+## ERD
