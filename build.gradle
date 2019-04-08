@@ -1,0 +1,41 @@
+group 'primavera'
+version '0.0.1-SNAPSHOT'
+apply from: rootProject.file('gradle/versions.gradle')
+
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "io.freefair.gradle:lombok-plugin:3.2.0"
+    }
+}
+
+allprojects {
+    apply plugin: 'java'
+    apply plugin: 'idea'
+    apply plugin: "io.freefair.lombok"
+
+    sourceCompatibility = 12
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        compile group: 'org.projectlombok', name: 'lombok', version: "${lombokVersion}"
+        compile group: 'ch.qos.logback', name: 'logback-classic', version: "${logbackVersion}"
+        compile group: 'ch.qos.logback', name: 'logback-core', version: "${logbackVersion}"
+        compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
+        compile group: 'org.slf4j', name: 'jcl-over-slf4j', version: '1.7.25'
+        testCompile group: 'org.hamcrest', name: 'hamcrest-core', version: '2.1'
+        testCompile group: 'org.mockito', name: 'mockito-core', version: '2.25.1'
+        testCompile group: 'org.mockito', name: 'mockito-junit-jupiter', version: '2.25.1'
+        testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.3.2'
+        testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: '5.3.2'
+        testRuntime group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.3.2'
+        annotationProcessor group: 'org.projectlombok', name: 'lombok', version: "${lombokVersion}"
+    }
+}
