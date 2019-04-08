@@ -1,0 +1,3 @@
+rootProject.name = 'primavera'
+include 'chap01'
+findProject(':primavera:chap01')?.name = 'chap01'
