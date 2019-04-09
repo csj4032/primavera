@@ -24,6 +24,12 @@
 ## chap02
 * MariaDB 연결 및 테스트
 
+## chap03
+* Springboot DataSource
+
+## chap04
+* Mybatis
+
 ## Library Version
 * gradle 라이브러리 버전 정보 정리
 * lombok = '1.18.6'

@@ -33,9 +33,12 @@ allprojects {
         testCompile group: 'org.hamcrest', name: 'hamcrest-core', version: '2.1'
         testCompile group: 'org.mockito', name: 'mockito-core', version: '2.25.1'
         testCompile group: 'org.mockito', name: 'mockito-junit-jupiter', version: '2.25.1'
-        testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.3.2'
-        testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: '5.3.2'
-        testRuntime group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.3.2'
+        testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: "${junitJupiterVersion}"
+        testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: "${junitJupiterVersion}"
+        testRuntime group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: "${junitJupiterVersion}"
+        testRuntime group: 'org.junit.platform', name: 'junit-platform-launcher', version: "${junitPlatformVersion}"
+        testRuntime group: 'org.junit.platform', name: 'junit-platform-engine', version: "${junitPlatformVersion}"
+        testRuntime group: 'org.junit.platform', name: 'junit-platform-commons', version: "${junitPlatformVersion}"
         annotationProcessor group: 'org.projectlombok', name: 'lombok', version: "${lombokVersion}"
     }
 }
