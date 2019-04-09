@@ -1,9 +1,12 @@
 package com.genius.primavera.domain.mapper;
 
+import com.genius.primavera.domain.mapper.support.UserTableSupport;
 import com.genius.primavera.domain.model.Contact;
 import com.genius.primavera.domain.model.User;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mybatis.dynamic.sql.render.RenderingStrategy;
+import org.mybatis.dynamic.sql.select.render.SelectStatementProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -11,6 +14,10 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
+import static org.mybatis.dynamic.sql.SqlBuilder.*;
 
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
@@ -112,5 +119,18 @@ public class UserMapperTest {
 	public void findAllWithContacts() {
 		User user = userMapper.findByIdWithContacts(users.get(0).getId());
 		Assertions.assertEquals(contacts, user.getContacts());
+	}
+
+	@Test
+	@Order(9)
+	@DisplayName(value = "검색 조건에 따른 결과 반환")
+	public void findUserByRequestUser() {
+		SelectStatementProvider selectStatement = select(UserTableSupport.id, UserTableSupport.name, UserTableSupport.regDate, UserTableSupport.modDate)
+				.from(UserTableSupport.userTable)
+				.where(UserTableSupport.id, isIn(users.stream().map(e -> e.getId()).collect(toList())))
+				.build()
+				.render(RenderingStrategy.MYBATIS3);
+		List<User> destination = userMapper.findByRequestUser(selectStatement);
+		Assertions.assertEquals(users, destination);
 	}
 }
