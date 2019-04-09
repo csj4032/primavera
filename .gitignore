@@ -3,3 +3,5 @@
 *.iml
 /chap01/build
 /chap01/out
+/chap02/build
+/chap02/out
