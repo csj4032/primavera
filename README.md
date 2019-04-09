@@ -12,6 +12,9 @@
 ## chap01
 * 스프링 부트 설정
 
+## chap02
+* MariaDB 연결 및 테스트
+
 ## Library Version
 * gradle 라이브러리 버전 정보 정리
 * lombok = '1.18.6'

@@ -1,3 +1,5 @@
 rootProject.name = 'primavera'
 include 'chap01'
 findProject(':primavera:chap01')?.name = 'chap01'
+include 'chap02'
+findProject(':primavera:chap02')?.name = 'chap02'
