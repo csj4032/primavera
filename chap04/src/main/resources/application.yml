@@ -1,7 +1,11 @@
 spring:
   application:
     name: Privamera
-
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://db.choibom.com:3306/study
+    username: study
+    password: study
   banner:
     charset: UTF-8
     location: classpath:primavera.txt
@@ -11,10 +15,5 @@ mybatis:
   type-handlers-package: com.genius.primavera.typehandler
   configuration:
     map-underscore-to-camel-case: true
-    default-fetch-size: 100
+    default-fetch-size: 1000
     default-statement-timeout: 30
-
-mariadb:
-  url: jdbc:mariadb://localhost:3306/study
-  user: study
-  password: study

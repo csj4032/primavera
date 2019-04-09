@@ -6,7 +6,8 @@
 * MariaDB 10.3.14
 * Springboot 2.1.4.RELEASE
 * Thymeleaf
-* Mybatis 
+* Mybatis
+* Lombok
 * Bootstrap
 
 ## Requirements Specification
