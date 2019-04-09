@@ -25,3 +25,4 @@ mybatis:
 ```
 
 * User 등록, 수정, 아이디 검색, 전체 검색, 주소록 포함 검색
+* mybatis-dynamic-sql 이용한 User 조회

@@ -2,6 +2,8 @@ package com.genius.primavera.domain.mapper;
 
 import com.genius.primavera.domain.model.User;
 import org.apache.ibatis.annotations.*;
+import org.mybatis.dynamic.sql.select.render.SelectStatementProvider;
+import org.mybatis.dynamic.sql.util.SqlProviderAdapter;
 
 import java.util.List;
 
@@ -28,6 +30,10 @@ public interface UserMapper {
 			@Result(property = "contacts", javaType = List.class, column = "ID", many = @Many(select = "com.genius.primavera.domain.mapper.ContactMapper.findByUserId"))
 	})
 	User findByIdWithContacts(@Param(value = "id") long id);
+
+	@SelectProvider(type= SqlProviderAdapter.class, method="select")
+	@ResultMap("USER_WITH_CONTACTS")
+	List<User> findByRequestUser(SelectStatementProvider selectStatement);
 
 	@ResultMap("USER")
 	@Select(value = SELECT_ID_NAME_REG_DATE_MOD_DATE_FROM_USER)
