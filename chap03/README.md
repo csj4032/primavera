@@ -67,3 +67,14 @@ nested exception is org.springframework.boot.autoconfigure.jdbc.DataSourceProper
 ```
 * application-properties datasource [참고](https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html)
 * org.springframework.boot.autoconfigure.jdbc.DataSourceConfiguration 확인
+* UserDao, Datasource 를 통한 유저 등록, 전체 조회, 삭제 테스트
+
+```sql
+CREATE TABLE USER (
+  ID bigint(20) NOT NULL AUTO_INCREMENT,
+  NAME varchar(50) NOT NULL,
+  REG_DATE datetime NOT NULL,
+  MOD_DATE datetime DEFAULT NULL,
+  PRIMARY KEY (ID)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+```
