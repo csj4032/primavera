@@ -1,4 +1,4 @@
-## chap03
+## chap04
 ### Mybatis
 ### Mybatis Auto Configuration 추가
 * [참고](http://www.mybatis.org/spring-boot-starter/mybatis-spring-boot-autoconfigure/)
@@ -23,3 +23,5 @@ mybatis:
         default-statement-timeout: 30
 ...
 ```
+
+* User 등록, 수정, 아이디 검색, 전체 검색, 주소록 포함 검색
