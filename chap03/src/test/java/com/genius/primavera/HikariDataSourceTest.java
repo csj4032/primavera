@@ -11,16 +11,16 @@ import java.sql.SQLException;
 
 public class HikariDataSourceTest {
 
-	public static final String USER_NAME = "study";
-	public static final String PASS_WORLD = "study";
-	public static final String CATALOG = "study";
+	public static final String USER_NAME = "primavera";
+	public static final String PASS_WORLD = "primavera";
+	public static final String CATALOG = "primavera";
 	private HikariConfig configuration;
 
 	@BeforeEach
 	public void init() {
 		configuration = new HikariConfig();
 		configuration.setDriverClassName("org.mariadb.jdbc.Driver");
-		configuration.setJdbcUrl("jdbc:mariadb://localhost:3306/study");
+		configuration.setJdbcUrl("jdbc:mariadb://localhost:3306/primavera");
 		configuration.setUsername(USER_NAME);
 		configuration.setPassword(PASS_WORLD);
 		configuration.setConnectionInitSql("SELECT 1 FROM DUAL");

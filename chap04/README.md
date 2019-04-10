@@ -26,3 +26,16 @@ mybatis:
 
 * User 등록, 수정, 아이디 검색, 전체 검색, 주소록 포함 검색
 * mybatis-dynamic-sql 이용한 User 조회
+
+```
+org.springframework.dao.DataIntegrityViolationException: 
+### Error updating database.  Cause: java.sql.SQLDataException: (conn=271) Data too long for column 'STATUS' at row 1
+### The error may exist in com/genius/primavera/domain/mapper/UserMapper.java (best guess)
+### The error may involve com.genius.primavera.domain.mapper.UserMapper.save-Inline
+### The error occurred while setting parameters
+### SQL: INSERT INTO USER (EMAIL, PASSWORD, NICK_NAME, STATUS, REG_DATE, MOD_DATE) VALUES (?, ?,?, ?, ?, ?)
+### Cause: java.sql.SQLDataException: (conn=271) Data too long for column 'STATUS' at row 1
+; (conn=271) Data too long for column 'STATUS' at row 1; nested exception is java.sql.SQLDataException: (conn=271) Data too long for column 'STATUS' at row 1
+```
+* STATUS 컬럼 typeHandler 적용
+    * type-handler 등록은 type-alias 도 함께 등록

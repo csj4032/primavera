@@ -25,6 +25,7 @@ repositories {
 dependencies {
     implementation('org.springframework.boot:spring-boot-starter-web')
     implementation('org.springframework.boot:spring-boot-starter-jdbc')
+    implementation('org.springframework.boot:spring-boot-starter-security')
     compile("org.mybatis.spring.boot:mybatis-spring-boot-starter:2.0.1")
     compile("org.mybatis.dynamic-sql:mybatis-dynamic-sql:1.1.1")
     compile ('org.mariadb.jdbc:mariadb-java-client:2.4.1')

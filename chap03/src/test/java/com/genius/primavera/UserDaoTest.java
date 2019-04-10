@@ -1,14 +1,15 @@
 package com.genius.primavera;
 
-import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.sql.DataSource;
-import java.util.List;
+import java.time.LocalDateTime;
 
 @SpringBootTest
 @TestMethodOrder(OrderAnnotation.class)
@@ -17,27 +18,31 @@ public class UserDaoTest {
 
 	@Autowired
 	private DataSource dataSource;
-	private JdbcTemplate jdbcTemplate;
 	private UserDao userDao;
+	private static PasswordEncoder passwordEncoder;
+
+	@BeforeAll
+	public static void setUp() {
+		passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+	}
 
 	@BeforeEach
 	public void init() {
-		jdbcTemplate = new JdbcTemplate(dataSource);
-		userDao = new UserDao(jdbcTemplate);
+		userDao = new UserDao(new JdbcTemplate(dataSource));
 	}
 
 	@Test
 	@Order(1)
 	@DisplayName("유저 등록")
 	public void saveUser() {
-		userDao.saveUser("Genius");
+		userDao.saveUser("genius@gmail.com", passwordEncoder.encode("secret"), "genius", "A", LocalDateTime.now());
 	}
 
 	@Test
 	@Order(2)
 	@DisplayName("유저 전체 조회")
 	public void getUsers() {
-		Assertions.assertEquals(List.of("Genius"), userDao.getUsers());
+		userDao.getUsers().forEach(password -> Assertions.assertTrue(passwordEncoder.matches("secret", password)));
 	}
 
 	@Test

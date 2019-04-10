@@ -3,17 +3,18 @@ spring:
     name: Privamera
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://db.choibom.com:3306/study
-    username: study
-    password: study
+    url: jdbc:mariadb://localhost:3306/primavera
+    username: primavera
+    password: primavera
   banner:
     charset: UTF-8
     location: classpath:primavera.txt
 
 mybatis:
-  type-aliases-package: com.genius.primavera.domain.model
-  type-handlers-package: com.genius.primavera.typehandler
+  #config: classpath:mybatis-config.xml
   configuration:
     map-underscore-to-camel-case: true
     default-fetch-size: 1000
     default-statement-timeout: 30
+  type-aliases-package: com.genius.primavera.domain
+  type-handlers-package: com.genius.primavera.domain

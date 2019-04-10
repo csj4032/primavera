@@ -22,7 +22,7 @@ public class SpringDataSourceTest {
 		try(var connection = dataSource.getConnection()){
 			// 왜 hikari 인가?
 			Assertions.assertEquals("com.zaxxer.hikari.pool.HikariProxyConnection", connection.getClass().getName());
-			Assertions.assertEquals("study", connection.getCatalog());
+			Assertions.assertEquals("primavera", connection.getCatalog());
 		}
 	}
 }
