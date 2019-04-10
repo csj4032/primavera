@@ -1,0 +1,12 @@
+package com.genius.primavera.application;
+
+import com.genius.primavera.domain.model.User;
+
+public interface UserService {
+
+	User save(User user);
+
+	User update(User user);
+
+	User signIn(String email, String password);
+}
