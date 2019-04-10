@@ -1,6 +1,7 @@
 package com.genius.primavera.domain.typehandler;
 
 import com.genius.primavera.domain.TypeHandlerException;
+import com.genius.primavera.domain.model.RoleType;
 import com.genius.primavera.domain.model.UserStatus;
 import org.apache.ibatis.type.*;
 
@@ -8,6 +9,7 @@ import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
 
 @MappedJdbcTypes(JdbcType.CHAR)
 @MappedTypes(UserStatus.class)
@@ -34,12 +36,6 @@ public class UserStatusTypeHandler<E extends Enum<E>> extends BaseTypeHandler<Us
 	}
 
 	private UserStatus getUserStatus(int type) {
-		return switch (type) {
-			case 1 -> UserStatus.ON;
-			case 2 -> UserStatus.BLOCK;
-			case 3 -> UserStatus.DORMANT;
-			case 4 -> UserStatus.LEAVE;
-			default -> throw new TypeHandlerException();
-		};
+		return Arrays.stream(UserStatus.values()).filter(e -> e.getValue() == type).findFirst().orElseThrow();
 	}
 }
