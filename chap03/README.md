@@ -21,7 +21,7 @@ com.zaxxer.hikari.HikariConfig - healthCheckRegistry.............none
 com.zaxxer.hikari.HikariConfig - idleTimeout.....................600000
 com.zaxxer.hikari.HikariConfig - initializationFailTimeout.......1
 com.zaxxer.hikari.HikariConfig - isolateInternalQueries..........false
-com.zaxxer.hikari.HikariConfig - jdbcUrl.........................jdbc:mariadb://localhost:3306/study
+com.zaxxer.hikari.HikariConfig - jdbcUrl.........................jdbc:mariadb://localhost:3306/primavera
 com.zaxxer.hikari.HikariConfig - leakDetectionThreshold..........0
 com.zaxxer.hikari.HikariConfig - maxLifetime.....................1800000
 com.zaxxer.hikari.HikariConfig - maximumPoolSize.................10
@@ -36,7 +36,7 @@ com.zaxxer.hikari.HikariConfig - scheduledExecutor...............none
 com.zaxxer.hikari.HikariConfig - schema..........................none
 com.zaxxer.hikari.HikariConfig - threadFactory...................internal
 com.zaxxer.hikari.HikariConfig - transactionIsolation............default
-com.zaxxer.hikari.HikariConfig - username........................"study"
+com.zaxxer.hikari.HikariConfig - username........................"primavera"
 com.zaxxer.hikari.HikariConfig - validationTimeout...............5000
 com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
 com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.mariadb.jdbc.MariaDbConnection@3ba9ad43
@@ -61,20 +61,11 @@ nested exception is org.springframework.boot.autoconfigure.jdbc.DataSourceProper
 ```
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://localhost:3306/study
-    name: study
-    password: study
+    url: jdbc:mariadb://localhost:3306/primavera
+    name: primavera
+    password: primavera
 ```
 * application-properties datasource [참고](https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html)
 * org.springframework.boot.autoconfigure.jdbc.DataSourceConfiguration 확인
 * UserDao, Datasource 를 통한 유저 등록, 전체 조회, 삭제 테스트
-
-```sql
-CREATE TABLE USER (
-  ID bigint(20) NOT NULL AUTO_INCREMENT,
-  NAME varchar(50) NOT NULL,
-  REG_DATE datetime NOT NULL,
-  MOD_DATE datetime DEFAULT NULL,
-  PRIMARY KEY (ID)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
-```
+* PasswordEncoderFactories 이용한 비밀번호 암호

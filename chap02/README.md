@@ -12,7 +12,7 @@
 public static Connection getConnection() {
 		try {
 			DriverManager.registerDriver(new org.mariadb.jdbc.Driver());
-			return DriverManager.getConnection(URL, "study", "study");
+			return DriverManager.getConnection(URL, "primavera", "primavera");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

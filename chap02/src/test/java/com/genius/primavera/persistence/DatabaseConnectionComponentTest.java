@@ -21,6 +21,6 @@ public class DatabaseConnectionComponentTest {
 	@Test
 	public void connectionTest() throws SQLException {
 		Connection connection = databaseConnectionComponent.getConnection();
-		assertEquals("study", connection.getCatalog());
+		assertEquals("primavera", connection.getCatalog());
 	}
 }

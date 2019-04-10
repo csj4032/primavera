@@ -3,9 +3,9 @@ spring:
     name: Privamera
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://localhost:3306/study
-    username: study
-    password: study
+    url: jdbc:mariadb://localhost:3306/primavera
+    username: primavera
+    password: primavera
   banner:
     charset: UTF-8
     location: classpath:primavera.txt

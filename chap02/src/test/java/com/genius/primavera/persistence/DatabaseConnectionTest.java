@@ -12,6 +12,6 @@ public class DatabaseConnectionTest {
 	@Test
 	public void connectionTest() throws SQLException {
 		Connection connection = DatabaseConnection.getConnection();
-		assertEquals("study", connection.getCatalog());
+		assertEquals("primavera", connection.getCatalog());
 	}
 }

@@ -8,14 +8,17 @@ import java.util.List;
 @Getter
 @Setter
 @Builder
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
-@EqualsAndHashCode(of = {"id", "name"})
+@EqualsAndHashCode(of = {"id", "email"})
 public class User {
 	private long id;
-	private String name;
-	private List<Contact> contacts;
+	private String email;
+	private String password;
+	private String nickname;
+	private UserStatus status;
+	private List<Role> roles;
 	private LocalDateTime regDate;
 	private LocalDateTime modDate;
 }

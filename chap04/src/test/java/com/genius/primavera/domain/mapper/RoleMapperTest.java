@@ -1,6 +1,6 @@
 package com.genius.primavera.domain.mapper;
 
-import com.genius.primavera.domain.model.Contact;
+import com.genius.primavera.domain.model.Role;
 import com.genius.primavera.domain.model.User;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,14 +15,14 @@ import java.util.List;
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@DisplayName(value = "연락 관련 테스트")
-public class ContractsMapperTest {
+@DisplayName(value = "권한 관련 테스트")
+public class RoleMapperTest {
 
 	@Autowired
 	private UserMapper userMapper;
 	@Autowired
-	private ContactMapper contractMapper;
-	private static List<Contact> contacts;
+	private UserRoleMapper contractMapper;
+	private static List<Role> contacts;
 	private static User user;
 
 	@BeforeAll
@@ -33,10 +33,5 @@ public class ContractsMapperTest {
 	public void save() {
 		contacts = new ArrayList<>();
 		user = userMapper.findAll().get(0);
-		for (int i = 0; i < 100; i++) {
-			Contact contact = Contact.builder().userId(user.getId()).email("genius@gmail.com").regDate(LocalDateTime.now()).build();
-			contacts.add(contact);
-			contractMapper.save(contact);
-		}
 	}
 }

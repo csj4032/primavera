@@ -7,6 +7,6 @@ spring:
     location: classpath:primavera.txt
 
 mariadb:
-  url: jdbc:mariadb://localhost:3306/study
-  user: study
-  password: study
+  url: jdbc:mariadb://localhost:3306/primavera
+  user: primavera
+  password: primavera

@@ -1,24 +1,31 @@
 package com.genius.primavera.domain.mapper;
 
 import com.genius.primavera.domain.mapper.support.UserTableSupport;
-import com.genius.primavera.domain.model.Contact;
+import com.genius.primavera.domain.model.Role;
+import com.genius.primavera.domain.model.RoleType;
 import com.genius.primavera.domain.model.User;
+import com.genius.primavera.domain.model.UserStatus;
+import com.genius.primavera.domain.typehandler.UserStatusTypeHandler;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.type.MappedTypes;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mybatis.dynamic.sql.render.RenderingStrategy;
 import org.mybatis.dynamic.sql.select.render.SelectStatementProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 import static org.mybatis.dynamic.sql.SqlBuilder.*;
 
+@Slf4j
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -27,19 +34,27 @@ public class UserMapperTest {
 
 	@Autowired
 	private UserMapper userMapper;
-	@Autowired
-	private ContactMapper contractsMapper;
 	private static User source;
 	private static List<User> users;
-	private static List<Contact> contacts;
+	private static String password;
+	private static List<Role> roles;
 
 	@BeforeAll
 	public static void setUp() {
 		users = new ArrayList<>();
+		password = PasswordEncoderFactories.createDelegatingPasswordEncoder().encode("secret");
+		UserStatus status = UserStatus.ON;
+		roles = List.of(Role.builder().id(1).type(RoleType.USER).build());
 		for (int i = 0; i < 10; i++) {
-			users.add(User.builder().name("Genius_" + i).regDate(LocalDateTime.now()).modDate(LocalDateTime.now()).build());
+			users.add(User.builder()
+					.email("genius_" + i + "@gmail.com")
+					.nickname("genius_" + i)
+					.password(password)
+					.status(status)
+					.roles(roles)
+					.regDate(LocalDateTime.now()).modDate(LocalDateTime.now()).build());
 		}
-		source = new User(0, "Anonymous", null, LocalDateTime.now(), LocalDateTime.now());
+		source = new User(0, "", password, "", status, roles, LocalDateTime.now(), LocalDateTime.now());
 	}
 
 	@Test
@@ -60,10 +75,10 @@ public class UserMapperTest {
 	@Order(2)
 	@DisplayName(value = "유저 등록 후 ID 값 반환")
 	public void saveSelectKey() {
-		source = User.builder().name("Primavera").regDate(LocalDateTime.now()).modDate(LocalDateTime.now()).build();
+		source = User.builder().email("primavera@gmail.com").nickname("primavera").password(password).status(UserStatus.ON).roles(roles).regDate(LocalDateTime.now()).modDate(LocalDateTime.now()).build();
 		userMapper.save(source);
 		User destination = userMapper.findById(source.getId());
-		Assertions.assertEquals(source.getName(), destination.getName());
+		Assertions.assertEquals(source.getEmail(), destination.getEmail());
 	}
 
 	@Test
@@ -78,11 +93,12 @@ public class UserMapperTest {
 	@Order(4)
 	@DisplayName(value = "특정 아이디 유저 수정")
 	public void update() {
-		source.setName("Primavera_0");
+		source.setNickname("spring");
 		source.setModDate(LocalDateTime.now());
 		userMapper.update(source);
 		User destination = userMapper.findById(source.getId());
-		Assertions.assertEquals(destination.getName(), source.getName());
+		Assertions.assertEquals(destination.getNickname(), source.getNickname());
+		Assertions.assertEquals(destination.getId(), source.getId());
 	}
 
 	@Test
@@ -103,34 +119,29 @@ public class UserMapperTest {
 
 	@Test
 	@Order(7)
-	@DisplayName(value = "특정 유저 주소록 저장")
-	public void saveContacts() {
-		contacts = new ArrayList<>();
-		for (int i = 0; i < 100; i++) {
-			Contact contact = Contact.builder().userId(users.get(0).getId()).email("genius@gmail.com").regDate(LocalDateTime.now()).build();
-			contacts.add(contact);
-			contractsMapper.save(contact);
-		}
+	@DisplayName(value = "특정 유저 권한 저장")
+	public void saveRoles() {
+
 	}
 
 	@Test
 	@Order(8)
-	@DisplayName(value = "모든 유저 주소록 포함 검색")
-	public void findAllWithContacts() {
-		User user = userMapper.findByIdWithContacts(users.get(0).getId());
-		Assertions.assertEquals(contacts, user.getContacts());
+	@DisplayName(value = "모든 유저 권한 포함 검색")
+	public void findAllWithRoles() {
+
 	}
 
 	@Test
 	@Order(9)
 	@DisplayName(value = "검색 조건에 따른 결과 반환")
 	public void findUserByRequestUser() {
-		SelectStatementProvider selectStatement = select(UserTableSupport.id, UserTableSupport.name, UserTableSupport.regDate, UserTableSupport.modDate)
+		SelectStatementProvider selectStatement = select(UserTableSupport.id, UserTableSupport.email, UserTableSupport.password, UserTableSupport.nickname, UserTableSupport.status, UserTableSupport.regDate, UserTableSupport.modDate)
 				.from(UserTableSupport.userTable)
 				.where(UserTableSupport.id, isIn(users.stream().map(e -> e.getId()).collect(toList())))
 				.build()
 				.render(RenderingStrategy.MYBATIS3);
 		List<User> destination = userMapper.findByRequestUser(selectStatement);
 		Assertions.assertEquals(users, destination);
+		log.info("{}", destination);
 	}
 }

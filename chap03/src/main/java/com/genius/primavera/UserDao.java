@@ -14,15 +14,15 @@ public class UserDao {
 		this.jdbcTemplate = jdbcTemplate;
 	}
 
-	public int saveUser(String name) {
-		return jdbcTemplate.update("INSERT INTO USER (NAME, REG_DATE, MOD_DATE) VALUES (?, ?, ?)", name, LocalDateTime.now(), LocalDateTime.now());
+	public int saveUser(String email, String password, String nickname, String status, LocalDateTime regDate) {
+		return jdbcTemplate.update("INSERT INTO USER (EMAIL, PASSWORD, NICK_NAME, STATUS, REG_DATE) VALUES (? ,?, ?, ?, ?)", email, password, nickname, status, regDate);
 	}
 
 	public List<String> getUsers() {
-		return jdbcTemplate.query("SELECT NAME FROM USER", (rs) -> {
+		return jdbcTemplate.query("SELECT PASSWORD FROM USER", (rs) -> {
 			var result = new ArrayList<String>();
 			while (rs.next()) {
-				result.add(rs.getString("NAME"));
+				result.add(rs.getString("PASSWORD"));
 			}
 			return result;
 		});

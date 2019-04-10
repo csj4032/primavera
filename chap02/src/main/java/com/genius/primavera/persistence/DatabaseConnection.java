@@ -9,12 +9,12 @@ public class DatabaseConnection {
 	private DatabaseConnection() {
 	}
 
-	public static final String URL = "jdbc:mariadb://localhost:3306/study";
+	public static final String URL = "jdbc:mariadb://localhost:3306/primavera";
 
 	public static Connection getConnection() {
 		try {
 			DriverManager.registerDriver(new org.mariadb.jdbc.Driver());
-			return DriverManager.getConnection(URL, "study", "study");
+			return DriverManager.getConnection(URL, "primavera", "primavera");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
