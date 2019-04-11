@@ -1,6 +1,7 @@
 package com.genius.primavera;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ public class SpringDataSourceTest {
 	private DataSource dataSource;
 
 	@Test
+	@DisplayName(value = "스프링 빈을 이용한 데이터베이스 접속")
 	public void dataSourceTest() throws SQLException {
 		try(var connection = dataSource.getConnection()){
 			// 왜 hikari 인가?

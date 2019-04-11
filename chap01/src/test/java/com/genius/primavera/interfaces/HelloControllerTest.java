@@ -2,6 +2,7 @@ package com.genius.primavera.interfaces;
 
 import com.genius.primavera.application.HelloService;
 import org.hamcrest.core.IsAnything;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,7 @@ public class HelloControllerTest {
 	private HelloService helloService;
 
 	@Test
+	@DisplayName(value = "index 접근하면 반환값으로 hello world")
 	public void indexPage() throws Exception {
 		mockMvc.perform(get("/").accept(MediaType.TEXT_PLAIN))
 				.andExpect(status().isOk())
@@ -38,6 +40,7 @@ public class HelloControllerTest {
 	}
 
 	@Test
+	@DisplayName(value = "articles 접근하면 반환값으로 hello world")
 	public void indexPageArticle() throws Exception {
 		given(this.helloService.getArticles()).willReturn(List.of("게시글1", "게시글2"));
 		mockMvc.perform(get("/articles").accept(MediaType.APPLICATION_JSON_UTF8_VALUE))

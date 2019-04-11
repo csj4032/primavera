@@ -20,7 +20,22 @@ testRuntime group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '
 ```
 
 ### 테스트
+* 스프링부트 테스트 [참고](https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-testing.html)
 * PrimaveraApplicationTest
+
+```java
+@ExtendWith(SpringExtension.class)
+@SpringBootTest
+public class PrimaveraApplicationTest {
+
+	@Test
+	@DisplayName(value = "스프링부트가 정상 작동하는지 알아보자.")
+	public void helloWorld() {
+
+	}
+}
+```
+
 * HelloController
     * MockMvc 테스트
     * MockBean 테스트
