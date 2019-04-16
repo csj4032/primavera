@@ -13,6 +13,7 @@ logging:
 ```
 
 ### Filter
+* org.springframework.boot.web.servlet.filter 패키지
 ```
 2019-04-16 19:14:35.999 DEBUG 48150 --- [  restartedMain] .s.b.w.s.f.OrderedHiddenHttpMethodFilter : Filter 'hiddenHttpMethodFilter' configured for use
 2019-04-16 19:14:35.999 DEBUG 48150 --- [  restartedMain] o.s.b.w.s.f.OrderedRequestContextFilter  : Filter 'requestContextFilter' configured for use
@@ -23,3 +24,17 @@ logging:
 
 ### lucy-xss-filter
 * [참고](https://github.com/naver/lucy-xss-filter)
+```
+@Bean
+public FilterRegistrationBean<XssEscapeServletFilter> filterRegistrationBean() {
+    FilterRegistrationBean<XssEscapeServletFilter> filterRegistration = new FilterRegistrationBean<>();
+    filterRegistration.setFilter(new XssEscapeServletFilter());
+    filterRegistration.setOrder(1);
+    filterRegistration.addUrlPatterns("/*");
+    return filterRegistration;
+}
+```
+
+
+### ETC
+* Chain of Responsibility Pattern 참고
