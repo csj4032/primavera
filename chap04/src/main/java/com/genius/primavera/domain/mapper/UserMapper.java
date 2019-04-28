@@ -47,6 +47,18 @@ public interface UserMapper {
 	@SelectKey(statement = "SELECT LAST_INSERT_ID()", keyProperty = "user.id", before = false, resultType = long.class)
 	int save(@Param("user") User user);
 
+	@Insert(value = {
+			"<script>",
+			"INSERT INTO USER (EMAIL, PASSWORD, NICKNAME, STATUS, REG_DATE, MOD_DATE)",
+			"VALUES",
+			"<foreach collection='users' item='user' separator=','>",
+			"(#{user.email}, #{user.password}, #{user.nickname}, #{user.status, typeHandler=UserStatusTypeHandler}, #{user.regDate}, #{user.modDate})",
+			"</foreach>",
+			"</script>"
+	})
+	@Options(useGeneratedKeys = true, keyProperty = "user.id")
+	int save(@Param("users") List<User> users);
+
 	@Update(value = "UPDATE USER SET NICKNAME = #{user.nickname}, MOD_DATE = #{user.modDate} WHERE ID = #{user.id}")
 	int update(@Param("user") User user);
 

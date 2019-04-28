@@ -52,7 +52,10 @@
 
 ```sql
 
-CREATE DATABASE  primavera DEFAULT CHARACTER SET utf8mb4;
+CREATE DATABASE primavera DEFAULT CHARACTER SET utf8mb4;
+
+CREATE USER 'primavera'@'localhost' IDENTIFIED BY 'primavera';
+GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, ALTER ON primavera.* TO 'primavera'@'localhost';
 
 CREATE TABLE `ROLE` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
