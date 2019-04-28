@@ -39,11 +39,11 @@ public class HelloControllerTest {
 				.andExpect(content().string(IsAnything.anything("hello world")));
 	}
 
-	@Test
-	@DisplayName(value = "articles 접근하면 반환값으로 hello world")
-	public void indexPageArticle() throws Exception {
-		given(this.helloService.getArticles()).willReturn(List.of("게시글1", "게시글2"));
-		mockMvc.perform(get("/articles").accept(MediaType.APPLICATION_JSON_UTF8_VALUE))
-				.andExpect(status().isOk()).andExpect(content().string(("[\"게시글1\",\"게시글2\"]")));
-	}
+//	@Test
+//	@DisplayName(value = "articles 접근하면 반환값으로 hello world")
+//	public void indexPageArticle() throws Exception {
+//		given(this.helloService.getArticles()).willReturn(List.of("게시글1", "게시글2"));
+//		mockMvc.perform(get("/articles").accept(MediaType.APPLICATION_JSON_UTF8_VALUE))
+//				.andExpect(status().isOk()).andExpect(content().string(("[\"게시글1\",\"게시글2\"]")));
+//	}
 }

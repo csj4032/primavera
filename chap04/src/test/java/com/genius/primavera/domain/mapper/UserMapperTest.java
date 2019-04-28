@@ -33,6 +33,7 @@ public class UserMapperTest {
 	private UserRoleMapper userRoleMapper;
 	private static User source;
 	private static List<User> users;
+	private static List<User> bulkUsers;
 
 	@BeforeAll
 	public static void setUp() {
@@ -49,6 +50,19 @@ public class UserMapperTest {
 					.roles(roles)
 					.regDate(LocalDateTime.now()).modDate(LocalDateTime.now()).build());
 		}
+
+		bulkUsers = new ArrayList<>();
+		for (int i = 0; i < 100; i++) {
+			bulkUsers.add(User.builder()
+					.email("genius_" + i + "@gmail.com")
+					.nickname("genius_" + i)
+					.password(password)
+					.status(status)
+					.roles(roles)
+					.regDate(LocalDateTime.now()).modDate(LocalDateTime.now()).build());
+		}
+
+
 		source = User.builder().email("primavera@gmail.com").nickname("primavera").password(password).status(UserStatus.ON).roles(roles).regDate(LocalDateTime.now()).modDate(LocalDateTime.now()).build();
 	}
 
@@ -131,5 +145,13 @@ public class UserMapperTest {
 		List<User> destination = userMapper.findByRequestUser(selectStatement);
 		Assertions.assertEquals(users, destination);
 		log.info("{}", destination);
+	}
+
+	@Test
+	@Order(9)
+	@DisplayName(value = "유저 벌크 등록")
+	public void bulkSave() {
+		userMapper.save(bulkUsers);
+		bulkUsers.stream().forEach(System.out::println);
 	}
 }
