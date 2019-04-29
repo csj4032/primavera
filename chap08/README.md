@@ -15,6 +15,13 @@ compile('org.springframework.security:spring-security-web:5.1.5.RELEASE')
 
 ### SecurityConfig 파일 추가
 
+### DelegatingFilterProxy
+* Proxy for a standard Servlet Filter, delegating to a Spring-managed bean that implements the Filter interface.
+
+### Flow 
+* org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
+* org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
+
 ### FilterChainProxy log
 
 ```
@@ -53,5 +60,41 @@ compile('org.springframework.security:spring-security-web:5.1.5.RELEASE')
 2019-04-29 15:50:33.942 DEBUG 37625 --- [  XNIO-1 task-1] o.s.s.w.a.ExceptionTranslationFilter     : Access is denied (user is anonymous); redirecting to authentication entry point
 ```
 
+### WebAsyncManagerIntegrationFilter
+* WebSecurityConfigurerAdapter getHttp 메소드에서 등록
+
+### SecurityContextPersistenceFilter
+* SecurityContextRepository 에서 SecurityContext 를 로드하고 저장하는 일을 담당
+* SecurityContext 는 사용자의 보호되고 인증된 세션 
+
+### HeaderWriterFilter
+
+### CsrfFilter
+
+### LogoutFilter
+
+### UsernamePasswordAuthenticationFilter
+
+### DefaultLoginPageGeneratingFilter
+
+### DefaultLogoutPageGeneratingFilter
+
+### BasicAuthenticationFilter
+
+### RequestCacheAwareFilter
+
+### SecurityContextHolderAwareRequestFilter
+
+### AnonymousAuthenticationFilter
+
+### SessionManagementFilter
+
+### ExceptionTranslationFilter
+* 보호된 요청을 처리하는 동안 발생할 수 있는 기대한 예외의 기본 라우팅과 위임을 처리
+
+### FilterSecurityInterceptor
+* 권한부여와 관련한 결정을 AccessDecisionManager 에게 위임해 권한부여 결정 및 접근 제어 결정을 쉽게 만듬
+
 ### 참고
+* Spring Security3 (피터 뮬라리엔)
 * https://docs.spring.io/spring-security/site/docs/current/guides/html5/helloworld-boot.html
