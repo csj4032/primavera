@@ -1,6 +1,5 @@
 package com.genius.primavera.interfaces;
 
-
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
