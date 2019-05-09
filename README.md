@@ -46,6 +46,9 @@
 ## chap08
 * Spring Security
 
+## chap09
+* Spring OAuth2 Social Login
+
 ## Library Version
 * gradle 라이브러리 버전 정보 정리
 * lombok = '1.18.6'
