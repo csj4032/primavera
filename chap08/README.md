@@ -98,49 +98,54 @@ compile('org.springframework.security:spring-security-web:5.1.5.RELEASE')
 ## 설정 (SecurityConfig)
 
 ```java
+@Slf4j
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Override
-    protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
-        PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
-        auth.inMemoryAuthentication()
-                .withUser("genius").password("{bcrypt}$2a$10$7UEHLpn1r4gZY2qxiZFJ5.7wa3Hdz8IXgxUtFogy0Ac10fh7TG4V.").roles("USER")
-                .and()
-                .withUser("manager").password(encoder.encode("password")).roles("MANAGER")
-                .and()
-                .withUser("admin").password(encoder.encode("password")).roles("ADMIN");
-    }
+ private AuthenticationSuccessHandler successHandler = (request, response, authentication) -> log.info("success : " + request.getContextPath());
+ private AuthenticationFailureHandler failureHandler = (request, response, authentication) -> log.info("failure : " + request.getContextPath());
 
-    @Override
-    public void configure(WebSecurity webSecurity) throws Exception {
-        webSecurity.ignoring().antMatchers(HttpMethod.GET, "/resources/**", "/bower_components/**", "/dist/**", "/plugins/**", "/favicon.ico");
-    }
+ @Override
+ protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
+     PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+     auth.inMemoryAuthentication()
+             .withUser("Genius").password("{bcrypt}$2a$10$7UEHLpn1r4gZY2qxiZFJ5.7wa3Hdz8IXgxUtFogy0Ac10fh7TG4V.").roles("USER")
+             .and()
+             .withUser("Marcus Tullius Cicero").password(encoder.encode("password")).roles("MANAGER")
+             .and()
+             .withUser("Julius Caesar").password(encoder.encode("password")).roles("ADMIN");
+ }
 
-    @Override
-    protected void configure(final HttpSecurity http) throws Exception {
-        http
-                .csrf().disable()
-                .authorizeRequests()
-                .antMatchers("/login").permitAll()
-                .antMatchers("/index").hasAnyRole("USER", "MANAGER", "ADMIN")
-                .antMatchers("/manager").hasAnyRole("MANAGER", "ADMIN")
-                .antMatchers("/admin").hasRole("ADMIN")
-                .anyRequest().authenticated()
-                .and()
-                .formLogin()
-                .usernameParameter("email")
-                .passwordParameter("password")
-                .loginPage("/login")
-                .loginProcessingUrl("/signin")
-                .defaultSuccessUrl("/index", true)
-                .failureUrl("/login?error=true")
-                .and()
-                .logout()
-                .logoutUrl("/logout")
-                .deleteCookies("JSESSIONID");
-    }
+ @Override
+ public void configure(WebSecurity webSecurity) throws Exception {
+     webSecurity.ignoring().antMatchers(HttpMethod.GET, "/resources/**", "/bower_components/**", "/dist/**", "/plugins/**", "/favicon.ico");
+ }
+
+ @Override
+ protected void configure(final HttpSecurity http) throws Exception {
+     http
+             .csrf().disable()
+             .authorizeRequests()
+             .antMatchers("/login").permitAll()
+             .anyRequest().authenticated()
+             .and()
+             .addFilterAfter(new PrimaveraFilter(), UsernamePasswordAuthenticationFilter.class)
+             .formLogin()
+             .usernameParameter("email")
+             .passwordParameter("password")
+             .loginPage("/login")
+             .loginProcessingUrl("/signin")
+             .successHandler(successHandler)
+             .defaultSuccessUrl("/index", true)
+             .failureHandler(failureHandler)
+             .failureUrl("/login?error=true")
+             .and()
+             .logout()
+             .logoutUrl("/signout")
+             .deleteCookies("JSESSIONID");
+ }
 }
 ```
 

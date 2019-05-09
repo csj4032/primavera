@@ -31,7 +31,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public User signIn(String userId, String password) {
-		return null;
+	public User findByEmail(String email) {
+		return userMapper.findByEmail(email);
 	}
 }

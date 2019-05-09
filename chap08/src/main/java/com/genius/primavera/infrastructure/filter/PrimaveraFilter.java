@@ -20,7 +20,6 @@ import java.io.IOException;
 import static org.springframework.security.web.context.HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY;
 
 @Slf4j
-@Component
 public class PrimaveraFilter extends OncePerRequestFilter {
 
     @Override
