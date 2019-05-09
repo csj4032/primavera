@@ -8,5 +8,5 @@ public interface UserService {
 
 	User update(User user);
 
-	User signIn(String email, String password);
+	User findByEmail(String email);
 }

@@ -10,6 +10,7 @@ import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.ResultMap;
+import org.apache.ibatis.annotations.ResultType;
 import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.SelectKey;
@@ -29,18 +30,25 @@ public interface UserMapper {
 
 	@Results(id = "USER", value = {
 			@Result(property = "id", column = "ID"),
-			@Result(property = "name", column = "NAME"),
+			@Result(property = "email", column = "EMAIL"),
+			@Result(property = "nickname", column = "NICKNAME"),
+			@Result(property = "status", column = "STATUS"),
 			@Result(property = "regDate", column = "REG_DATE"),
 			@Result(property = "modDate", column = "MOD_DATE")
 	})
 	@Select(value = SELECT_ID_NAME_REG_DATE_MOD_DATE_FROM_USER + "WHERE ID = #{id}")
 	User findById(@Param(value = "id") long id);
 
+	@ResultMap(value = "USER_WITH_ROLES")
+	@Select(value = SELECT_ID_NAME_REG_DATE_MOD_DATE_FROM_USER + "WHERE EMAIL = #{email}")
+	User findByEmail(@Param(value = "email")  String email);
+
 	@Select(value = SELECT_ID_NAME_REG_DATE_MOD_DATE_FROM_USER + "WHERE ID = #{id}")
 	@Results(id = "USER_WITH_ROLES", value = {
 			@Result(property = "id", column = "ID"),
 			@Result(property = "email", column = "EMAIL"),
-			@Result(property = "password", column = "PASSWORD"),
+			@Result(property = "nickname", column = "NICKNAME"),
+			@Result(property = "status", column = "STATUS"),
 			@Result(property = "regDate", column = "REG_DATE"),
 			@Result(property = "modDate", column = "MOD_DATE"),
 			@Result(property = "roles", javaType = List.class, column = "ID", many = @Many(select = "com.genius.primavera.domain.mapper.UserRoleMapper.findByUserId"))

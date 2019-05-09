@@ -13,4 +13,5 @@
     <logger name="org.xnio.nio" level="INFO"/>
     <logger name="org.springframework" level="INFO"/>
     <logger name="org.springframework.security" level="DEBUG"/>
+    <logger name="com.genius.primavera" level="DEBUG"/>
 </included>

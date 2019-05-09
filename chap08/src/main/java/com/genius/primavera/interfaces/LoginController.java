@@ -1,6 +1,9 @@
 package com.genius.primavera.interfaces;
 
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.WebAttributes;
@@ -20,23 +23,26 @@ import static org.springframework.security.web.context.HttpSessionSecurityContex
 @Controller
 public class LoginController {
 
-	@GetMapping(value = "/login")
-	public String loginForm() {
-		return "login";
-	}
+    @GetMapping(value = "/login")
+    public String loginForm() {
+        return "login";
+    }
 
-	@GetMapping(value = "/index")
-	public String index() {
-		return "index";
-	}
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_MANAGER', 'ROLE_ADMINISTRATOR')")
+    @GetMapping(value = "/index")
+    public String index() {
+        return "index";
+    }
 
-	@GetMapping(value = "/manager")
-	public String manager() {
-		return "manager";
-	}
+    @PreAuthorize("hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMINISTRATOR')")
+    @GetMapping(value = "/manager")
+    public String manager() {
+        return "manager";
+    }
 
-	@GetMapping(value = "/admin")
-	public String admin() {
-		return "admin";
-	}
+    @PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
+    @GetMapping(value = "/admin")
+    public String admin() {
+        return "admin";
+    }
 }
