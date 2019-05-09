@@ -1,4 +1,5 @@
-<header th:fragment="header" xmlns:th="http://www.w3.org/1999/xhtml" class="main-header">
+<header th:fragment="header" xmlns:th="http://www.w3.org/1999/xhtml" class="main-header"
+		xmlns:sec="http://www.w3.org/1999/xhtml">
 	<a href="index2.html" class="logo">
 		<span class="logo-mini"><b>A</b>LT</span>
 		<span class="logo-lg"><b>Admin</b>LTE</span>
@@ -206,16 +207,18 @@
 				<li class="dropdown user user-menu">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown">
 						<img src="dist/img/user2-160x160.jpg" class="user-image" alt="User Image">
-						<span class="hidden-xs">Alexander Pierce</span>
+						<span sec:authentication="name" class="hidden-xs">Alexander Pierce</span>
 					</a>
 					<ul class="dropdown-menu">
 						<!-- User image -->
 						<li class="user-header">
 							<img src="dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
-
 							<p>
-								Alexander Pierce - Web Developer
-								<small>Member since Nov. 2012</small>
+								<span sec:authentication="name">Alexander Pierce</span>
+								<span sec:authorize="hasRole('ROLE_USER')">- Web Design</span>
+								<span sec:authorize="hasRole('ROLE_MANAGER')">- Web Developer</span>
+								<span sec:authorize="hasRole('ROLE_ADMIN')">- Web Master</span>
+								<small>Member since Nov. 2019</small>
 							</p>
 						</li>
 						<!-- Menu Body -->
@@ -239,7 +242,7 @@
 								<a href="#" class="btn btn-default btn-flat">Profile</a>
 							</div>
 							<div class="pull-right">
-								<a href="#" class="btn btn-default btn-flat">Sign out</a>
+								<a th:href="@{/signout}" href="/signout" class="btn btn-default btn-flat">Sign out</a>
 							</div>
 						</li>
 					</ul>
