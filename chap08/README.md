@@ -95,6 +95,138 @@ compile('org.springframework.security:spring-security-web:5.1.5.RELEASE')
 ### FilterSecurityInterceptor
 * 권한부여와 관련한 결정을 AccessDecisionManager 에게 위임해 권한부여 결정 및 접근 제어 결정을 쉽게 만듬
 
+## 설정 (SecurityConfig)
+
+```java
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Override
+    protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
+        PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+        auth.inMemoryAuthentication()
+                .withUser("genius").password("{bcrypt}$2a$10$7UEHLpn1r4gZY2qxiZFJ5.7wa3Hdz8IXgxUtFogy0Ac10fh7TG4V.").roles("USER")
+                .and()
+                .withUser("manager").password(encoder.encode("password")).roles("MANAGER")
+                .and()
+                .withUser("admin").password(encoder.encode("password")).roles("ADMIN");
+    }
+
+    @Override
+    public void configure(WebSecurity webSecurity) throws Exception {
+        webSecurity.ignoring().antMatchers(HttpMethod.GET, "/resources/**", "/bower_components/**", "/dist/**", "/plugins/**", "/favicon.ico");
+    }
+
+    @Override
+    protected void configure(final HttpSecurity http) throws Exception {
+        http
+                .csrf().disable()
+                .authorizeRequests()
+                .antMatchers("/login").permitAll()
+                .antMatchers("/index").hasAnyRole("USER", "MANAGER", "ADMIN")
+                .antMatchers("/manager").hasAnyRole("MANAGER", "ADMIN")
+                .antMatchers("/admin").hasRole("ADMIN")
+                .anyRequest().authenticated()
+                .and()
+                .formLogin()
+                .usernameParameter("email")
+                .passwordParameter("password")
+                .loginPage("/login")
+                .loginProcessingUrl("/signin")
+                .defaultSuccessUrl("/index", true)
+                .failureUrl("/login?error=true")
+                .and()
+                .logout()
+                .logoutUrl("/logout")
+                .deleteCookies("JSESSIONID");
+    }
+}
+```
+
+### Thymeleaf + Security
+```html
+<li class="dropdown user user-menu">
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+        <img src="dist/img/user2-160x160.jpg" class="user-image" alt="User Image">
+        <span sec:authentication="name" class="hidden-xs">Alexander Pierce</span>
+    </a>
+    <ul class="dropdown-menu">
+        <!-- User image -->
+        <li class="user-header">
+            <img src="dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+            <p>
+                <span sec:authentication="name">Alexander Pierce</span>
+                <span sec:authorize="hasRole('ROLE_USER')">- Web Design</span>
+                <span sec:authorize="hasRole('ROLE_MANAGER')">- Web Developer</span>
+                <span sec:authorize="hasRole('ROLE_ADMIN')">- Web Master</span>
+                <small>Member since Nov. 2019</small>
+            </p>
+        </li>
+        <!-- Menu Body -->
+        <li class="user-body">
+            <div class="row">
+                <div class="col-xs-4 text-center">
+                    <a href="#">Followers</a>
+                </div>
+                <div class="col-xs-4 text-center">
+                    <a href="#">Sales</a>
+                </div>
+                <div class="col-xs-4 text-center">
+                    <a href="#">Friends</a>
+                </div>
+            </div>
+            <!-- /.row -->
+        </li>
+        <!-- Menu Footer-->
+        <li class="user-footer">
+            <div class="pull-left">
+                <a href="#" class="btn btn-default btn-flat">Profile</a>
+            </div>
+            <div class="pull-right">
+                <a th:href="@{/signout}" href="/signout" class="btn btn-default btn-flat">Sign out</a>
+            </div>
+        </li>
+    </ul>
+</li>
+```
+
+### PasswordEncoding Test
+```java
+@Slf4j
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+public class PasswordEncoderTest {
+
+    private static PasswordEncoder encoder;
+    private static String rawPassword = "password";
+    private static String bcrype = "{bcrypt}$2a$10$7UEHLpn1r4gZY2qxiZFJ5.7wa3Hdz8IXgxUtFogy0Ac10fh7TG4V.";
+    private static String noop = "{noop}password";
+
+    @BeforeAll
+    public static void setUp() {
+        encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    }
+
+    @Test
+    @Order(1)
+    @DisplayName("bcrype 방식")
+    public void bcrypeEncoder() {
+        String encodedPassword = encoder.encode(rawPassword);
+        log.info(encodedPassword);
+        Assertions.assertNotEquals(bcrype, encodedPassword);
+        Assertions.assertTrue(encoder.matches(rawPassword, encodedPassword));
+        Assertions.assertTrue(encoder.matches(rawPassword, bcrype));
+    }
+
+    @Test
+    @Order(2)
+    @DisplayName("noop 방식")
+    public void noopEncoder() {
+        Assertions.assertTrue(encoder.matches(rawPassword, noop));
+    }
+}
+```
+
 ### 참고
 * Spring Security3 (피터 뮬라리엔)
 * https://docs.spring.io/spring-security/site/docs/current/guides/html5/helloworld-boot.html

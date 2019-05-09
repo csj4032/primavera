@@ -21,26 +21,22 @@ import static org.springframework.security.web.context.HttpSessionSecurityContex
 public class LoginController {
 
 	@GetMapping(value = "/login")
-	public String loginView() {
+	public String loginForm() {
 		return "login";
 	}
 
-	@PostMapping(value = "/login")
-	public String logIn(Model model) {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		model.addAttribute("principal", authentication.getPrincipal());
-		model.addAttribute("credentials", authentication.getCredentials());
+	@GetMapping(value = "/index")
+	public String index() {
 		return "index";
 	}
 
-	@GetMapping(value = "/logout")
-	public String loginOut(HttpServletRequest request) {
-		HttpSession session = request.getSession(false);
-		if (session != null) {
-			log.info("Invalidating session: " + session.getId());
-			session.invalidate();
-		}
-		SecurityContextHolder.clearContext();
-		return "redirect:/login";
+	@GetMapping(value = "/manager")
+	public String manager() {
+		return "manager";
+	}
+
+	@GetMapping(value = "/admin")
+	public String admin() {
+		return "admin";
 	}
 }
