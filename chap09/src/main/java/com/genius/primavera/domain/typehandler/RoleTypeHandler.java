@@ -17,27 +17,27 @@ import java.util.Arrays;
 @MappedTypes(RoleType.class)
 public class RoleTypeHandler<E extends Enum<E>> extends BaseTypeHandler<RoleType> {
 
-	@Override
-	public void setNonNullParameter(PreparedStatement ps, int i, RoleType parameter, JdbcType jdbcType) throws SQLException {
-		ps.setInt(i, parameter.getValue());
-	}
+    @Override
+    public void setNonNullParameter(PreparedStatement ps, int i, RoleType parameter, JdbcType jdbcType) throws SQLException {
+        ps.setInt(i, parameter.getValue());
+    }
 
-	@Override
-	public RoleType getNullableResult(ResultSet rs, String columnName) throws SQLException {
-		return getRoleType(rs.getInt(columnName));
-	}
+    @Override
+    public RoleType getNullableResult(ResultSet rs, String columnName) throws SQLException {
+        return getRoleType(rs.getInt(columnName));
+    }
 
-	@Override
-	public RoleType getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
-		return getRoleType(rs.getInt(columnIndex));
-	}
+    @Override
+    public RoleType getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
+        return getRoleType(rs.getInt(columnIndex));
+    }
 
-	@Override
-	public RoleType getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
-		return getRoleType(cs.getInt(columnIndex));
-	}
+    @Override
+    public RoleType getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
+        return getRoleType(cs.getInt(columnIndex));
+    }
 
-	private RoleType getRoleType(int type) {
-		return Arrays.stream(RoleType.values()).filter(e -> e.getValue() == type).findFirst().orElseThrow();
-	}
+    private RoleType getRoleType(int type) {
+        return Arrays.stream(RoleType.values()).filter(e -> e.getValue() == type).findFirst().orElseThrow();
+    }
 }
