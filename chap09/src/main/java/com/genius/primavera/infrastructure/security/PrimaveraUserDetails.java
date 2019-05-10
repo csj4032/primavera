@@ -20,7 +20,7 @@ public class PrimaveraUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return user.getRoles().stream().map(role -> new SimpleGrantedAuthority("ROLE_"+ role.getType().toString())).collect(Collectors.toList());
+        return user.getRoles().stream().map(role -> new SimpleGrantedAuthority("ROLE_" + role.getType().toString())).collect(Collectors.toList());
     }
 
     @Override
@@ -51,5 +51,9 @@ public class PrimaveraUserDetails implements UserDetails {
     @Override
     public boolean isEnabled() {
         return user.getStatus().equals(UserStatus.ON);
+    }
+
+    public String getProfileUrl() {
+        return user.getConnection().getProfileUrl();
     }
 }

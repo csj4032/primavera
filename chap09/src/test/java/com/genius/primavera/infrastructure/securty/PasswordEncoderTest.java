@@ -17,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 public class PasswordEncoderTest {
 
     private static PasswordEncoder encoder;
-    private static String rawPassword = "password";
+    private static String rawPassword = "csj4032@gmail.com";
     private static String bcrype = "{bcrypt}$2a$10$7UEHLpn1r4gZY2qxiZFJ5.7wa3Hdz8IXgxUtFogy0Ac10fh7TG4V.";
     private static String noop = "{noop}password";
 
@@ -42,5 +42,6 @@ public class PasswordEncoderTest {
     @DisplayName("noop 방식")
     public void noopEncoder() {
         Assertions.assertTrue(encoder.matches(rawPassword, noop));
+        Assertions.assertTrue(encoder.matches("csj4032@gmail.com", "{bcrypt}$2a$10$XjQRpeo6I0YEfjjOxLEas.DC4knVsy5ceaz1QtrX1zsagGcmr9uF2"));
     }
 }

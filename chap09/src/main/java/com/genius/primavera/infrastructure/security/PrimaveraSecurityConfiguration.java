@@ -1,8 +1,12 @@
 package com.genius.primavera.infrastructure.security;
 
 import com.genius.primavera.infrastructure.filter.PrimaveraFilter;
+import com.genius.primavera.infrastructure.security.social.GoogleOAuth2ClientAuthenticationProcessingFilter;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.oauth2.resource.UserInfoTokenServices;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -13,15 +17,22 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.OAuth2ClientContext;
+import org.springframework.security.oauth2.client.OAuth2RestTemplate;
+import org.springframework.security.oauth2.client.filter.OAuth2ClientAuthenticationProcessingFilter;
+import org.springframework.security.oauth2.client.filter.OAuth2ClientContextFilter;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.web.filter.CompositeFilter;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.Filter;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -29,16 +40,17 @@ import lombok.extern.slf4j.Slf4j;
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
-public class PrimaveraSecurityConfig extends WebSecurityConfigurerAdapter {
+public class PrimaveraSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private AuthenticationSuccessHandler successHandler = (request, response, authentication) -> log.info("success : " + request.getContextPath());
     private AuthenticationFailureHandler failureHandler = (request, response, authentication) -> log.info("failure : " + request.getContextPath());
 
     @Autowired
-    private PrimaveraUserDetailsService primaveraUserDetailsService;
-
+    private PrimaveraSocialUserDetailsService socialService;
     @Autowired
-    private PrimaveraOAuth2UserService primaveraOAuth2UserService;
+    private OAuth2ClientContext oauth2ClientContext;
+    @Autowired
+    private PrimaveraUserDetailsService primaveraUserDetailsService;
 
     @Override
     protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
@@ -62,10 +74,11 @@ public class PrimaveraSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/login").permitAll()
+                .antMatchers("/auth/**", "/login/**", "/error").permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .addFilterAfter(new PrimaveraFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new PrimaveraFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(ssoFilter(), BasicAuthenticationFilter.class)
                 .formLogin()
                 .usernameParameter("email")
                 .passwordParameter("password")
@@ -78,21 +91,38 @@ public class PrimaveraSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .logout()
                 .logoutUrl("/signout")
-                .deleteCookies("JSESSIONID")
-                .and()
-                .oauth2Login()
-                    .authorizationEndpoint()
-                    .baseUri("/oauth2/authorize")
-                    //.authorizationRequestRepository(cookieAuthorizationRequestRepository())
-                    .and()
-                    .redirectionEndpoint()
-                    .baseUri("/oauth2/callback/*")
-                    .and()
-                    .userInfoEndpoint()
-                    .userService(primaveraOAuth2UserService)
-                    .and()
-                    .successHandler((request, response, authentication)-> {})
-                    .failureHandler((request, response, authentication)-> {});
+                .deleteCookies("JSESSIONID");
+    }
+
+    private Filter ssoFilter() {
+        CompositeFilter filter = new CompositeFilter();
+        List<Filter> filters = new ArrayList<>();
+        filters.add(ssoFilter(google(), new GoogleOAuth2ClientAuthenticationProcessingFilter(socialService)));
+        filter.setFilters(filters);
+        return filter;
+    }
+
+    private Filter ssoFilter(ClientResources client, OAuth2ClientAuthenticationProcessingFilter filter) {
+        OAuth2RestTemplate restTemplate = new OAuth2RestTemplate(client.getClient(),oauth2ClientContext);
+        filter.setRestTemplate(restTemplate);
+        UserInfoTokenServices tokenServices = new UserInfoTokenServices(client.getResource().getUserInfoUri(), client.getClient().getClientId());
+        filter.setTokenServices(tokenServices);
+        tokenServices.setRestTemplate(restTemplate);
+        return filter;
+    }
+
+    @Bean
+    @ConfigurationProperties("google")
+    public ClientResources google() {
+        return new ClientResources();
+    }
+
+    @Bean
+    public FilterRegistrationBean<OAuth2ClientContextFilter> oauth2ClientFilterRegistration(OAuth2ClientContextFilter filter) {
+        FilterRegistrationBean<OAuth2ClientContextFilter> registration = new FilterRegistrationBean<>();
+        registration.setFilter(filter);
+        registration.setOrder(-100);
+        return registration;
     }
 
     @Bean

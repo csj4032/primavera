@@ -14,17 +14,19 @@ spring:
     enabled: true
     prefix: classpath:/templates/
     suffix: .html
-  security:
-    oauth2:
-      client:
-        registration:
-          google:
-            clientId: 690657782214-ukljodv9a6k2o65dtpb10j78eofat253.apps.googleusercontent.com
-            clientSecret: yt1FjTLGyDfvOqZOv2PTrTOW
-            redirectUriTemplate: "{baseUrl}/oauth2/callback/{registrationId}"
-            scope:
-              - email
-              - profile
+
+google:
+  client:
+    clientId: ${OAUTH2_GOOGLE_CLIENTID}
+    clientSecret: ${OAUTH2_GOOGLE_CLIENTSECRET}
+    accessTokenUri: https://www.googleapis.com/oauth2/v4/token
+    userAuthorizationUri: https://accounts.google.com/o/oauth2/v2/auth
+    clientAuthenticationScheme: form
+    scope:
+      - email
+      - profile
+  resource:
+    userInfoUri: https://www.googleapis.com/oauth2/v3/userinfo
 
 mybatis:
   configuration:
@@ -36,3 +38,11 @@ mybatis:
 
 logging:
   config: classpath:logback.xml
+
+server:
+  ssl:
+    key-alias: primavera
+    key-password: primavera
+    key-store: chap09/primavera.jks
+    key-store-type: PKCS12
+  port: 8443
