@@ -1,4 +1,4 @@
-package com.genius.primavera.infrastructure.security.social;
+package com.genius.primavera.infrastructure.security.social.google;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.genius.primavera.domain.model.UserConnection;

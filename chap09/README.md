@@ -10,8 +10,7 @@ compile('org.springframework.security:spring-security-oauth2-client:5.1.5.RELEAS
 
 #### Key Generation
 ```
- keytool -genkey -alias primavera -keyalg RSA -sigalg MD5withRSA -keystore primavera.jks -storepass primavera  -keypass primavera -validity 9999  -keystore primavera.jks
-keytool -list -keystore primavera.jks
+keytool -genkeypair -alias primavera -storetype PKCS12 -keyalg RSA -keysize 2048  -keystore primavera.p12 -validity 3650
 ```
 
 #### Application.yml 추가
