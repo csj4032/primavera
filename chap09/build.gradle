@@ -61,4 +61,5 @@ dependencies {
         exclude module: 'junit'
     }
     testImplementation('org.springframework.security:spring-security-test')
+    testCompile('io.rest-assured:rest-assured:3.3.0')
 }
