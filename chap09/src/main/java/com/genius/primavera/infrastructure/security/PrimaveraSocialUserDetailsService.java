@@ -24,7 +24,6 @@ public class PrimaveraSocialUserDetailsService implements UserDetailsService {
     private UserService userService;
 
     public UsernamePasswordAuthenticationToken doAuthentication(UserConnection userConnection) {
-        UserDetails userDetails = loadUserByUsername(userConnection.getDisplayName());
         User user = userService.findByEmail(userConnection.getEmail());
         if (user == null) {
             return setAuthenticationToken(userService.signUp(userConnection));

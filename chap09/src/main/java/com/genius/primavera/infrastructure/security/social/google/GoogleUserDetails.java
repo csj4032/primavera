@@ -2,12 +2,13 @@ package com.genius.primavera.infrastructure.security.social.google;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import com.genius.primavera.infrastructure.security.social.SocialUserDetails;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 
 import lombok.Getter;
 
 @Getter
-public class GoogleUserDetails {
+public class GoogleUserDetails implements SocialUserDetails {
     private String sub;
     private String name;
     @JsonProperty("given_name")

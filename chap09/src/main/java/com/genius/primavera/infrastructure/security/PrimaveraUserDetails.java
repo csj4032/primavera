@@ -53,7 +53,7 @@ public class PrimaveraUserDetails implements UserDetails {
         return user.getStatus().equals(UserStatus.ON);
     }
 
-    public String getProfileUrl() {
-        return user.getConnection().getProfileUrl();
+    public String getImageUrl() {
+        return user.getConnection().getImageUrl();
     }
 }

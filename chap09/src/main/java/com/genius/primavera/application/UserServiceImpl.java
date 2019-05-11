@@ -51,6 +51,7 @@ public class UserServiceImpl implements UserService {
         user.setStatus(UserStatus.ON);
         user.setRegDate(LocalDateTime.now());
         user.setRoles(List.of(new Role(1, RoleType.USER)));
+        user.setConnection(userConnection);
         save(user);
         userConnectionMapper.save(userConnection);
         return user;
