@@ -24,9 +24,7 @@ import static org.springframework.security.web.context.HttpSessionSecurityContex
 public class LoginController {
 
     @GetMapping(value = "/login")
-    public String loginForm(HttpServletRequest httpServletRequest) {
-        System.out.println(httpServletRequest.getScheme());
-        System.out.println(httpServletRequest.getHeader("X-Forwarded-Proto"));
+    public String loginForm() {
         return "login";
     }
 

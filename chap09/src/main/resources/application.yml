@@ -61,7 +61,7 @@ facebook:
     authenticationScheme: query
     clientAuthenticationScheme: form
   resource:
-    userInfoUri: https://graph.facebook.com/me
+    userInfoUri: https://graph.facebook.com/me?fields=id,email,name,picture
 
 github:
   client:
