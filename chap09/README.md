@@ -6,7 +6,6 @@
 compile('org.springframework.security.oauth.boot:spring-security-oauth2-autoconfigure:2.0.0.RELEASE')
 ```
 
-
 #### Application.yml 추가
 ```
 server:
@@ -41,7 +40,7 @@ facebook:
     authenticationScheme: query
     clientAuthenticationScheme: form
   resource:
-    userInfoUri: https://graph.facebook.com/me
+    https://graph.facebook.com/me?fields=id,email,name
 
 github:
   client:
@@ -63,11 +62,12 @@ keytool -genkeypair -alias primavera -storetype PKCS12 -keyalg RSA -keysize 2048
 
 #### Local Damian
 * host 파일 수정
+
 ```
 127.0.0.1       local.primavera.com
 ```
 
-#### Social Authorization callback URL
+#### Social Authorization Callback URL
  * https://localhost:8443/login/google
  * https://localhost:8443/login/facebook
  * https://localhost:8443/login/github
