@@ -1,0 +1,74 @@
+spring:
+  application:
+    name: Privamera
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://db.choibom.com:3306/primavera
+    username: primavera
+    password: primavera
+  banner:
+    charset: UTF-8
+    location: classpath:primavera.txt
+  thymeleaf:
+    cache: false
+    enabled: true
+    prefix: classpath:/templates/
+    suffix: .html
+  devtools:
+    livereload:
+      enabled: true
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+    default-fetch-size: 1000
+    default-statement-timeout: 30
+  type-aliases-package: com.genius.primavera.domain
+  type-handlers-package: com.genius.primavera.domain
+
+logging:
+  config: classpath:logback.xml
+
+server:
+  ssl:
+    key-alias: primavera
+    key-store: chap09/primavera.p12
+    key-store-type: PKCS12
+    key-store-password: primavera
+    enabled: true
+  port: 8443
+
+google:
+  client:
+    clientId: ${OAUTH2_GOOGLE_CLIENTID}
+    clientSecret: ${OAUTH2_GOOGLE_CLIENTSECRET}
+    accessTokenUri: https://www.googleapis.com/oauth2/v4/token
+    userAuthorizationUri: https://accounts.google.com/o/oauth2/v2/auth
+    clientAuthenticationScheme: form
+    scope:
+      - email
+      - profile
+  resource:
+    userInfoUri: https://www.googleapis.com/oauth2/v3/userinfo
+
+facebook:
+  client:
+    clientId: ${OAUTH2_FACEBOOK_CLIENTID}
+    clientSecret: ${OAUTH2_FACEBOOK_CLIENTSECRET}
+    accessTokenUri: https://graph.facebook.com/oauth/access_token
+    userAuthorizationUri: https://www.facebook.com/dialog/oauth
+    tokenName: oauth_token
+    authenticationScheme: query
+    clientAuthenticationScheme: form
+  resource:
+    userInfoUri: https://graph.facebook.com/me?fields=id,email,name
+
+github:
+  client:
+    clientId: ${OAUTH2_GITHUB_CLIENTID}
+    clientSecret: ${OAUTH2_GITHUB_CLIENTSECRET}
+    accessTokenUri: https://github.com/login/oauth/access_token
+    userAuthorizationUri: https://github.com/login/oauth/authorize
+    clientAuthenticationScheme: form
+  resource:
+    userInfoUri: https://api.github.com/user
