@@ -1,0 +1,96 @@
+<!DOCTYPE HTML>
+<html xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml" layout:decorate="~{layouts/layout}">
+<head>
+	<title>Primavera Post List</title>
+</head>
+<body>
+<div layout:fragment="content" class="content-wrapper">
+	<section class="content-header">
+		<h1>Posts
+			<small>advanced table</small>
+		</h1>
+		<ol class="breadcrumb">
+			<li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+			<li><a href="#">Post</a></li>
+			<li class="active">Post Data tables</li>
+		</ol>
+	</section>
+	<section class="content">
+		<div class="row">
+			<div class="col-xs-12">
+				<div class="box">
+					<div class="box-header">
+						<h3 class="box-title">Post Data Table</h3>
+					</div>
+					<div class="box-body">
+						<div id="posts_wrapper" class="dataTables_wrapper form-inline dt-bootstrap">
+							<div class="row">
+								<div class="col-sm-6"></div>
+								<div class="col-sm-6"></div>
+							</div>
+							<div class="row">
+								<div class="col-sm-12">
+									<table id="posts" class="table table-bordered table-hover dataTable" role="grid">
+										<thead>
+										<tr role="row">
+											<th class="sorting_asc" aria-sort="ascending" aria-label="id">ID</th>
+											<th class="sorting_asc" aria-sort="ascending">Subject</th>
+											<th class="sorting_asc" aria-sort="ascending">Contents</th>
+											<th class="sorting_asc" aria-sort="ascending">Writer</th>
+											<th class="sorting_asc" aria-sort="ascending">RegDt</th>
+										</tr>
+										</thead>
+										<tbody>
+										<tr th:each="post : ${posts}">
+											<td th:text="${post.id}">1</td>
+											<td th:text="${post.subject}">로마는 하루아침에 이루어지지 않았다.</td>
+											<td th:text="${post.contents}">제1권 로마는 하루아침에 이루어지지 않았다.</td>
+											<td th:text="${post.writer.nickname}">Genius</td>
+											<td th:text="${post.regDt}">2019-05-20</td>
+										</tr>
+										</tbody>
+									</table>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-5">
+									<div class="dataTables_info" id="example2_info" role="status" aria-live="polite">Showing 1 to 10 of 57 entries</div>
+								</div>
+								<div class="col-sm-7">
+									<div class="dataTables_paginate paging_simple_numbers" id="posts_paginate">
+										<ul class="pagination">
+											<li class="paginate_button previous disabled" id="posts_previous"><a href="#" aria-controls="posts" data-dt-idx="0" tabindex="0">Previous</a></li>
+											<li class="paginate_button active"><a href="#" aria-controls="posts" data-dt-idx="1" tabindex="0">1</a></li>
+											<li class="paginate_button "><a href="#" aria-controls="posts" data-dt-idx="2" tabindex="0">2</a></li>
+											<li class="paginate_button "><a href="#" aria-controls="posts" data-dt-idx="3" tabindex="0">3</a></li>
+											<li class="paginate_button "><a href="#" aria-controls="posts" data-dt-idx="4" tabindex="0">4</a></li>
+											<li class="paginate_button "><a href="#" aria-controls="posts" data-dt-idx="5" tabindex="0">5</a></li>
+											<li class="paginate_button "><a href="#" aria-controls="posts" data-dt-idx="6" tabindex="0">6</a></li>
+											<li class="paginate_button next" id="example2_next"><a href="#" aria-controls="posts" data-dt-idx="7" tabindex="0">Next</a></li>
+										</ul>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	<script src="bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
+	<script src="bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+	<script>
+		$(function () {
+			$('#posts').DataTable({
+				'paging'      : false,
+				'lengthChange': false,
+				'searching'   : false,
+				'ordering'    : true,
+				'info'        : false,
+				'autoWidth'   : false
+			});
+		})
+	</script>
+</div>
+</body>
+</html>
