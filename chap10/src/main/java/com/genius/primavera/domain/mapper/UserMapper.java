@@ -24,18 +24,17 @@ import java.util.List;
 @Mapper
 public interface UserMapper {
 
-    String SELECT_FROM_USER_JOIN_CONNECTION = "SELECT A.ID, A.EMAIL, NICKNAME, PASSWORD, STATUS, B.PROVIDER, B.PROVIDER_ID, B.PROFILE_URL, B.IMAGE_URL, REG_DATE, MOD_DATE FROM USER A INNER JOIN USER_CONNECTION B ON A.EMAIL = B.EMAIL ";
-    String SELECT_FROM_USER = "SELECT ID, EMAIL, NICKNAME, PASSWORD, STATUS, REG_DATE, MOD_DATE FROM USER ";
-    String INSERT_SQL = "INSERT INTO USER (EMAIL, PASSWORD, NICKNAME, STATUS, REG_DATE, MOD_DATE) " +
-            "VALUES (#{user.email}, #{user.password}, #{user.nickname}, #{user.status, typeHandler=UserStatusTypeHandler}, #{user.regDate}, #{user.modDate})";
+    String SELECT_FROM_USER_JOIN_CONNECTION = "SELECT A.ID, A.EMAIL, NICKNAME, PASSWORD, STATUS, B.PROVIDER, B.PROVIDER_ID, B.PROFILE_URL, B.IMAGE_URL, REG_DT, MOD_DT FROM USER A INNER JOIN USER_CONNECTION B ON A.EMAIL = B.EMAIL ";
+    String SELECT_FROM_USER = "SELECT ID, EMAIL, NICKNAME, PASSWORD, STATUS, REG_DT, MOD_DT FROM USER ";
+    String INSERT_SQL = "INSERT INTO USER (EMAIL, PASSWORD, NICKNAME, STATUS, REG_DT, MOD_DT) VALUES (#{user.email}, #{user.password}, #{user.nickname}, #{user.status, typeHandler=UserStatusTypeHandler}, #{user.regDt}, #{user.modDt})";
 
     @Results(id = "USER", value = {
             @Result(property = "id", column = "ID"),
             @Result(property = "email", column = "EMAIL"),
             @Result(property = "nickname", column = "NICKNAME"),
             @Result(property = "status", column = "STATUS"),
-            @Result(property = "regDate", column = "REG_DATE"),
-            @Result(property = "modDate", column = "MOD_DATE")
+            @Result(property = "regDt", column = "REG_DT"),
+            @Result(property = "modDt", column = "MOD_DT")
     })
     @Select(value = SELECT_FROM_USER + "WHERE ID = #{id}")
     User findById(@Param(value = "id") long id);
@@ -54,8 +53,8 @@ public interface UserMapper {
             @Result(property = "connection.providerId", column = "PROVIDER_ID"),
             @Result(property = "connection.profileUrl", column = "PROFILE_URL"),
             @Result(property = "connection.imageUrl", column = "IMAGE_URL"),
-            @Result(property = "regDate", column = "REG_DATE"),
-            @Result(property = "modDate", column = "MOD_DATE"),
+            @Result(property = "regDt", column = "REG_DT"),
+            @Result(property = "modDt", column = "MOD_DT"),
             @Result(property = "roles", javaType = List.class, column = "ID", many = @Many(select = "com.genius.primavera.domain.mapper.UserRoleMapper.findByUserId"))
     })
     User findByIdWithRoles(@Param(value = "id") long id);

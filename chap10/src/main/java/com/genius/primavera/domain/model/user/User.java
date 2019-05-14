@@ -51,6 +51,6 @@ public class User {
     @NotNull
     @Size(min = 1)
     private List<Role> roles;
-    private LocalDateTime regDate;
-    private LocalDateTime modDate;
+    private LocalDateTime regDt;
+    private LocalDateTime modDt;
 }

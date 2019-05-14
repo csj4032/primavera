@@ -6,5 +6,9 @@ import java.util.List;
 
 public interface PostService {
 
-	List<Post> findAll();
+    List<Post> findAll();
+
+    int save(Post post);
+
+    Post findById(long id);
 }
