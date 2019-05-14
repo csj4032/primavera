@@ -17,27 +17,27 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class PostServiceImpl implements PostService {
 
-    @Autowired
-    private PostMapper postMapper;
+	@Autowired
+	private PostMapper postMapper;
 
-    @Override
-    public int save(Post post) {
-        return postMapper.save(post);
-    }
+	@Override
+	public int save(Post post) {
+		return postMapper.save(post);
+	}
 
-    @Override
-    public List<Post> findAll() {
-        return postMapper.findAll();
-    }
+	@Override
+	public List<Post> findAll() {
+		return postMapper.findAll();
+	}
 
-    @Override
-    public Page<Post> findForPageable(Pageable pageable) {
-        List<Post> posts = postMapper.findForPageable(pageable);
-        return new PageImpl(posts, pageable, posts.size());
-    }
+	@Override
+	public Page<Post> findForPageable(Pageable pageable) {
+		List<Post> posts = postMapper.findForPageable(pageable);
+		return new PageImpl(posts, pageable, posts.size());
+	}
 
-    @Override
-    public Post findById(long id) {
-        return new Post();
-    }
+	@Override
+	public Post findById(long id) {
+		return new Post();
+	}
 }
