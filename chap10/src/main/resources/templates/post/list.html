@@ -28,6 +28,30 @@
 								<div class="col-sm-6"></div>
 								<div class="col-sm-6"></div>
 							</div>
+<!--							<div class="row">-->
+<!--								<div class="col-sm-12">-->
+<!--									<table id="posts" class="table table-bordered table-hover dataTable" role="grid">-->
+<!--										<thead>-->
+<!--										<tr role="row">-->
+<!--											<th class="sorting_asc" aria-sort="ascending" aria-label="id">ID</th>-->
+<!--											<th class="sorting_asc" aria-sort="ascending">Subject</th>-->
+<!--											<th class="sorting_asc" aria-sort="ascending">Contents</th>-->
+<!--											<th class="sorting_asc" aria-sort="ascending">Writer</th>-->
+<!--											<th class="sorting_asc" aria-sort="ascending">RegDt</th>-->
+<!--										</tr>-->
+<!--										</thead>-->
+<!--										<tbody>-->
+<!--										<tr th:each="post : ${posts}">-->
+<!--											<td th:text="${post.id}">1</td>-->
+<!--											<td th:text="${post.subject}">로마는 하루아침에 이루어지지 않았다.</td>-->
+<!--											<td th:text="${post.contents}">제1권 로마는 하루아침에 이루어지지 않았다.</td>-->
+<!--											<td th:text="${post.writer.nickname}">Genius</td>-->
+<!--											<td th:text="${post.regDt}">2019-05-20</td>-->
+<!--										</tr>-->
+<!--										</tbody>-->
+<!--									</table>-->
+<!--								</div>-->
+<!--							</div>-->
 							<div class="row">
 								<div class="col-sm-12">
 									<table id="posts" class="table table-bordered table-hover dataTable" role="grid">
@@ -41,31 +65,7 @@
 										</tr>
 										</thead>
 										<tbody>
-										<tr th:each="post : ${posts}">
-											<td th:text="${post.id}">1</td>
-											<td th:text="${post.subject}">로마는 하루아침에 이루어지지 않았다.</td>
-											<td th:text="${post.contents}">제1권 로마는 하루아침에 이루어지지 않았다.</td>
-											<td th:text="${post.writer.nickname}">Genius</td>
-											<td th:text="${post.regDt}">2019-05-20</td>
-										</tr>
-										</tbody>
-									</table>
-								</div>
-							</div>
-							<div class="row">
-								<div class="col-sm-12">
-									<table id="posts" class="table table-bordered table-hover dataTable" role="grid">
-										<thead>
-										<tr role="row">
-											<th class="sorting_asc" aria-sort="ascending" aria-label="id">ID</th>
-											<th class="sorting_asc" aria-sort="ascending">Subject</th>
-											<th class="sorting_asc" aria-sort="ascending">Contents</th>
-											<th class="sorting_asc" aria-sort="ascending">Writer</th>
-											<th class="sorting_asc" aria-sort="ascending">RegDt</th>
-										</tr>
-										</thead>
-										<tbody>
-										<tr th:each="post : ${page}">
+										<tr th:each="post : ${page.content}">
 											<td th:text="${post.id}">1</td>
 											<td th:text="${post.subject}">로마는 하루아침에 이루어지지 않았다.</td>
 											<td th:text="${post.contents}">제1권 로마는 하루아침에 이루어지지 않았다.</td>

@@ -31,7 +31,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public PageImpl<Post> findForPageable(Pageable pageable) {
+    public Page<Post> findForPageable(Pageable pageable) {
         List<Post> posts = postMapper.findForPageable(pageable);
         return new PageImpl(posts, pageable, posts.size());
     }
