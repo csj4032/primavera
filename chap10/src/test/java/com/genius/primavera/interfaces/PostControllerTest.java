@@ -15,6 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -44,7 +47,6 @@ public class PostControllerTest {
     private PostService postService;
 
     @Test
-    @Disabled
     @Order(1)
     @DisplayName("포스팅 목록 화면 접근")
     @WithUserDetails(value = "Genius Choi", userDetailsServiceBeanName = "primaveraUserDetailsService")
@@ -52,7 +54,7 @@ public class PostControllerTest {
         given(this.postService.findAll()).willReturn(List.of(
                 Post.builder().id(1).subject("로마는 하루아침에 이루어지지 않았다.").contents("제1권 로마는 하루아침에 이루어지지 않았다.").writer(User.builder().id(1).email("Genius Choi").nickname("Genius").build()).build(),
                 Post.builder().id(2).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1).email("Genius Choi").nickname("Genius").build()).build()));
-        mockMvc.perform(get("/posts").accept(MediaType.TEXT_HTML))
+        mockMvc.perform(get("/posts/all").accept(MediaType.TEXT_HTML))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("로마는 하루아침에 이루어지지 않았다.")))
                 .andExpect(content().string(containsString("Genius")));
@@ -60,6 +62,35 @@ public class PostControllerTest {
 
     @Test
     @Order(2)
+    @DisplayName("포스팅 페이징 목록 화면 접근")
+    @WithUserDetails(value = "Genius Choi", userDetailsServiceBeanName = "primaveraUserDetailsService")
+    public void postListOfPagination() throws Exception {
+        Pageable pageable = new PageRequest(0, 10);
+        List<Post> list = List.of(
+                Post.builder().id(1).subject("로마는 하루아침에 이루어지지 않았다.").contents("제1권 로마는 하루아침에 이루어지지 않았다.").writer(User.builder().id(1).email("Genius Choi").nickname("Genius").build()).build(),
+                Post.builder().id(2).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1).email("Genius Choi").nickname("Genius").build()).build(),
+                Post.builder().id(3).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1).email("Genius Choi").nickname("Genius").build()).build(),
+                Post.builder().id(3).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1).email("Genius Choi").nickname("Genius").build()).build(),
+                Post.builder().id(4).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1).email("Genius Choi").nickname("Genius").build()).build(),
+                Post.builder().id(5).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1).email("Genius Choi").nickname("Genius").build()).build(),
+                Post.builder().id(6).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1).email("Genius Choi").nickname("Genius").build()).build(),
+                Post.builder().id(7).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1).email("Genius Choi").nickname("Genius").build()).build(),
+                Post.builder().id(8).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1).email("Genius Choi").nickname("Genius").build()).build(),
+                Post.builder().id(9).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1).email("Genius Choi").nickname("Genius").build()).build(),
+                Post.builder().id(10).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1).email("Genius Choi").nickname("Genius").build()).build(),
+                Post.builder().id(11).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1).email("Genius Choi").nickname("Genius").build()).build(),
+                Post.builder().id(12).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1).email("Genius Choi").nickname("Genius").build()).build()
+        );
+        given(this.postService.findForPageable(pageable)).willReturn(new PageImpl(list, pageable, list.size()));
+        mockMvc.perform(get("/posts").param("page", "1").param("size", "10").accept(MediaType.TEXT_HTML))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("한니발 전쟁")))
+                .andExpect(content().string(containsString("11")))
+                .andExpect(content().string(containsString("Genius")));
+    }
+
+    @Test
+    @Order(3)
     @DisplayName("포스팅 상세 화면 접근")
     @WithUserDetails(value = "Genius Choi", userDetailsServiceBeanName = "primaveraUserDetailsService")
     public void postDetail() throws Exception {
@@ -72,7 +103,7 @@ public class PostControllerTest {
     }
 
     @Test
-    @Order(3)
+    @Order(4)
     @DisplayName("포스팅 등록 화면 접근")
     @WithUserDetails(value = "Genius Choi", userDetailsServiceBeanName = "primaveraUserDetailsService")
     public void postForm() throws Exception {
@@ -80,7 +111,7 @@ public class PostControllerTest {
     }
 
     @Test
-    @Order(4)
+    @Order(5)
     @DisplayName("포스팅 저장 후 목록 화면")
     @WithUserDetails(value = "Genius Choi", userDetailsServiceBeanName = "primaveraUserDetailsService")
     public void postSave() throws Exception {
