@@ -17,6 +17,6 @@ public class Post {
 	private String subject;
 	private String contents;
 	private PostStatus status;
-	private LocalDateTime regDt;
-	private LocalDateTime modDt;
+	private LocalDateTime regDt = LocalDateTime.now();
+	private LocalDateTime modDt = LocalDateTime.now();
 }

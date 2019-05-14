@@ -55,6 +55,7 @@ dependencies {
     compile('org.mariadb.jdbc:mariadb-java-client:2.4.1')
     compile('nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:2.3.0')
     compile('com.navercorp.lucy:lucy-xss-servlet:2.0.0')
+    compile('org.modelmapper:modelmapper:2.3.3')
     compileOnly('org.projectlombok:lombok')
     annotationProcessor('org.projectlombok:lombok')
     testImplementation('org.springframework.boot:spring-boot-starter-test') {

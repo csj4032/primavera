@@ -34,7 +34,7 @@ public class UserServiceImpl implements UserService {
     public User save(User user) {
         user.setPassword(PasswordEncoderFactories.createDelegatingPasswordEncoder().encode(user.getPassword()));
         user.setStatus(UserStatus.ON);
-        user.setRegDate(LocalDateTime.now());
+        user.setRegDt(LocalDateTime.now());
         userMapper.save(user);
         user.getRoles().stream().forEach(role -> userRoleMapper.save(new UserRole(user.getId(), role.getType().getValue())));
         return user;
@@ -48,7 +48,7 @@ public class UserServiceImpl implements UserService {
         user.setNickname(userConnection.getDisplayName());
         user.setPassword(userConnection.getEmail());
         user.setStatus(UserStatus.ON);
-        user.setRegDate(LocalDateTime.now());
+        user.setRegDt(LocalDateTime.now());
         user.setRoles(List.of(new Role(1, RoleType.USER)));
         user.setConnection(userConnection);
         save(user);
