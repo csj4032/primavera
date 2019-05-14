@@ -3,22 +3,14 @@ package com.genius.primavera.interfaces;
 import com.genius.primavera.application.post.PostService;
 import com.genius.primavera.domain.model.post.Post;
 import com.genius.primavera.domain.model.user.User;
-
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.data.ldap.DataLdapTest;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
@@ -87,7 +79,6 @@ public class PostControllerTest {
         );
         Page<Post> postPage = Mockito.mock(Page.class);
         Mockito.when(this.postService.findForPageable(pageable)).thenReturn(postPage);
-        //given(this.postService.findForPageable(pageable)).willReturn();
         mockMvc.perform(get("/posts").param("page", "1").param("size", "10").accept(MediaType.TEXT_HTML))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("한니발 전쟁")))

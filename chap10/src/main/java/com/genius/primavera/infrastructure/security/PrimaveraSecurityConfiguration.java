@@ -1,7 +1,7 @@
 package com.genius.primavera.infrastructure.security;
 
 import com.genius.primavera.infrastructure.filter.PrimaveraFilter;
-
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -24,8 +24,6 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 import java.util.List;
 
 import javax.servlet.Filter;
-
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Configuration
