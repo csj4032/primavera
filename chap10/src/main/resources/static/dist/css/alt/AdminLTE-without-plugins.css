@@ -171,7 +171,7 @@ a:focus {
   text-decoration: none;
   color: #72afd2;
 }
-/* Page Header */
+/* Paged Header */
 .page-header {
   margin: 10px 0 20px 0;
   font-size: 22px;
@@ -3097,7 +3097,7 @@ table.text-center th {
   width: auto;
 }
 /*
- * Page: Mailbox
+ * Paged: Mailbox
  * -------------
  */
 .mailbox-messages > .table {
@@ -3166,7 +3166,7 @@ table.text-center th {
   height: auto;
 }
 /*
- * Page: Lock Screen
+ * Paged: Lock Screen
  * -----------------
  */
 /* ADD THIS CLASS TO THE <BODY> TAG */
@@ -3232,7 +3232,7 @@ table.text-center th {
   margin-top: 10px;
 }
 /*
- * Page: Login & Register
+ * Paged: Login & Register
  * ----------------------
  */
 .login-logo,
@@ -3283,7 +3283,7 @@ table.text-center th {
   margin: 10px 0;
 }
 /*
- * Page: 400 and 500 error pages
+ * Paged: 400 and 500 error pages
  * ------------------------------
  */
 .error-page {
@@ -3325,7 +3325,7 @@ table.text-center th {
   }
 }
 /*
- * Page: Invoice
+ * Paged: Invoice
  * -------------
  */
 .invoice {
@@ -3339,7 +3339,7 @@ table.text-center th {
   margin-top: 0;
 }
 /*
- * Page: Profile
+ * Paged: Profile
  * -------------
  */
 .profile-user-img {
