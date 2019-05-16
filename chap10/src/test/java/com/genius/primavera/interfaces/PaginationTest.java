@@ -37,9 +37,9 @@ public class PaginationTest {
         PageRequest pageRequest = PageRequest.of(6, 5);
         List<Post> contents = posts.stream().skip(pageRequest.getOffset()).limit(pageRequest.getRowNumber()).collect(Collectors.toList());
         Paged<Post> paged = new Paged(pageRequest, contents, posts.size());
-        Assertions.assertEquals(6, paged.getPageNumber());
         Assertions.assertEquals(5, paged.getPageSize());
         Assertions.assertEquals(List.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10), paged.getPaginates());
+        Assertions.assertEquals(6, paged.getPageNumber());
         Assertions.assertEquals(5, paged.getContents().size());
         Assertions.assertEquals(26, paged.getContents().get(0).getId());
         Assertions.assertEquals(30, paged.getContents().get(4).getId());
