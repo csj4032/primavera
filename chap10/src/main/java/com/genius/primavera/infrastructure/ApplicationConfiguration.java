@@ -20,7 +20,7 @@ public class ApplicationConfiguration implements WebMvcConfigurer {
 
 	@Bean
 	public FilterRegistrationBean<XssEscapeServletFilter> filterRegistrationBean() {
-		FilterRegistrationBean<XssEscapeServletFilter> filterRegistration = new FilterRegistrationBean<>();
+		var filterRegistration = new FilterRegistrationBean<XssEscapeServletFilter>();
 		filterRegistration.setFilter(new XssEscapeServletFilter());
 		filterRegistration.setOrder(1);
 		filterRegistration.addUrlPatterns("/*");
@@ -29,7 +29,7 @@ public class ApplicationConfiguration implements WebMvcConfigurer {
 
 	@Bean
 	public ObjectMapper objectMapper() {
-		ObjectMapper mapper = new ObjectMapper();
+		var mapper = new ObjectMapper();
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		return mapper;
 	}}

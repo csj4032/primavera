@@ -23,7 +23,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public int save(PostDto.RequestForSave requestForSave) {
-        Post post = new ModelMapper().map(requestForSave, Post.class);
+        var post = new ModelMapper().map(requestForSave, Post.class);
         return postMapper.save(post);
     }
 
@@ -34,9 +34,8 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Paged<Post> findForPageable(PageRequest pageRequest) {
-        int postSize = postMapper.findAllCount();
-        List<Post> posts = postMapper.findForPageable(pageRequest);
-        return new Paged(pageRequest, posts, postSize);
+        var posts = postMapper.findForPageable(pageRequest);
+        return new Paged(pageRequest, posts, postMapper.findAllCount());
     }
 
     @Override

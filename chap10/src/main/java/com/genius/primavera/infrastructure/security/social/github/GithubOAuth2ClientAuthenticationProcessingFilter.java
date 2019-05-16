@@ -28,7 +28,7 @@ public class GithubOAuth2ClientAuthenticationProcessingFilter extends OAuth2Clie
 
 	@Override
 	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
-		final GithubUserDetails userDetails = objectMapper.convertValue(((OAuth2Authentication) authResult).getUserAuthentication().getDetails(), GithubUserDetails.class);
+		var userDetails = objectMapper.convertValue(((OAuth2Authentication) authResult).getUserAuthentication().getDetails(), GithubUserDetails.class);
 		userDetails.setAccessToken(restTemplate.getAccessToken());
 		super.successfulAuthentication(request, response, chain, primaveraSocialUserDetailsService.doAuthentication(UserConnection.valueOf(userDetails)));
 	}

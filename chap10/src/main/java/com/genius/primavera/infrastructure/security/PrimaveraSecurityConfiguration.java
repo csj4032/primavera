@@ -44,10 +44,10 @@ public class PrimaveraSecurityConfiguration extends WebSecurityConfigurerAdapter
 
 	@Override
 	protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
-		PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
-		User genius = new User("Genius", "{bcrypt}$2a$10$7UEHLpn1r4gZY2qxiZFJ5.7wa3Hdz8IXgxUtFogy0Ac10fh7TG4V.", List.of(new SimpleGrantedAuthority("USER")));
-		User marcus = new User("Marcus Tullius Cicero", "{bcrypt}$2a$10$7UEHLpn1r4gZY2qxiZFJ5.7wa3Hdz8IXgxUtFogy0Ac10fh7TG4V.", List.of(new SimpleGrantedAuthority("USER")));
-		User julius = new User("Julius Caesar", "{bcrypt}$2a$10$7UEHLpn1r4gZY2qxiZFJ5.7wa3Hdz8IXgxUtFogy0Ac10fh7TG4V.", List.of(new SimpleGrantedAuthority("USER")));
+		var encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+		var genius = new User("Genius", "{bcrypt}$2a$10$7UEHLpn1r4gZY2qxiZFJ5.7wa3Hdz8IXgxUtFogy0Ac10fh7TG4V.", List.of(new SimpleGrantedAuthority("USER")));
+		var marcus = new User("Marcus Tullius Cicero", "{bcrypt}$2a$10$7UEHLpn1r4gZY2qxiZFJ5.7wa3Hdz8IXgxUtFogy0Ac10fh7TG4V.", List.of(new SimpleGrantedAuthority("USER")));
+		var julius = new User("Julius Caesar", "{bcrypt}$2a$10$7UEHLpn1r4gZY2qxiZFJ5.7wa3Hdz8IXgxUtFogy0Ac10fh7TG4V.", List.of(new SimpleGrantedAuthority("USER")));
 		auth.inMemoryAuthentication().withUser(genius).withUser(marcus).withUser(julius);
 		auth.authenticationProvider(authenticationProvider());
 	}
@@ -84,7 +84,7 @@ public class PrimaveraSecurityConfiguration extends WebSecurityConfigurerAdapter
 
 	@Bean
 	public DaoAuthenticationProvider authenticationProvider() {
-		DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+		var authProvider = new DaoAuthenticationProvider();
 		authProvider.setUserDetailsService(primaveraUserDetailsService);
 		return authProvider;
 	}

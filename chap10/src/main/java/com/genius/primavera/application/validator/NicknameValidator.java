@@ -1,6 +1,5 @@
 package com.genius.primavera.application.validator;
 
-import java.io.Closeable;
 import java.io.Serializable;
 
 import javax.validation.ConstraintValidator;
