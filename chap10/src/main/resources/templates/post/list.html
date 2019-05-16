@@ -42,9 +42,9 @@
 										</tr>
 										</thead>
 										<tbody>
-										<tr th:each="post : ${page.contents}">
+										<tr class="btn-block" th:each="post : ${page.contents}">
 											<td th:text="${post.id}">1</td>
-											<td th:text="${post.subject}">로마는 하루아침에 이루어지지 않았다.</td>
+											<td><a th:href="${'/posts/' + post.id}" th:text="${post.subject}">로마는 하루아침에 이루어지지 않았다.</a></td>
 											<td class="text-overflow" th:text="${post.contents}">제1권 로마는 하루아침에 이루어지지 않았다.</td>
 											<td th:text="${post.writer.nickname}">Genius</td>
 											<td th:text="${#temporals.format(post.regDt, 'yyyy-MM-dd HH:mm:ss')}">2019-05-20</td>
