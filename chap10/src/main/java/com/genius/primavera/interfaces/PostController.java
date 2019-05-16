@@ -2,8 +2,6 @@ package com.genius.primavera.interfaces;
 
 import com.genius.primavera.application.post.PostService;
 import com.genius.primavera.domain.PageRequest;
-import com.genius.primavera.domain.Paged;
-import com.genius.primavera.domain.model.post.Post;
 import com.genius.primavera.domain.model.post.PostDto;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +30,7 @@ public class PostController {
 
 	@GetMapping("/posts")
 	public String listForPageable(Model model, PageRequest pageRequest) {
-		Paged<Post> page = postService.findForPageable(pageRequest);
+		var page = postService.findForPageable(pageRequest);
 		model.addAttribute("page", page);
 		return "post/list";
 	}
