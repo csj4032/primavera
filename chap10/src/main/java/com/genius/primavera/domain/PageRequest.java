@@ -6,11 +6,14 @@ import lombok.Setter;
 @Getter
 @Setter
 public class PageRequest {
-    private int pageNumber;
-    private int pageSize;
-    private int totalSize;
+    private int pageNumber = 1;
+    private int pageSize = 10;
+    private int totalSize = 10;
 
-    private PageRequest(int pageNumber, int pageSize, int totalSize) {
+    public PageRequest() {
+    }
+
+    public PageRequest(int pageNumber, int pageSize, int totalSize) {
         this.pageNumber = pageNumber;
         this.pageSize = pageSize;
         this.totalSize = totalSize;
@@ -45,10 +48,10 @@ public class PageRequest {
     }
 
     public int getRowNumber() {
-        return getPageNumber() == 1 ? 1 : (getPageNumber() - 1) * getPageSize();
+        return getPageSize();
     }
 
     public int getOffset() {
-        return getPageSize();
+        return getPageNumber() == 1 ? 0 : (getPageNumber() - 1) * getPageSize();
     }
 }

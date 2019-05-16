@@ -1,5 +1,6 @@
 package com.genius.primavera.domain.mapper;
 
+import com.genius.primavera.domain.PageRequest;
 import com.genius.primavera.domain.model.post.Post;
 
 import org.apache.ibatis.annotations.Insert;
@@ -9,25 +10,29 @@ import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.ResultMap;
 import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Repository;
+import org.apache.ibatis.type.InstantTypeHandler;
+import org.apache.ibatis.type.JdbcType;
 
+import java.time.Instant;
 import java.util.List;
 
 @Mapper
 public interface PostMapper {
 
     String INSERT_SQL = "INSERT INTO POST (WRITER_ID, SUBJECT, CONTENTS, STATUS, REG_DT) " + "VALUES (#{writer.id}, #{subject}, #{contents}, #{status, typeHandler=PostStatusTypeHandler}, #{regDt})";
-    String SELECT_ALL_SQL = "SELECT A.ID, A.SUBJECT, A.CONTENTS, A.REG_DT, A.MOD_DT, A.WRITER_ID, B.EMAIL, B.NICKNAME FROM POST AS A INNER JOIN USER B ON A.WRITER_ID = B.ID";
-    String SELECT_PAGEABLE_SQL = "SELECT A.ID, A.SUBJECT, A.CONTENTS, A.REG_DT, A.MOD_DT, A.WRITER_ID, B.EMAIL, B.NICKNAME FROM POST AS A INNER JOIN USER B ON A.WRITER_ID = B.ID LIMIT #{size} OFFSET #{offset}";
+    String SELECT_SQL = "SELECT A.ID, A.SUBJECT, A.CONTENTS, A.REG_DT, A.MOD_DT, A.WRITER_ID, B.EMAIL, B.NICKNAME FROM POST AS A INNER JOIN USER B ON A.WRITER_ID = B.ID";
+    String SELECT_COUNT_SQL = "SELECT COUNT(*) AS CNT FROM POST AS A INNER JOIN USER B ON A.WRITER_ID = B.ID";
 
     @Insert(value = INSERT_SQL)
     @Options(useGeneratedKeys = true, keyProperty = "id")
     int save(Post post);
 
     @ResultMap(value = "POST_WITH_USER")
-    @Select(value = SELECT_ALL_SQL)
+    @Select(value = SELECT_SQL)
     List<Post> findAll();
+
+    @Select(value = SELECT_COUNT_SQL)
+    int findAllCount();
 
     @Results(id = "POST_WITH_USER", value = {
             @Result(property = "id", column = "ID"),
@@ -36,9 +41,13 @@ public interface PostMapper {
             @Result(property = "writer.id", column = "WRITER_ID"),
             @Result(property = "writer.email", column = "EMAIL"),
             @Result(property = "writer.nickname", column = "NICKNAME"),
-            @Result(property = "regDt", column = "REG_DT"),
-            @Result(property = "modDt", column = "MOD_DT"),
+            @Result(property = "regDt", javaType = Instant.class, typeHandler = InstantTypeHandler.class, column = "REG_DT", jdbcType = JdbcType.TIMESTAMP_WITH_TIMEZONE),
+            @Result(property = "modDt", javaType = Instant.class, typeHandler = InstantTypeHandler.class, column = "MOD_DT", jdbcType = JdbcType.TIMESTAMP_WITH_TIMEZONE),
     })
-    @Select(value = SELECT_PAGEABLE_SQL)
-    List<Post> findForPageable(Pageable pageable);
+    @Select(value = SELECT_SQL + " ORDER BY A.ID DESC LIMIT #{rowNumber} OFFSET #{offset}")
+    List<Post> findForPageable(PageRequest pageRequest);
+
+    @ResultMap(value = "POST_WITH_USER")
+    @Select(value = SELECT_SQL + " WHERE A.ID = #{id} ORDER BY A.ID DESC")
+    Post findById(long id);
 }

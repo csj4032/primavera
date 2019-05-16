@@ -53,6 +53,10 @@ public class PrimaveraUserDetails implements UserDetails {
 		return user.getStatus().equals(UserStatus.ON);
 	}
 
+	public long getUserId() {
+		return user.getId();
+	}
+
 	public String getImageUrl() {
 		return user.getConnection().getImageUrl();
 	}

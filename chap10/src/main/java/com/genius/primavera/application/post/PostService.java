@@ -1,19 +1,19 @@
 package com.genius.primavera.application.post;
 
+import com.genius.primavera.domain.PageRequest;
+import com.genius.primavera.domain.Paged;
 import com.genius.primavera.domain.model.post.Post;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import com.genius.primavera.domain.model.post.PostDto;
 
 import java.util.List;
 
 public interface PostService {
 
-    int save(Post post);
+    int save(PostDto.RequestForSave requestForSave);
 
     List<Post> findAll();
 
-    Page<Post> findForPageable(Pageable pagination);
+    Paged<Post> findForPageable(PageRequest pageRequest);
 
     Post findById(long id);
 }

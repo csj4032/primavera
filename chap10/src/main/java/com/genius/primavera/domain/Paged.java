@@ -46,7 +46,7 @@ public class Paged<T> {
         return Math.min((getFirstPagedNumber() + getTotalSize() - 1), getTotalPages());
     }
 
-    public List<Integer> getPagedNumbers() {
+    public List<Integer> getPaginates() {
         return IntStream.rangeClosed(getFirstPagedNumber(), getLastPagedNumber()).boxed().collect(Collectors.toList());
     }
 
@@ -56,6 +56,14 @@ public class Paged<T> {
 
     public boolean hasNext() {
         return pageRequest.getPageNumber() < getTotalPages();
+    }
+
+    public int getNextNumber() {
+        return hasNext() ? pageRequest.getPageNumber() + 1 : pageRequest.getPageNumber();
+    }
+
+    public int getPreviousNumber() {
+        return hasPrevious() ? pageRequest.getPageNumber() - 1 : pageRequest.getPageNumber();
     }
 
     public int getPageNumber() {

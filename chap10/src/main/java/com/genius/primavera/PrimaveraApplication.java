@@ -5,6 +5,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableOAuth2Client;
 
+import java.util.TimeZone;
+
+import javax.annotation.PostConstruct;
+
 @SpringBootApplication
 public class PrimaveraApplication {
 

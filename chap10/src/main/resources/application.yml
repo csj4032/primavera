@@ -3,7 +3,7 @@ spring:
     name: Privamera
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://db.choibom.com:3306/primavera
+    url: jdbc:mariadb://db.choibom.com:3306/primavera?serverTimezone=Asia/Seoul
     username: primavera
     password: primavera
   banner:
