@@ -3,7 +3,9 @@ package com.genius.primavera.domain.model.post;
 import com.genius.primavera.domain.model.user.User;
 import lombok.*;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @Getter
 @Setter
@@ -17,6 +19,6 @@ public class Post {
 	private String subject;
 	private String contents;
 	private PostStatus status;
-	private LocalDateTime regDt = LocalDateTime.now();
-	private LocalDateTime modDt = LocalDateTime.now();
+	private Instant regDt;
+	private Instant modDt;
 }
