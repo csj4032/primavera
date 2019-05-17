@@ -50,7 +50,7 @@
 * Spring OAuth2 Social Login
 
 ## chap10
-* Post, Pagination
+* Post, Pagination, wysihtml5
 
 ## Library Version
 * gradle 라이브러리 버전 정보 정리
