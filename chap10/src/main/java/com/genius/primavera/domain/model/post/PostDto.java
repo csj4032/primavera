@@ -30,4 +30,17 @@ public class PostDto {
         @Builder.Default
         private Instant regDt = Instant.now();
     }
+
+    @Getter
+    @Setter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class ResponseForList {
+        private long id;
+        private String subject;
+        private String writerNickName;
+        private Instant regDt;
+        private Instant modDt;
+    }
 }
