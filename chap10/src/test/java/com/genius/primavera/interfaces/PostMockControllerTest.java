@@ -1,9 +1,10 @@
 package com.genius.primavera.interfaces;
 
-import com.genius.primavera.application.post.PostService;
+import com.genius.primavera.application.post.PostingService;
 import com.genius.primavera.domain.PageRequest;
 import com.genius.primavera.domain.Paged;
 import com.genius.primavera.domain.model.post.Post;
+import com.genius.primavera.domain.model.post.PostDto;
 import com.genius.primavera.domain.model.user.User;
 
 import org.junit.jupiter.api.Assertions;
@@ -47,7 +48,7 @@ public class PostMockControllerTest {
 	private MockMvc mockMvc;
 
 	@MockBean
-	private PostService postService;
+	private PostingService postService;
 
 	@Test
 	@Order(1)
@@ -85,7 +86,7 @@ public class PostMockControllerTest {
 				Post.builder().id(11).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1).email("Genius Choi").nickname("Genius").build()).build(),
 				Post.builder().id(12).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1).email("Genius Choi").nickname("Genius").build()).build()
 		);
-		Paged<Post> postPage = new Paged(pageable, list, list.size());
+		Paged<PostDto.ResponseForList> postPage = new Paged(pageable, list, list.size());
 		given(this.postService.findForPageable(pageable)).willReturn(postPage);
 		Assertions.assertEquals(10, postPage.getPageSize());
 		Assertions.assertEquals(13, postPage.getTotalElements());

@@ -7,6 +7,7 @@ import com.genius.primavera.domain.model.post.Post;
 import com.genius.primavera.domain.model.post.PostDto;
 
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
-public class PostServiceImpl implements PostService {
+public class PostingServiceImpl implements PostingService {
 
     @Autowired
     private PostMapper postMapper;
@@ -33,9 +34,9 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Paged<Post> findForPageable(PageRequest pageRequest) {
-        var posts = postMapper.findForPageable(pageRequest);
-        return new Paged(pageRequest, posts, postMapper.findAllCount());
+    public Paged<PostDto.ResponseForList> findForPageable(PageRequest pageRequest) {
+        return new Paged<>(pageRequest, new ModelMapper().map(postMapper.findForPageable(pageRequest), new TypeToken<List<PostDto.ResponseForList>>() {
+        }.getType()), postMapper.findAllCount());
     }
 
     @Override

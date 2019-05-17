@@ -7,13 +7,13 @@ import com.genius.primavera.domain.model.post.PostDto;
 
 import java.util.List;
 
-public interface PostService {
+public interface PostingService {
 
     int save(PostDto.RequestForSave requestForSave);
 
     List<Post> findAll();
 
-    Paged<Post> findForPageable(PageRequest pageRequest);
+    Paged<PostDto.ResponseForList> findForPageable(PageRequest pageRequest);
 
     Post findById(long id);
 }

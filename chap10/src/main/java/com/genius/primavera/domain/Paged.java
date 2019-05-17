@@ -1,5 +1,6 @@
 package com.genius.primavera.domain;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -10,14 +11,14 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Paged<T> {
-    private PageRequest pageRequest;
-    private int totalElements;
+    private final PageRequest pageRequest;
+    private final int totalElements;
     private int totalPages;
-    private List<T> contents;
+    private final List<T> contents = new ArrayList<>();
 
     public Paged(PageRequest pageRequest, List<T> contents, int totalElements) {
         this.pageRequest = pageRequest;
-        this.contents = contents;
+        this.contents.addAll(contents);
         this.totalElements = totalElements;
     }
 
