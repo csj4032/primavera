@@ -11,6 +11,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -25,8 +26,8 @@ public class PostingController {
     }
 
     @GetMapping("/posts")
-    public String listForPageable(Model model, PageRequest pageRequest) {
-        model.addAttribute("page", postService.findForPageable(pageRequest));
+    public String listForPageable(Model model, PageRequest pageRequest, @RequestParam(value = "keyword", defaultValue = "", required = false) String keyword) {
+        model.addAttribute("page", postService.findForPageable(pageRequest, keyword));
         return "post/list";
     }
 

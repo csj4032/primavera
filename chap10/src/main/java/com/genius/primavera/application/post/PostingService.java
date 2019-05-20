@@ -13,7 +13,7 @@ public interface PostingService {
 
     List<Post> findAll();
 
-    Paged<PostDto.ResponseForList> findForPageable(PageRequest pageRequest);
+    Paged<PostDto.ResponseForList> findForPageable(PageRequest pageRequest, String keyword);
 
     Post findById(long id);
 }
