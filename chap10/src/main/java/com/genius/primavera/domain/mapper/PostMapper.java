@@ -6,6 +6,7 @@ import com.genius.primavera.domain.model.post.Post;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Options;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.ResultMap;
 import org.apache.ibatis.annotations.Results;
@@ -44,8 +45,8 @@ public interface PostMapper {
             @Result(property = "regDt", javaType = Instant.class, typeHandler = InstantTypeHandler.class, column = "REG_DT", jdbcType = JdbcType.TIMESTAMP_WITH_TIMEZONE),
             @Result(property = "modDt", javaType = Instant.class, typeHandler = InstantTypeHandler.class, column = "MOD_DT", jdbcType = JdbcType.TIMESTAMP_WITH_TIMEZONE),
     })
-    @Select(value = SELECT_SQL + " ORDER BY A.ID DESC LIMIT #{rowNumber} OFFSET #{offset}")
-    List<Post> findForPageable(PageRequest pageRequest);
+    @Select(value = SELECT_SQL + " ORDER BY A.ID DESC LIMIT #{pageRequest.rowNumber} OFFSET #{pageRequest.offset}")
+    List<Post> findForPageable(@Param("pageRequest") PageRequest pageRequest, @Param("keyword") String keyword);
 
     @ResultMap(value = "POST_WITH_USER")
     @Select(value = SELECT_SQL + " WHERE A.ID = #{id} ORDER BY A.ID DESC")

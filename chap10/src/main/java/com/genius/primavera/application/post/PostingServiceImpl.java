@@ -34,8 +34,8 @@ public class PostingServiceImpl implements PostingService {
     }
 
     @Override
-    public Paged<PostDto.ResponseForList> findForPageable(PageRequest pageRequest) {
-        return new Paged<>(pageRequest, new ModelMapper().map(postMapper.findForPageable(pageRequest), new TypeToken<List<PostDto.ResponseForList>>() {
+    public Paged<PostDto.ResponseForList> findForPageable(PageRequest pageRequest, String keyword) {
+        return new Paged<>(pageRequest, new ModelMapper().map(postMapper.findForPageable(pageRequest, keyword), new TypeToken<List<PostDto.ResponseForList>>() {
         }.getType()), postMapper.findAllCount());
     }
 
