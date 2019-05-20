@@ -43,7 +43,7 @@ public interface ArticleMapper {
             @Result(property = "modDt", column = "MOD_DT")
 
     })
-    @Select("SELECT A.ID, A.P_ID, A.REFERENCE, A.STEP, A.LEVEL, A.WRITER_ID, B.EMAIL, B.NICKNAME, A.SUBJECT, A.STATUS, A.REG_DT, A.MOD_DT FROM ARTICLE A INNER JOIN USER B ON A.WRITER_ID = B.ID")
+    @Select("SELECT A.ID, A.P_ID, A.REFERENCE, A.STEP, A.LEVEL, A.WRITER_ID, B.EMAIL, B.NICKNAME, A.SUBJECT, A.STATUS, A.REG_DT, A.MOD_DT FROM ARTICLE A INNER JOIN USER B ON A.WRITER_ID = B.ID WHERE A.P_ID = 0")
     List<Article> findAll();
 
     @ResultMap(value = "ARTICLE_WITH_USER")
@@ -53,6 +53,7 @@ public interface ArticleMapper {
     @Results(value = {
             @Result(property = "id", column = "ID"),
             @Result(property = "pId", column = "P_ID"),
+            @Result(property = "children", javaType = Article[].class, column = "ID", many = @Many(select = "findByArticleIdForChildren", fetchType = FetchType.DEFAULT)),
             @Result(property = "reference", column = "REFERENCE"),
             @Result(property = "step", column = "STEP"),
             @Result(property = "level", column = "LEVEL"),

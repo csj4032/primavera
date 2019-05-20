@@ -52,7 +52,7 @@ CREATE TABLE `ARTICLE` (
                 @Result(property = "modDt", column = "MOD_DT")
     
         })
-        @Select("SELECT A.ID, A.P_ID, A.REFERENCE, A.STEP, A.LEVEL, A.WRITER_ID, B.EMAIL, B.NICKNAME, A.SUBJECT, A.STATUS, A.REG_DT, A.MOD_DT FROM ARTICLE A INNER JOIN USER B ON A.WRITER_ID = B.ID")
+        @Select("SELECT A.ID, A.P_ID, A.REFERENCE, A.STEP, A.LEVEL, A.WRITER_ID, B.EMAIL, B.NICKNAME, A.SUBJECT, A.STATUS, A.REG_DT, A.MOD_DT FROM ARTICLE A INNER JOIN USER B ON A.WRITER_ID = B.ID WHERE A.P_ID = 0")
         List<Article> findAll();
     
         @ResultMap(value = "ARTICLE_WITH_USER")
