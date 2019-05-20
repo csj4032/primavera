@@ -6,7 +6,6 @@ import com.genius.primavera.domain.model.user.User;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -38,6 +37,7 @@ class ArticleMapperTest {
     private static Article article1_1_1;
     private static Article article1_1_2;
     private static Article article2;
+    private static Article article2_1;
 
     @BeforeAll
     public static void setUp() {
@@ -86,10 +86,20 @@ class ArticleMapperTest {
 
     @Test
     @Order(5)
+    @DisplayName("게시글 2번 저장")
+    public void saveArticle2_1() {
+        article2_1 = Article.builder().parent(article2).pId(article2.getId()).reference(article2.getId()).step(1).level(1).writer(user).subject("게시글 2번_1번").status(ArticleStatus.PUBLIC).regDt(Instant.now()).build();
+        int count = articleMapper.save(article2_1);
+        Assertions.assertEquals(1, count);
+    }
+
+
+    @Test
+    @Order(5)
     @DisplayName("게시글 조회")
     public void findAllArticle() {
         List<Article> articles = articleMapper.findAll();
-        Assertions.assertEquals(5, articles.size());
+        Assertions.assertEquals(2, articles.size());
         articles.forEach(e -> System.out.println(e.toString()));
     }
 }
