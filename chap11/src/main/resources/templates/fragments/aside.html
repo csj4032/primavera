@@ -1,0 +1,41 @@
+<aside th:fragment="aside" xmlns:th="http://www.w3.org/1999/xhtml" class="main-sidebar"
+	   xmlns:sec="http://www.w3.org/1999/xhtml">
+	<section class="sidebar">
+		<div class="user-panel">
+			<div class="pull-left image">
+				<img th:src="${#authorization.getAuthentication().principal.imageUrl}" src="dist/img/user2-160x160.jpg"
+					 class="img-circle" alt="User Image">
+			</div>
+			<div class="pull-left info">
+				<p sec:authentication="name">Alexander Pierce</p>
+				<a href="#"><i class="fa fa-circle text-success"></i> Online</a>
+			</div>
+		</div>
+		<form action="#" method="get" class="sidebar-form">
+			<div class="input-group">
+				<input type="text" name="q" class="form-control" placeholder="Search...">
+				<span class="input-group-btn">
+                <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
+                </button>
+              </span>
+			</div>
+		</form>
+		<ul class="sidebar-menu" data-widget="tree">
+			<li class="header">MAIN NAVIGATION</li>
+			<li class="treeview">
+				<a th:href="@{posts}" href="posts">
+					<i class="fa fa-files-o"></i>
+					<span>Post</span>
+					<span class="pull-right-container">
+						<span class="label label-primary pull-right">1</span>
+						<span class="label pull-right bg-red">2</span>
+					</span>
+				</a>
+				<ul class="treeview-menu" style="display: none;">
+					<li><a th:href="@{/posts}" href="/posts"><i class="fa fa-circle-o"></i>List</a></li>
+					<li><a th:href="@{/post/form}" href="/post/form"><i class="fa fa-circle-o"></i>Form</a></li>
+				</ul>
+			</li>
+		</ul>
+	</section>
+</aside>
