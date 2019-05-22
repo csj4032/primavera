@@ -1,6 +1,12 @@
 ## chap11
 
-### 계층형 게시판 테이블
+### 계층구조
+* 인접 목록 트리 조회 (안티 패턴)
+* 경로 열거
+* 중첩 집합
+* 클로저 테이블
+
+### 계층형 게시판 (글타래) 테이블
 
 ```sql
 CREATE TABLE `ARTICLE` (
@@ -9,7 +15,7 @@ CREATE TABLE `ARTICLE` (
   `REFERENCE` bigint(20) NOT NULL,
   `STEP` int(11) NOT NULL,
   `LEVEL` int(11) NOT NULL,
-  `WRITER_ID` bigint(20) NOT NULL,
+  `AUTHOR` bigint(20) NOT NULL,
   `SUBJECT` varchar(200) NOT NULL,
   `STATUS` tinyint(3) NOT NULL,
   `HIT` bigint(20) NOT NULL DEFAULT 0,
@@ -30,7 +36,7 @@ CREATE TABLE `ARTICLE` (
     @Repository
     public interface ArticleMapper {
     
-        @Insert("INSERT INTO ARTICLE (P_ID, REFERENCE, STEP, LEVEL, SUBJECT, WRITER_ID, STATUS) VALUES (#{pId}, #{reference}, #{step}, #{level}, #{subject}, #{writer.id}, #{status, typeHandler=ArticleStatusTypeHandler})")
+        @Insert("INSERT INTO ARTICLE (P_ID, REFERENCE, STEP, LEVEL, SUBJECT, AUTHOR, STATUS) VALUES (#{pId}, #{reference}, #{step}, #{level}, #{subject}, #{author.id}, #{status, typeHandler=ArticleStatusTypeHandler})")
         @Options(useGeneratedKeys = true, keyColumn = "ID", keyProperty = "id")
         int save(Article article);
     
@@ -43,20 +49,20 @@ CREATE TABLE `ARTICLE` (
                 @Result(property = "reference", column = "REFERENCE"),
                 @Result(property = "step", column = "STEP"),
                 @Result(property = "level", column = "LEVEL"),
-                @Result(property = "writer.id", column = "WRITER_ID"),
-                @Result(property = "writer.email", column = "EMAIL"),
-                @Result(property = "writer.nickname", column = "EMAIL"),
+                @Result(property = "author.id", column = "AUTHOR"),
+                @Result(property = "author.email", column = "EMAIL"),
+                @Result(property = "author.nickname", column = "EMAIL"),
                 @Result(property = "subject", column = "SUBJECT"),
                 @Result(property = "status", typeHandler = ArticleStatusTypeHandler.class, column = "STATUS"),
                 @Result(property = "regDt", column = "REG_DT"),
                 @Result(property = "modDt", column = "MOD_DT")
     
         })
-        @Select("SELECT A.ID, A.P_ID, A.REFERENCE, A.STEP, A.LEVEL, A.WRITER_ID, B.EMAIL, B.NICKNAME, A.SUBJECT, A.STATUS, A.REG_DT, A.MOD_DT FROM ARTICLE A INNER JOIN USER B ON A.WRITER_ID = B.ID WHERE A.P_ID = 0")
+        @Select("SELECT A.ID, A.P_ID, A.REFERENCE, A.STEP, A.LEVEL, A.AUTHOR, B.EMAIL, B.NICKNAME, A.SUBJECT, A.STATUS, A.REG_DT, A.MOD_DT FROM ARTICLE A INNER JOIN USER B ON A.AUTHOR = B.ID WHERE A.P_ID = 0")
         List<Article> findAll();
     
         @ResultMap(value = "ARTICLE_WITH_USER")
-        @Select("SELECT A.ID, A.P_ID, A.REFERENCE, A.STEP, A.LEVEL, A.WRITER_ID, B.EMAIL, B.NICKNAME, A.SUBJECT, A.STATUS, A.REG_DT, A.MOD_DT FROM ARTICLE A INNER JOIN USER B ON A.WRITER_ID = B.ID WHERE A.ID = #{id}")
+        @Select("SELECT A.ID, A.P_ID, A.REFERENCE, A.STEP, A.LEVEL, A.AUTHOR, B.EMAIL, B.NICKNAME, A.SUBJECT, A.STATUS, A.REG_DT, A.MOD_DT FROM ARTICLE A INNER JOIN USER B ON A.AUTHOR = B.ID WHERE A.ID = #{id}")
         Article findByArticleId(long id);
     
         @Results(value = {
@@ -65,7 +71,7 @@ CREATE TABLE `ARTICLE` (
                 @Result(property = "reference", column = "REFERENCE"),
                 @Result(property = "step", column = "STEP"),
                 @Result(property = "level", column = "LEVEL"),
-                @Result(property = "writer.id", column = "WRITER_ID"),
+                @Result(property = "writer.id", column = "AUTHOR"),
                 @Result(property = "writer.email", column = "EMAIL"),
                 @Result(property = "writer.nickname", column = "EMAIL"),
                 @Result(property = "subject", column = "SUBJECT"),
@@ -74,7 +80,7 @@ CREATE TABLE `ARTICLE` (
                 @Result(property = "modDt", column = "MOD_DT")
     
         })
-        @Select("SELECT A.ID, A.P_ID, A.REFERENCE, A.STEP, A.LEVEL, A.WRITER_ID, B.EMAIL, B.NICKNAME, A.SUBJECT, A.STATUS, A.REG_DT, A.MOD_DT FROM ARTICLE A INNER JOIN USER B ON A.WRITER_ID = B.ID WHERE A.P_ID = #{id}")
+        @Select("SELECT A.ID, A.P_ID, A.REFERENCE, A.STEP, A.LEVEL, A.AUTHOR, B.EMAIL, B.NICKNAME, A.SUBJECT, A.STATUS, A.REG_DT, A.MOD_DT FROM ARTICLE A INNER JOIN USER B ON A.AUTHOR = B.ID WHERE A.P_ID = #{id}")
         Article findByArticleIdForChildren(long id);
     }
 ```
