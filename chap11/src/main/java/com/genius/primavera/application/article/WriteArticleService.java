@@ -6,4 +6,6 @@ import com.genius.primavera.domain.model.article.ArticleDto;
 public interface WriteArticleService {
 
     Article write(ArticleDto.WriteRequestArticle requestArticle);
+
+    Article findById(long id);
 }

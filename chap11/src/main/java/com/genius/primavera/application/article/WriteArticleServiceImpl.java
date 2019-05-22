@@ -24,26 +24,35 @@ public class WriteArticleServiceImpl implements WriteArticleService {
     private ArticleContentMapper articleContentMapper;
 
     @Override
-    @Transactional
+    @Transactional()
     public Article write(ArticleDto.WriteRequestArticle requestArticle) {
         PrimaveraUserDetails primaveraUserDetails = (PrimaveraUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User author = primaveraUserDetails.getUser();
+        boolean isStepUpdate = requestArticle.getLevel() > 1;
         Article article = new Article();
-        if (requestArticle.getPId() != 0) {
-            Article parentArticle = articleMapper.findByArticleId(article.getParentId());
-            article.setPId(parentArticle.getId());
-            article.setReference(article.getReference());
-            article.setStep(parentArticle.getStep() + 1);
-            article.setLevel(parentArticle.getLevel() + 1);
-        }
+        article.setPId(requestArticle.getPId());
+        article.setReference(requestArticle.getReference());
+        article.setStep(requestArticle.getStep() + 1);
+        article.setLevel(requestArticle.getLevel() + 1);
         article.setAuthor(author);
         article.setSubject(requestArticle.getSubject());
         article.setStatus(requestArticle.getStatus());
         article.setRegDt(Instant.now());
+
+        articleMapper.updateStep(requestArticle.getReference(), requestArticle.getStep());
+
         Content content = new Content();
         content.setArticle(article);
         content.setContents(requestArticle.getText());
+        article.setContent(content);
+
+        articleMapper.save(article);
         articleContentMapper.saveContent(content);
         return article;
+    }
+
+    @Override
+    public Article findById(long id) {
+        return articleMapper.findById(id);
     }
 }

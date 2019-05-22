@@ -24,8 +24,11 @@ public class Article {
     private long id;
     private long pId;
     private long reference;
-    private int step;
-    private int level;
+    @Builder.Default
+    private int step = 1;
+    private int maxStep = 1;
+    @Builder.Default
+    private int level = 1;
     private ArticleStatus status;
     private Article parent;
     private Article[] children;
@@ -59,16 +62,6 @@ public class Article {
     public long getParentId() {
         if (Objects.isNull(parent)) return 0;
         return this.parent.getId();
-    }
-
-    public int getLevel() {
-        if (Objects.isNull(parent)) return 0;
-        return this.parent.getLevel(0);
-    }
-
-    private int getLevel(int level) {
-        if (this.getParentId() == 0) return ++level;
-        return this.parent.getLevel(++level);
     }
 
     public Article[] getSibling() {
