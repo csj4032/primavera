@@ -49,7 +49,7 @@ class ArticleMapperTest {
     @Order(1)
     @DisplayName("게시글 1번 저장")
     public void saveArticle1() {
-        article1 = Article.builder().writer(user).subject("게시글 1번").status(ArticleStatus.PUBLIC).regDt(Instant.now()).build();
+        article1 = Article.builder().author(user).subject("게시글 1번").status(ArticleStatus.PUBLIC).regDt(Instant.now()).build();
         int count = articleMapper.save(article1);
         Assertions.assertEquals(1, count);
     }
@@ -58,7 +58,7 @@ class ArticleMapperTest {
     @Order(2)
     @DisplayName("게시글 1번_1번 저장")
     public void saveArticle1_1() {
-        article1_1 = Article.builder().parent(article1).pId(article1.getId()).reference(article1.getId()).step(1).level(1).writer(user).subject("게시글 1번_1번").status(ArticleStatus.PUBLIC).regDt(Instant.now()).build();
+        article1_1 = Article.builder().parent(article1).pId(article1.getId()).reference(article1.getId()).step(1).level(1).author(user).subject("게시글 1번_1번").status(ArticleStatus.PUBLIC).regDt(Instant.now()).build();
         int count = articleMapper.save(article1_1);
         Assertions.assertEquals(1, count);
     }
@@ -67,8 +67,8 @@ class ArticleMapperTest {
     @Order(3)
     @DisplayName("게시글 1번_1번_1번, 1번_1번_2번 저장")
     public void saveArticle1_1_1() {
-        article1_1_1 = Article.builder().parent(article1_1).pId(article1_1.getId()).reference(article1.getId()).step(2).level(2).writer(user).subject("게시글 1번_1번_1번").status(ArticleStatus.PUBLIC).regDt(Instant.now()).build();
-        article1_1_2 = Article.builder().parent(article1_1).pId(article1_1.getId()).reference(article1.getId()).step(3).level(2).writer(user).subject("게시글 1번_1번_2번").status(ArticleStatus.PUBLIC).regDt(Instant.now()).build();
+        article1_1_1 = Article.builder().parent(article1_1).pId(article1_1.getId()).reference(article1.getId()).step(2).level(2).author(user).subject("게시글 1번_1번_1번").status(ArticleStatus.PUBLIC).regDt(Instant.now()).build();
+        article1_1_2 = Article.builder().parent(article1_1).pId(article1_1.getId()).reference(article1.getId()).step(3).level(2).author(user).subject("게시글 1번_1번_2번").status(ArticleStatus.PUBLIC).regDt(Instant.now()).build();
         int count = articleMapper.save(article1_1_1);
         Assertions.assertEquals(1, count);
         count = articleMapper.save(article1_1_2);
@@ -79,7 +79,7 @@ class ArticleMapperTest {
     @Order(4)
     @DisplayName("게시글 2번 저장")
     public void saveArticle2() {
-        article2 = Article.builder().writer(user).subject("게시글 2번").status(ArticleStatus.PUBLIC).regDt(Instant.now()).build();
+        article2 = Article.builder().author(user).subject("게시글 2번").status(ArticleStatus.PUBLIC).regDt(Instant.now()).build();
         int count = articleMapper.save(article2);
         Assertions.assertEquals(1, count);
     }
@@ -88,14 +88,13 @@ class ArticleMapperTest {
     @Order(5)
     @DisplayName("게시글 2번 저장")
     public void saveArticle2_1() {
-        article2_1 = Article.builder().parent(article2).pId(article2.getId()).reference(article2.getId()).step(1).level(1).writer(user).subject("게시글 2번_1번").status(ArticleStatus.PUBLIC).regDt(Instant.now()).build();
+        article2_1 = Article.builder().parent(article2).pId(article2.getId()).reference(article2.getId()).step(1).level(1).author(user).subject("게시글 2번_1번").status(ArticleStatus.PUBLIC).regDt(Instant.now()).build();
         int count = articleMapper.save(article2_1);
         Assertions.assertEquals(1, count);
     }
 
-
     @Test
-    @Order(5)
+    @Order(6)
     @DisplayName("게시글 조회")
     public void findAllArticle() {
         List<Article> articles = articleMapper.findAll();

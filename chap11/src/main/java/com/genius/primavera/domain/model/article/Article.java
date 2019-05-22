@@ -30,17 +30,17 @@ public class Article {
     private Article parent;
     private Article[] children;
     private String subject;
-    private User writer;
+    private User author;
     private Content content;
     private Instant regDt;
     private Instant modDt;
 
-    public long getWriteId() {
-        return writer.getId();
+    public long getAuthorId() {
+        return author.getId();
     }
 
-    public String getWriteName() {
-        return writer.getNickname();
+    public String getAuthorName() {
+        return author.getNickname();
     }
 
     public boolean hasParents() {
@@ -77,6 +77,6 @@ public class Article {
     }
 
     public String toHierachy() {
-        return IntStream.range(0, this.level).mapToObj(e -> "--").collect(Collectors.joining()) + getId() + " " + getSubject() + " " + getWriteName() + " " + getRegDt();
+        return IntStream.range(0, this.level).mapToObj(e -> "--").collect(Collectors.joining()) + getId() + " " + getSubject() + " " + getAuthorName() + " " + getRegDt();
     }
 }
