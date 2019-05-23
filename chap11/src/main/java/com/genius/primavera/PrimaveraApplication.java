@@ -5,6 +5,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableOAuth2Client;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.TimeZone;
 
 import javax.annotation.PostConstruct;
@@ -12,11 +14,12 @@ import javax.annotation.PostConstruct;
 @SpringBootApplication
 public class PrimaveraApplication {
 
-	private static final String PROPERTIES = "spring.config.location=classpath:/social.yml";
+	private static final String APPLICATION = "spring.config.location=classpath:/application-${spring.profiles.active:default}.yml,classpath:/social.yml";
 
 	public static void main(String[] args) {
 		new SpringApplicationBuilder(PrimaveraApplication.class)
 				.bannerMode(Banner.Mode.OFF)
+				.properties(APPLICATION)
 				.build()
 				.run(args);
 	}

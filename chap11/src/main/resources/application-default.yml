@@ -1,0 +1,39 @@
+spring:
+  application:
+    name: Privamera
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://db.choibom.com:3306/primavera?useLegacyDatetimeCode=false&serverTimezone=Asia/Seoul
+    username: primavera
+    password: primavera
+  banner:
+    charset: UTF-8
+    location: classpath:primavera.txt
+  thymeleaf:
+    cache: false
+    enabled: true
+    prefix: classpath:/templates/
+    suffix: .html
+  devtools:
+    livereload:
+      enabled: true
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+    default-fetch-size: 1000
+    default-statement-timeout: 30
+  type-aliases-package: com.genius.primavera.domain
+  type-handlers-package: com.genius.primavera.domain
+
+logging:
+  config: classpath:logback.xml
+
+server:
+  ssl:
+    key-alias: primavera
+    key-store: chap10/primavera.p12
+    key-store-type: PKCS12
+    key-store-password: primavera
+    enabled: true
+  port: 8443
