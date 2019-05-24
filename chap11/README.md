@@ -84,3 +84,20 @@ CREATE TABLE `ARTICLE` (
         Article findByArticleIdForChildren(long id);
     }
 ```
+
+### Springboot Environment
+
+```java
+public class PrimaveraApplication {
+
+	private static final String APPLICATION = "spring.config.location=classpath:/application-${spring.profiles.active:default}.yml,classpath:/social.yml";
+
+	public static void main(String[] args) {
+		new SpringApplicationBuilder(PrimaveraApplication.class)
+				.bannerMode(Banner.Mode.OFF)
+				.properties(APPLICATION)
+				.build()
+				.run(args);
+	}
+}
+```
