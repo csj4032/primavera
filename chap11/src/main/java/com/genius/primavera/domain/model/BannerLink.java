@@ -1,4 +1,4 @@
-package com.genius.primavera;
+package com.genius.primavera.domain.model;
 
 import lombok.Getter;
 import lombok.ToString;
@@ -8,8 +8,8 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.genius.primavera.BannerLink.Device.MOBILE;
-import static com.genius.primavera.BannerLink.Device.PC;
+import static com.genius.primavera.domain.model.BannerLink.Device.MOBILE;
+import static com.genius.primavera.domain.model.BannerLink.Device.PC;
 
 @Getter
 @ToString
@@ -17,7 +17,9 @@ public enum BannerLink {
 
 	EVENT(MOBILE, PC),
 	PROMOTION(MOBILE),
-	DEAL(MOBILE, PC);
+	PRODUCT(PC),
+	DEAL(PC),
+	NONE;
 
 	private Device[] device;
 
@@ -26,12 +28,17 @@ public enum BannerLink {
 	}
 
 	enum Device {
-		PC("http://www.naver.com"), MOBILE("http://m.naver.com");
+		PC("http://www.naver.com"),
+		MOBILE("http://m.naver.com");
 		String url;
 
 		Device(String url) {
 			this.url = url;
 		}
+	}
+
+	public static String valueOf(BannerLink bannerLink, Device device) {
+		return BannerMap.get(bannerLink).get(device);
 	}
 
 	private static final Collector<Device, ?, Map<Device, String>> deviceCollector = Collectors.toMap(k -> k, e -> e.url);
