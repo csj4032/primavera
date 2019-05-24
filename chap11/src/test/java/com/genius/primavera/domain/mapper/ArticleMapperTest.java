@@ -98,7 +98,7 @@ class ArticleMapperTest {
     @DisplayName("게시글 조회")
     public void findAllArticle() {
         List<Article> articles = articleMapper.findAll();
-        Assertions.assertEquals(2, articles.size());
+        Assertions.assertEquals(6, articles.size());
         articles.forEach(e -> System.out.println(e.toString()));
     }
 }
