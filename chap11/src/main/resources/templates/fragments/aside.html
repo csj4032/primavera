@@ -23,7 +23,7 @@
 		<ul class="sidebar-menu" data-widget="tree">
 			<li class="header">MAIN NAVIGATION</li>
 			<li class="treeview">
-				<a th:href="@{posts}" href="posts">
+				<a th:href="@{/posts}" href="posts">
 					<i class="fa fa-files-o"></i>
 					<span>Post</span>
 					<span class="pull-right-container">
@@ -35,6 +35,16 @@
 					<li><a th:href="@{/posts}" href="/posts"><i class="fa fa-circle-o"></i>List</a></li>
 					<li><a th:href="@{/post/form}" href="/post/form"><i class="fa fa-circle-o"></i>Form</a></li>
 				</ul>
+			</li>
+			<li>
+				<a th:href="@{/articles}" href="articles">
+					<i class="fa fa-files-o"></i>
+					<span>Article</span>
+					<span class="pull-right-container">
+						<span class="label label-primary pull-right">1</span>
+						<span class="label pull-right bg-red">2</span>
+					</span>
+				</a>
 			</li>
 		</ul>
 	</section>

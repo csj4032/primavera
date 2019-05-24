@@ -26,7 +26,6 @@ public class Article {
     private long reference;
     @Builder.Default
     private int step = 1;
-    private int maxStep = 1;
     @Builder.Default
     private int level = 1;
     private ArticleStatus status;

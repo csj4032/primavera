@@ -1,5 +1,7 @@
 package com.genius.primavera.application.article;
 
+import com.genius.primavera.domain.PageRequest;
+import com.genius.primavera.domain.Paged;
 import com.genius.primavera.domain.mapper.ArticleMapper;
 import com.genius.primavera.domain.model.article.Article;
 import com.genius.primavera.domain.model.article.ArticleDto;
@@ -7,12 +9,15 @@ import com.genius.primavera.domain.model.article.Content;
 import com.genius.primavera.domain.model.user.User;
 import com.genius.primavera.infrastructure.security.PrimaveraUserDetails;
 
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.List;
 
 @Service
 public class WriteArticleServiceImpl implements WriteArticleService {
@@ -28,7 +33,6 @@ public class WriteArticleServiceImpl implements WriteArticleService {
     public Article write(ArticleDto.WriteRequestArticle requestArticle) {
         PrimaveraUserDetails primaveraUserDetails = (PrimaveraUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User author = primaveraUserDetails.getUser();
-        boolean isStepUpdate = requestArticle.getLevel() > 1;
         Article article = new Article();
         article.setPId(requestArticle.getPId());
         article.setReference(requestArticle.getReference());
@@ -54,5 +58,12 @@ public class WriteArticleServiceImpl implements WriteArticleService {
     @Override
     public Article findById(long id) {
         return articleMapper.findById(id);
+    }
+
+    @Override
+    public Paged<ArticleDto.ListResponseArticle> findForPageable(PageRequest pageRequest) {
+        int count = articleMapper.findAllCount();
+        List<ArticleDto.ListResponseArticle> articles = new ModelMapper().map(articleMapper.findForPageable(pageRequest), new TypeToken<List<ArticleDto.ListResponseArticle>>() {}.getType());
+        return new Paged<>(pageRequest, articles, count);
     }
 }
