@@ -33,6 +33,9 @@ public class Article {
     private Article[] children;
     private String subject;
     private User author;
+    private int hit;
+    private int recommend;
+    private int disapprove;
     private Content content;
     private Instant regDt;
     private Instant modDt;

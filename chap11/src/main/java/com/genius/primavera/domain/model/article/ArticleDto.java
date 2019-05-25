@@ -30,7 +30,8 @@ public class ArticleDto {
         private String subject;
         private String authorName;
         private int hit;
-        private int like;
+        private int recommend;
+        private int disapprove;
         private Instant regDt;
         private Instant modDt;
 

@@ -7,6 +7,10 @@ buildscript {
     }
 }
 
+plugins {
+    id 'org.flywaydb.flyway' version '5.2.4'
+}
+
 apply plugin: 'java'
 apply plugin: 'idea'
 apply plugin: 'org.springframework.boot'
@@ -39,6 +43,12 @@ bootRun {
     jvmArgs(['--enable-preview'])
 }
 
+flyway {
+    url = 'jdbc:mariadb://localhost:3306/primavera'
+    user = 'primavera'
+    password = 'primavera'
+}
+
 dependencies {
     implementation('org.springframework.boot:spring-boot-starter-web') {
         exclude module: "spring-boot-starter-tomcat"
@@ -55,10 +65,11 @@ dependencies {
     compile('org.springframework.boot:spring-boot-starter-undertow')
     compile("org.mybatis.spring.boot:mybatis-spring-boot-starter:2.0.1")
     compile("org.mybatis.dynamic-sql:mybatis-dynamic-sql:1.1.1")
-    compile('org.mariadb.jdbc:mariadb-java-client:2.4.1')
+    compile('org.mariadb.jdbc:mariadb-java-client:2.3.0')
     compile('nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:2.3.0')
     compile('com.navercorp.lucy:lucy-xss-servlet:2.0.0')
     compile('org.modelmapper:modelmapper:2.3.3')
+    compile('org.flywaydb:flyway-core:5.2.4')
     compileOnly('org.projectlombok:lombok')
     annotationProcessor('org.projectlombok:lombok')
     testImplementation('org.springframework.boot:spring-boot-starter-test') {

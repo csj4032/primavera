@@ -24,8 +24,8 @@ CREATE TABLE `ARTICLE` (
   `REG_DT` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `MOD_DT` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`ID`),
-  KEY `FK_WRITER_ID_idx` (`WRITER_ID`),
-  CONSTRAINT `FK_ARTICLE_WRITER_ID` FOREIGN KEY (`WRITER_ID`) REFERENCES `USER` (`ID`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  KEY `FK_WRITER_ID_idx` (`AUTHOR`),
+  CONSTRAINT `FK_ARTICLE_WRITER_ID` FOREIGN KEY (`AUTHOR`) REFERENCES `USER` (`ID`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
 ```
 
@@ -100,4 +100,49 @@ public class PrimaveraApplication {
 				.run(args);
 	}
 }
+```
+
+### Docker For MariaDB
+
+#### Downloading an Image
+
+```
+docker search mariadb
+docker pull mariadb:latest
+
+```
+
+#### Creating a Container
+
+```
+
+docker run --name mariadb -d -p 3306:3306 -e MYSQL_ROOT_HOST=% -e MYSQL_ROOT_PASSWORD=root -e MYSQL_USER=primavera -e MYSQL_PASSWORD=primavera -e MYSQL_DATABASE=primavera mariadb:latest
+
+docker ps
+
+docker exec -it mariadb bash
+
+mysql -u primavera -h 127.0.0.1 -p primavera
+
+
+show databases;
+
+use primavera;
+
+show tables;
+
+desribe article; 
+```
+
+#### Running and Stopping the Container
+
+```
+
+docker restart mariadb
+docker stop mariadb
+docker start mariadb
+
+docker rm maraidb
+docker rm -v maraidb
+
 ```

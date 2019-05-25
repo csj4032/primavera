@@ -103,6 +103,10 @@ public interface ArticleMapper {
             @Result(property = "author.nickname", column = "EMAIL"),
             @Result(property = "subject", column = "SUBJECT"),
             @Result(property = "status", typeHandler = ArticleStatusTypeHandler.class, column = "STATUS"),
+            @Result(property = "hit", column = "HIT"),
+            @Result(property = "recommend", column = "RECOMMEND"),
+            @Result(property = "disapprove", column = "DISAPPROVE"),
+            @Result(property = "hit", column = "HIT"),
             @Result(property = "regDt", column = "REG_DT"),
             @Result(property = "modDt", column = "MOD_DT")
     })
