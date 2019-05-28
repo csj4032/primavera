@@ -19,8 +19,6 @@ public interface WriteArticleService {
 
     Paged<ArticleDto.ListArticle> findForPageable(PageRequest pageRequest);
 
-    String getOriginSubject(long originId);
-
     ArticleDto.FormArticle findByForForm(WriteType type, long id);
 
 }
