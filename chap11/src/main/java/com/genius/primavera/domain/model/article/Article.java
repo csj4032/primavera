@@ -24,10 +24,8 @@ public class Article {
     private long id;
     private long pId;
     private long reference;
-    @Builder.Default
-    private int step = 0;
-    @Builder.Default
-    private int level = 0;
+    private int step;
+    private int level;
     private ArticleStatus status;
     private Article parent;
     private Article[] children;

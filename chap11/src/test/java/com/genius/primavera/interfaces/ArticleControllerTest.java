@@ -1,6 +1,7 @@
 package com.genius.primavera.interfaces;
 
 import com.genius.primavera.application.article.WriteArticleService;
+import com.genius.primavera.domain.model.article.ArticleDto;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
@@ -15,16 +16,23 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+
+import java.util.LinkedHashMap;
 
 import lombok.extern.slf4j.Slf4j;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 @Slf4j
 @SpringBootTest
+@Transactional
 @AutoConfigureMockMvc
 @ExtendWith(SpringExtension.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -56,5 +64,19 @@ public class ArticleControllerTest {
                 .andDo(print())
                 .andExpect(view().name("article/detail"))
                 .andExpect(status().is2xxSuccessful());
+    }
+
+    @Test
+    @Order(3)
+    @DisplayName("게시글 작성 접근")
+    @WithUserDetails(value = "Genius Choi", userDetailsServiceBeanName = "primaveraUserDetailsService")
+    public void save() throws Exception {
+        MultiValueMap<String, String> param = new LinkedMultiValueMap();
+        param.set("pId", "0");
+        param.set("subject", "제목");
+        param.set("contents", "내용");
+        mockMvc.perform(post("/articles/save").params(param).contentType(MediaType.APPLICATION_FORM_URLENCODED))
+                .andDo(print())
+                .andExpect(status().is3xxRedirection());
     }
 }

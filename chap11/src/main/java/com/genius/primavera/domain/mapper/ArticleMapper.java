@@ -27,7 +27,7 @@ public interface ArticleMapper {
     String SELECT_WITH_USER_CONTENTS_SQL = "SELECT A.ID, A.P_ID, A.REFERENCE, A.STEP, A.LEVEL, A.AUTHOR, B.EMAIL, B.NICKNAME, A.SUBJECT, A.STATUS, C.ID AS CONTENTS_ID, C.CONTENTS, A.REG_DT, A.MOD_DT FROM ARTICLE A INNER JOIN USER B ON A.AUTHOR = B.ID INNER JOIN ARTICLE_CONTENT C ON A.ID = C.ARTICLE_ID ";
 
     @InsertProvider(type = ArticleProvider.class, method = "save")
-    @Options(useGeneratedKeys = true, keyColumn = "ID", keyProperty = "id")
+    @Options(useGeneratedKeys = true, keyColumn = "ID", keyProperty = "id", useCache=false)
     int save(Article article);
 
     @Results(id = "ARTICLE_WITH_USER",
@@ -140,7 +140,7 @@ public interface ArticleMapper {
     class ArticleProvider {
         public String save(Article article) {
             String sql = "INSERT INTO ARTICLE (P_ID, REFERENCE, STEP, LEVEL, SUBJECT, AUTHOR, STATUS, REG_DT) VALUES (#{pId}, ";
-            if (article.getPId() == 0) {
+            if (article.getPId() == 0l) {
                 sql += "LAST_INSERT_ID() + 1";
             } else {
                 sql += "#{reference}";
