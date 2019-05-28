@@ -36,7 +36,7 @@ public class WriteArticleServiceImpl implements WriteArticleService {
 
     @Override
     @Transactional
-    public Article write(ArticleDto.WriteArticle writeArticle) {
+    public Article save(ArticleDto.WriteArticle writeArticle) {
         Article origin = getOriginArticle(writeArticle);
         Article article = getArticle(origin, writeArticle, getUser());
         articleMapper.updateStep(origin.getReference(), origin.getStep());
@@ -48,7 +48,7 @@ public class WriteArticleServiceImpl implements WriteArticleService {
     }
 
     @Override
-    public Article modify(ArticleDto.WriteArticle writeArticle) {
+    public Article update(ArticleDto.WriteArticle writeArticle) {
         Article article = articleMapper.findByIdWithContent(writeArticle.getId());
         article.setSubject(writeArticle.getSubject());
         article.setModDt(Instant.now());
@@ -60,7 +60,7 @@ public class WriteArticleServiceImpl implements WriteArticleService {
     @Override
     public ArticleDto.FormArticle findByForForm(WriteType type, long id) {
         if (type.equals(WriteType.REPLY)) return getReplayForm(id);
-        if (type.equals(WriteType.MODIFY)) return getModifyForm(id);
+        if (type.equals(WriteType.UPDATE)) return getModifyForm(id);
         return getEmptyForm();
     }
 
@@ -119,7 +119,7 @@ public class WriteArticleServiceImpl implements WriteArticleService {
         formArticle.setId(id);
         formArticle.setSubject(article.getSubject());
         formArticle.setContents(article.getContents());
-        formArticle.setWriteType(WriteType.MODIFY);
+        formArticle.setWriteType(WriteType.UPDATE);
         return formArticle;
     }
 

@@ -64,8 +64,8 @@ class WriteArticleServiceTest {
     @Disabled
     @DisplayName("Mock 글 쓰기")
     public void mockWriteTest() {
-        given(this.mockWriteArticleService.write(writeRequestArticle)).willReturn(new Article());
-        Assertions.assertEquals(new Article(), mockWriteArticleService.write(writeRequestArticle));
+        given(this.mockWriteArticleService.save(writeRequestArticle)).willReturn(new Article());
+        Assertions.assertEquals(new Article(), mockWriteArticleService.save(writeRequestArticle));
     }
 
     @Test
@@ -73,7 +73,7 @@ class WriteArticleServiceTest {
     @DisplayName("원글 첫번째 쓰기")
     @WithMockPrimaveraUserDetails
     public void writeTest() {
-        article_1 = writeArticleService.write(writeRequestArticle);
+        article_1 = writeArticleService.save(writeRequestArticle);
         article_1 = writeArticleService.findById(article_1.getId());
         Assertions.assertEquals(null, article_1.getParent());
         Assertions.assertEquals(1, article_1.getStep());
@@ -89,7 +89,7 @@ class WriteArticleServiceTest {
         writeRequestArticle.setSubject(origin.getSubject() + "_1");
         writeRequestArticle.setContents("원글 첫번째 덧글 쓰기");
         writeRequestArticle.setWriteType(WriteType.REPLY);
-        article_1_1 = writeArticleService.write(writeRequestArticle);
+        article_1_1 = writeArticleService.save(writeRequestArticle);
         Assertions.assertEquals(article_1.getReference(), article_1_1.getReference());
         Assertions.assertEquals(2, article_1_1.getLevel());
         Assertions.assertEquals(2, article_1_1.getStep());
@@ -105,7 +105,7 @@ class WriteArticleServiceTest {
         writeRequestArticle.setSubject(origin.getSubject() + "_2");
         writeRequestArticle.setContents("원글 첫번째 두번째 덧글 쓰기");
         writeRequestArticle.setWriteType(WriteType.REPLY);
-        article_1_2 = writeArticleService.write(writeRequestArticle);
+        article_1_2 = writeArticleService.save(writeRequestArticle);
         Assertions.assertEquals(article_1.getReference(), article_1_2.getReference());
         Assertions.assertEquals(2, article_1_2.getLevel());
         Assertions.assertEquals(2, article_1_2.getStep());
@@ -121,7 +121,7 @@ class WriteArticleServiceTest {
         writeRequestArticle.setSubject(origin.getSubject() + "_1");
         writeRequestArticle.setContents("원글 첫번째 덧글 첫번째 덧글 쓰기");
         writeRequestArticle.setWriteType(WriteType.REPLY);
-        article_1_1_1 = writeArticleService.write(writeRequestArticle);
+        article_1_1_1 = writeArticleService.save(writeRequestArticle);
         Assertions.assertEquals(article_1.getReference(), article_1_1_1.getReference());
         Assertions.assertEquals(3, article_1_1_1.getLevel());
         Assertions.assertEquals(4, article_1_1_1.getStep());
@@ -136,7 +136,7 @@ class WriteArticleServiceTest {
         writeRequestArticle.setSubject("제목_2");
         writeRequestArticle.setContents("원글");
         writeRequestArticle.setWriteType(WriteType.FORM);
-        article_2 = writeArticleService.write(writeRequestArticle);
+        article_2 = writeArticleService.save(writeRequestArticle);
         article_2 = writeArticleService.findById(article_2.getId());
         Assertions.assertEquals(null, article_1.getParent());
         Assertions.assertEquals(1, article_1.getStep());
@@ -151,7 +151,7 @@ class WriteArticleServiceTest {
         writeRequestArticle.setPId(origin.getId());
         writeRequestArticle.setSubject(origin.getSubject() + "_1");
         writeRequestArticle.setContents("원글 첫번째 덧글 첫번째 덧글 첫번째 덧글 쓰기");
-        article_1_1_1_1 = writeArticleService.write(writeRequestArticle);
+        article_1_1_1_1 = writeArticleService.save(writeRequestArticle);
         Assertions.assertEquals(4, article_1_1_1_1.getLevel());
         Assertions.assertEquals(5, article_1_1_1_1.getStep());
     }
@@ -166,7 +166,7 @@ class WriteArticleServiceTest {
         writeRequestArticle.setSubject(origin.getSubject() + "_2");
         writeRequestArticle.setContents("원글 첫번째 덧글 첫번째 덧글 쓰기");
         writeRequestArticle.setWriteType(WriteType.REPLY);
-        article_1_1_2 = writeArticleService.write(writeRequestArticle);
+        article_1_1_2 = writeArticleService.save(writeRequestArticle);
         Assertions.assertEquals(article_1.getReference(), article_1_1_2.getReference());
         Assertions.assertEquals(3, article_1_1_2.getLevel());
         Assertions.assertEquals(4, article_1_1_2.getStep());
@@ -181,7 +181,7 @@ class WriteArticleServiceTest {
         writeRequestArticle.setPId(origin.getId());
         writeRequestArticle.setSubject(origin.getSubject() + "_1");
         writeRequestArticle.setContents("원글 두번째 덧글 첫번째 쓰기");
-        article_2_1 = writeArticleService.write(writeRequestArticle);
+        article_2_1 = writeArticleService.save(writeRequestArticle);
         Assertions.assertEquals(article_2.getReference(), article_2_1.getReference());
         Assertions.assertEquals(2, article_2_1.getLevel());
         Assertions.assertEquals(2, article_2_1.getStep());
@@ -197,7 +197,7 @@ class WriteArticleServiceTest {
         writeRequestArticle.setSubject(origin.getSubject() + "_2");
         writeRequestArticle.setContents("원글 두번째 덧글 두번째 쓰기");
         writeRequestArticle.setWriteType(WriteType.REPLY);
-        article_2_2 = writeArticleService.write(writeRequestArticle);
+        article_2_2 = writeArticleService.save(writeRequestArticle);
 
         Assertions.assertEquals(article_2.getReference(), article_2_2.getReference());
         Assertions.assertEquals(2, article_2_2.getLevel());
@@ -214,7 +214,7 @@ class WriteArticleServiceTest {
         writeRequestArticle.setSubject(origin.getSubject() + "_3");
         writeRequestArticle.setWriteType(WriteType.REPLY);
         writeRequestArticle.setContents("원글 두번째 덧글 세번째 쓰기");
-        article_2_3 = writeArticleService.write(writeRequestArticle);
+        article_2_3 = writeArticleService.save(writeRequestArticle);
         Assertions.assertEquals(article_2.getReference(), article_2_3.getReference());
         Assertions.assertEquals(2, article_2_3.getLevel());
         Assertions.assertEquals(2, article_2_3.getStep());

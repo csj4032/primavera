@@ -41,12 +41,12 @@ public class ArticleController {
 
     @PostMapping(value = "/articles/save")
     public String save(@Valid ArticleDto.WriteArticle writeArticle) {
-        writeArticleService.write(writeArticle);
+        writeArticleService.save(writeArticle);
         return "redirect:/articles";
     }
 
     @PostMapping(value = "/articles/modify")
     public String modify(@Valid ArticleDto.WriteArticle writeArticle) {
-        return "redirect:/articles/" + writeArticleService.modify(writeArticle).getId();
+        return "redirect:/articles/" + writeArticleService.update(writeArticle).getId();
     }
 }
