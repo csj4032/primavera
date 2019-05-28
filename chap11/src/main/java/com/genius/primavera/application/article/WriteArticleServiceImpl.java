@@ -59,12 +59,9 @@ public class WriteArticleServiceImpl implements WriteArticleService {
 
     @Override
     public ArticleDto.FormArticle findByForForm(WriteType type, long id) {
-        if (type.equals(WriteType.REPLY)) {
-            return getReplayForm(id);
-        } else if (type.equals(WriteType.MODIFY)) {
-            return getModifyForm(id);
-        }
-        return getEmpltyForm();
+        if (type.equals(WriteType.REPLY)) return getReplayForm(id);
+        if (type.equals(WriteType.MODIFY)) return getModifyForm(id);
+        return getEmptyForm();
     }
 
     @Override
@@ -81,12 +78,6 @@ public class WriteArticleServiceImpl implements WriteArticleService {
     public Paged<ArticleDto.ListArticle> findForPageable(PageRequest pageRequest) {
         return new Paged<>(pageRequest, modelMapper.map(articleMapper.findForPageable(pageRequest), new TypeToken<List<ArticleDto.ListArticle>>() {
         }.getType()), articleMapper.findAllCount());
-    }
-
-    @Override
-    public String getOriginSubject(long originId) {
-        Article article = findById(originId);
-        return article == null ? "" : article.getSubject();
     }
 
     private Article getOriginArticle(ArticleDto.WriteArticle writeArticle) {
@@ -118,7 +109,7 @@ public class WriteArticleServiceImpl implements WriteArticleService {
         return content;
     }
 
-    private ArticleDto.FormArticle getEmpltyForm() {
+    private ArticleDto.FormArticle getEmptyForm() {
         return new ArticleDto.FormArticle();
     }
 
