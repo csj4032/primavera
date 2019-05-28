@@ -7,7 +7,7 @@ import lombok.Getter;
 @Getter
 public enum WriteType {
     FORM("form", "save"),
-    MODIFY("modify", "modify"),
+    UPDATE("update", "update"),
     REPLY("reply", "save");
 
     private String type;

@@ -9,9 +9,9 @@ import com.genius.primavera.domain.model.article.WriteType;
 
 public interface WriteArticleService {
 
-    Article write(ArticleDto.WriteArticle writeArticle) throws ArticleNotFoundException;
+    Article save(ArticleDto.WriteArticle writeArticle) throws ArticleNotFoundException;
 
-    Article modify(ArticleDto.WriteArticle writeArticle);
+    Article update(ArticleDto.WriteArticle writeArticle);
 
     Article findById(long id);
 
