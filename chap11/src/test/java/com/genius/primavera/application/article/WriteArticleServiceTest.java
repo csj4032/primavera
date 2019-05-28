@@ -37,7 +37,7 @@ class WriteArticleServiceTest {
     @Mock
     private WriteArticleService mockWriteArticleService;
 
-    private static ArticleDto.WriteRequestArticle writeRequestArticle;
+    private static ArticleDto.WriteArticle writeRequestArticle;
     private static Article article_1;
     private static Article article_1_1;
     private static Article article_1_1_1;
@@ -51,12 +51,10 @@ class WriteArticleServiceTest {
 
     @BeforeAll
     public static void setUp() {
-        writeRequestArticle = new ArticleDto.WriteRequestArticle();
+        writeRequestArticle = new ArticleDto.WriteArticle();
         writeRequestArticle.setPId(0);
-        writeRequestArticle.setStep(0);
-        writeRequestArticle.setLevel(0);
         writeRequestArticle.setSubject("제목_1");
-        writeRequestArticle.setText("원글");
+        writeRequestArticle.setContents("원글");
     }
 
     @Test
@@ -86,11 +84,8 @@ class WriteArticleServiceTest {
     public void writeFirstReplyTest() {
         Article origin = writeArticleService.findById(article_1.getId());
         writeRequestArticle.setPId(origin.getId());
-        writeRequestArticle.setReference(origin.getReference());
-        writeRequestArticle.setStep(origin.getStep());
-        writeRequestArticle.setLevel(origin.getLevel());
         writeRequestArticle.setSubject(origin.getSubject() + "_1");
-        writeRequestArticle.setText("원글 첫번째 덧글 쓰기");
+        writeRequestArticle.setContents("원글 첫번째 덧글 쓰기");
         article_1_1 = writeArticleService.write(writeRequestArticle);
         Assertions.assertEquals(article_1.getReference(), article_1_1.getReference());
         Assertions.assertEquals(2, article_1_1.getLevel());
@@ -104,11 +99,8 @@ class WriteArticleServiceTest {
     public void writeSecondReplyTest() {
         Article origin = writeArticleService.findById(article_1.getId());
         writeRequestArticle.setPId(origin.getId());
-        writeRequestArticle.setReference(origin.getReference());
-        writeRequestArticle.setStep(origin.getStep());
-        writeRequestArticle.setLevel(origin.getLevel());
         writeRequestArticle.setSubject(origin.getSubject() + "_2");
-        writeRequestArticle.setText("원글 첫번째 두번째 덧글 쓰기");
+        writeRequestArticle.setContents("원글 첫번째 두번째 덧글 쓰기");
         article_1_2 = writeArticleService.write(writeRequestArticle);
         Assertions.assertEquals(article_1.getReference(), article_1_2.getReference());
         Assertions.assertEquals(2, article_1_2.getLevel());
@@ -122,11 +114,8 @@ class WriteArticleServiceTest {
     public void writeFirst_FirstReplyTest() {
         Article origin = writeArticleService.findById(article_1_1.getId());
         writeRequestArticle.setPId(origin.getId());
-        writeRequestArticle.setReference(origin.getReference());
-        writeRequestArticle.setStep(origin.getStep());
-        writeRequestArticle.setLevel(origin.getLevel());
         writeRequestArticle.setSubject(origin.getSubject() + "_1");
-        writeRequestArticle.setText("원글 첫번째 덧글 첫번째 덧글 쓰기");
+        writeRequestArticle.setContents("원글 첫번째 덧글 첫번째 덧글 쓰기");
         article_1_1_1 = writeArticleService.write(writeRequestArticle);
         Assertions.assertEquals(article_1.getReference(), article_1_1_1.getReference());
         Assertions.assertEquals(3, article_1_1_1.getLevel());
@@ -139,10 +128,8 @@ class WriteArticleServiceTest {
     @WithUserDetails(value = "Genius Choi", userDetailsServiceBeanName = "primaveraUserDetailsService")
     public void writeSecondTest() {
         writeRequestArticle.setPId(0);
-        writeRequestArticle.setStep(0);
-        writeRequestArticle.setLevel(0);
         writeRequestArticle.setSubject("제목_2");
-        writeRequestArticle.setText("원글");
+        writeRequestArticle.setContents("원글");
         article_2 = writeArticleService.write(writeRequestArticle);
         article_2 = writeArticleService.findById(article_2.getId());
         Assertions.assertEquals(null, article_1.getParent());
@@ -156,15 +143,12 @@ class WriteArticleServiceTest {
     public void writeFirst_FirstReply_FirstReplyTest() {
         Article origin = writeArticleService.findById(article_1_1_1.getId());
         writeRequestArticle.setPId(origin.getId());
-        writeRequestArticle.setReference(origin.getReference());
-        writeRequestArticle.setStep(origin.getStep());
-        writeRequestArticle.setLevel(origin.getLevel());
         writeRequestArticle.setSubject(origin.getSubject() + "_1");
-        writeRequestArticle.setText("원글 첫번째 덧글 첫번째 덧글 첫번째 덧글 쓰기");
+        writeRequestArticle.setContents("원글 첫번째 덧글 첫번째 덧글 첫번째 덧글 쓰기");
         article_1_1_1_1 = writeArticleService.write(writeRequestArticle);
         Assertions.assertEquals(article_1.getReference(), article_1_1_1_1.getReference());
         Assertions.assertEquals(4, article_1_1_1_1.getLevel());
-        Assertions.assertEquals(6, article_1_1_1_1.getStep());
+        Assertions.assertEquals(5, article_1_1_1_1.getStep());
     }
 
     @Test
@@ -174,15 +158,12 @@ class WriteArticleServiceTest {
     public void writeFirst_FirstReply_SecondReplyTest() {
         Article origin = writeArticleService.findById(article_1_1.getId());
         writeRequestArticle.setPId(origin.getId());
-        writeRequestArticle.setReference(origin.getReference());
-        writeRequestArticle.setStep(origin.getStep());
-        writeRequestArticle.setLevel(origin.getLevel());
         writeRequestArticle.setSubject(origin.getSubject() + "_2");
-        writeRequestArticle.setText("원글 첫번째 덧글 첫번째 덧글 쓰기");
+        writeRequestArticle.setContents("원글 첫번째 덧글 첫번째 덧글 쓰기");
         article_1_1_2 = writeArticleService.write(writeRequestArticle);
         Assertions.assertEquals(article_1.getReference(), article_1_1_2.getReference());
         Assertions.assertEquals(3, article_1_1_2.getLevel());
-        Assertions.assertEquals(5, article_1_1_2.getStep());
+        Assertions.assertEquals(4, article_1_1_2.getStep());
     }
 
     @Test
@@ -192,9 +173,6 @@ class WriteArticleServiceTest {
     public void writeSecond_FirstReply_Test() {
         Article origin = writeArticleService.findById(article_2.getId());
         writeRequestArticle.setPId(origin.getId());
-        writeRequestArticle.setReference(origin.getReference());
-        writeRequestArticle.setStep(origin.getStep());
-        writeRequestArticle.setLevel(origin.getLevel());
         writeRequestArticle.setSubject(origin.getSubject() + "_1");
         article_2_1 = writeArticleService.write(writeRequestArticle);
         Assertions.assertEquals(article_2.getReference(), article_2_1.getReference());
@@ -209,9 +187,6 @@ class WriteArticleServiceTest {
     public void writeSecond_SecondReply_Test() {
         Article origin = writeArticleService.findById(article_2.getId());
         writeRequestArticle.setPId(origin.getId());
-        writeRequestArticle.setReference(origin.getReference());
-        writeRequestArticle.setStep(origin.getStep());
-        writeRequestArticle.setLevel(origin.getLevel());
         writeRequestArticle.setSubject(origin.getSubject() + "_2");
         article_2_2 = writeArticleService.write(writeRequestArticle);
         Assertions.assertEquals(article_2.getReference(), article_2_2.getReference());
@@ -226,9 +201,6 @@ class WriteArticleServiceTest {
     public void writeSecond_ThirdReply_Test() {
         Article origin = writeArticleService.findById(article_2.getId());
         writeRequestArticle.setPId(origin.getId());
-        writeRequestArticle.setReference(origin.getReference());
-        writeRequestArticle.setStep(origin.getStep());
-        writeRequestArticle.setLevel(origin.getLevel());
         writeRequestArticle.setSubject(origin.getSubject() + "_3");
         article_2_3 = writeArticleService.write(writeRequestArticle);
         Assertions.assertEquals(article_2.getReference(), article_2_3.getReference());

@@ -24,6 +24,7 @@ import java.util.List;
 public interface ArticleMapper {
 
     String SELECT_WITH_USER_SQL = "SELECT A.ID, A.P_ID, A.REFERENCE, A.STEP, A.LEVEL, A.AUTHOR, B.EMAIL, B.NICKNAME, A.SUBJECT, A.STATUS, A.REG_DT, A.MOD_DT FROM ARTICLE A INNER JOIN USER B ON A.AUTHOR = B.ID ";
+    String SELECT_WITH_USER_CONTENTS_SQL = "SELECT A.ID, A.P_ID, A.REFERENCE, A.STEP, A.LEVEL, A.AUTHOR, B.EMAIL, B.NICKNAME, A.SUBJECT, A.STATUS, C.CONTENTS, A.REG_DT, A.MOD_DT FROM ARTICLE A INNER JOIN USER B ON A.AUTHOR = B.ID INNER JOIN ARTICLE_CONTENT C ON A.ID = C.ARTICLE_ID ";
 
     @InsertProvider(type = ArticleProvider.class, method = "save")
     @Options(useGeneratedKeys = true, keyColumn = "ID", keyProperty = "id")
@@ -40,7 +41,7 @@ public interface ArticleMapper {
                     @Result(property = "level", column = "LEVEL"),
                     @Result(property = "author.id", column = "AUTHOR"),
                     @Result(property = "author.email", column = "EMAIL"),
-                    @Result(property = "author.nickname", column = "EMAIL"),
+                    @Result(property = "author.nickname", column = "NICKNAME"),
                     @Result(property = "subject", column = "SUBJECT"),
                     @Result(property = "status", typeHandler = ArticleStatusTypeHandler.class, column = "STATUS"),
                     @Result(property = "regDt", column = "REG_DT"),
@@ -59,7 +60,7 @@ public interface ArticleMapper {
                     @Result(property = "level", column = "LEVEL"),
                     @Result(property = "author.id", column = "AUTHOR"),
                     @Result(property = "author.email", column = "EMAIL"),
-                    @Result(property = "author.nickname", column = "EMAIL"),
+                    @Result(property = "author.nickname", column = "NICKNAME"),
                     @Result(property = "subject", column = "SUBJECT"),
                     @Result(property = "status", typeHandler = ArticleStatusTypeHandler.class, column = "STATUS"),
                     @Result(property = "regDt", column = "REG_DT"),
@@ -77,7 +78,7 @@ public interface ArticleMapper {
             @Result(property = "level", column = "LEVEL"),
             @Result(property = "author.id", column = "AUTHOR"),
             @Result(property = "author.email", column = "EMAIL"),
-            @Result(property = "author.nickname", column = "EMAIL"),
+            @Result(property = "author.nickname", column = "NICKNAME"),
             @Result(property = "subject", column = "SUBJECT"),
             @Result(property = "status", typeHandler = ArticleStatusTypeHandler.class, column = "STATUS"),
             @Result(property = "regDt", column = "REG_DT"),
@@ -100,7 +101,7 @@ public interface ArticleMapper {
             @Result(property = "level", column = "LEVEL"),
             @Result(property = "author.id", column = "AUTHOR"),
             @Result(property = "author.email", column = "EMAIL"),
-            @Result(property = "author.nickname", column = "EMAIL"),
+            @Result(property = "author.nickname", column = "NICKNAME"),
             @Result(property = "subject", column = "SUBJECT"),
             @Result(property = "status", typeHandler = ArticleStatusTypeHandler.class, column = "STATUS"),
             @Result(property = "hit", column = "HIT"),
@@ -112,6 +113,25 @@ public interface ArticleMapper {
     })
     @Select(value = SELECT_WITH_USER_SQL + "WHERE A.STATUS = 1 ORDER BY A.REFERENCE DESC, A.STEP ASC LIMIT #{pageRequest.rowNumber} OFFSET #{pageRequest.offset}")
     List<Article> findForPageable(@Param("pageRequest") PageRequest pageRequest);
+
+    @Results(id = "ARTICLE_DETAIL_WITH_USER_CONTENT",
+            value = {
+                    @Result(property = "id", column = "ID"),
+                    @Result(property = "pId", column = "P_ID"),
+                    @Result(property = "reference", column = "REFERENCE"),
+                    @Result(property = "step", column = "STEP"),
+                    @Result(property = "level", column = "LEVEL"),
+                    @Result(property = "author.id", column = "AUTHOR"),
+                    @Result(property = "author.email", column = "EMAIL"),
+                    @Result(property = "author.nickname", column = "NICKNAME"),
+                    @Result(property = "subject", column = "SUBJECT"),
+                    @Result(property = "status", typeHandler = ArticleStatusTypeHandler.class, column = "STATUS"),
+                    @Result(property = "content.contents", column = "CONTENTS"),
+                    @Result(property = "regDt", column = "REG_DT"),
+                    @Result(property = "modDt", column = "MOD_DT")
+            })
+    @Select(value = SELECT_WITH_USER_CONTENTS_SQL + " WHERE A.ID = #{id}")
+    Article findByIdWithContent(long id);
 
     class ArticleProvider {
         public String save(Article article) {
