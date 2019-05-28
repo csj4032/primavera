@@ -3,6 +3,7 @@ package com.genius.primavera.interfaces;
 import com.genius.primavera.application.article.WriteArticleService;
 import com.genius.primavera.domain.PageRequest;
 import com.genius.primavera.domain.model.article.ArticleDto;
+import com.genius.primavera.domain.model.article.WriteType;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -26,16 +27,15 @@ public class ArticleController {
         return "article/list";
     }
 
-    @GetMapping(value = "/articles/{id}")
+    @GetMapping(value = "/articles/{id:[0-9]+}")
     public String detail(@PathVariable(value = "id") long id, Model model) {
         model.addAttribute("article", writeArticleService.findByIdWithContent(id));
         return "article/detail";
     }
 
-    @GetMapping(value = "/articles/form")
-    public String detail(Model model, @RequestParam(value = "originId", required = false, defaultValue = "0") long originId) {
-        model.addAttribute("originId", originId);
-        model.addAttribute("originSubject", writeArticleService.getOriginSubject(originId));
+    @GetMapping(value = "/articles/{type:form|modify|reply}")
+    public String form(Model model, @PathVariable(value = "type") WriteType type, @RequestParam(value = "id", required = false, defaultValue = "0") long id) {
+        model.addAttribute("form", writeArticleService.findByForForm(type, id));
         return "article/form";
     }
 
@@ -43,5 +43,10 @@ public class ArticleController {
     public String save(@Valid ArticleDto.WriteArticle writeArticle) {
         writeArticleService.write(writeArticle);
         return "redirect:/articles";
+    }
+
+    @PostMapping(value = "/articles/modify")
+    public String modify(@Valid ArticleDto.WriteArticle writeArticle) {
+        return "redirect:/articles/" + writeArticleService.modify(writeArticle).getId();
     }
 }

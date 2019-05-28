@@ -38,7 +38,8 @@
 					</div>
 					<div class="box-footer">
 						<div class="pull-right">
-							<a th:href="@{${'/articles/form?originId=' + article.id}}" class="btn btn-default"><i class="fa fa-fw fa-list"></i> 답글</a>
+							<a th:href="@{${'/articles/modify?id=' + article.id}}" class="btn btn-default"><i class="fa fa-fw fa-list"></i> 수정</a>
+							<a th:href="@{${'/articles/reply?id=' + article.id}}" class="btn btn-default"><i class="fa fa-fw fa-list"></i> 답글</a>
 							<a th:href="@{/articles}" class="btn btn-default"><i class="fa fa-fw fa-list"></i> 목록</a>
 						</div>
 					</div>

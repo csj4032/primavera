@@ -7,6 +7,7 @@ import com.genius.primavera.domain.mapper.ArticleMapper;
 import com.genius.primavera.domain.model.article.Article;
 import com.genius.primavera.domain.model.article.ArticleDto;
 import com.genius.primavera.domain.model.article.Content;
+import com.genius.primavera.domain.model.article.WriteType;
 import com.genius.primavera.domain.model.user.User;
 
 import org.modelmapper.ModelMapper;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Objects;
 
 import static com.genius.primavera.application.PrimaveraUtil.getUser;
 
@@ -46,6 +48,26 @@ public class WriteArticleServiceImpl implements WriteArticleService {
     }
 
     @Override
+    public Article modify(ArticleDto.WriteArticle writeArticle) {
+        Article article = articleMapper.findByIdWithContent(writeArticle.getId());
+        article.setSubject(writeArticle.getSubject());
+        article.setModDt(Instant.now());
+        articleMapper.update(article);
+        articleContentMapper.update(article.getContentsId(), writeArticle.getContents());
+        return article;
+    }
+
+    @Override
+    public ArticleDto.FormArticle findByForForm(WriteType type, long id) {
+        if (type.equals(WriteType.REPLY)) {
+            return getReplayForm(id);
+        } else if (type.equals(WriteType.MODIFY)) {
+            return getModifyForm(id);
+        }
+        return getEmpltyForm();
+    }
+
+    @Override
     public Article findById(long id) {
         return articleMapper.findById(id);
     }
@@ -68,11 +90,12 @@ public class WriteArticleServiceImpl implements WriteArticleService {
     }
 
     private Article getOriginArticle(ArticleDto.WriteArticle writeArticle) {
-        Article article = articleMapper.findById(writeArticle.getPId());
-        if (writeArticle.getPId() != 0 && article == null) {
-            throw new ArticleNotFoundException();
+        if (writeArticle.getWriteType().equals(WriteType.REPLY)) {
+            Article article = articleMapper.findById(writeArticle.getPId());
+            if (Objects.isNull(article)) throw new ArticleNotFoundException();
+            return article;
         }
-        return article == null ? new Article() : article;
+        return new Article();
     }
 
     private Article getArticle(Article origin, ArticleDto.WriteArticle writeArticle, User author) {
@@ -85,7 +108,7 @@ public class WriteArticleServiceImpl implements WriteArticleService {
         article.setSubject(writeArticle.getSubject());
         article.setStatus(writeArticle.getStatus());
         article.setRegDt(Instant.now());
-        return null;
+        return article;
     }
 
     private Content getContent(ArticleDto.WriteArticle writeArticle, Article article) {
@@ -93,5 +116,28 @@ public class WriteArticleServiceImpl implements WriteArticleService {
         content.setArticle(article);
         content.setContents(writeArticle.getContents());
         return content;
+    }
+
+    private ArticleDto.FormArticle getEmpltyForm() {
+        return new ArticleDto.FormArticle();
+    }
+
+    private ArticleDto.FormArticle getModifyForm(long id) {
+        ArticleDto.FormArticle formArticle = new ArticleDto.FormArticle();
+        Article article = articleMapper.findByIdWithContent(id);
+        formArticle.setId(id);
+        formArticle.setSubject(article.getSubject());
+        formArticle.setContents(article.getContents());
+        formArticle.setWriteType(WriteType.MODIFY);
+        return formArticle;
+    }
+
+    private ArticleDto.FormArticle getReplayForm(long id) {
+        ArticleDto.FormArticle formArticle = new ArticleDto.FormArticle();
+        Article article = articleMapper.findById(id);
+        formArticle.setPId(id);
+        formArticle.setSubject("[RE] " + article.getSubject());
+        formArticle.setWriteType(WriteType.REPLY);
+        return formArticle;
     }
 }

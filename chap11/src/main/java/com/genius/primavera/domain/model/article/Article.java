@@ -52,6 +52,10 @@ public class Article {
         return content.getContents();
     }
 
+    public long getContentsId() {
+        return content.getId();
+    }
+
     public boolean hasParents() {
         return !Objects.isNull(parent);
     }
