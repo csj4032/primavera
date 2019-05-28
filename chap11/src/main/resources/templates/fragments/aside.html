@@ -33,10 +33,10 @@
 				</a>
 				<ul class="treeview-menu" style="display: none;">
 					<li><a th:href="@{/posts}" href="/posts"><i class="fa fa-circle-o"></i>List</a></li>
-					<li><a th:href="@{/post/form}" href="/post/form"><i class="fa fa-circle-o"></i>Form</a></li>
+					<li><a th:href="@{/posts/form}" href="/post/form"><i class="fa fa-circle-o"></i>Form</a></li>
 				</ul>
 			</li>
-			<li>
+			<li class="treeview">
 				<a th:href="@{/articles}" href="articles">
 					<i class="fa fa-files-o"></i>
 					<span>Article</span>
@@ -45,6 +45,10 @@
 						<span class="label pull-right bg-red">2</span>
 					</span>
 				</a>
+				<ul class="treeview-menu" style="display: none;">
+					<li><a th:href="@{/articles}" href="/articles"><i class="fa fa-circle-o"></i>List</a></li>
+					<li><a th:href="@{/articles/form}" href="/articles/form"><i class="fa fa-circle-o"></i>Form</a></li>
+				</ul>
 			</li>
 		</ul>
 	</section>

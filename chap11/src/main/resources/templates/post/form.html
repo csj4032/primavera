@@ -21,7 +21,7 @@
 		<div class="row">
 			<div class="col-md-12">
 				<div class="box box-widget">
-					<form role="form" action="/post/save" method="post">
+					<form role="form" action="/posts/save" method="post">
 						<input type="hidden" name="writerId" th:value="${#authorization.getAuthentication().principal.userId}">
 						<div class="box-body">
 							<div class="form-group">

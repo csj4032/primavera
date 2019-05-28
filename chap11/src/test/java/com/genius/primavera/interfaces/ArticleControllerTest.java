@@ -41,12 +41,20 @@ public class ArticleControllerTest {
     @DisplayName("게시판 리스트 화면 접근")
     @WithUserDetails(value = "Genius Choi", userDetailsServiceBeanName = "primaveraUserDetailsService")
     public void articles() throws Exception {
-        //PageRequest pageRequest = PageRequest.of(1, 5, 5);
-        //Paged<Article>  paged = writeArticleService.findForPageable(pageRequest);
-        //given(writeArticleService.findForPageable(pageRequest)).willReturn(paged);
         mockMvc.perform(get("/articles").accept(MediaType.TEXT_HTML))
                 .andDo(print())
                 .andExpect(view().name("article/list"))
+                .andExpect(status().is2xxSuccessful());
+    }
+
+    @Test
+    @Order(2)
+    @DisplayName("1번 게시글 상세 접근")
+    @WithUserDetails(value = "Genius Choi", userDetailsServiceBeanName = "primaveraUserDetailsService")
+    public void detail() throws Exception {
+        mockMvc.perform(get("/articles/1").accept(MediaType.TEXT_HTML))
+                .andDo(print())
+                .andExpect(view().name("article/detail"))
                 .andExpect(status().is2xxSuccessful());
     }
 }

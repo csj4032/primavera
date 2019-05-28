@@ -43,9 +43,9 @@
 											<th>ID</th>
 											<th>Subject</th>
 											<th>Writer</th>
+											<th>Hit</th>
 											<th>Like</th>
 											<th>Disapprove</th>
-											<th>Hit</th>
 											<th>RegDt</th>
 											<th>ModDt</th>
 										</tr>
@@ -53,10 +53,10 @@
 										<tbody>
 										<tr th:each="article : ${page.getContents()}">
 											<td th:text="${article.id}">1</td>
-											<td><a th:href="${'/articles/' + article.id}" th:text="${article.subject}">로마는 하루아침에 이루어지지 않았다.</a></td>
+											<td th:style="${'padding-left:' + (article.level*10) + 'px'}"><a th:href="${'/articles/' + article.id}" th:text="${article.subject}">로마는 하루아침에 이루어지지 않았다.</a></td>
 											<td th:text="${article.authorName}">Genius</td>
+											<td th:text="${article.hit}">0</td>
 											<td th:text="${article.recommend}">0</td>
-											<td th:text="${article.like}">0</td>
 											<td th:text="${article.disapprove}">0</td>
 											<td th:text="${#temporals.format(article.regDt, 'yyyy-MM-dd HH:mm:ss')}">2019-05-20</td>
 											<td th:text="${article.modDt}">2019-05-20</td>

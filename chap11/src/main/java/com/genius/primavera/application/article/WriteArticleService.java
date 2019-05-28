@@ -1,5 +1,6 @@
 package com.genius.primavera.application.article;
 
+import com.genius.primavera.domain.ArticleNotFoundException;
 import com.genius.primavera.domain.PageRequest;
 import com.genius.primavera.domain.Paged;
 import com.genius.primavera.domain.model.article.Article;
@@ -7,9 +8,13 @@ import com.genius.primavera.domain.model.article.ArticleDto;
 
 public interface WriteArticleService {
 
-    Article write(ArticleDto.WriteRequestArticle requestArticle);
+    Article write(ArticleDto.WriteArticle writeArticle) throws ArticleNotFoundException;
 
     Article findById(long id);
 
-    Paged<ArticleDto.ListResponseArticle> findForPageable(PageRequest pageRequest);
+    ArticleDto.DetailArticle findByIdWithContent(long id);
+
+    Paged<ArticleDto.ListArticle> findForPageable(PageRequest pageRequest);
+
+    String getOriginSubject(long originId);
 }

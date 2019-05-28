@@ -25,9 +25,9 @@ public class Article {
     private long pId;
     private long reference;
     @Builder.Default
-    private int step = 1;
+    private int step = 0;
     @Builder.Default
-    private int level = 1;
+    private int level = 0;
     private ArticleStatus status;
     private Article parent;
     private Article[] children;
@@ -46,6 +46,10 @@ public class Article {
 
     public String getAuthorName() {
         return author.getNickname();
+    }
+
+    public String getContents() {
+        return content.getContents();
     }
 
     public boolean hasParents() {
