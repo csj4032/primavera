@@ -24,7 +24,7 @@ import java.util.List;
 public interface ArticleMapper {
 
     String SELECT_WITH_USER_SQL = "SELECT A.ID, A.P_ID, A.REFERENCE, A.STEP, A.LEVEL, A.AUTHOR, B.EMAIL, B.NICKNAME, A.SUBJECT, A.STATUS, A.REG_DT, A.MOD_DT FROM ARTICLE A INNER JOIN USER B ON A.AUTHOR = B.ID ";
-    String SELECT_WITH_USER_CONTENTS_SQL = "SELECT A.ID, A.P_ID, A.REFERENCE, A.STEP, A.LEVEL, A.AUTHOR, B.EMAIL, B.NICKNAME, A.SUBJECT, A.STATUS, C.CONTENTS, A.REG_DT, A.MOD_DT FROM ARTICLE A INNER JOIN USER B ON A.AUTHOR = B.ID INNER JOIN ARTICLE_CONTENT C ON A.ID = C.ARTICLE_ID ";
+    String SELECT_WITH_USER_CONTENTS_SQL = "SELECT A.ID, A.P_ID, A.REFERENCE, A.STEP, A.LEVEL, A.AUTHOR, B.EMAIL, B.NICKNAME, A.SUBJECT, A.STATUS, C.ID AS CONTENTS_ID, C.CONTENTS, A.REG_DT, A.MOD_DT FROM ARTICLE A INNER JOIN USER B ON A.AUTHOR = B.ID INNER JOIN ARTICLE_CONTENT C ON A.ID = C.ARTICLE_ID ";
 
     @InsertProvider(type = ArticleProvider.class, method = "save")
     @Options(useGeneratedKeys = true, keyColumn = "ID", keyProperty = "id")
@@ -126,12 +126,16 @@ public interface ArticleMapper {
                     @Result(property = "author.nickname", column = "NICKNAME"),
                     @Result(property = "subject", column = "SUBJECT"),
                     @Result(property = "status", typeHandler = ArticleStatusTypeHandler.class, column = "STATUS"),
+                    @Result(property = "content.id", column = "CONTENTS_ID"),
                     @Result(property = "content.contents", column = "CONTENTS"),
                     @Result(property = "regDt", column = "REG_DT"),
                     @Result(property = "modDt", column = "MOD_DT")
             })
     @Select(value = SELECT_WITH_USER_CONTENTS_SQL + " WHERE A.ID = #{id}")
     Article findByIdWithContent(long id);
+
+    @Update("UPDATE ARTICLE SET SUBJECT = #{subject}, MOD_DT = #{modDt} WHERE ID = #{id} ")
+    int update(Article article);
 
     class ArticleProvider {
         public String save(Article article) {

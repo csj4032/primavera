@@ -1,8 +1,6 @@
 package com.genius.primavera.domain.model.article;
 
 import java.time.Instant;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import javax.validation.constraints.NotEmpty;
 
@@ -14,12 +12,14 @@ public class ArticleDto {
     @Getter
     @Setter
     public static class WriteArticle {
+        private long id;
         private long pId;
         private ArticleStatus status = ArticleStatus.PUBLIC;
         @NotEmpty
         private String subject;
         private long author;
         private String contents;
+        private WriteType writeType = WriteType.FORM;
     }
 
     @Getter
@@ -36,7 +36,7 @@ public class ArticleDto {
         private Instant modDt;
 
         public String getSubject() {
-            return IntStream.range(1, this.level).mapToObj(e -> "RE : ").collect(Collectors.joining()) + subject;
+            return (level > 1 ? "[RE] " : "") + subject;
         }
     }
 
@@ -55,5 +55,27 @@ public class ArticleDto {
         private String contents;
         private Instant regDt;
         private Instant modDt;
+    }
+
+    @Getter
+    @Setter
+    public static class FormArticle {
+        private long id;
+        private long pId;
+        private long reference;
+        private int step;
+        private int level;
+        private String subject;
+        private String authorName;
+        private String contents;
+        private WriteType writeType = WriteType.FORM;
+
+        public String actionType() {
+            return writeType.getAction();
+        }
+
+        public String writeType() {
+            return writeType.getType();
+        }
     }
 }
