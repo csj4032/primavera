@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.genius.primavera.domain.model.article.Article;
 import com.genius.primavera.domain.model.article.ArticleDto;
+import com.genius.primavera.domain.model.article.Comment;
+import com.genius.primavera.domain.model.article.CommentDto;
 import com.navercorp.lucy.security.xss.servletfilter.XssEscapeServletFilter;
 
 import org.modelmapper.ModelMapper;
@@ -46,6 +48,11 @@ public class ApplicationConfiguration implements WebMvcConfigurer {
         modelMapper.createTypeMap(Article.class, ArticleDto.DetailArticle.class).addMappings(mapper -> {
             mapper.map(src -> src.getAuthorName(), ArticleDto.DetailArticle::setAuthorName);
             mapper.map(src -> src.getContents(), ArticleDto.DetailArticle::setContents);});
+
+        modelMapper.createTypeMap(Comment.class, CommentDto.Detail.class).addMappings(mapper -> {
+            mapper.map(src -> src.getAuthor().getNickname(), CommentDto.Detail::setAuthorName);
+            mapper.map(src -> src.getAuthor().getConnection().getImageUrl(), CommentDto.Detail::setAuthorImage);});
+
         return modelMapper;
     }
 }

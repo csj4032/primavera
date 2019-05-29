@@ -35,6 +35,7 @@ public class Article {
     private int recommend;
     private int disapprove;
     private Content content;
+    private Comment[] comments;
     private Instant regDt;
     private Instant modDt;
 

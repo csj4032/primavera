@@ -53,8 +53,13 @@ public class ArticleDto {
         private int recommend;
         private int disapprove;
         private String contents;
+        private CommentDto.Detail[] comments;
         private Instant regDt;
         private Instant modDt;
+
+        public long getCommentSize() {
+            return comments.length;
+        }
     }
 
     @Getter
@@ -77,5 +82,12 @@ public class ArticleDto {
         public String writeType() {
             return writeType.getType();
         }
+    }
+
+    @Getter
+    @Setter
+    public static class WriteComment {
+        private long article;
+        private String comment;
     }
 }

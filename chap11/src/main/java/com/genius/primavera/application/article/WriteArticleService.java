@@ -17,9 +17,13 @@ public interface WriteArticleService {
 
     Article findById(long id);
 
-    ArticleDto.DetailArticle findByIdWithContent(long id);
+    ArticleDto.DetailArticle hitAndFindArticle(long id);
+
+    ArticleDto.DetailArticle findByIdWithContentAndComment(long id);
 
     Paged<ArticleDto.ListArticle> findForPageable(PageRequest pageRequest);
 
     ArticleDto.FormArticle findByForForm(WriteType type, long id);
+
+    int comment(ArticleDto.WriteComment writeComment);
 }

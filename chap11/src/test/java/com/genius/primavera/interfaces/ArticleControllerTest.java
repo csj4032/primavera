@@ -1,7 +1,6 @@
 package com.genius.primavera.interfaces;
 
 import com.genius.primavera.application.article.WriteArticleService;
-import com.genius.primavera.domain.model.article.ArticleDto;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
@@ -19,8 +18,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-
-import java.util.LinkedHashMap;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -57,6 +54,20 @@ public class ArticleControllerTest {
 
     @Test
     @Order(2)
+    @DisplayName("게시글 작성 접근")
+    @WithUserDetails(value = "Genius Choi", userDetailsServiceBeanName = "primaveraUserDetailsService")
+    public void save() throws Exception {
+        MultiValueMap<String, String> param = new LinkedMultiValueMap();
+        param.set("pId", "0");
+        param.set("subject", "제목");
+        param.set("contents", "내용");
+        mockMvc.perform(post("/articles/save").params(param).contentType(MediaType.APPLICATION_FORM_URLENCODED))
+                .andDo(print())
+                .andExpect(status().is3xxRedirection());
+    }
+
+    @Test
+    @Order(3)
     @DisplayName("1번 게시글 상세 접근")
     @WithUserDetails(value = "Genius Choi", userDetailsServiceBeanName = "primaveraUserDetailsService")
     public void detail() throws Exception {
@@ -67,15 +78,14 @@ public class ArticleControllerTest {
     }
 
     @Test
-    @Order(3)
-    @DisplayName("게시글 작성 접근")
+    @Order(4)
+    @DisplayName("1번 게시글 댓글 등록")
     @WithUserDetails(value = "Genius Choi", userDetailsServiceBeanName = "primaveraUserDetailsService")
-    public void save() throws Exception {
+    public void comment() throws Exception {
         MultiValueMap<String, String> param = new LinkedMultiValueMap();
-        param.set("pId", "0");
-        param.set("subject", "제목");
-        param.set("contents", "내용");
-        mockMvc.perform(post("/articles/save").params(param).contentType(MediaType.APPLICATION_FORM_URLENCODED))
+        param.set("articleId", "1");
+        param.set("comment", "댓글");
+        mockMvc.perform(post("/articles/comment").params(param).contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andDo(print())
                 .andExpect(status().is3xxRedirection());
     }

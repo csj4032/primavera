@@ -3,10 +3,13 @@ package com.genius.primavera.application.article;
 import com.genius.primavera.domain.ArticleNotFoundException;
 import com.genius.primavera.domain.PageRequest;
 import com.genius.primavera.domain.Paged;
-import com.genius.primavera.domain.mapper.ArticleMapper;
+import com.genius.primavera.domain.mapper.article.ArticleCommentMapper;
+import com.genius.primavera.domain.mapper.article.ArticleContentMapper;
+import com.genius.primavera.domain.mapper.article.ArticleMapper;
 import com.genius.primavera.domain.model.article.Article;
 import com.genius.primavera.domain.model.article.ArticleDto;
 import com.genius.primavera.domain.model.article.ArticleStatus;
+import com.genius.primavera.domain.model.article.Comment;
 import com.genius.primavera.domain.model.article.Content;
 import com.genius.primavera.domain.model.article.WriteType;
 import com.genius.primavera.domain.model.user.User;
@@ -34,6 +37,9 @@ public class WriteArticleServiceImpl implements WriteArticleService {
 
     @Autowired
     private ArticleContentMapper articleContentMapper;
+
+    @Autowired
+    private ArticleCommentMapper articleCommentMapper;
 
     @Override
     @Transactional
@@ -75,13 +81,35 @@ public class WriteArticleServiceImpl implements WriteArticleService {
     }
 
     @Override
+    public int comment(ArticleDto.WriteComment writeComment) {
+        Article article = articleMapper.findById(writeComment.getArticle());
+        Comment comment = new Comment();
+        comment.setArticle(article);
+        comment.setAuthor(getUser());
+        comment.setComment(writeComment.getComment());
+        comment.setStatus(ArticleStatus.PUBLIC);
+        comment.setRegDt(Instant.now());
+        return articleCommentMapper.save(comment);
+    }
+
+    @Override
     public Article findById(long id) {
         return articleMapper.findById(id);
     }
 
     @Override
-    public ArticleDto.DetailArticle findByIdWithContent(long id) {
-        return modelMapper.map(articleMapper.findByIdWithContent(id), ArticleDto.DetailArticle.class);
+    public ArticleDto.DetailArticle hitAndFindArticle(long id) {
+        articleHit(id);
+        return findByIdWithContentAndComment(id);
+    }
+
+    private void articleHit(long id) {
+        articleMapper.articleHit(id);
+    }
+
+    @Override
+    public ArticleDto.DetailArticle findByIdWithContentAndComment(long id) {
+        return modelMapper.map(articleMapper.findByIdWithContentAndComment(id), ArticleDto.DetailArticle.class);
     }
 
     @Override

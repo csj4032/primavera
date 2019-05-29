@@ -31,7 +31,7 @@ public class ArticleController {
 
     @GetMapping(value = "/articles/{id:[0-9]+}")
     public String detail(@PathVariable(value = "id") long id, Model model) {
-        model.addAttribute("article", writeArticleService.findByIdWithContent(id));
+        model.addAttribute("article", writeArticleService.hitAndFindArticle(id));
         return "article/detail";
     }
 
@@ -47,7 +47,7 @@ public class ArticleController {
         return "redirect:/articles";
     }
 
-    @PostMapping(value = "/articles/modify")
+    @PostMapping(value = "/articles/update")
     public String modify(@Valid ArticleDto.WriteArticle writeArticle) {
         return "redirect:/articles/" + writeArticleService.update(writeArticle).getId();
     }
@@ -56,5 +56,11 @@ public class ArticleController {
     public String delete(@Param("id") long id) {
         writeArticleService.delete(id);
         return "redirect:/articles";
+    }
+
+    @PostMapping(value = "/articles/comment")
+    public String comment(@Valid ArticleDto.WriteComment writeComment) {
+        writeArticleService.comment(writeComment);
+        return "redirect:/articles/" + writeComment.getArticle();
     }
 }
