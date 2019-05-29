@@ -38,15 +38,29 @@
 					</div>
 					<div class="box-footer">
 						<div class="pull-right">
-							<a th:href="@{${'/articles/modify?id=' + article.id}}" class="btn btn-default"><i class="fa fa-fw fa-list"></i> 수정</a>
-							<a th:href="@{${'/articles/reply?id=' + article.id}}" class="btn btn-default"><i class="fa fa-fw fa-list"></i> 답글</a>
+							<a href="javascript://" class="btn btn-danger" id="article-delete-button"><i class="fa fa-fw fa-list"></i> 삭제</a>
+							<a th:href="@{${'/articles/update?id=' + article.id}}" class="btn btn-warning"><i class="fa fa-fw fa-list"></i> 수정</a>
+							<a th:href="@{${'/articles/reply?id=' + article.id}}" class="btn btn-primary"><i class="fa fa-fw fa-list"></i> 답글</a>
 							<a th:href="@{/articles}" class="btn btn-default"><i class="fa fa-fw fa-list"></i> 목록</a>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
+		<form action="/articles/delete" method="post" id="article-delete-form">
+			<input type="hidden" name="_method" value="DELETE"/>
+			<input type="hidden" name="id" th:value="${article.id}"/>
+		</form>
 	</section>
+	<script>
+		$(function() {
+			$("#article-delete-button").click(function () {
+				if (confirm('정말로 삭제하시겠습니까?')) {
+					$('#article-delete-form').submit();
+				}
+			})
+		});
+	</script>
 </div>
 </body>
 </html>

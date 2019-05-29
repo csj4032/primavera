@@ -134,7 +134,7 @@ public interface ArticleMapper {
     @Select(value = SELECT_WITH_USER_CONTENTS_SQL + " WHERE A.ID = #{id}")
     Article findByIdWithContent(long id);
 
-    @Update("UPDATE ARTICLE SET SUBJECT = #{subject}, MOD_DT = #{modDt} WHERE ID = #{id} ")
+    @Update("UPDATE ARTICLE SET SUBJECT = #{subject}, STATUS = #{status, typeHandler=ArticleStatusTypeHandler}, MOD_DT = #{modDt} WHERE ID = #{id} ")
     int update(Article article);
 
     class ArticleProvider {

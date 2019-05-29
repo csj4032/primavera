@@ -15,7 +15,7 @@
 * Social 정보를 이용한 회원 가입
 * Social 정보를 이용한 로그인, 로그아웃, 탈퇴
 * 게시글 등록, 수정, 삭제, 조회 기능
-* 게시글 덧글 등록 기능
+* 게시글 답글 등록, 수정, 삭제 기능
 * 게시글 댓글 등록, 수정, 삭제 기능 및 대댓글 등록, 수정, 삭제
 * 게시글 관련 첨부파일 등록, 삭제
 * 게시글 편집 기능
@@ -50,10 +50,10 @@
 * Spring OAuth2 Social Login
 
 ## chap10
-* Post, Pagination, wysihtml5
+* Post, Pagination, WYSIHTML5
 
 ## chap11
-* Hierarchy Article Contents, Comments 
+* Hierarchy Article Contents, Reply
 
 ## Library Version
 * gradle 라이브러리 버전 정보 정리
