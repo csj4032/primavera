@@ -53,7 +53,7 @@
 										<tbody>
 										<tr th:each="article : ${page.getContents()}">
 											<td th:text="${article.id}">1</td>
-											<td th:style="${'padding-left:' + (article.level*10) + 'px'}"><a th:href="${'/articles/' + article.id}" th:text="${article.subject}">로마는 하루아침에 이루어지지 않았다.</a></td>
+											<td th:style="${'padding-left:' + (article.level*10) + 'px'}"><a th:href="${'/articles/' + article.id}" th:text="${T(org.springframework.web.util.HtmlUtils).htmlUnescape(article.subject)}"></a></td>
 											<td th:text="${article.authorName}">Genius</td>
 											<td th:text="${article.hit}">0</td>
 											<td th:text="${article.recommend}">0</td>

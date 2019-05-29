@@ -1,5 +1,6 @@
 package com.genius.primavera.domain.mapper;
 
+import com.genius.primavera.domain.mapper.article.ArticleMapper;
 import com.genius.primavera.domain.model.article.Article;
 import com.genius.primavera.domain.model.article.ArticleStatus;
 import com.genius.primavera.domain.model.user.User;

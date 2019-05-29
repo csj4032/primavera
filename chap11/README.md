@@ -9,24 +9,25 @@
 ### 계층형 게시판 (글타래) 테이블
 
 ```sql
-CREATE TABLE `ARTICLE` (
-  `ID` bigint(20) NOT NULL AUTO_INCREMENT,
-  `P_ID` bigint(20) NOT NULL DEFAULT 0,
-  `REFERENCE` bigint(20) NOT NULL,
-  `STEP` int(11) NOT NULL,
-  `LEVEL` int(11) NOT NULL,
-  `AUTHOR` bigint(20) NOT NULL,
-  `SUBJECT` varchar(200) NOT NULL,
-  `STATUS` tinyint(3) NOT NULL,
-  `HIT` bigint(20) NOT NULL DEFAULT 0,
-  `LIKE` bigint(20) NOT NULL DEFAULT 0,
-  `DISLIKE` bigint(20) NOT NULL DEFAULT 0,
-  `REG_DT` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `MOD_DT` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`ID`),
-  KEY `FK_WRITER_ID_idx` (`AUTHOR`),
-  CONSTRAINT `FK_ARTICLE_WRITER_ID` FOREIGN KEY (`AUTHOR`) REFERENCES `USER` (`ID`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+CREATE TABLE IF NOT EXISTS ARTICLE
+(
+    ID BIGINT(20) NOT NULL AUTO_INCREMENT,
+    P_ID BIGINT(20) NOT NULL DEFAULT 0,
+    REFERENCE BIGINT(20) NOT NULL,
+    STEP INT(11) NOT NULL,
+    LEVEL INT(11) NOT NULL,
+    AUTHOR BIGINT(20) NOT NULL,
+    SUBJECT VARCHAR(200) NOT NULL,
+    STATUS TINYINT(3) NOT NULL,
+    HIT BIGINT(20) NOT NULL DEFAULT 0,
+    RECOMMEND BIGINT(20) NOT NULL DEFAULT 0,
+    DISAPPROVE BIGINT(20) NOT NULL DEFAULT 0,
+    REG_DT TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP() ON UPDATE CURRENT_TIMESTAMP(),
+    MOD_DT TIMESTAMP NULL DEFAULT NULL,
+  PRIMARY KEY (ID),
+  KEY FK_WRITER_ID_IDX (AUTHOR),
+  CONSTRAINT FK_ARTICLE_AUTHOR_ID FOREIGN KEY (AUTHOR) REFERENCES USER (ID) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4;
 ```
 
 ### 계층 관계 아티클 조회
@@ -109,13 +110,11 @@ public class PrimaveraApplication {
 ```
 docker search mariadb
 docker pull mariadb:latest
-
 ```
 
 #### Creating a Container
 
 ```
-
 docker run --name mariadb -d -p 3306:3306 -e MYSQL_ROOT_HOST=% -e MYSQL_ROOT_PASSWORD=root -e MYSQL_USER=primavera -e MYSQL_PASSWORD=primavera -e MYSQL_DATABASE=primavera mariadb:latest
 
 docker ps
@@ -123,7 +122,6 @@ docker ps
 docker exec -it mariadb bash
 
 mysql -u primavera -h 127.0.0.1 -p primavera
-
 
 show databases;
 
@@ -137,12 +135,10 @@ desribe article;
 #### Running and Stopping the Container
 
 ```
-
 docker restart mariadb
 docker stop mariadb
 docker start mariadb
 
 docker rm maraidb
 docker rm -v maraidb
-
 ```

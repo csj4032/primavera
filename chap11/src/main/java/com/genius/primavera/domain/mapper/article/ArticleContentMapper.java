@@ -1,4 +1,4 @@
-package com.genius.primavera.application.article;
+package com.genius.primavera.domain.mapper.article;
 
 import com.genius.primavera.domain.model.article.Content;
 
