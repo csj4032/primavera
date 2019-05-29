@@ -16,51 +16,53 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 public class ArticleController {
 
-    @Autowired
-    private WriteArticleService writeArticleService;
+	@Autowired
+	private WriteArticleService writeArticleService;
 
-    @GetMapping(value = "/articles")
-    public String articles(Model model, PageRequest pageRequest) {
-        model.addAttribute("page", writeArticleService.findForPageable(pageRequest));
-        return "article/list";
-    }
+	@GetMapping(value = "/articles")
+	public String articles(Model model, PageRequest pageRequest) {
+		model.addAttribute("page", writeArticleService.findForPageable(pageRequest));
+		return "article/list";
+	}
 
-    @GetMapping(value = "/articles/{id:[0-9]+}")
-    public String detail(@PathVariable(value = "id") long id, Model model) {
-        model.addAttribute("article", writeArticleService.hitAndFindArticle(id));
-        return "article/detail";
-    }
+	@GetMapping(value = "/articles/{id:[0-9]+}")
+	public String detail(@PathVariable(value = "id") long id, Model model) {
+		model.addAttribute("article", writeArticleService.hitAndFindArticle(id));
+		return "article/detail";
+	}
 
-    @GetMapping(value = "/articles/{type:form|update|reply}")
-    public String form(Model model, @PathVariable(value = "type") WriteType type, @RequestParam(value = "id", required = false, defaultValue = "0") long id) {
-        model.addAttribute("form", writeArticleService.findByForForm(type, id));
-        return "article/form";
-    }
+	@GetMapping(value = "/articles/{type:form|update|reply}")
+	public String form(Model model, @PathVariable(value = "type") WriteType type, @RequestParam(value = "id", required = false, defaultValue = "0") long id) {
+		model.addAttribute("form", writeArticleService.findByForForm(type, id));
+		return "article/form";
+	}
 
-    @PostMapping(value = "/articles/save")
-    public String save(@Valid ArticleDto.WriteArticle writeArticle) {
-        writeArticleService.save(writeArticle);
-        return "redirect:/articles";
-    }
+	@PostMapping(value = "/articles/save")
+	public String save(@Valid ArticleDto.WriteArticle writeArticle) {
+		writeArticleService.save(writeArticle);
+		return "redirect:/articles";
+	}
 
-    @PostMapping(value = "/articles/update")
-    public String modify(@Valid ArticleDto.WriteArticle writeArticle) {
-        return "redirect:/articles/" + writeArticleService.update(writeArticle).getId();
-    }
+	@PostMapping(value = "/articles/update")
+	public String modify(@Valid ArticleDto.WriteArticle writeArticle) {
+		return "redirect:/articles/" + writeArticleService.update(writeArticle).getId();
+	}
 
-    @DeleteMapping(value = "/articles/delete")
-    public String delete(@Param("id") long id) {
-        writeArticleService.delete(id);
-        return "redirect:/articles";
-    }
+	@DeleteMapping(value = "/articles/delete")
+	public String delete(@Param("id") long id) {
+		writeArticleService.delete(id);
+		return "redirect:/articles";
+	}
 
-    @PostMapping(value = "/articles/comment")
-    public String comment(@Valid ArticleDto.WriteComment writeComment) {
-        writeArticleService.comment(writeComment);
-        return "redirect:/articles/" + writeComment.getArticle();
-    }
+	@PostMapping(value = "/articles/comment")
+	public String comment(@Valid ArticleDto.WriteComment writeComment) {
+		writeArticleService.comment(writeComment);
+		return "redirect:/articles/" + writeComment.getArticle();
+	}
 }

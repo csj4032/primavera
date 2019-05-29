@@ -39,3 +39,9 @@ org.springframework.dao.DataIntegrityViolationException:
 ```
 * STATUS 컬럼 typeHandler 적용
     * type-handler 등록은 type-alias 도 함께 등록
+    
+### Spring Isolation
+
+| 격리 수준 | 설명 |
+|---|---|
+| DEFAULT | DB 기본 격리 수준을 사용합니다. 대다수 DB는 READ_COMMITTED 기본 격리 수준|
