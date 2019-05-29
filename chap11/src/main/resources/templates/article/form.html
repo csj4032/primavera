@@ -22,10 +22,9 @@
 			<div class="col-md-12">
 				<div class="box box-widget">
 					<form role="form" th:action="${'/articles/' + form.actionType()}" method="post">
-						<input type="hidden" name="writerId" th:value="${#authorization.getAuthentication().principal.userId}">
-						<input type="input" name="id" th:value="${form.id}">
-						<input type="input" name="pId" th:value="${form.pId}">
-						<input type="input" name="writeType" th:value="${form.writeType}">
+						<input type="hidden" name="id" th:value="${form.id}">
+						<input type="hidden" name="pId" th:value="${form.pId}">
+						<input type="hidden" name="writeType" th:value="${form.writeType}">
 						<div class="box-body">
 							<div class="form-group">
 								<label for="subject">Subject</label>

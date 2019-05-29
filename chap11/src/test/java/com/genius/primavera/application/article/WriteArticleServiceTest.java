@@ -81,13 +81,13 @@ class WriteArticleServiceTest {
 
     @Test
     @Order(3)
-    @DisplayName("원글 첫번째 덧글 쓰기")
+    @DisplayName("원글 첫번째 답글 쓰기")
     @WithUserDetails(value = "Genius Choi", userDetailsServiceBeanName = "primaveraUserDetailsService")
     public void writeFirstReplyTest() {
         Article origin = writeArticleService.findById(article_1.getId());
         writeRequestArticle.setPId(origin.getId());
         writeRequestArticle.setSubject(origin.getSubject() + "_1");
-        writeRequestArticle.setContents("원글 첫번째 덧글 쓰기");
+        writeRequestArticle.setContents("원글 첫번째 답글 쓰기");
         writeRequestArticle.setWriteType(WriteType.REPLY);
         article_1_1 = writeArticleService.save(writeRequestArticle);
         Assertions.assertEquals(article_1.getReference(), article_1_1.getReference());
@@ -97,13 +97,13 @@ class WriteArticleServiceTest {
 
     @Test
     @Order(4)
-    @DisplayName("원글 두번째 덧글 쓰기")
+    @DisplayName("원글 두번째 답글 쓰기")
     @WithUserDetails(value = "Genius Choi", userDetailsServiceBeanName = "primaveraUserDetailsService")
     public void writeSecondReplyTest() {
         Article origin = writeArticleService.findById(article_1.getId());
         writeRequestArticle.setPId(origin.getId());
         writeRequestArticle.setSubject(origin.getSubject() + "_2");
-        writeRequestArticle.setContents("원글 첫번째 두번째 덧글 쓰기");
+        writeRequestArticle.setContents("원글 첫번째 두번째 답글 쓰기");
         writeRequestArticle.setWriteType(WriteType.REPLY);
         article_1_2 = writeArticleService.save(writeRequestArticle);
         Assertions.assertEquals(article_1.getReference(), article_1_2.getReference());
@@ -113,13 +113,13 @@ class WriteArticleServiceTest {
 
     @Test
     @Order(5)
-    @DisplayName("원글 첫번째 덧글 첫번째 덧글 쓰기")
+    @DisplayName("원글 첫번째 답글 첫번째 답글 쓰기")
     @WithUserDetails(value = "Genius Choi", userDetailsServiceBeanName = "primaveraUserDetailsService")
     public void writeFirst_FirstReplyTest() {
         Article origin = writeArticleService.findById(article_1_1.getId());
         writeRequestArticle.setPId(origin.getId());
         writeRequestArticle.setSubject(origin.getSubject() + "_1");
-        writeRequestArticle.setContents("원글 첫번째 덧글 첫번째 덧글 쓰기");
+        writeRequestArticle.setContents("원글 첫번째 답글 첫번째 답글 쓰기");
         writeRequestArticle.setWriteType(WriteType.REPLY);
         article_1_1_1 = writeArticleService.save(writeRequestArticle);
         Assertions.assertEquals(article_1.getReference(), article_1_1_1.getReference());
@@ -144,13 +144,13 @@ class WriteArticleServiceTest {
 
     @Test
     @Order(7)
-    @DisplayName("원글 첫번째 덧글 첫번째 덧글 첫번째 덧글 쓰기")
+    @DisplayName("원글 첫번째 답글 첫번째 답글 첫번째 답글 쓰기")
     @WithUserDetails(value = "Genius Choi", userDetailsServiceBeanName = "primaveraUserDetailsService")
     public void writeFirst_FirstReply_FirstReplyTest() {
         Article origin = writeArticleService.findById(article_1_1_1.getId());
         writeRequestArticle.setPId(origin.getId());
         writeRequestArticle.setSubject(origin.getSubject() + "_1");
-        writeRequestArticle.setContents("원글 첫번째 덧글 첫번째 덧글 첫번째 덧글 쓰기");
+        writeRequestArticle.setContents("원글 첫번째 답글 첫번째 답글 첫번째 답글 쓰기");
         article_1_1_1_1 = writeArticleService.save(writeRequestArticle);
         Assertions.assertEquals(4, article_1_1_1_1.getLevel());
         Assertions.assertEquals(5, article_1_1_1_1.getStep());
@@ -158,13 +158,13 @@ class WriteArticleServiceTest {
 
     @Test
     @Order(8)
-    @DisplayName("원글 첫번째 덧글 첫번째 덧글 두번째 덧글 쓰기")
+    @DisplayName("원글 첫번째 답글 첫번째 답글 두번째 답글 쓰기")
     @WithUserDetails(value = "Genius Choi", userDetailsServiceBeanName = "primaveraUserDetailsService")
     public void writeFirst_FirstReply_SecondReplyTest() {
         Article origin = writeArticleService.findById(article_1_1.getId());
         writeRequestArticle.setPId(origin.getId());
         writeRequestArticle.setSubject(origin.getSubject() + "_2");
-        writeRequestArticle.setContents("원글 첫번째 덧글 첫번째 덧글 쓰기");
+        writeRequestArticle.setContents("원글 첫번째 답글 첫번째 답글 쓰기");
         writeRequestArticle.setWriteType(WriteType.REPLY);
         article_1_1_2 = writeArticleService.save(writeRequestArticle);
         Assertions.assertEquals(article_1.getReference(), article_1_1_2.getReference());
@@ -174,13 +174,13 @@ class WriteArticleServiceTest {
 
     @Test
     @Order(9)
-    @DisplayName("원글 두번째 덧글 첫번째 쓰기")
+    @DisplayName("원글 두번째 답글 첫번째 쓰기")
     @WithUserDetails(value = "Genius Choi", userDetailsServiceBeanName = "primaveraUserDetailsService")
     public void writeSecond_FirstReply_Test() {
         Article origin = writeArticleService.findById(article_2.getId());
         writeRequestArticle.setPId(origin.getId());
         writeRequestArticle.setSubject(origin.getSubject() + "_1");
-        writeRequestArticle.setContents("원글 두번째 덧글 첫번째 쓰기");
+        writeRequestArticle.setContents("원글 두번째 답글 첫번째 쓰기");
         article_2_1 = writeArticleService.save(writeRequestArticle);
         Assertions.assertEquals(article_2.getReference(), article_2_1.getReference());
         Assertions.assertEquals(2, article_2_1.getLevel());
@@ -189,13 +189,13 @@ class WriteArticleServiceTest {
 
     @Test
     @Order(10)
-    @DisplayName("원글 두번째 덧글 두번째 쓰기")
+    @DisplayName("원글 두번째 답글 두번째 쓰기")
     @WithUserDetails(value = "Genius Choi", userDetailsServiceBeanName = "primaveraUserDetailsService")
     public void writeSecond_SecondReply_Test() {
         Article origin = writeArticleService.findById(article_2.getId());
         writeRequestArticle.setPId(origin.getId());
         writeRequestArticle.setSubject(origin.getSubject() + "_2");
-        writeRequestArticle.setContents("원글 두번째 덧글 두번째 쓰기");
+        writeRequestArticle.setContents("원글 두번째 답글 두번째 쓰기");
         writeRequestArticle.setWriteType(WriteType.REPLY);
         article_2_2 = writeArticleService.save(writeRequestArticle);
 
@@ -206,14 +206,14 @@ class WriteArticleServiceTest {
 
     @Test
     @Order(11)
-    @DisplayName("원글 두번째 덧글 세번째 쓰기")
+    @DisplayName("원글 두번째 답글 세번째 쓰기")
     @WithUserDetails(value = "Genius Choi", userDetailsServiceBeanName = "primaveraUserDetailsService")
     public void writeSecond_ThirdReply_Test() {
         Article origin = writeArticleService.findById(article_2.getId());
         writeRequestArticle.setPId(origin.getId());
         writeRequestArticle.setSubject(origin.getSubject() + "_3");
         writeRequestArticle.setWriteType(WriteType.REPLY);
-        writeRequestArticle.setContents("원글 두번째 덧글 세번째 쓰기");
+        writeRequestArticle.setContents("원글 두번째 답글 세번째 쓰기");
         article_2_3 = writeArticleService.save(writeRequestArticle);
         Assertions.assertEquals(article_2.getReference(), article_2_3.getReference());
         Assertions.assertEquals(2, article_2_3.getLevel());

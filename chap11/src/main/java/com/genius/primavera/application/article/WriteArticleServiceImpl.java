@@ -6,6 +6,7 @@ import com.genius.primavera.domain.Paged;
 import com.genius.primavera.domain.mapper.ArticleMapper;
 import com.genius.primavera.domain.model.article.Article;
 import com.genius.primavera.domain.model.article.ArticleDto;
+import com.genius.primavera.domain.model.article.ArticleStatus;
 import com.genius.primavera.domain.model.article.Content;
 import com.genius.primavera.domain.model.article.WriteType;
 import com.genius.primavera.domain.model.user.User;
@@ -55,6 +56,15 @@ public class WriteArticleServiceImpl implements WriteArticleService {
         articleMapper.update(article);
         articleContentMapper.update(article.getContentsId(), writeArticle.getContents());
         return article;
+    }
+
+    @Override
+    public int delete(long id) {
+        Article article = articleMapper.findById(id);
+        if (Objects.isNull(article)) throw new ArticleNotFoundException();
+        article.setStatus(ArticleStatus.DELETE);
+        article.setModDt(Instant.now());
+        return articleMapper.update(article);
     }
 
     @Override

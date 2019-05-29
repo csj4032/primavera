@@ -13,6 +13,8 @@ public interface WriteArticleService {
 
     Article update(ArticleDto.WriteArticle writeArticle);
 
+    int delete(long id);
+
     Article findById(long id);
 
     ArticleDto.DetailArticle findByIdWithContent(long id);
@@ -20,5 +22,4 @@ public interface WriteArticleService {
     Paged<ArticleDto.ListArticle> findForPageable(PageRequest pageRequest);
 
     ArticleDto.FormArticle findByForForm(WriteType type, long id);
-
 }
