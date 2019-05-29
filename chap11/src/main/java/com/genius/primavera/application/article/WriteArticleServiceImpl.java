@@ -14,6 +14,7 @@ import com.genius.primavera.domain.model.article.Content;
 import com.genius.primavera.domain.model.article.WriteType;
 import com.genius.primavera.domain.model.user.User;
 
+import org.jetbrains.annotations.NotNull;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -118,7 +119,7 @@ public class WriteArticleServiceImpl implements WriteArticleService {
         }.getType()), articleMapper.findAllCount());
     }
 
-    private Article getOriginArticle(ArticleDto.WriteArticle writeArticle) {
+    private Article getOriginArticle(@NotNull ArticleDto.WriteArticle writeArticle) {
         if (writeArticle.getWriteType().equals(WriteType.REPLY)) {
             Article article = articleMapper.findById(writeArticle.getPId());
             if (Objects.isNull(article)) throw new ArticleNotFoundException();
@@ -127,7 +128,7 @@ public class WriteArticleServiceImpl implements WriteArticleService {
         return new Article();
     }
 
-    private Article getArticle(Article origin, ArticleDto.WriteArticle writeArticle, User author) {
+    private Article getArticle(@NotNull Article origin, @NotNull ArticleDto.WriteArticle writeArticle, User author) {
         var article = new Article();
         article.setPId(origin.getId());
         article.setReference(origin.getReference());
@@ -140,7 +141,7 @@ public class WriteArticleServiceImpl implements WriteArticleService {
         return article;
     }
 
-    private Content getContent(ArticleDto.WriteArticle writeArticle, Article article) {
+    private Content getContent(@NotNull ArticleDto.WriteArticle writeArticle, @NotNull Article article) {
         Content content = new Content();
         content.setArticle(article);
         content.setContents(writeArticle.getContents());
