@@ -12,9 +12,9 @@
 
 	$(function() {
 
-		// Shim allowing us to get the state of the check-box on jQuery versions
+		// Shim allowing us to get the state of the check-box on jQuery gradle
 		// prior to 1.6, when prop was added.  The reason we don't just use attr
-		// is because it doesn't work in jQuery versions 1.9.x and later.
+		// is because it doesn't work in jQuery gradle 1.9.x and later.
 
 		// TODO: Remove this once Flot's minimum supported jQuery reaches 1.6.
 		if (typeof $.fn.prop != 'function') {
