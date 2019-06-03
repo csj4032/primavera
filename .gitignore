@@ -1,6 +1,7 @@
 .gradle
 .idea
 *.iml
+*.jks
 /chap01/build
 /chap01/out
 /chap02/build
@@ -24,3 +25,5 @@
 /chap10/out
 /chap11/build
 /chap11/out
+/chap12/build
+/chap12/out
