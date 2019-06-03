@@ -1,9 +1,10 @@
 package com.genius.primavera;
 
 import com.zaxxer.hikari.HikariDataSource;
-
+import lombok.*;
+import lombok.extern.slf4j.Slf4j;
+import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,19 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Stream;
-
-import javax.sql.DataSource;
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
@@ -42,6 +30,7 @@ public class PrimaveraController {
 
     @GetMapping(value = "users/{id}")
     public User user(@PathVariable(value = "id") long id) {
+        primaveraDao.findByName("a");
         return primaveraDao.findById(id);
     }
 }
@@ -59,11 +48,17 @@ class User {
 @RequiredArgsConstructor
 class PrimaveraDao {
     private final JdbcTemplate jdbcTemplate;
+    private final SqlSessionTemplate sqlSessionTemplate;
 
     User findById(long id) {
         return jdbcTemplate.queryForObject(
                 "SELECT 1 AS id, '홍길동' as Name FROM DUAL WHERE 1 = ?",
                 (ResultSet rs, int rowNum) -> new User(rs.getLong(1), rs.getString(2)),
                 id);
+    }
+
+    User findByName(String name) {
+        return sqlSessionTemplate.selectOne(
+                "SELECT 1 AS id, '홍길동' as Name FROM DUAL WHERE 'a' = #{name}", name);
     }
 }
