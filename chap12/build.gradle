@@ -46,6 +46,7 @@ dependencies {
     }
     implementation('org.springframework.boot:spring-boot-starter-jdbc')
     compile('org.springframework.boot:spring-boot-starter-undertow')
+    compile("org.mybatis.spring.boot:mybatis-spring-boot-starter:2.0.1")
     compile('org.mariadb.jdbc:mariadb-java-client:2.4.1')
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude module: 'junit'
