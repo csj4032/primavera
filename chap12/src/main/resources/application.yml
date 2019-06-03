@@ -1,2 +1,8 @@
+spring:
+  datasource:
+    username: primavera
+    password: primavera
+    url: jdbc:mariadb://localhost/primavera
+
 logging:
   config: classpath:logback.xml
