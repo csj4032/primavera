@@ -25,6 +25,8 @@ spring:
     table: SCHEMA_HISTORY
     baseline-on-migrate: false
     baseline-description: schema history
+  aop:
+    proxy-target-class: true
 
 mybatis:
   configuration:
