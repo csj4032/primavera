@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @ExtendWith(SpringExtension.class)
 @DisplayName(value = "트랜잭션 전파 테스트")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class WinnerServiceTest {
+public class WinnerServicePropagationTest {
 
     @Autowired
     private WinnerService winnerService;
