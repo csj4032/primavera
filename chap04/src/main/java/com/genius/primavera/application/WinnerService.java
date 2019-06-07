@@ -13,4 +13,12 @@ public interface WinnerService {
     int saveAllNotSupported(List<Winner> winners);
 
     int saveAllNested(List<Winner> winner1);
+
+    List<Winner> findAllUncommitted();
+
+    List<Winner> findAllCommitted();
+
+    Winner findAllByIdReadCommitted(int id);
+
+    Winner findAllByIdRepeatableRead(int id);
 }

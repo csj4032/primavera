@@ -4,6 +4,7 @@ import com.genius.primavera.domain.mapper.WinnerMapper;
 import com.genius.primavera.domain.model.Winner;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,5 +49,29 @@ public class WinnerServiceImpl implements WinnerService {
             winnerMapper.insertWinner(winners.get(i));
         }
         return winners.size();
+    }
+
+    @Override
+    @Transactional(isolation = Isolation.READ_UNCOMMITTED)
+    public List<Winner> findAllUncommitted() {
+        return winnerMapper.findAll();
+    }
+
+    @Override
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public List<Winner> findAllCommitted() {
+        return winnerMapper.findAll();
+    }
+
+    @Override
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public Winner findAllByIdReadCommitted(int id) {
+        return winnerMapper.findById(id);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.NESTED, isolation = Isolation.REPEATABLE_READ)
+    public Winner findAllByIdRepeatableRead(int id) {
+        return winnerMapper.findById(id);
     }
 }
