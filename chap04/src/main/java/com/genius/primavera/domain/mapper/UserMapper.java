@@ -57,7 +57,7 @@ public interface UserMapper {
 			"</script>"
 	})
 	@Options(useGeneratedKeys = true, keyProperty = "user.id")
-	int save(@Param("users") List<User> users);
+	int saveAll(@Param("users") List<User> users);
 
 	@Update(value = "UPDATE USER SET NICKNAME = #{user.nickname}, MOD_DATE = #{user.modDate} WHERE ID = #{user.id}")
 	int update(@Param("user") User user);

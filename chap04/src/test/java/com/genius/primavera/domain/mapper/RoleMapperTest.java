@@ -21,7 +21,7 @@ public class RoleMapperTest {
 	@Autowired
 	private UserMapper userMapper;
 	@Autowired
-	private UserRoleMapper contractMapper;
+	private UserRoleMapper roleMapper;
 	private static List<Role> contacts;
 	private static User user;
 
