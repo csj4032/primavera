@@ -151,7 +151,7 @@ public class UserMapperTest {
 	@Order(9)
 	@DisplayName(value = "유저 벌크 등록")
 	public void bulkSave() {
-		userMapper.save(bulkUsers);
+		userMapper.saveAll(bulkUsers);
 		bulkUsers.stream().forEach(System.out::println);
 	}
 }
