@@ -19,9 +19,11 @@ class HelloAspectTest {
 	@Test
 	public void helloAspectTest() {
 		helloService.getArticle(1);
-		helloService.getArticle(1);
-		helloService.getArticle(1);
-
-		Assertions.assertEquals(3, helloAspect.getArticleCount(1));
+		helloService.getArticle(3);
+		helloService.getArticle(3);
+		helloService.getArticle(3);
+		Assertions.assertEquals(1, helloAspect.getArticleCount(1));
+		Assertions.assertEquals(0, helloAspect.getArticleCount(2));
+		Assertions.assertEquals(3, helloAspect.getArticleCount(3));
 	}
 }

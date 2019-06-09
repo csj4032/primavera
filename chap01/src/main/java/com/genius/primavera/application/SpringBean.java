@@ -1,5 +1,11 @@
 package com.genius.primavera.application;
 
+import lombok.extern.slf4j.Slf4j;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+
+@Slf4j
 public class SpringBean {
 
 	private String name;
@@ -10,5 +16,15 @@ public class SpringBean {
 
 	public String getName() {
 		return name;
+	}
+
+	@PostConstruct
+	public void construct() {
+		log.info("construct");
+	}
+
+	@PreDestroy
+	public void destroy() {
+		log.info("destroy");
 	}
 }
