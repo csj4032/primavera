@@ -51,6 +51,6 @@ public class HelloAspect {
 	}
 
 	public int getArticleCount(int index) {
-		return indexCounts.get(index);
+		return indexCounts.computeIfAbsent(index, k -> 0);
 	}
 }
