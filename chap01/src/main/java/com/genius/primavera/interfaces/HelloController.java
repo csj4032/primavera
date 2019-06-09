@@ -22,8 +22,8 @@ public class HelloController {
 	private final SpringBean springBean;
 
 	@GetMapping
-	public String index() {
-		log.info(springBean.getName());
+	public String index(int number) {
+		log.info("bean name : " + springBean.getName() + "parameter : " + number);
 		return "index";
 	}
 

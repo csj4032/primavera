@@ -1,7 +1,6 @@
 spring:
   application:
     name: Privamera
-
   banner:
     charset: UTF-8
     location: classpath:primavera.txt

@@ -5,6 +5,7 @@
 * Application Properties [참고](https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html)
 * Spring boot banner [링크](https://devops.datenkollektiv.de/banner.txt/index.html)
 
+
 #### 테스트 설정
 * Junit 5 적용을 위한 gradle.build 설정
 * Junit 5 [참고](https://junit.org/junit5/docs/current/user-guide/)
