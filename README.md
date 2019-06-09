@@ -23,25 +23,25 @@
 ## Launch
 
 ## chap01
-* 스프링 부트 설정
+* 스프링 부트 설정, DI
 
 ## chap02
-* MariaDB 연결 및 테스트
+* MariaDB 연결 및 테스트, AOP
 
 ## chap03
 * Springboot DataSource
 
 ## chap04
-* Mybatis
+* Mybatis, Transaction
 
 ## chap05
-* Validation
+* Validation, AJAX
 
 ## chap06
-* Thymeleaf
+* Thymeleaf, 회원가입
 
 ## chap07
-* Filter
+* Filter, Lucy-xss-filter
 
 ## chap08
 * Spring Security
