@@ -4,5 +4,7 @@ import java.util.List;
 
 public interface HelloService {
 
+	String getArticle(int id);
+
 	List<String> getArticles();
 }

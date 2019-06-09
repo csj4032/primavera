@@ -32,6 +32,7 @@ test {
 
 dependencies {
     implementation('org.springframework.boot:spring-boot-starter-web')
+    implementation('org.springframework.boot:spring-boot-starter-aop')
     implementation('org.springframework.boot:spring-boot-starter-jdbc')
     compile('org.springframework.security:spring-security-core:5.1.5.RELEASE')
     compile("org.mybatis.spring.boot:mybatis-spring-boot-starter:2.0.1")
