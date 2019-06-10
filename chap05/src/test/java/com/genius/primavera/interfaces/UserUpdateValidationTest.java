@@ -52,7 +52,7 @@ public class UserUpdateValidationTest {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
 		HttpEntity<User> httpEntity = new HttpEntity(source, headers);
-		ResponseEntity<User> destination = restTemplate.exchange("/user/update", HttpMethod.POST, httpEntity, User.class, source);
+		ResponseEntity<User> destination = restTemplate.exchange("/users/update", HttpMethod.POST, httpEntity, User.class, source);
 		Assertions.assertEquals(400, destination.getStatusCodeValue());
 	}
 }

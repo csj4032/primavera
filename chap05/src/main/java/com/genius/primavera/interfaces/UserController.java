@@ -12,11 +12,16 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
-@RequestMapping(value = "/user")
+@RequestMapping(value = "/users")
 public class UserController {
 
 	@Autowired
 	private UserService userService;
+
+	@GetMapping(value = "/{id}")
+	public String getUser(@PathVariable(value = "id") long id) {
+		return "user";
+	}
 
 	@GetMapping(value = "/{id}")
 	public long getUserById(@PathVariable(value = "id") long id) {

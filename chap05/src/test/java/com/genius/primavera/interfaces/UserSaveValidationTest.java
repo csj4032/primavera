@@ -27,7 +27,7 @@ public class UserSaveValidationTest {
 	@Order(1)
 	@DisplayName("유저 아이디를 이용한 조회")
 	public void getUserById() {
-		long body = restTemplate.getForObject("/user/1", long.class);
+		long body = restTemplate.getForObject("/users/1", long.class);
 		Assertions.assertEquals(1L, body);
 	}
 
@@ -93,7 +93,7 @@ public class UserSaveValidationTest {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
 		HttpEntity<User> httpEntity = new HttpEntity(source, headers);
-		ResponseEntity<User> destination = restTemplate.exchange("/user/save", HttpMethod.POST, httpEntity, User.class, source);
+		ResponseEntity<User> destination = restTemplate.exchange("/users/save", HttpMethod.POST, httpEntity, User.class, source);
 		Assertions.assertEquals(400, destination.getStatusCodeValue());
 	}
 }
