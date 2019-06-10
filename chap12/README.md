@@ -7,4 +7,6 @@
 4. ConfigFileApplicationListener 통하여 application.yml 로딩
 
 ### Database 어떻게 연결되나?
-
+1. DataSourceAutoConfiguration matched
+2. DataSourceConfiguration.PooledDataSourceConfiguration matched
+3. DataSourceConfiguration.Hikari matched
