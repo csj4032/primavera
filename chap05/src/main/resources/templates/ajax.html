@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+	<title>Ajax</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="webjars/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+	<script src="webjars/jquery/3.0.0/jquery.min.js"></script>
+</head>
+<body>
+<div class="container d-flex w-100 h-100 p-3 mx-auto flex-column">
+	<div class="row justify-content-md-center">
+		<main role="main" class="inner cover">
+			<button type="button" id="html" class="btn btn-secondary">html</button>
+			<button type="button" id="form" class="btn btn-secondary">form</button>
+			<button type="button" id="form-data-get" class="btn btn-secondary">form-data-get</button>
+			<button type="button" id="form-data-post" class="btn btn-secondary">form-data-post</button>
+			<button type="button" id="json-data-get" class="btn btn-danger">json-data-get</button>
+			<button type="button" id="json-data-post" class="btn btn-secondary">json-data-post</button>
+		</main>
+	</div>
+</div>
+<script>
+
+	$("#html").click(function () {
+		$.ajax({
+			method: "GET",
+			url: "/ajax/html",
+			dataType: "html",
+			contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+			dataType: "html",
+			success: function (result) {
+				console.log(result)
+			},
+			error: function (error) {
+				console.log(error);
+			}
+		});
+	});
+
+	$("#form").click(function () {
+		$.ajax({
+			method: "GET",
+			url: "/ajax/form",
+			contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+			dataType: "json",
+			success: function (result) {
+				console.log(result)
+			},
+			error: function (error) {
+				console.log(error);
+			}
+		});
+	});
+
+	$("#form-data-get").click(function () {
+		$.ajax({
+			method: "GET",
+			url: "/ajax/form/data",
+			contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+			data: {id: 1, nickname: "John", email: "genius@gmail.com"},
+			dataType: "json",
+			success: function (result) {
+				console.log(result)
+			},
+			error: function (error) {
+				console.log(error);
+			}
+		});
+	});
+
+	$("#form-data-post").click(function () {
+		$.ajax({
+			method: "POST",
+			url: "/ajax/form/data",
+			contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+			data: {id: 1, nickname: "John", email: "genius@gmail.com"},
+			dataType: "json",
+			success: function (result) {
+				console.log(result)
+			},
+			error: function (error) {
+				console.log(error);
+			}
+		});
+	});
+
+	$("#json-data-get").click(function () {
+		const user = {
+			id: 1,
+			email: "genius@gmail.com"
+		};
+		$.ajax({
+			method: "GET",
+			url: "/ajax/json/data",
+			contentType: "application/json; charset=UTF-8",
+			data: JSON.stringify(user),
+			dataType: "json",
+			success: function (result) {
+				console.log(result)
+			},
+			error: function (error) {
+				console.log(error);
+			}
+		});
+	});
+
+	$("#json-data-post").click(function () {
+		const user = {
+			id: 1,
+			email: "genius@gmail.com"
+		};
+		$.ajax({
+			method: "POST",
+			url: "/ajax/json/data",
+			contentType: "application/json; charset=UTF-8",
+			data: JSON.stringify(user),
+			dataType: "json",
+			success: function (result) {
+				console.log(result)
+			},
+			error: function (error) {
+				console.log(error);
+			}
+		});
+	});
+</script>
+</body>
+</html>

@@ -19,11 +19,6 @@ public class UserController {
 	private UserService userService;
 
 	@GetMapping(value = "/{id}")
-	public String getUser(@PathVariable(value = "id") long id) {
-		return "user";
-	}
-
-	@GetMapping(value = "/{id}")
 	public long getUserById(@PathVariable(value = "id") long id) {
 		return id;
 	}
