@@ -51,4 +51,5 @@ dependencies {
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude module: 'junit'
     }
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 }
