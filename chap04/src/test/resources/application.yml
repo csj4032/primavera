@@ -11,6 +11,8 @@ spring:
   banner:
     charset: UTF-8
     location: classpath:primavera.txt
+  aop:
+    proxy-target-class: true
 
 logging:
   config: classpath:logback.xml

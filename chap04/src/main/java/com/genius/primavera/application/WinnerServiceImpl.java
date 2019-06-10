@@ -26,6 +26,18 @@ public class WinnerServiceImpl implements WinnerService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public int saveNew(Winner winner) {
+        return winnerMapper.insertWinner(winner);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
+    public int saveNotSupported(Winner winner) {
+        return winnerMapper.insertWinner(winner);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public int saveAll(List<Winner> winners) {
         for (int i = 0; i < winners.size(); i++) {
             winnerMapper.insertWinner(winners.get(i));
@@ -47,6 +59,31 @@ public class WinnerServiceImpl implements WinnerService {
     public int saveAllNested(List<Winner> winners) {
         for (int i = 0; i < winners.size(); i++) {
             winnerMapper.insertWinner(winners.get(i));
+        }
+        return winners.size();
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public int innerSave(List<Winner> winners) {
+        for (int i = 0; i < winners.size(); i++) {
+            this.save(winners.get(i));
+        }
+        return winners.size();
+    }    @Override
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public int innerSaveNew(List<Winner> winners) {
+        for (int i = 0; i < winners.size(); i++) {
+            this.saveNew(winners.get(i));
+        }
+        return winners.size();
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public int innerNotSupported(List<Winner> winners) {
+        for (int i = 0; i < winners.size(); i++) {
+            this.saveNotSupported(winners.get(i));
         }
         return winners.size();
     }
