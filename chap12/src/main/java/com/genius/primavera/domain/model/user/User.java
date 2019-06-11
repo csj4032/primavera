@@ -25,8 +25,8 @@ import lombok.ToString;
 @Setter
 @Builder
 @ToString
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor(staticName = "of")
 @EqualsAndHashCode(of = {"id", "email"})
 public class User {
 
