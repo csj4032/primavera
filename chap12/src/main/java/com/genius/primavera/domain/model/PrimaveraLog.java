@@ -30,7 +30,7 @@ public class PrimaveraLog implements Serializable {
     public static final String SEQUENCE_NAME = "users_sequence";
 
     @Id
-    private long id;
+    public long id;
     private String type;
     private String kind;
     private String target;

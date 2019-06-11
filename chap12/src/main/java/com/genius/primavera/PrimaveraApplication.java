@@ -1,8 +1,12 @@
 package com.genius.primavera;
 
 import org.springframework.boot.Banner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.data.mongodb.config.EnableMongoAuditing;
 import org.springframework.data.mongodb.repository.config.EnableReactiveMongoRepositories;
 import org.springframework.web.reactive.config.EnableWebFlux;
@@ -10,6 +14,7 @@ import org.springframework.web.reactive.config.EnableWebFlux;
 @SpringBootApplication
 @EnableMongoAuditing
 @EnableReactiveMongoRepositories
+@EnableConfigurationProperties(ThymeleafProperties.class)
 public class PrimaveraApplication {
 
 	private static final String APPLICATION = "spring.config.location=classpath:/application-${spring.profiles.active:default}.yml,classpath:/social.yml";

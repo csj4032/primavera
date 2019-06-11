@@ -1,6 +1,5 @@
 <!DOCTYPE HTML>
-<html xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml"
-      layout:decorate="~{layouts/layout}">
+<html xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml" layout:decorate="~{layouts/layout}">
 <head>
 	<title>Primavera Admin</title>
 </head>
@@ -47,6 +46,7 @@
                         <div class="dataTables_wrapper form-inline dt-bootstrap">
                             <div class="row">
                                 <div class="col-sm-12">
+                                    <div th:text="${message}"></div>
                                     <table id="articles" class="table table-hover" role="grid">
                                         <thead>
                                         <tr role="row">
@@ -56,10 +56,11 @@
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        <tr th:each="log : ${logs}">
+                                        <tr data-th-each="log : ${logs}">
                                             <td>[[${log.id}]]</td>
+                                            <td>[[${log}]]</td>
+                                            <td>[[${log}]]</td>
                                         </tr>
-                                        <tbody>
                                         </tbody>
                                     </table>
                                 </div>
