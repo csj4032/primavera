@@ -1,4 +1,4 @@
-package com.genius.primavera.infrastructure.Intercepts;
+package com.genius.primavera.infrastructure.intercepts;
 
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.statement.StatementHandler;

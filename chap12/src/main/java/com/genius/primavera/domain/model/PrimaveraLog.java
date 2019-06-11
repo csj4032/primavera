@@ -24,6 +24,8 @@ import lombok.ToString;
 @Document(collection = "primaveraLog")
 public class PrimaveraLog implements Serializable {
 
+    private static final long serialVersionUID = 2405172041950251807L;
+
     @Transient
     public static final String SEQUENCE_NAME = "users_sequence";
 
@@ -31,7 +33,7 @@ public class PrimaveraLog implements Serializable {
     private long id;
     private String type;
     private String kind;
-    private Object target;
+    private String target;
     @CreatedDate
     private Instant createDt;
 }
