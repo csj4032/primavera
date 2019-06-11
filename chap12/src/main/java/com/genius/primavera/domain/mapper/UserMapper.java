@@ -16,14 +16,13 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.SelectKey;
 import org.apache.ibatis.annotations.SelectProvider;
 import org.apache.ibatis.annotations.Update;
-import org.hibernate.envers.event.spi.EnversListener;
 import org.mybatis.dynamic.sql.select.render.SelectStatementProvider;
 import org.mybatis.dynamic.sql.util.SqlProviderAdapter;
 
 import java.util.List;
 
 @Mapper
-public interface UserMapper extends EnversListener {
+public interface UserMapper {
 
     String SELECT_FROM_USER_JOIN_CONNECTION = "SELECT A.ID, A.EMAIL, NICKNAME, PASSWORD, STATUS, B.PROVIDER, B.PROVIDER_ID, B.PROFILE_URL, B.IMAGE_URL, REG_DT, MOD_DT FROM USER A INNER JOIN USER_CONNECTION B ON A.EMAIL = B.EMAIL ";
     String SELECT_FROM_USER = "SELECT ID, EMAIL, NICKNAME, PASSWORD, STATUS, REG_DT, MOD_DT FROM USER ";

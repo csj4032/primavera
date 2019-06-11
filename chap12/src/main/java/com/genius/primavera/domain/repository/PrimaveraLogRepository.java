@@ -11,4 +11,5 @@ import reactor.core.publisher.Flux;
 public interface PrimaveraLogRepository extends ReactiveMongoRepository<PrimaveraLog, Long> {
 
     Flux<PrimaveraLog> findByType(String type);
+
 }

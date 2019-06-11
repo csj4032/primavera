@@ -3,7 +3,6 @@ package com.genius.primavera.infrastructure.aspect;
 import com.genius.primavera.application.logging.MongoSequenceGeneratorService;
 import com.genius.primavera.application.logging.PrimaveraLogService;
 import com.genius.primavera.domain.model.PrimaveraLog;
-import com.genius.primavera.domain.repository.PrimaveraLogRepository;
 
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
@@ -32,7 +31,7 @@ public class PrimaveraLoggingAspect {
                 .id(mongoSequenceGeneratorService.generateSequence(PrimaveraLog.SEQUENCE_NAME))
                 .type(primaveraLogging.type())
                 .kind(joinPoint.getKind())
-                .target(joinPoint.getTarget())
+                .target(joinPoint.getTarget().toString())
                 .createDt(Instant.now())
                 .build();
         primaveraLogService.save(primaveraLog);

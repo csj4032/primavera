@@ -3,16 +3,9 @@ package com.genius.primavera;
 import org.springframework.boot.Banner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.data.mongodb.config.EnableMongoAuditing;
 import org.springframework.data.mongodb.repository.config.EnableReactiveMongoRepositories;
-import org.springframework.security.oauth2.config.annotation.web.configuration.EnableOAuth2Client;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TimeZone;
-
-import javax.annotation.PostConstruct;
+import org.springframework.web.reactive.config.EnableWebFlux;
 
 @SpringBootApplication
 @EnableMongoAuditing
