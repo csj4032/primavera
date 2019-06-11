@@ -19,8 +19,8 @@ public class ChartController {
     private PrimaveraLogRepository primaveraLogRepository;
 
     @GetMapping(value = "/chart")
-    public String logs(Model model) {
-        IReactiveSSEDataDriverContextVariable primaveraLogFlux = new ReactiveDataDriverContextVariable(primaveraLogRepository.findAll(), 100);
+    public String logs(final Model model) {
+        final IReactiveSSEDataDriverContextVariable primaveraLogFlux = new ReactiveDataDriverContextVariable(primaveraLogRepository.findAll(), 1, 1);
         model.addAttribute("logs", primaveraLogFlux);
         return "chart";
     }
