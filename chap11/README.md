@@ -156,26 +156,3 @@ docker start mariadb
 docker rm maraidb
 docker rm -v maraidb
 ```
-
-### Docker For MongoDB
-
-#### Downloading an Image
-
-```
-docker search mongo
-
-docker login --username csj4032
-
-docker pull mongo
-```
-
-#### Creating a Container
-
-```
-docker run --name mongodb -d -e MONGO_INITDB_ROOT_USERNAME=primavera -e MONGO_INITDB_ROOT_PASSWORD=primavera mongodb
-
-docker ps
-
-docker exec -it mongodb bash
-
-```

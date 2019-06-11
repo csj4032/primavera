@@ -29,7 +29,7 @@
 * MariaDB 연결 및 테스트, AOP
 
 ## chap03
-* Springboot DataSource
+* Springboot DataSource, Application.yml, ConfigurationProperties
 
 ## chap04
 * Mybatis, Transaction
@@ -56,7 +56,7 @@
 * Hierarchy Article Contents, Reply
 
 ## chap12
-* Application.yml, ConfigurationProperties
+* Spring Security Annotation
 
 ## Library Version
 * gradle 라이브러리 버전 정보 정리
