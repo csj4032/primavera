@@ -1,0 +1,34 @@
+google:
+  client:
+    clientId: ${OAUTH2_GOOGLE_CLIENTID}
+    clientSecret: ${OAUTH2_GOOGLE_CLIENTSECRET}
+    accessTokenUri: https://www.googleapis.com/oauth2/v4/token
+    userAuthorizationUri: https://accounts.google.com/o/oauth2/v2/auth
+    clientAuthenticationScheme: form
+    scope:
+      - email
+      - profile
+  resource:
+    userInfoUri: https://www.googleapis.com/oauth2/v3/userinfo
+
+facebook:
+  client:
+    clientId: ${OAUTH2_FACEBOOK_CLIENTID}
+    clientSecret: ${OAUTH2_FACEBOOK_CLIENTSECRET}
+    accessTokenUri: https://graph.facebook.com/oauth/access_token
+    userAuthorizationUri: https://www.facebook.com/dialog/oauth
+    tokenName: oauth_token
+    authenticationScheme: query
+    clientAuthenticationScheme: form
+  resource:
+    userInfoUri: https://graph.facebook.com/me?fields=id,email,name
+
+github:
+  client:
+    clientId: ${OAUTH2_GITHUB_CLIENTID}
+    clientSecret: ${OAUTH2_GITHUB_CLIENTSECRET}
+    accessTokenUri: https://github.com/login/oauth/access_token
+    userAuthorizationUri: https://github.com/login/oauth/authorize
+    clientAuthenticationScheme: form
+  resource:
+    userInfoUri: https://api.github.com/user

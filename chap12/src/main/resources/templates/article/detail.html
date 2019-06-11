@@ -1,0 +1,106 @@
+<!DOCTYPE HTML>
+<html xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml" layout:decorate="~{layouts/layout}">
+<head>
+	<title>Primavera Article Detail</title>
+	<link rel="stylesheet" href="/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
+</head>
+<body>
+<div layout:fragment="content" class="content-wrapper">
+	<section class="content-header">
+		<h1>
+			Article
+			<small>Detail</small>
+		</h1>
+		<ol class="breadcrumb">
+			<li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+			<li>Article</li>
+			<li class="active">Detail</li>
+		</ol>
+	</section>
+	<section class="content">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="box box-widget">
+					<div class="box-header with-border">
+						<div class="user-block">
+							<img class="img-circle" th:src="${#authorization.getAuthentication().principal.imageUrl}" src="../dist/img/user1-12h:128.jpg" alt="User Image">
+							<span class="username"><a href="#" th:text="${article.authorName}">Jonathan Burke Jr.</a></span>
+							<span class="description" th:text="${'Shared publicly - ' +  article.regDt}">Shared publicly - 7:30 PM Today</span>
+						</div>
+						<div class="box-tools">
+							<button type="button" class="btn btn-box-tool" data-toggle="tooltip" title data-original-title="comments"><i class="fa fa-comments-o margin-r-5"></i><p th:text="${article.commentSize}"></p></button>
+							<button type="button" class="btn btn-box-tool" data-toggle="tooltip" title data-original-title="up"><i class="fa fa-thumbs-o-up margin-r-5"></i><p th:text="${article.recommend}"></p></button>
+							<button type="button" class="btn btn-box-tool" data-toggle="tooltip" title data-original-title="down"><i class="fa fa-thumbs-o-down margin-r-5"></i><p th:text="${article.disapprove}"></p></button>
+							<button type="button" class="btn btn-box-tool" data-toggle="tooltip" title data-original-title="check"><i class="fa fa-check"></i><p th:text="${article.hit}"></p></button>
+						</div>
+					</div>
+					<div class="mailbox-read-info">
+						<h2 th:text="${T(org.springframework.web.util.HtmlUtils).htmlUnescape(article.subject)}"></h2>
+					</div>
+					<div class="box-body post-read-message">
+						<div class="margin-bottom"><div th:remove="tag" th:utext="${T(org.springframework.web.util.HtmlUtils).htmlUnescape(article.contents)}"></div></div>
+					</div>
+					<div class="box-footer">
+						<div class="pull-left">
+							<span class="label label-danger">UI Design</span>
+							<span class="label label-success">Coding</span>
+							<span class="label label-info">Javascript</span>
+							<span class="label label-warning">PHP</span>
+						</div>
+						<div class="pull-right">
+							<a href="javascript://" class="btn btn-danger btn-sm" id="article-delete-button"><i class="fa fa-fw fa-trash"></i> 삭제</a>
+							<a th:href="@{${'/articles/update?id=' + article.id}}" class="btn btn-warning btn-sm"><i class="fa fa-fw fa-edit"></i> 수정</a>
+							<a th:href="@{${'/articles/reply?id=' + article.id}}" class="btn btn-primary btn-sm"><i class="fa fa-fw fa-reply"></i> 답글</a>
+							<a th:href="@{/articles}" class="btn btn-default  btn-sm"><i class="fa fa-fw fa-list"></i> 목록</a>
+						</div>
+					</div>
+				</div>
+				<div class="box box-widget" th:each="comment : ${article.comments}">
+					<div class="box-body box-comments">
+						<img class="img-circle img-sm" th:src="${comment.authorImage}" src="../dist/img/user3-128x128.jpg" alt="User Image">
+						<div class="comment-text">
+						<span class="username">[[${comment.authorName}]]<span class="text-muted pull-right" th:text="${comment.regDt}">8:03 PM Today</span></span>
+						<div th:remove="tag" th:utext="${T(org.springframework.web.util.HtmlUtils).htmlUnescape(comment.comment)}"></div></div>
+						<div class="pull-right">
+							<a href="javascript://" class="btn btn-danger btn-xs" id="comment-delete-button"><i class="fa fa-fw fa-trash"></i></a>
+							<a th:href="@{${'/articles/update?id=' + article.id}}" class="btn btn-warning btn-xs"><i class="fa fa-fw fa-edit"></i></a>
+							<a th:href="@{${'/articles/reply?id=' + article.id}}" class="btn btn-primary btn-xs"><i class="fa fa-fw fa-reply"></i></a>
+						</div>
+					</div>
+				</div>
+				<div class="box-widget">
+					<div class="box-footer">
+						<form class="form" action="/articles/comment" method="post">
+							<input type="hidden" name="article" th:value="${article.id}">
+							<div class="box-body">
+								<div class="form-group">
+									<textarea class="form-control textarea" rows="3" id="comment" name="comment" placeholder="Comment"></textarea>
+								</div>
+							</div>
+							<div class="box-footer">
+								<button type="submit" class="btn btn-primary pull-right btn-sm">Submit</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+		<form action="/articles/delete" method="post" id="article-delete-form">
+			<input type="hidden" name="_method" value="DELETE"/>
+			<input type="hidden" name="id" th:value="${article.id}"/>
+		</form>
+	</section>
+	<script>
+		$(function() {
+			$("#article-delete-button").click(function () {
+				if (confirm('정말로 삭제하시겠습니까?')) {
+					$('#article-delete-form').submit();
+				}
+			})
+		});
+
+		$('.textarea').wysihtml5({toolbar: {fa: true}});
+	</script>
+</div>
+</body>
+</html>

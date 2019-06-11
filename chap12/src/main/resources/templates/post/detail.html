@@ -1,0 +1,51 @@
+<!DOCTYPE HTML>
+<html xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml"
+	  layout:decorate="~{layouts/layout}">
+<head>
+	<title>Primavera Post Detail</title>
+</head>
+<body>
+<div layout:fragment="content" class="content-wrapper">
+	<section class="content-header">
+		<h1>
+			Post
+			<small>Detail</small>
+		</h1>
+		<ol class="breadcrumb">
+			<li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+			<li>Post</li>
+			<li class="active">Detail</li>
+		</ol>
+	</section>
+	<section class="content">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="box box-widget">
+					<div class="box-header with-border">
+						<div class="user-block">
+							<img class="img-circle" th:src="${#authorization.getAuthentication().principal.imageUrl}" src="../dist/img/user1-128x128.jpg" alt="User Image">
+							<span class="username"><a href="#" th:text="${post.writer.nickname}">Jonathan Burke Jr.</a></span>
+							<span class="description" th:text="${'Shared publicly -' +  post.regDt}">Shared publicly - 7:30 PM Today</span>
+						</div>
+						<div class="box-tools">
+							<button type="button" class="btn btn-box-tool" data-toggle="tooltip" title data-original-title="line"><i class="fa fa-heart-o"></i></button>
+							<button type="button" class="btn btn-box-tool" data-toggle="tooltip" title data-original-title="edit"><i class="fa fa-edit"></i></button>
+							<button type="button" class="btn btn-box-tool" data-toggle="tooltip" title data-original-title="delete"><i class="fa-trash"></i></button>
+						</div>
+					</div>
+					<div class="box-body post-read-message">
+						<h3 th:text="${post.subject}"></h3>
+						<div class="margin-bottom"><div th:remove="tag" th:utext="${T(org.springframework.web.util.HtmlUtils).htmlUnescape(post.contents)}"></div></div>
+					</div>
+					<div class="box-footer">
+						<div class="pull-right">
+							<a th:href="@{/posts}" class="btn btn-default"><i class="fa fa-fw fa-list"></i> 목록</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+</div>
+</body>
+</html>
