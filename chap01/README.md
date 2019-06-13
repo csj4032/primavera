@@ -1,9 +1,30 @@
 ## chap01
 ### 스프링 부트 설정
 #### 프로젝트 기본 설정
+* Spring CLI [링크](https://docs.spring.io/spring-boot/docs/current/reference/html/getting-started-installing-spring-boot.html#getting-started-installing-the-cli)
 * Spring Initializr [링크](https://start.spring.io/) 
 * Application Properties [참고](https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html)
 * Spring boot banner [링크](https://devops.datenkollektiv.de/banner.txt/index.html)
+
+#### Spring CLI
+```
+spring init --list
+
+spring init --build=gradle --java-version=1.8 --dependencies=web,thymeleaf --groupId=com.genius.primavera primavera
+
+```
+
+#### SpringBootApplication
+* 스프링 컴포넌트 검색과 스프링 부트 자동 구성을 활성화 
+
+##### @Configuration
+* 이 어노테이션이 붙은 클래스를 스프링의 자바 기반 구성 클래스로 저장
+
+##### @ComponentScan
+* 컴포넌트 검색 기능을 활성화해서 웹 컨트롤러 클래스나 다른 컴포넌트 클래스들을 자동으로 검색하여 스프링 애플리케이션 컨텍스트에 빈으로 등록시킴
+
+##### @EnableAutoConfiguration
+* 스프링 부트의 자동 구성
 
 #### Dependency Injection
 
