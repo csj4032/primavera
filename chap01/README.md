@@ -27,7 +27,6 @@ spring init --build=gradle --java-version=1.8 --dependencies=web,thymeleaf --gro
 ##### @EnableAutoConfiguration
 * 스프링 부트의 자동 구성
 
-#### Dependency Injection
 
 #### 테스트 설정
 * Junit 5 적용을 위한 gradle.build 설정
@@ -59,6 +58,10 @@ public class PrimaveraApplicationTest {
 	}
 }
 ```
+
+##### SpringBean Bean 생성 및 테스트
+
+##### HelloController 이용한 SpringBean 접근
 
 * HelloController
     * MockMvc 테스트

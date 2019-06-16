@@ -17,7 +17,7 @@ public class DatabaseConnectionTest {
 	@Test
 	@Order(1)
 	@DisplayName(value = "데이터베이스에 접속해보자")
-	public void connectionTest() {
+	public void connectionTest() throws ClassNotFoundException {
 		try {
 			DriverManager.registerDriver(new org.mariadb.jdbc.Driver());
 			Connection connection = DriverManager.getConnection(URL, "primavera", "primavera");
