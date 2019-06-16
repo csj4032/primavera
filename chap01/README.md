@@ -5,7 +5,6 @@
 * Spring Initializr [링크](https://start.spring.io/) 
 * Spring Boot Reference Guide [링크](https://docs.spring.io/spring-boot/docs/current/reference/html/)
 * Spring Boot Application Properties [참고](https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html)
-* Spring boot banner [링크](https://devops.datenkollektiv.de/banner.txt/index.html)
 
 #### Spring CLI
 ```
@@ -14,6 +13,17 @@ spring init --list
 spring init --build=gradle --java-version=1.8 --dependencies=web,thymeleaf --groupId=com.genius.primavera primavera
 
 ```
+
+### Application.yml 언제 어떻게 읽을까?
+1. PrimaveraApplication
+2. SpringApplicationBuilder 에서 SpringApplication 생성 후 run
+3. SpringApplication 생성 중 ApplicationListener 등록 (META-INF/spring.factories 파일 참조)
+4. ConfigFileApplicationListener 통하여 application.yml 로딩
+
+### Database 어떻게 연결되나?
+1. DataSourceAutoConfiguration matched
+2. DataSourceConfiguration.PooledDataSourceConfiguration matched
+3. DataSourceConfiguration.Hikari matched
 
 #### SpringBootApplication
 * 스프링 컴포넌트 검색과 스프링 부트 자동 구성을 활성화 
@@ -26,7 +36,6 @@ spring init --build=gradle --java-version=1.8 --dependencies=web,thymeleaf --gro
 
 ##### @EnableAutoConfiguration
 * 스프링 부트의 자동 구성
-
 
 #### 테스트 설정
 * Junit 5 적용을 위한 gradle.build 설정
@@ -63,6 +72,5 @@ public class PrimaveraApplicationTest {
 
 ##### HelloController 이용한 SpringBean 접근
 
-* HelloController
-    * MockMvc 테스트
-    * MockBean 테스트
+### ETC
+* Spring boot banner [링크](https://devops.datenkollektiv.de/banner.txt/index.html)
