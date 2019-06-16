@@ -3,7 +3,8 @@
 #### 프로젝트 기본 설정
 * Spring CLI [링크](https://docs.spring.io/spring-boot/docs/current/reference/html/getting-started-installing-spring-boot.html#getting-started-installing-the-cli)
 * Spring Initializr [링크](https://start.spring.io/) 
-* Application Properties [참고](https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html)
+* Spring Boot Reference Guide [링크](https://docs.spring.io/spring-boot/docs/current/reference/html/)
+* Spring Boot Application Properties [참고](https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html)
 * Spring boot banner [링크](https://devops.datenkollektiv.de/banner.txt/index.html)
 
 #### Spring CLI
