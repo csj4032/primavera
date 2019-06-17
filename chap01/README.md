@@ -1,17 +1,81 @@
 ## chap01
-### 스프링 부트 설정
-#### 프로젝트 기본 설정
+### Spring Boot Start
+#### Project Initialization
 * Spring CLI [링크](https://docs.spring.io/spring-boot/docs/current/reference/html/getting-started-installing-spring-boot.html#getting-started-installing-the-cli)
-* Spring Initializr [링크](https://start.spring.io/) 
+* Spring Initializr [링크](https://start.spring.io/)
 * Spring Boot Reference Guide [링크](https://docs.spring.io/spring-boot/docs/current/reference/html/)
 * Spring Boot Application Properties [참고](https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html)
+* Building Spring Boot 2 Applications with Gradle [링크](https://guides.gradle.org/building-spring-boot-2-projects-with-gradle/)
 
-#### Spring CLI
+
+##### Spring CLI
 ```
-spring init --list
+$ spring init --list
+$ spring init --build=gradle --java-version=1.8 --dependencies=web,thymeleaf --groupId=com.genius.primavera primavera
+```
 
-spring init --build=gradle --java-version=1.8 --dependencies=web,thymeleaf --groupId=com.genius.primavera primavera
+##### Gradle Project
+```
+$ mkdir ~/gradle-spring-boot-project
+$ cd ~/gradle-spring-boot-project
+$ gradle init  --type java-application
+```
 
+###### build.gradle
+```
+plugins {
+    id 'java'
+    id 'com.gradle.build-scan' version '2.0.2'
+    id 'org.springframework.boot' version '2.0.5.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.7.RELEASE'
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-dependencies:2.0.5.RELEASE'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    components {
+        withModule('org.springframework:spring-beans') {
+            allVariants {
+                withDependencyConstraints {
+                    // Need to patch constraints because snakeyaml is an optional dependency
+                    it.findAll { it.name == 'snakeyaml' }.each { it.version { strictly '1.19' } }
+                }
+            }
+        }
+    }
+}
+```
+
+#### Test Configuration
+* Junit 5 적용을 위한 gradle.build 설정
+* Junit 5 [참고](https://junit.org/junit5/docs/current/user-guide/)
+
+```
+testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude module: 'junit'
+}
+
+testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.3.2'
+testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: '5.3.2'
+testRuntime group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.3.2'
+```
+
+##### 참고
+* 스프링부트 테스트 [참고](https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-testing.html)
+* PrimaveraApplicationTest
+
+```java
+@ExtendWith(SpringExtension.class)
+@SpringBootTest
+public class PrimaveraApplicationTest {
+
+	@Test
+	@DisplayName(value = "스프링부트가 정상 작동하는지 알아보자.")
+	public void helloWorld() {
+
+	}
+}
 ```
 
 ### Application.yml 언제 어떻게 읽을까?
@@ -36,37 +100,6 @@ spring init --build=gradle --java-version=1.8 --dependencies=web,thymeleaf --gro
 
 ##### @EnableAutoConfiguration
 * 스프링 부트의 자동 구성
-
-#### 테스트 설정
-* Junit 5 적용을 위한 gradle.build 설정
-* Junit 5 [참고](https://junit.org/junit5/docs/current/user-guide/)
-
-```
-testImplementation('org.springframework.boot:spring-boot-starter-test') {
-        exclude module: 'junit'
-}
-
-testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.3.2'
-testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: '5.3.2'
-testRuntime group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.3.2'
-```
-
-### 테스트
-* 스프링부트 테스트 [참고](https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-testing.html)
-* PrimaveraApplicationTest
-
-```java
-@ExtendWith(SpringExtension.class)
-@SpringBootTest
-public class PrimaveraApplicationTest {
-
-	@Test
-	@DisplayName(value = "스프링부트가 정상 작동하는지 알아보자.")
-	public void helloWorld() {
-
-	}
-}
-```
 
 ##### SpringBean Bean 생성 및 테스트
 

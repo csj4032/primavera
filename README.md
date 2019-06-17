@@ -23,10 +23,10 @@
 ## Launch
 
 ## chap01
-* 스프링 부트 설정, DI
+* Spring Boot Start, Hello World, Test
 
 ## chap02
-* MariaDB 연결 및 테스트, AOP
+* 스프링 MVC, MariaDB 연결 및 테스트
 
 ## chap03
 * Springboot DataSource, Application.yml, ConfigurationProperties
@@ -38,7 +38,7 @@
 * Validation, AJAX
 
 ## chap06
-* Thymeleaf, 회원가입
+* Thymeleaf, Sign in
 
 ## chap07
 * Filter, Lucy-xss-filter
