@@ -34,16 +34,17 @@ public class HelloControllerTest {
 	@Test
 	@DisplayName(value = "index 접근하면 반환값으로 hello world")
 	public void indexPage() throws Exception {
-		mockMvc.perform(get("/").accept(MediaType.TEXT_PLAIN))
+		mockMvc.perform(get("/")
+				.accept(MediaType.TEXT_PLAIN).param("number", "1"))
 				.andExpect(status().isOk())
 				.andExpect(content().string(IsAnything.anything("hello world")));
 	}
 
-//	@Test
-//	@DisplayName(value = "articles 접근하면 반환값으로 hello world")
-//	public void indexPageArticle() throws Exception {
-//		given(this.helloService.getArticles()).willReturn(List.of("게시글1", "게시글2"));
-//		mockMvc.perform(get("/articles").accept(MediaType.APPLICATION_JSON_UTF8_VALUE))
-//				.andExpect(status().isOk()).andExpect(content().string(("[\"게시글1\",\"게시글2\"]")));
-//	}
+	@Test
+	@DisplayName(value = "articles 접근하면 반환값으로 hello world")
+	public void indexPageArticle() throws Exception {
+		given(this.helloService.getArticles()).willReturn(List.of("게시글1", "게시글2"));
+		mockMvc.perform(get("/articles").accept(MediaType.APPLICATION_JSON_UTF8_VALUE))
+				.andExpect(status().isOk()).andExpect(content().string(("[\"게시글1\",\"게시글2\"]")));
+	}
 }

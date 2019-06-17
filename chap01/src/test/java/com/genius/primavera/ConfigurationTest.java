@@ -1,6 +1,7 @@
 package com.genius.primavera;
 
 import com.genius.primavera.application.SpringBean;
+
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
