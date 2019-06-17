@@ -1,30 +1,30 @@
 package com.genius.primavera.application;
 
-import lombok.extern.slf4j.Slf4j;
-
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class SpringBean {
 
-	private String name;
+    private String name;
 
-	public SpringBean(String name) {
-		this.name = name;
-	}
+    public SpringBean(String name) {
+        this.name = name;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	@PostConstruct
-	public void construct() {
-		log.info("construct");
-	}
+    @PostConstruct
+    public void construct() {
+        log.info("construct");
+    }
 
-	@PreDestroy
-	public void destroy() {
-		log.info("destroy");
-	}
+    @PreDestroy
+    public void destroy() {
+        log.info("destroy");
+    }
 }
