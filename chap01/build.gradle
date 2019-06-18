@@ -1,34 +1,21 @@
-plugins {
-    id 'java'
+tasks.withType(JavaCompile).each {
+    it.options.compilerArgs.add('--enable-preview')
 }
 
-apply plugin: 'java'
-apply plugin: 'idea'
-apply plugin: 'org.springframework.boot'
-apply plugin: 'io.spring.dependency-management'
-
-group = 'com.genius.primavera'
-version = '0.0.1-SNAPSHOT'
-
-configurations {
-    compileOnly {
-        extendsFrom annotationProcessor
-    }
+test {
+    jvmArgs(['--enable-preview'])
 }
 
-repositories {
-    mavenCentral()
+bootRun {
+    main = 'com.genius.primavera.PrimaveraApplication'
+    jvmArgs(['--enable-preview'])
 }
 
 dependencies {
     implementation('org.springframework.boot:spring-boot-starter-web')
-    implementation('org.springframework.boot:spring-boot-starter-aop')
-    implementation('org.springframework.boot:spring-boot-starter-thymeleaf')
     compileOnly('org.projectlombok:lombok')
     annotationProcessor('org.projectlombok:lombok')
-    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude module: 'junit'
     }
-    testImplementation('org.springframework.security:spring-security-test')
 }

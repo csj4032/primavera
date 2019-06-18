@@ -22,11 +22,14 @@
 
 ## Launch
 
+## chap00
+* Domain
+
 ## chap01
-* Spring Boot Start, Hello World, Test
+* Spring Boot Start, Hello World, Configuration
 
 ## chap02
-* 스프링 MVC, MariaDB 연결 및 테스트
+* Spring Boot Test
 
 ## chap03
 * Springboot DataSource, Application.yml, ConfigurationProperties
