@@ -7,22 +7,25 @@ buildscript {
     }
     dependencies {
         classpath("io.freefair.gradle:lombok-plugin:3.2.0")
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:2.1.5.RELEASE")
-        classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion")
+        classpath("io.spring.gradle:dependency-management-plugin:0.6.0.RELEASE")
     }
-}
-
-plugins {
-    id "com.jfrog.bintray" version "1.8.4"
 }
 
 subprojects {
 
+    group = 'com.genius.primavera'
+    version = '0.0.1-SNAPSHOT'
+
     apply plugin: 'java'
     apply plugin: 'idea'
-    apply plugin: "io.freefair.lombok"
-    apply plugin: "io.spring.dependency-management"
-    apply plugin: 'project-report'
+    apply plugin: 'io.freefair.lombok'
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management'
+    
+    repositories {
+        mavenCentral()
+    }
 
     dependencies {
         compile group: 'ch.qos.logback', name: 'logback-classic', version: "${logbackVersion}"
@@ -50,5 +53,23 @@ subprojects {
     compileTestJava {
         sourceCompatibility = JavaVersion.VERSION_12
         targetCompatibility = JavaVersion.VERSION_12
+    }
+}
+
+project(':chap01') {
+    dependencies {
+        compile project(':chap00')
+    }
+}
+
+project(':chap02') {
+    dependencies {
+        compile project(':chap00')
+    }
+}
+
+project(':chap03') {
+    dependencies {
+        compile project(':chap00')
     }
 }

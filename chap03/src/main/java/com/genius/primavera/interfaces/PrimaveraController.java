@@ -1,5 +1,8 @@
-package com.genius.primavera;
+package com.genius.primavera.interfaces;
 
+import com.genius.primavera.PrimaveraDao;
+import com.genius.primavera.PrimaveraProperties;
+import com.genius.primavera.domain.model.user.User;
 import com.zaxxer.hikari.HikariDataSource;
 
 import lombok.*;
