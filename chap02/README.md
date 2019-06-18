@@ -1,8 +1,10 @@
 ## chap02
 
 ### Spring Boot Test
+* HelloControllerTest
+  * @WebMvcTest, @MockBean 이용
 * PrimaveraApplicationTest
-* PrimaveraWebMvcTest
+* HelloJsonTest
 
 ### MariaDB 연결 및 테스트
 * DatabaseConnectionComponentTest
