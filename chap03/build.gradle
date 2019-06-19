@@ -11,4 +11,5 @@ dependencies {
         exclude module: "junit"
     }
     testImplementation("org.springframework.security:spring-security-test")
+    compile project(":chap00")
 }

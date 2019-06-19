@@ -14,7 +14,6 @@ logging:
   config: classpath:logback.xml
 
 mybatis:
-  #config: classpath:mybatis-config.xml
   configuration:
     map-underscore-to-camel-case: true
     default-fetch-size: 1000
