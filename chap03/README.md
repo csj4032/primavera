@@ -58,6 +58,8 @@ Caused by: org.springframework.beans.BeanInstantiationException:
 Failed to instantiate [com.zaxxer.hikari.HikariDataSource]: Factory method 'dataSource' threw exception; 
 nested exception is org.springframework.boot.autoconfigure.jdbc.DataSourceProperties$DataSourceBeanCreationException: Failed to determine a suitable driver class
 ```
+* SpringJdbcTest
+  * @AutoConfigureTestDatabase 기본 설정값인 Replace.Any -> Replace.NONE 으로 수정 혹은 application.yml spring.test.database.replace: NONE
 
 * UserDaoTest
   * org.springframework.boot.autoconfigure.jdbc.DataSourceConfiguration 확인
