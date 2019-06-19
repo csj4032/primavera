@@ -60,6 +60,11 @@ dependencies {
 }
 ```
 
+###### dependencies
+```
+$ gradle dependencies
+```
+
 #### HelloWorld
 ```java
 package com.genius.primavera.interfaces;
@@ -130,6 +135,8 @@ logging:
     com.genius.primavera: warn
 ```
 * application-{profile}.yml
+* properties 는 동일한 계층을 반복적으로 작성
+* yml 파일은 각 설정이 계층적으로 구성
 
 #### Gradle Build And Start
 ```
