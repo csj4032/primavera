@@ -1,5 +1,15 @@
 ## chap02
 
+### Spring MVC
+| MVC | 역할 |
+|---|---|
+| Model | 애플리케이션의 정보, 즉 데이터를 의미 |
+| View | 사용자 인터페이스, 즉 사용자가 보고 사용하는 화면 등을 의미 |
+| Controller | 모델과 뷰의 중계 역할, 사용자의 요청을 파악하고 그에 맞는 결과를 사용자에게 돌려줌 |
+
+### Spring WEB MVC
+![The request processing workflow in Spring Web MVC (high level)](https://docs.spring.io/spring/docs/3.2.x/spring-framework-reference/html/images/mvc.png)
+
 ### Spring Boot Test
 * HelloControllerTest
   * @WebMvcTest, @MockBean 이용

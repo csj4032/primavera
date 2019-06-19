@@ -9,6 +9,13 @@ spring:
   banner:
     charset: UTF-8
     location: classpath:primavera.txt
+  devtools:
+    livereload:
+      enabled: true
+      port: 35729
+
+logging:
+  config: classpath:logback.xml
 
 mybatis:
   configuration:
