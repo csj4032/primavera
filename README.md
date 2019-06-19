@@ -32,7 +32,7 @@
 * Spring Boot Test
 
 ## chap03
-* Springboot DataSource, Application.yml, ConfigurationProperties
+* Spring Boot DataSource, JdbcTemplate, Hikari
 
 ## chap04
 * Mybatis, Transaction

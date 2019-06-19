@@ -12,15 +12,15 @@ public class DatabaseConnectionComponent {
 
 	@Value(value = "${mariadb.url}")
 	public String url;
-	@Value(value = "${mariadb.user}")
-	public String user;
+	@Value(value = "${mariadb.username}")
+	public String username;
 	@Value(value = "${mariadb.password}")
 	public String password;
 
 	public Connection getConnection() {
 		try {
 			DriverManager.registerDriver(new org.mariadb.jdbc.Driver());
-			return DriverManager.getConnection(url, user, password);
+			return DriverManager.getConnection(url, username, password);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

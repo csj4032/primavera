@@ -45,6 +45,7 @@ subprojects {
         testRuntime group: 'org.junit.platform', name: 'junit-platform-engine', version: "${junitPlatformVersion}"
         testRuntime group: 'org.junit.platform', name: 'junit-platform-commons', version: "${junitPlatformVersion}"
         annotationProcessor group: 'org.projectlombok', name: 'lombok', version: "${lombokVersion}"
+        annotationProcessor group: 'org.springframework.boot', name:'spring-boot-configuration-processor'
     }
 
     sourceCompatibility = JavaVersion.VERSION_12

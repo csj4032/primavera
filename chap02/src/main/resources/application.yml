@@ -1,4 +1,5 @@
 spring:
+  profiles: default
   application:
     name: Privamera
   banner:
@@ -12,5 +13,6 @@ logging:
 
 mariadb:
   url: jdbc:mariadb://localhost:3306/primavera
-  user: primavera
+  username: primavera
   password: primavera
+  allows : local, dev, prod

@@ -1,7 +1,16 @@
 ## chap03
-### DataSource
-* HikariCP [참고](https://github.com/brettwooldridge/HikariCP)
-    * HikariDataSourceTest
+
+### Application.yml
+```
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://localhost:3306/primavera
+    username: primavera
+    password: primavera
+```
+
+### Spring Boot Test
+* HikariDataSourceTest
 ```
 com.zaxxer.hikari.HikariConfig - Driver class org.mariadb.jdbc.Driver found in Thread context class loader jdk.internal.loader.ClassLoaders$AppClassLoader@3d4eac69
 com.zaxxer.hikari.HikariConfig - HikariPool-1 - configuration:
@@ -42,30 +51,21 @@ com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
 com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.mariadb.jdbc.MariaDbConnection@3ba9ad43
 com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
 ```
-* tomcat datasource [참고](https://tomcat.apache.org/tomcat-9.0-doc/jdbc-pool.html)
-* dbcp2 datasource [참고](https://commons.apache.org/proper/commons-dbcp/)
 
-* spring-boot-starter-jdbc 추가
-```
-implementation('org.springframework.boot:spring-boot-starter-jdbc')
-```
-* SpringDataSourceTest 테스트 및 로그 확인
-
+* SpringDataSourceTest
 ```
 Caused by: org.springframework.beans.BeanInstantiationException: 
 Failed to instantiate [com.zaxxer.hikari.HikariDataSource]: Factory method 'dataSource' threw exception; 
 nested exception is org.springframework.boot.autoconfigure.jdbc.DataSourceProperties$DataSourceBeanCreationException: Failed to determine a suitable driver class
 ```
 
-* application.yml datasource 정보 추가 후 테스트
-```
-  datasource:
-    driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://localhost:3306/primavera
-    name: primavera
-    password: primavera
-```
+* UserDaoTest
+  * org.springframework.boot.autoconfigure.jdbc.DataSourceConfiguration 확인
+  * Datasource 를 통한 유저 등록, 전체 조회, 삭제 테스트
+  * PasswordEncoderFactories 이용한 비밀번호 암호
+
+### ETC
 * application-properties datasource [참고](https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html)
-* org.springframework.boot.autoconfigure.jdbc.DataSourceConfiguration 확인
-* UserDao, Datasource 를 통한 유저 등록, 전체 조회, 삭제 테스트
-* PasswordEncoderFactories 이용한 비밀번호 암호
+* HikariCP [참고](https://github.com/brettwooldridge/HikariCP)
+* tomcat datasource [참고](https://tomcat.apache.org/tomcat-9.0-doc/jdbc-pool.html)
+* dbcp2 datasource [참고](https://commons.apache.org/proper/commons-dbcp/)
