@@ -35,7 +35,7 @@
 * Spring Boot DataSource, JdbcTemplate, Hikari
 
 ## chap04
-* Mybatis, Transaction
+* Spring Transaction, Mybatis, Logback
 
 ## chap05
 * Validation, AJAX

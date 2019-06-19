@@ -18,4 +18,5 @@ dependencies {
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude module: 'junit'
     }
+    compile project(":chap00")
 }

@@ -1,44 +1,24 @@
 ## chap04
-### Mybatis
-### Mybatis Auto Configuration 추가
-* [참고](http://www.mybatis.org/spring-boot-starter/mybatis-spring-boot-autoconfigure/)
-* PrimaveraApplicationTest 실행 에러 로그 확인
 
-```
-dependencies {
-  compile("org.mybatis.spring.boot:mybatis-spring-boot-starter:2.0.1")
-}
-```
+### Logback File Configuration
 
-* Application.yml 설정 추가
-
+### Mybatis Auto Configuration
 ```
-# application.yml
 mybatis:
-    type-aliases-package: com.example.domain.model
-    type-handlers-package: com.example.typehandler
-    configuration:
-        map-underscore-to-camel-case: true
-        default-fetch-size: 100
-        default-statement-timeout: 30
-...
+  configuration:
+    map-underscore-to-camel-case: true
+    default-fetch-size: 1000
+    default-statement-timeout: 30
+  type-aliases-package: com.genius.primavera.domain
+  type-handlers-package: com.genius.primavera.domain
 ```
 
-* User 등록, 수정, 아이디 검색, 전체 검색, 주소록 포함 검색
-* mybatis-dynamic-sql 이용한 User 조회
-
-```
-org.springframework.dao.DataIntegrityViolationException: 
-### Error updating database.  Cause: java.sql.SQLDataException: (conn=271) Data too long for column 'STATUS' at row 1
-### The error may exist in com/genius/primavera/domain/mapper/UserMapper.java (best guess)
-### The error may involve com.genius.primavera.domain.mapper.UserMapper.save-Inline
-### The error occurred while setting parameters
-### SQL: INSERT INTO USER (EMAIL, PASSWORD, NICK_NAME, STATUS, REG_DATE, MOD_DATE) VALUES (?, ?,?, ?, ?, ?)
-### Cause: java.sql.SQLDataException: (conn=271) Data too long for column 'STATUS' at row 1
-; (conn=271) Data too long for column 'STATUS' at row 1; nested exception is java.sql.SQLDataException: (conn=271) Data too long for column 'STATUS' at row 1
-```
-* STATUS 컬럼 typeHandler 적용
-    * type-handler 등록은 type-alias 도 함께 등록
+### Spring Boot Test
+* WinnerServiceIsolationTest
+* WinnerServicePropagationTest
+* RoleMapperTest
+* UserMapperTest (Dynamic Sql)
+* WinnerMapperTest
 
 ### ACID (원자성, 일관성, 격리성, 지속성)
 * 원자성(Atomicity) : 트랜잭션은 연속적인 액션들로 이루어진 원자성 작업, 트랜잭션의 액션은 전부다 수행되거나 아무것도 수행되지 안도록 보장 
@@ -57,7 +37,7 @@ org.springframework.dao.DataIntegrityViolationException:
 | NEVER | 반드시 트랜잭션 없이 현재 메서드를 실행하되 진행 중인 트랜잭션이 있으면 예외를 던짐 |
 | NESTED | 진행 중인 트랜잭션이 있으면 현재 메서드를 이 트랜잭션의 중첩 트랜잭션 내에서 실행함. 진행 중인 트랜잭션이 없으면 새 트랜잭션을 시작해서 실행함 |
 
-### 트랜잭션 격리 속성
+### Read phenomena
 * Dirty read : T2가 수정 후 커밋하지 않은 필드을 T1이 읽는 상황에서 나중에 T2가 롤백하면 T1이 읽은 필드는 일시적인 값으로 더 이상 유효하지 않음
 * Nonrepeatable read : 어떤 필드를 T1이 읽은 후 T2가 수정할 경우, T1이 같은 필드를 다시 읽으면 다른 값을 얻음 
 * Phantom read : T1이 테이블의 로우 몇 개를 읽은 후 T2가 같은 테이블에 새 로우를 삽입할 경우, 나중에 T1이 같은 테이블을 다시 읽으면 T2가 삽입한 로우가 보임
@@ -72,3 +52,9 @@ org.springframework.dao.DataIntegrityViolationException:
 | READ_COMMITTED | 한 트랜잭션이 다른 트랜잭션이 커밋한 값만 읽을 수 있음. 오염된 값 읽기 문제는 해결. 재현 불가한 일기, 허상 읽기 문제는 남음 |
 | REPEATABLE_READ | 트랜잭션이 어떤 필드를 여러 번 읽어도 동일한 값을 읽도록 보장. 트랜잭션이 지속되는 동안에는 다른 트랜잭션이 해당 필드를 변경 할 수 없음. 오염된 값 읽기, 재현 불가한 읽기 문제는 해결되지만 허상 읽기는 여젼히 숙제 |
 | SERIALIZABLE | 트랜잭션이 테이블을 여러 번 읽어도 정확히 동일한 로우를 읽도록 보장. 트랜잭션이 지속되는 동안에는 다른 트랜잭션이 해당 테이블에 삽입 수정, 삭제를 할 수 없음. 동시성 문제는 모두 해소되지만 성능은 현저히 떨어짐 |
+
+### ETC
+* logback [참고](https://logback.qos.ch/)
+* mybatis [참고](http://www.mybatis.org/mybatis-3/)
+* mybatis Dynamic SQL [참고](http://www.mybatis.org/mybatis-dynamic-sql/docs/introduction.html)
+* spring-boot-autoconfigure [참고](http://www.mybatis.org/spring-boot-starter/mybatis-spring-boot-autoconfigure/)

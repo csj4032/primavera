@@ -56,21 +56,3 @@ subprojects {
         targetCompatibility = JavaVersion.VERSION_12
     }
 }
-
-project(':chap01') {
-    dependencies {
-        compile project(':chap00')
-    }
-}
-
-project(':chap02') {
-    dependencies {
-        compile project(':chap00')
-    }
-}
-
-project(':chap03') {
-    dependencies {
-        compile project(':chap00')
-    }
-}
