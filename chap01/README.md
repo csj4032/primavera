@@ -92,16 +92,28 @@ spring:
   banner:
     charset: UTF-8
     location: classpath:primavera.txt
+
 logging:
   level:
     org.springframework: debug
     com.genius.primavera: debug
 
-mariadb:
-  url: jdbc:mariadb://localhost:3306/primavera
-  user: primavera
-  password: primavera
-  allows : local, dev, prod
+com:
+  genius:
+    primavera:
+      username: primavera
+      password: primavera
+      url: jdbc:mariadb://localhost:3306/primavera
+      tables: user, role
+      params:
+        keyword: genius
+        page: 1
+        sort: desc
+      users:
+        - id: 1
+          email: genius
+        - id: 2
+          email: genius2
 
 ---
 

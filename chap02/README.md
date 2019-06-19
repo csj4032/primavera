@@ -6,7 +6,7 @@
 * PrimaveraApplicationTest
 * HelloJsonTest
 
-### MariaDB 연결 및 테스트
+### MariaDB Connection Test
 * DatabaseConnectionComponentTest
 * DatabaseConnectionTest
 
