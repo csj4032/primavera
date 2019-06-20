@@ -22,6 +22,11 @@ spring:
   * @Nickname Validator, Annotation
   * 저장과 수정에 따른 필수값 그룹
   * 객체 내부 속성 @Valid 재귀 검사
+  
+### Spring Boot Test
+* AjaxControllerTest
+* UserSaveValidationTest
+* UserUpdateValidationTest
 
 ### ETC
 * Spring MVC Test Framework [참고](https://docs.spring.io/spring/docs/current/spring-framework-reference/testing.html#spring-mvc-test-framework)
