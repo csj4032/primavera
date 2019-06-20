@@ -1,11 +1,15 @@
 spring:
+  profiles: default
   application:
     name: Privamera
   datasource:
-    driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://localhost:3306/primavera
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+    url: jdbc:log4jdbc:mariadb://localhost:3306/primavera
     username: primavera
     password: primavera
+    hikari:
+      connection-test-query: SELECT 1 FROM DUAL
   banner:
     charset: UTF-8
     location: classpath:primavera.txt
@@ -14,6 +18,30 @@ spring:
     enabled: true
     prefix: classpath:/templates/
     suffix: .html
+---
+spring:
+  profiles: dev
+  application:
+    name: Privamera
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://localhost:3306/primavera
+    username: primavera
+    password: primavera
+    hikari:
+      connection-test-query: SELECT 1 FROM DUAL
+  banner:
+    charset: UTF-8
+    location: classpath:primavera.txt
+  thymeleaf:
+    cache: false
+    enabled: true
+    prefix: classpath:/templates/
+    suffix: .html
+
+logging:
+  config: classpath:logback.xml
 
 mybatis:
   configuration:
