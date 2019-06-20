@@ -10,13 +10,20 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Slf4j
 @RestController
-@RequestMapping(value = "/user")
+@RequestMapping(value = "/users")
 public class UserController {
 
 	@Autowired
 	private UserService userService;
+
+	@GetMapping
+	public List<User> getUserById() {
+		return userService.getUsers();
+	}
 
 	@GetMapping(value = "/{id}")
 	public long getUserById(@PathVariable(value = "id") long id) {

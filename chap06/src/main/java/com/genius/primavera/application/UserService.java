@@ -2,6 +2,8 @@ package com.genius.primavera.application;
 
 import com.genius.primavera.domain.model.User;
 
+import java.util.List;
+
 public interface UserService {
 
 	User save(User user);
@@ -9,4 +11,6 @@ public interface UserService {
 	User update(User user);
 
 	User signIn(String email, String password);
+
+	List<User> getUsers();
 }
