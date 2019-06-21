@@ -1,7 +1,7 @@
 <configuration>
     <include resource="logging/logback/defaults.xml" />
     <include resource="logging/logback/console-appender.xml" />
-    <property name="LOG_FILE" value="${LOG_FILE:-${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}/}spring.log}"/>
+    <property name="LOG_FILE" value="${LOG_FILE:-${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}}spring.log}"/>
     <include resource="logging/logback/file-appender.xml" />
     <root level="DEBUG">
         <appender-ref ref="CONSOLE" />
