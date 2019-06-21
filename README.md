@@ -68,6 +68,9 @@
 
 ## ERD
 
+<style>p{color:red;}</style>
+*foo*
+
 ## SQL
 
 ```sql
