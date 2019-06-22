@@ -29,7 +29,7 @@
 * Spring Boot Start, Hello World, Configuration
 
 ## chap02
-* Spring Boot Test
+* Spring Boot Test, AOP
 
 ## chap03
 * Spring Boot DataSource, JdbcTemplate, Hikari

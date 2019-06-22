@@ -12,6 +12,13 @@
 ![Typical context hierarchy in Spring Web MVC](https://docs.spring.io/spring/docs/4.3.9.RELEASE/spring-framework-reference/html/images/mvc-context-hierarchy.png)
 ![Single root context in Spring Web MVC](https://docs.spring.io/spring/docs/4.3.9.RELEASE/spring-framework-reference/html/images/mvc-root-context.png)
 
+### Spring AOP
+| AOP | 설명 |
+| Aspect | 포인트컷과 관련 어드바이스의 집합 |
+| Advice | 특정 포인트컷에 있는 조인 포인트에서 실행될 액션   |
+| Pointcut | 어드바이스를 하나 또는 여러 조인트 포임트와 결합하는 패턴 |
+| Join Point | 어드바이스가 실행될 메서드 예외 지점  |
+
 ### Spring Boot Test
 * HelloControllerTest
   * @WebMvcTest, @MockBean 이용
