@@ -3,15 +3,6 @@
 ### ApplicationConfiguration
 * ApplicationConfiguration.java 어플리케이션 설정
 
-### application.yml 어플리케이션 로그 설정
-* application.yml LOGGING 에서 설정 가능
-* [공식](https://logback.qos.ch/)
-* [가이드](https://www.baeldung.com/logback)
-```
-logging:
-  config: classpath:logback.xml
-```
-
 ### Filter
 * org.springframework.boot.web.servlet.filter 패키지
 ```
@@ -35,6 +26,15 @@ public FilterRegistrationBean<XssEscapeServletFilter> filterRegistrationBean() {
 }
 ```
 
+### Undertow
+```
+dependencies {
+    implementation('org.springframework.boot:spring-boot-starter-web') {
+        exclude module: "spring-boot-starter-tomcat"
+    }
+    compile('org.springframework.boot:spring-boot-starter-undertow')
+}
+```
 
 ### ETC
 * Chain of Responsibility Pattern 참고
