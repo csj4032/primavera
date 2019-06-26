@@ -63,3 +63,6 @@ server:
     key-store-password: primavera
     enabled: true
   port: 8443
+
+file:
+  location: upload

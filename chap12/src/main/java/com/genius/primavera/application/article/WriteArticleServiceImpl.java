@@ -1,5 +1,6 @@
 package com.genius.primavera.application.article;
 
+import com.genius.primavera.application.storage.StorageService;
 import com.genius.primavera.domain.ArticleNotFoundException;
 import com.genius.primavera.domain.PageRequest;
 import com.genius.primavera.domain.Paged;
@@ -13,16 +14,11 @@ import com.genius.primavera.domain.model.article.Comment;
 import com.genius.primavera.domain.model.article.Content;
 import com.genius.primavera.domain.model.article.WriteType;
 import com.genius.primavera.domain.model.user.User;
-import com.genius.primavera.infrastructure.security.PrimaveraUserDetails;
 
 import org.jetbrains.annotations.NotNull;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.access.prepost.PreFilter;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,22 +26,19 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
 
+import lombok.RequiredArgsConstructor;
+
 import static com.genius.primavera.application.PrimaveraUtil.getUser;
 
 @Service
+@RequiredArgsConstructor
 public class WriteArticleServiceImpl implements WriteArticleService {
 
-    @Autowired
-    private ModelMapper modelMapper;
-
-    @Autowired
-    private ArticleMapper articleMapper;
-
-    @Autowired
-    private ArticleContentMapper articleContentMapper;
-
-    @Autowired
-    private ArticleCommentMapper articleCommentMapper;
+    private final ModelMapper modelMapper;
+    private final ArticleMapper articleMapper;
+    private final ArticleContentMapper articleContentMapper;
+    private final ArticleCommentMapper articleCommentMapper;
+    private final StorageService storageService;
 
     @Override
     @Transactional
@@ -63,7 +56,7 @@ public class WriteArticleServiceImpl implements WriteArticleService {
 
     @Override
     @Transactional
-    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMINISTRATOR')")
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_MANAGER', 'ROLE_ADMINISTRATOR')")
     public Article update(ArticleDto.WriteArticle writeArticle) {
         Article article = articleMapper.findByIdWithContent(writeArticle.getId());
         if (Objects.isNull(article)) throw new ArticleNotFoundException();
