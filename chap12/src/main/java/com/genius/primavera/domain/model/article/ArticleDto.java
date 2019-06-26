@@ -1,5 +1,7 @@
 package com.genius.primavera.domain.model.article;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import java.time.Instant;
 
 import javax.validation.constraints.NotEmpty;
@@ -20,6 +22,7 @@ public class ArticleDto {
         private long author;
         private String contents;
         private WriteType writeType = WriteType.FORM;
+        private MultipartFile file;
     }
 
     @Getter

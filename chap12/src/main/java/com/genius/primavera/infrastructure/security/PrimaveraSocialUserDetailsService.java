@@ -32,7 +32,7 @@ public class PrimaveraSocialUserDetailsService implements UserDetailsService {
     }
 
     private UsernamePasswordAuthenticationToken setAuthenticationToken(User user) {
-        List<? extends GrantedAuthority> authorities = user.getRoles().stream().map(role -> new SimpleGrantedAuthority(role.getType().toString())).collect(toList());
+        List<? extends GrantedAuthority> authorities = user.getRoles().stream().map(role -> new SimpleGrantedAuthority("ROLE_" + role.getType().toString())).collect(toList());
         return new UsernamePasswordAuthenticationToken(new PrimaveraUserDetails(user), null, authorities);
     }
 
