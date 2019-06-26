@@ -36,7 +36,7 @@ public class LoginControllerTest {
 	@Order(2)
 	@DisplayName("로그인 시도 : 성공")
 	public void loginIn() throws Exception {
-		mockMvc.perform(post("/login").param("userId", "1").param("password", "Secret0!"))
+		mockMvc.perform(post("/login").param("email", "Genius Choi").param("password", "{bcrypt}$2a$10$HaDq9M2.gGCLOR8JPAL6teKzXbFwRrdOAf9S16tUB6DrjB8JRIA4i"))
 				.andExpect(status().isOk())
 				.andExpect(header().exists("auth"))
 				.andExpect(view().name("index"))
@@ -47,7 +47,7 @@ public class LoginControllerTest {
 	@Order(3)
 	@DisplayName("로그인 시도 : 실패")
 	public void loginInFalse() throws Exception {
-		mockMvc.perform(post("/login").param("userId", "1").param("password", ""))
+		mockMvc.perform(post("/login").param("email", "Genius Choi").param("password", ""))
 				.andExpect(status().isOk())
 				.andExpect(view().name("login"))
 				.andExpect(model().attribute("message", "failure"));

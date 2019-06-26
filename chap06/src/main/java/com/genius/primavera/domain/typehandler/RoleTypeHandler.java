@@ -1,7 +1,7 @@
 package com.genius.primavera.domain.typehandler;
 
-import com.genius.primavera.domain.TypeHandlerException;
 import com.genius.primavera.domain.model.RoleType;
+
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.MappedJdbcTypes;
