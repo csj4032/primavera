@@ -15,7 +15,7 @@ public class UserDao {
 	}
 
 	public int saveUser(String email, String password, String nickname, String status, LocalDateTime regDate) {
-		return jdbcTemplate.update("INSERT INTO USER (EMAIL, PASSWORD, NICK_NAME, STATUS, REG_DATE) VALUES (? ,?, ?, ?, ?)", email, password, nickname, status, regDate);
+		return jdbcTemplate.update("INSERT INTO USER (EMAIL, PASSWORD, NICK_NAME, STATUS, REG_DT) VALUES (? ,?, ?, ?, ?)", email, password, nickname, status, regDate);
 	}
 
 	public List<String> getUsers() {
