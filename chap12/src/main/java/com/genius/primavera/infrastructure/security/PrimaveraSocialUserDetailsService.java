@@ -15,29 +15,24 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+import lombok.RequiredArgsConstructor;
+
 import static java.util.stream.Collectors.toList;
 
 @Component
-public class PrimaveraSocialUserDetailsService implements UserDetailsService {
+@RequiredArgsConstructor
+public class PrimaveraSocialUserDetailsService extends PrimaveraUserDetailsService {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
     public UsernamePasswordAuthenticationToken doAuthentication(UserConnection userConnection) {
-        User user = userService.findByEmail(userConnection.getEmail());
-        if (user == null) {
-            return setAuthenticationToken(userService.signUp(userConnection));
+        if (!userService.isExistUser(userConnection.getEmail())) {
+            userService.signUp(userConnection);
         }
-        return setAuthenticationToken(user);
+        return setAuthenticationToken((PrimaveraUserDetails) loadUserByUsername(userConnection.getEmail()));
     }
 
-    private UsernamePasswordAuthenticationToken setAuthenticationToken(User user) {
-        List<? extends GrantedAuthority> authorities = user.getRoles().stream().map(role -> new SimpleGrantedAuthority("ROLE_" + role.getType().toString())).collect(toList());
-        return new UsernamePasswordAuthenticationToken(new PrimaveraUserDetails(user), null, authorities);
-    }
-
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return null;
+    private UsernamePasswordAuthenticationToken setAuthenticationToken(PrimaveraUserDetails primaveraUserDetails) {
+        return new UsernamePasswordAuthenticationToken(primaveraUserDetails, null, primaveraUserDetails.getAuthorities());
     }
 }

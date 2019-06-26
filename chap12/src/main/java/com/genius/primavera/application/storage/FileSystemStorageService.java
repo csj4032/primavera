@@ -2,6 +2,7 @@ package com.genius.primavera.application.storage;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.FileSystemUtils;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -20,7 +21,7 @@ public class FileSystemStorageService implements StorageService {
 
     @Override
     public void deleteAll() {
-        System.out.println("@@@@@@@@@@@@@@@@@@2");
+        FileSystemUtils.deleteRecursively(rootLocation.toFile());
     }
 
     @Override
