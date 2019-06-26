@@ -18,27 +18,6 @@ spring:
     enabled: true
     prefix: classpath:/templates/
     suffix: .html
----
-spring:
-  profiles: dev
-  application:
-    name: Privamera
-  datasource:
-    type: com.zaxxer.hikari.HikariDataSource
-    driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://localhost:3306/primavera
-    username: primavera
-    password: primavera
-    hikari:
-      connection-test-query: SELECT 1 FROM DUAL
-  banner:
-    charset: UTF-8
-    location: classpath:primavera.txt
-  thymeleaf:
-    cache: false
-    enabled: true
-    prefix: classpath:/templates/
-    suffix: .html
 
 logging:
   config: classpath:logback.xml

@@ -30,12 +30,17 @@ public class UserServiceImpl implements UserService {
 		return user;
 	}
 
-	@Override
-	public User signIn(String userId, String password) {
-		return null;
-	}
+    @Override
+    public User findByEmail(String email) {
+        return userMapper.findByEmail(email);
+    }
 
-	@Override
+    @Override
+    public boolean signIn(String email, String password) {
+        return userMapper.findByEmail(email).isAuthenticate(password);
+    }
+
+    @Override
 	public List<User> getUsers() {
 		return userMapper.findAll();
 	}

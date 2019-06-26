@@ -1,6 +1,9 @@
 package com.genius.primavera.domain.model;
 
 import com.genius.primavera.application.validator.Nickname;
+
+import org.springframework.lang.NonNull;
+
 import lombok.*;
 
 import javax.validation.Valid;
@@ -40,4 +43,8 @@ public class User {
 	private List<Role> roles;
 	private LocalDateTime regDate;
 	private LocalDateTime modDate;
+
+	public boolean isAuthenticate(@NonNull String password) {
+		return this.password.equals(password);
+	}
 }

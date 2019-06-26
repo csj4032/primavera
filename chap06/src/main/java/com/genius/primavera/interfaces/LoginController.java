@@ -27,9 +27,8 @@ public class LoginController {
 
 	@PostMapping(value = "/login")
 	public String logIn(Model model, HttpSession session, HttpServletResponse response, @RequestParam(value = "email") String email, @RequestParam(value = "password") String password) {
-		User user = userService.signIn(email, password);
-		if (!password.isEmpty()) {
-			session.setAttribute("user", user);
+		if (userService.signIn(email, password)) {
+			session.setAttribute("user", userService.findByEmail(email));
 			response.addHeader("auth", "success");
 			model.addAttribute("message", "success");
 			return "index";

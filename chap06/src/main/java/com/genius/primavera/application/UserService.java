@@ -6,11 +6,13 @@ import java.util.List;
 
 public interface UserService {
 
-	User save(User user);
+    User save(User user);
 
-	User update(User user);
+    User update(User user);
 
-	User signIn(String email, String password);
+    User findByEmail(String email);
 
-	List<User> getUsers();
+    boolean signIn(String email, String password);
+
+    List<User> getUsers();
 }
