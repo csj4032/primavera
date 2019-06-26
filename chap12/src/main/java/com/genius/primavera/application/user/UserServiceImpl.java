@@ -18,17 +18,15 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    @Autowired
-    private UserMapper userMapper;
-
-    @Autowired
-    private UserRoleMapper userRoleMapper;
-
-    @Autowired
-    private UserConnectionMapper userConnectionMapper;
+    private final UserMapper userMapper;
+    private final UserRoleMapper userRoleMapper;
+    private final UserConnectionMapper userConnectionMapper;
 
     @Override
     public User save(User user) {
@@ -54,6 +52,11 @@ public class UserServiceImpl implements UserService {
         save(user);
         userConnectionMapper.save(userConnection);
         return user;
+    }
+
+    @Override
+    public boolean isExistUser(String email) {
+        return userMapper.findByEmail(email) != null;
     }
 
     @Override

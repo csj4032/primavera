@@ -12,4 +12,6 @@ public interface UserService {
 	User findByEmail(String email);
 
 	User signUp(UserConnection userConnection);
+
+	boolean isExistUser(String email);
 }

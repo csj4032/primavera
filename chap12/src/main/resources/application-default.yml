@@ -64,5 +64,5 @@ server:
     enabled: true
   port: 8443
 
-file:
+storage:
   location: upload
