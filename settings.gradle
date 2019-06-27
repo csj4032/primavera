@@ -1,5 +1,5 @@
 rootProject.name = 'primavera'
-//include 'chap00'
+include 'chap00'
 //include 'chap01'
 //include 'chap02'
 //include 'chap03'

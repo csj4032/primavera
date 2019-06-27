@@ -88,13 +88,7 @@ public class WriteArticleServiceImpl implements WriteArticleService {
     @Override
     public int comment(ArticleDto.WriteComment writeComment) {
         Article article = articleMapper.findById(writeComment.getArticle());
-        Comment comment = new Comment();
-        comment.setArticle(article);
-        comment.setAuthor(getUser());
-        comment.setComment(writeComment.getComment());
-        comment.setStatus(ArticleStatus.PUBLIC);
-        comment.setRegDt(Instant.now());
-        return articleCommentMapper.save(comment);
+        return articleCommentMapper.save(getComment(writeComment, article));
     }
 
     @Override
@@ -108,10 +102,6 @@ public class WriteArticleServiceImpl implements WriteArticleService {
         return findByIdWithContentAndComment(id);
     }
 
-    private void articleHit(long id) {
-        articleMapper.articleHit(id);
-    }
-
     @Override
     public ArticleDto.DetailArticle findByIdWithContentAndComment(long id) {
         return modelMapper.map(articleMapper.findByIdWithContentAndComment(id), ArticleDto.DetailArticle.class);
@@ -121,6 +111,21 @@ public class WriteArticleServiceImpl implements WriteArticleService {
     public Paged<ArticleDto.ListArticle> findForPageable(PageRequest pageRequest) {
         return new Paged<>(pageRequest, modelMapper.map(articleMapper.findForPageable(pageRequest), new TypeToken<List<ArticleDto.ListArticle>>() {
         }.getType()), articleMapper.findAllCount());
+    }
+
+    @NotNull
+    private Comment getComment(ArticleDto.WriteComment writeComment, Article article) {
+        Comment comment = new Comment();
+        comment.setArticle(article);
+        comment.setAuthor(getUser());
+        comment.setComment(writeComment.getComment());
+        comment.setStatus(ArticleStatus.PUBLIC);
+        comment.setRegDt(Instant.now());
+        return comment;
+    }
+
+    private void articleHit(long id) {
+        articleMapper.articleHit(id);
     }
 
     private Article getOriginArticle(@NotNull ArticleDto.WriteArticle writeArticle) {
