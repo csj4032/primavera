@@ -67,6 +67,7 @@
 * logback = '1.2.3'
 
 ## ERD
+![ERD](https://github.com/csj4032/primavera/blob/master/primavera.png)
 
 ## SQL
 
