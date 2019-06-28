@@ -36,6 +36,7 @@ public class Article {
     private int disapprove;
     private Content content;
     private Comment[] comments;
+    private File[] files;
     private Instant regDt;
     private Instant modDt;
 
@@ -80,6 +81,14 @@ public class Article {
 
     public void setContents(String contents) {
         content.setContents(contents);
+    }
+
+    public long getParentReference() {
+        return parent.getReference();
+    }
+
+    public int getParentStep() {
+        return parent.getStep();
     }
 
     public String toHierachy() {

@@ -15,8 +15,9 @@ public interface ArticleContentMapper {
 
     @Insert("INSERT INTO ARTICLE_CONTENT (ARTICLE_ID, CONTENTS) VALUES (#{article.id}, #{contents})")
     @Options(useGeneratedKeys = true, keyColumn = "ID", keyProperty = "id")
-    int saveContent(Content content);
+    int save(Content content);
 
     @Update("UPDATE ARTICLE_CONTENT SET CONTENTS = #{contents} WHERE id = #{id}")
     int update(@Param("id") long id , @Param("contents") String contents);
+
 }

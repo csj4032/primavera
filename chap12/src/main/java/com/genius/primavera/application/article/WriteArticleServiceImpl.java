@@ -1,6 +1,7 @@
 package com.genius.primavera.application.article;
 
 import com.genius.primavera.application.storage.StorageService;
+import com.genius.primavera.domain.mapper.article.ArticleFileMapper;
 import com.genius.primavera.domain.ArticleNotFoundException;
 import com.genius.primavera.domain.PageRequest;
 import com.genius.primavera.domain.Paged;
@@ -12,6 +13,7 @@ import com.genius.primavera.domain.model.article.ArticleDto;
 import com.genius.primavera.domain.model.article.ArticleStatus;
 import com.genius.primavera.domain.model.article.Comment;
 import com.genius.primavera.domain.model.article.Content;
+import com.genius.primavera.domain.model.article.File;
 import com.genius.primavera.domain.model.article.WriteType;
 import com.genius.primavera.domain.model.user.User;
 
@@ -38,19 +40,18 @@ public class WriteArticleServiceImpl implements WriteArticleService {
     private final ArticleMapper articleMapper;
     private final ArticleContentMapper articleContentMapper;
     private final ArticleCommentMapper articleCommentMapper;
+    private final ArticleFileMapper articleFileMapper;
     private final StorageService storageService;
 
     @Override
     @Transactional
     @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMINISTRATOR')")
     public Article save(ArticleDto.WriteArticle writeArticle) {
-        Article origin = getOriginArticle(writeArticle);
-        Article article = getArticle(origin, writeArticle, getUser());
-        articleMapper.updateStep(origin.getReference(), origin.getStep());
-        Content content = getContent(writeArticle, article);
-        article.setContent(content);
-        articleMapper.save(article);
-        articleContentMapper.saveContent(content);
+        Article article = getArticle(getParentArticle(writeArticle), writeArticle, getUser());
+        articleMapper.updateStep(article.getParentReference(), article.getParentStep());
+        article.setContent(getContent(writeArticle, article));
+        article.setFiles(getFiles(writeArticle, article));
+        saveArticle(article);
         return article;
     }
 
@@ -113,6 +114,12 @@ public class WriteArticleServiceImpl implements WriteArticleService {
         }.getType()), articleMapper.findAllCount());
     }
 
+    private void saveArticle(Article article) {
+        articleMapper.save(article);
+        articleContentMapper.save(article.getContent());
+        articleFileMapper.save(article.getFiles());
+    }
+
     @NotNull
     private Comment getComment(ArticleDto.WriteComment writeComment, Article article) {
         Comment comment = new Comment();
@@ -124,11 +131,15 @@ public class WriteArticleServiceImpl implements WriteArticleService {
         return comment;
     }
 
+    private File[] getFiles(ArticleDto.WriteArticle writeArticle, Article article) {
+        return new File[0];
+    }
+
     private void articleHit(long id) {
         articleMapper.articleHit(id);
     }
 
-    private Article getOriginArticle(@NotNull ArticleDto.WriteArticle writeArticle) {
+    private Article getParentArticle(@NotNull ArticleDto.WriteArticle writeArticle) {
         if (writeArticle.getWriteType().equals(WriteType.REPLY)) {
             Article article = articleMapper.findById(writeArticle.getPId());
             if (Objects.isNull(article)) throw new ArticleNotFoundException();
@@ -137,12 +148,13 @@ public class WriteArticleServiceImpl implements WriteArticleService {
         return new Article();
     }
 
-    private Article getArticle(@NotNull Article origin, @NotNull ArticleDto.WriteArticle writeArticle, User author) {
+    private Article getArticle(@NotNull Article parent, @NotNull ArticleDto.WriteArticle writeArticle, User author) {
         var article = new Article();
-        article.setPId(origin.getId());
-        article.setReference(origin.getReference());
-        article.setStep(origin.getStep() + 1);
-        article.setLevel(origin.getLevel() + 1);
+        article.setPId(parent.getId());
+        article.setParent(parent);
+        article.setReference(parent.getReference());
+        article.setStep(parent.getStep() + 1);
+        article.setLevel(parent.getLevel() + 1);
         article.setAuthor(author);
         article.setSubject(writeArticle.getSubject());
         article.setStatus(writeArticle.getStatus());
