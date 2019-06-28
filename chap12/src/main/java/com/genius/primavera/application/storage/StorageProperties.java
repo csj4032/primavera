@@ -11,5 +11,5 @@ import lombok.Setter;
 @Component
 @ConfigurationProperties("storage")
 public class StorageProperties {
-    private String location = "upload-dir";
+    private String location = "upload";
 }
