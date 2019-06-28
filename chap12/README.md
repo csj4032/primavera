@@ -28,6 +28,8 @@ public class PrimaveraLoggingAspect {
 }
 ```
 
+### Http2 적용
+
 ### File Upload
 
 ### 시스템 로그 통계
