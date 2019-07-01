@@ -57,6 +57,7 @@ public class PrimaveraPropertiesTest {
         Assertions.assertEquals(jdbcUrl, "jdbc:mariadb://localhost:3306/primavera");
         Assertions.assertEquals(jdbcUsername, "primavera");
         Assertions.assertEquals(jdbcPassword, "primavera");
+        // PR Test
         Assertions.assertEquals(tables, List.of("user", "role"));
     }
 
@@ -66,6 +67,7 @@ public class PrimaveraPropertiesTest {
         Assertions.assertEquals(primaveraProperties.getUrl(), "jdbc:mariadb://localhost:3306/primavera");
         Assertions.assertEquals(primaveraProperties.getUsername(), "primavera");
         Assertions.assertEquals(primaveraProperties.getPassword(), "primavera");
+        // PR Test
         Assertions.assertEquals(primaveraProperties.getUsers(), List.of(User.builder().id(1l).email("genius").build(), User.builder().id(2l).email("genius2").build()));
     }
 }
