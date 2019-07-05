@@ -53,6 +53,11 @@
 							<a th:href="@{${'/articles/reply?id=' + article.id}}" class="btn btn-primary btn-sm"><i class="fa fa-fw fa-reply"></i> 답글</a>
 							<a th:href="@{/articles}" class="btn btn-default  btn-sm"><i class="fa fa-fw fa-list"></i> 목록</a>
 						</div>
+						<div>
+							<span  th:each="attachment : ${article.attachments}">
+								<a class="label label-info" th:href="'/attachment/'+${attachment.id}" th:text="${attachment.name}"><i class="fa fa-fw fa-file"></i> 내려받기</a>
+							</span>
+						</div>
 					</div>
 				</div>
 				<div class="box box-widget" th:each="comment : ${article.comments}">

@@ -3,6 +3,7 @@ package com.genius.primavera.domain.model.article;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.Instant;
+import java.util.List;
 
 import javax.validation.constraints.NotEmpty;
 
@@ -57,6 +58,7 @@ public class ArticleDto {
         private int disapprove;
         private String contents;
         private CommentDto.Detail[] comments;
+        private List<Attachment> attachments;
         private Instant regDt;
         private Instant modDt;
 

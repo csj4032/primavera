@@ -2,6 +2,7 @@ package com.genius.primavera.domain.mapper.article;
 
 import com.genius.primavera.domain.PageRequest;
 import com.genius.primavera.domain.model.article.Article;
+import com.genius.primavera.domain.model.article.Attachment;
 import com.genius.primavera.domain.model.article.Comment;
 import com.genius.primavera.domain.typehandler.ArticleStatusTypeHandler;
 
@@ -159,6 +160,7 @@ public interface ArticleMapper {
                     @Result(property = "content.id", column = "CONTENTS_ID"),
                     @Result(property = "content.contents", column = "CONTENTS"),
                     @Result(property = "comments", javaType = Comment[].class, column = "ID", many = @Many(select = "com.genius.primavera.domain.mapper.article.ArticleCommentMapper.findByArticleId", fetchType = FetchType.DEFAULT)),
+                    @Result(property = "attachments", javaType = List.class, column = "ID", many = @Many(select = "com.genius.primavera.domain.mapper.article.ArticleAttachmentMapper.findByArticleId", fetchType = FetchType.DEFAULT)),
                     @Result(property = "regDt", column = "REG_DT"),
                     @Result(property = "modDt", column = "MOD_DT")
             })

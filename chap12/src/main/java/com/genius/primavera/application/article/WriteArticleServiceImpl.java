@@ -59,6 +59,7 @@ public class WriteArticleServiceImpl implements WriteArticleService {
 		article.setSubject(writeArticle.getSubject());
 		article.setModDt(Instant.now());
 		article.setContents(writeArticle.getContents());
+		if (Objects.nonNull(writeArticle.getFile())) article.setSaveAttachment(getAttachment(writeArticle, article));
 		updateArticleAndContent(writeArticle, article);
 		return article;
 	}
@@ -116,10 +117,10 @@ public class WriteArticleServiceImpl implements WriteArticleService {
 	}
 
 	private Attachment getAttachment(ArticleDto.WriteArticle writeArticle, Article article) {
-		return Attachment.builder().article(article).file(getFile(writeArticle)).build();
+		return Attachment.builder().article(article).file(storeAndLoad(writeArticle)).build();
 	}
 
-	private File getFile(ArticleDto.WriteArticle writeArticle) {
+	private File storeAndLoad(ArticleDto.WriteArticle writeArticle) {
 		storageService.store(writeArticle.getFile());
 		return storageService.load(writeArticle.getFile().getOriginalFilename()).toFile();
 	}
@@ -195,5 +196,6 @@ public class WriteArticleServiceImpl implements WriteArticleService {
 	protected void updateArticleAndContent(ArticleDto.WriteArticle writeArticle, Article article) {
 		articleMapper.update(article);
 		articleContentMapper.update(article.getContentsId(), writeArticle.getContents());
+		if (Objects.nonNull(article.getSaveAttachment())) articleAttachmentMapper.save(article.getSaveAttachment());
 	}
 }
