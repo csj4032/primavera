@@ -1,16 +1,22 @@
 package com.genius.primavera.application.storage;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.stream.Stream;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 public class FileSystemStorageService implements StorageService {
 
@@ -45,6 +51,20 @@ public class FileSystemStorageService implements StorageService {
     @Override
     public Path load(String filename) {
         return rootLocation.resolve(filename);
+    }
+
+    @Override
+    public Resource loadAsResource(String fileName) {
+        try {
+            Path filePath = rootLocation.resolve(fileName).normalize();
+            Resource resource = new UrlResource(filePath.toUri());
+            if (resource.exists()) {
+                return resource;
+            }
+        } catch (MalformedURLException ex) {
+            throw new NotFoundFileResourceException("File not found" + fileName);
+        }
+        throw new NotFoundFileResourceException("File not found" + fileName);
     }
 
     @Override

@@ -34,8 +34,8 @@ public class PrimaveraApplicationTest {
     @Order(1)
     @DisplayName("ActiveProfile")
     public void activeProfileTest() {
+
         Assertions.assertArrayEquals(new String[]{}, configurableApplicationContext.getEnvironment().getActiveProfiles());
-        new String();
     }
 
     @Test
