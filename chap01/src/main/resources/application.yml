@@ -5,6 +5,13 @@ spring:
   banner:
     charset: UTF-8
     location: classpath:primavera.txt
+  aop:
+    proxy-target-class: false
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driverClassName: org.h2.Driver
+    username: sa
+    password: password
 
 logging:
   level:
