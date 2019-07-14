@@ -5,6 +5,7 @@ import com.genius.primavera.application.validator.Nickname;
 import org.springframework.lang.NonNull;
 
 import lombok.*;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 
 import javax.validation.Valid;
 import javax.validation.constraints.*;
@@ -46,5 +47,9 @@ public class User {
 
 	public boolean isAuthenticate(@NonNull String password) {
 		return this.password.equals(password);
+	}
+
+	public void setPassword(String password) {
+		this.password = PasswordEncoderFactories.createDelegatingPasswordEncoder().encode(password);
 	}
 }

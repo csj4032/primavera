@@ -19,5 +19,7 @@ public class PrimaveraApplication {
 	private GeniusService geniusService;
 
 	@Bean
-	ApplicationRunner applicationRunner() { return (args) -> geniusService.doSomething(); }
+	ApplicationRunner applicationRunner() {
+		return (args) -> geniusService.doSomething();
+	}
 }
