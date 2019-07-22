@@ -5,10 +5,13 @@
 * Java 12 (Switch expressions)
 * IntelliJ IDEA (2019.1)
 * MariaDB 10.3.14
-* Springboot 2.1.4.RELEASE
+* Springboot 2.1.6.RELEASE
+* Springboot Security 2.1.6.RELEASE
 * Thymeleaf
 * Mybatis
 * Lombok
+* Lucy-xss
+* Flyway
 * Bootstrap
 
 ## Requirements Specification
