@@ -9,6 +9,7 @@
 * Springboot Security 2.1.6.RELEASE
 * Thymeleaf
 * Mybatis
+* JPA
 * Lombok
 * Lucy-xss
 * Flyway
@@ -63,6 +64,9 @@
 
 ## chap12
 * Spring Security Annotation, File Upload
+
+## chap13
+* JPA
 
 ## Library Version
 * gradle 라이브러리 버전 정보 정리

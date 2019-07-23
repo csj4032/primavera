@@ -1,0 +1,32 @@
+dependencies {
+    compile('org.springframework.boot:spring-boot-starter-web') {
+        exclude module: "spring-boot-starter-tomcat"
+    }
+    implementation('org.springframework.boot:spring-boot-starter-aop')
+    implementation('org.springframework.boot:spring-boot-starter-jdbc')
+    implementation('org.springframework.boot:spring-boot-starter-json')
+    implementation('org.springframework.boot:spring-boot-starter-data-jpa')
+    implementation('org.springframework.boot:spring-boot-starter-data-mongodb')
+    implementation('org.springframework.boot:spring-boot-starter-data-mongodb-reactive')
+    implementation('org.springframework.boot:spring-boot-starter-webflux')
+    implementation('org.springframework.boot:spring-boot-starter-thymeleaf')
+    implementation('org.springframework.boot:spring-boot-devtools')
+    implementation('org.springframework.boot:spring-boot-starter-security')
+    implementation('org.springframework.security.oauth.boot:spring-security-oauth2-autoconfigure:2.1.4.RELEASE')
+    implementation('org.thymeleaf.extras:thymeleaf-extras-springsecurity5:3.0.4.RELEASE')
+    implementation('org.springframework.boot:spring-boot-starter-undertow')
+    implementation('org.springframework.boot:spring-boot-starter-reactor-netty')
+    implementation('org.mariadb.jdbc:mariadb-java-client:2.3.0')
+    implementation('nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:2.3.0')
+    implementation('com.navercorp.lucy:lucy-xss-servlet:2.0.0')
+    implementation('org.modelmapper:modelmapper:2.3.3')
+    implementation('org.flywaydb:flyway-core:5.2.4')
+    implementation('org.projectlombok:lombok')
+    implementation('org.jctools:jctools-core:2.1.2')
+    annotationProcessor('org.projectlombok:lombok')
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude module: 'junit'
+    }
+    testImplementation('org.springframework.security:spring-security-test')
+    testImplementation('io.rest-assured:rest-assured:3.3.0')
+}
