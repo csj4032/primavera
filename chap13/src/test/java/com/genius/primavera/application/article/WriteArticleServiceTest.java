@@ -75,7 +75,6 @@ class WriteArticleServiceTest {
     public void writeTest() {
         article_1 = writeArticleService.save(writeRequestArticle);
         article_1 = writeArticleService.findById(article_1.getId());
-        Assertions.assertEquals(null, article_1.getParent());
         Assertions.assertEquals(1, article_1.getStep());
     }
 
@@ -138,7 +137,6 @@ class WriteArticleServiceTest {
         writeRequestArticle.setWriteType(WriteType.FORM);
         article_2 = writeArticleService.save(writeRequestArticle);
         article_2 = writeArticleService.findById(article_2.getId());
-        Assertions.assertEquals(null, article_1.getParent());
         Assertions.assertEquals(1, article_1.getStep());
     }
 

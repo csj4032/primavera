@@ -56,8 +56,8 @@ public class PostMockControllerTest {
 	@WithUserDetails(value = "Genius Choi", userDetailsServiceBeanName = "primaveraUserDetailsService")
 	public void postList() throws Exception {
 		given(this.postService.findAll()).willReturn(List.of(
-				Post.builder().id(1).subject("로마는 하루아침에 이루어지지 않았다.").contents("제1권 로마는 하루아침에 이루어지지 않았다.").writer(User.builder().id(1).email("Genius Choi").nickname("Genius").build()).build(),
-				Post.builder().id(2).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1).email("Genius Choi").nickname("Genius").build()).build()));
+				Post.builder().id(1).subject("로마는 하루아침에 이루어지지 않았다.").contents("제1권 로마는 하루아침에 이루어지지 않았다.").writer(User.builder().id(1L).email("Genius Choi").nickname("Genius").build()).build(),
+				Post.builder().id(2).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1L).email("Genius Choi").nickname("Genius").build()).build()));
 		mockMvc.perform(get("/posts").accept(MediaType.TEXT_HTML))
 				.andExpect(status().isOk())
 				.andExpect(content().string(containsString("로마는 하루아침에 이루어지지 않았다.")))
@@ -71,19 +71,19 @@ public class PostMockControllerTest {
 	public void postListOfPagination() throws Exception {
 		PageRequest pageable = PageRequest.of(1, 10);
 		List<Post> list = List.of(
-				Post.builder().id(1).subject("로마는 하루아침에 이루어지지 않았다.").contents("제1권 로마는 하루아침에 이루어지지 않았다.").writer(User.builder().id(1).email("Genius Choi").nickname("Genius").build()).build(),
-				Post.builder().id(2).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1).email("Genius Choi").nickname("Genius").build()).build(),
-				Post.builder().id(3).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1).email("Genius Choi").nickname("Genius").build()).build(),
-				Post.builder().id(3).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1).email("Genius Choi").nickname("Genius").build()).build(),
-				Post.builder().id(4).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1).email("Genius Choi").nickname("Genius").build()).build(),
-				Post.builder().id(5).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1).email("Genius Choi").nickname("Genius").build()).build(),
-				Post.builder().id(6).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1).email("Genius Choi").nickname("Genius").build()).build(),
-				Post.builder().id(7).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1).email("Genius Choi").nickname("Genius").build()).build(),
-				Post.builder().id(8).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1).email("Genius Choi").nickname("Genius").build()).build(),
-				Post.builder().id(9).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1).email("Genius Choi").nickname("Genius").build()).build(),
-				Post.builder().id(10).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1).email("Genius Choi").nickname("Genius").build()).build(),
-				Post.builder().id(11).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1).email("Genius Choi").nickname("Genius").build()).build(),
-				Post.builder().id(12).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1).email("Genius Choi").nickname("Genius").build()).build()
+				Post.builder().id(1).subject("로마는 하루아침에 이루어지지 않았다.").contents("제1권 로마는 하루아침에 이루어지지 않았다.").writer(User.builder().id(1L).email("Genius Choi").nickname("Genius").build()).build(),
+				Post.builder().id(2).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1L).email("Genius Choi").nickname("Genius").build()).build(),
+				Post.builder().id(3).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1L).email("Genius Choi").nickname("Genius").build()).build(),
+				Post.builder().id(3).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1L).email("Genius Choi").nickname("Genius").build()).build(),
+				Post.builder().id(4).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1L).email("Genius Choi").nickname("Genius").build()).build(),
+				Post.builder().id(5).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1L).email("Genius Choi").nickname("Genius").build()).build(),
+				Post.builder().id(6).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1L).email("Genius Choi").nickname("Genius").build()).build(),
+				Post.builder().id(7).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1L).email("Genius Choi").nickname("Genius").build()).build(),
+				Post.builder().id(8).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1L).email("Genius Choi").nickname("Genius").build()).build(),
+				Post.builder().id(9).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1L).email("Genius Choi").nickname("Genius").build()).build(),
+				Post.builder().id(10).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1L).email("Genius Choi").nickname("Genius").build()).build(),
+				Post.builder().id(11).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1L).email("Genius Choi").nickname("Genius").build()).build(),
+				Post.builder().id(12).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1L).email("Genius Choi").nickname("Genius").build()).build()
 		);
 		Paged<PostDto.ResponseForList> postPage = new Paged(pageable, list, list.size());
 		given(this.postService.findForPageable(pageable, "keyword")).willReturn(postPage);
@@ -99,7 +99,7 @@ public class PostMockControllerTest {
 	@DisplayName("포스팅 상세 화면 접근")
 	@WithUserDetails(value = "Genius Choi", userDetailsServiceBeanName = "primaveraUserDetailsService")
 	public void postDetail() throws Exception {
-		given(this.postService.findById(1)).willReturn(Post.builder().id(1).subject("제1권 로마는 하루아침에 이루어지지 않았다.").contents("제1권 로마는 하루아침에 이루어지지 않았다.").writer(User.builder().id(1).nickname("Genius").build()).build());
+		given(this.postService.findById(1)).willReturn(Post.builder().id(1).subject("제1권 로마는 하루아침에 이루어지지 않았다.").contents("제1권 로마는 하루아침에 이루어지지 않았다.").writer(User.builder().id(1L).nickname("Genius").build()).build());
 		mockMvc.perform(get("/posts/1").accept(MediaType.TEXT_HTML))
 				.andExpect(status().isOk())
 				.andExpect(content().string(containsString("하루아침에")))

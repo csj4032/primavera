@@ -14,4 +14,6 @@ public interface UserService {
 	User signUp(UserConnection userConnection);
 
 	boolean isExistUser(String email);
+
+    User findById(long id);
 }

@@ -34,8 +34,9 @@ import lombok.ToString;
 public class User {
 
     @Id
+    @Column(name = "ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Column(name = "EMAIL", insertable = false, updatable = false)
     private String email;
@@ -46,17 +47,20 @@ public class User {
     @Column(name = "NICKNAME")
     private String nickname;
 
+    @Column(name = "STATUS")
     private UserStatus status;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "EMAIL")
     private UserConnection connection;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "USER_ROLE", joinColumns = {@JoinColumn(name = "USER_ID", referencedColumnName = "ID")}, inverseJoinColumns = {@JoinColumn(name = "ROLE_ID", referencedColumnName = "ID")})
     private List<Role> roles;
 
+    @Column(name = "REG_DT")
     private LocalDateTime regDt;
 
+    @Column(name = "MOD_DT")
     private LocalDateTime modDt;
 }
