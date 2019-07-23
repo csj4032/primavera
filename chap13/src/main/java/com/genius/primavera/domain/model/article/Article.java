@@ -52,10 +52,9 @@ public class Article {
 
     @Column(name = "LEVEL")
     private int level;
+
     private ArticleStatus status;
 
-    //private Article parent;
-    //private Article[] children;
     private String subject;
 
     @ManyToOne(fetch = FetchType.EAGER, targetEntity = User.class)
@@ -76,8 +75,6 @@ public class Article {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "article")
     @Builder.Default
     private List<Attachment> attachments = new ArrayList<>();
-
-    //private Attachment saveAttachment;
 
     private Instant regDt;
     private Instant modDt;

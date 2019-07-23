@@ -28,8 +28,8 @@ public class UserController {
 
 	@PrimaveraLogging(type = "UserController")
 	@GetMapping(value = "/{id}")
-	public long getUserById(@PathVariable(value = "id") long id) {
-		return id;
+	public User findById(@PathVariable(value = "id") long id) {
+		return userService.findById(id);
 	}
 
 	@PostMapping(value = "/save")
