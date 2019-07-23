@@ -7,11 +7,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
@@ -37,21 +43,42 @@ public class Article {
 
     @Column(name = "PID")
     private long pId;
+
+    @Column(name = "REFERENCE")
     private long reference;
+
+    @Column(name = "STEP")
     private int step;
+
+    @Column(name = "LEVEL")
     private int level;
     private ArticleStatus status;
-    private Article parent;
-    private Article[] children;
+
+    //private Article parent;
+    //private Article[] children;
     private String subject;
+
+    @ManyToOne(fetch = FetchType.EAGER, targetEntity = User.class)
+    @JoinColumn(name = "USER_ID", nullable = false)
     private User author;
+
     private int hit;
     private int recommend;
     private int disapprove;
+
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "article")
     private Content content;
-    private Comment[] comments;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "ARTICLE_ID")
+    private List<Comment> comments;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "article")
+    @Builder.Default
     private List<Attachment> attachments = new ArrayList<>();
-    private Attachment saveAttachment;
+
+    //private Attachment saveAttachment;
+
     private Instant regDt;
     private Instant modDt;
 
@@ -71,38 +98,7 @@ public class Article {
         return content.getId();
     }
 
-    public boolean hasParents() {
-        return !Objects.isNull(parent);
-    }
-
-    public boolean hasChildren() {
-        return !Objects.isNull(children) && children.length > 0;
-    }
-
-    public Article rootParent() {
-        if (this.getParentId() == 0) return this;
-        return parent.getParent();
-    }
-
-    public long getParentId() {
-        if (Objects.isNull(parent)) return 0;
-        return this.parent.getId();
-    }
-
-    public Article[] getSibling() {
-        if (Objects.isNull(parent)) return null;
-        return parent.getChildren();
-    }
-
     public void setContents(String contents) {
         content.setContents(contents);
-    }
-
-    public long getParentReference() {
-        return parent.getReference();
-    }
-
-    public int getParentStep() {
-        return parent.getStep();
     }
 }

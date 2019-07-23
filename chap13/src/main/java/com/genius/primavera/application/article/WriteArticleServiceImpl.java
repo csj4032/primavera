@@ -39,7 +39,7 @@ public class WriteArticleServiceImpl implements WriteArticleService {
 		Article article = getArticle(getParentArticle(writeArticle), writeArticle, getUser());
 		articleRepository.save(article);
 		article.setContent(getContent(writeArticle, article));
-		if (Objects.nonNull(writeArticle.getFile())) article.setSaveAttachment(getAttachment(writeArticle, article));
+		//if (Objects.nonNull(writeArticle.getFile())) article.setSaveAttachment(getAttachment(writeArticle, article));
 		saveArticle(article);
 		return article;
 	}
@@ -130,7 +130,6 @@ public class WriteArticleServiceImpl implements WriteArticleService {
 	private Article getArticle(@NotNull Article parent, @NotNull ArticleDto.WriteArticle writeArticle, User author) {
 		var article = new Article();
 		article.setPId(parent.getId());
-		article.setParent(parent);
 		article.setReference(parent.getReference());
 		article.setStep(parent.getStep() + 1);
 		article.setLevel(parent.getLevel() + 1);
