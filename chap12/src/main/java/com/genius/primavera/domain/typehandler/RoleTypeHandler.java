@@ -38,6 +38,11 @@ public class RoleTypeHandler<E extends Enum<E>> extends BaseTypeHandler<RoleType
     }
 
     private RoleType getRoleType(int type) {
-        return Arrays.stream(RoleType.values()).filter(e -> e.getValue() == type).findFirst().orElseThrow();
+        return switch (type) {
+            case 1 -> RoleType.ADMINISTRATOR;
+            case 2 -> RoleType.MANAGER;
+            case 3 -> RoleType.USER;
+            default -> throw new IllegalStateException("Unexpected value: " + type);
+        };
     }
 }

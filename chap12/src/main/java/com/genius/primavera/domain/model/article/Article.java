@@ -32,6 +32,7 @@ public class Article {
 	private int disapprove;
 	private Content content;
 	private Comment[] comments;
+	@Builder.Default
 	private List<Attachment> attachments = new ArrayList<>();
 	private Attachment saveAttachment;
 	private Instant regDt;
