@@ -1,14 +1,12 @@
 package com.genius.primavera.domain.model.post;
 
-import java.util.stream.Stream;
-
 import lombok.Getter;
 
 @Getter
 public enum PostStatus {
     PUBLIC(1, "발행"),
     DELETE(2, "삭제"),
-    BLOCK(3, "재제");
+    BLOCK(3, "파리채블락");
 
     private int value;
     private String name;
@@ -19,6 +17,11 @@ public enum PostStatus {
     }
 
     public static PostStatus of(int source) {
-        return Stream.of(PostStatus.values()).filter(postStatus -> postStatus.getValue() == source).findFirst().orElseThrow();
+        return switch (source) {
+            case 1 -> PostStatus.PUBLIC;
+            case 2 -> PostStatus.DELETE;
+            case 3 -> PostStatus.BLOCK;
+            default -> throw new IllegalStateException("Unexpected value: " + source);
+        };
     }
 }
