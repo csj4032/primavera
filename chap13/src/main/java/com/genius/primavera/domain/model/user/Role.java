@@ -28,8 +28,8 @@ import lombok.ToString;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
-@Table(name = "ROLE")
+//@Entity
+//@Table(name = "ROLE")
 public class Role {
 
     @Id
