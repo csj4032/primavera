@@ -1,10 +1,14 @@
 package com.genius.primavera.domain.model.user;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.genius.primavera.domain.converter.RoleTypeAttributeConverter;
 
+import java.io.Serializable;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -12,8 +16,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,13 +26,13 @@ import lombok.ToString;
 
 @Getter
 @Setter
-@ToString
+@ToString(exclude = {"users"})
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-//@Entity
-//@Table(name = "ROLE")
-public class Role {
+@Entity
+@Table(name = "ROLE")
+public class Role implements Serializable {
 
     @Id
     @Column(name = "ID")
@@ -38,9 +40,9 @@ public class Role {
     private long id;
 
     @Column(name = "TYPE")
+    @Convert(converter = RoleTypeAttributeConverter.class)
     private RoleType type;
 
-    @JsonIgnore
     @ManyToMany(mappedBy = "roles", fetch = FetchType.EAGER)
-    private Collection<User> users;
+    private Set<User> users = new HashSet<>();
 }
