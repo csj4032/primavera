@@ -24,6 +24,7 @@ spring:
         jdbc:
           fetch_size: 30
           batch_size: 30
+    open-in-view: false
   banner:
     charset: UTF-8
     location: classpath:primavera.txt
