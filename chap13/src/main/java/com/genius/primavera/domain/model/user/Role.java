@@ -43,6 +43,5 @@ public class Role implements Serializable {
     @Convert(converter = RoleTypeAttributeConverter.class)
     private RoleType type;
 
-    @ManyToMany(mappedBy = "roles", fetch = FetchType.EAGER)
     private Set<User> users = new HashSet<>();
 }
