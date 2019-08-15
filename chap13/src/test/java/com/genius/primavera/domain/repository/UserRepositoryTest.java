@@ -1,10 +1,6 @@
 package com.genius.primavera.domain.repository;
 
-import com.genius.primavera.domain.model.user.Role;
-import com.genius.primavera.domain.model.user.RoleType;
-import com.genius.primavera.domain.model.user.User;
-import com.genius.primavera.domain.model.user.UserConnection;
-import com.genius.primavera.domain.model.user.UserStatus;
+import com.genius.primavera.domain.model.user.*;
 
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
@@ -18,6 +14,7 @@ import org.springframework.test.annotation.Commit;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Set;
 
 import static com.genius.primavera.domain.model.user.ProviderType.GOOGLE;
@@ -66,13 +63,18 @@ public class UserRepositoryTest {
     }
 
     @Test
-    public void findById() {
+    public void findByEmail() {
         var user = userRepository.findByEmail("csj4032@gmail.com").get();
         assertEquals(user.getNickname(), "Genius");
         var connection = user.getConnection();
         assertEquals(connection.getId(), 1);
         assertEquals(connection.getProvider(), GOOGLE);
         assertFalse(user.getRoles().isEmpty());
+    }
+
+    @Test
+    public void findByNickname() {
+        List<UserDto> users = userRepository.findByNickname("csj4032@gmail.com", UserDto.class);
     }
 
     @Test
