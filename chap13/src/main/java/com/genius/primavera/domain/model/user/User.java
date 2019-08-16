@@ -1,6 +1,7 @@
 package com.genius.primavera.domain.model.user;
 
 import com.genius.primavera.domain.converter.UserStatusAttributeConverter;
+import com.genius.primavera.domain.model.BaseEntity;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -34,7 +35,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @Entity
 @Table(name = "USER")
-public class User {
+public class User extends BaseEntity {
 
     @Id
     @Column(name = "ID")

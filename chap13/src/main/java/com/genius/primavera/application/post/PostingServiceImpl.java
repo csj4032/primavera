@@ -4,7 +4,7 @@ import com.genius.primavera.domain.PageRequest;
 import com.genius.primavera.domain.Paged;
 import com.genius.primavera.domain.model.post.Post;
 import com.genius.primavera.domain.model.post.PostDto;
-import com.genius.primavera.domain.repository.PostRepository;
+import com.genius.primavera.domain.repository.post.PostRepository;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
