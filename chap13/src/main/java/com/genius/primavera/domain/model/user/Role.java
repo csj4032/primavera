@@ -21,7 +21,7 @@ import lombok.ToString;
 
 @Getter
 @Setter
-@ToString(exclude = {"users"})
+@ToString
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

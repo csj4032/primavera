@@ -2,6 +2,7 @@ package com.genius.primavera.domain.repository.article;
 
 import com.genius.primavera.domain.model.article.Article;
 import com.genius.primavera.domain.model.article.ArticleStatus;
+import com.genius.primavera.domain.model.article.Attachment;
 import com.genius.primavera.domain.model.article.Content;
 import com.genius.primavera.domain.repository.UserRepository;
 
@@ -17,6 +18,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -52,8 +55,7 @@ public class ArticleRepositoryTest {
     @DisplayName("게시글 관련 테이블 Truncate")
     public void cleanUp() {
         entityManager.createNativeQuery("TRUNCATE ARTICLE").executeUpdate();
-        //entityManager.createNativeQuery("TRUNCATE ARTICLE_ATTACHMENT").executeUpdate();
-        //entityManager.createNativeQuery("TRUNCATE ARTICLE_COMMENT").executeUpdate();
+        entityManager.createNativeQuery("TRUNCATE ARTICLE_ATTACHMENT").executeUpdate();
         entityManager.createNativeQuery("TRUNCATE ARTICLE_CONTENT").executeUpdate();
     }
 
@@ -71,6 +73,7 @@ public class ArticleRepositoryTest {
         article.setSubject("게시글 제목입니다. 1");
         article.setStatus(ArticleStatus.PUBLIC);
         article.setContent(Content.builder().contents("게시글 내용입니다. 1").build());
+        article.setAttachments(List.of(Attachment.builder().name("file1.txt").path("/path").size(100).build()));
         articleRepository.save(article);
     }
 
@@ -79,12 +82,17 @@ public class ArticleRepositoryTest {
     @DisplayName("게시글 조회 테스트 [1번 글]")
     public void findByIdTest() {
         Article article = articleRepository.findById(1l).orElse(null);
+
         assertNotNull(article);
-        assertNotNull(article.getComments());
-        assertTrue(!article.getComments().isEmpty());
         assertEquals("게시글 제목입니다. 1", article.getSubject());
         assertEquals("Genius", article.getAuthorName());
+
+        assertNotNull(article.getComments());
+        assertTrue(!article.getComments().isEmpty());
         assertIterableEquals(article.getComments(), commentRepository.findByArticleId(1l));
+
+        assertNotNull(article.getAttachments());
+        assertTrue(!article.getAttachments().isEmpty());
     }
 
     @Test
@@ -97,6 +105,21 @@ public class ArticleRepositoryTest {
         article.setSubject("게시글 제목입니다.(수정) 1");
         Content content = article.getContent();
         content.setContents("게시글 내용입니다.(수정) 1");
+        article.getAttachments().add(Attachment.builder().name("file2.txt").path("/path").size(100).build());
         articleRepository.save(article);
+    }
+
+    @Test
+    @Order(5)
+    @DisplayName("게시글 수정 후 조회 테스트 [1번 글]")
+    public void updateAfterFindByIdTest() {
+        Article article = articleRepository.findById(1l).orElse(null);
+        assertNotNull(article);
+        assertEquals("게시글 제목입니다.(수정) 1", article.getSubject());
+        assertEquals("게시글 내용입니다.(수정) 1", article.getContents());
+
+        assertNotNull(article.getAttachments());
+        assertTrue(article.getAttachments().size() == 2);
+        article.getAttachments().forEach(e -> assertEquals("/path", e.getPath()));
     }
 }

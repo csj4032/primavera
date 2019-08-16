@@ -93,7 +93,7 @@ public class WriteArticleServiceImpl implements WriteArticleService {
 	}
 
 	private Attachment getAttachment(ArticleDto.WriteArticle writeArticle, Article article) {
-		return Attachment.builder().article(article).file(storeAndLoad(writeArticle)).build();
+		return Attachment.builder().articleId(article.getId()).file(storeAndLoad(writeArticle)).build();
 	}
 
 	private File storeAndLoad(ArticleDto.WriteArticle writeArticle) {

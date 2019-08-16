@@ -83,9 +83,9 @@ public class Article extends BaseEntity {
     @JoinColumn(name = "ARTICLE_ID")
     private List<Comment> comments;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "article")
-    @Builder.Default
-    private List<Attachment> attachments = new ArrayList<>();
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "ARTICLE_ID")
+    private List<Attachment> attachments;
 
     public long getAuthorId() {
         return author.getId();
