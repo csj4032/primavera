@@ -2,7 +2,6 @@ package com.genius.primavera.domain.repository;
 
 import com.genius.primavera.domain.model.user.User;
 
-import com.genius.primavera.domain.model.user.UserDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
