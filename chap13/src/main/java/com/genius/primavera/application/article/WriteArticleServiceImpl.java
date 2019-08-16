@@ -1,11 +1,9 @@
 package com.genius.primavera.application.article;
 
-import com.genius.primavera.domain.ArticleNotFoundException;
 import com.genius.primavera.domain.PageRequest;
 import com.genius.primavera.domain.Paged;
 import com.genius.primavera.domain.model.article.Article;
 import com.genius.primavera.domain.model.article.ArticleDto;
-import com.genius.primavera.domain.model.article.ArticleStatus;
 import com.genius.primavera.domain.model.article.Attachment;
 import com.genius.primavera.domain.model.article.Comment;
 import com.genius.primavera.domain.model.article.Content;
@@ -19,8 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
-import java.time.Instant;
-import java.util.Objects;
+import java.time.LocalDateTime;
 
 import lombok.RequiredArgsConstructor;
 
@@ -72,7 +69,7 @@ public class WriteArticleServiceImpl implements WriteArticleService {
 
 	@Override
 	public Article findById(long id) {
-		return articleRepository.findById(id);
+		return articleRepository.findById(id).orElse(new Article());
 	}
 
 	@Override
@@ -106,11 +103,6 @@ public class WriteArticleServiceImpl implements WriteArticleService {
 	@NotNull
 	private Comment getComment(ArticleDto.WriteComment writeComment, Article article) {
 		Comment comment = new Comment();
-		comment.setArticle(article);
-		comment.setAuthor(getUser());
-		comment.setComment(writeComment.getComment());
-		comment.setStatus(ArticleStatus.PUBLIC);
-		comment.setRegDt(Instant.now());
 		return comment;
 	}
 
@@ -119,11 +111,6 @@ public class WriteArticleServiceImpl implements WriteArticleService {
 	}
 
 	private Article getParentArticle(@NotNull ArticleDto.WriteArticle writeArticle) {
-		if (writeArticle.getWriteType().equals(WriteType.REPLY)) {
-			Article article = articleRepository.findById(writeArticle.getPId());
-			if (Objects.isNull(article)) throw new ArticleNotFoundException();
-			return article;
-		}
 		return new Article();
 	}
 
@@ -136,13 +123,12 @@ public class WriteArticleServiceImpl implements WriteArticleService {
 		article.setAuthor(author);
 		article.setSubject(writeArticle.getSubject());
 		article.setStatus(writeArticle.getStatus());
-		article.setRegDt(Instant.now());
+		article.setRegDt(LocalDateTime.now());
 		return article;
 	}
 
 	private Content getContent(@NotNull ArticleDto.WriteArticle writeArticle, @NotNull Article article) {
 		Content content = new Content();
-		content.setArticle(article);
 		content.setContents(writeArticle.getContents());
 		return content;
 	}
@@ -153,20 +139,11 @@ public class WriteArticleServiceImpl implements WriteArticleService {
 
 	private ArticleDto.FormArticle getModifyForm(long id) {
 		ArticleDto.FormArticle formArticle = new ArticleDto.FormArticle();
-		Article article = articleRepository.findById(id);
-		formArticle.setId(id);
-		formArticle.setSubject(article.getSubject());
-		formArticle.setContents(article.getContents());
-		formArticle.setWriteType(WriteType.UPDATE);
 		return formArticle;
 	}
 
 	private ArticleDto.FormArticle getReplayForm(long id) {
 		ArticleDto.FormArticle formArticle = new ArticleDto.FormArticle();
-		Article article = articleRepository.findById(id);
-		formArticle.setPId(id);
-		formArticle.setSubject("[RE] " + article.getSubject());
-		formArticle.setWriteType(WriteType.REPLY);
 		return formArticle;
 	}
 
