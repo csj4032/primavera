@@ -1,4 +1,4 @@
-package com.genius.primavera.domain.repository;
+package com.genius.primavera.domain.repository.article;
 
 import com.genius.primavera.domain.model.article.Article;
 

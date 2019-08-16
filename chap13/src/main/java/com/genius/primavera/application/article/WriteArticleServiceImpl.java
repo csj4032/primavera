@@ -9,7 +9,7 @@ import com.genius.primavera.domain.model.article.Comment;
 import com.genius.primavera.domain.model.article.Content;
 import com.genius.primavera.domain.model.article.WriteType;
 import com.genius.primavera.domain.model.user.User;
-import com.genius.primavera.domain.repository.ArticleRepository;
+import com.genius.primavera.domain.repository.article.ArticleRepository;
 
 import org.jetbrains.annotations.NotNull;
 import org.springframework.security.access.prepost.PreAuthorize;

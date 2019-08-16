@@ -17,9 +17,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -79,10 +79,12 @@ public class Article extends BaseEntity {
     @JoinColumn(name = "CONTENT_ID", referencedColumnName = "ID")
     private Content content;
 
-    @Transient
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "ARTICLE_ID")
     private List<Comment> comments;
 
-    @Transient
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "article")
+    @Builder.Default
     private List<Attachment> attachments = new ArrayList<>();
 
     public long getAuthorId() {

@@ -1,21 +1,17 @@
 package com.genius.primavera.domain.model.user;
 
 import com.genius.primavera.domain.converter.ProviderTypeAttributeConverter;
+import com.genius.primavera.domain.model.BaseEntity;
 import com.genius.primavera.infrastructure.security.social.facebook.FacebookUserDetails;
 import com.genius.primavera.infrastructure.security.social.github.GithubUserDetails;
 import com.genius.primavera.infrastructure.security.social.google.GoogleUserDetails;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.MapsId;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
@@ -33,7 +29,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @Entity
 @Table(name = "USER_CONNECTION")
-public class UserConnection {
+public class UserConnection extends BaseEntity {
 
     @Id
     @Column(name="ID")

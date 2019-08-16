@@ -1,5 +1,7 @@
 package com.genius.primavera.domain.model.article;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -23,7 +25,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @Entity
 @Table(name = "ARTICLE_CONTENT")
-public class Content {
+public class Content implements Serializable {
 
     @Id
     @Column(name = "ID")

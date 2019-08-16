@@ -2,7 +2,7 @@ package com.genius.primavera.application;
 
 import com.genius.primavera.application.storage.StorageService;
 import com.genius.primavera.domain.model.article.Attachment;
-import com.genius.primavera.domain.repository.AttachmentRepository;
+import com.genius.primavera.domain.repository.article.AttachmentRepository;
 
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
