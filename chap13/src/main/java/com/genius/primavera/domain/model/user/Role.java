@@ -3,18 +3,13 @@ package com.genius.primavera.domain.model.user;
 import com.genius.primavera.domain.converter.RoleTypeAttributeConverter;
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
@@ -43,5 +38,4 @@ public class Role implements Serializable {
     @Convert(converter = RoleTypeAttributeConverter.class)
     private RoleType type;
 
-    private Set<User> users = new HashSet<>();
 }
