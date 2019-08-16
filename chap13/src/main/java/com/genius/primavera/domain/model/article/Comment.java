@@ -5,6 +5,7 @@ import com.genius.primavera.domain.model.user.User;
 import java.time.Instant;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -26,10 +27,10 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
-    @JoinColumn(name = "ARTICLE_ID")
-    private Article article;
+    @Column(name = "LEVEL")
     private int level;
+
+    @Column(name = "STEP")
     private int step;
 
     @ManyToOne(fetch = FetchType.EAGER, targetEntity = User.class)

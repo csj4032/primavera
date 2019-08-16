@@ -12,8 +12,10 @@ import javax.persistence.EntityListeners;
 import javax.persistence.MappedSuperclass;
 
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 public abstract class BaseEntity implements Serializable {

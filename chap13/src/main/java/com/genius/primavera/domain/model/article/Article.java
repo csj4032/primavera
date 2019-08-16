@@ -1,14 +1,15 @@
 package com.genius.primavera.domain.model.article;
 
+import com.genius.primavera.domain.converter.ArticleStatusAttributeConverter;
+import com.genius.primavera.domain.model.BaseEntity;
 import com.genius.primavera.domain.model.user.User;
 
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -16,9 +17,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,17 +32,18 @@ import lombok.ToString;
 @Setter
 @Builder
 @ToString
-@NoArgsConstructor
-@AllArgsConstructor
 @Entity
 @Table(name = "ARTICLE")
-public class Article {
+@NoArgsConstructor
+@AllArgsConstructor
+public class Article extends BaseEntity {
 
     @Id
+    @Column(name = "ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "PID")
+    @Column(name = "P_ID")
     private long pId;
 
     @Column(name = "REFERENCE")
@@ -53,31 +55,35 @@ public class Article {
     @Column(name = "LEVEL")
     private int level;
 
+    @Column(name = "STATUS")
+    @Convert(converter = ArticleStatusAttributeConverter.class)
     private ArticleStatus status;
 
+    @Column(name = "SUBJECT")
     private String subject;
 
     @ManyToOne(fetch = FetchType.EAGER, targetEntity = User.class)
-    @JoinColumn(name = "USER_ID", nullable = false)
+    @JoinColumn(name = "AUTHOR", nullable = false, updatable = false)
     private User author;
 
+    @Column(name = "HIT")
     private int hit;
+
+    @Column(name = "RECOMMEND")
     private int recommend;
+
+    @Column(name = "DISAPPROVE")
     private int disapprove;
 
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "article")
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "CONTENT_ID", referencedColumnName = "ID")
     private Content content;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "ARTICLE_ID")
+    @Transient
     private List<Comment> comments;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "article")
-    @Builder.Default
+    @Transient
     private List<Attachment> attachments = new ArrayList<>();
-
-    private Instant regDt;
-    private Instant modDt;
 
     public long getAuthorId() {
         return author.getId();
