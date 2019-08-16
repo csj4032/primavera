@@ -1,20 +1,23 @@
 package com.genius.primavera.domain.model.article;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import lombok.*;
+import com.genius.primavera.domain.model.BaseEntity;
 
 import java.io.File;
 
-import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
@@ -24,28 +27,29 @@ import javax.persistence.Table;
 @AllArgsConstructor
 @Entity
 @Table(name = "ARTICLE_ATTACHMENT")
-public class Attachment {
+public class Attachment extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
-    @JoinColumn(name = "ARTICLE_ID", nullable = false)
-    private Article article;
+    @Column(name = "ARTICLE_ID")
+    private long articleId;
 
+    @Column(name = "NAME")
     private String name;
+
+    @Column(name = "SIZE")
     private long size;
+
+    @Column(name = "PATH")
     private String path;
+
+    @Transient
     private File file;
 
     public boolean isExists() {
         return this.id != 0;
-    }
-
-    public long getArticleId() {
-        return article.getId();
     }
 
     public static class AttachmentBuilder {
