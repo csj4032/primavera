@@ -1,11 +1,12 @@
 package com.genius.primavera.application.article;
 
 import com.genius.primavera.domain.ArticleNotFoundException;
-import com.genius.primavera.domain.PageRequest;
-import com.genius.primavera.domain.Paged;
 import com.genius.primavera.domain.model.article.Article;
 import com.genius.primavera.domain.model.article.ArticleDto;
 import com.genius.primavera.domain.model.article.WriteType;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 public interface WriteArticleService {
 
@@ -21,7 +22,7 @@ public interface WriteArticleService {
 
     ArticleDto.DetailArticle findByIdWithContentAndComment(long id);
 
-    Paged<ArticleDto.ListArticle> findForPageable(PageRequest pageRequest);
+    Page<ArticleDto.ListArticle> findForPageable(PageRequest pageRequest);
 
     ArticleDto.FormArticle findByForForm(WriteType type, long id);
 

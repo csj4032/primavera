@@ -1,10 +1,10 @@
 package com.genius.primavera.interfaces;
 
 import com.genius.primavera.application.post.PostingService;
-import com.genius.primavera.domain.PageRequest;
 import com.genius.primavera.domain.model.post.PostDto;
 import com.genius.primavera.infrastructure.aspect.PrimaveraLogging;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,8 +26,8 @@ public class PostingController {
 
     @PrimaveraLogging(type = "PostingController")
     @GetMapping("/posts")
-    public String listForPageable(Model model, PageRequest pageRequest, @RequestParam(value = "keyword", defaultValue = "", required = false) String keyword) {
-        model.addAttribute("page", postService.findForPageable(pageRequest, keyword));
+    public String listForPageable(Model model, Pageable pageable, @RequestParam(value = "keyword", defaultValue = "", required = false) String keyword) {
+        model.addAttribute("page", postService.findAll(pageable, keyword));
         return "post/list";
     }
 

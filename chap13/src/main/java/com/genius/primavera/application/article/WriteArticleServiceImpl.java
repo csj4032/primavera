@@ -1,7 +1,5 @@
 package com.genius.primavera.application.article;
 
-import com.genius.primavera.domain.PageRequest;
-import com.genius.primavera.domain.Paged;
 import com.genius.primavera.domain.model.article.Article;
 import com.genius.primavera.domain.model.article.ArticleDto;
 import com.genius.primavera.domain.model.article.Attachment;
@@ -12,6 +10,8 @@ import com.genius.primavera.domain.model.user.User;
 import com.genius.primavera.domain.repository.article.ArticleRepository;
 
 import org.jetbrains.annotations.NotNull;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -84,7 +84,7 @@ public class WriteArticleServiceImpl implements WriteArticleService {
 	}
 
 	@Override
-	public Paged<ArticleDto.ListArticle> findForPageable(PageRequest pageRequest) {
+	public Page<ArticleDto.ListArticle> findForPageable(PageRequest pageRequest) {
 		return null;
 	}
 

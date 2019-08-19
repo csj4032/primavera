@@ -4,6 +4,7 @@ import com.genius.primavera.domain.model.user.User;
 import com.genius.primavera.domain.model.user.UserConnection;
 import com.genius.primavera.domain.repository.UserRepository;
 
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,6 +44,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findByEmail(String email) {
-        return userRepository.findByEmail(email).orElse(new User());
+        return userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(email));
     }
 }

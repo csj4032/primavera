@@ -27,8 +27,6 @@ public class PostDto {
         private long writerId;
         @Builder.Default
         private PostStatus status = PostStatus.PUBLIC;
-        @Builder.Default
-        private Instant regDt = Instant.now();
     }
 
     @Getter

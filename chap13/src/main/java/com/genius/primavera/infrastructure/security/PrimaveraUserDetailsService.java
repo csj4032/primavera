@@ -17,10 +17,6 @@ public class PrimaveraUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userService.findByEmail(username);
-        if (user == null) {
-            throw new UsernameNotFoundException(username);
-        }
-        return new PrimaveraUserDetails(user);
+        return new PrimaveraUserDetails(userService.findByEmail(username));
     }
 }
