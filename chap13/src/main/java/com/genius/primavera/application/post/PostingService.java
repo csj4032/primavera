@@ -10,7 +10,7 @@ public interface PostingService {
 
     Post save(PostDto.RequestForSave requestForSave);
 
-    Page<Post> findAll(Pageable pageable, String keyword);
+    Page<Post> findBySubjectLike(String keyword, Pageable pageable);
 
     Post findById(long id);
 }
