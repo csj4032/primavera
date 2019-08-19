@@ -25,8 +25,8 @@ public class PostingServiceImpl implements PostingService {
     }
 
     @Override
-    public Page<Post> findAll(Pageable pageable, String keyword) {
-        return postRepository.findAll(pageable);
+    public Page<Post> findBySubjectLike(String keyword, Pageable pageable) {
+        return postRepository.findBySubjectLike(keyword, pageable);
     }
 
     @Override

@@ -78,7 +78,7 @@ public class PostingControllerTest {
         mockMvc.perform(get("/posts")
                 .param("page", "1")
                 .param("size", "10")
-                .param("keyword", "카타르")
+                .param("keyword", "승자의")
                 .accept(MediaType.TEXT_HTML))
                 .andExpect(status().isOk());
     }
