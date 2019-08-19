@@ -10,21 +10,24 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 public class PostDto {
 
     @Getter
     @Setter
     @Builder
+    @ToString(callSuper = true)
     @AllArgsConstructor
     @NoArgsConstructor
     public static class RequestForSave {
+        private Long id;
         @NotEmpty
         private String subject;
         @NotEmpty
         private String contents;
         @NotNull
-        private long writerId;
+        private Long writerId;
         @Builder.Default
         private PostStatus status = PostStatus.PUBLIC;
     }

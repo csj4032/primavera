@@ -1,6 +1,5 @@
 package com.genius.primavera.interfaces;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -51,7 +50,7 @@ public class PostingControllerTest {
         MultiValueMap params = new LinkedMultiValueMap();
         params.set("subject", "승자의 혼미");
         params.set("contents", "카르타고의 멸망에서부터 카이사르가 역사적 무대로 등장하기 전까지를 그리고 있는 <로마인 이야기> 그 세번째 이야기.");
-        params.set("writerId", "1");
+        params.set("writer", "1");
         mockMvc.perform(post("/posts/save").params(params)).andExpect(status().is3xxRedirection());
     }
 

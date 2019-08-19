@@ -18,10 +18,13 @@ import lombok.extern.slf4j.Slf4j;
 public class PostingServiceImpl implements PostingService {
 
     private final PostRepository postRepository;
+    private final ModelMapper modelMapper;
 
     @Override
     public Post save(PostDto.RequestForSave requestForSave) {
-        return postRepository.save(new ModelMapper().map(requestForSave, Post.class));
+        // ModelMapper 설정 확인
+        var post = modelMapper.map(requestForSave, Post.class);
+        return postRepository.save(post);
     }
 
     @Override

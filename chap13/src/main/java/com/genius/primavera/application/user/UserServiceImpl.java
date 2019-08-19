@@ -30,7 +30,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User signUp(UserConnection userConnection) {
-        User user = User.builder()
+        var user = User.builder()
                 .email(userConnection.getEmail())
                 .password(PasswordEncoderFactories.createDelegatingPasswordEncoder().encode("password"))
                 .nickname(userConnection.getDisplayName())
