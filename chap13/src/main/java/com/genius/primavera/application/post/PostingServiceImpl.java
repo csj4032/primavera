@@ -1,40 +1,32 @@
 package com.genius.primavera.application.post;
 
-import com.genius.primavera.domain.PageRequest;
-import com.genius.primavera.domain.Paged;
 import com.genius.primavera.domain.model.post.Post;
 import com.genius.primavera.domain.model.post.PostDto;
 import com.genius.primavera.domain.repository.post.PostRepository;
 
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class PostingServiceImpl implements PostingService {
 
-    @Autowired
-    private PostRepository postRepository;
+    private final PostRepository postRepository;
 
     @Override
     public Post save(PostDto.RequestForSave requestForSave) {
-        var post = new ModelMapper().map(requestForSave, Post.class);
-        return postRepository.save(post);
+        return postRepository.save(new ModelMapper().map(requestForSave, Post.class));
     }
 
     @Override
-    public List<Post> findAll() {
-        return postRepository.findAll();
-    }
-
-    @Override
-    public Paged<PostDto.ResponseForList> findForPageable(PageRequest pageRequest, String keyword) {
-        return null;
+    public Page<Post> findAll(Pageable pageable, String keyword) {
+        return postRepository.findAll(pageable);
     }
 
     @Override

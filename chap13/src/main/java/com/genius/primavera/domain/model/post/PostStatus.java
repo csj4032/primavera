@@ -26,7 +26,6 @@ public enum PostStatus implements ConvertedEnum<Integer>  {
         return Stream.of(PostStatus.values()).filter(postStatus -> postStatus.getValue() == source).findFirst().orElseThrow();
     }
 
-
     @Override
     public Integer toDbValue() {
         return value;

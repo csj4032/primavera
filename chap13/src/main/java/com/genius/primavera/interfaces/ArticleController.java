@@ -1,11 +1,11 @@
 package com.genius.primavera.interfaces;
 
 import com.genius.primavera.application.article.WriteArticleService;
-import com.genius.primavera.domain.PageRequest;
 import com.genius.primavera.domain.model.article.ArticleDto;
 import com.genius.primavera.domain.model.article.WriteType;
 import com.genius.primavera.infrastructure.aspect.PrimaveraLogging;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;

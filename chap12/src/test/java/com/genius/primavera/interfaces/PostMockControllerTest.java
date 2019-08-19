@@ -112,7 +112,7 @@ public class PostMockControllerTest {
 	@DisplayName("포스팅 등록 화면 접근")
 	@WithUserDetails(value = "Genius Choi", userDetailsServiceBeanName = "primaveraUserDetailsService")
 	public void postForm() throws Exception {
-		mockMvc.perform(get("/post/form")).andExpect(status().isOk());
+		mockMvc.perform(get("/posts/form")).andExpect(status().isOk());
 	}
 
 	@Test
@@ -124,6 +124,6 @@ public class PostMockControllerTest {
 		params.set("subject", "승자의 혼미");
 		params.set("contents", "카르타고의 멸망에서부터 카이사르가 역사적 무대로 등장하기 전까지를 그리고 있는 <로마인 이야기> 그 세번째 이야기.");
 		params.set("writerId", "1");
-		mockMvc.perform(post("/post/save").params(params)).andExpect(status().is3xxRedirection());
+		mockMvc.perform(post("/posts/save").params(params)).andExpect(status().is3xxRedirection());
 	}
 }
