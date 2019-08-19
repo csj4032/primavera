@@ -37,7 +37,6 @@ public class PostingControllerTest {
 
     @Test
     @Order(1)
-    @Disabled
     @DisplayName("포스팅 등록 화면 접근")
     @WithUserDetails(value = "csj4032@gmail.com", userDetailsServiceBeanName = "primaveraUserDetailsService")
     public void form() throws Exception {
@@ -46,7 +45,6 @@ public class PostingControllerTest {
 
     @Test
     @Order(2)
-    @Disabled
     @DisplayName("포스팅 저장 후 목록 화면")
     @WithUserDetails(value = "csj4032@gmail.com", userDetailsServiceBeanName = "primaveraUserDetailsService")
     public void save() throws Exception {
@@ -59,7 +57,6 @@ public class PostingControllerTest {
 
     @Test
     @Order(3)
-    @Disabled
     @DisplayName("포스팅 상세 화면 접근")
     @WithUserDetails(value = "csj4032@gmail.com", userDetailsServiceBeanName = "primaveraUserDetailsService")
     public void detail() throws Exception {
