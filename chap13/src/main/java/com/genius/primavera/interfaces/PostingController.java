@@ -27,7 +27,7 @@ public class PostingController {
     @PrimaveraLogging(type = "PostingController")
     @GetMapping("/posts")
     public String listForPageable(Model model, Pageable pageable, @RequestParam(value = "keyword", defaultValue = "", required = false) String keyword) {
-        model.addAttribute("page", postService.findBySubjectLike(keyword, pageable));
+        model.addAttribute("page", postService.findAll(pageable));
         return "post/list";
     }
 

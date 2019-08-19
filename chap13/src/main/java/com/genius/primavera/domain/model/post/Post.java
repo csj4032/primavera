@@ -46,4 +46,8 @@ public class Post extends BaseEntity {
     @Column(name = "STATUS")
     @Convert(converter = PostStatusAttributeConverter.class)
     private PostStatus status;
+
+    public String getWriterName() {
+        return writer.getNickname();
+    }
 }
