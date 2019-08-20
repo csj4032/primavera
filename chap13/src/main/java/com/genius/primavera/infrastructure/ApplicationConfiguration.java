@@ -25,39 +25,43 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableJpaAuditing
 public class ApplicationConfiguration implements WebMvcConfigurer {
 
-    @Bean
-    public FilterRegistrationBean<XssEscapeServletFilter> filterRegistrationBean() {
-        var filterRegistration = new FilterRegistrationBean<XssEscapeServletFilter>();
-        filterRegistration.setFilter(new XssEscapeServletFilter());
-        filterRegistration.setOrder(1);
-        filterRegistration.addUrlPatterns("/*");
-        return filterRegistration;
-    }
+	@Bean
+	public FilterRegistrationBean<XssEscapeServletFilter> filterRegistrationBean() {
+		var filterRegistration = new FilterRegistrationBean<XssEscapeServletFilter>();
+		filterRegistration.setFilter(new XssEscapeServletFilter());
+		filterRegistration.setOrder(1);
+		filterRegistration.addUrlPatterns("/*");
+		return filterRegistration;
+	}
 
-    @Bean
-    public ObjectMapper objectMapper() {
-        var mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        return mapper;
-    }
+	@Bean
+	public ObjectMapper objectMapper() {
+		var mapper = new ObjectMapper();
+		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		return mapper;
+	}
 
-    @Bean
-    public ModelMapper modelMapper() {
-        ModelMapper modelMapper = new ModelMapper();
-        modelMapper.getConfiguration()
-                .setSourceNameTokenizer(NameTokenizers.CAMEL_CASE)
-                .setDestinationNameTokenizer(NameTokenizers.CAMEL_CASE);
+	@Bean
+	public ModelMapper modelMapper() {
+		ModelMapper modelMapper = new ModelMapper();
+		modelMapper.getConfiguration()
+				.setSourceNameTokenizer(NameTokenizers.CAMEL_CASE)
+				.setDestinationNameTokenizer(NameTokenizers.CAMEL_CASE);
 
-        modelMapper.createTypeMap(Article.class, ArticleDto.DetailArticle.class).addMappings(mapper -> {
-            mapper.map(Article::getAuthorName, ArticleDto.DetailArticle::setAuthorName);
-            mapper.map(Article::getContents, ArticleDto.DetailArticle::setContents);
-        });
+		modelMapper.createTypeMap(Article.class, ArticleDto.DetailArticle.class).addMappings(mapper -> {
+			mapper.map(Article::getAuthorName, ArticleDto.DetailArticle::setAuthorName);
+			mapper.map(Article::getContents, ArticleDto.DetailArticle::setContents);
+		});
 
-        modelMapper.createTypeMap(Comment.class, CommentDto.Detail.class).addMappings(mapper -> {
-            mapper.map(src -> src.getAuthor().getNickname(), CommentDto.Detail::setAuthorName);
-            mapper.map(src -> src.getAuthor().getConnection().getImageUrl(), CommentDto.Detail::setAuthorImage);
-        });
+		modelMapper.createTypeMap(Comment.class, CommentDto.Detail.class).addMappings(mapper -> {
+			mapper.map(src -> src.getAuthor().getNickname(), CommentDto.Detail::setAuthorName);
+			mapper.map(src -> src.getAuthor().getConnection().getImageUrl(), CommentDto.Detail::setAuthorImage);
+		});
 
-        return modelMapper;
-    }
+		modelMapper.createTypeMap(PostDto.RequestForSave.class, Post.class).addMappings(mapping -> {
+			mapping.<Long>map(src -> src.getWriterId(), (dest, v) -> dest.getWriter().setId(v));
+		});
+
+		return modelMapper;
+	}
 }
