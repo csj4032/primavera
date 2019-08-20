@@ -8,6 +8,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,8 +22,9 @@ public class PostingServiceImpl implements PostingService {
     private final ModelMapper modelMapper;
 
     @Override
+    @Transactional
     public Post save(PostDto.RequestForSave requestForSave) {
-        // ModelMapper 설정 확인
+        // ToDo ModelMapper 설정 확인
         var post = modelMapper.map(requestForSave, Post.class);
         return postRepository.save(post);
     }
@@ -34,6 +36,6 @@ public class PostingServiceImpl implements PostingService {
 
     @Override
     public Post findById(long id) {
-        return postRepository.findById(id).orElse(new Post());
+        return postRepository.findById(id).orElseThrow();
     }
 }

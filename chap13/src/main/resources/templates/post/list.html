@@ -67,13 +67,13 @@
 									<div class="dataTables_paginate paging_simple_numbers" id="posts_paginate">
 										<ul class="pagination">
 											<li class="paginate_button previous" th:classappend="${page.hasPrevious() ? '' : 'disabled'}" id="posts_previous">
-												<a th:href="${page.hasPrevious() ? '/posts?pageNumber='+ page.previousPageable().getPageNumber() : ''}" aria-controls="posts" tabindex="0">이전</a>
+												<a th:href="${page.hasPrevious() ? '/posts?page='+ page.previousPageable().getPageNumber() : ''}" aria-controls="posts" tabindex="0">이전</a>
 											</li>
-											<li th:each="paginate:${page.getTotalElements()}" class="paginate_button" th:classappend="${paginate == page.getPageable().getPageNumber()} ? 'active' : ''">
-												<a th:href="'/posts?pageNumber=' + ${paginate}" aria-controls="posts" tabindex="0" th:text="${paginate}">1</a>
+											<li th:each="paginate:${#numbers.sequence(1, page.getTotalPages())}" class="paginate_button" th:classappend="${paginate == page.getPageable().getPageNumber()+1} ? 'active' : ''">
+												<a th:href="'/posts?page=' + ${paginate}" aria-controls="posts" tabindex="0" th:text="${paginate}">1</a>
 											</li>
 											<li class="paginate_button next" th:classappend="${page.hasNext() ? '' : 'disabled'}" id="posts_next">
-												<a th:href="${page.hasNext() ? '/posts?pageNumber='+ page.nextPageable().getPageNumber() : ''}" aria-controls="posts" tabindex="0">다음</a>
+												<a th:href="${page.hasNext() ? '/posts?page='+ page.nextPageable().getPageNumber() : ''}" aria-controls="posts" tabindex="0">다음</a>
 											</li>
 										</ul>
 									</div>
