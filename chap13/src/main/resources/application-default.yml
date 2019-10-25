@@ -42,7 +42,7 @@ spring:
     livereload:
       enabled: true
   flyway:
-    enabled: false
+    enabled: true
     encoding: UTF-8
     check-location: false
     locations: classpath:db/magration
