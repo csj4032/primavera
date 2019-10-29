@@ -12,7 +12,7 @@ dependencies {
     implementation('org.springframework.boot:spring-boot-starter-thymeleaf')
     implementation('org.springframework.boot:spring-boot-devtools')
     implementation('org.springframework.boot:spring-boot-starter-security')
-    implementation('org.springframework.security.oauth.boot:spring-security-oauth2-autoconfigure:2.1.4.RELEASE')
+    implementation('org.springframework.security.oauth.boot:spring-security-oauth2-autoconfigure:2.2.0.RELEASE')
     implementation('org.thymeleaf.extras:thymeleaf-extras-springsecurity5:3.0.4.RELEASE')
     implementation('org.springframework.boot:spring-boot-starter-undertow')
     implementation('org.springframework.boot:spring-boot-starter-reactor-netty')

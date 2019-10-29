@@ -2,6 +2,8 @@ package com.genius.primavera.infrastructure.security;
 
 import com.genius.primavera.infrastructure.filter.PrimaveraFilter;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -54,7 +56,7 @@ public class PrimaveraSecurityConfiguration extends WebSecurityConfigurerAdapter
 	}
 
 	@Override
-	public void configure(WebSecurity webSecurity) throws Exception {
+	public void configure(WebSecurity webSecurity) {
 		webSecurity.ignoring().antMatchers(HttpMethod.GET, "/resources/**", "/bower_components/**", "/dist/**", "/plugins/**", "/favicon.ico");
 	}
 
@@ -88,5 +90,10 @@ public class PrimaveraSecurityConfiguration extends WebSecurityConfigurerAdapter
 		var authProvider = new DaoAuthenticationProvider();
 		authProvider.setUserDetailsService(primaveraUserDetailsService);
 		return authProvider;
+	}
+
+	@Bean
+	public ApplicationListener applicationListener(){
+		return new PrimaveraAuthSuccessApplicationListener();
 	}
 }
