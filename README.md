@@ -68,6 +68,9 @@
 ## chap13
 * JPA, ModelMapper
 
+## chap14
+* Ignite, POI
+
 ## Library Version
 * gradle 라이브러리 버전 정보 정리
 * lombok = '1.18.6'
