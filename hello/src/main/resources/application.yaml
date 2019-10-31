@@ -10,6 +10,6 @@ eureka:
   client:
     enabled: false
 
-primavera:
-  api:
-    url: https://localhost:8443
+primavera-api:
+  ribbon:
+    listOfServers: localhost:8081,localhost:8082

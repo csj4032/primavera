@@ -65,7 +65,7 @@ public class PrimaveraSecurityConfiguration extends WebSecurityConfigurerAdapter
 		http
 				.csrf().disable()
 				.authorizeRequests()
-				.antMatchers("/auth/**", "/login/**", "/error").permitAll()
+				.antMatchers("/auth/**", "/login/**", "/error", "/greeting/*").permitAll()
 				.anyRequest().authenticated()
 				.and()
 				.addFilterBefore(new PrimaveraFilter(), UsernamePasswordAuthenticationFilter.class)

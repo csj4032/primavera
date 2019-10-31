@@ -23,32 +23,37 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping(value = "/user")
 public class UserController {
 
-	@Autowired
-	private UserService userService;
+    @Autowired
+    private UserService userService;
 
-	@PrimaveraLogging(type = "UserController")
-	@GetMapping(value = "/{id}")
-	public User findById(@PathVariable(value = "id") long id) {
-		return userService.findById(id);
-	}
+    @PrimaveraLogging(type = "UserController")
+    @GetMapping(value = "/{id}")
+    public User findById(@PathVariable(value = "id") long id) {
+        return userService.findById(id);
+    }
 
-	@PostMapping(value = "/save")
-	public ResponseEntity<User> save(@RequestBody User user, BindingResult bindingResult) {
-		log.info("{}", bindingResult);
-		if (!bindingResult.hasErrors()) {
-			userService.save(user);
-			return new ResponseEntity<>(user, HttpStatus.CREATED);
-		}
-		return new ResponseEntity<>(user, HttpStatus.BAD_REQUEST);
-	}
+    @PostMapping(value = "/save")
+    public ResponseEntity<User> save(@RequestBody User user, BindingResult bindingResult) {
+        log.info("{}", bindingResult);
+        if (!bindingResult.hasErrors()) {
+            userService.save(user);
+            return new ResponseEntity<>(user, HttpStatus.CREATED);
+        }
+        return new ResponseEntity<>(user, HttpStatus.BAD_REQUEST);
+    }
 
-	@PostMapping(value = "/update")
-	public ResponseEntity<User> update(@RequestBody User user, BindingResult bindingResult) {
-		log.info("{}", bindingResult);
-		if (!bindingResult.hasErrors()) {
-			userService.update(user);
-			return new ResponseEntity<>(user, HttpStatus.CREATED);
-		}
-		return new ResponseEntity<>(user, HttpStatus.BAD_REQUEST);
-	}
+    @PostMapping(value = "/update")
+    public ResponseEntity<User> update(@RequestBody User user, BindingResult bindingResult) {
+        log.info("{}", bindingResult);
+        if (!bindingResult.hasErrors()) {
+            userService.update(user);
+            return new ResponseEntity<>(user, HttpStatus.CREATED);
+        }
+        return new ResponseEntity<>(user, HttpStatus.BAD_REQUEST);
+    }
+
+    @GetMapping(value = "/greeting/{name}")
+    public String greeting(@PathVariable(value = "name") String name) {
+        return "chap13 : " + name;
+    }
 }
