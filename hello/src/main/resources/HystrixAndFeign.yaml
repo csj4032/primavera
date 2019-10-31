@@ -32,7 +32,7 @@ turbine:
   aggregator:
     clusterConfig: local_app
   clusterNameExpression: 'default'
-  appConfig: prd_app
+  appConfig: local_app
   instanceInsertPort:
     prd_app: 9000
   instanceUrlSuffix: ':9000/actuator/hystrix.stream'

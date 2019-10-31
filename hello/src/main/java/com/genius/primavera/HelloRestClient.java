@@ -1,14 +1,11 @@
 package com.genius.primavera;
 
-import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
-
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.cloud.openfeign.ribbon.FeignRibbonClientAutoConfiguration;
 
 import feign.Param;
 import feign.RequestLine;
 
-@FeignClient(name = "helloService", url = "${primavera.api.url}", configuration = FeignRibbonClientAutoConfiguration.class)
+@FeignClient(name = "primavera-api")
 public interface HelloRestClient {
 
     @RequestLine("GET /greeting/{name}")

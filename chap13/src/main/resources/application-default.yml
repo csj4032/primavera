@@ -42,7 +42,7 @@ spring:
     livereload:
       enabled: true
   flyway:
-    enabled: true
+    enabled: false
     encoding: UTF-8
     check-location: false
     locations: classpath:db/magration
@@ -69,10 +69,10 @@ server:
     key-store: chap10/primavera.p12
     key-store-type: PKCS12
     key-store-password: primavera
-    enabled: true
-  port: 8443
+    enabled: false
+  port: 8081
   http2:
-    enabled: true
+    enabled: false
 
 storage:
   location: upload
