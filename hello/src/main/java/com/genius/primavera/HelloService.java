@@ -1,9 +1,26 @@
 package com.genius.primavera;
 
-import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.cloud.openfeign.ribbon.FeignRibbonClientAutoConfiguration;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 
-@FeignClient(name="HelloService" , url="${primavera.api.url}", configuration = FeignRibbonClientAutoConfiguration.class)
-public interface HelloService {
+import org.springframework.stereotype.Component;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+@Component
+@RequiredArgsConstructor
+public class HelloService {
+
+    private final HelloRestClient helloRestClient;
+
+    @HystrixCommand(fallbackMethod = "getGreetingNameFallBack")
+    public String getGreetingName(String name) {
+        return helloRestClient.getGreetingName(name);
+    }
+
+    private String getGreetingNameFallBack(String name) {
+        log.error(name);
+        return name + " (Fall Back)";
+    }
 }
