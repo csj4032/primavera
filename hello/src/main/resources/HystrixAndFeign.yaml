@@ -12,13 +12,13 @@ hystrix:
   turbine:
     enable : true
   threadpool:
-    redisApiThdGrp :
+    hystrixGroupKey :
       coreSize: 2
       maximumSize: 3
       keepAliveTimeMinutes: 1
       allowMaximumSizeToDivergeFromCoreSize: true
   command:
-    redisApi:
+    hystrixCommandKey:
       execution:
         isolation:
           strategy: THREAD
