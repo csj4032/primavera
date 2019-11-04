@@ -26,6 +26,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.envers.Audited;
 
 @Getter
 @Setter
@@ -34,6 +35,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Audited
 @Table(name = "USER")
 public class User extends BaseEntity {
 

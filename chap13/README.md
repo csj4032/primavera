@@ -2,6 +2,8 @@
 
 ### JPA
 
+### Envers
+
 ### ModelMapper
 
 #### Matching Strategies

@@ -20,11 +20,13 @@ import lombok.Setter;
 @EntityListeners(AuditingEntityListener.class)
 public abstract class BaseEntity implements Serializable {
 
-    @CreatedDate
-    @Column(name = "REG_DT", updatable = false)
-    private LocalDateTime regDt;
+	@CreatedDate
+	@Column(name = "REG_DT", updatable = false)
+	private LocalDateTime regDt;
 
-    @LastModifiedDate
-    @Column(name = "MOD_DT")
-    private LocalDateTime modDt;
+	@LastModifiedDate
+	@Column(name = "MOD_DT")
+	private LocalDateTime modDt;
+
+
 }
