@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: product
+  profiles:
+    active: local
+server:
+  port: 8083

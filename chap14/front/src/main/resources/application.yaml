@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: account
+  profiles:
+    active: local
+
+server:
+  port: 8080
+  tomcat:
+    max-threads: 1
