@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: order
+  profiles:
+    active: local
+server:
+  port: 8082
