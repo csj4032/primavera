@@ -31,3 +31,5 @@
 /chap12/out
 /chap13/build
 /chap13/out
+/chap14/*/build
+/chap14/*/out
