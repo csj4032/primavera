@@ -1,6 +1,7 @@
 dependencies {
     compile('org.springframework.boot:spring-boot-starter-webflux')
     implementation('org.springframework.boot:spring-boot-starter-aop')
+    implementation('org.springframework.boot:spring-boot-starter-data-redis-reactive')
     implementation('org.springframework.boot:spring-boot-devtools')
     implementation('org.springframework.boot:spring-boot-starter-tomcat')
     implementation('org.modelmapper:modelmapper:2.3.3')
@@ -11,4 +12,5 @@ dependencies {
         exclude module: 'junit'
     }
     testImplementation('org.springframework.security:spring-security-test')
+    testImplementation('io.projectreactor:reactor-test:3.3.0.RELEASE')
 }

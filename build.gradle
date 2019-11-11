@@ -19,7 +19,7 @@ subprojects {
 
     apply plugin: 'java'
     apply plugin: 'idea'
-    apply plugin: 'io.freefair.lombok'
+    //apply plugin: 'io.freefair.lombok'
     apply plugin: 'org.springframework.boot'
     apply plugin: 'io.spring.dependency-management'
 
@@ -57,11 +57,11 @@ subprojects {
         annotationProcessor group: 'org.springframework.boot', name:'spring-boot-configuration-processor'
     }
 
-    sourceCompatibility = JavaVersion.VERSION_12
-    targetCompatibility = JavaVersion.VERSION_12
+    sourceCompatibility = JavaVersion.VERSION_13
+    targetCompatibility = JavaVersion.VERSION_13
 
     compileTestJava {
-        sourceCompatibility = JavaVersion.VERSION_12
-        targetCompatibility = JavaVersion.VERSION_12
+        sourceCompatibility = JavaVersion.VERSION_13
+        targetCompatibility = JavaVersion.VERSION_13
     }
 }
