@@ -12,10 +12,10 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class AccountHandler {
 
-	private final UserRepository userRepository;
+	private final AccountRepository accountRepository;
 
 	public Mono<ServerResponse> get(ServerRequest req) {
-		return userRepository
+		return accountRepository
 				.findById(req.pathVariable("id"))
 				.flatMap(user -> ServerResponse.ok().body(Mono.just(user), String.class))
 				.switchIfEmpty(ServerResponse.status(202).build());
