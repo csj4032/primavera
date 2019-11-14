@@ -3,5 +3,20 @@ spring:
     name: product
   profiles:
     active: local
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      authentication-database: admin
+      database: primavera
+      username: primavera
+      password: primavera
+
 server:
+  tomcat:
+    max-threads: 1
   port: 8083
+
+logging:
+  level:
+    org.springframework: DEBUG

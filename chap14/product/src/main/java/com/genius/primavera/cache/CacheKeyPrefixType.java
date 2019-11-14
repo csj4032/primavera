@@ -1,4 +1,4 @@
-package com.genius.primavera;
+package com.genius.primavera.cache;
 
 import lombok.Getter;
 
