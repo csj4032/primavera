@@ -9,7 +9,7 @@ public class ProductServiceImpl implements ProductService {
 
 	@Override
 	@CacheGet(keyPrefixType = CacheKeyPrefixType.PRODUCT)
-	public Product getProduct(long group, long id) {
-		return Product.builder().id(id).group(group).name("product").price(BigDecimal.TEN).build();
+	public Product getProduct(@CacheKey(order = 1) long group, @CacheKey(order = 2) long id, String name) {
+		return Product.builder().id(id).group(group).name(name).price(BigDecimal.TEN).build();
 	}
 }

@@ -30,7 +30,9 @@ public class CacheAspect {
 		String base = getBase(joinPoint.getTarget(), method.getName());
 		String suffix = getSuffix(method.getParameterAnnotations(), joinPoint.getArgs());
 		if (!suffix.isEmpty()) {
-			log.info(cacheGenerator.generator(join(KEY_DELIMITER, base, suffix)));
+			String key = cacheGenerator.generator(join(KEY_DELIMITER, base, suffix));
+			joinPoint.getArgs()[2] = key;
+			return joinPoint.proceed(joinPoint.getArgs());
 		}
 		return joinPoint.proceed();
 	}
