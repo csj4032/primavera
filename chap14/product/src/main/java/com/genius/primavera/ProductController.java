@@ -13,6 +13,6 @@ public class ProductController {
 
 	@GetMapping("/products/{group}/{id}")
 	public Product getProduct(@PathVariable(name = "group") long group, @PathVariable("id") long id) {
-		return productService.getProduct(group, id);
+		return productService.getProduct(group, id, "");
 	}
 }
