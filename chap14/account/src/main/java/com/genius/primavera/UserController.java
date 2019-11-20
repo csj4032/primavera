@@ -18,6 +18,7 @@ public class UserController {
 
 	@PostConstruct
 	public void init() {
+		userRepository.deleteAll();
 		userRepository.save(new User(0L, "Winter", LocalDateTime.now()));
 		userRepository.save(new User(1L, "Genius", LocalDateTime.now()));
 		userRepository.save(new User(2L, "Spring", LocalDateTime.now()));
