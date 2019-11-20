@@ -16,8 +16,8 @@ public class AccountRepository {
 		return reactiveRedisTemplate.<String, User>opsForHash().put(USER_CACHE_KEY, String.valueOf(user.getId()), user).log().map(p -> user);
 	}
 
-	Mono<String> findById(String id) {
-		return reactiveRedisTemplate.<String, String>opsForHash().get(USER_CACHE_KEY, id);
+	Mono<User> findById(String id) {
+		return reactiveRedisTemplate.<String, User>opsForHash().get(USER_CACHE_KEY, id);
 	}
 
 	Mono<Boolean> deleteAll() {

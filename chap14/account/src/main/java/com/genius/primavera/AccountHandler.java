@@ -17,7 +17,7 @@ public class AccountHandler {
 	public Mono<ServerResponse> get(ServerRequest req) {
 		return accountRepository
 				.findById(req.pathVariable("id"))
-				.flatMap(user -> ServerResponse.ok().body(Mono.just(user), String.class))
+				.flatMap(user -> ServerResponse.ok().body(Mono.just(user), User.class))
 				.switchIfEmpty(ServerResponse.status(202).build());
 	}
 }

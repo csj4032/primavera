@@ -7,6 +7,8 @@ dependencies {
     implementation('org.modelmapper:modelmapper:2.3.3')
     implementation('org.projectlombok:lombok')
     implementation('com.squareup.okhttp3:okhttp:4.2.2')
+    implementation('com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.10.1')
+    implementation('com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.10.1')
     annotationProcessor('org.projectlombok:lombok')
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude module: 'junit'
