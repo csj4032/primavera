@@ -19,9 +19,9 @@ public class UserController {
 	@PostConstruct
 	public void init() {
 		userRepository.deleteAll();
-		userRepository.save(new User(0L, "Winter", LocalDateTime.now()));
-		userRepository.save(new User(1L, "Genius", LocalDateTime.now()));
-		userRepository.save(new User(2L, "Spring", LocalDateTime.now()));
+		for (int i = 1; i < 101; i++) {
+			userRepository.save(new User(i, "Winter" + i, LocalDateTime.now()));
+		}
 	}
 
 	@GetMapping("/users")

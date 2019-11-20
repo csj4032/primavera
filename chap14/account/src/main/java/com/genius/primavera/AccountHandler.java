@@ -15,6 +15,11 @@ public class AccountHandler {
 	private final AccountRepository accountRepository;
 
 	public Mono<ServerResponse> get(ServerRequest req) {
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		return accountRepository
 				.findById(req.pathVariable("id"))
 				.flatMap(user -> ServerResponse.ok().body(Mono.just(user), User.class))

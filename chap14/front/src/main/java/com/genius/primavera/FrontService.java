@@ -6,5 +6,7 @@ import java.util.List;
 
 public interface FrontService {
 
-	Mono<FrontOrder> findAllOrders(String userId);
+	Mono<FrontOrder> findAllOrdersRx(String userId);
+
+	FrontOrder findAllOrders(String userId);
 }

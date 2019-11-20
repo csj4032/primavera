@@ -12,6 +12,7 @@ public class LoadTesting {
 
 	static AtomicInteger counter = new AtomicInteger(0);
 	static String url = "http://localhost:8080/router/users/{userId}/orders";
+	static String urlMvc = "http://localhost:8080/mvc/users/{userId}/orders";
 
 	public static void main(String[] args) throws InterruptedException, BrokenBarrierException {
 		ExecutorService executorService = Executors.newFixedThreadPool(100);
@@ -32,7 +33,7 @@ public class LoadTesting {
 				log.info("Thread {}", idx);
 				StopWatch thread = new StopWatch();
 				thread.start();
-				String result = restTemplate.getForObject(url, String.class, idx);
+				String result = restTemplate.getForObject(urlMvc, String.class, idx);
 				thread.stop();
 				log.info("Elapsed : {} {}", idx, thread.getTotalTimeSeconds());
 				return (Void) null;
@@ -40,7 +41,7 @@ public class LoadTesting {
 		}
 		barrier.await();
 		executorService.shutdown();
-		executorService.awaitTermination(100, TimeUnit.SECONDS);
+		executorService.awaitTermination(10, TimeUnit.SECONDS);
 		main.stop();
 		log.info("Total : {}", main.getTotalTimeSeconds());
 	}
