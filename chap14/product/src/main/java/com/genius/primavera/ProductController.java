@@ -23,7 +23,7 @@ public class ProductController {
 	public void init() throws InterruptedException {
 		productService.deleteAll().subscribe();
 		List<Product> products = new ArrayList<>();
-		for (long i = 0; i < 1000; i++)
+		for (Long i = 0L; i < 1000L; i++)
 			products.add(Product.builder().id(i).group(i).name("product" + i).price(i % 2 == 0 ? BigDecimal.TEN : BigDecimal.ONE).createDate(LocalDateTime.now()).build());
 		productService.saveAll(products).subscribe();
 	}
@@ -34,11 +34,11 @@ public class ProductController {
 	}
 
 	@GetMapping("/products/{id:[\\d]+}")
-	public Mono<Product> findById(@PathVariable("id") long id) {
+	public Mono<Product> findById(@PathVariable("id") Long id) {
 		return productService.findById(id);
 	}
 
-	@GetMapping("/products/{name:^[0-9a-zA-F]{1,100}$}")
+	@GetMapping("/products/{name:^[a-zA-F]{1,100}$}")
 	public Flux<Product> findByName(@PathVariable("name") String name) {
 		return productService.findByName(name);
 	}

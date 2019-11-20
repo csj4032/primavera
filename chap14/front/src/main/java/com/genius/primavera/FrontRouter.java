@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
-import reactor.core.publisher.Mono;
 
 import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
@@ -25,18 +24,13 @@ public class FrontRouter {
 
 	@Bean
 	protected RouterFunction<ServerResponse> getOrderRoute() {
-		RouterFunction<ServerResponse> responseRouterFunction = route(GET("/router/users/{userId}/orders"), req -> ok().body(frontService.findAllOrders(req.pathVariable("userId")), FrontOrder.class));
+		RouterFunction<ServerResponse> responseRouterFunction = route(GET("/router/users/{userId}/orders"), req -> ok().body(frontService.findAllOrdersRx(req.pathVariable("userId")), FrontOrder.class));
 		return responseRouterFunction;
 	}
 
 	@GetMapping(value = "/mvc/users/{userId}/orders")
-	public Mono<FrontOrder> getUserOrders(@PathVariable("userId") String userId) {
-		stopWatch.start();
-		Mono<FrontOrder> frontOrder = frontService.findAllOrders(userId);
-		stopWatch.stop();
-		System.out.println(stopWatch.shortSummary());
-		System.out.println(stopWatch.getTotalTimeMillis());
-		System.out.println(stopWatch.prettyPrint());
+	public FrontOrder getUserOrders(@PathVariable("userId") String userId) {
+		FrontOrder frontOrder = frontService.findAllOrders(userId);
 		return frontOrder;
 	}
 }
