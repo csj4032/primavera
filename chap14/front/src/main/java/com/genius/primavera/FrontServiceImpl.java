@@ -29,8 +29,8 @@ public class FrontServiceImpl implements FrontService {
 	@Override
 	public Mono<FrontOrder> findAllOrdersRx(String userId) {
 		Mono<User> userMono = webClient.build().get().uri(ACCOUNT_URL, userId).retrieve().bodyToMono(User.class);
-		Flux<Order> orderFlux = webClient.build().get().uri(ORDER_URL, userMono).retrieve().bodyToFlux(Order.class);
-		Flux<Product> productFlux = orderFlux.flatMap(order -> webClient.build().get().uri(PRODUCT_URL, order.getProductId()).retrieve().bodyToMono(Product.class));
+		Flux<Order> orderFlux = webClient.build().get().uri(ORDER_URL, userMono).retrieve().bodyToFlux(Order.class).cache();
+		Flux<Product> productFlux = orderFlux.flatMap(order -> webClient.build().get().uri(PRODUCT_URL, order.getProductId()).retrieve().bodyToMono(Product.class)).cache();
 		return userMono
 				.zipWhen(user -> orderFlux.zipWith(productFlux, (o, p) -> {
 					o.setProduct(p);
@@ -44,7 +44,11 @@ public class FrontServiceImpl implements FrontService {
 		User user = restTemplate.getForObject(ACCOUNT_URL, User.class, userId);
 		List<Order> orders = restTemplate.exchange(ORDER_URL, HttpMethod.GET, null, new ParameterizedTypeReference<List<Order>>() {
 		}, userId).getBody();
-		return new FrontOrder(user, null);
+		for (Order order: orders){
+			Product product = restTemplate.getForObject(PRODUCT_URL, Product.class, order.getProductId());
+			order.setProduct(product);
+		}
+		return new FrontOrder(user, orders);
 	}
 
 	private String getProductIds(List<Order> orders) {

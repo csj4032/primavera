@@ -1,6 +1,7 @@
 package com.genius.primavera;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.StopWatch;
 import org.springframework.web.client.RestTemplate;
 
@@ -33,7 +34,8 @@ public class LoadTesting {
 				log.info("Thread {}", idx);
 				StopWatch thread = new StopWatch();
 				thread.start();
-				String result = restTemplate.getForObject(urlMvc, String.class, idx);
+				ResponseEntity<String> responseEntity = restTemplate.getForEntity(url, String.class, idx);
+				log.info(responseEntity.getStatusCode().toString());
 				thread.stop();
 				log.info("Elapsed : {} {}", idx, thread.getTotalTimeSeconds());
 				return (Void) null;
