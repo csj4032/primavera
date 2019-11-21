@@ -22,7 +22,7 @@ public class OrderRouter {
 
 	@Bean
 	RouterFunction<ServerResponse> getUserRoute() {
-		return route(GET("/{userId}/orders"), req -> {
+		return route(GET("/users/{userId}/orders"), req -> {
 			try {
 				return ok().body(orderService.findByUserId(req.pathVariable("userId")), new ParameterizedTypeReference<List<Order>>(){});
 			} catch (InterruptedException e) {

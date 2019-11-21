@@ -16,14 +16,6 @@ public class UserController {
 
 	private final UserRepository userRepository;
 
-	@PostConstruct
-	public void init() {
-		userRepository.deleteAll();
-		for (int i = 1; i < 101; i++) {
-			userRepository.save(new User(i, "Winter" + i, LocalDateTime.now()));
-		}
-	}
-
 	@GetMapping("/users")
 	public ResponseEntity<Iterable<User>> getUsers() {
 		return new ResponseEntity<>(userRepository.findAll(), HttpStatus.OK);
