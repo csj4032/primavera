@@ -8,7 +8,11 @@ import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
+
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Scheduler;
+import reactor.core.scheduler.Schedulers;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,7 +24,7 @@ public class FrontServiceImpl implements FrontService {
 
 	private static String ACCOUNT_URL = "http://localhost:8081/accounts/{userId}";
 	private static String ORDER_URL = "http://localhost:8082/users/{userId}/orders";
-	private static String PRODUCT_URL = "http://localhost:8083/products/{productIds}";
+	private static String PRODUCT_URL = "http://localhost:8083/products/{productId}";
 
 	private final WebClient.Builder webClient;
 	private final RestTemplate restTemplate;
@@ -30,28 +34,18 @@ public class FrontServiceImpl implements FrontService {
 		log.info("findAllOrdersRx : {}", userId);
 		return webClient.build().get().uri(ACCOUNT_URL, userId).retrieve().bodyToMono(User.class)
 				.flatMap(user -> {
-					Mono<List<Order>> monoOrders = webClient.build().get().uri(ORDER_URL, user.getId()).retrieve().bodyToMono(new ParameterizedTypeReference<List<Order>>() {});
-					return monoOrders.map(orders -> {
-						log.info(orders.toString());
-						orders.stream()
-								.map(order -> {
-									Mono<Product> monoProduct = webClient.build().get().uri(PRODUCT_URL, order.getProductId()).retrieve().bodyToMono(Product.class);
-									monoProduct.map(product -> {
-										order.setProduct(new Product());
-										log.info(order.toString());
-										log.info(product.toString());
-										return product;
-									}).subscribe();
-									return order;
-								});
-						//Mono<List<Product>> monoProducts = webClient.build().get().uri(PRODUCT_URL, getProductIds(orders)).retrieve().bodyToMono(new ParameterizedTypeReference<List<Product>>() {});
+					Mono<List<Order>> monoOrders = webClient.build().get().uri(ORDER_URL, user.getId()).retrieve().bodyToMono(new ParameterizedTypeReference<List<Order>>(){}).log();
+					return monoOrders.flatMap(orders -> {
+						Flux<Order> orderFlux = Flux.fromIterable(orders);
+						Flux<Product> productFlux = orderFlux.flatMap(order -> webClient.build().get().uri(PRODUCT_URL, order.getProduct()).retrieve().bodyToMono(Product.class)).log();
+						log.info(productFlux.toString());
 						//monoProducts.map(products -> products.stream().map(product -> orders.stream().map(order -> {
 						//	if(order.getProductId() == product.getId()) order.setProduct(product);
 						//	return Mono.just(order);
 						//})));
-						return new FrontOrder(user, orders);
+						return Mono.just(new FrontOrder(user, orders));
 					});
-				});
+				}).log();
 	}
 
 	@Override
