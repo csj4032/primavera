@@ -1,0 +1,38 @@
+# feign 설정.
+feign.httpclient.enabled: true
+feign.hystrix.enabled: false
+feign.client.default-to-properties: false
+feign.client.config.recommand.connectTimeout: 500
+feign.client.config.recommand.readTimeout: 500
+feign.client.config.recommand.loggerLevel: full
+feign.compression.request.enabled: false
+feign.compression.response.enabled: true
+
+hystrix:
+  turbine:
+    enable : true
+  threadpool:
+    hystrixGroupKey :
+      coreSize: 2
+      maximumSize: 3
+      keepAliveTimeMinutes: 1
+      allowMaximumSizeToDivergeFromCoreSize: true
+  command:
+    hystrixCommandKey:
+      execution:
+        isolation:
+          strategy: THREAD
+      circuitBreaker:
+        requestVolumeThreshold: 15
+        sleepWindowInMilliseconds: 10000
+        errorThresholdPercentage: 30
+        enabled: true
+
+turbine:
+  aggregator:
+    clusterConfig: local_app
+  clusterNameExpression: 'default'
+  appConfig: local_app
+  instanceInsertPort:
+    prd_app: 9000
+  instanceUrlSuffix: ':9000/actuator/hystrix.stream'
