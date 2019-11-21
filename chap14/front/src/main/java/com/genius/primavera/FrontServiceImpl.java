@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 public class FrontServiceImpl implements FrontService {
 
 	private static String ACCOUNT_URL = "http://localhost:8081/accounts/{userId}";
-	private static String ORDER_URL = "http://localhost:8082/{userId}/orders";
+	private static String ORDER_URL = "http://localhost:8082/users/{userId}/orders";
 	private static String PRODUCT_URL = "http://localhost:8083/products/{productIds}";
 
 	private final WebClient.Builder webClient;

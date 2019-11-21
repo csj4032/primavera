@@ -11,7 +11,7 @@ docker search redis
 
 docker login --username csj4032
 
-docker pull redis
+docker pull redis:latest
 ```
 
 #### Creating a Container
