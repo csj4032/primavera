@@ -11,6 +11,11 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FrontOrder {
+
+	public FrontOrder(User user) {
+		this.user = user;
+	}
+
 	private User user;
 	private List<Order> orders;
 }
