@@ -16,6 +16,5 @@ public class Product {
 	private Long group;
 	private String name;
 	private BigDecimal price = BigDecimal.ZERO;
-	private LocalDateTime createDate;
 }
 
