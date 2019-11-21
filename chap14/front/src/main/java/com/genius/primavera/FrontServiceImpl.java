@@ -16,6 +16,7 @@ import reactor.core.scheduler.Schedulers;
 import reactor.util.function.Tuple2;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -35,15 +36,27 @@ public class FrontServiceImpl implements FrontService {
 		log.info("findAllOrdersRx : {}", userId);
 		return webClient.build().get().uri(ACCOUNT_URL, userId).retrieve().bodyToMono(User.class)
 				.flatMap(user -> {
-					Mono<List<Order>> monoOrders = webClient.build().get().uri(ORDER_URL, user.getId()).retrieve().bodyToMono(new ParameterizedTypeReference<List<Order>>() {}).log("1");
+					Mono<List<Order>> monoOrders = webClient.build().get().uri(ORDER_URL, user.getId()).retrieve().bodyToMono(new ParameterizedTypeReference<List<Order>>() {
+					}).log("1");
 					Mono<FrontOrder> frontOrderMono = monoOrders.flatMap(sourceOrders -> {
 						Flux<Order> sourceOrderFlux = Flux.fromIterable(sourceOrders);
 						Flux<Product> productFlux = sourceOrderFlux.flatMap(sourceOrder -> {
 							Mono<Product> productMono = webClient.build().get().uri(PRODUCT_URL, sourceOrder.getProductId()).retrieve().bodyToMono(Product.class);
 							return productMono;
 						});
-						Flux<Order> destinationOrderFlux = Flux.zip(sourceOrderFlux, productFlux).map((o)-> Order.builder().id(o.getT1().getId()).productId(o.getT1().getProductId()).product(o.getT2()).build());
-						destinationOrderFlux.map(order -> sourceOrders.add(order));
+						productFlux.map(product -> {
+							log.info("Product {}", product.getCreateDate());
+							AtomicInteger atomicInteger = new AtomicInteger();
+							sourceOrderFlux.map(order -> {
+								order.setProduct(product);
+								order.setProductId(11111);
+								log.info("Order : {} ", order.getProduct());
+								return order;
+							}).subscribe();
+							return product;
+						}).log("").subscribe();
+						//Flux<Order> destinationOrderFlux = Flux.zip(sourceOrderFlux, productFlux).map((o)-> Order.builder().id(o.getT1().getId()).productId(o.getT1().getProductId()).product(o.getT2()).build());
+						//destinationOrderFlux.map(order -> sourceOrders.add(order));
 						return Mono.just(new FrontOrder(user, sourceOrders));
 					}).log("4");
 					return frontOrderMono;
