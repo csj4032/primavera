@@ -12,6 +12,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -25,30 +26,24 @@ public class FrontServiceImpl implements FrontService {
 
 	private final WebClient.Builder webClient;
 	private final RestTemplate restTemplate;
+	private final ParameterizedTypeReference<List<Order>> responseType = new ParameterizedTypeReference<>() {};
 
 	@Override
 	public Mono<FrontOrder> findAllOrdersRx(String userId) {
 		Mono<User> userMono = webClient.build().get().uri(ACCOUNT_URL, userId).retrieve().bodyToMono(User.class);
 		Flux<Order> orderFlux = webClient.build().get().uri(ORDER_URL, userMono).retrieve().bodyToFlux(Order.class).cache();
 		Flux<Product> productFlux = orderFlux.flatMap(order -> webClient.build().get().uri(PRODUCT_URL, order.getProductId()).retrieve().bodyToMono(Product.class)).cache();
-		return userMono
-				.zipWhen(user -> orderFlux.zipWith(productFlux, (o, p) -> {
-					o.setProduct(p);
-					return o;
-				}).collectList())
-				.map(t -> new FrontOrder(t.getT1(), t.getT2()));
+		return userMono.zipWhen(user -> orderFlux.zipWith(productFlux, Order::applyProduct).collectList()).map(t -> new FrontOrder(t.getT1(), t.getT2()));
 	}
 
 	@Override
 	public FrontOrder findAllOrders(String userId) {
-		User user = restTemplate.getForObject(ACCOUNT_URL, User.class, userId);
-		List<Order> orders = restTemplate.exchange(ORDER_URL, HttpMethod.GET, null, new ParameterizedTypeReference<List<Order>>() {
-		}, userId).getBody();
-		for (Order order: orders){
-			Product product = restTemplate.getForObject(PRODUCT_URL, Product.class, order.getProductId());
-			order.setProduct(product);
-		}
-		return new FrontOrder(user, orders);
+		return new FrontOrder(
+				restTemplate.getForObject(ACCOUNT_URL, User.class, userId),
+				restTemplate.exchange(ORDER_URL, HttpMethod.GET, null, responseType, userId).getBody()
+						.stream()
+						.peek(order -> order.setProduct(restTemplate.getForObject(PRODUCT_URL, Product.class, order.getProductId())))
+						.collect(Collectors.toList()));
 	}
 
 	private String getProductIds(List<Order> orders) {
