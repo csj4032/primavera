@@ -12,4 +12,9 @@ public class Order {
 	private long id;
 	private long productId;
 	private Product product;
+
+	protected Order applyProduct( Product p) {
+		this.setProduct(p);
+		return this;
+	}
 }
