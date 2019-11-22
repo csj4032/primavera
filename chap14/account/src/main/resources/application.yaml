@@ -2,13 +2,15 @@ spring:
   application:
     name: account
   profiles:
-    active: local
-  redis:
-    host: localhost
-    port: 6379
+    active: default
+  cloud:
+    config:
+      uri: http://localhost:8888
 
 server:
   port: 8081
+  tomcat:
+    max-threads: 1
 
 logging:
   level:

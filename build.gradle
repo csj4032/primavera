@@ -42,6 +42,7 @@ subprojects {
         compile group: 'org.slf4j', name: 'jcl-over-slf4j', version: '1.7.25'
         compile group: 'org.jetbrains', name: 'annotations', version: '16.0.1'
         compile group: 'javax.inject', name: 'javax.inject', version:'1'
+        compile group: 'com.fasterxml.jackson.module', name: 'jackson-module-kotlin', version: '2.9.7'
         compileOnly group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.2'
         compileOnly group: 'org.projectlombok', name: 'lombok', version: "${lombokVersion}"
         testCompile group: 'org.hamcrest', name: 'hamcrest-core', version: '2.1'
@@ -55,6 +56,12 @@ subprojects {
         testRuntime group: 'org.junit.platform', name: 'junit-platform-commons', version: "${junitPlatformVersion}"
         annotationProcessor group: 'org.projectlombok', name: 'lombok', version: "${lombokVersion}"
         annotationProcessor group: 'org.springframework.boot', name:'spring-boot-configuration-processor'
+    }
+
+    dependencyManagement {
+        imports {
+            mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+        }
     }
 
     sourceCompatibility = JavaVersion.VERSION_13
