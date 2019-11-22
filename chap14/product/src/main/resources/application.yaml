@@ -1,16 +1,9 @@
 spring:
   application:
     name: product
-  profiles:
-    active: local
-  data:
-    mongodb:
-      host: localhost
-      port: 27017
-      authentication-database: admin
-      database: primavera
-      username: primavera
-      password: primavera
+  cloud:
+    config:
+      uri: http://localhost:8888
 
 server:
   tomcat:

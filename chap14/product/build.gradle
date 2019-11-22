@@ -5,6 +5,8 @@ dependencies {
     implementation('org.springframework.boot:spring-boot-starter-tomcat')
     implementation('org.springframework.boot:spring-boot-starter-data-mongodb')
     implementation('org.springframework.boot:spring-boot-starter-data-mongodb-reactive')
+    implementation('org.springframework.cloud:spring-cloud-starter-config')
+    implementation('org.springframework.security:spring-security-rsa')
     implementation('org.modelmapper:modelmapper:2.3.3')
     implementation('org.projectlombok:lombok')
     implementation('com.squareup.okhttp3:okhttp:4.2.2')
