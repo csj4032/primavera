@@ -3,7 +3,6 @@ package com.genius.primavera;
 import lombok.*;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -17,4 +16,3 @@ public class Product {
 	private String name;
 	private BigDecimal price = BigDecimal.ZERO;
 }
-
