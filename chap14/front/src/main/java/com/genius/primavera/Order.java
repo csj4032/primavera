@@ -13,7 +13,7 @@ public class Order {
 	private long productId;
 	private Product product;
 
-	protected Order applyProduct( Product p) {
+	protected Order applyProduct(Product p) {
 		this.setProduct(p);
 		return this;
 	}

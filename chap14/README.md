@@ -9,7 +9,7 @@
 ```
 docker search redis
 
-docker login --username csj4032
+docker login --username [username]
 
 docker pull redis:latest
 ```
