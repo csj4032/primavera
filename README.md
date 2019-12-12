@@ -69,7 +69,13 @@
 * JPA, ModelMapper
 
 ## chap14
-* Ignite, POI
+* WebFlux, Spring Config Server, 
+
+## chap15
+* WebFlux, MSA
+
+## hello
+* Hystrix, Openfeign, Turbine
 
 ## Library Version
 * gradle 라이브러리 버전 정보 정리
