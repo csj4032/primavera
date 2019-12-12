@@ -43,6 +43,7 @@ subprojects {
         compile group: 'org.jetbrains', name: 'annotations', version: '16.0.1'
         compile group: 'javax.inject', name: 'javax.inject', version:'1'
         compile group: 'com.fasterxml.jackson.module', name: 'jackson-module-kotlin', version: '2.9.7'
+        compile group: 'org.jooq', name: 'jool', version: '0.9.14'
         compileOnly group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.2'
         compileOnly group: 'org.projectlombok', name: 'lombok', version: "${lombokVersion}"
         testCompile group: 'org.hamcrest', name: 'hamcrest-core', version: '2.1'
