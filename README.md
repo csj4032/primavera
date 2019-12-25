@@ -69,10 +69,10 @@
 * JPA, ModelMapper
 
 ## chap14
-* WebFlux, Spring Config Server, 
+* WebFlux, Spring Config Server
 
-## chap15
-* WebFlux, MSA
+## chap15 (예정)
+* Execl Import Export
 
 ## hello
 * Hystrix, Openfeign, Turbine
