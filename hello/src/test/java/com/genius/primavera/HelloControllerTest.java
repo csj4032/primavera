@@ -1,8 +1,8 @@
 package com.genius.primavera;
 
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,9 +29,9 @@ class HelloControllerTest {
 	private TestRestTemplate testRestTemplate;
 
 	@Test
+	@Order(1)
 	public void params() {
-		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl("http://localhost:8080").path("hello/params")
-				.queryParam("persons.name", "A","B","C")
+		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl("http://localhost:8080").path("/hello/params")
 				.queryParam("names", "A", "B", "C")
 				.queryParam("ages", 1, 2, 3)
 				.queryParam("enumTypes", "ABC", "DEF", "GHI");
@@ -39,5 +39,12 @@ class HelloControllerTest {
 		log.info("url : {}", uri.toString());
 		ResponseEntity<String> result = testRestTemplate.exchange(uri, HttpMethod.GET, new HttpEntity<>(null, null), String.class);
 		log.info(result.getBody());
+	}
+
+	@Test
+	@Order(2)
+	public void person() {
+		ResponseEntity<String> result = testRestTemplate.exchange("/hello/persons", HttpMethod.GET, null, String.class);
+		log.info("persons : {}", result.getBody());
 	}
 }

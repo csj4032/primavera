@@ -2,10 +2,10 @@
 스프링부트를 이용한 커뮤니티 사이트 개발
 
 ## Technical Specification
-* Java 12 (Switch expressions)
-* IntelliJ IDEA (2019.1)
+* Java 13 (Switch expressions, text blocks)
+* IntellJ IDEA (2019.3)
 * MariaDB 10.3.14
-* Springboot 2.1.6.RELEASE
+* Springboot 2.2.2.RELEASE
 * Springboot Security 2.1.6.RELEASE
 * Thymeleaf
 * Mybatis

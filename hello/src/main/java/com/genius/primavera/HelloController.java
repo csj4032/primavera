@@ -34,8 +34,26 @@ public class HelloController {
 	}
 
 	@GetMapping("/hello/params")
-	public Seq<Person> params(Params params, List<Person> persons) {
-		System.out.println(persons);
+	public Seq<Person> params(Params params) {
 		return zip(params.names, params.ages, params.enumTypes).map(Person::of);
+	}
+
+	@GetMapping("/hello/persons")
+	public String persons() {
+		String persons = """
+				            {[
+				            {
+					"name" : "김길동",
+					"age" : 10,
+					"enumType" : ABC
+				            },
+				            {
+				"name" : "홍길동",
+				"age" : 11,
+				"enumType" : ABC
+				            }
+				            ]}
+				            """;
+		return persons;
 	}
 }
