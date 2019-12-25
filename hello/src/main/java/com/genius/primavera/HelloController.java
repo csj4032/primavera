@@ -33,7 +33,7 @@ public class HelloController {
 		return "Hello World " + helloService.getGreetingName(name);
 	}
 
-	@GetMapping("/hello/params")
+	@PostMapping("/hello/params")
 	public Seq<Person> params(Params params) {
 		return zip(params.names, params.ages, params.enumTypes).map(Person::of);
 	}
