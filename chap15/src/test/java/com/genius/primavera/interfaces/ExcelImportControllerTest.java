@@ -3,6 +3,7 @@ package com.genius.primavera.interfaces;
 import com.genius.primavera.application.ExcelImportService;
 import com.genius.primavera.domain.ExcelImportRequest;
 import com.genius.primavera.domain.ExcelImportResponse;
+import com.genius.primavera.domain.MediaType;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.hateoas.MediaTypes;
-import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -63,9 +63,9 @@ public class ExcelImportControllerTest {
 
 		@BeforeAll
 		public void setUp() throws IOException {
-			multipartFile = new MockMultipartFile("file", resource.getInputStream());
-			excelImportRequest = new ExcelImportRequest("20191225.txt", multipartFile);
-			excelImportResponse = new ExcelImportResponse("Honda", excelImportRequest.getSize());
+			//multipartFile = new MockMultipartFile("file", resource.getInputStream());
+			//excelImportRequest = new ExcelImportRequest("20191225.txt", multipartFile);
+			//excelImportResponse = new ExcelImportResponse("Honda", excelImportRequest.getSize());
 			multiValueMap = new LinkedMultiValueMap() {{
 				add("name", "20191225.txt");
 			}};
@@ -75,7 +75,8 @@ public class ExcelImportControllerTest {
 		@Order(1)
 		@DisplayName("path 확인 테스트")
 		public void pathTest() throws Exception {
-			when(excelImportService.excelImport(new ExcelImportRequest("20191225.txt", multipartFile))).thenReturn(new ExcelImportResponse("", 100));
+			when(excelImportService.excelImport(new ExcelImportRequest("20191225.txt", multipartFile)))
+					.thenReturn(new ExcelImportResponse("", 100, MediaType.EXCEL_TYPE, ""));
 			mockMvc.perform(post("/save")).andDo(print())
 					.andExpect(status().isCreated()).andExpect(content()
 					.contentType(MediaTypes.HAL_JSON_VALUE))
@@ -86,12 +87,13 @@ public class ExcelImportControllerTest {
 		@Order(2)
 		@DisplayName("multipart 확인 테스트")
 		public void multipartTest() throws Exception {
-			when(excelImportService.excelImport(new ExcelImportRequest("20191225.txt", multipartFile))).thenReturn(new ExcelImportResponse("", 100));
+			when(excelImportService.excelImport(new ExcelImportRequest("20191225.txt", multipartFile)))
+					.thenReturn(new ExcelImportResponse("", 100, MediaType.EXCEL_TYPE, ""));
 			mockMvc.perform(
 					multipart("/save")
 							.file(multipartFile)
 							.params(multiValueMap)
-							.contentType(MediaType.MULTIPART_FORM_DATA)).andDo(print())
+							.contentType(org.springframework.http.MediaType.MULTIPART_FORM_DATA)).andDo(print())
 					.andExpect(status().isCreated()).andExpect(content()
 					.contentType(MediaTypes.HAL_JSON_VALUE))
 					.andExpect(jsonPath("$.name").value("20191225.txt"))
@@ -102,6 +104,7 @@ public class ExcelImportControllerTest {
 		@Order(3)
 		@DisplayName("excel 파일 형식 확인 테스트")
 		public void isExcelFile() {
+
 		}
 	}
 }

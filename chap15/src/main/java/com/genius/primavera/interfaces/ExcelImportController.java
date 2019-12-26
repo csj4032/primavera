@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -18,7 +20,7 @@ public class ExcelImportController {
 	private final ExcelImportService excelImportService;
 
 	@PostMapping("/save")
-	public ResponseEntity<ExcelImportResponse> save(ExcelImportRequest excelRequest) {
+	public ResponseEntity<ExcelImportResponse> save(ExcelImportRequest excelRequest) throws IOException {
 		//return new ResponseEntity<>(new ExcelImportResponse(excelRequest.getName(), excelRequest.getSize()), HttpStatus.CREATED);
 		ExcelImportResponse excelImportResponse = excelImportService.excelImport(excelRequest);
 		return new ResponseEntity<>(excelImportResponse, HttpStatus.CREATED);
