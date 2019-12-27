@@ -58,4 +58,15 @@ public class ExcelImportServiceImplTest {
 		ExcelImportResponse excelImportResponse = excelImportService.excelImport(excelImportRequest);
 		Assertions.assertEquals(MediaType.EXCEL_TYPE, excelImportResponse.getMediaType());
 	}
+
+	@Test
+	@Order(4)
+	@DisplayName("엑셀 파일 로우 카운트 테스트")
+	public void excelFileRowCount() throws IOException {
+		Resource resource = resourceLoader.getResource("classpath:20191225.xlsx");
+		MockMultipartFile multipartFile = new MockMultipartFile("file", resource.getInputStream());
+		ExcelImportRequest excelImportRequest = new ExcelImportRequest("20191225.xlsx", multipartFile);
+		ExcelImportResponse excelImportResponse = excelImportService.excelImport(excelImportRequest);
+		Assertions.assertEquals("row count : 700", excelImportResponse.getMessage());
+	}
 }
