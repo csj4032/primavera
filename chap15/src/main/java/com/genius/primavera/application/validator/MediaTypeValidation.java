@@ -14,8 +14,11 @@ public class MediaTypeValidation implements Validator {
 	@Override
 	public boolean validate(ExcelImportRequest excelImportRequest) {
 		log.info("Media Type Validator");
+		Tika tika = new Tika();
 		try {
-			return new Tika().detect(excelImportRequest.getInputStream()).contains(APPLICATION_X_TIKA_OOXML);
+			String mediaType = tika.detect(excelImportRequest.getInputStream());
+			log.info("mediaType : {}", mediaType);
+			return mediaType.contains(APPLICATION_X_TIKA_OOXML);
 		} catch (IOException e) {
 			log.error(e.getMessage());
 		}
