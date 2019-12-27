@@ -44,7 +44,6 @@ public class ExcelImportServiceImplTest {
 		Resource resource = resourceLoader.getResource("classpath:20191225.txt");
 		MockMultipartFile multipartFile = new MockMultipartFile("file", resource.getInputStream());
 		ExcelImportRequest excelImportRequest = new ExcelImportRequest("20191225.txt", multipartFile);
-		System.out.println(excelImportService.getMediaType(excelImportRequest));
 		ExcelImportResponse excelImportResponse = excelImportService.excelImport(excelImportRequest);
 		Assertions.assertEquals(MediaType.UNKNOWN, excelImportResponse.getMediaType());
 	}
@@ -56,7 +55,6 @@ public class ExcelImportServiceImplTest {
 		Resource resource = resourceLoader.getResource("classpath:20191225.xlsx");
 		MockMultipartFile multipartFile = new MockMultipartFile("file", resource.getInputStream());
 		ExcelImportRequest excelImportRequest = new ExcelImportRequest("20191225.xlsx", multipartFile);
-		System.out.println(excelImportService.getMediaType(excelImportRequest));
 		ExcelImportResponse excelImportResponse = excelImportService.excelImport(excelImportRequest);
 		Assertions.assertEquals(MediaType.EXCEL_TYPE, excelImportResponse.getMediaType());
 	}

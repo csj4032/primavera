@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.impl.io.EmptyInputStream;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,6 +15,7 @@ import java.util.Objects;
 
 @Getter
 @Setter
+@Slf4j
 @NoArgsConstructor
 @AllArgsConstructor
 public class ExcelImportRequest implements ExcelFileValid {
@@ -27,8 +29,13 @@ public class ExcelImportRequest implements ExcelFileValid {
 	}
 
 	@Override
-	public InputStream getInputStream() throws IOException {
-		if (file == null) return EmptyInputStream.nullInputStream();
-		return this.getFile().getInputStream();
+	public InputStream getInputStream() {
+		InputStream inputStream = EmptyInputStream.nullInputStream();
+		try {
+			inputStream = this.getFile().getInputStream();
+		} catch (IOException | NullPointerException e) {
+			log.error(e.getMessage());
+		}
+		return inputStream;
 	}
 }
