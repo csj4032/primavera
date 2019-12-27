@@ -20,12 +20,11 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class ExcelImportServiceImpl implements ExcelImportService {
 
-	private final Map<String, List<Validator>> validators;
+	private final Map<String, List<Validator>> validatorGroup;
 
 	@Override
 	public ExcelImportResponse excelImport(ExcelImportRequest excelImportRequest) {
-		boolean valid = validators.get("sizeAndTypeValidation").stream().allMatch(v -> v.validate(excelImportRequest));
-		log.info("valid : {}", valid);
+		boolean valid = validatorGroup.get("sizeAndTypeValidation").stream().allMatch(v -> v.validate(excelImportRequest));
 		if (valid) {
 			return new ExcelTypeFile(excelImportRequest).getExcelImportResponse();
 		} else {
