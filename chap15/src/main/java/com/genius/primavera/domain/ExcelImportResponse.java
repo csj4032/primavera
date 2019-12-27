@@ -1,11 +1,13 @@
 package com.genius.primavera.domain;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.hateoas.RepresentationModel;
 
 @Getter
 @Setter
+@EqualsAndHashCode
 public class ExcelImportResponse extends RepresentationModel<ExcelImportResponse> {
 	private String name;
 	private long size;

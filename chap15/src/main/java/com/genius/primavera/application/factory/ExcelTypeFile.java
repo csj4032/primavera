@@ -6,15 +6,11 @@ import com.genius.primavera.domain.Financial;
 import com.genius.primavera.domain.MediaType;
 import com.monitorjbl.xlsx.StreamingReader;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.util.StopWatch;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -50,7 +46,7 @@ public class ExcelTypeFile extends AbstractResponseFactory implements ResponseFa
 							.grossSales(BigDecimal.valueOf(row.getCell(7).getNumericCellValue()))
 							.discounts(row.getCell(8).getStringCellValue())
 							.sales(BigDecimal.valueOf(row.getCell(9).getNumericCellValue()))
-							.COGS(BigDecimal.valueOf(row.getCell(10).getNumericCellValue()))
+							.cogs(BigDecimal.valueOf(row.getCell(10).getNumericCellValue()))
 							.profit(BigDecimal.valueOf(row.getCell(11).getNumericCellValue()))
 							.date(row.getCell(12).getDateCellValue().toInstant())
 							.build();
