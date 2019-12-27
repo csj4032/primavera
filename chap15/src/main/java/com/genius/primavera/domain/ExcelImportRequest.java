@@ -30,12 +30,11 @@ public class ExcelImportRequest implements ExcelFileValid {
 
 	@Override
 	public InputStream getInputStream() {
-		InputStream inputStream = EmptyInputStream.nullInputStream();
 		try {
-			inputStream = this.getFile().getInputStream();
+			return this.getFile().getInputStream();
 		} catch (IOException | NullPointerException e) {
 			log.error(e.getMessage());
+			return EmptyInputStream.INSTANCE;
 		}
-		return inputStream;
 	}
 }

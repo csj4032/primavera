@@ -23,7 +23,7 @@ public class Financial {
 	private BigDecimal grossSales;
 	private String discounts;
 	private BigDecimal sales;
-	private BigDecimal COGS;
+	private BigDecimal cogs;
 	private BigDecimal profit;
 	private Instant date;
 }
