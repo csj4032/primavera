@@ -1,6 +1,6 @@
 package com.genius.primavera.application.factory;
 
-import com.genius.primavera.application.template.ExcelImportTemplate;
+import com.genius.primavera.application.template.FinancialTemplate;
 import com.genius.primavera.domain.ExcelImportRequest;
 import com.genius.primavera.domain.ExcelImportResponse;
 import com.genius.primavera.domain.Financial;
@@ -17,7 +17,7 @@ public class ExcelTypeFile extends AbstractResponseFactory implements ResponseFa
 	}
 
 	public ExcelImportResponse getExcelImportResponse() {
-		List<Financial> financialList = new ExcelImportTemplate<Financial>(excelImportRequest.getInputStream()).read(Financial::of);
+		List<Financial> financialList = new FinancialTemplate<Financial>(excelImportRequest.getInputStream()).read(Financial::of);
 		return new ExcelImportResponse(excelImportRequest.getName(), excelImportRequest.getSize(), MediaType.EXCEL_TYPE, "row count : " + financialList.size());
 	}
 }
