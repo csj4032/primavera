@@ -22,10 +22,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
 	@Override
 	public ExcelImportResponse excelImport(ExcelImportRequest excelImportRequest) {
 		boolean valid = validatorGroup.get("sizeAndTypeValidation").stream().allMatch(v -> v.validate(excelImportRequest));
-		if (valid) {
-			return new ExcelTypeFile(excelImportRequest).getExcelImportResponse();
-		} else {
-			return new UnknownFile(excelImportRequest).getExcelImportResponse();
-		}
+		if (valid) return new ExcelTypeFile(excelImportRequest).getExcelImportResponse();
+		return new UnknownFile(excelImportRequest).getExcelImportResponse();
 	}
 }
