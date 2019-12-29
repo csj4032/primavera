@@ -17,7 +17,7 @@ public class ExcelTypeFile extends AbstractResponseFactory implements ResponseFa
 	}
 
 	public ExcelImportResponse getExcelImportResponse() {
-		List<Financial> financialList = new FinancialTemplate<Financial>(excelImportRequest.getInputStream()).read(Financial::of);
+		List<Financial> financialList = new FinancialTemplate(excelImportRequest.getInputStream()).read(Financial::of);
 		return new ExcelImportResponse(excelImportRequest.getName(), excelImportRequest.getSize(), MediaType.EXCEL_TYPE, "row count : " + financialList.size());
 	}
 }
