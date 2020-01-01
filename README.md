@@ -3,9 +3,9 @@
 
 ## Technical Specification
 * Java 13 (Switch expressions, text blocks)
-* IntellJ IDEA (2019.3)
+* IntelliJ IDEA (2019.3.1)
 * MariaDB 10.3.14
-* Springboot 2.2.2.RELEASE
+* Springboot 2.2.2.RELEASE (https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.2-Release-Notes)
 * Springboot Security 2.1.6.RELEASE
 * Thymeleaf
 * Mybatis

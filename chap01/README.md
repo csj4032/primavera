@@ -166,7 +166,7 @@ $ gradle :chap01:bootRun -DmainClass=com.genius.primavera.PrimaveraApplication
 * Locating Auto-configuration Candidates (META-INF/spring.factories)
 * Condition Annotations
 
-#### Test Configuration
+#### Test Configuration (Spring Boot 2.2 Release 버전 이후 Junit 5 기본)
 * Junit 5 적용을 위한 gradle.build 설정
 * Junit 5 [참고](https://junit.org/junit5/docs/current/user-guide/)
 
