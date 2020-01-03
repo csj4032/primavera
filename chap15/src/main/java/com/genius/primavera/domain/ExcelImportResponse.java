@@ -7,7 +7,7 @@ import org.springframework.hateoas.RepresentationModel;
 
 @Getter
 @Setter
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = false)
 public class ExcelImportResponse extends RepresentationModel<ExcelImportResponse> {
 	private String name;
 	private long size;
