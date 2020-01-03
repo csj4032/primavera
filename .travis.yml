@@ -1,0 +1,5 @@
+language: java
+jdk: oraclejdk13
+
+before_install:
+  - chmod +x mvnw
