@@ -1,9 +1,18 @@
 language: java
-install: true
 
-os: osx
-dist: trusty
-jdk: oraclejdk13
+jdk:
+  - oraclejdk13
 
-script:
-  - ./gradlew build --scan -s
+branches:
+  only:
+    - master
+
+script: "./gradlew clean test"
+
+cache:
+  directories:
+    - '$HOME/.m2/repository'
+    - '$HOME/.gradle'
+
+after_success:
+  - ./gradlew jacocoTestReport coveralls
