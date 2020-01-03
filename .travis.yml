@@ -14,5 +14,9 @@ cache:
     - '$HOME/.m2/repository'
     - '$HOME/.gradle'
 
+env:
+  global:
+    - COVERALLS_REPO_TOKEN=zkuwfYF8m7tHeHe09w23Om2CrQJg4hOWU
+
 after_success:
   - ./gradlew jacocoTestReport coveralls
