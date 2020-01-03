@@ -9,6 +9,7 @@ buildscript {
         classpath("io.freefair.gradle:lombok-plugin:4.1.3")
         classpath("org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion")
         classpath("io.spring.gradle:dependency-management-plugin:1.0.8.RELEASE")
+        classpath("org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.2")
     }
 }
 
@@ -22,6 +23,8 @@ subprojects {
     apply plugin: 'jacoco'
     apply plugin: 'org.springframework.boot'
     apply plugin: 'io.spring.dependency-management'
+    apply plugin: 'net.saliman.cobertura'
+    apply plugin: 'com.github.kt3k.coveralls'
 
     repositories {
         mavenCentral()
@@ -48,7 +51,7 @@ subprojects {
         compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
         compile group: 'org.slf4j', name: 'jcl-over-slf4j', version: '1.7.25'
         compile group: 'org.jetbrains', name: 'annotations', version: '16.0.1'
-        compile group: 'javax.inject', name: 'javax.inject', version:'1'
+        compile group: 'javax.inject', name: 'javax.inject', version: '1'
         compile group: 'com.fasterxml.jackson.module', name: 'jackson-module-kotlin', version: '2.9.7'
         compile group: 'org.jooq', name: 'jool', version: '0.9.14'
         compileOnly group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.2'
@@ -57,7 +60,7 @@ subprojects {
         testCompile group: 'org.mockito', name: 'mockito-core', version: '2.25.1'
         testCompile group: 'org.mockito', name: 'mockito-junit-jupiter', version: '2.25.1'
         annotationProcessor group: 'org.projectlombok', name: 'lombok', version: "${lombokVersion}"
-        annotationProcessor group: 'org.springframework.boot', name:'spring-boot-configuration-processor'
+        annotationProcessor group: 'org.springframework.boot', name: 'spring-boot-configuration-processor'
     }
 
     dependencyManagement {
