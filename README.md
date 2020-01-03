@@ -1,8 +1,8 @@
 # Primavera
 스프링부트를 이용한 커뮤니티 사이트 개발
 
-[![Build Status](https://travis-ci.org/csj4032/primavera.svg?branch=master)](https://travis-ci.org/jojoldu/translator)
-[![Coverage Status](https://coveralls.io/repos/github/csj4032/primavera/badge.svg?branch=master)](https://coveralls.io/github/csj4032/primavera?branch=master)
+[![Build Status](https://travis-ci.org/csj4032/primavera.svg?branch=master)](https://travis-ci.org/csj4032/primavera)
+[![Coverage Status](https://coveralls.io/repos/github/csj4032/primavera/badge.svg)](https://coveralls.io/github/csj4032/primavera)
 
 ## Technical Specification
 * Java 13 (Switch expressions, text blocks)
