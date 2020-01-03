@@ -10,6 +10,7 @@ buildscript {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion")
         classpath("io.spring.gradle:dependency-management-plugin:1.0.8.RELEASE")
         classpath("org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.2")
+        classpath("net.saliman:gradle-cobertura-plugin:3.0.0")
     }
 }
 
