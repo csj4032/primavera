@@ -1,5 +1,9 @@
 language: java
+install: true
+
+os: osx
+dist: trusty
 jdk: oraclejdk13
 
-before_install:
-  - chmod +x mvnw
+script:
+  - ./gradlew build --scan -s
