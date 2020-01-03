@@ -48,6 +48,10 @@ subprojects {
         }
     }
 
+    coveralls {
+        jacocoReportPath 'build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml'
+    }
+
     dependencies {
         compile group: 'ch.qos.logback', name: 'logback-classic', version: "${logbackVersion}"
         compile group: 'ch.qos.logback', name: 'logback-core', version: "${logbackVersion}"
