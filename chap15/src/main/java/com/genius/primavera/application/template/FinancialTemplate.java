@@ -24,18 +24,20 @@ public class FinancialTemplate implements ExcelImportTemplate<Financial> {
 	@Override
 	public List<Financial> read(Function<Row, Financial> function) {
 		List<Financial> list = Collections.emptyList();
-		Workbook workbook = StreamingReader.builder().open(inputStream);
-		Iterator<Sheet> sheets = workbook.sheetIterator();
-		while (sheets.hasNext()) {
-			Sheet sheet = sheets.next();
-			Iterator<Row> rows = sheet.iterator();
-			while (rows.hasNext()) {
-				Row row = rows.next();
-				if (row.getRowNum() == 0) continue;
-				list.add(function.apply(row));
+		try (Workbook workbook = StreamingReader.builder().open(inputStream)) {
+			Iterator<Sheet> sheets = workbook.sheetIterator();
+			while (sheets.hasNext()) {
+				Sheet sheet = sheets.next();
+				Iterator<Row> rows = sheet.iterator();
+				while (rows.hasNext()) {
+					Row row = rows.next();
+					if (row.getRowNum() == 0) continue;
+					list.add(function.apply(row));
+				}
 			}
+		} catch (IOException e) {
+			log.error(e.getMessage());
 		}
-		try { inputStream.close(); } catch (IOException e) { log.error(e.getMessage());}
 		return list;
 	}
 }
