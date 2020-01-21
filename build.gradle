@@ -17,7 +17,7 @@ buildscript {
 allprojects {
     apply plugin: 'com.github.kt3k.coveralls'
     apply plugin: 'jacoco'
-
+    apply plugin: 'project-report'
     repositories {
         jcenter()
     }
