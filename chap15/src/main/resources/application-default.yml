@@ -32,7 +32,8 @@ spring:
     livereload:
       enabled: true
   aop:
-    proxy-target-class: true
+    proxy-target-class: false
+    auto: false
   servlet:
     multipart:
       max-file-size: 128KB
