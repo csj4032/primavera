@@ -2,7 +2,6 @@ package com.genius.primavera.interfaces;
 
 import com.genius.primavera.application.ExcelImportService;
 import com.genius.primavera.domain.ExcelImportRequest;
-import com.genius.primavera.domain.ExcelImportRequest.ExcelImportRequestInner;
 import com.genius.primavera.domain.ExcelImportResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
