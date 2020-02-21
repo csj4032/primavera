@@ -24,7 +24,6 @@ public class ExcelImportController {
 
 	@PostMapping("/save")
 	public ResponseEntity<ExcelImportResponse> save(ExcelImportRequest excelRequest) throws IOException {
-		ExcelImportRequestInner request = new ExcelImportRequest().new ExcelImportRequestInner();
 		log.info("{}", validator.toString());
 		return new ResponseEntity<>(excelImportService.excelImport(excelRequest), HttpStatus.CREATED);
 	}
