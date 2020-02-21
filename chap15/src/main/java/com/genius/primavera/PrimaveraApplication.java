@@ -1,9 +1,11 @@
 package com.genius.primavera;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.Banner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 
+@Slf4j
 @SpringBootApplication
 public class PrimaveraApplication {
 
