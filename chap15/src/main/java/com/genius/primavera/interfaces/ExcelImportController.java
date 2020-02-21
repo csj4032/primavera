@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.Validator;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,10 +20,12 @@ import java.io.IOException;
 public class ExcelImportController {
 
 	private final ExcelImportService excelImportService;
+	private final Validator validator;
 
 	@PostMapping("/save")
 	public ResponseEntity<ExcelImportResponse> save(ExcelImportRequest excelRequest) throws IOException {
 		ExcelImportRequestInner request = new ExcelImportRequest().new ExcelImportRequestInner();
+		log.info("{}", validator.toString());
 		return new ResponseEntity<>(excelImportService.excelImport(excelRequest), HttpStatus.CREATED);
 	}
 }

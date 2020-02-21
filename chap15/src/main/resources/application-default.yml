@@ -32,11 +32,21 @@ spring:
     livereload:
       enabled: true
   aop:
-    proxy-target-class: true
+    proxy-target-class: false
+    auto: false
   servlet:
     multipart:
       max-file-size: 128KB
       max-request-size: 128KB
+
+server:
+  port: 8443
+  ssl:
+    key-store: "classpath:keys/primavera.p12"
+    key-store-password: primavera
+    key-store-type: PKCS12
+    key-alias: primavera
+    protocol: TLS
 
 logging:
   config: classpath:logback.xml

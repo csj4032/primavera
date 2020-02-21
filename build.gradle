@@ -17,7 +17,7 @@ buildscript {
 allprojects {
     apply plugin: 'com.github.kt3k.coveralls'
     apply plugin: 'jacoco'
-
+    apply plugin: 'project-report'
     repositories {
         jcenter()
     }
@@ -80,7 +80,6 @@ subprojects {
         targetCompatibility = JavaVersion.VERSION_13
     }
 }
-
 
 task jacocoRootReport(type: JacocoReport) {
     description = 'Generates an aggregate report from all subprojects'
