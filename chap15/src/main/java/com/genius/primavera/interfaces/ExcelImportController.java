@@ -2,6 +2,7 @@ package com.genius.primavera.interfaces;
 
 import com.genius.primavera.application.ExcelImportService;
 import com.genius.primavera.domain.ExcelImportRequest;
+import com.genius.primavera.domain.ExcelImportRequest.ExcelImportRequestInner;
 import com.genius.primavera.domain.ExcelImportResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +22,7 @@ public class ExcelImportController {
 
 	@PostMapping("/save")
 	public ResponseEntity<ExcelImportResponse> save(ExcelImportRequest excelRequest) throws IOException {
+		ExcelImportRequestInner request = new ExcelImportRequest().new ExcelImportRequestInner();
 		return new ResponseEntity<>(excelImportService.excelImport(excelRequest), HttpStatus.CREATED);
 	}
 }

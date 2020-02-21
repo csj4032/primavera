@@ -37,4 +37,8 @@ public class ExcelImportRequest implements ExcelFileValid {
 			return EmptyInputStream.INSTANCE;
 		}
 	}
+
+	public static class ExcelImportRequestInner {
+		static String aa;
+	}
 }
