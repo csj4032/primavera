@@ -18,6 +18,8 @@
 			<button type="button" id="form-data-post" class="btn btn-secondary">form-data-post</button>
 			<button type="button" id="json-data-get" class="btn btn-danger">json-data-get</button>
 			<button type="button" id="json-data-post" class="btn btn-secondary">json-data-post</button>
+			<button type="button" id="json-data-delete" class="btn btn-secondary">json-data-delete</button>
+			<button type="button" id="json-data-array" class="btn btn-secondary">json-data-array</button>
 		</main>
 	</div>
 </div>
@@ -116,6 +118,41 @@
 			url: "/ajax/json/data",
 			contentType: "application/json; charset=UTF-8",
 			data: JSON.stringify(user),
+			dataType: "json",
+			success: function (result) {
+				console.log(result)
+			},
+			error: function (error) {
+				console.log(error);
+			}
+		});
+	});
+
+	$("#json-data-delete").click(function () {
+		const user = {
+			id: 1,
+			email: "genius@gmail.com"
+		};
+		$.ajax({
+			method: "DELETE",
+			url: "/ajax/json/data",
+			contentType: "application/json; charset=UTF-8",
+			data: JSON.stringify(user),
+			dataType: "json",
+			success: function (result) {
+				console.log(result)
+			},
+			error: function (error) {
+				console.log(error);
+			}
+		});
+	});
+
+	$("#json-data-array").click(function () {
+		$.ajax({
+			method: "POST",
+			url: "/ajax/form/array",
+			data: {numbers: [1, 2, 3]},
 			dataType: "json",
 			success: function (result) {
 				console.log(result)
