@@ -8,6 +8,7 @@ import com.genius.primavera.infrastructure.security.social.facebook.FacebookOAut
 import com.genius.primavera.infrastructure.security.social.github.GithubOAuth2ClientAuthenticationProcessingFilter;
 import com.genius.primavera.infrastructure.security.social.google.GoogleOAuth2ClientAuthenticationProcessingFilter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.UserInfoTokenServices;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -33,7 +34,7 @@ public class PrimaveraSocialConfiguration {
 	private final OAuth2ClientContext oauth2ClientContext;
 	private final PrimaveraSocialUserDetailsService primaveraSocialUserDetailsService;
 
-	public PrimaveraSocialConfiguration(ObjectMapper objectMapper, OAuth2ClientContext oauth2ClientContext, PrimaveraSocialUserDetailsService primaveraSocialUserDetailsService) {
+	public PrimaveraSocialConfiguration(ObjectMapper objectMapper, @Qualifier("oauth2ClientContext") OAuth2ClientContext oauth2ClientContext, PrimaveraSocialUserDetailsService primaveraSocialUserDetailsService) {
 		this.objectMapper = objectMapper;
 		this.oauth2ClientContext = oauth2ClientContext;
 		this.primaveraSocialUserDetailsService = primaveraSocialUserDetailsService;

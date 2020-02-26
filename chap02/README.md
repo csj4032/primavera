@@ -55,7 +55,6 @@ use primavera;
 
 show tables;
 
-desribe article; 
 ```
 
 #### Running and Stopping the Container

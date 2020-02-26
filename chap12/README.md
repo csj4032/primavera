@@ -41,7 +41,7 @@ public class PrimaveraLoggingAspect {
 ```
 docker search mongo
 
-docker login --username csj4032
+docker login --username {username}
 
 docker pull mongo
 ```

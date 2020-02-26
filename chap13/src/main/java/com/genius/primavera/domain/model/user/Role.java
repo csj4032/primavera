@@ -18,6 +18,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.envers.Audited;
+
+import static org.hibernate.envers.RelationTargetAuditMode.NOT_AUDITED;
 
 @Getter
 @Setter
@@ -27,6 +30,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @Entity
 @Table(name = "ROLE")
+@Audited(targetAuditMode = NOT_AUDITED)
 public class Role implements Serializable {
 
     @Id

@@ -28,5 +28,4 @@ public abstract class BaseEntity implements Serializable {
 	@Column(name = "MOD_DT")
 	private LocalDateTime modDt;
 
-
 }

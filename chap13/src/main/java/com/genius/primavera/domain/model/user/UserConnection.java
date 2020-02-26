@@ -20,6 +20,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.envers.Audited;
+
+import static org.hibernate.envers.RelationTargetAuditMode.NOT_AUDITED;
 
 @Getter
 @Setter
@@ -29,6 +32,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @Entity
 @Table(name = "USER_CONNECTION")
+@Audited(targetAuditMode = NOT_AUDITED)
 public class UserConnection extends BaseEntity {
 
     @Id
