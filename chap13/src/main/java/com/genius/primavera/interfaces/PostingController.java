@@ -23,34 +23,34 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class PostingController {
 
-    private final PostingService postService;
+	private final PostingService postService;
 
-    @PrimaveraLogging(type = "PostingController")
-    @GetMapping("/posts")
-    public String listForPageable(Model model,
-                                  @RequestParam(value = "page", defaultValue = "1", required = false) int page,
-                                  @RequestParam(value = "size", defaultValue = "10", required = false) int size,
-                                  @RequestParam(value = "sort", defaultValue = "id", required = false) String sort,
-                                  @RequestParam(value = "keyword", defaultValue = "", required = false) String keyword) {
-        model.addAttribute("page", postService.findAll(PageRequest.of(page - 1, size, new Sort(Sort.Direction.DESC, sort))));
-        return "post/list";
-    }
+	@PrimaveraLogging(type = "PostingController")
+	@GetMapping("/posts")
+	public String listForPageable(Model model,
+								  @RequestParam(value = "page", defaultValue = "1", required = false) int page,
+								  @RequestParam(value = "size", defaultValue = "10", required = false) int size,
+								  @RequestParam(value = "sort", defaultValue = "id", required = false) String sort,
+								  @RequestParam(value = "keyword", defaultValue = "", required = false) String keyword) {
+		model.addAttribute("page", postService.findAll(PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, sort))));
+		return "post/list";
+	}
 
-    @GetMapping("/posts/{id}")
-    public String detail(@PathVariable(value = "id") long id, Model model) {
-        model.addAttribute("post", postService.findById(id));
-        return "post/detail";
-    }
+	@GetMapping("/posts/{id}")
+	public String detail(@PathVariable(value = "id") long id, Model model) {
+		model.addAttribute("post", postService.findById(id));
+		return "post/detail";
+	}
 
-    @GetMapping("/posts/form")
-    public String form() {
-        return "post/form";
-    }
+	@GetMapping("/posts/form")
+	public String form() {
+		return "post/form";
+	}
 
-    @PostMapping("/posts/save")
-    @PreAuthorize("#requestForSave.writerId == authentication.principal.userId")
-    public String save(@Validated PostDto.RequestForSave requestForSave) {
-        postService.save(requestForSave);
-        return "redirect:/posts";
-    }
+	@PostMapping("/posts/save")
+	@PreAuthorize("#requestForSave.writerId == authentication.principal.userId")
+	public String save(@Validated PostDto.RequestForSave requestForSave) {
+		postService.save(requestForSave);
+		return "redirect:/posts";
+	}
 }
