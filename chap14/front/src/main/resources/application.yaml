@@ -13,3 +13,13 @@ server:
     max-threads: 10
     max-connections: 10
     connection-timeout: 1000
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh
+
+logging:
+  level:
+    org.springframework: debug

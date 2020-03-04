@@ -1,0 +1,3 @@
+# EnableAutoConfiguration Loaders
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.genius.primavera.infrastructure.PrimaveraAutoConfiguration

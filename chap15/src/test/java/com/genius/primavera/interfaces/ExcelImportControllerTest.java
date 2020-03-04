@@ -63,6 +63,7 @@ public class ExcelImportControllerTest {
 
 		@BeforeAll
 		public void setUp() throws IOException {
+			Math.ceil(1);
 			//multipartFile = new MockMultipartFile("file", resource.getInputStream());
 			//excelImportRequest = new ExcelImportRequest("20191225.txt", multipartFile);
 			//excelImportResponse = new ExcelImportResponse("Honda", excelImportRequest.getSize());

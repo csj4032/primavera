@@ -21,6 +21,7 @@ import static org.springframework.web.reactive.function.server.ServerResponse.ok
 public class FrontRouter {
 
 	private final FrontService frontService;
+	private final Config config;
 
 	@Bean
 	protected RouterFunction<ServerResponse> getOrderRoute() {
@@ -33,5 +34,11 @@ public class FrontRouter {
 	public FrontOrder getUserOrders(@PathVariable("userId") String userId) {
 		FrontOrder frontOrder = frontService.findAllOrders(userId);
 		return frontOrder;
+	}
+
+	@GetMapping(value = "/config")
+	public String getConfig() {
+		log.info("config : {}", config);
+		return config.toString();
 	}
 }

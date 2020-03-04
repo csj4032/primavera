@@ -50,3 +50,8 @@ server:
 
 logging:
   config: classpath:logback.xml
+
+primavera:
+  config:
+    name: primavera
+    enabled: true
