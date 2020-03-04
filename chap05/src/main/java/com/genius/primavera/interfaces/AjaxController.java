@@ -37,7 +37,12 @@ public class AjaxController {
 	}
 
 	@GetMapping(value = "/ajax/json/data")
-	public @ResponseBody User getJsonData(@RequestBody User user) {
+	public @ResponseBody User getJsonData(User user) {
+		return user;
+	}
+
+	@GetMapping(value = "/ajax/json/data/body")
+	public @ResponseBody User getJsonDataBody(@RequestBody User user) {
 		return user;
 	}
 
