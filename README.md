@@ -74,8 +74,9 @@
 ## chap14
 * WebFlux, Spring Config Server
 
-## chap15 (예정)
-* Execl Import Export
+## chap15
+* Excel Import Export
+* Sentry & Slack
 
 ## hello
 * Hystrix, Openfeign, Turbine
