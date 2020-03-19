@@ -4,6 +4,24 @@
 
 ### POI Excel file to database
 
+### Sentry
+* https://sentry.io 가입 혹은 로그인
+* Settings > Project > Client Keys DNS 를 환경변수에 추가
+* Logback appender 추가
+
+```
+<included>
+    <appender name="SENTRY" class="io.sentry.logback.SentryAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>WARN</level>
+        </filter>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+</included>
+```
+
 ### PostgreSQL
 
 ```

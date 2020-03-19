@@ -22,6 +22,7 @@ dependencies {
     implementation('org.apache.poi:poi-scratchpad:4.1.1')
     implementation('com.monitorjbl:xlsx-streamer:2.1.0')
     implementation('org.javatuples:javatuples:1.2')
+    implementation('io.sentry:sentry-logback:1.7.30')
     annotationProcessor('org.projectlombok:lombok')
     testImplementation('org.springframework.boot:spring-boot-starter-test')
 }
