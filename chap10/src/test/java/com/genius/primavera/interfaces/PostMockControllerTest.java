@@ -87,7 +87,7 @@ public class PostMockControllerTest {
 				Post.builder().id(12).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1).email("Genius Choi").nickname("Genius").build()).build()
 		);
 		Paged<PostDto.ResponseForList> postPage = new Paged(pageable, list, list.size());
-		given(this.postService.findForPageable(pageable)).willReturn(postPage);
+		given(this.postService.findForPageable(pageable, "")).willReturn(postPage);
 		Assertions.assertEquals(10, postPage.getPageSize());
 		Assertions.assertEquals(13, postPage.getTotalElements());
 		Assertions.assertEquals(2, postPage.getTotalPages());
