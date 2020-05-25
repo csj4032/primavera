@@ -9,7 +9,7 @@
 * Gradle 6.4.1
 * IntelliJ IDEA (2020.1)
 * MariaDB 10.3.14
-* Springboot 2.2.4.RELEASE (https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.2-Release-Notes)
+* Springboot 2.3.0.RELEASE (https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.3-Release-Notes)
 * Springboot Security 2.1.6.RELEASE
 * Thymeleaf
 * Mybatis

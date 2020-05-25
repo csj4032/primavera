@@ -10,9 +10,6 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class PasswordEncoderTest {
 
@@ -31,7 +28,6 @@ public class PasswordEncoderTest {
     @DisplayName("bcrype 방식")
     public void bcrypeEncoder() {
         String encodedPassword = encoder.encode(rawPassword);
-        log.info(encodedPassword);
         Assertions.assertNotEquals(bcrype, encodedPassword);
         Assertions.assertTrue(encoder.matches(rawPassword, encodedPassword));
         Assertions.assertTrue(encoder.matches(rawPassword, bcrype));

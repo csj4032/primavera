@@ -1,10 +1,8 @@
 package com.genius.primavera.application.validator;
 
-import java.io.Closeable;
-import java.io.Serializable;
-
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
+import java.io.Serializable;
 
 public class NicknameValidator implements ConstraintValidator<Nickname, String> , Serializable {
 
