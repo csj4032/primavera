@@ -27,7 +27,7 @@ mybatis:
   type-handlers-package: com.genius.primavera.domain
 
 logging:
-  config: classpath:logback-test.xml
+  config: classpath:logback.xml
 
 server:
   ssl:
