@@ -31,7 +31,7 @@
 ## Launch
 
 ## chap00
-* Domain
+* Domain, @SpringBootConfiguration, @EnableAutoConfiguration, initializers
 
 ## chap01
 * Spring Boot Start, Hello World, Configuration
