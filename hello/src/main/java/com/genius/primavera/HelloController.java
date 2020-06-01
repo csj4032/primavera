@@ -22,7 +22,7 @@ import static java.util.stream.Collectors.toList;
 import static org.jooq.lambda.Seq.zip;
 
 @Slf4j
-@RestController
+//@RestController
 @RequiredArgsConstructor
 public class HelloController {
 

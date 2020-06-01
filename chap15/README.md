@@ -4,6 +4,8 @@
 
 ### POI Excel file to database
 
+### AutoConfiguration
+
 ### Sentry
 * https://sentry.io 가입 혹은 로그인
 * Settings > Project > Client Keys DNS 를 환경변수에 추가

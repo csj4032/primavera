@@ -1,16 +1,3 @@
-tasks.withType(JavaCompile).each {
-    it.options.compilerArgs.add('--enable-preview')
-}
-
-test {
-    jvmArgs(['--enable-preview'])
-}
-
-bootRun {
-    main = 'com.genius.primavera.PrimaveraApplication'
-    jvmArgs(['--enable-preview'])
-}
-
 dependencies {
     implementation('org.springframework.boot:spring-boot-starter-web')
     implementation('org.springframework.boot:spring-boot-starter-jdbc')

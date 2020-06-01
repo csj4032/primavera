@@ -20,7 +20,7 @@ public class HelloService {
     }
 
     private String getGreetingNameFallBack(String name) {
-        log.error(name);
+        log.info(name);
         return name + " (Fall Back)";
     }
 }

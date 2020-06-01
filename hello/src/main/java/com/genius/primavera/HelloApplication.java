@@ -1,15 +1,14 @@
 package com.genius.primavera;
 
-import org.springframework.boot.SpringApplication;
+import feign.Contract;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cloud.netflix.hystrix.EnableHystrix;
 import org.springframework.cloud.netflix.hystrix.dashboard.EnableHystrixDashboard;
-import org.springframework.cloud.netflix.turbine.EnableTurbine;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
-
-import feign.Contract;
+import org.springframework.context.support.GenericApplicationContext;
 
 @EnableCaching
 @EnableHystrix
@@ -19,7 +18,7 @@ import feign.Contract;
 public class HelloApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(HelloApplication.class, args);
+		new SpringApplicationBuilder(HelloApplication.class).build().run(args);
 	}
 
 	@Bean
