@@ -1,5 +1,6 @@
 package com.genius.primavera;
 
+import com.genius.primavera.application.WorldService;
 import com.genius.primavera.interfaces.HelloController;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
