@@ -1,6 +1,6 @@
 package com.genius.primavera;
 
-import com.genius.primavera.domain.model.user.User;
+import com.genius.primavera.domain.model.User;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
