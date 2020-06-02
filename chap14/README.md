@@ -1,5 +1,12 @@
 ## chap14
 
+### Step
+1. Configuration Server Start
+2. Account Server Start
+3. Product Server Start
+4. Order Server Start
+5. Front Server Start
+
 ### WebFlux
 
 ### Docker For Redis
