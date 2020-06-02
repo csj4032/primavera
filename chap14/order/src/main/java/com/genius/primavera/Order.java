@@ -8,6 +8,6 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Order {
-	private long id;
-	private long productId;
+	private Long id;
+	private Long productId;
 }

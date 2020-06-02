@@ -6,31 +6,21 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.web.reactive.function.server.RouterFunction;
-import org.springframework.web.reactive.function.server.ServerResponse;
 
 import java.util.List;
 
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
+import static org.springframework.web.reactive.function.server.ServerResponse.ok;
 
 @SpringBootConfiguration
 @EnableAutoConfiguration
 public class OrderApplication {
 
+	private static String USERS_USER_ID_ORDER_URL = "users/{userId}/orders";
+	private static ParameterizedTypeReference<List<Order>> ORDERS_TYPE_REF = new ParameterizedTypeReference<>() {
+	};
+
 	public static void main(String[] args) {
-		new SpringApplicationBuilder(OrderApplication.class)
-				.initializers((GenericApplicationContext applicationContext) -> {
-					applicationContext.registerBean(RouterFunction.class, () -> {
-						return route()
-								.GET("/users/{userId}/orders", request -> {
-									var userId = request.pathVariable("userId");
-									var orderService = applicationContext.getBean("OrderService", OrderService.class);
-									var orders = orderService.findByUserId(userId);
-									return ServerResponse.ok().body(orders, new ParameterizedTypeReference<List<Order>>() {
-									});
-								}).build();
-					});
-				})
-				.build()
-				.run(args);
+		new SpringApplicationBuilder(OrderApplication.class).initializers((GenericApplicationContext context) -> context.registerBean(RouterFunction.class, () -> route().GET(USERS_USER_ID_ORDER_URL, request -> ok().body(context.getBean(OrderService.class).findByUserId(request.pathVariable("userId")), ORDERS_TYPE_REF)).build())).build().run(args);
 	}
 }
