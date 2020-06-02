@@ -1,4 +1,4 @@
-package com.genius.primavera.domain.model.user;
+package com.genius.primavera.domain.model;
 
 import lombok.*;
 
@@ -7,6 +7,7 @@ import javax.management.relation.Role;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Builder
 public class User {
     private long id;
     private String email;
