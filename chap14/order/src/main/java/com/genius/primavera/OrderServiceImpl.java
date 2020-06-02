@@ -6,6 +6,8 @@ import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -27,7 +29,7 @@ public class OrderServiceImpl implements OrderService {
 	private List<Order> newOrderInstance(int n) {
 		List<Order> orders = new ArrayList<>();
 		for (int i = 1; i <= n; i++) {
-			orders.add(new Order(i, i));
+			orders.add(new Order(Long.valueOf(i), Long.valueOf(i)));
 		}
 		return orders;
 	}
