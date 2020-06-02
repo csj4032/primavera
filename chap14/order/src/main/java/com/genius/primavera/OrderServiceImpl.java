@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -13,9 +12,13 @@ import java.util.List;
 public class OrderServiceImpl implements OrderService {
 
 	@Override
-	public Mono<List<Order>> findByUserId(String userId) throws InterruptedException {
+	public Mono<List<Order>> findByUserId(String userId) {
 		log.info("Start Find Id : {}", userId);
-		Thread.sleep(50);
+		try {
+			Thread.sleep(50);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		Mono<List<Order>> orders = Mono.just(newOrderInstance(100));
 		log.info("Stop Find Id : {}", userId);
 		return orders;

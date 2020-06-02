@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface OrderService {
 
-	Mono<List<Order>> findByUserId(String userId) throws InterruptedException;
+	Mono<List<Order>> findByUserId(String userId);
 }
