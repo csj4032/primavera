@@ -22,4 +22,4 @@ server:
 logging:
   level:
     org.springframework: debug
-    com.genis.primavera: debug
+    com.genius.primavera: debug
