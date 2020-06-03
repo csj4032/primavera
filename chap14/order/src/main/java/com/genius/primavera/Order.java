@@ -13,6 +13,12 @@ import org.springframework.data.relational.core.mapping.Table;
 @AllArgsConstructor
 @Table(value = "ORDERS")
 public class Order {
+
+	public Order(Long userId, Long productId) {
+		this.userId = userId;
+		this.productId = productId;
+	}
+
 	@Id
 	@Column("ID")
 	private Long id;

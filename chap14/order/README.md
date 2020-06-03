@@ -2,7 +2,11 @@
 
 ### OrderServer - WebFlux
 
-### Reference - https://github.com/spring-projects-experimental/spring-fu
+### Reference : https://github.com/spring-projects-experimental/spring-fu
+
+### R2DBC : https://github.com/mariadb-corporation/mariadb-connector-r2dbc
+
+### R2DBC Pool : https://github.com/r2dbc/r2dbc-pool
 
 ### Create Table
 
@@ -13,4 +17,7 @@ CREATE TABLE `ORDERS` (
   `PRODUCT_ID` bigint(20) NOT NULL,
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
-```
+
+TRUNCATE `primavera`.`ORDERS`;
+
+`````
