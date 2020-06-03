@@ -1,5 +1,8 @@
 dependencies {
-    compile('org.springframework.boot:spring-boot-starter-webflux')
+    compileOnly("org.mariadb:r2dbc-mariadb:0.8.2-alpha2")
+    compileOnly("io.r2dbc:r2dbc-pool:0.8.3.RELEASE")
+    compileOnly("org.springframework.data:spring-data-r2dbc")
+    implementation('org.springframework.boot:spring-boot-starter-webflux')
     implementation('org.springframework.boot:spring-boot-starter-aop')
     implementation('org.springframework.boot:spring-boot-devtools')
     implementation('org.springframework.boot:spring-boot-starter-tomcat')

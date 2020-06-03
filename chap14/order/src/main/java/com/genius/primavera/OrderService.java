@@ -1,10 +1,8 @@
 package com.genius.primavera;
 
-import reactor.core.publisher.Mono;
-
-import java.util.List;
+import reactor.core.publisher.Flux;
 
 public interface OrderService {
 
-	Mono<List<Order>> findByUserId(String userId);
+	Flux<Order> findByUserId(String userId);
 }
