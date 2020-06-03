@@ -1,35 +1,27 @@
 package com.genius.primavera;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import reactor.core.publisher.Mono;
+import reactor.core.publisher.Flux;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Slf4j
-@Service
+@RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
 
+	private final OrderRepository orderRepository;
+
 	@Override
-	public Mono<List<Order>> findByUserId(String userId) {
-		log.info("Start Find Id : {}", userId);
-		try {
-			Thread.sleep(50);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		Mono<List<Order>> orders = Mono.just(newOrderInstance(100));
-		log.info("Stop Find Id : {}", userId);
-		return orders;
+	public Flux<Order> findByUserId(String userId) {
+		return orderRepository.findAll();
 	}
 
 	private List<Order> newOrderInstance(int n) {
 		List<Order> orders = new ArrayList<>();
 		for (int i = 1; i <= n; i++) {
-			orders.add(new Order(Long.valueOf(i), Long.valueOf(i)));
+			orders.add(new Order(Long.valueOf(i), Long.valueOf(i), Long.valueOf(i)));
 		}
 		return orders;
 	}
