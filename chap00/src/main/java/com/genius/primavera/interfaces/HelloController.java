@@ -1,6 +1,5 @@
 package com.genius.primavera.interfaces;
 
-
 import com.genius.primavera.application.HelloService;
 import com.genius.primavera.application.WorldService;
 import lombok.RequiredArgsConstructor;
