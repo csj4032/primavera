@@ -32,6 +32,10 @@
 ![IntellJ, Gradle](https://github.com/csj4032/primavera/blob/master/gradle.png)
 
 ## chap00
+* Gradle : https://gradle.org
+* Maven : https://maven.apache.org/
+* Spring Initializr : https://start.spring.io
+* Lombok Plugin
 * Domain, @SpringBootConfiguration, @EnableAutoConfiguration, initializers
 
 ## chap01

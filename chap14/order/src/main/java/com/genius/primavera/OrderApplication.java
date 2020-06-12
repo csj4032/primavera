@@ -36,7 +36,6 @@ public class OrderApplication {
 				.run(args);
 	}
 
-
 	@EventListener(ApplicationReadyEvent.class)
 	public void init(ApplicationReadyEvent applicationReadyEvent) {
 		log.debug("OrderApplication Start... {}", applicationReadyEvent);
