@@ -6,7 +6,12 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class PrimaveraConfiguration {
 
 	private String name = "primavera";
-	private boolean enabled = false;
+	private boolean enabled;
+
+	public PrimaveraConfiguration(String name, boolean enabled) {
+		this.name = name;
+		this.enabled = enabled;
+	}
 
 	public String getName() {
 		return name;
