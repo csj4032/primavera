@@ -14,6 +14,6 @@ public class PrimaveraRestExceptionHandler {
 	@ExceptionHandler(PrimaveraBusinessException.class)
 	protected ResponseEntity<Object> handleBusinessException(final PrimaveraBusinessException primaveraBusinessException) {
 		log.error("PrimaveraBusinessException handleException Message {}", primaveraBusinessException.getMessage());
-		return new ResponseEntity<Object>(primaveraBusinessException.getCause(), HttpStatus.INTERNAL_SERVER_ERROR);
+		return new ResponseEntity<>(primaveraBusinessException.getCause(), HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 }

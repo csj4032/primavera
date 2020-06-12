@@ -17,7 +17,7 @@ import java.util.function.Function;
 
 @Slf4j
 @RequiredArgsConstructor
-public class FinancialTemplate implements ExcelImportTemplate<Financial> {
+public class FinancialTemplate implements ExcelImportTemplate<Row, Financial> {
 
 	private final InputStream inputStream;
 
@@ -36,7 +36,7 @@ public class FinancialTemplate implements ExcelImportTemplate<Financial> {
 				}
 			}
 		} catch (IOException e) {
-			log.error(e.getMessage());
+			log.error("{}", e.getMessage());
 		}
 		return list;
 	}

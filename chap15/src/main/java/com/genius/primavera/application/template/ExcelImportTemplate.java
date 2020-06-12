@@ -1,12 +1,11 @@
 package com.genius.primavera.application.template;
 
-import org.apache.poi.ss.usermodel.Row;
-
 import java.util.List;
 import java.util.function.Function;
 
-public interface ExcelImportTemplate<T> {
+@FunctionalInterface
+public interface ExcelImportTemplate<T, R> {
 
-	List<T> read(final Function<Row, T> function);
+	List<R> read(final Function<T, R> function);
 
 }
