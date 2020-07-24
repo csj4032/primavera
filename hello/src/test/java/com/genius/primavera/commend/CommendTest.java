@@ -14,13 +14,13 @@ public class CommendTest {
 	@Test
 	public void commendTest() {
 		List<Person> people = List.of(new Person("A", 1, EnumType.ABC), new Person("B", 1, EnumType.GHI));
+		log.info("original : {}", people);
 		Chain chain = new MarkChain(new DrawChain(null));
 		List<Commends> commends = new ArrayList();
 		commends.add(new ChainCommend(chain));
 		CommendManager commendManager = new CommendManager(commends);
 		commendManager.append(new ValidationCommend(EnumType.ABC));
 		List<Person> destination = commendManager.execute(people);
-		log.info("original : {}", people);
 		log.info("destination : {}", destination);
 	}
 }
