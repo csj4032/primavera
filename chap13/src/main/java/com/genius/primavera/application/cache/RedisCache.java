@@ -7,7 +7,6 @@ import com.genius.primavera.domain.repository.TempRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.lambda.Seq;
-import org.jooq.lambda.Unchecked;
 import org.jooq.lambda.tuple.Tuple2;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -22,11 +21,11 @@ import static java.util.stream.Collectors.toList;
 public class RedisCache {
 
 	private final TempRepository tempTempRepository;
-	private final RedisTemplate<String, String> redisTemplate;
+	private final RedisTemplate<String, Temp> redisTemplate;
 	private final ObjectMapper objectMapper;
 
 	public Optional<Temp> getTempById(Long id) throws JsonProcessingException {
-		return Optional.of(objectMapper.readValue(redisTemplate.opsForValue().get(String.valueOf(id)), Temp.class));
+		return Optional.of(redisTemplate.opsForValue().get(String.valueOf(id)));
 	}
 
 	public Map<Long, Optional<Temp>> getTempByIdIn(List<Long> ids) {
@@ -52,11 +51,10 @@ public class RedisCache {
 				.multiGet(ids.stream().map(String::valueOf).collect(toList()))
 				.stream()
 				.filter(Objects::nonNull)
-				.map(Unchecked.function(str -> objectMapper.readValue(str, Temp.class)))
 				.collect(toList());
 	}
 
 	private void setRedis(List<Tuple2<Long, Temp>> redisSetTemps) {
-		redisTemplate.opsForValue().multiSet(redisSetTemps.stream().collect(HashMap::new, Unchecked.biConsumer((m, t) -> m.put(String.valueOf(t.v1()), objectMapper.writeValueAsString(t.v2()))), HashMap::putAll));
+		redisTemplate.opsForValue().multiSet(redisSetTemps.stream().collect(HashMap::new, (m, t) -> m.put(String.valueOf(t.v1()), t.v2()), HashMap::putAll));
 	}
 }

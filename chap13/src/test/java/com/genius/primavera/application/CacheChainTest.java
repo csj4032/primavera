@@ -1,6 +1,5 @@
 package com.genius.primavera.application;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.genius.primavera.application.cache.LocalCache;
 import com.genius.primavera.domain.model.Temp;
@@ -32,17 +31,16 @@ public class CacheChainTest {
 	@Autowired
 	private LocalCache localCache;
 	@Autowired
-	private RedisTemplate<String, String> redisTemplate;
+	private RedisTemplate<String, Temp> redisTemplate;
 	@Autowired
 	private TempRepository tempRepository;
-	@Autowired
-	private ObjectMapper objectMapper;
 
 	@BeforeEach
 	public void init() {
 		LongStream.rangeClosed(1, 100).forEach(Unchecked.longConsumer(idx -> redisTemplate.delete(String.valueOf(idx))));
-		LongStream.rangeClosed(1, 10).forEach(Unchecked.longConsumer(idx -> redisTemplate.opsForValue().set(String.valueOf(idx), objectMapper.writeValueAsString(new Temp(idx, LocalDateTime.now())))));
+		LongStream.rangeClosed(1, 10).forEach(Unchecked.longConsumer(idx -> redisTemplate.opsForValue().set(String.valueOf(idx), new Temp(idx, LocalDateTime.now()))));
 		Object cache = redisTemplate.execute((RedisCallback) connection -> connection.mGet("1".getBytes(), "2".getBytes(), "3".getBytes(), "4".getBytes()));
+		((List<byte[]>) cache).forEach(obj -> log.info("Redis temp : {}", obj));
 		((List<byte[]>) cache).forEach(obj -> log.info("Redis temp : {}", new String(obj)));
 		LongStream.rangeClosed(11, 20).forEach(e -> tempRepository.save(new Temp(e, LocalDateTime.now())));
 		tempRepository.findByIdIn(List.of(11L, 12L, 13L, 14L)).forEach(temp -> log.info("Mongo temp : {}", temp));
