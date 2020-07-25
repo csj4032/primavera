@@ -89,8 +89,8 @@ public class ApplicationConfiguration implements WebMvcConfigurer {
 	}
 
 	@Bean(name = "redisTemplate")
-	public RedisTemplate<String, String> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
-		RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();
+	public <K, V> RedisTemplate<K, V> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
+		RedisTemplate<K, V> redisTemplate = new RedisTemplate<>();
 		redisTemplate.setConnectionFactory(redisConnectionFactory);
 		redisTemplate.setKeySerializer(new StringRedisSerializer());
 		redisTemplate.setValueSerializer(new SnappyRedisSerializer(new KryoRedisSerializer()));
