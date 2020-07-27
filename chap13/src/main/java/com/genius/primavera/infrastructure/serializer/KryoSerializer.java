@@ -17,7 +17,6 @@ public class KryoSerializer<T> {
 		Kryo kryo = new Kryo();
 		try {
 			kryo.setRegistrationRequired(false);
-			//NPE bug fix (Collection  deserialization)
 			((Kryo.DefaultInstantiatorStrategy) kryo.getInstantiatorStrategy()).setFallbackInstantiatorStrategy(new StdInstantiatorStrategy());
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);

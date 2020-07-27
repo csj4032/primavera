@@ -1,6 +1,5 @@
 package com.genius.primavera.application;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.genius.primavera.application.cache.LocalCache;
 import com.genius.primavera.domain.model.Temp;
 import com.genius.primavera.domain.repository.TempRepository;
