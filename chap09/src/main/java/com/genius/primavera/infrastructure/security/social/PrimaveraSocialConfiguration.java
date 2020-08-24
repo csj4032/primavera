@@ -7,6 +7,7 @@ import com.genius.primavera.infrastructure.security.PrimaveraSocialUserDetailsSe
 import com.genius.primavera.infrastructure.security.social.facebook.FacebookOAuth2ClientAuthenticationProcessingFilter;
 import com.genius.primavera.infrastructure.security.social.github.GithubOAuth2ClientAuthenticationProcessingFilter;
 import com.genius.primavera.infrastructure.security.social.google.GoogleOAuth2ClientAuthenticationProcessingFilter;
+import com.genius.primavera.infrastructure.security.social.kakao.KakaoOAuth2ClientAuthenticationProcessingFilter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.UserInfoTokenServices;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -49,7 +50,8 @@ public class PrimaveraSocialConfiguration {
 					return primaveraSocialUserDetailsService.doAuthentication(UserConnection.valueOf(userDetails));
 				})),
 				ssoFilter(facebook(), new FacebookOAuth2ClientAuthenticationProcessingFilter(objectMapper, primaveraSocialUserDetailsService)),
-				ssoFilter(github(), new GithubOAuth2ClientAuthenticationProcessingFilter(objectMapper, primaveraSocialUserDetailsService))
+				ssoFilter(github(), new GithubOAuth2ClientAuthenticationProcessingFilter(objectMapper, primaveraSocialUserDetailsService)),
+				ssoFilter(kakao(), new KakaoOAuth2ClientAuthenticationProcessingFilter(objectMapper, primaveraSocialUserDetailsService))
 		));
 		return filter;
 	}
