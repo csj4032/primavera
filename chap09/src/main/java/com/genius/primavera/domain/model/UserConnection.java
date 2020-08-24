@@ -4,6 +4,7 @@ import com.genius.primavera.infrastructure.security.social.facebook.FacebookUser
 import com.genius.primavera.infrastructure.security.social.github.GithubUserDetails;
 import com.genius.primavera.infrastructure.security.social.google.GoogleUserDetails;
 
+import com.genius.primavera.infrastructure.security.social.kakao.KakaoUserDetails;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -64,6 +65,19 @@ public class UserConnection {
 				.imageUrl(userDetails.getPicture())
 				.provider(ProviderType.GOOGLE)
 				.profileUrl(userDetails.getProfile())
+				.build();
+	}
+
+	public static UserConnection valueOf(KakaoUserDetails userDetails) {
+		return UserConnection.builder()
+				.expireTime(userDetails.getExpiresIn())
+				.providerId(userDetails.getId())
+				.accessToken(userDetails.getAccessToken())
+				.email(userDetails.getEmail())
+				.displayName(userDetails.getNickname())
+				.imageUrl(userDetails.getProfileImage())
+				.provider(ProviderType.KAKAO)
+				.profileUrl(userDetails.getProfileImage())
 				.build();
 	}
 }
