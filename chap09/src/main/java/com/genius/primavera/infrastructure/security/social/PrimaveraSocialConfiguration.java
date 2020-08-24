@@ -82,6 +82,12 @@ public class PrimaveraSocialConfiguration {
 	}
 
 	@Bean
+	@ConfigurationProperties("kakao")
+	public ClientResources kakao() {
+		return new ClientResources();
+	}
+
+	@Bean
 	public FilterRegistrationBean<OAuth2ClientContextFilter> oauth2ClientFilterRegistration(OAuth2ClientContextFilter filter) {
 		FilterRegistrationBean<OAuth2ClientContextFilter> registration = new FilterRegistrationBean<>();
 		registration.setFilter(filter);

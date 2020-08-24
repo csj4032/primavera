@@ -76,6 +76,7 @@
 
 ## chap13
 * JPA, ModelMapper
+* 카카오 API 메세지 보내기
 
 ## chap14
 * WebFlux, Spring Config Server

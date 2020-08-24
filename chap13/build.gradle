@@ -16,6 +16,7 @@ dependencies {
     implementation('org.springframework.boot:spring-boot-starter-reactor-netty')
     implementation('org.springframework.boot:spring-boot-devtools')
     implementation('org.springframework.data:spring-data-envers')
+    implementation('org.springframework.experimental:spring-graal-native:0.7.1.RELEASE')
     implementation('org.springframework.security.oauth.boot:spring-security-oauth2-autoconfigure:2.1.4.RELEASE')
     implementation('org.thymeleaf.extras:thymeleaf-extras-springsecurity5:3.0.4.RELEASE')
     implementation('nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:2.3.0')
