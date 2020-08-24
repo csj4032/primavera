@@ -72,3 +72,12 @@ github:
     clientAuthenticationScheme: form
   resource:
     userInfoUri: https://api.github.com/user
+
+kakao:
+  client:
+    clientId: ${OAUTH2_KAKAO_CLIENTID}
+    clientSecret: ${OAUTH2_KAKAO_CLIENTSECRET}
+    accessTokenUri: https://kauth.kakao.com/oauth/token
+    userAuthorizationUri: https://kauth.kakao.com/oauth/authorize
+  resource:
+    userInfoUri: https://kapi.kakao.com/v2/user/me
