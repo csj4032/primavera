@@ -24,6 +24,7 @@ dependencies {
     implementation('org.javatuples:javatuples:1.2')
     implementation('io.sentry:sentry-logback:1.7.30')
     implementation('com.opencsv:opencsv:5.2')
+    implementation('org.openkoreantext:open-korean-text:2.1.0')
     annotationProcessor('org.projectlombok:lombok')
     testImplementation('org.springframework.boot:spring-boot-starter-test')
 }
