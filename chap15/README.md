@@ -6,6 +6,13 @@
 
 ### AutoConfiguration
 
+### OpenCVS 카카오톡 채팅 메세지 통계
+* 추가 라이브러리
+```
+    implementation('com.opencsv:opencsv:5.2')
+    implementation('org.openkoreantext:open-korean-text:2.1.0')
+```
+
 ### Sentry
 * https://sentry.io 가입 혹은 로그인
 * Settings > Project > Client Keys DNS 를 환경변수에 추가
