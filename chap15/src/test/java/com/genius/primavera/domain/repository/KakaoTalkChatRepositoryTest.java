@@ -9,7 +9,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.openkoreantext.processor.KoreanTokenJava;
+import org.openkoreantext.processor.OpenKoreanTextProcessorJava;
+import org.openkoreantext.processor.tokenizer.KoreanTokenizer;
 import org.springframework.core.io.ClassPathResource;
+import scala.collection.Seq;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -17,6 +21,11 @@ import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static org.openkoreantext.processor.KoreanPosJava.Josa;
+import static org.openkoreantext.processor.KoreanPosJava.Punctuation;
+import static org.openkoreantext.processor.OpenKoreanTextProcessorJava.*;
+import static org.openkoreantext.processor.OpenKoreanTextProcessorJava.tokensToJavaKoreanTokenList;
 
 @Slf4j
 class KakaoTalkChatRepositoryTest {
@@ -46,22 +55,37 @@ class KakaoTalkChatRepositoryTest {
 
 		// User 별 메세지
 		Map<String, List<String>> countMessagesByUser = kakaoTalkChats.stream().collect(Collectors.groupingBy(KakaoTalkChat::getUser, Collectors.mapping(KakaoTalkChat::getMessage, Collectors.toList())));
-		log.info("countMessagesByUser {}", countMessagesByUser);
+		//log.info("countMessagesByUser {}", countMessagesByUser);
 
 		// User 별 <메세지, 날짜>
 		Map<String, List<Tuple2<String, LocalDateTime>>> countMessageAndDateByUser = kakaoTalkChats.stream().collect(Collectors.groupingBy(KakaoTalkChat::getUser, Collectors.mapping(kakaoTalkChat -> new Tuple2<>(kakaoTalkChat.getMessage(), kakaoTalkChat.getDate()), Collectors.toList())));
-		log.info("countMessageAndDateByUser {}", countMessageAndDateByUser);
+		//log.info("countMessageAndDateByUser {}", countMessageAndDateByUser);
 
 		// User 메세지 갯수
 		Map<String, Long> countMessageByUser = kakaoTalkChats.stream().collect(Collectors.groupingBy(KakaoTalkChat::getUser, Collectors.counting()));
-		log.info("countMessageByUser {}", countMessageByUser);
+		//log.info("countMessageByUser {}", countMessageByUser);
 
 		// User 메세지 갯수 정렬(DESC) 후 10개
 		Map<String, Long> countMessageByUserOrder = kakaoTalkChats.stream()
 				.collect(Collectors.groupingBy(KakaoTalkChat::getUser, Collectors.counting())).entrySet().stream().sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
 				.limit(10)
 				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
-		log.info("countMessageByUser {}", countMessageByUserOrder);
+		//log.info("countMessageByUserOrder {}", countMessageByUserOrder);
+
+		// 단어별 사용 갯수
+		Map<String, Long> wordCount = kakaoTalkChats.stream()
+				.map(e -> tokensToJavaKoreanTokenList(tokenize(normalize(e.getMessage()))))
+				.flatMap(e -> e.stream())
+				.filter(e -> !e.isUnknown())
+				.filter(e -> !e.getPos().equals(Punctuation))
+				.filter(e -> !e.getPos().equals(Josa))
+				.collect(Collectors.groupingBy(KoreanTokenJava::getText, Collectors.counting()))
+				.entrySet()
+				.stream()
+				.sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
+				.limit(10)
+				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+		log.info("wordCount {}", wordCount);
 
 	}
 }
