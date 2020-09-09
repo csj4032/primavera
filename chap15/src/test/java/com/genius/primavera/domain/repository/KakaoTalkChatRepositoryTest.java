@@ -55,24 +55,24 @@ class KakaoTalkChatRepositoryTest {
 
 		// User 별 메세지
 		Map<String, List<String>> countMessagesByUser = kakaoTalkChats.stream().collect(Collectors.groupingBy(KakaoTalkChat::getUser, Collectors.mapping(KakaoTalkChat::getMessage, Collectors.toList())));
-		//log.info("countMessagesByUser {}", countMessagesByUser);
+		log.info("countMessagesByUser {}", countMessagesByUser);
 
 		// User 별 <메세지, 날짜>
 		Map<String, List<Tuple2<String, LocalDateTime>>> countMessageAndDateByUser = kakaoTalkChats.stream().collect(Collectors.groupingBy(KakaoTalkChat::getUser, Collectors.mapping(kakaoTalkChat -> new Tuple2<>(kakaoTalkChat.getMessage(), kakaoTalkChat.getDate()), Collectors.toList())));
-		//log.info("countMessageAndDateByUser {}", countMessageAndDateByUser);
+		log.info("countMessageAndDateByUser {}", countMessageAndDateByUser);
 
 		// User 메세지 갯수
 		Map<String, Long> countMessageByUser = kakaoTalkChats.stream().collect(Collectors.groupingBy(KakaoTalkChat::getUser, Collectors.counting()));
-		//log.info("countMessageByUser {}", countMessageByUser);
+		log.info("countMessageByUser {}", countMessageByUser);
 
 		// User 메세지 갯수 정렬(DESC) 후 10개
 		Map<String, Long> countMessageByUserOrder = kakaoTalkChats.stream()
 				.collect(Collectors.groupingBy(KakaoTalkChat::getUser, Collectors.counting())).entrySet().stream().sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
 				.limit(10)
 				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
-		//log.info("countMessageByUserOrder {}", countMessageByUserOrder);
+		log.info("countMessageByUserOrder {}", countMessageByUserOrder);
 
-		// 단어별 사용 갯수
+		// 단어별 출 갯수
 		Map<String, Long> wordCount = kakaoTalkChats.stream()
 				.map(e -> tokensToJavaKoreanTokenList(tokenize(normalize(e.getMessage()))))
 				.flatMap(e -> e.stream())
@@ -86,6 +86,5 @@ class KakaoTalkChatRepositoryTest {
 				.limit(10)
 				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
 		log.info("wordCount {}", wordCount);
-
 	}
 }
