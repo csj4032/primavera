@@ -22,8 +22,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.openkoreantext.processor.KoreanPosJava.Josa;
-import static org.openkoreantext.processor.KoreanPosJava.Punctuation;
+import static org.openkoreantext.processor.KoreanPosJava.*;
 import static org.openkoreantext.processor.OpenKoreanTextProcessorJava.*;
 import static org.openkoreantext.processor.OpenKoreanTextProcessorJava.tokensToJavaKoreanTokenList;
 
@@ -54,15 +53,18 @@ class KakaoTalkChatRepositoryTest {
 		log.info("kakaoTalkChats size : {}", kakaoTalkChats.size());
 
 		// User 별 메세지
-		Map<String, List<String>> countMessagesByUser = kakaoTalkChats.stream().collect(Collectors.groupingBy(KakaoTalkChat::getUser, Collectors.mapping(KakaoTalkChat::getMessage, Collectors.toList())));
+		Map<String, List<String>> countMessagesByUser = kakaoTalkChats.stream()
+				.collect(Collectors.groupingBy(KakaoTalkChat::getUser, Collectors.mapping(KakaoTalkChat::getMessage, Collectors.toList())));
 		log.info("countMessagesByUser {}", countMessagesByUser);
 
 		// User 별 <메세지, 날짜>
-		Map<String, List<Tuple2<String, LocalDateTime>>> countMessageAndDateByUser = kakaoTalkChats.stream().collect(Collectors.groupingBy(KakaoTalkChat::getUser, Collectors.mapping(kakaoTalkChat -> new Tuple2<>(kakaoTalkChat.getMessage(), kakaoTalkChat.getDate()), Collectors.toList())));
+		Map<String, List<Tuple2<String, LocalDateTime>>> countMessageAndDateByUser = kakaoTalkChats.stream()
+				.collect(Collectors.groupingBy(KakaoTalkChat::getUser, Collectors.mapping(kakaoTalkChat -> new Tuple2<>(kakaoTalkChat.getMessage(), kakaoTalkChat.getDate()), Collectors.toList())));
 		log.info("countMessageAndDateByUser {}", countMessageAndDateByUser);
 
 		// User 메세지 갯수
-		Map<String, Long> countMessageByUser = kakaoTalkChats.stream().collect(Collectors.groupingBy(KakaoTalkChat::getUser, Collectors.counting()));
+		Map<String, Long> countMessageByUser = kakaoTalkChats.stream()
+				.collect(Collectors.groupingBy(KakaoTalkChat::getUser, Collectors.counting()));
 		log.info("countMessageByUser {}", countMessageByUser);
 
 		// User 메세지 갯수 정렬(DESC) 후 10개
@@ -73,12 +75,10 @@ class KakaoTalkChatRepositoryTest {
 		log.info("countMessageByUserOrder {}", countMessageByUserOrder);
 
 		// 단어별 출 갯수
-		Map<String, Long> wordCount = kakaoTalkChats.stream()
+		Map<String, Long> wordCount = kakaoTalkChats.parallelStream()
 				.map(e -> tokensToJavaKoreanTokenList(tokenize(normalize(e.getMessage()))))
 				.flatMap(e -> e.stream())
-				.filter(e -> !e.isUnknown())
-				.filter(e -> !e.getPos().equals(Punctuation))
-				.filter(e -> !e.getPos().equals(Josa))
+				.filter(e -> e.getPos().equals(Noun))
 				.collect(Collectors.groupingBy(KoreanTokenJava::getText, Collectors.counting()))
 				.entrySet()
 				.stream()
