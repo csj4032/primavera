@@ -5,7 +5,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/csj4032/primavera/badge.svg)](https://coveralls.io/github/csj4032/primavera)
 
 ## Technical Specification
-* Java 14 (Switch expressions, text blocks)
+* Java 15 (Switch expressions, text blocks)
 * Gradle 6.4.1
 * IntelliJ IDEA (2020.1)
 * MariaDB 10.3.14
