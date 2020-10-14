@@ -26,4 +26,6 @@ public class Order {
 	private Long userId;
 	@Column("PRODUCT_ID")
 	private Long productId;
+	@Column("AMOUNT")
+	private Long amount;
 }
