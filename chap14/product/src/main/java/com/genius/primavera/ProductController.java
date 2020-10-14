@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,7 +25,7 @@ public class ProductController {
 		productService.deleteAll().subscribe();
 		List<Product> products = new ArrayList<>();
 		for (Long i = 0L; i < 1000L; i++)
-			products.add(Product.builder().id(i).group(i).name("product" + i).price(i % 2 == 0 ? BigDecimal.TEN : BigDecimal.ONE).createDate(LocalDateTime.now()).build());
+			products.add(Product.builder().id(i).group(i).name("product" + i).price(i % 2 == 0 ? BigDecimal.TEN : BigDecimal.ONE).stock(ThreadLocalRandom.current().nextLong(1000)).createDate(LocalDateTime.now()).build());
 		productService.saveAll(products).subscribe();
 	}
 

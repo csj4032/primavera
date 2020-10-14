@@ -22,5 +22,6 @@ public class Product {
 	private Long group;
 	private String name;
 	private BigDecimal price = BigDecimal.ZERO;
+	private Long stock;
 	private LocalDateTime createDate;
 }
