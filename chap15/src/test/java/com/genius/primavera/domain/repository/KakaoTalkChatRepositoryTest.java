@@ -4,28 +4,26 @@ import com.genius.primavera.domain.KakaoTalkChat;
 import com.opencsv.bean.ColumnPositionMappingStrategy;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
-import com.uwyn.jhighlight.fastutil.Hash;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.lambda.tuple.Tuple2;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.openkoreantext.processor.KoreanTokenJava;
-import org.openkoreantext.processor.OpenKoreanTextProcessorJava;
-import org.openkoreantext.processor.tokenizer.KoreanTokenizer;
 import org.springframework.core.io.ClassPathResource;
-import scala.collection.Seq;
 
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.openkoreantext.processor.KoreanPosJava.Josa;
 import static org.openkoreantext.processor.KoreanPosJava.Punctuation;
 import static org.openkoreantext.processor.OpenKoreanTextProcessorJava.*;
-import static org.openkoreantext.processor.OpenKoreanTextProcessorJava.tokensToJavaKoreanTokenList;
 
 @Slf4j
 class KakaoTalkChatRepositoryTest {
