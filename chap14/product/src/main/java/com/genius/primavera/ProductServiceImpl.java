@@ -45,7 +45,8 @@ public class ProductServiceImpl implements ProductService {
 
 	@Override
 	public Mono<Product> findById(Long id) {
-		return productRepository.findById(id).filter(p -> saleCommand.isSaleable(p, EnumSet.of(SaleRoleType.LEGAL, SaleRoleType.STOCK)));
+		return productRepository.findById(id)
+				.filter(p -> saleCommand.isSaleable(p, EnumSet.of(SaleRoleType.LEGAL, SaleRoleType.STOCK)));
 	}
 
 	@Override
