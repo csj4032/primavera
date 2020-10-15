@@ -10,9 +10,18 @@ import java.util.List;
 @Mapper
 public interface UserMapper {
 
-	String SELECT_ID_NAME_REG_DATE_MOD_DATE_FROM_USER = "SELECT ID, EMAIL, NICKNAME, PASSWORD, STATUS, REG_DATE, MOD_DATE FROM USER ";
-	String INSERT_SQL = "INSERT INTO USER (EMAIL, PASSWORD, NICKNAME, STATUS, REG_DATE, MOD_DATE) " +
-			"VALUES (#{user.email}, #{user.password}, #{user.nickname}, #{user.status, typeHandler=UserStatusTypeHandler}, #{user.regDate}, #{user.modDate})";
+	String SELECT_ID_NAME_REG_DATE_MOD_DATE_FROM_USER = """
+			SELECT 
+				ID, EMAIL, NICKNAME, PASSWORD, STATUS, REG_DATE, MOD_DATE 
+			FROM 
+				USER
+			""";
+	String INSERT_SQL = """
+			INSERT INTO USER 
+				(EMAIL, PASSWORD, NICKNAME, STATUS, REG_DATE, MOD_DATE) 
+			VALUES 
+				(#{user.email}, #{user.password}, #{user.nickname}, #{user.status, typeHandler=UserStatusTypeHandler}, #{user.regDate}, #{user.modDate})
+				""";
 
 	@Results(id = "USER", value = {
 			@Result(property = "id", column = "ID"),
@@ -47,14 +56,15 @@ public interface UserMapper {
 	@SelectKey(statement = "SELECT LAST_INSERT_ID()", keyProperty = "user.id", before = false, resultType = long.class)
 	int save(@Param("user") User user);
 
-	@Insert(value = {
-			"<script>",
-			"INSERT INTO USER (EMAIL, PASSWORD, NICKNAME, STATUS, REG_DATE, MOD_DATE)",
-			"VALUES",
-			"<foreach collection='users' item='user' separator=','>",
-			"(#{user.email}, #{user.password}, #{user.nickname}, #{user.status, typeHandler=UserStatusTypeHandler}, #{user.regDate}, #{user.modDate})",
-			"</foreach>",
-			"</script>"
+	@Insert(value = {"""
+			<script>
+				INSERT INTO USER (EMAIL, PASSWORD, NICKNAME, STATUS, REG_DATE, MOD_DATE) 
+				VALUES 
+				<foreach collection='users' item='user' separator=','> 
+				(#{user.email}, #{user.password}, #{user.nickname}, #{user.status, typeHandler=UserStatusTypeHandler}, #{user.regDate}, #{user.modDate}) 
+				</foreach> 
+			</script>
+			"""
 	})
 	@Options(useGeneratedKeys = true, keyProperty = "user.id")
 	int saveAll(@Param("users") List<User> users);
