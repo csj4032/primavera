@@ -14,7 +14,11 @@ import java.util.List;
 @Mapper
 public interface WinnerMapper {
 
-	String INSERT_SQL = "INSERT INTO WINNER (USER_ID, WINNER, REG_DT) " + "VALUES (#{userId}, #{winner}, #{regDt})";
+	String INSERT_SQL = """
+			INSERT INTO WINNER (USER_ID, WINNER, REG_DT) 
+			VALUES 
+			(#{userId}, #{winner}, #{regDt})
+			""";
 
 	@Insert(value = INSERT_SQL)
 	@Options(useGeneratedKeys = true, keyProperty = "id")
@@ -22,7 +26,7 @@ public interface WinnerMapper {
 	int insertWinner(Winner winner);
 
 	@Select(value = "SELECT ID, USER_ID, WINNER, REG_DT FROM WINNER")
-    List<Winner> findAll();
+	List<Winner> findAll();
 
 	@Update(value = "UPDATE WINNER SET WINNER = #{winner} WHERE ID = #{id}")
 	int updateWinner(Winner winner);
