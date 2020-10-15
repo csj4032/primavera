@@ -87,7 +87,6 @@ public class PrimaveraApplication {
 class PrimaveraApplicationRunner implements ApplicationRunner {
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
-		String[] aa = {"dsddd", "dddd"};
 		log.info("! PrimaveraApplicationRunner Runner Args: {}", args);
 	}
 }

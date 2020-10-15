@@ -29,7 +29,7 @@
 * 게시글 편집 기능
 
 ## Launch
-![IntellJ, Gradle](https://github.com/csj4032/primavera/blob/master/gradle.png)
+![IntelliJ, Gradle](https://github.com/csj4032/primavera/blob/master/gradle.png)
 
 ## chap00
 * Gradle : https://gradle.org
@@ -37,6 +37,7 @@
 * Spring Initializr : https://start.spring.io
 * Lombok Plugin
 * Domain, @SpringBootConfiguration, @EnableAutoConfiguration, initializers
+* SpringApplicationBuilder
 
 ## chap01
 * Spring Boot Start, Hello World, Configuration
