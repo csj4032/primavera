@@ -1,3 +1,27 @@
+def querydslSrcDir = 'src/main/generated'
+
+querydsl {
+    library = 'com.querydsl:querydsl-apt:4.4.0'
+    jpa = true
+    querydslSourcesDir = querydslSrcDir
+}
+
+compileQuerydsl{
+    options.annotationProcessorPath = configurations.querydsl
+}
+
+configurations {
+    querydsl.extendsFrom compileClasspath
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java', querydslSrcDir]
+        }
+    }
+}
+
 dependencies {
     compile('org.springframework.boot:spring-boot-starter-web') {
         exclude module: "spring-boot-starter-tomcat"
@@ -16,7 +40,6 @@ dependencies {
     implementation('org.springframework.boot:spring-boot-starter-reactor-netty')
     implementation('org.springframework.boot:spring-boot-devtools')
     implementation('org.springframework.data:spring-data-envers')
-    implementation('org.springframework.experimental:spring-graal-native:0.7.1.RELEASE')
     implementation('org.springframework.security.oauth.boot:spring-security-oauth2-autoconfigure:2.1.4.RELEASE')
     implementation('org.thymeleaf.extras:thymeleaf-extras-springsecurity5:3.0.4.RELEASE')
     implementation('nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:2.3.0')
@@ -31,7 +54,10 @@ dependencies {
     implementation('com.esotericsoftware:kryo:4.0.2')
     implementation('org.xerial.snappy:snappy-java:1.1.7.6')
     implementation('org.apache.commons:commons-pool2:2.8.0')
+    implementation('com.querydsl:querydsl-jpa')
+    implementation('com.querydsl:querydsl-apt')
     annotationProcessor('org.projectlombok:lombok')
+    annotationProcessor('com.querydsl:querydsl-apt')
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude module: 'junit'
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'

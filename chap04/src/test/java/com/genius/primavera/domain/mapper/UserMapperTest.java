@@ -137,7 +137,8 @@ public class UserMapperTest {
 	@Order(8)
 	@DisplayName(value = "검색 조건에 따른 결과 반환")
 	public void findUserByRequestUser() {
-		SelectStatementProvider selectStatement = select(UserTableSupport.id, UserTableSupport.email, UserTableSupport.password, UserTableSupport.nickname, UserTableSupport.status, UserTableSupport.regDate, UserTableSupport.modDate)
+		SelectStatementProvider selectStatement =
+				select(UserTableSupport.id, UserTableSupport.email, UserTableSupport.password, UserTableSupport.nickname, UserTableSupport.status, UserTableSupport.regDate, UserTableSupport.modDate)
 				.from(UserTableSupport.userTable)
 				.where(UserTableSupport.id, isIn(users.stream().map(User::getId).collect(toList())))
 				.build()

@@ -31,6 +31,7 @@
 /chap12/out
 /chap13/build
 /chap13/out
+/chap13/src/main/generated
 /chap14/*/build
 /chap14/*/out
 /chap15/build
