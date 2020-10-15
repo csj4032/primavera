@@ -6,9 +6,12 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 @Slf4j
 @SpringBootApplication
+// Application.yml 우선순위
+//@EnableAspectJAutoProxy(proxyTargetClass = true)
 public class PrimaveraApplication {
 
 	public static void main(String[] args) {

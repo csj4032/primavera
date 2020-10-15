@@ -6,7 +6,7 @@ spring:
     charset: UTF-8
     location: classpath:primavera.txt
   aop:
-    proxy-target-class: false
+    proxy-target-class: true
   datasource:
     url: jdbc:h2:mem:testdb
     driverClassName: org.h2.Driver
@@ -35,6 +35,9 @@ com:
         - id: 2
           email: genius2
 
+plantPlaces:
+  api:
+    url: http://www.plantplaces.com
 ---
 
 spring:

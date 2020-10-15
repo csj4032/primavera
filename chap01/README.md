@@ -166,6 +166,16 @@ $ gradle :chap01:bootRun -DmainClass=com.genius.primavera.PrimaveraApplication
 * Locating Auto-configuration Candidates (META-INF/spring.factories)
 * Condition Annotations
 
+#### @EnableAspectJAutoProxy
+```
+spring:
+  aop:
+    proxy-target-class: true
+```
+* application.yml 설정과 어노테이션 관계
+* https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/core.html#aop-introduction-proxies
+* https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/core.html#aop-enable-aspectj-java
+
 #### Test Configuration (Spring Boot 2.2 Release 버전 이후 Junit 5 기본)
 * Junit 5 적용을 위한 gradle.build 설정
 * Junit 5 [참고](https://junit.org/junit5/docs/current/user-guide/)
@@ -179,6 +189,9 @@ testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', versio
 testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: '5.3.2'
 testRuntime group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.3.2'
 ```
+
+### Retrofit2
+* https://square.github.io/retrofit/
 
 ### ETC
 * Spring boot test [참고](https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-testing.html)

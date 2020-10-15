@@ -1,11 +1,16 @@
 package com.genius.primavera.application;
 
 import com.genius.primavera.domain.model.User;
+import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 
-public interface HelloService {
+@Service
+public class HelloService implements IHelloService {
 
-	List<User> getUsers();
-
+	@Override
+	public List<User> getUsers() {
+		return Collections.EMPTY_LIST;
+	}
 }
