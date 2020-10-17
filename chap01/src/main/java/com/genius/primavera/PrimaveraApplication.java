@@ -10,7 +10,7 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 @Slf4j
 @SpringBootApplication
-// Application.yml 우선순위
+//Application.yml 우선순위
 //@EnableAspectJAutoProxy(proxyTargetClass = true)
 public class PrimaveraApplication {
 

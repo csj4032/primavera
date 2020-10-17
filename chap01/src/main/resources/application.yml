@@ -6,7 +6,7 @@ spring:
     charset: UTF-8
     location: classpath:primavera.txt
   aop:
-    proxy-target-class: true
+    proxy-target-class: false
   datasource:
     url: jdbc:h2:mem:testdb
     driverClassName: org.h2.Driver
