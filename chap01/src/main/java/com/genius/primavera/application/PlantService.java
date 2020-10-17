@@ -11,7 +11,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PlantService implements IPlantService {
 
-	private final PlantRepository plantRepository;
+	private final IPlantRepository plantRepository;
 
 	@Override
 	public List<Plant> fetchPlants(String combinedName) throws IOException {

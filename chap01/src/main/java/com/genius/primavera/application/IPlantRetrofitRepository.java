@@ -11,4 +11,7 @@ public interface IPlantRetrofitRepository {
 
 	@GET("/perl/mobile/viewplantsjsonarray.pl")
 	Call<List<Plant>> getPlants(@Query("Combined_Name") String combinedName);
+
+
+
 }
