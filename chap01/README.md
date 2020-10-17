@@ -197,4 +197,5 @@ testRuntime group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '
 * Spring boot test [참고](https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-testing.html)
 * Spring boot banner [링크](https://devops.datenkollektiv.de/banner.txt/index.html)
 * Creating Your Own Auto-configuration [링크](https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-developing-auto-configuration.html#boot-features-developing-auto-configuration)
+* Spring Expression Language The Elvis Operator [링크](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/core.html#expressions-operator-elvis)
 * Creating a Custom Starter with Spring Boot [링크](https://www.baeldung.com/spring-boot-custom-starter)
