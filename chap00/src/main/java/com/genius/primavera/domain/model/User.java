@@ -22,6 +22,10 @@ public class User {
 	public User() {
 	}
 
+	public User(long id) {
+		this.id = id;
+	}
+
 	public User(long id, String email, String password, String nickname, List<Role> roles, LocalDateTime regDt, LocalDateTime modDt) {
 		this.id = id;
 		this.email = email;
