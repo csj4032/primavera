@@ -2,6 +2,7 @@ dependencies {
     implementation('org.springframework.boot:spring-boot-starter-aop')
     implementation('org.springframework.boot:spring-boot-starter-web')
     implementation('org.springframework.boot:spring-boot-starter-thymeleaf')
+    implementation('org.springframework.boot:spring-boot-starter-validation')
     compile('org.mariadb.jdbc:mariadb-java-client:2.4.1')
     compileOnly('org.projectlombok:lombok')
     annotationProcessor('org.projectlombok:lombok')

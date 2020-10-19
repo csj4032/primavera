@@ -2,12 +2,12 @@ package com.genius.primavera;
 
 import com.genius.primavera.infrastructure.interception.PrimaveraInterceptor;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.event.EventListener;
+import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Slf4j
 @SpringBootApplication
@@ -15,23 +15,19 @@ public class PrimaveraApplication {
 
 	public static void main(String[] args) {
 		new SpringApplicationBuilder(PrimaveraApplication.class)
-				.initializers(applicationContext -> {
-					for (int i = 0; i < applicationContext.getBeanDefinitionNames().length; i++) {
-						System.out.println("DDD " + applicationContext.getBeanDefinitionNames()[i]);
-					}
-				})
+				.initializers((GenericApplicationContext applicationContext) -> applicationContext.registerBean("webMvcConfig", WebMvcConfigurer.class, () -> getWebMvcConfigurer()))
 				.lazyInitialization(true)
 				.build()
 				.run();
 	}
 
-	@EventListener(ApplicationReadyEvent.class)
-	public void applicationReadyEvent(ApplicationReadyEvent applicationReadyEvent) {
-		PrimaveraInterceptor primaveraInterceptor = (PrimaveraInterceptor) applicationReadyEvent.getApplicationContext().getBean("primaveraInterceptor");
-		InterceptorRegistry registry = new InterceptorRegistry();
-		registry.addInterceptor(primaveraInterceptor);
-		WebMvcAutoConfiguration.WebMvcAutoConfigurationAdapter webMvcAutoConfigurationAdapter = (WebMvcAutoConfiguration.WebMvcAutoConfigurationAdapter) applicationReadyEvent.getApplicationContext()
-				.getBean(WebMvcAutoConfiguration.WebMvcAutoConfigurationAdapter.class);
-		webMvcAutoConfigurationAdapter.addInterceptors(registry);
+	@NotNull
+	private static WebMvcConfigurer getWebMvcConfigurer() {
+		return new WebMvcConfigurer() {
+			@Override
+			public void addInterceptors(InterceptorRegistry interceptorRegistry) {
+				interceptorRegistry.addInterceptor(new PrimaveraInterceptor()).addPathPatterns("/*");
+			}
+		};
 	}
 }
