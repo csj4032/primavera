@@ -83,7 +83,7 @@ public class PrimaveraApplication {
 }
 
 @Slf4j
-@Component
+//@Component
 class PrimaveraApplicationRunner implements ApplicationRunner {
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
@@ -92,7 +92,7 @@ class PrimaveraApplicationRunner implements ApplicationRunner {
 }
 
 @Slf4j
-@Component
+//@Component
 class PrimaveraCommandLineRunner implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
