@@ -71,6 +71,7 @@ docker rm -v maraidb
 ### ETC
 * AOP Concepts [참고](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/core.html#aop-introduction-defn)
 * Aspect Oriented Programming with Spring [참고](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/core.html#aop)
+* Interception [참고](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/web.html#mvc-handlermapping-interceptor)
 * Testing [참고](https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-testing.html)
 * Mariadb-connector-j [참고](https://mariadb.com/kb/en/library/about-mariadb-connector-j/)
 * Mariadb-java-client [링크](https://mvnrepository.com/artifact/org.mariadb.jdbc/mariadb-java-client)
