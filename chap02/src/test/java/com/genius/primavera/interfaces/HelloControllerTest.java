@@ -1,7 +1,7 @@
 package com.genius.primavera.interfaces;
 
 import com.genius.primavera.applicaiton.HelloService;
-import com.genius.primavera.domain.model.user.User;
+import com.genius.primavera.domain.model.User;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
