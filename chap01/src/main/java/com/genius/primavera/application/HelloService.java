@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import java.util.Collections;
 import java.util.List;
 
-@Service
+@Service("helloService")
 public class HelloService implements IHelloService {
 
 	@Override

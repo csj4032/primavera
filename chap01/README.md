@@ -161,6 +161,42 @@ $ gradle :chap01:bootRun -DmainClass=com.genius.primavera.PrimaveraApplication
 * @ComponentScan
   * 특정 패키지 경로를 기반으로 @Configuration에서 사용할 @Component 설정 클래스를 찾음
 
+#### Spring StereoType
+| 스테레오타입 | 설명 |
+| @Component | 스프링에서 스프링 관리 컴포넌트로 인식하는 마커 |
+| @Repository | 데이터 접근 객체의 역할을 수행 (Component 특화) |
+| @Service | 서비스 계층의 역할 (Component 특화) |
+| @Controller | 일반적으로 웹 컨텍스트에서 사용 (Component 특화) |
+
+#### Constructor-based or setter-based DI?
+* 단일 책임의 원칙 : 생성자의 인자가 많을 경우 코드량도 많아지고, 의존관계도 많아져 단일 책임의 원칙에 위배된다. 그래서 Constructor Injection을 사용함으로써 의존관계, 복잡성을 쉽게 알수 있어 리팩토링의 단초를 제공하게 된다.
+* 테스트 용이성 : DI 컨테이너에서 관리되는 클래스는 특정 DI 컨테이너에 의존하지 않고 POJO여야 한다. DI 컨테이너를 사용하지 않고도 인스턴스화 할 수 있고, 단위 테스트도 가능하며, 다른 DI 프레임 워크로 전환할 수도 있게 된다.
+* Immutability : Constructor Injection에서는 필드는 final로 선언할 수 있다. 불변 객체가 가능한데 비해 Field Injection은 final는 선언할 수 없기 때문에 객체가 변경 가능한 상태가 된다.
+* 순환 의존성 : Constructor Injection에서는 멤버 객체가 순환 의존성을 가질 경우 BeanCurrentlyInCreationException이 발생해서 순환 의존성을 알 수 있게 된다.
+* 의존성 명시 : 의존 객체 중 필수는 Constructor Injection을 옵션인 경우는 Setter Injection을 활용할 수 있다.
+
+```
+Description:
+
+The dependencies of some of the beans in the application context form a cycle:
+
+┌─────┐
+|  injectionService defined in file [/Users/we/Workspace/primavera/chap01/out/production/classes/com/genius/primavera/application/InjectionService.class]
+↑     ↓
+|  injectionServiceCycle defined in file [/Users/we/Workspace/primavera/chap01/out/production/classes/com/genius/primavera/application/InjectionServiceCycle.class]
+└─────┘
+
+```
+
+#### Bean Scope
+| 스코프 | 설명 |
+| singleton | 스프링 컨테이너가 단일 인스턴스를 리턴, 기본값 |
+| prototype | 스프링 컨테이너가 요청을 받을 때마다 새로운 인스턴스를 생성 |
+| request | 스프링 컨테이너가 각각의 HTTP 요청에 대응하여 새로운 인스턴스를 리턴, 웹 컨텍스트에서 사용 |
+| session | 스프링 컨테이너가 Http 세션에 대응하여 새로운 인스턴스를 리턴, 웹 컨텍스트에서 사용 |
+| application | ServletContext 의 수명 주기로 지정, 웹 컨텍스트에서 사용 |
+| websocket | WebSocket 의 수명 주기로 지정, 웹 컨텍스트에서 사용 |
+
 #### @EnableAutoConfiguration
 * AutoConfigurationImportSelector
 * Locating Auto-configuration Candidates (META-INF/spring.factories)
@@ -196,6 +232,11 @@ testRuntime group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '
 ### ETC
 * Spring boot test [참고](https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-testing.html)
 * Spring boot banner [링크](https://devops.datenkollektiv.de/banner.txt/index.html)
+* Dependencies [링크](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/core.html#beans-dependencies)
+  * https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/core.html#beans-constructor-injection
+  * https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/core.html#beans-setter-injection (Constructor-based or setter-based DI?)
+* Bean Scopes [링크](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/core.html#beans-factory-scopes)
+* Using a Custom Scope [링크](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/core.html#beans-factory-scopes-custom-using)
 * Creating Your Own Auto-configuration [링크](https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-developing-auto-configuration.html#boot-features-developing-auto-configuration)
 * Spring Expression Language The Elvis Operator [링크](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/core.html#expressions-operator-elvis)
 * Creating a Custom Starter with Spring Boot [링크](https://www.baeldung.com/spring-boot-custom-starter)
