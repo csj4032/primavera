@@ -1,0 +1,13 @@
+dependencies {
+    implementation('org.springframework.boot:spring-boot-starter-batch')
+    implementation('org.mariadb.jdbc:mariadb-java-client:2.3.0')
+    implementation('org.modelmapper:modelmapper:2.3.3')
+    implementation('org.projectlombok:lombok')
+    implementation('com.opencsv:opencsv:5.2')
+    implementation('org.openkoreantext:open-korean-text:2.1.0')
+    annotationProcessor('org.projectlombok:lombok')
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+    testImplementation('org.springframework.batch:spring-batch-test')
+}
