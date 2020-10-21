@@ -31,80 +31,80 @@ import static java.sql.Connection.TRANSACTION_REPEATABLE_READ;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class WinnerServiceIsolationTest {
 
-    private static SqlSession sqlSession;
+	private static SqlSession sqlSession;
 
-    @Autowired
-    private SqlSessionFactory sqlSessionFactory;
+	@Autowired
+	private SqlSessionFactory sqlSessionFactory;
 
-    @Autowired
-    private WinnerService winnerService;
+	@Autowired
+	private WinnerService winnerService;
 
-    @Test
-    @Order(1)
-    @DisplayName("READ_UNCOMMITTED_INSERT")
-    public void read_uncommitted_insert() {
-        sqlSession = sqlSessionFactory.openSession();
-        WinnerMapper winnerMapper = sqlSession.getMapper(WinnerMapper.class);
-        winnerMapper.truncate();
-        winnerMapper.insertWinner(Winner.builder().userId(1).winner(WinnerType.LOSER).regDt(LocalDateTime.now()).build());
-    }
+	@Test
+	@Order(1)
+	@DisplayName("READ_UNCOMMITTED_INSERT")
+	public void read_uncommitted_insert() {
+		sqlSession = sqlSessionFactory.openSession();
+		WinnerMapper winnerMapper = sqlSession.getMapper(WinnerMapper.class);
+		winnerMapper.truncate();
+		winnerMapper.insertWinner(Winner.builder().userId(1).winner(WinnerType.LOSER).regDt(LocalDateTime.now()).build());
+	}
 
-    @Test
-    @Order(2)
-    @DisplayName("READ_COMMITTED_SELECT")
-    public void read_committed() {
-        Assertions.assertTrue(winnerService.findAllCommitted().isEmpty());
-    }
+	@Test
+	@Order(2)
+	@DisplayName("READ_COMMITTED_SELECT")
+	public void read_committed() {
+		Assertions.assertTrue(winnerService.findAllCommitted().isEmpty());
+	}
 
-    @Test
-    @Order(3)
-    @DisplayName("READ_UNCOMMITTED_SELECT")
-    public void read_uncommitted() {
-        Assertions.assertTrue(!winnerService.findAllUncommitted().isEmpty());
-    }
+	@Test
+	@Order(3)
+	@DisplayName("READ_UNCOMMITTED_SELECT")
+	public void read_uncommitted() {
+		Assertions.assertTrue(!winnerService.findAllUncommitted().isEmpty());
+	}
 
-    @Test
-    @Order(4)
-    @DisplayName("READ_UNCOMMITTED_COMMIT")
-    public void read_uncommitted_commit() {
-        sqlSession.commit();
-    }
+	@Test
+	@Order(4)
+	@DisplayName("READ_UNCOMMITTED_COMMIT")
+	public void read_uncommitted_commit() {
+		sqlSession.commit();
+	}
 
-    @Test
-    @Order(5)
-    @DisplayName("REPEATABLE_READ_READ_COMMITTED")
-    public void read_committed_repeatable() throws SQLException {
-        sqlSession = sqlSessionFactory.openSession();
-        sqlSession.getConnection().setTransactionIsolation(TRANSACTION_READ_COMMITTED);
-        Winner before = sqlSession.getMapper(WinnerMapper.class).findById(1);
-        sqlSession.clearCache();
+	@Test
+	@Order(5)
+	@DisplayName("REPEATABLE_READ_READ_COMMITTED")
+	public void read_committed_repeatable() throws SQLException {
+		sqlSession = sqlSessionFactory.openSession();
+		sqlSession.getConnection().setTransactionIsolation(TRANSACTION_READ_COMMITTED);
+		Winner before = sqlSession.getMapper(WinnerMapper.class).findById(1);
+		sqlSession.clearCache();
 
-        SqlSession localSqlSession = sqlSessionFactory.openSession();
-        WinnerMapper localWinnerMapper = localSqlSession.getMapper(WinnerMapper.class);
-        localWinnerMapper.updateWinner(Winner.builder().id(1).userId(1).winner(WinnerType.WINNER).regDt(LocalDateTime.now()).build());
-        localSqlSession.commit();
+		SqlSession localSqlSession = sqlSessionFactory.openSession();
+		WinnerMapper localWinnerMapper = localSqlSession.getMapper(WinnerMapper.class);
+		localWinnerMapper.updateWinner(Winner.builder().id(1).userId(1).winner(WinnerType.WINNER).regDt(LocalDateTime.now()).build());
+		localSqlSession.commit();
 
-        Winner after = sqlSession.getMapper(WinnerMapper.class).findById(1);
+		Winner after = sqlSession.getMapper(WinnerMapper.class).findById(1);
 
-        Assertions.assertNotEquals(before.getWinner(), after.getWinner());
-    }
+		Assertions.assertNotEquals(before.getWinner(), after.getWinner());
+	}
 
-    @Test
-    @Order(6)
-    @DisplayName("REPEATABLE_READ_REPEATABLE_READ")
-    public void repeatable_read_select() throws SQLException {
-        sqlSession = sqlSessionFactory.openSession();
-        sqlSession.getConnection().setTransactionIsolation(TRANSACTION_REPEATABLE_READ);
-        Winner before = sqlSession.getMapper(WinnerMapper.class).findById(1);
-        sqlSession.clearCache();
+	@Test
+	@Order(6)
+	@DisplayName("REPEATABLE_READ_REPEATABLE_READ")
+	public void repeatable_read_select() throws SQLException {
+		sqlSession = sqlSessionFactory.openSession();
+		sqlSession.getConnection().setTransactionIsolation(TRANSACTION_REPEATABLE_READ);
+		Winner before = sqlSession.getMapper(WinnerMapper.class).findById(1);
+		sqlSession.clearCache();
 
-        SqlSession localSqlSession = sqlSessionFactory.openSession();
-        WinnerMapper localWinnerMapper = localSqlSession.getMapper(WinnerMapper.class);
-        localWinnerMapper.updateWinner(Winner.builder().id(1).userId(1).winner(WinnerType.LOSER).regDt(LocalDateTime.now()).build());
-        localSqlSession.commit();
+		SqlSession localSqlSession = sqlSessionFactory.openSession();
+		WinnerMapper localWinnerMapper = localSqlSession.getMapper(WinnerMapper.class);
+		localWinnerMapper.updateWinner(Winner.builder().id(1).userId(1).winner(WinnerType.LOSER).regDt(LocalDateTime.now()).build());
+		localSqlSession.commit();
 
-        Winner after = sqlSession.getMapper(WinnerMapper.class).findById(1);
+		Winner after = sqlSession.getMapper(WinnerMapper.class).findById(1);
 
-        Assertions.assertEquals(before.getWinner(), after.getWinner());
-    }
+		Assertions.assertEquals(before.getWinner(), after.getWinner());
+	}
 }
