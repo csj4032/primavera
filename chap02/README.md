@@ -27,10 +27,11 @@
   * 어드바이스를 적용할 수 있는 곳을 조인포인트
   * 애플리케이션 실행에 애스펙트를 끼워 넣을 수 있는 지점
 * Target object
+  * 부가기능을 부여할 대상
 * Advice
   * Before advice
     * 어드바이스 대상 메서드가 호출되기 전에 어드바이스 기능을 수행
-  * After retunning advice
+  * After returning advice
     * 어드바이스 대상 메서드가 성공적으로 완료된 후에 어드바이스 기능을 수행
   * After throwing advice
     * 어드바이스 대상 메서드가 예외를 던진 후에 어드바이스 기능을 수행
