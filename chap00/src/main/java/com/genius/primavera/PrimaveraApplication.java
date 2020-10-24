@@ -33,7 +33,7 @@ public class PrimaveraApplication {
 				.initializers((GenericApplicationContext applicationContext) -> {
 					log.info("! PrimaveraApplication initializers");
 					applicationContext.registerBean("world", WorldService.class, () -> () -> "World!!!");
-					applicationContext.registerBean(HelloController.class, () -> new HelloController(() -> "Hello", applicationContext.getBean("world", WorldService.class)));
+					//applicationContext.registerBean(HelloController.class, () -> new HelloController(() -> "Hello", applicationContext.getBean("world", WorldService.class)));
 				})
 				.logStartupInfo(true)
 				.build();
