@@ -33,7 +33,6 @@ import javax.sql.DataSource;
 @SpringBootApplication
 public class PrimaveraApplication {
 	public static void main(String[] args) {
-		System.out.println(Integer.valueOf(200) == Integer.valueOf(200));
 		SpringApplication springApplication = new SpringApplicationBuilder(PrimaveraApplication.class)
 				.initializers((GenericApplicationContext applicationContext) -> {
 					applicationContext.registerBean("jobExecutionListenerSupport", JobExecutionListenerSupport.class, () -> new JobExecutionListenerSupport() {

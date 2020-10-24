@@ -1,6 +1,6 @@
 package com.genius.primavera;
 
-import com.genius.primavera.domain.model.User;
+import com.genius.primavera.domain.User;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

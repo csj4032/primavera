@@ -1,6 +1,6 @@
 package com.genius.primavera.applicaiton;
 
-import com.genius.primavera.domain.model.User;
+import com.genius.primavera.domain.User;
 
 import java.util.List;
 

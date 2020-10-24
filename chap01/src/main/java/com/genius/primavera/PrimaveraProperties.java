@@ -1,6 +1,6 @@
 package com.genius.primavera;
 
-import com.genius.primavera.domain.model.User;
+import com.genius.primavera.domain.User;
 import lombok.ToString;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
