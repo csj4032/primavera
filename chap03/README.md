@@ -1,5 +1,18 @@
 ## chap03
 
+### USER TABLE
+```
+CREATE TABLE `USER` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `EMAIL` varchar(45) COLLATE utf8mb4_bin DEFAULT NULL,
+  `PASSWORD` varchar(45) COLLATE utf8mb4_bin DEFAULT NULL,
+  `NICK_NAME` varchar(20) COLLATE utf8mb4_bin DEFAULT NULL,
+  `STATUS` varchar(10) COLLATE utf8mb4_bin DEFAULT NULL,
+  `REG_DT` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+```
+
 ### Application.yml
 ```
   datasource:

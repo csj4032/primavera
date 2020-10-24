@@ -1,7 +1,7 @@
 package com.genius.primavera.interfaces;
 
 import com.genius.primavera.application.PrimaveraService;
-import com.genius.primavera.domain.model.user.User;
+import com.genius.primavera.domain.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

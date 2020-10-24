@@ -27,3 +27,4 @@ public class PrimaveraInterceptor implements HandlerInterceptor {
 		log.info("afterCompletion");
 	}
 }
+
