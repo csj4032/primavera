@@ -1,6 +1,6 @@
 package com.genius.primavera.application;
 
-import com.genius.primavera.domain.model.User;
+import com.genius.primavera.domain.User;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;

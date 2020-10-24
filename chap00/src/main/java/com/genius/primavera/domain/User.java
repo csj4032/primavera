@@ -1,4 +1,4 @@
-package com.genius.primavera.domain.model;
+package com.genius.primavera.domain;
 
 import lombok.*;
 

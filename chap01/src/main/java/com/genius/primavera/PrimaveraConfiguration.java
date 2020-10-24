@@ -1,7 +1,7 @@
 package com.genius.primavera;
 
 import com.genius.primavera.application.IHelloService;
-import com.genius.primavera.domain.model.User;
+import com.genius.primavera.domain.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
@@ -10,7 +10,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
