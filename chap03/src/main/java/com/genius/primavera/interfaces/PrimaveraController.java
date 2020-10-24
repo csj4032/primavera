@@ -30,7 +30,7 @@ public class PrimaveraController {
 
 	@GetMapping(value = "users/{id}")
 	public User user(@PathVariable(value = "id") long id) {
-		primaveraDao.findByName("a");
+		//primaveraDao.findByName("a");
 		return primaveraDao.findById(id);
 	}
 }
