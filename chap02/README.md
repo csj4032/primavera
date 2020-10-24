@@ -13,6 +13,38 @@
 ![Single root context in Spring Web MVC](https://docs.spring.io/spring/docs/4.3.9.RELEASE/spring-framework-reference/html/images/mvc-root-context.png)
 
 ### Spring AOP
+
+* Aspect
+  * 어드바이스와 포인트컷을 합친 것
+  * 두 가지 정보가 합쳐지면 애스펙트가 무엇을 언제 어떻게 할지, 즉 애스펙트에 필요한 모든 정보가 정의
+  * @Aspect 어노테이션으로 어노테이션이있는 경우 클래스 선언은 Spring에서 aspect로 인식
+* Weaving
+  * 타깃 객체에 애스펙트를 적용해서 새로운 프록시 객체를 생성하는 절차
+    * 컴파일시간
+    * 클래스로드시간
+    * 실행시간
+* Join point
+  * 어드바이스를 적용할 수 있는 곳을 조인포인트
+  * 애플리케이션 실행에 애스펙트를 끼워 넣을 수 있는 지점
+* Target object
+* Advice
+  * Before advice
+    * 어드바이스 대상 메서드가 호출되기 전에 어드바이스 기능을 수행
+  * After retunning advice
+    * 어드바이스 대상 메서드가 성공적으로 완료된 후에 어드바이스 기능을 수행
+  * After throwing advice
+    * 어드바이스 대상 메서드가 예외를 던진 후에 어드바이스 기능을 수행
+  * After (finally) advice
+    * 결과에 상관없이 어드바이스 대상 메서드가 완료된 후에 어드바이스 기능을 수행
+  * Around advice
+    * 어드바이스가 어드바이스 대상 메서드를 감싸서 어드바이스 대상 메서드 호출 전과 후에 몇 가지 기능을 제공
+* Pointcut
+  * 애스펙트가 어드바이스할 조인포인트의 영역을 좁히는 일을 함
+  * 어드바이스는 애스펙트가 무엇을 언제 할지를 정의한다면, 포인트컷은 어디서 할지를 정의
+  * 각 포인트컷은 어드바이스가 위빙돼야 하는 하나 이상의 조인포인트를 정의
+* Introduction:
+  * 기존 클래스에 코드 변경 없이도 새 메소드나 멤버 변수를 추가하는 기능
+
 | AOP | 설명 |
 | Aspect | 포인트컷과 관련 어드바이스의 집합 |
 | Advice | 특정 포인트컷에 있는 조인 포인트에서 실행될 액션  |
