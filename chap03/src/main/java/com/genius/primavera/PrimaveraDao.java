@@ -1,6 +1,6 @@
 package com.genius.primavera;
 
-import com.genius.primavera.domain.model.user.User;
+import com.genius.primavera.domain.User;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;

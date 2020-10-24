@@ -1,6 +1,6 @@
 package com.genius.primavera.dataSource;
 
-import com.genius.primavera.domain.model.user.User;
+import com.genius.primavera.domain.User;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
