@@ -1,14 +1,12 @@
 package com.genius.primavera.application;
 
+import com.genius.primavera.domain.mapper.WinnerMapper;
 import com.genius.primavera.domain.model.Winner;
 import com.genius.primavera.domain.model.WinnerType;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,15 +22,21 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
 @DisplayName(value = "트랜잭션 전파 테스트")
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class WinnerServicePropagationTest {
+
+	@Autowired
+	private SqlSessionFactory sqlSessionFactory;
 
 	@Autowired
 	private WinnerService winnerService;
 
 	@BeforeAll
-	public static void setUp() {
-
+	public void setUp() {
+		SqlSession sqlSession = sqlSessionFactory.openSession();
+		WinnerMapper winnerMapper = sqlSession.getMapper(WinnerMapper.class);
+		winnerMapper.truncate();
 	}
 
 	@Test
@@ -56,40 +60,37 @@ public class WinnerServicePropagationTest {
 	@Order(3)
 	@DisplayName("PROPAGATION_REQUIRES_REQUIRES_NEW")
 	public void propagation_required_requires_new() {
-		Winner winner1 = Winner.builder().userId(4).winner(WinnerType.WINNER).regDt(LocalDateTime.now()).build();
-		Winner winner2 = Winner.builder().userId(5).winner(WinnerType.ETC).regDt(LocalDateTime.now()).build();
+		Winner winner1 = Winner.builder().userId(3).winner(WinnerType.WINNER).regDt(LocalDateTime.now()).build();
+		Winner winner2 = Winner.builder().userId(4).winner(WinnerType.WINNER).regDt(LocalDateTime.now()).build();
+		Winner winner3 = Winner.builder().userId(5).winner(WinnerType.ETC).regDt(LocalDateTime.now()).build();
 		Exception exception = assertThrows(DataIntegrityViolationException.class, () -> {
-			winnerService.save(winner1);
-			winnerService.saveAll(List.of(winner1, winner1));
-			winnerService.saveAll(List.of(winner1, winner2));
+			winnerService.saveAndNew(winner1, winner2, winner3, winnerService);
 		});
 		assertEquals(DataIntegrityViolationException.class, exception.getClass());
 	}
 
 	@Test
 	@Order(4)
-	@DisplayName("PROPAGATION_REQUIRES_NOT_SUPPORTED")
-	public void propagation_not_supported() {
+	@DisplayName("PROPAGATION_REQUIRES_NESTED")
+	public void propagation_nested() {
 		Winner winner1 = Winner.builder().userId(6).winner(WinnerType.WINNER).regDt(LocalDateTime.now()).build();
-		Winner winner2 = Winner.builder().userId(7).winner(WinnerType.ETC).regDt(LocalDateTime.now()).build();
-		Winner winner3 = Winner.builder().userId(8).winner(WinnerType.LOSER).regDt(LocalDateTime.now()).build();
+		Winner winner2 = Winner.builder().userId(7).winner(WinnerType.LOSER).regDt(LocalDateTime.now()).build();
+		Winner winner3 = Winner.builder().userId(8).winner(WinnerType.ETC).regDt(LocalDateTime.now()).build();
 		Exception exception = assertThrows(DataIntegrityViolationException.class, () -> {
-			winnerService.saveAllNotSupported(List.of(winner1, winner1));
-			winnerService.saveAllNotSupported(List.of(winner1, winner2, winner3));
+			winnerService.saveAndNested(winner1, winner2, winner3, winnerService);
 		});
 		assertEquals(DataIntegrityViolationException.class, exception.getClass());
 	}
 
 	@Test
 	@Order(5)
-	@DisplayName("PROPAGATION_NESTED")
-	public void propagation_nested() {
+	@DisplayName("PROPAGATION_REQUIRES_NOT_SUPPORTED")
+	public void propagation_not_supported() {
 		Winner winner1 = Winner.builder().userId(9).winner(WinnerType.WINNER).regDt(LocalDateTime.now()).build();
-		Winner winner2 = Winner.builder().userId(10).winner(WinnerType.ETC).regDt(LocalDateTime.now()).build();
-		Winner winner3 = Winner.builder().userId(11).winner(WinnerType.LOSER).regDt(LocalDateTime.now()).build();
+		Winner winner2 = Winner.builder().userId(10).winner(WinnerType.WINNER).regDt(LocalDateTime.now()).build();
+		Winner winner3 = Winner.builder().userId(11).winner(WinnerType.ETC).regDt(LocalDateTime.now()).build();
 		Exception exception = assertThrows(DataIntegrityViolationException.class, () -> {
-			winnerService.saveAllNested(List.of(winner1, winner1));
-			winnerService.saveAllNested(List.of(winner1, winner2, winner3));
+			winnerService.saveAndNotSupported(winner1, winner2, winner3, winnerService);
 		});
 		assertEquals(DataIntegrityViolationException.class, exception.getClass());
 	}

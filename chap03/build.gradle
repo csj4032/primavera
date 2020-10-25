@@ -1,10 +1,10 @@
 dependencies {
     implementation('org.springframework.boot:spring-boot-starter-web')
     implementation('org.springframework.boot:spring-boot-starter-jdbc')
-    compile ('org.mariadb.jdbc:mariadb-java-client:2.4.1')
-    compile("org.mybatis.spring.boot:mybatis-spring-boot-starter:2.0.1")
+    implementation ('org.mariadb.jdbc:mariadb-java-client:2.4.1')
+    implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:2.0.1")
     compileOnly('org.projectlombok:lombok')
-
+    implementation('org.reflections:reflections:0.9.12')
     annotationProcessor ("org.springframework.boot:spring-boot-configuration-processor")
     annotationProcessor("org.projectlombok:lombok")
     testImplementation("org.springframework.boot:spring-boot-starter-test") {

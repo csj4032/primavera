@@ -13,6 +13,17 @@ mybatis:
   type-handlers-package: com.genius.primavera.domain
 ```
 
+### WINNER TABLE
+```
+CREATE TABLE IF NOT EXISTS WINNER (
+    ID int(11) NOT NULL AUTO_INCREMENT,
+    USER_ID int(45) NOT NULL,
+    WINNER enum('WINNER','LOSER') NOT NULL,
+    REG_DT datetime NOT NULL,
+    PRIMARY KEY (ID)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+```
+
 ### Spring Boot Test
 * WinnerServiceIsolationTest
 * WinnerServicePropagationTest
