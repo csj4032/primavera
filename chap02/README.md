@@ -54,6 +54,13 @@
 | Join Point | 어드바이스가 실행될 메서드 예외 지점  |
 
 ### Spring Interceptor
+| 메서드 | 설명 |
+|---|---|
+| preHandle() | 맵핑되기 전 처리 |
+| postHandle() | 맵핑되고난 후 처리 |
+| afterCompletion() | 모든 작업이 완료된 후 실행 |
+
+### Spring ResponseBodyAdvice
 
 
 ### Spring Boot Test

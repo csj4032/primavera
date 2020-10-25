@@ -30,7 +30,7 @@ public class PrimaveraInterceptor implements HandlerInterceptor {
 		if (response instanceof ResettableStreamHttpServletResponse) {
 			//((ResettableStreamHttpServletResponse) response).payloadFilePrefix = ((ResettableStreamHttpServletRequest) request).payloadFilePrefix;
 			//((ResettableStreamHttpServletResponse) response).payloadTarget = ((ResettableStreamHttpServletRequest) request).payloadTarget;
-			writeResponsePayloadAudit((ResettableStreamHttpServletResponse) response);
+			//writeResponsePayloadAudit((ResettableStreamHttpServletResponse) response);
 		}
 		log.info("afterCompletion");
 	}

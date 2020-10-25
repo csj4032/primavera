@@ -15,7 +15,7 @@ public class PrimaveraApplication {
 
 	public static void main(String[] args) {
 		new SpringApplicationBuilder(PrimaveraApplication.class)
-				.initializers((GenericApplicationContext applicationContext) -> applicationContext.registerBean("webMvcConfig", WebMvcConfigurer.class, () -> getWebMvcConfigurer()))
+			//	.initializers((GenericApplicationContext applicationContext) -> applicationContext.registerBean("webMvcConfig", WebMvcConfigurer.class, () -> getWebMvcConfigurer()))
 				.lazyInitialization(true)
 				.build()
 				.run();

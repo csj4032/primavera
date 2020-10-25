@@ -6,29 +6,35 @@ import java.util.List;
 
 public interface WinnerService {
 
-    int save(Winner winner);
+	int save(Winner winner);
 
-    int saveNew(Winner winner);
+	int saveAndNew(Winner winner1, Winner winner2, Winner winner3, WinnerService winnerService);
 
-    int saveNotSupported(Winner winner);
+	int saveAndNested(Winner winner1, Winner winner2, Winner winner3, WinnerService winnerService);
 
-    int saveAll(List<Winner> winners);
+	int saveNested(Winner winner);
 
-    int saveAllNotSupported(List<Winner> winners);
+	int saveRequiresNew(Winner winner);
 
-    int saveAllNested(List<Winner> winner);
+	int saveNotSupported(Winner winner);
 
-    int innerSave(List<Winner> winners);
+	int saveAll(List<Winner> winners);
 
-    int innerSaveNew(List<Winner> winners);
+	int saveAndNotSupported(Winner winner1, Winner winner2, Winner winner3, WinnerService winnerService);
 
-    int innerNotSupported(List<Winner> winners);
+	int saveAllNested(List<Winner> winner);
 
-    List<Winner> findAllUncommitted();
+	int innerSave(List<Winner> winners);
 
-    List<Winner> findAllCommitted();
+	int innerSaveNew(List<Winner> winners);
 
-    Winner findAllByIdReadCommitted(int id);
+	int innerNotSupported(List<Winner> winners);
 
-    Winner findAllByIdRepeatableRead(int id);
+	List<Winner> findAllUncommitted();
+
+	List<Winner> findAllCommitted();
+
+	Winner findAllByIdReadCommitted(int id);
+
+	Winner findAllByIdRepeatableRead(int id);
 }
