@@ -17,10 +17,10 @@ import lombok.Setter;
 @Component
 @ConfigurationProperties(prefix = "com.genius.primavera")
 public class PrimaveraProperties {
-    private String username;
-    private String password;
-    private String url;
-    private List<String> tables;
-    private Map<String, String> params;
-    private List<User> users;
+	private String username;
+	private String password;
+	private String url;
+	private List<String> tables;
+	private Map<String, String> params;
+	private List<User> users;
 }

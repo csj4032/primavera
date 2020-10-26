@@ -1,5 +1,6 @@
 package com.genius.primavera.application;
 
+import com.genius.primavera.application.plant.PlantService;
 import com.google.gson.stream.MalformedJsonException;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;

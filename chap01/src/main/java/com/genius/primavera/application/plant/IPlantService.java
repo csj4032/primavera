@@ -1,4 +1,4 @@
-package com.genius.primavera.application;
+package com.genius.primavera.application.plant;
 
 import com.genius.primavera.domain.Plant;
 

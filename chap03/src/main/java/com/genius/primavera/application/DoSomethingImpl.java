@@ -13,7 +13,7 @@ public class DoSomethingImpl implements DoSomething {
 	@Override
 	@ProxyPointAnnotation
 	public String doSomething(String first) {
-		log.info("{} ", this);
+		log.info("{}", this);
 		return doSomething(first, "second");
 	}
 

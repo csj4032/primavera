@@ -1,6 +1,6 @@
 package com.genius.primavera.interfaces;
 
-import com.genius.primavera.application.IPlantService;
+import com.genius.primavera.application.plant.IPlantService;
 import com.genius.primavera.domain.Plant;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
