@@ -1,17 +1,12 @@
 package com.genius.primavera;
 
 import com.genius.primavera.domain.User;
-
 import lombok.extern.slf4j.Slf4j;
-
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.GenericXmlApplicationContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -21,6 +16,7 @@ import java.util.List;
 @Slf4j
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class PrimaveraPropertiesTest {
 
 	@Value("${com.genius.primavera.url:jdbc:mariadb://localhost:3306/default}")
@@ -41,12 +37,12 @@ public class PrimaveraPropertiesTest {
 	@Test
 	@Order(1)
 	public void configurationTest() {
-		ApplicationContext genericXmlApplicationContext = new GenericXmlApplicationContext("classpath:configuration.xml");
+		GenericXmlApplicationContext genericXmlApplicationContext = new GenericXmlApplicationContext("classpath:configuration.xml");
 		PrimaveraSpringBean xmlSpringBean = genericXmlApplicationContext.getBean("xmlSpringBean", PrimaveraSpringBean.class);
 		Assertions.assertEquals("xmlSpringBean", xmlSpringBean.getName());
 		log.info(xmlSpringBean.getName());
 
-		ApplicationContext annotationConfigApplicationContext = new AnnotationConfigApplicationContext(PrimaveraConfiguration.class);
+		AnnotationConfigApplicationContext annotationConfigApplicationContext = new AnnotationConfigApplicationContext(PrimaveraConfiguration.class);
 		PrimaveraSpringBean annotationSpringBean = annotationConfigApplicationContext.getBean("annotationSpringBean", PrimaveraSpringBean.class);
 		Assertions.assertEquals("annotationSpringBean", annotationSpringBean.getName());
 	}

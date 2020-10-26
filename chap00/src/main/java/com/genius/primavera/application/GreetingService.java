@@ -1,6 +1,6 @@
 package com.genius.primavera.application;
 
-public interface HelloService {
+public interface GreetingService {
 
 	String hello();
 }

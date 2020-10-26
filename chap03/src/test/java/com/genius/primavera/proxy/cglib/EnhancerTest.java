@@ -15,7 +15,10 @@ public class EnhancerTest {
 		enhancer.setSuperclass(DoSomethingImpl.class);
 		enhancer.setCallback(NoOp.INSTANCE);
 		DoSomethingImpl doSomething = (DoSomethingImpl) enhancer.create();
+		log.info("{}", doSomething);
 		String result = doSomething.doSomething("first");
 		log.info("{}", result);
+		DoSomethingImpl doSomething1 = new DoSomethingImpl();
+		log.info("{}", doSomething1);
 	}
 }
