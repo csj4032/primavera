@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @ToString
 @ProxyAnnotation
-public class PrimaveraProxyImpl implements PrimaveraProxy {
+public class DoSomethingImpl implements DoSomething {
 
 	@Override
 	@ProxyPointAnnotation

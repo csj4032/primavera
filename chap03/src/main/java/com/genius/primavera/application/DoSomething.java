@@ -1,6 +1,6 @@
 package com.genius.primavera.application;
 
-public interface PrimaveraProxy {
+public interface DoSomething {
 
 	String doSomething(String first);
 
