@@ -1,7 +1,6 @@
 package com.genius.primavera.domain.mapper;
 
 import com.genius.primavera.domain.model.Winner;
-
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;

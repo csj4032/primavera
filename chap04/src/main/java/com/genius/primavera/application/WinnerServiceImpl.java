@@ -1,8 +1,8 @@
 package com.genius.primavera.application;
 
 import com.genius.primavera.domain.mapper.WinnerMapper;
-import com.genius.primavera.domain.model.Winner;
 
+import com.genius.primavera.domain.model.Winner;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -12,14 +12,14 @@ import java.util.List;
 
 import lombok.RequiredArgsConstructor;
 
-@Service
+@Service(value = "winnerService")
 @RequiredArgsConstructor
 public class WinnerServiceImpl implements WinnerService {
 
 	private final WinnerMapper winnerMapper;
 
 	@Override
-	@Transactional(propagation = Propagation.REQUIRED)
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = RollbackForClass.class, noRollbackFor = NoRollbackForClass.class)
 	public int save(Winner winner) {
 		return winnerMapper.insertWinner(winner);
 	}
