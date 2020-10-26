@@ -4,6 +4,7 @@ dependencies {
     implementation('org.springframework.boot:spring-boot-starter-data-jpa')
     implementation('com.squareup.retrofit2:retrofit:2.9.0')
     implementation('com.squareup.retrofit2:converter-gson:2.9.0')
+    implementation('org.hibernate:hibernate-validator:6.0.13.Final')
     implementation('com.google.code.gson:gson:2.8.5')
     runtime('com.h2database:h2:1.4.199')
     testImplementation('org.springframework.boot:spring-boot-starter-test') {

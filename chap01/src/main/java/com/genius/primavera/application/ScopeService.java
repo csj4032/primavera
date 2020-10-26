@@ -4,7 +4,7 @@ import com.genius.primavera.domain.User;
 
 import java.util.List;
 
-public interface IHelloService {
+public interface ScopeService {
 
 	List<User> getUsers();
 
