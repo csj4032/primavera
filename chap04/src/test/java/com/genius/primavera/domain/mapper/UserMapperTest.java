@@ -52,7 +52,7 @@ public class UserMapperTest {
 		}
 
 		bulkUsers = new ArrayList<>();
-		for (int i = 0; i < 100; i++) {
+		for (int i = 10; i < 100; i++) {
 			bulkUsers.add(User.builder()
 					.email("genius_" + i + "@gmail.com")
 					.nickname("genius_" + i)
@@ -61,7 +61,6 @@ public class UserMapperTest {
 					.roles(roles)
 					.regDate(LocalDateTime.now()).modDate(LocalDateTime.now()).build());
 		}
-
 
 		source = User.builder().email("primavera@gmail.com").nickname("primavera").password(password).status(UserStatus.ON).roles(roles).regDate(LocalDateTime.now()).modDate(LocalDateTime.now()).build();
 	}
