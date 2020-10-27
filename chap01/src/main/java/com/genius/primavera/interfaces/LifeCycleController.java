@@ -1,6 +1,8 @@
 package com.genius.primavera.interfaces;
 
-import com.genius.primavera.application.injection.BooService;
+import com.genius.primavera.lifecycle.AnnotationClass;
+import com.genius.primavera.lifecycle.InterfaceImpl;
+import com.genius.primavera.lifecycle.XmlBean;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,13 +13,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/")
-public class InjectionController {
+public class LifeCycleController {
 
-	private final BooService booService;
+	private final AnnotationClass annotationClass;
+	private final InterfaceImpl anInterface;
+	private final XmlBean xmlBean;
 
-	@GetMapping("/overflow")
-	public String cycleStackOverflow() {
-		booService.boo();
-		return "overflow";
+	@GetMapping("/life")
+	public String scope() {
+		return "Hello World";
 	}
 }
