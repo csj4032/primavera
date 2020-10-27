@@ -4,8 +4,6 @@
 	   xsi:schemaLocation="http://www.springframework.org/schema/beans
 	   http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-	<bean id="xmlSpringBean" class="com.genius.primavera.PrimaveraSpringBean">
-		<constructor-arg value="xmlSpringBean"/>
-	</bean>
+	<bean id="xmlBean" class="com.genius.primavera.lifecycle.XmlBean" init-method="afterPropertiesSet" destroy-method="destroy"/>
 
 </beans>
