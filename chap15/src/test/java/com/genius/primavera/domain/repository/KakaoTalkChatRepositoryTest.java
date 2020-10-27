@@ -51,18 +51,15 @@ class KakaoTalkChatRepositoryTest {
 		log.info("kakaoTalkChats size : {}", kakaoTalkChats.size());
 
 		// User 별 메세지
-		Map<String, List<String>> countMessagesByUser = kakaoTalkChats.stream()
-				.collect(Collectors.groupingBy(KakaoTalkChat::getUser, Collectors.mapping(KakaoTalkChat::getMessage, Collectors.toList())));
+		Map<String, List<String>> countMessagesByUser = kakaoTalkChats.stream().collect(Collectors.groupingBy(KakaoTalkChat::getUser, Collectors.mapping(KakaoTalkChat::getMessage, Collectors.toList())));
 		log.info("countMessagesByUser {}", countMessagesByUser);
 
 		// User 별 <메세지, 날짜>
-		Map<String, List<Tuple2<String, LocalDateTime>>> countMessageAndDateByUser = kakaoTalkChats.stream()
-				.collect(Collectors.groupingBy(KakaoTalkChat::getUser, Collectors.mapping(kakaoTalkChat -> new Tuple2<>(kakaoTalkChat.getMessage(), kakaoTalkChat.getDate()), Collectors.toList())));
+		Map<String, List<Tuple2<String, LocalDateTime>>> countMessageAndDateByUser = kakaoTalkChats.stream().collect(Collectors.groupingBy(KakaoTalkChat::getUser, Collectors.mapping(kakaoTalkChat -> new Tuple2<>(kakaoTalkChat.getMessage(), kakaoTalkChat.getDate()), Collectors.toList())));
 		log.info("countMessageAndDateByUser {}", countMessageAndDateByUser);
 
 		// User 메세지 갯수
-		Map<String, Long> countMessageByUser = kakaoTalkChats.stream()
-				.collect(Collectors.groupingBy(KakaoTalkChat::getUser, Collectors.counting()));
+		Map<String, Long> countMessageByUser = kakaoTalkChats.stream().collect(Collectors.groupingBy(KakaoTalkChat::getUser, Collectors.counting()));
 		log.info("countMessageByUser {}", countMessageByUser);
 
 		// User 메세지 갯수 정렬(DESC) 후 10개
