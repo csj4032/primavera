@@ -12,6 +12,15 @@ import org.springframework.stereotype.Component;
 @Component
 public class PrimaveraLoggingAspect {
 
+	/*
+		execution([접근제한자 패턴] 타입패턴 [타입패턴.]이름패턴 (타입패턴| "..", ...)[throws 예외패턴])
+		접근제한자 패턴 : public, private 같은 접근제한자, 생략 가능
+		타입패턴 : 리턴 값의 타입 패턴
+		타입패턴. : 패키지와 클래스 이름에 따라 패턴. 생략 가능
+		이름패턴 : 메서드 이름
+		타입패턴| : 파라미터 타입 패턴을 순서대로 넣을 수 있음, 와일드카드를 이용한 파라미터 개수에 상관없는 패턴을 만들 수 있음
+		예외패턴 : 예외 이름 패턴
+	 */
 	@Pointcut("execution(* com.genius.primavera.applicaiton.HelloService.getUserById(..)) && target(object) && args(id) && @annotation(primaveraLogging)")
 	private void helloServicePointcut(Object object, long id, PrimaveraLogging primaveraLogging) {
 	}
@@ -28,23 +37,31 @@ public class PrimaveraLoggingAspect {
 		return retVal;
 	}
 
+	@Around(value = "@annotation(primaveraLogging)")
+	public Object aroundHandler(ProceedingJoinPoint pjp, PrimaveraLogging primaveraLogging) throws Throwable {
+		log.info("Around Before type : {}", primaveraLogging.type());
+		Object retVal = pjp.proceed();
+		log.info("Around After retVal : {}, type : {}", retVal, primaveraLogging.type());
+		return retVal;
+	}
+
 	@Before(value = "@annotation(primaveraLogging)", argNames = "joinPoint, primaveraLogging")
-	public void preLogging(JoinPoint joinPoint, PrimaveraLogging primaveraLogging) {
+	public void beforeHandler(JoinPoint joinPoint, PrimaveraLogging primaveraLogging) {
 		log.info("Before jointPoint : {}, type : {}", joinPoint, primaveraLogging.type());
 	}
 
-	@After(value = "@annotation(primaveraLogging)", argNames = "primaveraLogging")
-	public void sufLogging(PrimaveraLogging primaveraLogging) {
-		log.info("After type : {}", primaveraLogging.type());
-	}
-
 	@AfterReturning(value = "@annotation(primaveraLogging)", returning = "str")
-	public void onAfterReturningHandler(JoinPoint joinPoint, Object str, PrimaveraLogging primaveraLogging) {
+	public void afterReturningHandler(JoinPoint joinPoint, Object str, PrimaveraLogging primaveraLogging) {
 		log.info("AfterReturning : {}, str : {}, type : {}", joinPoint, str, primaveraLogging.type());
 	}
 
 	@AfterThrowing(value = "@annotation(primaveraLogging)", throwing = "exception")
-	public void writeFailLog(JoinPoint joinPoint, Exception exception, PrimaveraLogging primaveraLogging) throws RuntimeException {
+	public void afterThrowingHandler(JoinPoint joinPoint, Exception exception, PrimaveraLogging primaveraLogging) throws RuntimeException {
 		log.info("AfterThrowing : {}, exception : {}, type : {}", joinPoint, exception.getMessage(), primaveraLogging.type());
+	}
+
+	@After(value = "@annotation(primaveraLogging)", argNames = "joinPoint, primaveraLogging")
+	public void afterHandler(JoinPoint joinPoint, PrimaveraLogging primaveraLogging) {
+		log.info("After joinPoint {}, type : {}", joinPoint, primaveraLogging.type());
 	}
 }

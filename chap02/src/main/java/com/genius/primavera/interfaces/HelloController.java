@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-
 @Slf4j
 @Controller
 @RequiredArgsConstructor
@@ -36,8 +35,14 @@ public class HelloController {
 
 	@GetMapping("/oops")
 	@PrimaveraLogging(type = "Controller")
-	public String oops(Model model) {
+	public String oops() {
 		if (1 == 1) throw new OopsException("oops");
+		return "hello";
+	}
+
+	@GetMapping("/order")
+	@PrimaveraLogging(type = "Controller")
+	public String order() {
 		return "hello";
 	}
 }
