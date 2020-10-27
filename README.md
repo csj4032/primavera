@@ -6,8 +6,8 @@
 
 ## Technical Specification
 * Java 15 (Switch expressions, text blocks)
-* Gradle 6.4.1
-* IntelliJ IDEA (2020.1)
+* Gradle 6.7
+* IntelliJ IDEA (2020.2)
 * MariaDB 10.3.14
 * Springboot 2.3.0.RELEASE (https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.3-Release-Notes)
 * Springboot Security 2.1.6.RELEASE
