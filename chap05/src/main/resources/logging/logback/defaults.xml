@@ -10,9 +10,9 @@
     <logger name="com.zaxxer.hikari" level="DEBUG"/>
     <logger name="org.hibernate.validator" level="DEBUG"/>
     <logger name="org.mybatis.spring" level="DEBUG"/>
-    <logger name="org.xnio.nio" level="DEBUG"/>
-    <logger name="org.springframework" level="DEBUG"/>
-    <logger name="org.springframework.security" level="DEBUG"/>
-    <logger name="org.springframework.security.oauth2" level="DEBUG"/>
+    <logger name="org.hibernate.internal.util.EntityPrinter" level="INFO"/>
+    <logger name="org.hibernate.engine.spi.ActionQueue" level="INFO"/>
+    <logger name="log4j.logger.net.sf.hibernate.type" level="DEBUG"/>
+    <logger name="org.springframework" level="INFO"/>
     <logger name="com.genius.primavera" level="DEBUG"/>
 </included>
