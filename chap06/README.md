@@ -49,6 +49,12 @@ log4jdbc.dump.sql.maxlinelength = 0
 <logger name="jdbc.resultsettable" level="DEBUG"/>
 ```
 
+### JPA Relation Advance
+```sql
+CREATE DATABASE advance DEFAULT CHARACTER SET utf8mb4;
+GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, ALTER ON advance.* TO 'relation'@'%';
+```
+
 ### ETC
 * thymeleaf [참고](https://www.thymeleaf.org/)
 * adminLTE [참고](https://adminlte.io)

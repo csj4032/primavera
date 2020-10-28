@@ -9,6 +9,7 @@ dependencies {
     compile('org.mariadb.jdbc:mariadb-java-client:2.4.1')
     compile('nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:2.3.0')
     compile('org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4.1:1.16')
+    compile('org.hibernate:hibernate-entitymanager:5.4.22.Final')
     compileOnly('org.projectlombok:lombok')
     annotationProcessor('org.projectlombok:lombok')
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
