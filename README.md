@@ -59,9 +59,11 @@
 
 ## chap07
 * Filter, Lucy-xss-filter
+* Log4jdbc
 
 ## chap08
 * Spring Security
+* Spring Boot Starter
 
 ## chap09
 * Spring OAuth2 Social Login
