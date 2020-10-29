@@ -28,24 +28,24 @@ public class LucyFilterTest {
 		mockMvc.perform(get("/lucy/filter").param("xss", "<ok>"))
 				.andDo(print())
 				.andExpect(status().isOk())
-				.andExpect(content().string("&lt;ok&gt;"));
+				.andExpect(content().string("&amp;lt;ok&amp;gt;"));
 	}
 
 	@Test
 	@Order(2)
 	@DisplayName("XSS 필터 URL 예외 적용")
 	public void filterParameterDisable() throws Exception {
-		mockMvc.perform(get("/lucy/filter/parameter/disable").param("message", "<ok>").param( "xss", "<ignore>"))
+		mockMvc.perform(get("/lucy/filter/parameter/disable").param("message", "<ok>").param("xss", "<ignore>"))
 				.andDo(print())
 				.andExpect(status().isOk())
-				.andExpect(content().string("&lt;ok&gt;<ignore>"));
+				.andExpect(content().string("&amp;lt;ok&amp;gt;<ignore>"));
 	}
 
 	@Test
 	@Order(3)
 	@DisplayName("XSS 필터 파라미터 예외 적용")
 	public void filterUrlDisable() throws Exception {
-		mockMvc.perform(get("/lucy/filter/url/disable").param("message", "<ok>").param( "xss", "<ignore>"))
+		mockMvc.perform(get("/lucy/filter/url/disable").param("message", "<ok>").param("xss", "<ignore>"))
 				.andDo(print())
 				.andExpect(status().isOk())
 				.andExpect(content().string("<ok><ignore>"));
@@ -55,9 +55,9 @@ public class LucyFilterTest {
 	@Order(4)
 	@DisplayName("XSS 필터 글로벌 파라미터 예외 적용")
 	public void filterGlobalParameterDisable() throws Exception {
-		mockMvc.perform(get("/lucy/filter/global").param("message", "<ok>").param( "global", "<ignore>"))
+		mockMvc.perform(get("/lucy/filter/global").param("message", "<ok>").param("global", "<ignore>"))
 				.andDo(print())
 				.andExpect(status().isOk())
-				.andExpect(content().string("&lt;ok&gt;<ignore>"));
+				.andExpect(content().string("&amp;lt;ok&amp;gt;<ignore>"));
 	}
 }

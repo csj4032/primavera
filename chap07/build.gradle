@@ -12,7 +12,7 @@ dependencies {
     implementation("org.mybatis.dynamic-sql:mybatis-dynamic-sql:1.1.1")
     implementation('org.mariadb.jdbc:mariadb-java-client:2.4.1')
     implementation('nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:2.3.0')
-    implementation('commons-codec:commons-codec:1.15')
+    implementation('com.navercorp.lucy:lucy-xss-servlet:2.0.0')
     compileOnly('org.projectlombok:lombok')
     annotationProcessor('org.projectlombok:lombok')
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
@@ -21,5 +21,5 @@ dependencies {
     }
     testImplementation('org.springframework.security:spring-security-test')
 
-    implementation project(":spring-boot-starter-lucy-filter")
+    //implementation project(":spring-boot-starter-lucy-filter")
 }
