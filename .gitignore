@@ -36,3 +36,5 @@
 /chap14/*/out
 /chap15/build
 /chap15/out
+/spring-boot-starter-lucy-filter/build
+/spring-boot-starter-lucy-filter/out

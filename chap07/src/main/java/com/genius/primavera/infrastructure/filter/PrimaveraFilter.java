@@ -1,5 +1,6 @@
 package com.genius.primavera.infrastructure.filter;
 
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
@@ -18,6 +19,7 @@ import java.io.IOException;
 import static org.springframework.security.web.context.HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY;
 
 @Slf4j
+@ToString
 @Component
 public class PrimaveraFilter extends OncePerRequestFilter {
 
