@@ -14,6 +14,11 @@ spring:
     enabled: true
     prefix: classpath:/templates/
     suffix: .html
+  lucy-filter:
+    enabled: true
+    name: lucy-filter
+    order: 0
+    addUrlPatterns: /*
 
 mybatis:
   configuration:
@@ -24,4 +29,4 @@ mybatis:
   type-handlers-package: com.genius.primavera.domain
 
 logging:
-  config: classpath:logback-test.xml
+  config: classpath:logback.xml

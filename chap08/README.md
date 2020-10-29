@@ -247,6 +247,8 @@ public class PasswordEncoderTest {
 }
 ```
 
+### Spring-Boot-Starter
+
 ### 참고
 * Spring Security3 (피터 뮬라리엔)
 * https://docs.spring.io/spring-security/site/docs/current/guides/html5/helloworld-boot.html

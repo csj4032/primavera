@@ -3,7 +3,6 @@ package com.genius.primavera.infrastructure.security;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Component;
 
 @Slf4j
 public class PrimaveraPasswordEncoder implements PasswordEncoder {

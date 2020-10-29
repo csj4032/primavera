@@ -16,13 +16,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class LucyXssFilterTest {
 
-    @Test
-    @Order(1)
-    @DisplayName(value = "루시 필터 XssPreventer 검사")
-    public void testXssPreventer() {
-        String dirty = "\"><script>alert('xss');</script>";
-        String clean = XssPreventer.escape(dirty);
-        assertEquals("&quot;&gt;&lt;script&gt;alert(&#39;xss&#39;);&lt;/script&gt;", clean);
-        assertEquals(dirty, XssPreventer.unescape(clean));
-    }
+	@Test
+	@Order(1)
+	@DisplayName(value = "루시 필터 XssPreventer 검사")
+	public void testXssPreventer() {
+		String dirty = "\"><script>alert('xss');</script>";
+		String clean = XssPreventer.escape(dirty);
+		assertEquals("&quot;&gt;&lt;script&gt;alert(&#39;xss&#39;);&lt;/script&gt;", clean);
+		assertEquals(dirty, XssPreventer.unescape(clean));
+	}
 }

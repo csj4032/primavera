@@ -240,3 +240,4 @@ testRuntime group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '
 * Creating Your Own Auto-configuration [링크](https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-developing-auto-configuration.html#boot-features-developing-auto-configuration)
 * Spring Expression Language The Elvis Operator [링크](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/core.html#expressions-operator-elvis)
 * Creating a Custom Starter with Spring Boot [링크](https://www.baeldung.com/spring-boot-custom-starter)
+* Gradle Building Java & JVM projects [링크](https://docs.gradle.org/current/userguide/building_java_projects.html)
