@@ -26,7 +26,7 @@ import java.util.List;
 public interface UserMapper {
 
     String SELECT_FROM_USER_JOIN_CONNECTION = "SELECT A.ID, A.EMAIL, NICKNAME, PASSWORD, STATUS, B.PROVIDER, B.PROVIDER_ID, B.PROFILE_URL, B.IMAGE_URL, REG_DATE, MOD_DATE FROM USER A INNER JOIN USER_CONNECTION B ON A.EMAIL = B.EMAIL ";
-    String SELECT_FROM_USER = "SELECT ID, EMAIL, NICKNAME, PASSWORD, STATUS, REG_DATE, MOD_DATE FROM USER ";
+    String SELECT_FROM_USER = "SELECT ID, EMAIL, NICKNAME, PASSWORD, STATUS, REG_DT, MOD_DT FROM USER ";
     String INSERT_SQL = "INSERT INTO USER (EMAIL, PASSWORD, NICKNAME, STATUS, REG_DATE, MOD_DATE) " +
             "VALUES (#{user.email}, #{user.password}, #{user.nickname}, #{user.status, typeHandler=UserStatusTypeHandler}, #{user.regDate}, #{user.modDate})";
 

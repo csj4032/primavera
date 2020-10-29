@@ -7,25 +7,25 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
-@RequestMapping(value = "/filter")
+@RequestMapping(value = "/lucy")
 public class FilterController {
 
-	@GetMapping
+	@GetMapping("/filter")
 	public String getMessage(String xss) {
 		return xss;
 	}
 
-	@GetMapping("/lucy/parameter/disable")
+	@GetMapping("/filter/parameter/disable")
 	public String filterParameterDisable(String message, String xss) {
 		return message + xss;
 	}
 
-	@GetMapping("/lucy/url/disable")
+	@GetMapping("/filter/url/disable")
 	public String filterUrlDisable(String message, String xss) {
 		return message + xss;
 	}
 
-	@GetMapping("/lucy/global")
+	@GetMapping("/filter/global")
 	public String globalParameterDisable(String message, String global) {
 		return message + global;
 	}

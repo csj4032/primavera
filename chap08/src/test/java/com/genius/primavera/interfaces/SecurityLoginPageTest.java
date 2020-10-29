@@ -37,61 +37,61 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class SecurityLoginPageTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+	@Autowired
+	private MockMvc mockMvc;
 
-    @Autowired
-    private MockHttpServletRequest request;
+	@Autowired
+	private MockHttpServletRequest request;
 
-    @Test
-    @Order(1)
-    @DisplayName("권한이 없는 경우 로그인 화면으로 이동")
-    public void loginPage() throws Exception {
-        mockMvc.perform(get("/"))
-                .andDo(print())
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("http://localhost/login"));
-    }
+	@Test
+	@Order(1)
+	@DisplayName("권한이 없는 경우 로그인 화면으로 이동")
+	public void loginPage() throws Exception {
+		mockMvc.perform(get("/"))
+				.andDo(print())
+				.andExpect(status().is3xxRedirection())
+				.andExpect(redirectedUrl("http://localhost/login"));
+	}
 
-    @Test
-    @Order(2)
-    @DisplayName("로그인 시도 성공 후 메인 페이지 이동")
-    public void signInFail() throws Exception {
-        HttpSession session = mockMvc.perform(post("/signin")
-                .with(csrf())
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("email", "Genius")
-                .param("password", "password"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/index"))
-                .andReturn()
-                .getRequest()
-                .getSession();
+	@Test
+	@Order(2)
+	@DisplayName("로그인 시도 성공 후 메인 페이지 이동")
+	public void signInFail() throws Exception {
+		HttpSession session = mockMvc.perform(post("/signin")
+				.with(csrf())
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.param("email", "Genius")
+				.param("password", "password"))
+				.andExpect(status().is3xxRedirection())
+				.andExpect(redirectedUrl("/index"))
+				.andReturn()
+				.getRequest()
+				.getSession();
 
-        request.setSession(session);
-        SecurityContext securityContext = (SecurityContext) session.getAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY);
-        SecurityContextHolder.setContext(securityContext);
-        Assertions.assertTrue(securityContext.getAuthentication().isAuthenticated());
-        Assertions.assertEquals("Genius", securityContext.getAuthentication().getName());
-    }
+		request.setSession(session);
+		SecurityContext securityContext = (SecurityContext) session.getAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY);
+		SecurityContextHolder.setContext(securityContext);
+		Assertions.assertTrue(securityContext.getAuthentication().isAuthenticated());
+		Assertions.assertEquals("Genius", securityContext.getAuthentication().getName());
+	}
 
-    @Test
-    @Order(3)
-    @DisplayName("USER 권한으로 메인 페이지 접근")
-    @WithMockUser(username = "Genius")
-    public void index() throws Exception {
-        mockMvc.perform(get("/index"))
-                .andDo(print())
-                .andExpect(status().is2xxSuccessful());
-    }
+	@Test
+	@Order(3)
+	@DisplayName("USER 권한으로 메인 페이지 접근")
+	@WithMockUser(username = "Genius")
+	public void index() throws Exception {
+		mockMvc.perform(get("/index"))
+				.andDo(print())
+				.andExpect(status().is2xxSuccessful());
+	}
 
-    @Test
-    @Order(4)
-    @DisplayName("USER 권한으로  Manager 페이지 접근")
-    @WithMockUser(username = "Genius", roles = "USER")
-    public void manager() throws Exception {
-        mockMvc.perform(get("/manager"))
-                .andDo(print())
-                .andExpect(status().is4xxClientError());
-    }
+	@Test
+	@Order(4)
+	@DisplayName("USER 권한으로  Manager 페이지 접근")
+	@WithMockUser(username = "Genius", roles = "USER")
+	public void manager() throws Exception {
+		mockMvc.perform(get("/manager"))
+				.andDo(print())
+				.andExpect(status().is4xxClientError());
+	}
 }

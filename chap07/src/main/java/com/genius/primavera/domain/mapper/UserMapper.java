@@ -24,7 +24,7 @@ import java.util.List;
 public interface UserMapper {
 
 	String SELECT_ID_NAME_REG_DATE_MOD_DATE_FROM_USER = "SELECT ID, EMAIL, NICKNAME, PASSWORD, STATUS, REG_DATE, MOD_DATE FROM USER ";
-	String INSERT_SQL = "INSERT INTO USER (EMAIL, PASSWORD, NICKNAME, STATUS, REG_DATE, MOD_DATE) " +
+	String INSERT_SQL = "INSERT INTO USER (EMAIL, PASSWORD, NICKNAME, STATUS, REG_DT, MOD_DT) " +
 			"VALUES (#{user.email}, #{user.password}, #{user.nickname}, #{user.status, typeHandler=UserStatusTypeHandler}, #{user.regDate}, #{user.modDate})";
 
 	@Results(id = "USER", value = {
