@@ -28,7 +28,7 @@ public class LucyFilterTest {
 		mockMvc.perform(get("/lucy/filter").param("xss", "<ok>"))
 				.andDo(print())
 				.andExpect(status().isOk())
-				.andExpect(content().string("&amp;lt;ok&amp;gt;"));
+				.andExpect(content().string("&lt;ok&gt;"));
 	}
 
 	@Test
@@ -38,7 +38,7 @@ public class LucyFilterTest {
 		mockMvc.perform(get("/lucy/filter/parameter/disable").param("message", "<ok>").param("xss", "<ignore>"))
 				.andDo(print())
 				.andExpect(status().isOk())
-				.andExpect(content().string("&amp;lt;ok&amp;gt;<ignore>"));
+				.andExpect(content().string("&lt;ok&gt;<ignore>"));
 	}
 
 	@Test
@@ -58,6 +58,6 @@ public class LucyFilterTest {
 		mockMvc.perform(get("/lucy/filter/global").param("message", "<ok>").param("global", "<ignore>"))
 				.andDo(print())
 				.andExpect(status().isOk())
-				.andExpect(content().string("&amp;lt;ok&amp;gt;<ignore>"));
+				.andExpect(content().string("&lt;ok&gt;<ignore>"));
 	}
 }
