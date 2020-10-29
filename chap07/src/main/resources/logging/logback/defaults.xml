@@ -15,4 +15,11 @@
     <logger name="org.eclipse.jetty.util.component.AbstractLifeCycle" level="ERROR"/>
     <logger name="org.hibernate.validator.internal.util.Version" level="WARN"/>
     <logger name="com.navercorp.lucy.security.xss.servletfilter.*" level="DEBUG"/>
+    <logger name="jdbc" level="OFF"/>
+	<logger name="jdbc.connection" level="OFF"/>
+	<logger name="jdbc.sqlonly" level="OFF"/>
+	<logger name="jdbc.sqltiming" level="DEBUG"/>
+	<logger name="jdbc.audit" level="OFF"/>
+	<logger name="jdbc.resultset" level="OFF"/>
+	<logger name="jdbc.resultsettable" level="OFF"/>
 </included>

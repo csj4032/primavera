@@ -15,4 +15,11 @@
     <logger name="org.springframework.security" level="DEBUG"/>
     <logger name="org.springframework.security.oauth2" level="DEBUG"/>
     <logger name="com.genius.primavera" level="DEBUG"/>
+    <logger name="jdbc" level="OFF"/>
+    <logger name="jdbc.connection" level="OFF"/>
+    <logger name="jdbc.sqlonly" level="INFO"/>
+    <logger name="jdbc.sqltiming" level="OFF"/>
+    <logger name="jdbc.audit" level="OFF"/>
+    <logger name="jdbc.resultset" level="OFF"/>
+    <logger name="jdbc.resultsettable" level="INFO"/>
 </included>

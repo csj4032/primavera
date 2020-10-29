@@ -4,7 +4,7 @@ spring:
     name: Privamera
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    driver-class-name: org.mariadb.jdbc.Driver
+    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
     url: jdbc:log4jdbc:mariadb://localhost:3306/primavera
     username: primavera
     password: primavera
