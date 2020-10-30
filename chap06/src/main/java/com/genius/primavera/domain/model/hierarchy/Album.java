@@ -13,15 +13,16 @@ import javax.persistence.Table;
 @Getter
 @Entity
 @ToString(callSuper = true)
-@Table(name = "ADDRESS")
+@Table(name = "ALBUM")
 @DiscriminatorValue("A")
-public class Address extends Contact {
-	@Column(name = "COUNTRY")
-	private String country;
-	@Column(name = "CITY")
-	private String city;
-	@Column(name = "STREET")
-	private String street;
-	@Column(name = "ZIPCODE")
-	private String zipCode;
+public class Album extends Item {
+
+	public Album(String name, int price, String artist) {
+		this.setName(name);
+		this.setPrice(price);
+		this.artist = artist;
+	}
+
+	@Column(name = "ARTIST")
+	private String artist;
 }

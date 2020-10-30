@@ -31,8 +31,8 @@ spring:
 ### JPA Relation Basic
 ```sql
 CREATE DATABASE basic DEFAULT CHARACTER SET utf8mb4;
-CREATE USER 'relation'@'localhost' IDENTIFIED BY 'relation';
-GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, ALTER ON basic.* TO 'relation'@'localhost';
+CREATE USER 'relation'@'%' IDENTIFIED BY 'relation';
+GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, ALTER ON basic.* TO 'relation'@'%';
 ```
 
 ### ETC
