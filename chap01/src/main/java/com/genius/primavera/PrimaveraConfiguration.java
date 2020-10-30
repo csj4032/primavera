@@ -24,13 +24,12 @@ public class PrimaveraConfiguration {
 
 	@RequestScope
 	@Bean("scopeServiceRequest")
-	//@Scope(value = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
 	public ScopeService helloServiceRequest() {
 		return new ScopeServiceImpl();
 	}
 
 	@Bean("scopeServiceRequestAnonymous")
-	@Scope(value = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
+	@Scope(value = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.INTERFACES)
 	public ScopeService helloServiceRequestAnonymous() {
 		return () -> Collections.EMPTY_LIST;
 	}

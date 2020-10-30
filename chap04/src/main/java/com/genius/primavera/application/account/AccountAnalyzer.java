@@ -13,11 +13,11 @@ public class AccountAnalyzer {
 		var path = Paths.get(resource + fineName);
 		var lines = Files.readAllLines(path);
 		var accountInfos = accountParser.parseLinesFormCVS(lines);
-		var accountProcessor = new AccountPrecessor(accountInfos);
+		var accountProcessor = new AccountProcessor(accountInfos);
 		collectSummary(accountProcessor);
 	}
 
-	private void collectSummary(AccountPrecessor accountProcessor) {
+	private void collectSummary(AccountProcessor accountProcessor) {
 		System.out.println("Total : " + accountProcessor.calculationTotalAmount());
 		System.out.println("Month : " + accountProcessor.calculationTotalForMonth(Month.JANUARY));
 		System.out.println("Category : " + accountProcessor.calculationTotalForCategory(Category.Type0));

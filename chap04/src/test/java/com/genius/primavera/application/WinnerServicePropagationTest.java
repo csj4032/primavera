@@ -74,7 +74,7 @@ public class WinnerServicePropagationTest {
 	@Test
 	@Order(4)
 	@DisplayName("PROPAGATION_REQUIRES_NESTED")
-	public void propagation_nested() {
+	public void propagation_required_nested() {
 		Winner winner1 = Winner.builder().userId(6).winner(WinnerType.WINNER).regDt(LocalDateTime.now()).build();
 		Winner winner2 = Winner.builder().userId(7).winner(WinnerType.LOSER).regDt(LocalDateTime.now()).build();
 		Winner winner3 = Winner.builder().userId(8).winner(WinnerType.ETC).regDt(LocalDateTime.now()).build();
@@ -86,11 +86,24 @@ public class WinnerServicePropagationTest {
 
 	@Test
 	@Order(5)
+	@DisplayName("PROPAGATION_REQUIRES_NESTED_REQUIRES")
+	public void propagation_nested_required() {
+		Winner winner1 = Winner.builder().userId(9).winner(WinnerType.WINNER).regDt(LocalDateTime.now()).build();
+		Winner winner2 = Winner.builder().userId(10).winner(WinnerType.ETC).regDt(LocalDateTime.now()).build();
+		Winner winner3 = Winner.builder().userId(11).winner(WinnerType.WINNER).regDt(LocalDateTime.now()).build();
+		Exception exception = assertThrows(DataIntegrityViolationException.class, () -> {
+			winnerService.saveAndNested(winner1, winner2, winner3, winnerService);
+		});
+		assertEquals(DataIntegrityViolationException.class, exception.getClass());
+	}
+
+	@Test
+	@Order(6)
 	@DisplayName("PROPAGATION_REQUIRES_NOT_SUPPORTED")
 	public void propagation_not_supported() {
-		Winner winner1 = Winner.builder().userId(9).winner(WinnerType.WINNER).regDt(LocalDateTime.now()).build();
-		Winner winner2 = Winner.builder().userId(10).winner(WinnerType.WINNER).regDt(LocalDateTime.now()).build();
-		Winner winner3 = Winner.builder().userId(11).winner(WinnerType.ETC).regDt(LocalDateTime.now()).build();
+		Winner winner1 = Winner.builder().userId(12).winner(WinnerType.WINNER).regDt(LocalDateTime.now()).build();
+		Winner winner2 = Winner.builder().userId(13).winner(WinnerType.WINNER).regDt(LocalDateTime.now()).build();
+		Winner winner3 = Winner.builder().userId(14).winner(WinnerType.ETC).regDt(LocalDateTime.now()).build();
 		Exception exception = assertThrows(DataIntegrityViolationException.class, () -> {
 			winnerService.saveAndNotSupported(winner1, winner2, winner3, winnerService);
 		});
@@ -98,12 +111,12 @@ public class WinnerServicePropagationTest {
 	}
 
 	@Test
-	@Order(6)
+	@Order(7)
 	@DisplayName("PROPAGATION_REQUIRE_INNER")
 	public void propagation_requires_inner() {
-		Winner winner1 = Winner.builder().userId(12).winner(WinnerType.WINNER).regDt(LocalDateTime.now()).build();
-		Winner winner2 = Winner.builder().userId(13).winner(WinnerType.ETC).regDt(LocalDateTime.now()).build();
-		Winner winner3 = Winner.builder().userId(14).winner(WinnerType.LOSER).regDt(LocalDateTime.now()).build();
+		Winner winner1 = Winner.builder().userId(15).winner(WinnerType.WINNER).regDt(LocalDateTime.now()).build();
+		Winner winner2 = Winner.builder().userId(16).winner(WinnerType.ETC).regDt(LocalDateTime.now()).build();
+		Winner winner3 = Winner.builder().userId(17).winner(WinnerType.LOSER).regDt(LocalDateTime.now()).build();
 		Exception exception = assertThrows(DataIntegrityViolationException.class, () -> {
 			winnerService.innerSave(List.of(winner1, winner1));
 			winnerService.innerSave(List.of(winner1, winner2, winner3));
@@ -112,12 +125,12 @@ public class WinnerServicePropagationTest {
 	}
 
 	@Test
-	@Order(7)
+	@Order(8)
 	@DisplayName("PROPAGATION_REQUIRE_NEW_INNER")
 	public void propagation_requires_new_inner() {
-		Winner winner1 = Winner.builder().userId(15).winner(WinnerType.WINNER).regDt(LocalDateTime.now()).build();
-		Winner winner2 = Winner.builder().userId(16).winner(WinnerType.ETC).regDt(LocalDateTime.now()).build();
-		Winner winner3 = Winner.builder().userId(17).winner(WinnerType.LOSER).regDt(LocalDateTime.now()).build();
+		Winner winner1 = Winner.builder().userId(18).winner(WinnerType.WINNER).regDt(LocalDateTime.now()).build();
+		Winner winner2 = Winner.builder().userId(19).winner(WinnerType.ETC).regDt(LocalDateTime.now()).build();
+		Winner winner3 = Winner.builder().userId(20).winner(WinnerType.LOSER).regDt(LocalDateTime.now()).build();
 		Exception exception = assertThrows(DataIntegrityViolationException.class, () -> {
 			winnerService.innerSaveNew(List.of(winner1, winner1));
 			winnerService.innerSaveNew(List.of(winner1, winner2, winner3));
@@ -126,12 +139,12 @@ public class WinnerServicePropagationTest {
 	}
 
 	@Test
-	@Order(8)
+	@Order(9)
 	@DisplayName("PROPAGATION_NOT_SUPPORTED_INNER")
 	public void propagation_not_supported_inner() {
-		Winner winner1 = Winner.builder().userId(18).winner(WinnerType.WINNER).regDt(LocalDateTime.now()).build();
-		Winner winner2 = Winner.builder().userId(19).winner(WinnerType.ETC).regDt(LocalDateTime.now()).build();
-		Winner winner3 = Winner.builder().userId(20).winner(WinnerType.LOSER).regDt(LocalDateTime.now()).build();
+		Winner winner1 = Winner.builder().userId(21).winner(WinnerType.WINNER).regDt(LocalDateTime.now()).build();
+		Winner winner2 = Winner.builder().userId(22).winner(WinnerType.ETC).regDt(LocalDateTime.now()).build();
+		Winner winner3 = Winner.builder().userId(23).winner(WinnerType.LOSER).regDt(LocalDateTime.now()).build();
 		Exception exception = assertThrows(DataIntegrityViolationException.class, () -> {
 			winnerService.innerNotSupported(List.of(winner1, winner1));
 			winnerService.innerNotSupported(List.of(winner1, winner2, winner3));

@@ -1,4 +1,4 @@
-package com.genius.primavera.domain.relation.oneToMany;
+package com.genius.primavera.domain.relation.manyToOne;
 
 import lombok.*;
 
