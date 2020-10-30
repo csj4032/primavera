@@ -22,10 +22,10 @@
 		<class>com.genius.primavera.domain.relation.oneToMany.Contact</class>
 		<class>com.genius.primavera.domain.relation.oneToMany.Professor</class>
 		<class>com.genius.primavera.domain.relation.oneToMany.Customer</class>
-		<class>com.genius.primavera.domain.relation.oneToMany.Department</class>
-		<class>com.genius.primavera.domain.relation.oneToMany.Employee</class>
-		<class>com.genius.primavera.domain.relation.oneToMany.Player</class>
-		<class>com.genius.primavera.domain.relation.oneToMany.Team</class>
+		<class>com.genius.primavera.domain.relation.manyToOne.Department</class>
+		<class>com.genius.primavera.domain.relation.manyToOne.Employee</class>
+		<class>com.genius.primavera.domain.relation.manyToOne.Player</class>
+		<class>com.genius.primavera.domain.relation.manyToOne.Team</class>
 		<class>com.genius.primavera.domain.relation.oneToOne.Address</class>
 		<class>com.genius.primavera.domain.relation.oneToOne.Article</class>
 		<class>com.genius.primavera.domain.relation.oneToOne.Book</class>

@@ -3,7 +3,11 @@ package com.genius.primavera.application;
 import com.genius.primavera.domain.mapper.WinnerMapper;
 
 import com.genius.primavera.domain.model.Winner;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,12 +15,17 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 @Service(value = "winnerService")
 @RequiredArgsConstructor
 public class WinnerServiceImpl implements WinnerService {
 
+	@Autowired
+	private PlatformTransactionManager transactionManager;
+
 	private final WinnerMapper winnerMapper;
+
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = RollbackForClass.class, noRollbackFor = NoRollbackForClass.class)
@@ -25,7 +34,7 @@ public class WinnerServiceImpl implements WinnerService {
 	}
 
 	@Override
-	@Transactional(propagation = Propagation.REQUIRED)
+	@Transactional(propagation = Propagation.REQUIRED, noRollbackFor = DataIntegrityViolationException.class)
 	public int saveAndNew(Winner winner1, Winner winner2, Winner winner3, WinnerService winnerService) {
 		winnerMapper.insertWinner(winner1);
 		winnerService.saveRequiresNew(winner2);
@@ -34,7 +43,7 @@ public class WinnerServiceImpl implements WinnerService {
 	}
 
 	@Override
-	@Transactional(propagation = Propagation.REQUIRED)
+	@Transactional(propagation = Propagation.REQUIRED, noRollbackFor = DataIntegrityViolationException.class)
 	public int saveAndNested(Winner winner1, Winner winner2, Winner winner3, WinnerService winnerService) {
 		winnerMapper.insertWinner(winner1);
 		winnerService.saveNested(winner2);
@@ -60,7 +69,8 @@ public class WinnerServiceImpl implements WinnerService {
 	@Override
 	@Transactional(propagation = Propagation.NESTED)
 	public int saveNested(Winner winner) {
-		return winnerMapper.insertWinner(winner);
+		winnerMapper.insertWinner(winner);
+		return 0;
 	}
 
 	@Override

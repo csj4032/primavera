@@ -4,11 +4,11 @@ import java.time.Month;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class AccountPrecessor {
+public class AccountProcessor {
 
 	private final List<AccountInfo> accountInfos;
 
-	public AccountPrecessor(List<AccountInfo> accountInfos) {
+	public AccountProcessor(List<AccountInfo> accountInfos) {
 		this.accountInfos = accountInfos;
 	}
 

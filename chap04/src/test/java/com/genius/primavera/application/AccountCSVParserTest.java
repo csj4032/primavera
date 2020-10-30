@@ -2,7 +2,7 @@ package com.genius.primavera.application;
 
 import com.genius.primavera.application.account.AccountCSVParser;
 import com.genius.primavera.application.account.AccountInfo;
-import com.genius.primavera.application.account.AccountPrecessor;
+import com.genius.primavera.application.account.AccountProcessor;
 import com.genius.primavera.application.account.Category;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
@@ -28,7 +28,7 @@ public class AccountCSVParserTest {
 		AccountCSVParser accountCSVParser = new AccountCSVParser();
 		List<AccountInfo> accountInfos = accountCSVParser.parseLinesFormCVS(lines);
 		Assertions.assertNotNull(accountInfos);
-		AccountPrecessor accountPrecess = new AccountPrecessor(accountInfos);
+		AccountProcessor accountPrecess = new AccountProcessor(accountInfos);
 		Assertions.assertEquals(97300l, accountPrecess.calculationTotalAmount());
 		Assertions.assertEquals(97300l, accountPrecess.calculationTotalForMonth(Month.JANUARY));
 		Assertions.assertEquals(100000l, accountPrecess.calculationTotalForCategory(Category.Type0));

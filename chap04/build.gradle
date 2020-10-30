@@ -6,7 +6,6 @@ dependencies {
     compile("org.mybatis.dynamic-sql:mybatis-dynamic-sql:1.2.1")
     compile('org.mariadb.jdbc:mariadb-java-client:2.4.1')
     compile('org.hibernate:hibernate-validator:6.0.13.Final')
-    compile('com.h2database:h2:1.4.200')
     compile('com.zaxxer:HikariCP:3.4.5')
     compileOnly('org.projectlombok:lombok')
     annotationProcessor('org.projectlombok:lombok')
