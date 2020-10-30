@@ -7,6 +7,18 @@
 
 	<persistence-unit name="advance" transaction-type="RESOURCE_LOCAL">
 		<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+		<class>com.genius.primavera.domain.model.hierarchy.Address</class>
+		<class>com.genius.primavera.domain.model.hierarchy.Album</class>
+		<class>com.genius.primavera.domain.model.hierarchy.Book</class>
+		<class>com.genius.primavera.domain.model.hierarchy.Canidae</class>
+		<class>com.genius.primavera.domain.model.hierarchy.Contact</class>
+		<class>com.genius.primavera.domain.model.hierarchy.Email</class>
+		<class>com.genius.primavera.domain.model.hierarchy.Family</class>
+		<class>com.genius.primavera.domain.model.hierarchy.Felidae</class>
+		<class>com.genius.primavera.domain.model.hierarchy.Item</class>
+		<class>com.genius.primavera.domain.model.hierarchy.Mobile</class>
+		<class>com.genius.primavera.domain.model.hierarchy.Movie</class>
+		<class>com.genius.primavera.domain.model.hierarchy.Scincidae</class>
 		<properties>
 			<property name="javax.persistence.jdbc.driver" value="org.mariadb.jdbc.Driver" />
 			<property name="javax.persistence.jdbc.url" value="jdbc:mariadb://localhost:3306/advance" />

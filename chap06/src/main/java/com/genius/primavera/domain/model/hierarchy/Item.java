@@ -1,29 +1,24 @@
 package com.genius.primavera.domain.model.hierarchy;
 
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Setter
 @Getter
 @Entity
 @ToString
-@Table(name = "CONTACT")
+@Table(name = "ITEM")
 @DiscriminatorColumn(name = "TYPE")
-@Inheritance(strategy = InheritanceType.JOINED)
-public abstract class Contact {
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+public abstract class Item {
 
 	@Id
-	@Column(name = "ID")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-
-	@Column(name = "REG_DT")
-	private LocalDateTime regDt;
-
-	@Column(name = "MOD_DT")
-	private LocalDateTime modDt;
+	private String name;
+	private int price;
 }
