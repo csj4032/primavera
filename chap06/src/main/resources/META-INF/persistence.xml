@@ -19,6 +19,8 @@
 		<class>com.genius.primavera.domain.model.hierarchy.Mobile</class>
 		<class>com.genius.primavera.domain.model.hierarchy.Movie</class>
 		<class>com.genius.primavera.domain.model.hierarchy.Scincidae</class>
+		<class>com.genius.primavera.domain.model.mapped.Professor</class>
+		<class>com.genius.primavera.domain.model.mapped.Student</class>
 		<properties>
 			<property name="javax.persistence.jdbc.driver" value="org.mariadb.jdbc.Driver" />
 			<property name="javax.persistence.jdbc.url" value="jdbc:mariadb://localhost:3306/advance" />

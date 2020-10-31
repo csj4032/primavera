@@ -79,6 +79,13 @@ nested exception is org.springframework.boot.autoconfigure.jdbc.DataSourceProper
   * Datasource 를 통한 유저 등록, 전체 조회, 삭제 테스트
   * PasswordEncoderFactories 이용한 비밀번호 암호
 
+| 속성 | 설명 |
+|---|---|
+maxActive |	동시에 사용할 수 있는 최대 커넥션 개수 |
+maxIdle |	Connection Pool에 반납할 때 최대로 유지될 수 있는 커넥션 개수 |
+minIdle	| 최소한으로 유지할 커넥션 개수 |
+initialSize |	최초로 getConnection() Method를 통해 커넥션 풀에 채워 넣을 커넥션 개수 |
+
 ### ETC
 * application-properties datasource [참고](https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html)
 * HikariCP [참고](https://github.com/brettwooldridge/HikariCP)
