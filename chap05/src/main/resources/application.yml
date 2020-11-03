@@ -22,5 +22,5 @@ mybatis:
     map-underscore-to-camel-case: true
     default-fetch-size: 1000
     default-statement-timeout: 30
-  type-aliases-package: com.genius.primavera.domain
-  type-handlers-package: com.genius.primavera.domain
+  type-aliases-package: com.genius.primavera.domain.model
+  type-handlers-package: com.genius.primavera.domain.model

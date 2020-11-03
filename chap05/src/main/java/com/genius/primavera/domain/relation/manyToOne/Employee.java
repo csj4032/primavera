@@ -22,7 +22,7 @@ public class Employee {
 	@Column(name = "NAME")
 	private String name;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DEPARTMENT_ID")
 	// 사원은 부서의 Prime Key 를 Foreign key 등록
 	private Department department;

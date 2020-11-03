@@ -1,4 +1,4 @@
-package com.genius.primavera.domain.typehandler;
+package com.genius.primavera.domain.model.typehandler;
 
 import com.genius.primavera.domain.model.post.PostStatus;
 

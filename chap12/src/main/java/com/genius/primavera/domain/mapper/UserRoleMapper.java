@@ -2,7 +2,7 @@ package com.genius.primavera.domain.mapper;
 
 import com.genius.primavera.domain.model.user.Role;
 import com.genius.primavera.domain.model.user.UserRole;
-import com.genius.primavera.domain.typehandler.RoleTypeHandler;
+import com.genius.primavera.domain.model.typehandler.RoleTypeHandler;
 
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;

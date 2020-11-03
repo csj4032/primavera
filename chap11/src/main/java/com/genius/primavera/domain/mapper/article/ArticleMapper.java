@@ -3,7 +3,7 @@ package com.genius.primavera.domain.mapper.article;
 import com.genius.primavera.domain.PageRequest;
 import com.genius.primavera.domain.model.article.Article;
 import com.genius.primavera.domain.model.article.Comment;
-import com.genius.primavera.domain.typehandler.ArticleStatusTypeHandler;
+import com.genius.primavera.domain.model.typehandler.ArticleStatusTypeHandler;
 
 import org.apache.ibatis.annotations.InsertProvider;
 import org.apache.ibatis.annotations.Many;
