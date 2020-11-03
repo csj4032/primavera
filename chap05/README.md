@@ -35,6 +35,9 @@ CREATE USER 'relation'@'%' IDENTIFIED BY 'relation';
 GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, ALTER ON basic.* TO 'relation'@'%';
 ```
 
+
+
 ### ETC
 * Spring MVC Test Framework [참고](https://docs.spring.io/spring/docs/current/spring-framework-reference/testing.html#spring-mvc-test-framework)
+* Spring-boot-data-source-decorator [참고](https://github.com/gavlyukovskiy/spring-boot-data-source-decorator)
 * LiveReload [링크](http://livereload.com/extensions/)
