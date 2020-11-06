@@ -6,9 +6,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public class PrimaveraSpringBean {
-    private String name;
+	private String name;
 
-    public PrimaveraSpringBean(String name) {
-        this.name = name;
-    }
+	public PrimaveraSpringBean(String name) {
+		this.name = name;
+	}
 }

@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,8 +20,8 @@ public class RoleMapperTest {
 	@Autowired
 	private UserMapper userMapper;
 	@Autowired
-	private UserRoleMapper contractMapper;
-	private static List<Role> contacts;
+	private UserRoleMapper userRoleMapper;
+	private static List<Role> roles;
 	private static User user;
 
 	@BeforeAll
@@ -31,7 +30,7 @@ public class RoleMapperTest {
 
 	@Test
 	public void save() {
-		contacts = new ArrayList<>();
+		roles = new ArrayList<>();
 		user = userMapper.findAll().get(0);
 	}
 }

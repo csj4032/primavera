@@ -9,7 +9,7 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 
 @Slf4j
-@DisplayName("N:1 플레이어와 팀 단방향  : 팀에는 회원을 참조하는 필드가 없음")
+@DisplayName("N:1 플레이어와 팀 단방향  : 팀에는 플레이어을 참조하는 필드가 없음")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ManyToOneUnidirectional {
 
