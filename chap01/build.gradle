@@ -17,5 +17,4 @@ dependencies {
     testCompileOnly group: 'org.projectlombok', name: 'lombok', version: "${lombokVersion}"
     testAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: "${lombokVersion}"
 
-    compile project(":chap00")
 }

@@ -52,7 +52,7 @@
 * Spring Transaction, Mybatis, Logback
 
 ## chap05
-* Validation, AJAX
+* Validation, AJAX, JOOL, Mybatis DSL
 
 ## chap06
 * Thymeleaf, Sign in

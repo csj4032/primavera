@@ -13,7 +13,7 @@ import javax.annotation.Resource;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/")
-public class HelloController {
+public class ScopeController {
 
 	private final ScopeService scopeService;
 	private final ScopeService scopeServiceRequest;
