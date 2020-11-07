@@ -25,7 +25,7 @@ public class UserController {
 
 	@PostMapping(value = "/save")
 	public ResponseEntity<User> save(@RequestBody @Validated(User.SaveGroup.class) User user, BindingResult bindingResult) {
-		log.info("{}", bindingResult);
+		log.info("User Save : {}", bindingResult);
 		if (!bindingResult.hasErrors()) {
 			userService.save(user);
 			return new ResponseEntity<>(user, HttpStatus.CREATED);
@@ -35,7 +35,7 @@ public class UserController {
 
 	@PostMapping(value = "/update")
 	public ResponseEntity<User> update(@RequestBody @Validated(User.UpdateGroup.class) User user, BindingResult bindingResult) {
-		log.info("{}", bindingResult);
+		log.info("User Update : {}", bindingResult);
 		if (!bindingResult.hasErrors()) {
 			userService.update(user);
 			return new ResponseEntity<>(user, HttpStatus.CREATED);

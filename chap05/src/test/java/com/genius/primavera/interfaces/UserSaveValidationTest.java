@@ -12,6 +12,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @ExtendWith(SpringExtension.class)
@@ -86,6 +87,14 @@ public class UserSaveValidationTest {
 	@DisplayName("유저 저장 후 결과 유저 값 받기 권한 아이디 타입 안 넣음")
 	public void saveAndReturnUserIllegalRoleType() {
 		User source = User.builder().id(1L).email("genius@gmail.com").password("Secret0!").nickname("genius").roles(List.of(new Role(1, null))).build();
+		saveUser(source);
+	}
+
+	@Test
+	@Order(9)
+	@DisplayName("유저 등록일자가 수정일자보다 뒤일 경")
+	public void saveAndRegDateModDate() {
+		User source = User.builder().id(1L).email("genius@gmail.com").password("Secret0!").regDate(LocalDateTime.now().plusDays(1)).modDate(LocalDateTime.now()).nickname("genius").roles(List.of(new Role(1, null))).build();
 		saveUser(source);
 	}
 

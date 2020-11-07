@@ -43,7 +43,7 @@ public class PrimaveraSecurityConfig extends WebSecurityConfigurerAdapter {
 		DelegatingPasswordEncoder encoder = (DelegatingPasswordEncoder) PasswordEncoderFactories.createDelegatingPasswordEncoder();
 		encoder.setDefaultPasswordEncoderForMatches(PrimaveraPasswordEncoder.getInstance());
 		auth.inMemoryAuthentication()
-				.withUser("Genius").password("{bcrypt}$2a$10$7UEHLpn1r4gZY2qxiZFJ5.7wa3Hdz8IXgxUtFogy0Ac10fh7TG4V.").roles("USER")
+				.withUser("Genius@gmail.com").password("{bcrypt}$2a$10$7UEHLpn1r4gZY2qxiZFJ5.7wa3Hdz8IXgxUtFogy0Ac10fh7TG4V.").roles("USER")
 				.and()
 				.withUser("Marcus Tullius Cicero").password(encoder.encode("password")).roles("MANAGER")
 				.and()
@@ -61,7 +61,7 @@ public class PrimaveraSecurityConfig extends WebSecurityConfigurerAdapter {
 		http
 				.csrf().disable()
 				.authorizeRequests()
-				.antMatchers("/login").permitAll()
+				.antMatchers("/login/*").permitAll()
 				.anyRequest().authenticated()
 				.and()
 				.addFilterAfter(new PrimaveraFilter(), UsernamePasswordAuthenticationFilter.class)
