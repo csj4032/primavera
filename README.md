@@ -60,12 +60,15 @@
 ## chap07
 * Filter, Lucy-xss-filter
 * Log4jdbc
+* Undertow
 
 ## chap08
+* Chain of Responsibility
 * Spring Security
 * Spring Boot Starter
 
 ## chap09
+* Https
 * Spring OAuth2 Social Login
 
 ## chap10
