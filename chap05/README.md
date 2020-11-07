@@ -19,7 +19,8 @@ spring:
 
 ### Validation
 * UserSaveValidationTest
-  * @Nickname Validator, Annotation
+  * @Nickname Validator, Annotation 
+  * @ScriptAssert
   * 저장과 수정에 따른 필수값 그룹
   * 객체 내부 속성 @Valid 재귀 검사
   
@@ -35,9 +36,8 @@ CREATE USER 'relation'@'%' IDENTIFIED BY 'relation';
 GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, ALTER ON basic.* TO 'relation'@'%';
 ```
 
-
-
 ### ETC
 * Spring MVC Test Framework [참고](https://docs.spring.io/spring/docs/current/spring-framework-reference/testing.html#spring-mvc-test-framework)
 * Spring-boot-data-source-decorator [참고](https://github.com/gavlyukovskiy/spring-boot-data-source-decorator)
+* Migration from Nashorn to GraalVM JavaScript [참고](https://golb.hplar.ch/2020/04/java-javascript-engine.html)
 * LiveReload [링크](http://livereload.com/extensions/)

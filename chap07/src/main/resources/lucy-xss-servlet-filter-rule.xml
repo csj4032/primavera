@@ -30,7 +30,7 @@
 
 	<!-- default defender 선언, 별다른 defender 선언이 없으면 default defender를 사용해 필터링 한다. -->
 	<default>
-		<defender>xssSaxFilterDefender</defender>
+		<defender>xssFilterDefender</defender>
 	</default>
 
 	<!-- global 필터링 룰 선언 -->

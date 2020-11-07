@@ -18,6 +18,7 @@ dependencies {
     annotationProcessor('org.projectlombok:lombok')
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude module: 'junit'
+        exclude module: 'junit-vintage-engine'
     }
     testImplementation('org.springframework.security:spring-security-test')
     implementation project(':spring-boot-starter-lucy-filter')

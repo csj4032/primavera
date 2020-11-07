@@ -22,33 +22,33 @@ import java.util.function.Supplier;
 @RequestMapping(value = "/users")
 public class UserController {
 
-    @Autowired
-    private UserService userService;
+	@Autowired
+	private UserService userService;
 
-    @GetMapping
-    public List<User> getUserById() {
-        return userService.getUsers();
-    }
+	@GetMapping
+	public List<User> getUserById() {
+		return userService.getUsers();
+	}
 
-    @GetMapping(value = "/{id}")
-    public User getUserById(@PathVariable(value = "id") long id) {
-        return userService.findById(id);
-    }
+	@GetMapping(value = "/{id}")
+	public User getUserById(@PathVariable(value = "id") long id) {
+		return userService.findById(id);
+	}
 
-    @PostMapping(value = "/save")
-    public ResponseEntity<User> save(@RequestBody @Validated(User.SaveGroup.class) User user, BindingResult bindingResult) {
-        log.info("{}", bindingResult);
-        return getUserResponseEntity(user, bindingResult, HttpStatus.CREATED, userService::save);
-    }
+	@PostMapping(value = "/save")
+	public ResponseEntity<User> save(@RequestBody @Validated(User.SaveGroup.class) User user, BindingResult bindingResult) {
+		log.info("{}", bindingResult);
+		return getUserResponseEntity(user, bindingResult, HttpStatus.CREATED, userService::save);
+	}
 
-    @PostMapping(value = "/update")
-    public ResponseEntity<User> update(@RequestBody @Validated(User.UpdateGroup.class) User user, BindingResult bindingResult) {
-        log.info("{}", bindingResult);
-        return getUserResponseEntity(user, bindingResult, HttpStatus.OK, userService::update);
-    }
+	@PostMapping(value = "/update")
+	public ResponseEntity<User> update(@RequestBody @Validated(User.UpdateGroup.class) User user, BindingResult bindingResult) {
+		log.info("{}", bindingResult);
+		return getUserResponseEntity(user, bindingResult, HttpStatus.OK, userService::update);
+	}
 
-    @NotNull
-    private ResponseEntity<User> getUserResponseEntity(User user, BindingResult bindingResult, HttpStatus httpStatus, Function<User, User> supplier) {
-        return bindingResult.hasErrors() ? new ResponseEntity<>(user, HttpStatus.BAD_REQUEST) : new ResponseEntity<>(supplier.apply(user), httpStatus);
-    }
+	@NotNull
+	private ResponseEntity<User> getUserResponseEntity(User user, BindingResult bindingResult, HttpStatus httpStatus, Function<User, User> supplier) {
+		return bindingResult.hasErrors() ? new ResponseEntity<>(user, HttpStatus.BAD_REQUEST) : new ResponseEntity<>(supplier.apply(user), httpStatus);
+	}
 }
