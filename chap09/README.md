@@ -3,7 +3,7 @@
 ### build.gradle spring-security-oauth2-client 추가
 
 ```
-compile('org.springframework.security.oauth.boot:spring-security-oauth2-autoconfigure:2.0.0.RELEASE')
+compile('org.springframework.security.oauth.boot:spring-security-oauth2-autoconfigure:2.3.4.RELEASE')
 ```
 
 #### Application.yml 추가
@@ -73,6 +73,11 @@ keytool -genkeypair -alias primavera -storetype PKCS12 -keyalg RSA -keysize 2048
  * https://localhost:8443/login/github
 
 ### ETC
+* https://spring.io/guides/tutorials/spring-boot-oauth2/
+* https://developers.payco.com/guide/development/start
 * https://console.cloud.google.com
+  * https://developers.google.com/identity/protocols/oauth2
 * https://developers.facebook.com
+  * https://developers.facebook.com/docs/facebook-login/manually-build-a-login-flow/
 * https://github.com
+  * https://developer.github.com/apps/building-oauth-apps/authorizing-oauth-apps/

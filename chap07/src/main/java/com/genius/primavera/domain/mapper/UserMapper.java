@@ -23,7 +23,7 @@ import java.util.List;
 @Mapper
 public interface UserMapper {
 
-	String SELECT_ID_NAME_REG_DATE_MOD_DATE_FROM_USER = "SELECT ID, EMAIL, NICKNAME, PASSWORD, STATUS, REG_DATE, MOD_DATE FROM USER ";
+	String SELECT_ID_NAME_REG_DATE_MOD_DATE_FROM_USER = "SELECT ID, EMAIL, NICKNAME, PASSWORD, STATUS, REG_DT, MOD_DT FROM USER ";
 	String INSERT_SQL = "INSERT INTO USER (EMAIL, PASSWORD, NICKNAME, STATUS, REG_DT, MOD_DT) " +
 			"VALUES (#{user.email}, #{user.password}, #{user.nickname}, #{user.status, typeHandler=UserStatusTypeHandler}, #{user.regDate}, #{user.modDate})";
 
@@ -41,8 +41,8 @@ public interface UserMapper {
 			@Result(property = "id", column = "ID"),
 			@Result(property = "email", column = "EMAIL"),
 			@Result(property = "password", column = "PASSWORD"),
-			@Result(property = "regDate", column = "REG_DATE"),
-			@Result(property = "modDate", column = "MOD_DATE"),
+			@Result(property = "regDate", column = "REG_DT"),
+			@Result(property = "modDate", column = "MOD_DT"),
 			@Result(property = "roles", javaType = List.class, column = "ID", many = @Many(select = "com.genius.primavera.domain.mapper.UserRoleMapper.findByUserId"))
 	})
 	User findByIdWithRoles(@Param(value = "id") long id);

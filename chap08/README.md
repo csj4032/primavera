@@ -74,6 +74,10 @@ compile('org.springframework.security:spring-security-web:5.1.5.RELEASE')
 ### LogoutFilter
 
 ### UsernamePasswordAuthenticationFilter
+* UsernamePasswordAuthenticationFilter attemptAuthentication()
+* ProviderManager > authenticate()
+* AbstractUserDetailsAuthenticationProvider > authenticate() > retrieveUser()
+* DaoAuthenticationProvider > getUserDetailsService()
 
 ### DefaultLoginPageGeneratingFilter
 
@@ -247,8 +251,7 @@ public class PasswordEncoderTest {
 }
 ```
 
-### Spring-Boot-Starter
-
 ### 참고
 * Spring Security3 (피터 뮬라리엔)
+* https://docs.spring.io/spring-security/site/docs/5.4.1/reference/html5/#introduction
 * https://docs.spring.io/spring-security/site/docs/current/guides/html5/helloworld-boot.html

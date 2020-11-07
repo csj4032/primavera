@@ -49,8 +49,8 @@ public interface UserMapper {
 			@Result(property = "email", column = "EMAIL"),
 			@Result(property = "nickname", column = "NICKNAME"),
 			@Result(property = "status", column = "STATUS"),
-			@Result(property = "regDate", column = "REG_DATE"),
-			@Result(property = "modDate", column = "MOD_DATE"),
+			@Result(property = "regDate", column = "REG_DT"),
+			@Result(property = "modDate", column = "MOD_DT"),
 			@Result(property = "roles", javaType = List.class, column = "ID", many = @Many(select = "com.genius.primavera.domain.mapper.UserRoleMapper.findByUserId"))
 	})
 	User findByIdWithRoles(@Param(value = "id") long id);

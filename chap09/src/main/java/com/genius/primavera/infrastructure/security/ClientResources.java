@@ -6,17 +6,17 @@ import org.springframework.security.oauth2.client.token.grant.code.Authorization
 
 public class ClientResources {
 
-    @NestedConfigurationProperty
-    private AuthorizationCodeResourceDetails client = new AuthorizationCodeResourceDetails();
+	@NestedConfigurationProperty
+	private AuthorizationCodeResourceDetails client = new AuthorizationCodeResourceDetails();
 
-    @NestedConfigurationProperty
-    private ResourceServerProperties resource = new ResourceServerProperties();
+	@NestedConfigurationProperty
+	private ResourceServerProperties resource = new ResourceServerProperties();
 
-    public AuthorizationCodeResourceDetails getClient() {
-        return client;
-    }
+	public AuthorizationCodeResourceDetails getClient() {
+		return client;
+	}
 
-    public ResourceServerProperties getResource() {
-        return resource;
-    }
+	public ResourceServerProperties getResource() {
+		return resource;
+	}
 }
