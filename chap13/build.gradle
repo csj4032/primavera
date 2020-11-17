@@ -1,27 +1,3 @@
-def querydslSrcDir = 'src/main/generated'
-
-querydsl {
-    library = 'com.querydsl:querydsl-apt:4.4.0'
-    jpa = true
-    querydslSourcesDir = querydslSrcDir
-}
-
-compileQuerydsl{
-    options.annotationProcessorPath = configurations.querydsl
-}
-
-configurations {
-    querydsl.extendsFrom compileClasspath
-}
-
-sourceSets {
-    main {
-        java {
-            srcDirs = ['src/main/java', querydslSrcDir]
-        }
-    }
-}
-
 dependencies {
     compile('org.springframework.boot:spring-boot-starter-web') {
         exclude module: "spring-boot-starter-tomcat"
