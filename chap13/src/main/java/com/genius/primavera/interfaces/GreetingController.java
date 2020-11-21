@@ -2,6 +2,7 @@ package com.genius.primavera.interfaces;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 public class GreetingController {
 
     @GetMapping(value = "/greeting/{name}")
-    public String greeting(@PathVariable(value = "name") String name) {
+    public String greeting(@PathVariable(value = "name") @RequestBody String name) {
         return "chap13 : " + name;
     }
 }

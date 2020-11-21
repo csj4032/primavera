@@ -20,24 +20,24 @@ import static java.util.stream.Collectors.toList;
 @Component
 public class PrimaveraSocialUserDetailsService implements UserDetailsService {
 
-    @Autowired
-    private UserService userService;
+	@Autowired
+	private UserService userService;
 
-    public UsernamePasswordAuthenticationToken doAuthentication(UserConnection userConnection) {
-        User user = userService.findByEmail(userConnection.getEmail());
-        if (user == null) {
-            return setAuthenticationToken(userService.signUp(userConnection));
-        }
-        return setAuthenticationToken(user);
-    }
+	public UsernamePasswordAuthenticationToken doAuthentication(UserConnection userConnection) {
+		User user = userService.findByEmail(userConnection.getEmail());
+		if (user == null) {
+			return setAuthenticationToken(userService.signUp(userConnection));
+		}
+		return setAuthenticationToken(user);
+	}
 
-    private UsernamePasswordAuthenticationToken setAuthenticationToken(User user) {
-        List<? extends GrantedAuthority> authorities = user.getRoles().stream().map(role -> new SimpleGrantedAuthority(role.getType().toString())).collect(toList());
-        return new UsernamePasswordAuthenticationToken(new PrimaveraUserDetails(user), null, authorities);
-    }
+	private UsernamePasswordAuthenticationToken setAuthenticationToken(User user) {
+		List<? extends GrantedAuthority> authorities = user.getRoles().stream().map(role -> new SimpleGrantedAuthority(role.getType().toString())).collect(toList());
+		return new UsernamePasswordAuthenticationToken(new PrimaveraUserDetails(user), null, authorities);
+	}
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return null;
-    }
+	@Override
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		return null;
+	}
 }
