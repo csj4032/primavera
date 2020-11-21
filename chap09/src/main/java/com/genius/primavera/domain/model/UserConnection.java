@@ -75,9 +75,9 @@ public class UserConnection {
 				.accessToken(userDetails.getAccessToken())
 				.email(userDetails.getEmail())
 				.displayName(userDetails.getNickname())
-				.imageUrl(userDetails.getProfileImage())
+				.imageUrl(userDetails.getThumbnailImageUrl())
 				.provider(ProviderType.KAKAO)
-				.profileUrl(userDetails.getProfileImage())
+				.profileUrl(userDetails.getProfileImageUrl())
 				.build();
 	}
 }

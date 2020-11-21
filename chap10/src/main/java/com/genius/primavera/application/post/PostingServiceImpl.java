@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -19,28 +20,28 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class PostingServiceImpl implements PostingService {
 
-    @Autowired
-    private PostMapper postMapper;
+	@Autowired
+	private PostMapper postMapper;
 
-    @Override
-    public int save(PostDto.RequestForSave requestForSave) {
-        var post = new ModelMapper().map(requestForSave, Post.class);
-        return postMapper.save(post);
-    }
+	@Override
+	public int save(PostDto.RequestForSave requestForSave) {
+		var post = new ModelMapper().map(requestForSave, Post.class);
+		return postMapper.save(post);
+	}
 
-    @Override
-    public List<Post> findAll() {
-        return postMapper.findAll();
-    }
+	@Override
+	public List<Post> findAll() {
+		return postMapper.findAll();
+	}
 
-    @Override
-    public Paged<PostDto.ResponseForList> findForPageable(PageRequest pageRequest, String keyword) {
-        return new Paged<>(pageRequest, new ModelMapper().map(postMapper.findForPageable(pageRequest, keyword), new TypeToken<List<PostDto.ResponseForList>>() {
-        }.getType()), postMapper.findAllCount());
-    }
+	@Override
+	public Paged<PostDto.ResponseForList> findForPageable(PageRequest pageRequest, String keyword) {
+		return new Paged<>(pageRequest, new ModelMapper().map(postMapper.findForPageable(pageRequest, keyword), new TypeToken<List<PostDto.ResponseForList>>() {
+		}.getType()), postMapper.findAllCount());
+	}
 
-    @Override
-    public Post findById(long id) {
-        return postMapper.findById(id);
-    }
+	@Override
+	public Post findById(long id) {
+		return postMapper.findById(id);
+	}
 }

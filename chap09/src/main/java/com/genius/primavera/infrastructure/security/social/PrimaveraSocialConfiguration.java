@@ -43,6 +43,8 @@ public class PrimaveraSocialConfiguration {
 	@Bean
 	public Filter ssoFilter() {
 		var filter = new CompositeFilter();
+		var kakaoClientResources = kakao();
+
 		filter.setFilters(List.of(
 				ssoFilter(google(), new GoogleOAuth2ClientAuthenticationProcessingFilter((authResult, restTemplate, clazz) -> {
 					var userDetails = objectMapper.convertValue(((OAuth2Authentication) authResult).getUserAuthentication().getDetails(), clazz);
