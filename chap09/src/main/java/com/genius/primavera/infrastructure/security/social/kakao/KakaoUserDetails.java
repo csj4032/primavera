@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.genius.primavera.infrastructure.security.social.SocialUserDetails;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.context.annotation.Profile;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 
 @Getter

@@ -33,28 +33,28 @@ import lombok.ToString;
 @Table(name = "ARTICLE_COMMENT")
 public class Comment extends BaseEntity {
 
-    @Id
-    @Column(name = "ID")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+	@Id
+	@Column(name = "ID")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private long id;
 
-    @Column(name = "ARTICLE_ID")
-    private long articleId;
+	@Column(name = "ARTICLE_ID")
+	private long articleId;
 
-    @Column(name = "LEVEL")
-    private int level;
+	@Column(name = "LEVEL")
+	private int level;
 
-    @Column(name = "STEP")
-    private int step;
+	@Column(name = "STEP")
+	private int step;
 
-    @ManyToOne(fetch = FetchType.EAGER, targetEntity = User.class)
-    @JoinColumn(name = "AUTHOR", nullable = false, updatable = false)
-    private User author;
+	@ManyToOne(fetch = FetchType.EAGER, targetEntity = User.class)
+	@JoinColumn(name = "AUTHOR", nullable = false, updatable = false)
+	private User author;
 
-    @Column(name = "COMMENT")
-    private String comment;
+	@Column(name = "COMMENT")
+	private String comment;
 
-    @Column(name = "STATUS")
-    @Convert(converter = ArticleStatusAttributeConverter.class)
-    private ArticleStatus status = ArticleStatus.PUBLIC;
+	@Column(name = "STATUS")
+	@Convert(converter = ArticleStatusAttributeConverter.class)
+	private ArticleStatus status = ArticleStatus.PUBLIC;
 }

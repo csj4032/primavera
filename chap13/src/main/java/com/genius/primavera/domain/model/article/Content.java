@@ -27,11 +27,11 @@ import lombok.ToString;
 @Table(name = "ARTICLE_CONTENT")
 public class Content implements Serializable {
 
-    @Id
-    @Column(name = "ID")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+	@Id
+	@Column(name = "ID")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private long id;
 
-    @Column(name = "CONTENTS")
-    private String contents;
+	@Column(name = "CONTENTS")
+	private String contents;
 }

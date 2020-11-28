@@ -39,91 +39,91 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class UserRepositoryTest {
 
-    private static final String EMAIL = "csj4032@gmail.com";
+	private static final String EMAIL = "csj4032@gmail.com";
 
-    @Autowired
-    private UserRepository userRepository;
+	@Autowired
+	private UserRepository userRepository;
 
-    @Autowired
-    private RoleRepository roleRepository;
+	@Autowired
+	private RoleRepository roleRepository;
 
-    @PersistenceContext(unitName = "default")
-    private EntityManager entityManager;
+	@PersistenceContext(unitName = "default")
+	private EntityManager entityManager;
 
-    @Test
-    @Order(1)
-    @Rollback(false)
-    @Transactional
-    @DisplayName("사용자 등록")
-    public void addUser() {
-        var connection = UserConnection.builder()
-                .email(EMAIL)
-                .provider(GOOGLE)
-                .providerId("1")
-                .displayName("Genius")
-                .profileUrl("")
-                .imageUrl("")
-                .accessToken("1")
-                .expireTime(0)
-                .build();
+	@Test
+	@Order(1)
+	@Rollback(false)
+	@Transactional
+	@DisplayName("사용자 등록")
+	public void addUser() {
+		var connection = UserConnection.builder()
+				.email(EMAIL)
+				.provider(GOOGLE)
+				.providerId("1")
+				.displayName("Genius")
+				.profileUrl("")
+				.imageUrl("")
+				.accessToken("1")
+				.expireTime(0)
+				.build();
 
-        var role = roleRepository.findById(1l).get();
+		var role = roleRepository.findById(1l).get();
 
-        var user = User.builder()
-                .email(EMAIL)
-                .password(PasswordEncoderFactories.createDelegatingPasswordEncoder().encode("1234"))
-                .nickname("Genius")
-                .status(UserStatus.ON)
-                .connection(connection)
-                .roles(Set.of(role))
-                .build();
+		var user = User.builder()
+				.email(EMAIL)
+				.password(PasswordEncoderFactories.createDelegatingPasswordEncoder().encode("1234"))
+				.nickname("Genius")
+				.status(UserStatus.ON)
+				.connection(connection)
+				.roles(Set.of(role))
+				.build();
 
-        userRepository.save(user);
-    }
+		userRepository.save(user);
+	}
 
-    @Test
-    @Order(2)
-    @DisplayName("사용자 이메일을 이용한 조회 테스트")
-    public void findByEmail() {
-        var user = userRepository.findByEmail(EMAIL).get();
-        assertEquals(user.getNickname(), "Genius");
-        var connection = user.getConnection();
-        assertEquals(connection.getId(), 1);
-        assertEquals(connection.getProvider(), GOOGLE);
-        assertFalse(user.getRoles().isEmpty());
-    }
+	@Test
+	@Order(2)
+	@DisplayName("사용자 이메일을 이용한 조회 테스트")
+	public void findByEmail() {
+		var user = userRepository.findByEmail(EMAIL).get();
+		assertEquals(user.getNickname(), "Genius");
+		var connection = user.getConnection();
+		assertEquals(connection.getId(), 1);
+		assertEquals(connection.getProvider(), GOOGLE);
+		assertFalse(user.getRoles().isEmpty());
+	}
 
-    @Test
-    @Order(3)
-    @DisplayName("사용자 닉네임을 이용한 조회 테스트 [Projections]")
-    public void findByNickname() {
-        List<UserDto> users = userRepository.findByNickname("Genius", UserDto.class);
-        users.stream().forEach(e -> log.info("user : {}" , e));
-        assertTrue(!users.isEmpty());
-    }
+	@Test
+	@Order(3)
+	@DisplayName("사용자 닉네임을 이용한 조회 테스트 [Projections]")
+	public void findByNickname() {
+		List<UserDto> users = userRepository.findByNickname("Genius", UserDto.class);
+		users.stream().forEach(e -> log.info("user : {}", e));
+		assertTrue(!users.isEmpty());
+	}
 
-    @Test
-    @Order(4)
-    @Rollback(false)
-    @Transactional
-    @DisplayName("사용자 정보 변경 테스트")
-    public void userUpdate() {
-        var user = userRepository.findByEmail(EMAIL).get();
-        user.setStatus(UserStatus.BLOCK);
-        var connection = user.getConnection();
-        connection.setAccessToken("2");
-        user.getRoles().add(roleRepository.findById(1l).get());
-        userRepository.save(user);
-        assertEquals(user.getNickname(), "Genius");
-        assertEquals(user.getStatus(), UserStatus.BLOCK);
-    }
+	@Test
+	@Order(4)
+	@Rollback(false)
+	@Transactional
+	@DisplayName("사용자 정보 변경 테스트")
+	public void userUpdate() {
+		var user = userRepository.findByEmail(EMAIL).get();
+		user.setStatus(UserStatus.BLOCK);
+		var connection = user.getConnection();
+		connection.setAccessToken("2");
+		user.getRoles().add(roleRepository.findById(1l).get());
+		userRepository.save(user);
+		assertEquals(user.getNickname(), "Genius");
+		assertEquals(user.getStatus(), UserStatus.BLOCK);
+	}
 
-    @Test
-    @Order(5)
-    @DisplayName("사용자 관련 테이블 Truncate")
-    public void cleanUp() {
-        entityManager.createNativeQuery("TRUNCATE USER").executeUpdate();
-        entityManager.createNativeQuery("TRUNCATE USER_CONNECTION").executeUpdate();
-        entityManager.createNativeQuery("TRUNCATE USER_ROLE").executeUpdate();
-    }
+	@Test
+	@Order(5)
+	@DisplayName("사용자 관련 테이블 Truncate")
+	public void cleanUp() {
+		entityManager.createNativeQuery("TRUNCATE USER").executeUpdate();
+		entityManager.createNativeQuery("TRUNCATE USER_CONNECTION").executeUpdate();
+		entityManager.createNativeQuery("TRUNCATE USER_ROLE").executeUpdate();
+	}
 }

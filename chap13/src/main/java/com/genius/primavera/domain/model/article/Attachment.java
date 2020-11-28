@@ -29,40 +29,41 @@ import lombok.ToString;
 @Table(name = "ARTICLE_ATTACHMENT")
 public class Attachment extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private long id;
 
-    @Column(name = "ARTICLE_ID")
-    private long articleId;
+	@Column(name = "ARTICLE_ID")
+	private long articleId;
 
-    @Column(name = "NAME")
-    private String name;
+	@Column(name = "NAME")
+	private String name;
 
-    @Column(name = "SIZE")
-    private long size;
+	@Column(name = "SIZE")
+	private long size;
 
-    @Column(name = "PATH")
-    private String path;
+	@Column(name = "PATH")
+	private String path;
 
-    @Transient
-    private File file;
+	@Transient
+	private File file;
 
-    public boolean isExists() {
-        return this.id != 0;
-    }
+	public boolean isExists() {
+		return this.id != 0;
+	}
 
-    public static class AttachmentBuilder {
-        private String name;
-        private long size;
-        private String path;
-        private File file;
-        public AttachmentBuilder file(File file) {
-            this.file = file;
-            this.name = file.getName();
-            this.path = file.getAbsolutePath();
-            this.size = file.length();
-            return this;
-        }
-    }
+	public static class AttachmentBuilder {
+		private String name;
+		private long size;
+		private String path;
+		private File file;
+
+		public AttachmentBuilder file(File file) {
+			this.file = file;
+			this.name = file.getName();
+			this.path = file.getAbsolutePath();
+			this.size = file.length();
+			return this;
+		}
+	}
 }

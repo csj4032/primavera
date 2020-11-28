@@ -29,7 +29,6 @@ public class KakaoOAuth2ClientAuthenticationProcessingFilter extends OAuth2Clien
 	@Override
 	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
 		final KakaoUserDetails userDetails = objectMapper.convertValue(((OAuth2Authentication) authResult).getUserAuthentication().getDetails(), KakaoUserDetails.class);
-		System.out.println(userDetails);
 		userDetails.setAccessToken(restTemplate.getAccessToken());
 		super.successfulAuthentication(request, response, chain, primaveraSocialUserDetailsService.doAuthentication(UserConnection.valueOf(userDetails)));
 	}

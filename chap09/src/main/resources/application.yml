@@ -75,7 +75,7 @@ github:
 
 kakao:
   client:
-    clientId: 19b5e8d575d5ba1a8d50601c6b874f9e
+    clientId: ${OAUTH2_KAKAO_CLIENTID}
     accessTokenUri: https://kauth.kakao.com/oauth/token
     userAuthorizationUri: https://kauth.kakao.com/oauth/authorize
     authenticationScheme: form
