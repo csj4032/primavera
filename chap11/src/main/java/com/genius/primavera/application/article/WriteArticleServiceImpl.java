@@ -30,144 +30,144 @@ import static com.genius.primavera.application.PrimaveraUtil.getUser;
 @Service
 public class WriteArticleServiceImpl implements WriteArticleService {
 
-    @Autowired
-    private ModelMapper modelMapper;
+	@Autowired
+	private ModelMapper modelMapper;
 
-    @Autowired
-    private ArticleMapper articleMapper;
+	@Autowired
+	private ArticleMapper articleMapper;
 
-    @Autowired
-    private ArticleContentMapper articleContentMapper;
+	@Autowired
+	private ArticleContentMapper articleContentMapper;
 
-    @Autowired
-    private ArticleCommentMapper articleCommentMapper;
+	@Autowired
+	private ArticleCommentMapper articleCommentMapper;
 
-    @Override
-    @Transactional
-    public Article save(ArticleDto.WriteArticle writeArticle) {
-        Article origin = getOriginArticle(writeArticle);
-        Article article = getArticle(origin, writeArticle, getUser());
-        articleMapper.updateStep(origin.getReference(), origin.getStep());
-        Content content = getContent(writeArticle, article);
-        article.setContent(content);
-        articleMapper.save(article);
-        articleContentMapper.saveContent(content);
-        return article;
-    }
+	@Override
+	@Transactional
+	public Article save(ArticleDto.WriteArticle writeArticle) {
+		Article origin = getOriginArticle(writeArticle);
+		Article article = getArticle(origin, writeArticle, getUser());
+		articleMapper.updateStep(origin.getReference(), origin.getStep());
+		Content content = getContent(writeArticle, article);
+		article.setContent(content);
+		articleMapper.save(article);
+		articleContentMapper.saveContent(content);
+		return article;
+	}
 
-    @Override
-    public Article update(ArticleDto.WriteArticle writeArticle) {
-        Article article = articleMapper.findByIdWithContent(writeArticle.getId());
-        article.setSubject(writeArticle.getSubject());
-        article.setModDt(Instant.now());
-        articleMapper.update(article);
-        articleContentMapper.update(article.getContentsId(), writeArticle.getContents());
-        return article;
-    }
+	@Override
+	public Article update(ArticleDto.WriteArticle writeArticle) {
+		Article article = articleMapper.findByIdWithContent(writeArticle.getId());
+		article.setSubject(writeArticle.getSubject());
+		article.setModDt(Instant.now());
+		articleMapper.update(article);
+		articleContentMapper.update(article.getContentsId(), writeArticle.getContents());
+		return article;
+	}
 
-    @Override
-    public int delete(long id) {
-        Article article = articleMapper.findById(id);
-        if (Objects.isNull(article)) throw new ArticleNotFoundException();
-        article.setStatus(ArticleStatus.DELETE);
-        article.setModDt(Instant.now());
-        return articleMapper.update(article);
-    }
+	@Override
+	public int delete(long id) {
+		Article article = articleMapper.findById(id);
+		if (Objects.isNull(article)) throw new ArticleNotFoundException();
+		article.setStatus(ArticleStatus.DELETE);
+		article.setModDt(Instant.now());
+		return articleMapper.update(article);
+	}
 
-    @Override
-    public ArticleDto.FormArticle findByForForm(WriteType type, long id) {
-        if (type.equals(WriteType.REPLY)) return getReplayForm(id);
-        if (type.equals(WriteType.UPDATE)) return getModifyForm(id);
-        return getEmptyForm();
-    }
+	@Override
+	public ArticleDto.FormArticle findByForForm(WriteType type, long id) {
+		if (type.equals(WriteType.REPLY)) return getReplayForm(id);
+		if (type.equals(WriteType.UPDATE)) return getModifyForm(id);
+		return getEmptyForm();
+	}
 
-    @Override
-    public int comment(ArticleDto.WriteComment writeComment) {
-        Article article = articleMapper.findById(writeComment.getArticle());
-        Comment comment = new Comment();
-        comment.setArticle(article);
-        comment.setAuthor(getUser());
-        comment.setComment(writeComment.getComment());
-        comment.setStatus(ArticleStatus.PUBLIC);
-        comment.setRegDt(Instant.now());
-        return articleCommentMapper.save(comment);
-    }
+	@Override
+	public int comment(ArticleDto.WriteComment writeComment) {
+		Article article = articleMapper.findById(writeComment.getArticle());
+		Comment comment = new Comment();
+		comment.setArticle(article);
+		comment.setAuthor(getUser());
+		comment.setComment(writeComment.getComment());
+		comment.setStatus(ArticleStatus.PUBLIC);
+		comment.setRegDt(Instant.now());
+		return articleCommentMapper.save(comment);
+	}
 
-    @Override
-    public Article findById(long id) {
-        return articleMapper.findById(id);
-    }
+	@Override
+	public Article findById(long id) {
+		return articleMapper.findById(id);
+	}
 
-    @Override
-    public ArticleDto.DetailArticle hitAndFindArticle(long id) {
-        articleHit(id);
-        return findByIdWithContentAndComment(id);
-    }
+	@Override
+	public ArticleDto.DetailArticle hitAndFindArticle(long id) {
+		articleHit(id);
+		return findByIdWithContentAndComment(id);
+	}
 
-    private void articleHit(long id) {
-        articleMapper.articleHit(id);
-    }
+	private void articleHit(long id) {
+		articleMapper.articleHit(id);
+	}
 
-    @Override
-    public ArticleDto.DetailArticle findByIdWithContentAndComment(long id) {
-        return modelMapper.map(articleMapper.findByIdWithContentAndComment(id), ArticleDto.DetailArticle.class);
-    }
+	@Override
+	public ArticleDto.DetailArticle findByIdWithContentAndComment(long id) {
+		return modelMapper.map(articleMapper.findByIdWithContentAndComment(id), ArticleDto.DetailArticle.class);
+	}
 
-    @Override
-    public Paged<ArticleDto.ListArticle> findForPageable(PageRequest pageRequest) {
-        return new Paged<>(pageRequest, modelMapper.map(articleMapper.findForPageable(pageRequest), new TypeToken<List<ArticleDto.ListArticle>>() {
-        }.getType()), articleMapper.findAllCount());
-    }
+	@Override
+	public Paged<ArticleDto.ListArticle> findForPageable(PageRequest pageRequest) {
+		return new Paged<>(pageRequest, modelMapper.map(articleMapper.findForPageable(pageRequest), new TypeToken<List<ArticleDto.ListArticle>>() {
+		}.getType()), articleMapper.findAllCount());
+	}
 
-    private Article getOriginArticle(@NotNull ArticleDto.WriteArticle writeArticle) {
-        if (writeArticle.getWriteType().equals(WriteType.REPLY)) {
-            Article article = articleMapper.findById(writeArticle.getPId());
-            if (Objects.isNull(article)) throw new ArticleNotFoundException();
-            return article;
-        }
-        return new Article();
-    }
+	private Article getOriginArticle(@NotNull ArticleDto.WriteArticle writeArticle) {
+		if (writeArticle.getWriteType().equals(WriteType.REPLY)) {
+			Article article = articleMapper.findById(writeArticle.getPId());
+			if (Objects.isNull(article)) throw new ArticleNotFoundException();
+			return article;
+		}
+		return new Article();
+	}
 
-    private Article getArticle(@NotNull Article origin, @NotNull ArticleDto.WriteArticle writeArticle, User author) {
-        var article = new Article();
-        article.setPId(origin.getId());
-        article.setReference(origin.getReference());
-        article.setStep(origin.getStep() + 1);
-        article.setLevel(origin.getLevel() + 1);
-        article.setAuthor(author);
-        article.setSubject(writeArticle.getSubject());
-        article.setStatus(writeArticle.getStatus());
-        article.setRegDt(Instant.now());
-        return article;
-    }
+	private Article getArticle(@NotNull Article origin, @NotNull ArticleDto.WriteArticle writeArticle, User author) {
+		var article = new Article();
+		article.setPId(origin.getId());
+		article.setReference(origin.getReference());
+		article.setStep(origin.getStep() + 1);
+		article.setLevel(origin.getLevel() + 1);
+		article.setAuthor(author);
+		article.setSubject(writeArticle.getSubject());
+		article.setStatus(writeArticle.getStatus());
+		article.setRegDt(Instant.now());
+		return article;
+	}
 
-    private Content getContent(@NotNull ArticleDto.WriteArticle writeArticle, @NotNull Article article) {
-        Content content = new Content();
-        content.setArticle(article);
-        content.setContents(writeArticle.getContents());
-        return content;
-    }
+	private Content getContent(@NotNull ArticleDto.WriteArticle writeArticle, @NotNull Article article) {
+		Content content = new Content();
+		content.setArticle(article);
+		content.setContents(writeArticle.getContents());
+		return content;
+	}
 
-    private ArticleDto.FormArticle getEmptyForm() {
-        return new ArticleDto.FormArticle();
-    }
+	private ArticleDto.FormArticle getEmptyForm() {
+		return new ArticleDto.FormArticle();
+	}
 
-    private ArticleDto.FormArticle getModifyForm(long id) {
-        ArticleDto.FormArticle formArticle = new ArticleDto.FormArticle();
-        Article article = articleMapper.findByIdWithContent(id);
-        formArticle.setId(id);
-        formArticle.setSubject(article.getSubject());
-        formArticle.setContents(article.getContents());
-        formArticle.setWriteType(WriteType.UPDATE);
-        return formArticle;
-    }
+	private ArticleDto.FormArticle getModifyForm(long id) {
+		ArticleDto.FormArticle formArticle = new ArticleDto.FormArticle();
+		Article article = articleMapper.findByIdWithContent(id);
+		formArticle.setId(id);
+		formArticle.setSubject(article.getSubject());
+		formArticle.setContents(article.getContents());
+		formArticle.setWriteType(WriteType.UPDATE);
+		return formArticle;
+	}
 
-    private ArticleDto.FormArticle getReplayForm(long id) {
-        ArticleDto.FormArticle formArticle = new ArticleDto.FormArticle();
-        Article article = articleMapper.findById(id);
-        formArticle.setPId(id);
-        formArticle.setSubject("[RE] " + article.getSubject());
-        formArticle.setWriteType(WriteType.REPLY);
-        return formArticle;
-    }
+	private ArticleDto.FormArticle getReplayForm(long id) {
+		ArticleDto.FormArticle formArticle = new ArticleDto.FormArticle();
+		Article article = articleMapper.findById(id);
+		formArticle.setPId(id);
+		formArticle.setSubject("[RE] " + article.getSubject());
+		formArticle.setWriteType(WriteType.REPLY);
+		return formArticle;
+	}
 }
