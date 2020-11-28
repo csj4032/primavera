@@ -3,6 +3,7 @@ package com.genius.primavera.application.article;
 import com.genius.primavera.domain.model.article.Article;
 import com.genius.primavera.domain.model.article.ArticleDto;
 import com.genius.primavera.domain.model.article.WriteType;
+import com.genius.primavera.interfaces.WithMockPrimaveraUserDetails;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -50,7 +51,6 @@ class WriteArticleServiceTest {
 
 	@Test
 	@Order(1)
-	@Disabled
 	@DisplayName("Mock 글 쓰기")
 	public void mockWriteTest() {
 		mockWriteArticleService = Mockito.mock(WriteArticleService.class);
@@ -61,8 +61,7 @@ class WriteArticleServiceTest {
 	@Test
 	@Order(2)
 	@DisplayName("원글 첫번째 쓰기")
-	//@WithMockPrimaveraUserDetails
-	@WithUserDetails(value = "Genius Choi", userDetailsServiceBeanName = "primaveraUserDetailsService")
+	@WithMockPrimaveraUserDetails
 	public void writeTest() {
 		article_1 = writeArticleService.save(writeRequestArticle);
 		article_1 = writeArticleService.findById(article_1.getId());
