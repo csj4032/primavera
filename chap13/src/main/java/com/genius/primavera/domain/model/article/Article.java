@@ -40,72 +40,72 @@ import org.jetbrains.annotations.NotNull;
 @AllArgsConstructor
 public class Article extends BaseEntity {
 
-    @Id
-    @Column(name = "ID")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+	@Id
+	@Column(name = "ID")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private long id;
 
-    @Column(name = "P_ID")
-    private long pId;
+	@Column(name = "P_ID")
+	private long pId;
 
-    @Column(name = "REFERENCE")
-    private long reference;
+	@Column(name = "REFERENCE")
+	private long reference;
 
-    @Column(name = "STEP")
-    private int step;
+	@Column(name = "STEP")
+	private int step;
 
-    @Column(name = "LEVEL")
-    private int level;
+	@Column(name = "LEVEL")
+	private int level;
 
-    @Column(name = "STATUS")
-    @Convert(converter = ArticleStatusAttributeConverter.class)
-    private ArticleStatus status;
+	@Column(name = "STATUS")
+	@Convert(converter = ArticleStatusAttributeConverter.class)
+	private ArticleStatus status;
 
-    @Column(name = "SUBJECT")
-    private String subject;
+	@Column(name = "SUBJECT")
+	private String subject;
 
-    @ManyToOne(fetch = FetchType.EAGER, targetEntity = User.class)
-    @JoinColumn(name = "AUTHOR", nullable = false, updatable = false)
-    private User author;
+	@ManyToOne(fetch = FetchType.EAGER, targetEntity = User.class)
+	@JoinColumn(name = "AUTHOR", nullable = false, updatable = false)
+	private User author;
 
-    @Column(name = "HIT")
-    private int hit;
+	@Column(name = "HIT")
+	private int hit;
 
-    @Column(name = "RECOMMEND")
-    private int recommend;
+	@Column(name = "RECOMMEND")
+	private int recommend;
 
-    @Column(name = "DISAPPROVE")
-    private int disapprove;
+	@Column(name = "DISAPPROVE")
+	private int disapprove;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "CONTENT_ID", referencedColumnName = "ID")
-    private Content content;
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "CONTENT_ID", referencedColumnName = "ID")
+	private Content content;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "ARTICLE_ID")
-    private List<Comment> comments;
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinColumn(name = "ARTICLE_ID")
+	private List<Comment> comments;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "ARTICLE_ID")
-    private List<Attachment> attachments;
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinColumn(name = "ARTICLE_ID")
+	private List<Attachment> attachments;
 
-    public long getAuthorId() {
-        return author.getId();
-    }
+	public long getAuthorId() {
+		return author.getId();
+	}
 
-    public String getAuthorName() {
-        return author.getNickname();
-    }
+	public String getAuthorName() {
+		return author.getNickname();
+	}
 
-    public String getContents() {
-        return content.getContents();
-    }
+	public String getContents() {
+		return content.getContents();
+	}
 
-    public long getContentsId() {
-        return content.getId();
-    }
+	public long getContentsId() {
+		return content.getId();
+	}
 
-    public void setContents(String contents) {
-        content.setContents(contents);
-    }
+	public void setContents(String contents) {
+		content.setContents(contents);
+	}
 }

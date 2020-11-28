@@ -38,88 +38,88 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ArticleRepositoryTest {
 
-    @Autowired
-    private ArticleRepository articleRepository;
+	@Autowired
+	private ArticleRepository articleRepository;
 
-    @Autowired
-    private CommentRepository commentRepository;
+	@Autowired
+	private CommentRepository commentRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+	@Autowired
+	private UserRepository userRepository;
 
-    @PersistenceContext(unitName = "default")
-    private EntityManager entityManager;
+	@PersistenceContext(unitName = "default")
+	private EntityManager entityManager;
 
-    @Test
-    @Order(1)
-    @DisplayName("게시글 관련 테이블 Truncate")
-    public void cleanUp() {
-        entityManager.createNativeQuery("TRUNCATE ARTICLE").executeUpdate();
-        entityManager.createNativeQuery("TRUNCATE ARTICLE_ATTACHMENT").executeUpdate();
-        entityManager.createNativeQuery("TRUNCATE ARTICLE_CONTENT").executeUpdate();
-    }
+	@Test
+	@Order(1)
+	@DisplayName("게시글 관련 테이블 Truncate")
+	public void cleanUp() {
+		entityManager.createNativeQuery("TRUNCATE ARTICLE").executeUpdate();
+		entityManager.createNativeQuery("TRUNCATE ARTICLE_ATTACHMENT").executeUpdate();
+		entityManager.createNativeQuery("TRUNCATE ARTICLE_CONTENT").executeUpdate();
+	}
 
-    @Test
-    @Order(2)
-    @DisplayName("게시글 작성 테스트")
-    @Rollback(false)
-    @Transactional
-    public void writeArticleTest() {
-        Article article = new Article();
-        article.setPId(0);
-        article.setReference(0);
-        article.setStep(0);
-        article.setAuthor(userRepository.findById(1l).orElse(null));
-        article.setSubject("게시글 제목입니다. 1");
-        article.setStatus(ArticleStatus.PUBLIC);
-        article.setContent(Content.builder().contents("게시글 내용입니다. 1").build());
-        article.setAttachments(List.of(Attachment.builder().name("file1.txt").path("/path").size(100).build()));
-        articleRepository.save(article);
-    }
+	@Test
+	@Order(2)
+	@DisplayName("게시글 작성 테스트")
+	@Rollback(false)
+	@Transactional
+	public void writeArticleTest() {
+		Article article = new Article();
+		article.setPId(0);
+		article.setReference(0);
+		article.setStep(0);
+		article.setAuthor(userRepository.findById(1l).orElse(null));
+		article.setSubject("게시글 제목입니다. 1");
+		article.setStatus(ArticleStatus.PUBLIC);
+		article.setContent(Content.builder().contents("게시글 내용입니다. 1").build());
+		article.setAttachments(List.of(Attachment.builder().name("file1.txt").path("/path").size(100).build()));
+		articleRepository.save(article);
+	}
 
-    @Test
-    @Order(3)
-    @DisplayName("게시글 조회 테스트 [1번 글]")
-    public void findByIdTest() {
-        Article article = articleRepository.findById(1l).orElse(null);
+	@Test
+	@Order(3)
+	@DisplayName("게시글 조회 테스트 [1번 글]")
+	public void findByIdTest() {
+		Article article = articleRepository.findById(1l).orElse(null);
 
-        assertNotNull(article);
-        assertEquals("게시글 제목입니다. 1", article.getSubject());
-        assertEquals("Genius", article.getAuthorName());
+		assertNotNull(article);
+		assertEquals("게시글 제목입니다. 1", article.getSubject());
+		assertEquals("Genius", article.getAuthorName());
 
-        assertNotNull(article.getComments());
-        assertTrue(!article.getComments().isEmpty());
-        assertIterableEquals(article.getComments(), commentRepository.findByArticleId(1l));
+		assertNotNull(article.getComments());
+		assertTrue(!article.getComments().isEmpty());
+		assertIterableEquals(article.getComments(), commentRepository.findByArticleId(1l));
 
-        assertNotNull(article.getAttachments());
-        assertTrue(!article.getAttachments().isEmpty());
-    }
+		assertNotNull(article.getAttachments());
+		assertTrue(!article.getAttachments().isEmpty());
+	}
 
-    @Test
-    @Order(4)
-    @DisplayName("게시글 수정 테스트 [1번 글]")
-    @Rollback(false)
-    @Transactional
-    public void updateArticleTest() {
-        Article article = articleRepository.findById(1).orElse(null);
-        article.setSubject("게시글 제목입니다.(수정) 1");
-        Content content = article.getContent();
-        content.setContents("게시글 내용입니다.(수정) 1");
-        article.getAttachments().add(Attachment.builder().name("file2.txt").path("/path").size(100).build());
-        articleRepository.save(article);
-    }
+	@Test
+	@Order(4)
+	@DisplayName("게시글 수정 테스트 [1번 글]")
+	@Rollback(false)
+	@Transactional
+	public void updateArticleTest() {
+		Article article = articleRepository.findById(1).orElse(null);
+		article.setSubject("게시글 제목입니다.(수정) 1");
+		Content content = article.getContent();
+		content.setContents("게시글 내용입니다.(수정) 1");
+		article.getAttachments().add(Attachment.builder().name("file2.txt").path("/path").size(100).build());
+		articleRepository.save(article);
+	}
 
-    @Test
-    @Order(5)
-    @DisplayName("게시글 수정 후 조회 테스트 [1번 글]")
-    public void updateAfterFindByIdTest() {
-        Article article = articleRepository.findById(1l).orElse(null);
-        assertNotNull(article);
-        assertEquals("게시글 제목입니다.(수정) 1", article.getSubject());
-        assertEquals("게시글 내용입니다.(수정) 1", article.getContents());
+	@Test
+	@Order(5)
+	@DisplayName("게시글 수정 후 조회 테스트 [1번 글]")
+	public void updateAfterFindByIdTest() {
+		Article article = articleRepository.findById(1l).orElse(null);
+		assertNotNull(article);
+		assertEquals("게시글 제목입니다.(수정) 1", article.getSubject());
+		assertEquals("게시글 내용입니다.(수정) 1", article.getContents());
 
-        assertNotNull(article.getAttachments());
-        assertTrue(article.getAttachments().size() == 2);
-        article.getAttachments().forEach(e -> assertEquals("/path", e.getPath()));
-    }
+		assertNotNull(article.getAttachments());
+		assertTrue(article.getAttachments().size() == 2);
+		article.getAttachments().forEach(e -> assertEquals("/path", e.getPath()));
+	}
 }

@@ -26,23 +26,23 @@ import lombok.extern.slf4j.Slf4j;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class PostRepositoryTest {
 
-    @Autowired
-    private PostRepository postRepository;
+	@Autowired
+	private PostRepository postRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+	@Autowired
+	private UserRepository userRepository;
 
-    @Test
-    @Order(1)
-    @Rollback(false)
-    @Transactional
-    @DisplayName("포스트 작성 테스트")
-    public void writePostTest() {
-        Post post = new Post();
-        post.setWriter(userRepository.findById(1).orElseThrow());
-        post.setSubject("안녕하세요");
-        post.setContents("안녕하세요");
-        post.setStatus(PostStatus.PUBLIC);
-        postRepository.save(post);
-    }
+	@Test
+	@Order(1)
+	@Rollback(false)
+	@Transactional
+	@DisplayName("포스트 작성 테스트")
+	public void writePostTest() {
+		Post post = new Post();
+		post.setWriter(userRepository.findById(1).orElseThrow());
+		post.setSubject("안녕하세요");
+		post.setContents("안녕하세요");
+		post.setStatus(PostStatus.PUBLIC);
+		postRepository.save(post);
+	}
 }

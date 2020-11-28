@@ -21,6 +21,7 @@ public class Team {
 	@Column(name = "ID")
 	@GeneratedValue(strategy = IDENTITY)
 	private Long id;
+
 	@NonNull
 	@Column(name = "NAME")
 	private String name;

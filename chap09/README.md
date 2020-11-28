@@ -51,7 +51,24 @@ github:
     clientAuthenticationScheme: form
   resource:
     userInfoUri: https://api.github.com/user
+
+kakao:
+  client:
+    clientId: ${OAUTH2_KAKAO_CLIENTID}
+    accessTokenUri: https://kauth.kakao.com/oauth/token
+    userAuthorizationUri: https://kauth.kakao.com/oauth/authorize
+    authenticationScheme: form
+    clientAuthenticationScheme: form
+  resource:
+    userInfoUri: https://kapi.kakao.com/v2/user/me
 ```
+
+### Flow
+* AuthorizationCodeAccessTokenProvider
+* OAuth2ClientAuthenticationProcessingFilter
+* OAuth2RestTemplate
+* OAuth2AccessTokenSupport
+* DefaultClientAuthenticationHandler
 
 ### Application SSL
 
@@ -71,6 +88,7 @@ keytool -genkeypair -alias primavera -storetype PKCS12 -keyalg RSA -keysize 2048
  * https://localhost:8443/login/google
  * https://localhost:8443/login/facebook
  * https://localhost:8443/login/github
+ * https://localhost:8443/login/kakao
 
 ### ETC
 * https://spring.io/guides/tutorials/spring-boot-oauth2/
@@ -81,3 +99,4 @@ keytool -genkeypair -alias primavera -storetype PKCS12 -keyalg RSA -keysize 2048
   * https://developers.facebook.com/docs/facebook-login/manually-build-a-login-flow/
 * https://github.com
   * https://developer.github.com/apps/building-oauth-apps/authorizing-oauth-apps/
+* https://github.com/spring-projects/spring-security/wiki/OAuth-2.0-Migration-Guide
