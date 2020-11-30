@@ -1,9 +1,6 @@
 spring:
   application:
     name: Privamera
-  mvc:
-    favicon:
-      enabled: false
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
     url: jdbc:mariadb://localhost:3306/primavera?useLegacyDatetimeCode=false&serverTimezone=Asia/Seoul
@@ -76,3 +73,9 @@ server:
 
 storage:
   location: upload
+
+kakao:
+  api:
+    url: https://kapi.kakao.com
+    talk-social:
+      friend-list: v1/api/talk/friends
