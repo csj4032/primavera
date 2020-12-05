@@ -10,7 +10,8 @@ spring:
 server:
   port: 8081
   tomcat:
-    max-threads: 1
+    threads:
+      max: 1
 
 logging:
   level:

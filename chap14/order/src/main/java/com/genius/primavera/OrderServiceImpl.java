@@ -1,14 +1,10 @@
 package com.genius.primavera;
 
-import com.genius.primavera.saleed.SaleCommand;
-import com.genius.primavera.saleed.SaleRoleTable;
-import com.genius.primavera.saleed.SaleRoleType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
 
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.List;
 
 @Slf4j
@@ -19,7 +15,13 @@ public class OrderServiceImpl implements OrderService {
 
 	@Override
 	public Flux<Order> findByUserId(String userId) {
-		return orderRepository.findAll();
+		try {
+			Thread.sleep(0);
+			log.debug("Sleep!!!");
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		return orderRepository.findByUserId(Long.valueOf(userId));
 	}
 
 	private List<Order> newOrderInstance(int n) {

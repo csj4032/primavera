@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class LoadTesting {
 
 	static AtomicInteger counter = new AtomicInteger(0);
-	static String url = "http://localhost:8080/router/users/{userId}/orders";
+	static String url = "http://localhost:8080/users/{userId}/orders";
 	static String urlMvc = "http://localhost:8080/mvc/users/{userId}/orders";
 
 	public static void main(String[] args) throws InterruptedException, BrokenBarrierException {
