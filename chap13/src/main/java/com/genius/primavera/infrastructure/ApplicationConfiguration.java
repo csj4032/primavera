@@ -113,6 +113,7 @@ public class ApplicationConfiguration implements WebMvcConfigurer {
 		return LettucePoolingClientConfiguration.builder()
 				.poolConfig(genericObjectPoolConfig())
 				.commandTimeout(Duration.ofMillis(100000))
+				.clientOptions()
 				.shutdownTimeout(Duration.ofMillis(100000))
 				.clientResources(DefaultClientResources.create()).build();
 	}

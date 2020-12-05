@@ -9,7 +9,7 @@ dependencies {
     implementation('org.modelmapper:modelmapper:2.3.3')
     implementation('org.projectlombok:lombok')
     implementation('com.squareup.okhttp3:okhttp:4.2.2')
-    implementation('org.yaml:snakeyaml:1.25')
+    implementation('org.yaml:snakeyaml:1.27')
     annotationProcessor('org.projectlombok:lombok')
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude module: 'junit'

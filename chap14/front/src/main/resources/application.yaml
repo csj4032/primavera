@@ -10,7 +10,8 @@ spring:
 server:
   port: 8080
   tomcat:
-    max-threads: 10
+    threads:
+      max: 10
     max-connections: 10
     connection-timeout: 1000
 

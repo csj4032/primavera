@@ -11,7 +11,7 @@ buildscript {
         classpath("io.spring.gradle:dependency-management-plugin:1.0.9.RELEASE")
         classpath("gradle.plugin.org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.9.0")
         classpath("net.saliman:gradle-cobertura-plugin:3.0.0")
-        classpath("gradle.plugin.com.ewerk.gradle.plugins:querydsl-plugin:1.0.10")
+        //classpath("gradle.plugin.com.ewerk.gradle.plugins:querydsl-plugin:1.0.10")
     }
 }
 
@@ -35,7 +35,7 @@ subprojects {
     apply plugin: 'org.springframework.boot'
     apply plugin: 'io.spring.dependency-management'
     apply plugin: 'com.github.kt3k.coveralls'
-    apply plugin: "com.ewerk.gradle.plugins.querydsl"
+    //apply plugin: "com.ewerk.gradle.plugins.querydsl"
     repositories {
         mavenCentral()
     }

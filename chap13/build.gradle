@@ -66,5 +66,5 @@ dependencies {
     }
     testImplementation('org.springframework.security:spring-security-test')
 
-    implementation project(":spring-boot-starter-lucy-filter")
+    //implementation project(":spring-boot-starter-lucy-filter")
 }
