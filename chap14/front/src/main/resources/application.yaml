@@ -11,9 +11,7 @@ server:
   port: 8080
   tomcat:
     threads:
-      max: 10
-    max-connections: 10
-    connection-timeout: 1000
+      max: 1
 
 management:
   endpoints:

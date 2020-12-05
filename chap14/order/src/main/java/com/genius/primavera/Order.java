@@ -14,9 +14,10 @@ import org.springframework.data.relational.core.mapping.Table;
 @Table(value = "ORDERS")
 public class Order {
 
-	public Order(Long userId, Long productId) {
+	public Order(Long userId, Long productId, Long amount) {
 		this.userId = userId;
 		this.productId = productId;
+		this.amount = amount;
 	}
 
 	@Id

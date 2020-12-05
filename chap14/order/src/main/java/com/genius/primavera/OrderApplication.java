@@ -23,7 +23,6 @@ public class OrderApplication {
 	private static String USERS_USER_ID_ORDER_URL = "users/{userId}/orders";
 
 	public static void main(String[] args) {
-
 		new SpringApplicationBuilder(OrderApplication.class)
 				.initializers((GenericApplicationContext context) -> {
 					context.registerBean(RouterFunction.class, () -> {
@@ -41,6 +40,8 @@ public class OrderApplication {
 		log.debug("OrderApplication Start... {}", applicationReadyEvent);
 		var orderRepository = applicationReadyEvent.getApplicationContext().getBean(OrderRepository.class);
 		orderRepository.deleteAll().subscribe();
-		orderRepository.saveAll(LongStream.rangeClosed(1, 100).mapToObj(e -> new Order(1L, e)).collect(Collectors.toList())).subscribe();
+		LongStream.rangeClosed(1, 100).forEach(u -> {
+			orderRepository.saveAll(LongStream.rangeClosed(1, 100).mapToObj(p -> new Order(u, p, 100L)).collect(Collectors.toList())).subscribe();
+		});
 	}
 }
