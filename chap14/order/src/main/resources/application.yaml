@@ -13,14 +13,14 @@ spring:
     pool:
       initial-size: 10
       max-size: 20
-      max-idle-time: 30m
+      max-idle-time: 300m
       validation-query: SELECT 1
 
 server:
   port: 8082
   tomcat:
     threads:
-      max: 2
+      max: 1
 
 logging:
   level:
