@@ -8,11 +8,13 @@ dependencies {
     implementation('org.modelmapper:modelmapper:2.3.3')
     implementation('org.projectlombok:lombok')
     implementation('com.squareup.okhttp3:okhttp:4.2.2')
-    compileOnly("org.mariadb:r2dbc-mariadb:0.8.2-alpha2")
+    implementation('org.hibernate:hibernate-validator:6.0.13.Final')
+    compileOnly("org.mariadb:r2dbc-mariadb:0.8.4-rc")
     compileOnly("io.r2dbc:r2dbc-pool:0.8.3.RELEASE")
     annotationProcessor('org.projectlombok:lombok')
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude module: 'junit'
+        exclude module: 'junit-vintage-engine'
     }
     testImplementation('org.springframework.security:spring-security-test')
 }

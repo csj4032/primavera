@@ -23,6 +23,6 @@ public class FrontHandler {
 					Mono<Product> productMono = webClient.build().get().uri(PRODUCT_URL, order.getProductId()).retrieve().bodyToMono(Product.class);
 					return productMono.map(product -> new Order(order.getId(), order.getProductId(), product));
 				});
-		return userMono.zipWhen(user -> orderFlux.collectList()).map(t -> new FrontOrder(t.getT1(), t.getT2()));
+		return Mono.zip(userMono, orderFlux.collectList()).map(t -> new FrontOrder(t.getT1(), t.getT2()));
 	}
 }
