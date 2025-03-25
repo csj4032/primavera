@@ -1,31 +1,18 @@
 spring:
   application:
-    name: Privamera
-  datasource:
-    driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://localhost:3306/primavera
-    username: primavera
-    password: primavera
-    hikari:
-      auto-commit: false
-      data-source-properties:
-        cachePrepStmts: false
-        useServerPrepStmts: false
-        useLocalSessionState: false
-        cacheResultSetMetadata: fales
-        preparedStatementCacheQueries: 0
-  aop:
-    proxy-target-class: true
+    name: privamera
+  profiles:
+    active: local
+    group:
+      local:
+        - console-appender
+        - file-debug-appender
+        - file-error-appender
+        - file-info-appender
+        - file-warn-appender
+      test:
+        - console-appender
 
-logging:
-  config: classpath:logback.xml
-
-mybatis:
-  configuration:
-    map-underscore-to-camel-case: true
-    default-fetch-size: 1000
-    default-statement-timeout: 30
-    cache-enabled: false
-    local-cache-scope: statement
-  type-aliases-package: com.genius.primavera.domain
-  type-handlers-package: com.genius.primavera.domain
+primavera:
+  logs:
+    path: ./logs
