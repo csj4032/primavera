@@ -8,6 +8,10 @@ spring:
     charset: UTF-8
     location: classpath:primavera.txt
 
+server:
+  tomcat:
+    use-apr: never
+
 logging:
   level:
     org.springframework: debug

@@ -1,27 +1,23 @@
 package com.genius.primavera.interfaces;
 
 import com.genius.primavera.application.UserService;
-import com.genius.primavera.domain.model.User;
-
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
 @Slf4j
 @Controller
+@RequiredArgsConstructor
 public class LoginController {
 
-	@Autowired
-	private UserService userService;
+	private final UserService userService;
 
 	@GetMapping(value = "/login")
 	public String loginView() {
@@ -50,6 +46,6 @@ public class LoginController {
 		session.setAttribute("user", userService.findByEmail(email));
 		response.addHeader("auth", "success");
 		model.addAttribute("message", "success");
-		return "index";
+		return "redirect:/";
 	}
 }

@@ -8,6 +8,6 @@ dependencies {
     compileOnly "org.hibernate:hibernate-validator:${hibernateValidatorVersion}"
     compileOnly "com.zaxxer:HikariCP:${hikariCPVersion}"
     testImplementation "org.springframework.boot:spring-boot-starter-test"
-    testImplementation "org.springframework.security:spring-security-test"
+    testImplementation "org.springframework.security:spring-security-crypto:${springSecurityVersion}"
     testImplementation "org.mybatis.spring.boot:mybatis-spring-boot-starter-test:${mybatisSpringBootStarterVersion}"
 }

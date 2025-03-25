@@ -55,8 +55,8 @@ public class ManyToManyBidirectional {
 	@Order(2)
 	@DisplayName("출발지, 도착지 조회")
 	public void find() {
-		var origin = entityManager.find(Origin.class, 1l);
-		var destination = entityManager.find(Destination.class, 1l);
+		var origin = entityManager.find(Origin.class, 1L);
+		var destination = entityManager.find(Destination.class, 1L);
 		log.info("origin : {}", origin);
 		log.info("destination : {}", destination);
 	}
