@@ -1,16 +1,15 @@
 dependencies {
-    implementation('org.springframework.boot:spring-boot-starter-aop')
-    implementation('org.springframework.boot:spring-boot-starter-web')
-    implementation('org.springframework.boot:spring-boot-starter-thymeleaf')
-    implementation('org.springframework.boot:spring-boot-starter-validation')
-    implementation('commons-io:commons-io:2.6')
-    implementation('org.mariadb.jdbc:mariadb-java-client:2.4.1')
-    compileOnly('org.projectlombok:lombok')
-    annotationProcessor('org.projectlombok:lombok')
+    implementation "org.springframework.boot:spring-boot-starter-aop"
+    implementation "org.springframework.boot:spring-boot-starter-web"
+    implementation "org.springframework.boot:spring-boot-starter-thymeleaf"
+    implementation "org.springframework.boot:spring-boot-starter-validation"
+    implementation "commons-io:commons-io:${commonsIoVersion}"
+    implementation "org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}"
+    compileOnly "org.jetbrains:annotations:${jetbrainsAnnotationsVersion}"
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude module: 'junit'
         exclude module: 'junit-vintage-engine'
     }
-    testImplementation('org.springframework.security:spring-security-test')
-    compile project(":chap00")
+    testImplementation "org.springframework.security:spring-security-test"
+    compileOnly project(":chap00")
 }

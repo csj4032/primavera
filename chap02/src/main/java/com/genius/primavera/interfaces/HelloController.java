@@ -16,33 +16,32 @@ import org.springframework.web.bind.annotation.PathVariable;
 @RequiredArgsConstructor
 public class HelloController {
 
-	private final HelloService helloService;
+    private final HelloService helloService;
 
-	@GetMapping("/hello")
-	@PrimaveraLogging(type = "Controller")
-	@CrossOrigin(origins = "http://localhost:8080")
-	public String helloWorld(Model model) {
-		model.addAttribute("hello", helloService.getUsers());
-		return "hello";
-	}
+    @GetMapping("/hello")
+    @PrimaveraLogging(type = "Controller")
+    @CrossOrigin(origins = "http://localhost:8080")
+    public String helloWorld(Model model) {
+        model.addAttribute("hello", helloService.getUsers());
+        return "hello";
+    }
 
-	@GetMapping("/hello/{id}")
-	@PrimaveraLogging(type = "Controller")
-	public String helloWorld(Model model, @PathVariable(name = "id") long id) {
-		model.addAttribute("hello", helloService.getUserById(id));
-		return "hello";
-	}
+    @GetMapping("/hello/{id}")
+    @PrimaveraLogging(type = "Controller")
+    public String helloWorld(Model model, @PathVariable(name = "id") long id) {
+        model.addAttribute("hello", helloService.getUserById(id));
+        return "hello";
+    }
 
-	@GetMapping("/oops")
-	@PrimaveraLogging(type = "Controller")
-	public String oops() {
-		if (1 == 1) throw new OopsException("oops");
-		return "hello";
-	}
+    @GetMapping("/oops")
+    @PrimaveraLogging(type = "Controller")
+    public String oops() {
+        throw new OopsException("oops");
+    }
 
-	@GetMapping("/order")
-	@PrimaveraLogging(type = "Controller")
-	public String order() {
-		return "hello";
-	}
+    @GetMapping("/order")
+    @PrimaveraLogging(type = "Controller")
+    public String order() {
+        return "hello";
+    }
 }
