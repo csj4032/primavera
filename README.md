@@ -10,7 +10,7 @@
 * IntelliJ IDEA (2024.2.5)
 * MariaDB 10.3.14
 * Springboot 3.3.4.RELEASE (https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.4-Release-Notes)
-* Springboot Security 2.1.6.RELEASE
+* Springboot Security 6.4.4.RELEASE
 * Thymeleaf
 * Mybatis
 * JPA

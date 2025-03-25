@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -15,6 +16,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@ActiveProfiles("test")
 @ExtendWith(SpringExtension.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class LoginControllerTest {
@@ -36,18 +38,17 @@ public class LoginControllerTest {
 	@Order(2)
 	@DisplayName("로그인 시도 : 성공")
 	public void loginIn() throws Exception {
-		mockMvc.perform(post("/login").param("email", "Genius Choi").param("password", "{bcrypt}$2a$10$HaDq9M2.gGCLOR8JPAL6teKzXbFwRrdOAf9S16tUB6DrjB8JRIA4i"))
-				.andExpect(status().isOk())
+		mockMvc.perform(post("/login").param("email", "genius_0@gmail.com").param("password", "secret"))
+				.andExpect(status().is3xxRedirection())
 				.andExpect(header().exists("auth"))
-				.andExpect(view().name("index"))
-				.andExpect(model().attribute("message", "success"));
+				.andExpect(view().name("redirect:/"));
 	}
 
 	@Test
 	@Order(3)
 	@DisplayName("로그인 시도 : 실패")
 	public void loginInFalse() throws Exception {
-		mockMvc.perform(post("/login").param("email", "Genius Choi").param("password", ""))
+		mockMvc.perform(post("/login").param("email", "genius_0@gmail.com").param("password", ""))
 				.andExpect(status().isOk())
 				.andExpect(view().name("login"))
 				.andExpect(model().attribute("message", "failure"));
