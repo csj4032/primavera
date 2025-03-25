@@ -1,20 +1,20 @@
 dependencies {
-    implementation('org.springframework.boot:spring-boot-starter-web')
-    implementation('org.springframework.boot:spring-boot-starter-jdbc')
-    implementation('org.springframework.boot:spring-boot-starter-data-jpa')
-    implementation('com.squareup.retrofit2:retrofit:2.9.0')
-    implementation('com.squareup.retrofit2:converter-gson:2.9.0')
-    implementation('org.hibernate:hibernate-validator:6.0.13.Final')
-    implementation('com.google.code.gson:gson:2.8.5')
-    runtime('com.h2database:h2:1.4.199')
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-jdbc")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("com.squareup.retrofit2:retrofit:${retrofitVersion}")
+    implementation("com.squareup.retrofit2:converter-gson:${retrofitVersion}")
+    implementation("org.hibernate:hibernate-validator:6.0.13.Final")
+    implementation("com.google.code.gson:gson:${gsonVersion}")
+    implementation("javax.annotation:javax.annotation-api:${javaxAnnotationVersion}")
+    runtimeOnly("com.h2database:h2:${h2Version}")
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude module: 'junit'
         exclude module: 'junit-vintage-engine'
     }
 
-    compileOnly group: 'org.projectlombok', name: 'lombok', version: "${lombokVersion}"
-    annotationProcessor group: 'org.projectlombok', name: 'lombok', version: "${lombokVersion}"
-    testCompileOnly group: 'org.projectlombok', name: 'lombok', version: "${lombokVersion}"
-    testAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: "${lombokVersion}"
-
+    compileOnly("org.projectlombok:lombok:${lombokVersion}")
+    annotationProcessor("org.projectlombok:lombok:${lombokVersion}")
+    testCompileOnly("org.projectlombok:lombok:${lombokVersion}")
+    testAnnotationProcessor("org.projectlombok:lombok:${lombokVersion}")
 }

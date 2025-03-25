@@ -1,4 +1,5 @@
 dependencies {
-    implementation('org.springframework.boot:spring-boot-starter-web')
-    compile ('javax.validation:validation-api:2.0.1.Final')
+    implementation "org.springframework.boot:spring-boot-starter-web"
+    implementation "javax.annotation:javax.annotation-api:${javaxAnnotationVersion}"
+    compileOnly "javax.validation:validation-api:${javaxValidationVersion}"
 }

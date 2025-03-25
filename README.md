@@ -5,11 +5,11 @@
 [![Coverage Status](https://coveralls.io/repos/github/csj4032/primavera/badge.svg)](https://coveralls.io/github/csj4032/primavera)
 
 ## Technical Specification
-* Java 15 (Switch expressions, text blocks)
-* Gradle 6.7
-* IntelliJ IDEA (2020.2)
+* Java 21 (Switch expressions, text blocks)
+* Gradle 8.12.1
+* IntelliJ IDEA (2024.2.5)
 * MariaDB 10.3.14
-* Springboot 2.3.4.RELEASE (https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.3-Release-Notes)
+* Springboot 3.3.4.RELEASE (https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.4-Release-Notes)
 * Springboot Security 2.1.6.RELEASE
 * Thymeleaf
 * Mybatis

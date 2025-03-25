@@ -1,9 +1,9 @@
 package com.genius.primavera.infrastructure.interception;
 
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.WriteListener;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.WriteListener;
 import java.io.IOException;
 import java.io.OutputStream;
 

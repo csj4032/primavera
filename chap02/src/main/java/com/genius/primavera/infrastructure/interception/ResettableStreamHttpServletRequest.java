@@ -1,13 +1,14 @@
 package com.genius.primavera.infrastructure.interception;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
 import java.io.IOException;
 import java.io.ByteArrayInputStream;
+
+import jakarta.servlet.ServletInputStream;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequestWrapper;
 import org.apache.commons.io.IOUtils;
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
-import javax.servlet.ServletInputStream;
 
 public class ResettableStreamHttpServletRequest extends HttpServletRequestWrapper {
 

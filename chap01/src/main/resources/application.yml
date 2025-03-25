@@ -1,5 +1,7 @@
 spring:
-  profiles: default
+  config:
+    activate:
+      on-profile: default
   application:
     name: Privamera
   banner:
@@ -41,7 +43,9 @@ plantPlaces:
 ---
 
 spring:
-  profiles: dev
+  config:
+    activate:
+      on-profile: dev
   application:
     name: Privamera
   banner:
