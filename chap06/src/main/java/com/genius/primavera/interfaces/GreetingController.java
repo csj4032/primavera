@@ -13,6 +13,7 @@ public class GreetingController {
 
     @GetMapping(value = "/index")
     public String index(Model model) {
+        model.addAttribute("message", "success");
         return "index";
     }
 }
