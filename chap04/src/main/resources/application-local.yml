@@ -1,13 +1,11 @@
 spring:
-  application:
-    name: Privamera
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
     url: jdbc:mariadb://localhost:3306/primavera
     username: primavera
     password: primavera
     hikari:
-      auto-commit: true
+      auto-commit: false
       data-source-properties:
         cachePrepStmts: false
         useServerPrepStmts: false
@@ -16,9 +14,6 @@ spring:
         preparedStatementCacheQueries: 0
   aop:
     proxy-target-class: true
-
-logging:
-  config: classpath:logback.xml
 
 mybatis:
   configuration:

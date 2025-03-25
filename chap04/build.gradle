@@ -1,18 +1,13 @@
 dependencies {
-    implementation('org.springframework.boot:spring-boot-starter-aop')
-    implementation('org.springframework.boot:spring-boot-starter-jdbc')
-    implementation('org.springframework.boot:spring-boot-starter-web')
-    compile("org.mybatis.spring.boot:mybatis-spring-boot-starter:2.1.3")
-    compile("org.mybatis.dynamic-sql:mybatis-dynamic-sql:1.2.1")
-    compile('org.mariadb.jdbc:mariadb-java-client:2.4.1')
-    compile('org.hibernate:hibernate-validator:6.0.13.Final')
-    compile('com.zaxxer:HikariCP:3.4.5')
-    compileOnly('org.projectlombok:lombok')
-    annotationProcessor('org.projectlombok:lombok')
-    testImplementation('org.springframework.boot:spring-boot-starter-test') {
-        exclude module: 'junit'
-        exclude module: 'junit-vintage-engine'
-    }
-    testImplementation('org.springframework.security:spring-security-test')
-    testImplementation("org.mybatis.spring.boot:mybatis-spring-boot-starter-test:2.1.3")
+    implementation "org.springframework.boot:spring-boot-starter-aop"
+    implementation "org.springframework.boot:spring-boot-starter-jdbc"
+    implementation "org.springframework.boot:spring-boot-starter-web"
+    implementation "org.mybatis.spring.boot:mybatis-spring-boot-starter:${mybatisSpringBootStarterVersion}"
+    implementation "org.mybatis.dynamic-sql:mybatis-dynamic-sql:${mybatisDynamicSqlVersion}"
+    implementation "org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}"
+    compileOnly "org.hibernate:hibernate-validator:${hibernateValidatorVersion}"
+    compileOnly "com.zaxxer:HikariCP:${hikariCPVersion}"
+    testImplementation "org.springframework.boot:spring-boot-starter-test"
+    testImplementation "org.springframework.security:spring-security-test"
+    testImplementation "org.mybatis.spring.boot:mybatis-spring-boot-starter-test:${mybatisSpringBootStarterVersion}"
 }
