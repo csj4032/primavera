@@ -1,6 +1,5 @@
 package com.genius.primavera.application.account;
 
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -10,7 +9,6 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @ToString
-@EqualsAndHashCode(of = "date, amount, description")
 public class AccountInfo {
 
 	private final LocalDate date;

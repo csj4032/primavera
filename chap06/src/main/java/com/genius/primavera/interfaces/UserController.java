@@ -2,11 +2,9 @@ package com.genius.primavera.interfaces;
 
 import com.genius.primavera.application.UserService;
 import com.genius.primavera.domain.model.User;
-
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -15,15 +13,14 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 @RequestMapping(value = "/users")
 public class UserController {
 
-	@Autowired
-	private UserService userService;
+	private final UserService userService;
 
 	@GetMapping
 	public List<User> getUserById() {

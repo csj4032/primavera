@@ -13,6 +13,10 @@ spring:
       test:
         - console-appender
 
+server:
+  tomcat:
+    use-apr: never
+
 primavera:
   logs:
     path: ./logs

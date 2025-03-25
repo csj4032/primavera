@@ -31,7 +31,7 @@ public class SharedPrimaryKeyUniBidirectional {
 	@Order(1)
 	@DisplayName("유저, 주소 저장")
 	public void save() {
-		var user = User.of("user");
+		var user = Member.of("user");
 		var address = Address.of("address");
 		entityTransaction.begin();
 		entityManager.persist(user);
@@ -43,7 +43,7 @@ public class SharedPrimaryKeyUniBidirectional {
 	@Order(2)
 	@DisplayName("유저, 주소 조회")
 	public void find() {
-		var user = entityManager.find(User.class, 1l);
+		var user = entityManager.find(Member.class, 1l);
 		var address = entityManager.find(Address.class, 1l);
 		log.info("user : {}", user);
 		log.info("address : {}", address);

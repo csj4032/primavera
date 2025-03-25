@@ -14,7 +14,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 @NoArgsConstructor
 @AllArgsConstructor
 @RequiredArgsConstructor(staticName = "of")
-public class User {
+public class Member {
 
 	@Id
 	@Column(name = "ID")

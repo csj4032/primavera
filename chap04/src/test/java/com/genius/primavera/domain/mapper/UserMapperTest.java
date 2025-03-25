@@ -8,7 +8,7 @@ import org.mybatis.dynamic.sql.render.RenderingStrategies;
 import org.mybatis.dynamic.sql.select.render.SelectStatementProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
@@ -42,7 +42,7 @@ public class UserMapperTest {
     public static void setUp() {
         users = new ArrayList<>();
         List<Role> roles = List.of(Role.builder().id(1).type(RoleType.USER).build());
-        String password = PasswordEncoderFactories.createDelegatingPasswordEncoder().encode("secret");
+        String password = new BCryptPasswordEncoder().encode("secret");
         UserStatus status = UserStatus.ON;
         for (int i = 0; i < 10; i++) {
             users.add(User.builder()

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true">
+    <springProperty scope="context" name="LOG_PATH" source="primavera.logs.path"/>
+    <timestamp key="BY_DATE" datePattern="yyyy-MM-dd"/>
+    <include resource="logging/logback/console-appender.xml"/>
+    <include resource="logging/logback/file-debug-appender.xml"/>
+    <include resource="logging/logback/file-error-appender.xml"/>
+    <include resource="logging/logback/file-info-appender.xml"/>
+    <include resource="logging/logback/file-warning-appender.xml"/>
+
+    <logger name="com.genius.primavera" level="DEBUG"/>
+
+    <root level="DEBUG">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+</configuration>
