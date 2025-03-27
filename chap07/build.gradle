@@ -1,26 +1,28 @@
 dependencies {
-    implementation('org.springframework.boot:spring-boot-starter-web') {
+    implementation("org.springframework.boot:spring-boot-starter-web") {
         exclude module: "spring-boot-starter-tomcat"
     }
-    implementation('org.springframework.boot:spring-boot-starter-jdbc')
-    implementation('org.springframework.boot:spring-boot-starter-thymeleaf')
-    implementation('org.springframework.boot:spring-boot-devtools')
-    implementation('org.springframework.security:spring-security-core:5.1.5.RELEASE')
-    implementation('org.springframework.security:spring-security-web:5.1.5.RELEASE')
-    implementation('org.springframework.boot:spring-boot-starter-undertow')
-    implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:2.0.1")
-    implementation("org.mybatis.dynamic-sql:mybatis-dynamic-sql:1.1.1")
-    implementation('org.mariadb.jdbc:mariadb-java-client:2.4.1')
-    implementation('org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4.1:1.16')
-    implementation('nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:2.3.0')
-    implementation('com.navercorp.lucy:lucy-xss-servlet:2.0.0')
-    compileOnly('org.projectlombok:lombok')
-    annotationProcessor('org.projectlombok:lombok')
-    testImplementation('org.springframework.boot:spring-boot-starter-test') {
-        exclude module: 'junit'
-        exclude module: 'junit-vintage-engine'
-    }
-    testImplementation('org.springframework.security:spring-security-test')
-
-    //implementation project(":spring-boot-starter-lucy-filter")
+    implementation("org.springframework.boot:spring-boot-starter-undertow")
+    implementation "org.springframework.boot:spring-boot-starter-aop"
+    implementation "org.springframework.boot:spring-boot-starter-jdbc"
+    implementation "org.springframework.boot:spring-boot-starter-thymeleaf"
+    implementation "org.springframework.boot:spring-boot-starter-validation"
+    implementation "org.springframework.boot:spring-boot-devtools"
+    implementation "com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.6.2"
+    implementation "org.springframework.security:spring-security-core:${springSecurityVersion}"
+    implementation "org.springframework.security:spring-security-crypto:${springSecurityVersion}"
+    implementation "org.springframework.security:spring-security-web:${springSecurityVersion}"
+    implementation "org.mybatis.spring.boot:mybatis-spring-boot-starter:${mybatisSpringBootStarterVersion}"
+    implementation "org.mybatis.dynamic-sql:mybatis-dynamic-sql:${mybatisDynamicSqlVersion}"
+    implementation "org.hibernate:hibernate-entitymanager:${hibernateVersion}"
+    implementation "org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}"
+    implementation "nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:${thymeleafLayoutDialectVersion}"
+    implementation "org.graalvm.js:js:20.2.0"
+    implementation "org.graalvm.js:js-scriptengine:20.2.0"
+    implementation "org.webjars:bootstrap:${bootstrapVersion}"
+    implementation "org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4.1:${log4jdbcLog4j2Version}"
+    compileOnly "org.jetbrains:annotations:${jetbrainsAnnotationsVersion}"
+    compileOnly "javax.validation:validation-api:${javaxValidationVersion}"
+    testImplementation "org.springframework.boot:spring-boot-starter-test"
+    implementation project(":spring-boot-starter-lucy-filter")
 }

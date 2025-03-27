@@ -1,11 +1,14 @@
 dependencies {
-    implementation("org.springframework:spring-web")
-    implementation("org.springframework:spring-webmvc")
-    implementation('org.springframework.boot:spring-boot-autoconfigure')
-    implementation('org.springframework.boot:spring-boot-autoconfigure-processor')
-    annotationProcessor('org.springframework.boot:spring-boot-configuration-processor')
-    implementation('com.navercorp.lucy:lucy-xss-servlet:2.0.0')
-    implementation('jakarta.servlet:jakarta.servlet-api:4.0.4')
-    implementation('org.projectlombok:lombok')
-    annotationProcessor('org.projectlombok:lombok')
+    implementation "org.springframework:spring-web"
+    implementation "org.springframework:spring-webmvc"
+    implementation "org.springframework.boot:spring-boot-autoconfigure"
+    implementation "org.springframework.boot:spring-boot-autoconfigure-processor"
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+    implementation "com.navercorp.lucy:lucy-xss-servlet:${lucyXssServletVersion}"
+    implementation "jakarta.servlet:jakarta.servlet-api:${jakartaServletVersion}"
+    testImplementation "org.springframework.boot:spring-boot-starter-test"
+    implementation "org.projectlombok:lombok:${lombokVersion}"
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+    testImplementation "org.projectlombok:lombok:${lombokVersion}"
+    testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 }
