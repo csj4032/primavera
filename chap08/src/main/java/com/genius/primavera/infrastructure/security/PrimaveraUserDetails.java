@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 public class PrimaveraUserDetails implements UserDetails {
 
-    private User user;
+    private final User user;
 
     public PrimaveraUserDetails(User user) {
         this.user = user;

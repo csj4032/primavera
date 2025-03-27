@@ -29,7 +29,7 @@ public class PrimaveraPasswordEncoder implements PasswordEncoder {
 
 	@Override
 	public boolean matches(CharSequence rawPassword, String encodedPassword) {
-		if (encodedPassword == null || encodedPassword.length() == 0) {
+		if (encodedPassword == null || encodedPassword.isEmpty()) {
 			log.warn("Empty encoded password");
 			return false;
 		}

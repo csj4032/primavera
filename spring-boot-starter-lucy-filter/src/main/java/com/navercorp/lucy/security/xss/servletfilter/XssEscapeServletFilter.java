@@ -6,7 +6,7 @@ import java.io.IOException;
 
 public class XssEscapeServletFilter implements Filter {
 
-    private XssEscapeFilter xssEscapeFilter = XssEscapeFilter.getInstance();
+    private final XssEscapeFilter xssEscapeFilter = XssEscapeFilter.getInstance();
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
