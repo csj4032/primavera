@@ -80,7 +80,6 @@ public class PrimaveraSecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
     public UserDetailsService userDetailsService() {
         UserDetails user1 = User.withUsername("Genius@gmail.com")
                 .password(bCryptPasswordEncoder().encode("secret"))
