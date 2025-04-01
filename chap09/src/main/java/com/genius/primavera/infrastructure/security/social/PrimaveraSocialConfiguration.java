@@ -8,6 +8,7 @@ import com.genius.primavera.infrastructure.security.social.facebook.FacebookOAut
 import com.genius.primavera.infrastructure.security.social.github.GithubOAuth2ClientAuthenticationProcessingFilter;
 import com.genius.primavera.infrastructure.security.social.google.GoogleOAuth2ClientAuthenticationProcessingFilter;
 import com.genius.primavera.infrastructure.security.social.kakao.KakaoOAuth2ClientAuthenticationProcessingFilter;
+import jakarta.servlet.Filter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.UserInfoTokenServices;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -22,7 +23,6 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.web.filter.CompositeFilter;
 
-import javax.servlet.Filter;
 import java.util.List;
 
 @Slf4j

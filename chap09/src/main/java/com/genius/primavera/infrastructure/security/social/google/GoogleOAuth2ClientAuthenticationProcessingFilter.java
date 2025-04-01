@@ -1,20 +1,20 @@
 package com.genius.primavera.infrastructure.security.social.google;
 
 import com.genius.primavera.infrastructure.security.social.SocialAuthentication;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.filter.OAuth2ClientAuthenticationProcessingFilter;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Slf4j
 public class GoogleOAuth2ClientAuthenticationProcessingFilter extends OAuth2ClientAuthenticationProcessingFilter {
 
-	private SocialAuthentication socialAuthentication;
+	private final SocialAuthentication socialAuthentication;
 
 	public GoogleOAuth2ClientAuthenticationProcessingFilter(SocialAuthentication<GoogleUserDetails> socialAuthentication) {
 		super("/login/google");

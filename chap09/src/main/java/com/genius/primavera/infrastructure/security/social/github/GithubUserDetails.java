@@ -3,7 +3,9 @@ package com.genius.primavera.infrastructure.security.social.github;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.genius.primavera.infrastructure.security.social.SocialUserDetails;
 import lombok.Getter;
-import org.springframework.security.oauth2.common.OAuth2AccessToken;
+import org.springframework.security.oauth2.core.OAuth2AccessToken;
+
+import java.time.Instant;
 
 @Getter
 public class GithubUserDetails implements SocialUserDetails {
@@ -23,11 +25,11 @@ public class GithubUserDetails implements SocialUserDetails {
 	private String name;
 	private String email;
 	private String bio;
-	private long expiration;
+	private Instant expiration;
 	private String accessToken;
 
 	public void setAccessToken(OAuth2AccessToken accessToken) {
-		this.accessToken = accessToken.getValue();
-		this.expiration = -1l;
+		this.accessToken = accessToken.getTokenValue();
+		this.expiration = accessToken.getExpiresAt();
 	}
 }
