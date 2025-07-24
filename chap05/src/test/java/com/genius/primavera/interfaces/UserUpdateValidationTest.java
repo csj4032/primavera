@@ -20,6 +20,7 @@ import java.util.List;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureWebTestClient
+@DisplayName("사용자 수정 유효성 검증 테스트")
 public class UserUpdateValidationTest extends AbstractContainerTest {
 
     @Autowired
@@ -27,7 +28,7 @@ public class UserUpdateValidationTest extends AbstractContainerTest {
 
     @Test
     @Order(1)
-    @DisplayName("유저 정보 수정 아이디 누락")
+    @DisplayName("사용자 ID 누락 검증")
     public void updateAndUserIllegalId() {
         User source = User.builder().email("genius@gmail.com").password("Secret0!").nickname("genius").status(UserStatus.BLOCK).roles(List.of(new Role(1, RoleType.USER))).build();
         updateUser(source);
@@ -35,7 +36,7 @@ public class UserUpdateValidationTest extends AbstractContainerTest {
 
     @Test
     @Order(2)
-    @DisplayName("유저 정보 수정 상태 누락")
+    @DisplayName("사용자 상태 누락 검증")
     public void saveAndReturnUserIllegalStatus() {
         User source = User.builder().id(1L).email("genius@gmail.com").password("Secret0!").nickname("genius").status(null).roles(List.of(new Role(1, RoleType.USER))).build();
         updateUser(source);
@@ -43,7 +44,7 @@ public class UserUpdateValidationTest extends AbstractContainerTest {
 
     @Test
     @Order(3)
-    @DisplayName("유저 정보 수정 상태 누락")
+    @DisplayName("닉네임 최소 길이 미달 검증")
     public void saveAndReturnUserIllegalNickname() {
         User source = User.builder().id(1L).email("genius@gmail.com").password("Secret0!").nickname("g").status(UserStatus.BLOCK).roles(List.of(new Role(1, RoleType.USER))).build();
         updateUser(source);
