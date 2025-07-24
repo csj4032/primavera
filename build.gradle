@@ -1,7 +1,20 @@
 plugins {
     id 'java'
+    id 'jacoco'
     id 'org.springframework.boot' version '3.4.4'
     id 'io.spring.dependency-management' version '1.1.7'
+}
+
+tasks.test {
+    finalizedBy(tasks.jacocoTestReport) // test 작업이 끝나면 jacocoTestReport 실행
+}
+
+tasks.jacocoTestReport {
+    reports {
+        xml.required.set(true)
+        csv.required.set(false)
+        html.required.set(true)
+    }
 }
 
 allprojects {
