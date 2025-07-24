@@ -336,6 +336,33 @@ jobs:
   - 성능 테스트 자동화
   - 테스트 결과 보고서 생성 및 공유
 
+### CI/CD 배포 과정
+
+아래는 CI/CD 배포 과정을 시각화한 flowchart입니다. 이 다이어그램은 GitHub Actions를 사용하여 Java 빌드, Docker 이미지 생성, AWS ECR 푸시, 그리고 EKS 배포를 자동화하는 단계를 보여줍니다.
+
+```mermaid
+flowchart TD
+    A[코드 푸시 또는 PR 생성] --> B[GitHub Actions 트리거]
+    B --> C[Java 빌드 및 테스트]
+    C --> D[Docker 이미지 생성]
+    D --> E[AWS ECR 푸시]
+    E --> F[배포 준비]
+    F --> G[ArgoCD를 통한 EKS 배포]
+    G --> H[배포 상태 모니터링]
+    H --> I[배포 완료]
+```
+
+### 주요 단계 설명
+1. **코드 푸시 또는 PR 생성**: 개발자가 코드를 main 또는 develop 브랜치에 푸시하거나 Pull Request를 생성합니다.
+2. **GitHub Actions 트리거**: GitHub Actions 워크플로우가 자동으로 실행됩니다.
+3. **Java 빌드 및 테스트**: Gradle을 사용하여 애플리케이션을 빌드하고 테스트를 실행합니다.
+4. **Docker 이미지 생성**: Dockerfile을 기반으로 이미지를 빌드합니다.
+5. **AWS ECR 푸시**: 생성된 이미지를 AWS Elastic Container Registry(ECR)에 푸시합니다.
+6. **배포 준비**: ArgoCD가 Git 리포지토리의 상태를 확인하고 Kubernetes 클러스터에 배포를 준비합니다.
+7. **ArgoCD를 통한 EKS 배포**: ArgoCD가 Kubernetes 매니페스트 또는 Helm 차트를 사용하여 애플리케이션을 EKS에 배포합니다.
+8. **배포 상태 모니터링**: ArgoCD 대시보드 또는 kubectl을 사용하여 배포 상태를 모니터링합니다.
+9. **배포 완료**: 배포가 성공적으로 완료됩니다.
+
 ### GitHub Actions를 이용한 CI/CD 파이프라인 구축
 GitHub Actions를 사용하여 Spring Boot 애플리케이션의 빌드, Docker 이미지 생성, AWS ECR 푸시, 그리고 EKS 배포를 자동화할 수 있습니다. 아래는 이를 구현하는 방법에 대한 설명과 예제입니다.
 
