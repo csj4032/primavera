@@ -3,61 +3,25 @@ plugins {
     id 'io.spring.dependency-management' version '1.1.7'
 }
 
-def querydslSrcDir = 'src/main/java'
-
-sourceSets {
-    main {
-        java {
-            srcDirs = ['src/main/java', querydslSrcDir]
-        }
-    }
-}
-
 dependencies {
-    implementation('org.springframework.boot:spring-boot-starter-web') {
-        exclude module: "spring-boot-starter-tomcat"
-    }
-    implementation('org.springframework.boot:spring-boot-starter-aop')
-    implementation('org.springframework.boot:spring-boot-starter-jdbc')
-    implementation('org.springframework.boot:spring-boot-starter-json')
-    implementation('org.springframework.boot:spring-boot-starter-data-jpa')
-    implementation('org.springframework.boot:spring-boot-starter-data-mongodb')
-    implementation('org.springframework.boot:spring-boot-starter-data-redis')
-    implementation('org.springframework.boot:spring-boot-starter-data-mongodb-reactive')
-    implementation('org.springframework.boot:spring-boot-starter-webflux')
-    implementation('org.springframework.boot:spring-boot-starter-thymeleaf')
-    implementation('org.springframework.boot:spring-boot-starter-security')
-    implementation('org.springframework.boot:spring-boot-starter-undertow')
-    implementation('org.springframework.boot:spring-boot-starter-reactor-netty')
-    implementation('org.springframework.boot:spring-boot-devtools')
-    implementation('org.springframework.data:spring-data-envers')
-    implementation("org.springframework.security:spring-security-oauth2-authorization-server:${springSecurityOauth2AutoConfigureVersion}")
-    implementation("org.thymeleaf.extras:thymeleaf-extras-springsecurity6:${thymeleafExtrasSpringSecurity6Version}")
-    implementation("nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:${thymeleafLayoutDialectVersion}")
-    implementation("com.navercorp.lucy:lucy-xss-servlet:${lucyXssServletVersion}")
-    implementation("com.mysql:mysql-connector-j:${mysqlVersion}")
-    testImplementation('io.rest-assured:rest-assured:3.3.0')
-    implementation('org.modelmapper:modelmapper:3.2.1')
-    implementation('org.flywaydb:flyway-core:10.10.0')
-    implementation('org.projectlombok:lombok')
-    implementation('org.jctools:jctools-core:2.1.2')
-    implementation('com.github.ben-manes.caffeine:caffeine:2.8.5')
-    implementation('com.esotericsoftware:kryo:4.0.2')
-    implementation('org.xerial.snappy:snappy-java:1.1.7.6')
-    implementation('org.apache.commons:commons-pool2:2.8.0')
-    implementation('com.querydsl:querydsl-jpa')
-    implementation('com.querydsl:querydsl-apt')
-    implementation('com.squareup.retrofit2:retrofit:2.9.0')
-    implementation('com.squareup.retrofit2:converter-jackson:2.9.0')
-    annotationProcessor('org.projectlombok:lombok')
-    annotationProcessor("com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jpa")
-    annotationProcessor("jakarta.persistence:jakarta.persistence-api")
-    annotationProcessor("jakarta.annotation:jakarta.annotation-api")
-    testImplementation('org.springframework.boot:spring-boot-starter-test') {
-        exclude module: 'junit'
-        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
-    }
-    testImplementation('org.springframework.security:spring-security-test')
-
-    //implementation project(":spring-boot-starter-lucy-filter")
+    implementation "org.springframework.boot:spring-boot-starter-web"
+    implementation "org.springframework.boot:spring-boot-starter-aop"
+    implementation "org.springframework.boot:spring-boot-starter-jdbc"
+    implementation "org.springframework.boot:spring-boot-starter-thymeleaf"
+    implementation "org.springframework.boot:spring-boot-starter-validation"
+    implementation "org.springframework.boot:spring-boot-devtools"
+    implementation "com.github.gavlyukovskiy:p6spy-spring-boot-starter:${p6spySpringBootStarterVersion}"
+    implementation "org.springframework.security:spring-security-crypto:${springSecurityVersion}"
+    implementation "org.mybatis.spring.boot:mybatis-spring-boot-starter:${mybatisSpringBootStarterVersion}"
+    implementation "org.mybatis.dynamic-sql:mybatis-dynamic-sql:${mybatisDynamicSqlVersion}"
+    implementation "org.hibernate:hibernate-core:${hibernateVersion}"
+    implementation "com.mysql:mysql-connector-j:${mysqlVersion}"
+    testImplementation "org.testcontainers:mysql:1.19.3"
+    testImplementation "org.testcontainers:junit-jupiter:1.19.3"
+    testImplementation "com.mysql:mysql-connector-j:${mysqlVersion}"
+    implementation "org.graalvm.js:js:${graalvmJsVersion}"
+    implementation "org.graalvm.js:js-scriptengine:${graalvmJsVersion}"
+    implementation "org.webjars:bootstrap:${bootstrapVersion}"
+    compileOnly "jakarta.validation:jakarta.validation-api:${javaxValidationVersion}"
+    testImplementation "org.springframework.boot:spring-boot-starter-test"
 }

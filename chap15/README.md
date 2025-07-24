@@ -1,50 +1,33 @@
-## chap15
+## chap14
 
-### POI Excel database to file
+### Step
+1. Configuration Server Start
+2. Account Server Start
+3. Product Server Start
+4. Order Server Start
+5. Front Server Start
 
-### POI Excel file to database
+### WebFlux
 
-### AutoConfiguration
+### Docker For Redis
 
-### OpenCVS 카카오톡 채팅 메세지 통계
-* 추가 라이브러리
-```
-    implementation('com.opencsv:opencsv:5.2')
-    implementation('org.openkoreantext:open-korean-text:2.1.0')
-```
-
-### Sentry
-* https://sentry.io 가입 혹은 로그인
-* Settings > Project > Client Keys DNS 를 환경변수에 추가
-* Logback appender 추가
+#### Downloading an Image
 
 ```
-<included>
-    <appender name="SENTRY" class="io.sentry.logback.SentryAppender">
-        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <level>WARN</level>
-        </filter>
-        <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
-        </encoder>
-    </appender>
-</included>
+docker search redis
+
+docker login --username [username]
+
+docker pull redis:latest
 ```
 
-### PostgreSQL
+#### Creating a Container
 
 ```
-docker pull postgres
-docker run --name postgres -d -p 5432:5432 -e POSTGRES_PASSWORD=primavera -e POSTGRES_USER=primavera postgres
-docker exec -it postgres bash
+docker run --name redis -d -p 6379:6379 redis
 
-root@598a501b7d8e:/# psql -U postgres
-psql (11.5 (Debian 11.5-1.pgdg90+1))
-Type "help" for help.
+docker ps
 
-postgres=# CREATE DATABASE primavera;
-CREATE DATABASE
-
-postgres=# \q
+docker exec -it redis bash
 
 ```

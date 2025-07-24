@@ -1,20 +1,22 @@
 package com.genius.primavera.interfaces;
 
+import com.genius.primavera.domain.AbstractContainerTest;
 import com.genius.primavera.domain.model.User;
 
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@ExtendWith(MockitoExtension.class)
+@ExtendWith(SpringExtension.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@Disabled("Integration test using TestRestTemplate - requires full Spring context")
-class AjaxControllerTest {
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+class AjaxControllerTest extends AbstractContainerTest {
 
     @Autowired
     private TestRestTemplate testRestTemplate;

@@ -1,22 +1,24 @@
 package com.genius.primavera.interfaces;
 
+import com.genius.primavera.domain.AbstractContainerTest;
 import com.genius.primavera.domain.model.Role;
 import com.genius.primavera.domain.model.RoleType;
 import com.genius.primavera.domain.model.User;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@ExtendWith(MockitoExtension.class)
+@ExtendWith(SpringExtension.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@Disabled("Integration test for validation - requires full Spring context and web server")
-public class UserSaveValidationTest {
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+public class UserSaveValidationTest extends AbstractContainerTest {
 
     @Autowired
     private TestRestTemplate restTemplate;
