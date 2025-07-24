@@ -28,6 +28,13 @@ mybatis:
 
 logging:
   config: classpath:logback.xml
+  level:
+    com.genius.primavera: DEBUG
+    org.springframework.boot: INFO
+    org.springframework.security: DEBUG
+    org.springframework.web: INFO
+    jdbc.sqlonly: INFO
+    jdbc.sqltiming: INFO
 
 server:
   ssl:
