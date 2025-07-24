@@ -60,6 +60,7 @@ chap05/
 │   │   │   ├── UserRole.java                      # 사용자-권한 연관
 │   │   │   ├── RoleType.java                      # 권한 타입 enum
 │   │   │   ├── UserStatus.java                    # 사용자 상태 enum
+│   │   │   ├── TypeHandlerException.java          # 타입 핸들러 예외
 │   │   │   └── typehandler/                       # MyBatis 타입 핸들러
 │   │   │       ├── RoleTypeHandler.java           # 권한 타입 변환
 │   │   │       └── UserStatusTypeHandler.java     # 상태 변환
@@ -67,7 +68,7 @@ chap05/
 │   │       ├── UserMapper.java                    # 사용자 매퍼
 │   │       ├── UserRoleMapper.java                # 권한 매퍼
 │   │       └── support/                           # 매퍼 지원 클래스
-│   │           └── UserTableSupport.java          # 동적 SQL 지원
+│   │           └── UserTableSupport.java          # MyBatis Dynamic SQL 지원
 │   └── interfaces/                                 # 인터페이스 계층
 │       ├── UserController.java                    # 사용자 REST API
 │       └── AjaxController.java                    # AJAX 엔드포인트
@@ -326,7 +327,7 @@ INSERT INTO ROLES (ID, TYPE) VALUES
 
 ## 🔧 설정
 
-### application.yml
+### application-local.yml
 ```yaml
 spring:
   datasource:
@@ -334,16 +335,24 @@ spring:
     url: jdbc:mysql://localhost:3306/primavera
     username: primavera
     password: primavera
-  devtools:
-    livereload:
-      enabled: true
-      port: 35729
-  
+    hikari:
+      auto-commit: false
+      data-source-properties:
+        cachePrepStmts: false
+        useServerPrepStmts: false
+        useLocalSessionState: false
+        cacheResultSetMetadata: false
+        preparedStatementCacheQueries: 0
+  aop:
+    proxy-target-class: true
+
 mybatis:
   configuration:
     map-underscore-to-camel-case: true
     default-fetch-size: 1000
     default-statement-timeout: 30
+    cache-enabled: false
+    local-cache-scope: statement
   type-aliases-package: com.genius.primavera.domain
   type-handlers-package: com.genius.primavera.domain
 ```
