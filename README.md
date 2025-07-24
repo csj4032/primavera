@@ -232,6 +232,51 @@ docker-compose -f docker-compose.yml up
   * Prometheus 메트릭
   * Grafana 대시보드
 
+## Config Directory
+
+The `config` directory contains environment-specific and domain-specific configuration files. This structure ensures better separation of concerns, easier maintenance, and enhanced security.
+
+### Directory Structure
+```
+config/
+├── dev/
+│   ├── payment.yml
+│   ├── display.yml
+│   └── search.yml
+├── stage/
+│   ├── payment.yml
+│   ├── display.yml
+│   └── search.yml
+└── prod/
+    ├── payment.yml
+    ├── display.yml
+    └── search.yml
+```
+
+### Purpose
+1. **Environment-Specific Configurations**:
+   - Separate configurations for `dev`, `stage`, and `prod` environments to avoid conflicts and ensure proper isolation.
+
+2. **Domain-Specific Configurations**:
+   - Each domain (e.g., `payment`, `display`, `search`) has its own configuration file for better modularity and maintainability.
+
+3. **Security and Automation**:
+   - Sensitive information is isolated per environment, reducing the risk of accidental exposure.
+   - CI/CD pipelines can automatically load the appropriate configuration based on the target environment.
+
+### Example Configuration
+**`config/dev/payment.yml`**:
+```yaml
+payment:
+  database:
+    url: jdbc:mysql://dev-payment-db:3306/payment
+    username: dev_user
+    password: dev_password
+  api:
+    key: dev-payment-api-key
+example.property: "I AM IN THE DEV"
+```
+
 ## Custom Spring Boot Starters
 
 ### spring-boot-starter-lucy-filter
