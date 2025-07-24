@@ -1,343 +1,505 @@
-# Primavera
-스프링부트를 이용한 커뮤니티 사이트 개발
+# 🌸 Primavera - Spring Boot 종합 학습 프로젝트
 
 [![Build Status](https://travis-ci.org/csj4032/primavera.svg?branch=master)](https://travis-ci.org/csj4032/primavera)
 [![Coverage Status](https://coveralls.io/repos/github/csj4032/primavera/badge.svg)](https://coveralls.io/github/csj4032/primavera)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## Technical Specification
-* Java 21 (Switch expressions, text blocks, records)
-* Gradle 8.12.1
-* IntelliJ IDEA (2024.2.5)
-* MariaDB 10.3.14
-* Spring Boot 3.4.4 (https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.4-Release-Notes)
-* Spring Security 6.4.4 with OAuth2 Client Support
-* Spring Cloud 2024.0.1
-* Thymeleaf 3.4.0 with Spring Security Integration
-* MyBatis 3.0.4 with Dynamic SQL
-* JPA with Hibernate
-* Lombok 1.18.36
-* Lucy XSS Filter 2.0.1
-* Flyway Database Migration
-* Bootstrap 5.3.3
-* Undertow (Embedded Server)
-* SSL/HTTPS Support with PKCS12
-* Sentry Integration
-* Log4jdbc for SQL Logging
+Spring Boot를 이용한 현대적인 웹 애플리케이션 개발을 체계적으로 학습할 수 있는 종합 프로젝트입니다. 기초부터 고급 기술까지 단계별로 구성된 17개 챕터를 통해 실무에 필요한 모든 기술을 습득할 수 있습니다.
 
-## Requirements Specification
-* **Social Authentication**: OAuth2 기반 회원 가입 및 로그인 (Google, Facebook, GitHub, Kakao)
-* **Security**: HTTPS/SSL 보안 통신 및 역할 기반 접근 제어
-* **User Management**: 소셜 정보를 이용한 로그인, 로그아웃, 탈퇴
-* **Content Management**: 게시글 ��록, 수정, 삭제, 조회 기능
-* **Hierarchical Comments**: 게시글 답글 및 댓글, 대댓글 시스템
-* **File Management**: 게시글 관련 첨부파일 등록, 삭제
-* **Rich Text Editing**: WYSIHTML5 기반 게시글 편집 기능
-* **XSS Protection**: Lucy XSS Filter를 통한 보안 강화
+## 🛠️ 기술 스택
 
-## Project Architecture
+### Core Framework
+- **Java 21** (Switch expressions, Text blocks, Records)
+- **Spring Boot 3.5.3** (최신 LTS 버전)
+- **Spring Security 6.4.4** with OAuth2 Client
+- **Spring Cloud 2024.0.1**
+- **Gradle 8.12.1**
+
+### Database & Persistence
+- **MySQL/MariaDB 10.3.14** (Primary Database)
+- **Redis** (Caching & Session Storage)
+- **PostgreSQL** (Advanced Features)
+- **H2** (Testing)
+- **MyBatis 3.0.4** with Dynamic SQL
+- **JPA/Hibernate** (ORM)
+- **Flyway** (Database Migration)
+
+### Security & Authentication
+- **Spring Security 6.4.4**
+- **OAuth2 Client** (Google, Facebook, GitHub, Kakao)
+- **Lucy XSS Filter 2.0.1** (XSS Protection)
+- **SSL/HTTPS** with PKCS12
+- **JWT Token** Support
+
+### Web & Template
+- **Thymeleaf 3.4.0** (Server-side Rendering)
+- **Bootstrap 5.3.3** (UI Framework)
+- **AdminLTE** (Admin Dashboard)
+- **WYSIHTML5** (Rich Text Editor)
+- **WebFlux** (Reactive Programming)
+
+### Testing & Quality
+- **JUnit 5** (Unit Testing)
+- **TestContainers** (Integration Testing)
+- **MockMvc** (Web Layer Testing)
+- **Lombok 1.18.36** (Code Generation)
+- **SonarQube** (Code Quality)
+
+### Infrastructure & Deployment
+- **Docker** (Containerization)
+- **GitHub Actions** (CI/CD)
+- **Travis CI** (Legacy CI/CD)
+- **AWS EKS** (Kubernetes)
+- **ArgoCD** (GitOps)
+- **Prometheus & Grafana** (Monitoring)
+- **Sentry** (Error Tracking)
+- **Undertow** (Embedded Server)
+
+## 🏗️ 프로젝트 아키텍처
+
 ```
 primavera/
-├── chap00-16/          # 단계별 학습 모듈
-├── config/             # 구성 파일 저장소
-├── docker/             # Docker 컨테이너 구성 파일
-├── hello/              # Spring Cloud 튜토리얼
-├── spring-boot-starter-lucy-filter/  # 사용자 정의 스프링 부트 스타터: Lucy XSS 필터
-└── spring-boot-starter-social-kakao/ # 사용자 정의 스프링 부트 스타터: 카카오 소셜 로그인
+├── 📚 Learning Modules
+│   ├── chap00-04/          # 🎯 기초: Spring Boot 핵심 개념
+│   ├── chap05-08/          # 🔧 중급: 데이터, 보안, 템플릿
+│   ├── chap09-13/          # 🚀 고급: OAuth2, 마이크로서비스
+│   └── chap14-17/          # 💼 실무: 배포, 모니터링, 최적화
+├── 🔧 Infrastructure
+│   ├── config/             # 환경별 설정 파일
+│   ├── docker/             # Docker 컨테이너 구성
+│   └── k8s/                # Kubernetes 매니페스트
+├── 🧩 Custom Starters
+│   ├── spring-boot-starter-lucy-filter/    # XSS 보안 필터
+│   └── spring-boot-starter-social-kakao/   # 카카오 소셜 로그인
+└── 🌤️ Cloud Native
+    ├── hello/              # Spring Cloud 튜토리얼
+    └── chap15/             # 마이크로서비스 아키텍처
 ```
 
-## Database Schema
+## 📊 데이터베이스 스키마
+
 ![Primavera DB Schema](https://github.com/csj4032/primavera/blob/master/primavera.png)
 
-## Launch
+## 🚀 빠른 시작
+
+### 1. 환경 요구사항
+```bash
+# Java 21 설치 확인
+java -version
+
+# Docker 설치 확인
+docker --version
+docker-compose --version
+```
+
+### 2. 프로젝트 클론 및 실행
+```bash
+# 프로젝트 클론
+git clone https://github.com/csj4032/primavera.git
+cd primavera
+
+# 데이터베이스 실행 (Docker)
+docker-compose up -d mariadb redis
+
+# 특정 챕터 실행 (예: chap09)
+./gradlew :chap09:bootRun
+
+# 전체 빌드 및 테스트
+./gradlew clean build
+```
+
+### 3. 개발 환경 설정
 ![IntelliJ, Gradle](https://github.com/csj4032/primavera/blob/master/gradle.png)
 
-## Docker 실행 방법
-```bash
-# MariaDB 컨테이너 실행
-docker-compose up -d mariadb
+## 📚 학습 로드맵
 
-# 전체 서비스 실행 (개발 환경)
-docker-compose -f docker-compose.yml up
-```
+### 🎯 Phase 1: Spring Boot 기초 (chap00-04)
 
-## 챕터별 주요 내용
+#### **Chapter 00** - Spring Boot 시작하기
+- **학습 목표**: Spring Boot 핵심 개념 이해
+- **주요 내용**:
+  - `@SpringBootApplication` 어노테이션 분석
+  - `@EnableAutoConfiguration` 동작 원리
+  - `SpringApplicationBuilder` 활용법
+  - Domain-Driven Design 기초
+- **핵심 파일**: `PrimaveraApplication.java`
 
-## chap00 - Spring Boot 기초
-* **빌드 도구**: Gradle, Maven 비교 및 설정
-* **프로젝트 초기화**: Spring Initializr를 이용한 프로젝트 생성
-* **필수 플러그인**: Lombok 설정 및 활용
-* **Spring Boot 핵심 개념**: 
-  * Domain 구조 설계
-  * @SpringBootConfiguration 설정
-  * @EnableAutoConfiguration 동작 원리
-  * Application Context 초기화 과정
-  * SpringApplicationBuilder를 통한 애플리케이션 구성
+#### **Chapter 01** - 설정과 의존성 주입
+- **학습 목표**: Spring Boot 설정 시스템 마스터
+- **주요 내용**:
+  - `@ConfigurationProperties`를 통한 타입 안전한 설정
+  - YAML 구성 파일 활용
+  - Bean Scope와 라이프사이클
+  - 프로필별 환경 설정
+- **핵심 클래스**: `PrimaveraProperties`, `PrimaveraConfiguration`
 
-## chap01 - Spring Boot 시작
-* **첫 애플리케이션**: Hello World 구현
-* **구성 관리**: 
-  * application.properties/yml 활용
-  * 프로필 기반 구성
-  * 외부 구성 주입
-* **Bean 라이프사이클**: 컨테이너 내 빈 생성 및 관리
+#### **Chapter 02** - MVC와 AOP
+- **학습 목표**: 웹 계층 및 관점 지향 프로그래밍 구현
+- **주요 내용**:
+  - Spring MVC 아키텍처 패턴
+  - AOP를 통한 횡단 관심사 분리
+  - 인터셉터와 필터 체인
+  - `@Aspect`, `@Around` 활용
+- **핵심 클래스**: `PrimaveraLoggingAspect`, `PrimaveraInterceptor`
 
-## chap02 - 테스트와 AOP
-* **Spring Boot Test**: 
-  * 단위 테스트와 통합 테스트
-  * @SpringBootTest 어노테이션
-  * MockMvc를 이용한 컨트롤러 테스트
-* **AOP(Aspect-Oriented Programming)**: 
-  * 관점 지향 프로그래밍 구현
-  * @Aspect, @Pointcut, @Around 활용
-  * 로깅, 성능 측정, 트랜잭션 관리 적용
+#### **Chapter 03** - 데이터 접근 계층
+- **학습 목표**: 데이터베이스 연동 및 트랜잭션 관리
+- **주요 내용**:
+  - HikariCP 커넥션 풀 최적화
+  - JdbcTemplate을 통한 SQL 실행
+  - 다중 데이터소스 구성
+  - 선언적 트랜잭션 관리
+- **핵심 클래스**: `UserDao`, `PrimaveraDao`
 
-## chap03 - 데이터 접근
-* **DataSource 구성**: 
-  * JDBC 연결 설정
-  * 다중 DataSource 관리
-* **JdbcTemplate**: SQL 쿼리 실행 및 결과 처리
-* **커넥션 풀**: Hikari CP 최적화 설정
-* **트랜잭션 관리**: 선언적 트랜잭션 처리
+#### **Chapter 04** - MyBatis와 로깅
+- **학습 목표**: ORM 프레임워크와 로깅 시스템 구축
+- **주요 내용**:
+  - MyBatis 매퍼 어노테이션 기반 구성
+  - 동적 SQL 구현
+  - Logback 설정 및 커스터마이징
+  - SQL 로깅 및 성능 모니터링
+- **주요 설정**: `logback-spring.xml`, MyBatis 매퍼
 
-## chap04 - 트랜잭션과 MyBatis
-* **Spring Transaction**: 
-  * 트랜잭션 경계 설정
-  * 트랜잭션 전파 속성
-  * 롤백 정책
-* **MyBatis 통합**: 
-  * SqlSessionFactory 구성
-  * 매퍼 인터페이스 활용
-  * 동적 SQL 작성
-* **로깅 구성**: Logback을 이용한 SQL 로그 설정
+### 🔧 Phase 2: 중급 웹 개발 (chap05-08)
 
-## chap05 - 데이터 검증과 처리
-* **입력 검증**: 
-  * Bean Validation (JSR-380)
-  * 사용자 정의 유효성 검증
-* **비동기 처리**: AJAX 요청 및 응답 처리
-* **함수형 프로그래밍**: JOOL 라이브러리 활용
-* **동적 쿼리**: MyBatis DSL로 복잡한 쿼리 구성
+#### **Chapter 05** - 고급 유효성 검증 ⭐ *Enhanced*
+- **학습 목표**: 엔터프라이즈급 데이터 검증 시스템 구축
+- **주요 내용**:
+  - Jakarta Bean Validation (JSR-380)
+  - 커스텀 검증 어노테이션 개발
+  - 검증 그룹을 통한 상황별 검증
+  - GraalVM JavaScript 통합 검증
+  - TestContainers 기반 통합 테스트
+- **혁신 기능**:
+  - `@ScriptAssert`를 통한 복잡한 비즈니스 규칙 검증
+  - Docker 기반 MySQL 테스트 환경
+  - 실시간 유효성 검증 피드백
+- **핵심 클래스**: `NicknameValidator`, `AbstractContainerTest`
 
-## chap06 - 뷰 템플릿과 인증
-* **Thymeleaf 템플릿 엔진**: 
-  * 레이아웃 구성
-  * 표현식과 유틸리티 객체
-  * 조건부 렌더링
-* **사용자 인증**: 
-  * 로그인 폼 구현
-  * 인증 처리 로직
-  * 세션 관리
+#### **Chapter 06** - Thymeleaf와 JPA
+- **학습 목표**: 서버사이드 렌더링과 ORM 구현
+- **주요 내용**:
+  - Thymeleaf 템플릿 엔진 마스터
+  - AdminLTE 기반 관리자 대시보드
+  - JPA 엔티티 매핑 및 연관관계 설정
+  - Log4Jdbc를 통한 SQL 모니터링
+- **UI/UX**: 반응형 관리자 인터페이스 구현
 
-## chap07 - 필터와 로깅
-* **웹 필터**: 
-  * Filter 인터페이스 구현
-  * FilterRegistrationBean 설정
-* **보안 필터**: Lucy-xss-filter로 XSS 공격 방어
-* **SQL 로깅**: Log4jdbc 설정 및 활용
-* **웹 서버**: Undertow 서버 최적화 설정
+#### **Chapter 07** - 보안 필터와 XSS 방어
+- **학습 목표**: 웹 보안 강화 및 필터 체인 구현
+- **주요 내용**:
+  - Lucy XSS Filter를 통한 XSS 공격 차단
+  - 커스텀 서블릿 필터 개발
+  - Undertow 서버 최적화
+  - 보안 헤더 설정
+- **보안 강화**: 다층 보안 아키텍처 구현
 
-## chap08 - 디자인 패턴과 보안
-* **책임 연쇄 패턴**: Chain of Responsibility 구현
-* **Spring Security**: 
-  * 보안 구성
-  * 인증 및 권한 부여
-  * CSRF 보호
-* **커스텀 스타터**: Spring Boot Starter 개발 방법론
+#### **Chapter 08** - Spring Security 기초
+- **학습 목표**: 인증 및 권한 관리 시스템 구축
+- **주요 내용**:
+  - Spring Security 필터 체인 이해
+  - 인메모리 사용자 관리
+  - BCrypt 패스워드 암호화
+  - CSRF 보호 메커니즘
+  - 커스텀 Spring Boot Starter 개발
+- **디자인 패턴**: Chain of Responsibility 패턴 적용
 
-## chap09 - 소셜 로그인과 HTTPS ⭐ *Currently Active*
-* **HTTPS/SSL 구성**: 
-  * PKCS12 키스토어 생성
-  * 자체 서명 인증서 설정
-  * Undertow HTTPS 설정
-* **OAuth2 소셜 로그인**: 
-  * Google, Facebook, GitHub, Kakao 통합
-  * OAuth2 클라이언트 설정
-  * 소셜 사용자 정보 매핑
-* **Spring Security 6.4.4**: 
-  * 역할 기반 접근 제어 (USER, MANAGER, ADMINISTRATOR)
-  * SecurityFilterChain 설정
-  * 인증 성공/실패 핸들러
-* **도메인 주도 설계**: 레이어 분리와 클린 코드 구조
-* **환경 구성**: 환경 변수를 통한 OAuth2 클라이언트 자격 증명 관리
+### 🚀 Phase 3: 고급 기능 구현 (chap09-13)
 
-## chap10 - 게시판 구현
-* **게시글 관리**: 
-  * CRUD 기능 구현
-  * 권한별 접근 제어
-* **페이징 처리**: 
-  * 커스텀 페이지네이션 구현
-  * 정렬 및 필터링
-* **리치 텍스트 에디터**: WYSIHTML5 통합
+#### **Chapter 09** - OAuth2 소셜 로그인 & HTTPS ⭐ *Currently Active*
+- **학습 목표**: 현대적인 인증 시스템 및 보안 통신 구현
+- **주요 내용**:
+  - **다중 OAuth2 제공자**: Google, Facebook, GitHub, Kakao 통합
+  - **HTTPS/SSL 구성**: PKCS12 키스토어 및 자체 서명 인증서
+  - **Spring Security 6.4.4**: 최신 보안 설정 및 필터 체인
+  - **역할 기반 접근 제어**: USER, MANAGER, ADMINISTRATOR 권한 관리
+- **고급 기능**:
+  - 소셜 사용자 정보 매핑 및 통합
+  - OAuth2 토큰 관리 및 갱신
+  - 환경별 클라이언트 자격 증명 관리
+  - 도메인 주도 설계 원칙 적용
 
-## chap11 - 계층형 댓글 시스템
-* **계층형 게시글**: 
-  * 트리 구조 설계
-  * 재귀적 쿼리 처리
-* **답글 시스템**: 
-  * 대댓글 구현
-  * 댓글 정렬 알고리즘
+#### **Chapter 10** - 게시판 시스템
+- **학습 목표**: 완전한 CRUD 기능을 가진 게시판 구현
+- **주요 내용**:
+  - RESTful API 설계
+  - 페이징 및 정렬 구현
+  - WYSIHTML5 리치 텍스트 에디터
+  - 권한별 접근 제어
+  - MockMvc 기반 통합 테스트
 
-## chap12 - 권한 관리와 파일 업로드
-* **Spring Security 어노테이션**: 
-  * @PreAuthorize, @PostAuthorize
-  * @Secured, @RolesAllowed
-* **메서드 수준 보안**: SpEL을 이용한 동적 권한 검사
-* **파일 업로드**: 
-  * MultipartFile 처리
-  * 저장 및 다운로드 구현
-  * 이미지 리사이징
+#### **Chapter 11** - 계층형 댓글 & Flyway
+- **학습 목표**: 복잡한 데이터 구조 및 데이터베이스 마이그레이션
+- **주요 내용**:
+  - 계층형 댓글 시스템 설계
+  - 트리 구조 쿼리 최적화
+  - Flyway 데이터베이스 마이그레이션
+  - 재귀적 데이터 처리 알고리즘
 
-## chap13 - JPA와 외부 API
-* **JPA/Hibernate**: 
-  * 엔티티 매핑
-  * 연관 관계 설정
-  * JPQL 쿼리
-* **객체 매핑**: ModelMapper를 통한 DTO 변환
-* **카카오 API**: 
-  * 메시지 발송 기능
-  * API 클라이언트 구현
+#### **Chapter 12** - 고급 권한 관리
+- **학습 목표**: 메서드 수준 보안 및 파일 처리
+- **주요 내용**:
+  - `@PreAuthorize`, `@PostAuthorize` 활용
+  - SpEL을 통한 동적 권한 검사
+  - 파일 업로드/다운로드 구현
+  - 이미지 리사이징 및 최적화
 
-## chap14 - 리액티브 프로그래밍과 마이크로서비스
-* **WebFlux**: 
-  * 리액티브 프로그래밍 패러다임
-  * Mono와 Flux 활용
-  * 비동기 API 구현
-* **Spring Cloud Config Server**: 
-  * 중앙 집중식 구성 관리
-  * 동적 구성 업데이트
-* **마이크로서비스 아키텍처**: 
-  * 서비스 분리 (Account, Order, Product, Front, Configuration)
-  * 서비스 간 통신
+#### **Chapter 13** - JPA 고급 & 외부 API
+- **학습 목표**: 고급 ORM 기능 및 외부 서비스 통합
+- **주요 내용**:
+  - JPA/Hibernate 고급 매핑
+  - JPQL 및 Criteria API
+  - ModelMapper를 통한 DTO 변환
+  - 카카오 API 클라이언트 구현
 
-## chap15 - 고급 기능
-* **캐싱**: 
-  * Spring Cache 추상화
-  * Redis 캐시 구현
-* **스케줄링**: 
-  * @Scheduled 어노테이션
-  * Quartz 스케줄러 통합
-* **이벤트 기반 프로그래밍**: 
-  * Spring Events
-  * 비동기 이벤트 처리
+### 💼 Phase 4: 실무 및 배포 (chap14-17)
 
-## chap16 - 배포 및 모니터링
-* **도커 컨테이너화**: 
-  * Dockerfile 작성
-  * 멀티스테이지 빌드
-* **CI/CD 파이프라인**: 
-  * Travis CI 설정
-  * 자동 테스트 및 배포
-* **모니터링**: 
-  * Actuator 엔드포인트
-  * Prometheus 메트릭
-  * Grafana 대시보드
+#### **Chapter 14** - 리액티브 프로그래밍
+- **학습 목표**: 비동기 및 리액티브 시스템 구현
+- **주요 내용**:
+  - Spring WebFlux 기반 리액티브 API
+  - Mono와 Flux를 통한 비동기 스트림 처리
+  - 백프레셔 및 에러 처리
+  - 리액티브 데이터베이스 접근
 
-## Config Directory
+#### **Chapter 15** - 마이크로서비스 아키텍처
+- **학습 목표**: 분산 시스템 설계 및 구현
+- **주요 내용**:
+  - **서비스 분리**: Account, Product, Order, Front, Configuration
+  - **Spring Cloud Config**: 중앙 집중식 설정 관리
+  - **서비스 간 통신**: OpenFeign, Load Balancer
+  - **캐싱**: Redis 기반 분산 캐시
+- **아키텍처 패턴**: 마이크로서비스 분해 전략
 
-The `config` directory contains environment-specific and domain-specific configuration files. This structure ensures better separation of concerns, easier maintenance, and enhanced security.
+#### **Chapter 16** - 파일 처리 & 모니터링
+- **학습 목표**: 파일 시스템 통합 및 애플리케이션 모니터링
+- **주요 내용**:
+  - Apache POI를 통한 Excel 파일 처리
+  - OpenCSV를 통한 CSV 데이터 처리
+  - Sentry 통합 에러 트래킹
+  - PostgreSQL 고급 기능 활용
 
-### Directory Structure
-```
-config/
-├── dev/
-│   ├── payment.yml
-│   ├── display.yml
-│   └── search.yml
-├── stage/
-│   ├── payment.yml
-│   ├── display.yml
-│   └── search.yml
-└── prod/
-    ├── payment.yml
-    ├── display.yml
-    └── search.yml
-```
+#### **Chapter 17** - CI/CD & 운영
+- **학습 목표**: 완전 자동화된 배포 파이프라인 구축
+- **주요 내용**:
+  - **CI/CD 파이프라인**: GitHub Actions, Travis CI
+  - **컨테이너화**: Docker 멀티스테이지 빌드
+  - **오케스트레이션**: Kubernetes (EKS) 배포
+  - **GitOps**: ArgoCD를 통한 자동 배포
+  - **모니터링**: Prometheus, Grafana, Sentry 통합
+  - **보안**: 컨테이너 보안 스캔, 시크릿 관리
 
-### Purpose
-1. **Environment-Specific Configurations**:
-   - Separate configurations for `dev`, `stage`, and `prod` environments to avoid conflicts and ensure proper isolation.
+## 🔐 보안 기능
 
-2. **Domain-Specific Configurations**:
-   - Each domain (e.g., `payment`, `display`, `search`) has its own configuration file for better modularity and maintainability.
+### 다층 보안 아키텍처
+- **HTTPS/SSL**: 전송 계층 암호화
+- **OAuth2**: 표준 인증 프로토콜
+- **XSS 보호**: Lucy Filter 기반 입력 검증
+- **CSRF 보호**: 토큰 기반 요청 검증
+- **SQL 인젝션 방어**: MyBatis 파라미터 바인딩
 
-3. **Security and Automation**:
-   - Sensitive information is isolated per environment, reducing the risk of accidental exposure.
-   - CI/CD pipelines can automatically load the appropriate configuration based on the target environment.
-
-### Example Configuration
-**`config/dev/payment.yml`**:
+### 인증 및 권한 관리
 ```yaml
-payment:
-  database:
-    url: jdbc:mysql://dev-payment-db:3306/payment
-    username: dev_user
-    password: dev_password
-  api:
-    key: dev-payment-api-key
-example.property: "I AM IN THE DEV"
+# 역할 계층구조
+ADMINISTRATOR:
+  - 전체 시스템 관리
+  - 사용자 권한 관리
+  - 시스템 설정 변경
+
+MANAGER:
+  - 콘텐츠 관리
+  - 사용자 관리 (제한적)
+  - 통계 및 리포트 조회
+
+USER:
+  - 개인 프로필 관리
+  - 게시글 작성/수정
+  - 댓글 참여
 ```
 
-## Custom Spring Boot Starters
+## 🛠️ 커스텀 Spring Boot Starters
 
 ### spring-boot-starter-lucy-filter
-XSS 공격을 방어하기 위한 Lucy XSS 필터의 Spring Boot Starter 구현:
-* **자동 구성**: 필터 자동 등록 및 설정
-* **커스터마이징**: 속성 기반 필터 동작 제어
-* **프로필 지원**: 환경별 필터 규칙 관리
-
-### spring-boot-starter-social-kakao
-카카오 소셜 로그인을 위한 Spring Boot Starter 구현:
-* **OAuth2 통합**: Spring Security OAuth2 클라이언트와 통합
-* **사용자 정보 매핑**: 카카오 사용자 프로필 데이터 처리
-* **토큰 관리**: 액세스 토큰 및 리프레시 토큰 처리
-
-## Contributors
-- [csj4032](https://github.com/csj4032) - Creator and main developer
-
-## License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Travis CI 설정
-
-이 프로젝트는 Travis CI를 이용해 자동 빌드, 테스트, 배포를 수행합니다.
-
-### .travis.yml 예시
-```yaml
-language: java
-jdk:
-  - openjdk21
-
-# Gradle 캐시 활용
-cache:
-  directories:
-    - $HOME/.gradle/caches/
-    - $HOME/.gradle/wrapper/
-
-# 빌드 및 테스트
-script:
-  - ./gradlew clean build
-
-# 커버리지 리포트 업로드 (예: coveralls)
-after_success:
-  - ./gradlew jacocoTestReport
-  - bash <(curl -s https://codecov.io/bash)
-
-# 마스터 브랜치에 push 시 배포
-branches:
-  only:
-    - master
-
-# 환경 변수 예시 (필요시)
-env:
-  global:
-    - SPRING_PROFILES_ACTIVE=dev
+XSS 공격 방어를 위한 자동 구성 스타터:
+```java
+@ConfigurationProperties(prefix = "lucy.xss")
+public class LucyXssFilterProperties {
+    private boolean enabled = true;
+    private String[] excludeUrls = {};
+    private String ruleConfigPath = "lucy-xss-servlet-filter-rule.xml";
+}
 ```
 
-#### 설명
-- 빌드 도구: Gradle
-- JDK: OpenJDK 21
-- 빌드/테스트 자동화 및 커버리지 리포트 업로드
-- master 브랜치에만 배포 트리거
-- 환경 변수로 Spring Profile 지정 가능
+### spring-boot-starter-social-kakao
+카카오 소셜 로그인 통합 스타터:
+```java
+@ConfigurationProperties(prefix = "spring.security.oauth2.client.registration.kakao")
+public class KakaoOAuth2Properties {
+    private String clientId;
+    private String clientSecret;
+    private String scope = "profile_nickname,account_email";
+}
+```
 
-Travis CI를 통해 Pull Request 및 master 브���치에 대한 자동 빌드와 테스트가 실행되며, 빌드 상태는 상단 뱃지로 확인할 수 있습니다.
+## 📈 성능 최적화
+
+### 데이터베이스 최적화
+- **HikariCP**: 고성능 커넥션 풀
+- **쿼리 최적화**: 인덱스 전략 및 실행 계획 분석
+- **캐싱**: Redis 분산 캐시 활용
+- **읽기 전용 복제본**: 읽기 성능 향상
+
+### 애플리케이션 최적화
+- **JVM 튜닝**: G1GC 설정 및 힙 메모리 최적화
+- **비동기 처리**: `@Async` 및 CompletableFuture 활용
+- **이미지 최적화**: 동적 리사이징 및 압축
+- **정적 리소스**: CDN 및 브라우저 캐싱
+
+## 🧪 테스트 전략
+
+### 테스트 피라미드 구현
+```bash
+# 단위 테스트 (70%)
+./gradlew test
+
+# 통합 테스트 (20%)
+./gradlew integrationTest
+
+# E2E 테스트 (10%)
+./gradlew e2eTest
+```
+
+### TestContainers 활용
+- **데이터베이스**: MySQL, Redis 컨테이너
+- **외부 서비스**: WireMock을 통한 API 모킹
+- **전체 스택**: 실제 환경과 동일한 테스트
+
+## 🚀 배포 전략
+
+### 환경별 배포
+```bash
+# 개발 환경
+./gradlew :chap09:bootRun --args='--spring.profiles.active=dev'
+
+# 스테이징 환경
+docker-compose -f docker-compose.staging.yml up
+
+# 프로덕션 환경 (Kubernetes)
+kubectl apply -f k8s/production/
+```
+
+### 무중단 배포
+- **Blue-Green 배포**: 제로 다운타임 보장
+- **카나리 배포**: 점진적 트래픽 전환
+- **롤백 전략**: 즉시 이전 버전 복구
+
+## 📊 모니터링 및 관측성
+
+### 메트릭 수집
+- **애플리케이션 메트릭**: Spring Boot Actuator
+- **비즈니스 메트릭**: Micrometer + Prometheus
+- **인프라 메트릭**: Node Exporter, cAdvisor
+
+### 로깅 전략
+```yaml
+# 구조화된 로깅 (JSON)
+logging:
+  level:
+    com.genius.primavera: DEBUG
+    org.springframework.security: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+```
+
+### 알럿 및 대시보드
+- **Grafana 대시보드**: 실시간 메트릭 시각화
+- **프로메테우스 알럿**: 임계값 기반 알림
+- **Sentry**: 실시간 에러 트래킹 및 알림
+
+## 🌍 국제화 및 다국어 지원
+
+### 다국어 메시지
+```properties
+# messages_ko.properties
+user.validation.nickname.invalid=올바르지 않은 별명입니다.
+user.registration.success=회원가입이 완료되었습니다.
+
+# messages_en.properties
+user.validation.nickname.invalid=Invalid nickname format.
+user.registration.success=Registration completed successfully.
+```
+
+## 🔄 개발 워크플로우
+
+### Git 플로우
+```bash
+# 기능 브랜치 생성
+git checkout -b feature/social-login
+
+# 개발 완료 후 PR 생성
+git push origin feature/social-login
+
+# 코드 리뷰 및 자동 테스트 후 머지
+# CI/CD 파이프라인 자동 실행
+```
+
+### 코드 품질 관리
+- **SonarQube**: 정적 코드 분석
+- **SpotBugs**: 잠재적 버그 탐지
+- **Checkstyle**: 코딩 스타일 일관성
+- **JaCoCo**: 테스트 코버리지 측정
+
+## 📚 학습 리소스
+
+### 공식 문서
+- [Spring Boot Reference](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/)
+- [Spring Security Reference](https://docs.spring.io/spring-security/reference/)
+- [Spring Cloud Reference](https://docs.spring.io/spring-cloud/docs/current/reference/html/)
+
+### 추천 도서
+- "Spring Boot in Action" - Craig Walls
+- "Spring Security in Action" - Laurentiu Spilca
+- "Microservices Patterns" - Chris Richardson
+
+## 🤝 기여 가이드
+
+### 기여 방법
+1. 프로젝트 포크
+2. 기능 브랜치 생성 (`git checkout -b feature/amazing-feature`)
+3. 변경사항 커밋 (`git commit -m 'feat: add amazing feature'`)
+4. 브랜치 푸시 (`git push origin feature/amazing-feature`)
+5. Pull Request 생성
+
+### 커밋 메시지 규칙
+```
+feat: 새로운 기능 추가
+fix: 버그 수정
+docs: 문서 수정
+style: 코드 스타일 변경
+refactor: 코드 리팩토링
+test: 테스트 코드 추가/수정
+chore: 빌드 설정 등 기타 변경
+```
+
+## 📄 라이선스
+
+이 프로젝트는 [MIT 라이선스](LICENSE) 하에 배포됩니다.
+
+## 👥 기여자
+
+- [csj4032](https://github.com/csj4032) - 프로젝트 창시자 및 메인 개발자
+- [Claude](https://claude.ai) - 문서화 및 코드 리뷰 지원
+
+## 🙏 감사의 말
+
+이 프로젝트는 Spring Boot 커뮤니티와 오픈소스 생태계의 지원으로 만들어졌습니다. 모든 기여자와 사용자에게 감사드립니다.
+
+---
+
+<div align="center">
+
+**⭐ 이 프로젝트가 도움이 되셨다면 스타를 눌러주세요! ⭐**
+
+[🐛 이슈 신고](https://github.com/csj4032/primavera/issues) · [💡 기능 제안](https://github.com/csj4032/primavera/discussions) · [📖 위키](https://github.com/csj4032/primavera/wiki)
+
+</div>
