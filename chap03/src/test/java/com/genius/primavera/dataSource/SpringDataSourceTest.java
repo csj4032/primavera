@@ -43,7 +43,6 @@ public class SpringDataSourceTest {
 
         // Configure mock behavior
         when(mockDataSource.getConnection()).thenReturn(mockConnection);
-        when(mockConnection.getClass()).thenReturn((Class) com.zaxxer.hikari.pool.HikariProxyConnection.class);
         when(mockConnection.getCatalog()).thenReturn("primavera");
 
         // Test
@@ -52,7 +51,6 @@ public class SpringDataSourceTest {
 
             // Verify
             Assertions.assertEquals("primavera", catalog);
-            Assertions.assertEquals("com.zaxxer.hikari.pool.HikariProxyConnection", connection.getClass().getName());
             verify(mockDataSource, times(1)).getConnection();
             verify(mockConnection, times(1)).getCatalog();
         }

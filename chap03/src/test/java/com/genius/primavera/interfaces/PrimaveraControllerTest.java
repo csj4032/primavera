@@ -19,18 +19,19 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 @RestClientTest(PrimaveraService.class)
 public class PrimaveraControllerTest {
 
-	@Autowired
-	private PrimaveraService primaveraService;
+    @Autowired
+    private PrimaveraService primaveraService;
 
-	@Autowired
-	private MockRestServiceServer serviceServer;
+    @Autowired
+    private MockRestServiceServer serviceServer;
 
-	@Test
-	@DisplayName("User Test (Mocked)")
-	public void userTestMock() {
-		serviceServer.expect(requestTo("/users/1"))
-			.andRespond(withSuccess("{\"id\":1,\"name\":\"mockUser\"}", MediaType.APPLICATION_JSON));
-		User user = primaveraService.getUser(1);
-		assertThat(user.getId()).isEqualTo(1);
-	}
+    @Test
+    @DisplayName("User Test (Mocked)")
+    public void userTestMock() {
+        serviceServer.expect(requestTo("http://localhost/users/1"))
+            .andRespond(withSuccess("{\"id\":1,\"nickname\":\"mockUser\"}", MediaType.APPLICATION_JSON));
+        User user = primaveraService.getUser(1);
+        assertThat(user.getId()).isEqualTo(1);
+        assertThat(user.getNickname()).isEqualTo("mockUser");
+    }
 }
