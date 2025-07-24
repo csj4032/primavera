@@ -296,3 +296,48 @@ XSS 공격을 방어하기 위한 Lucy XSS 필터의 Spring Boot Starter 구현:
 
 ## License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Travis CI 설정
+
+이 프로젝트는 Travis CI를 이용해 자동 빌드, 테스트, 배포를 수행합니다.
+
+### .travis.yml 예시
+```yaml
+language: java
+jdk:
+  - openjdk21
+
+# Gradle 캐시 활용
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+
+# 빌드 및 테스트
+script:
+  - ./gradlew clean build
+
+# 커버리지 리포트 업로드 (예: coveralls)
+after_success:
+  - ./gradlew jacocoTestReport
+  - bash <(curl -s https://codecov.io/bash)
+
+# 마스터 브랜치에 push 시 배포
+branches:
+  only:
+    - master
+
+# 환경 변수 예시 (필요시)
+env:
+  global:
+    - SPRING_PROFILES_ACTIVE=dev
+```
+
+#### 설명
+- 빌드 도구: Gradle
+- JDK: OpenJDK 21
+- 빌드/테스트 자동화 및 커버리지 리포트 업로드
+- master 브랜치에만 배포 트리거
+- 환경 변수로 Spring Profile 지정 가능
+
+Travis CI를 통해 Pull Request 및 master 브랜치에 대한 자동 빌드와 테스트가 실행되며, 빌드 상태는 상단 뱃지로 확인할 수 있습니다.

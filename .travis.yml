@@ -1,22 +1,25 @@
 language: java
 
 jdk:
-  - oraclejdk13
+  - openjdk21
 
 branches:
   only:
     - master
 
-script: "./gradlew clean build"
+script:
+  - ./gradlew clean build
 
 cache:
   directories:
-    - '$HOME/.m2/repository'
-    - '$HOME/.gradle'
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
 
 env:
   global:
     - COVERALLS_REPO_TOKEN=zkuwfYF8m7tHeHe09w23Om2CrQJg4hOWU
+    - SPRING_PROFILES_ACTIVE=dev
 
 after_success:
-  - ./gradlew jacocoRootReport coveralls
+  - ./gradlew jacocoTestReport
+  - bash <(curl -s https://codecov.io/bash)
