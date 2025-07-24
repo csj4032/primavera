@@ -21,7 +21,7 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.web.filter.CompositeFilter;
 
-import javax.servlet.Filter;
+import jakarta.servlet.Filter;
 import java.util.List;
 
 @Slf4j

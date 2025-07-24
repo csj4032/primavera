@@ -8,6 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -16,6 +18,7 @@ import java.time.Month;
 import java.util.List;
 
 @Slf4j
+@ExtendWith(MockitoExtension.class)
 public class AccountCSVParserTest {
 
 	private static String resource = "src/main/resources/";

@@ -24,7 +24,7 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 
 import java.util.List;
 
-import javax.servlet.Filter;
+import jakarta.servlet.Filter;
 
 @Slf4j
 @Configuration

@@ -19,7 +19,7 @@ import org.springframework.security.web.context.HttpSessionSecurityContextReposi
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession;
 
 import lombok.extern.slf4j.Slf4j;
 

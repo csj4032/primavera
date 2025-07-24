@@ -21,7 +21,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
-import javax.servlet.Filter;
+import jakarta.servlet.Filter;
 
 import lombok.extern.slf4j.Slf4j;
 

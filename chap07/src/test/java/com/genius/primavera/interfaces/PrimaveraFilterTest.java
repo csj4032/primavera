@@ -10,7 +10,7 @@ import org.springframework.security.web.context.HttpSessionSecurityContextReposi
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession;
 
 import static org.springframework.security.web.context.HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;

@@ -5,9 +5,12 @@ import com.genius.primavera.application.account.AccountCSVParser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
 
+@ExtendWith(MockitoExtension.class)
 public class AccountAnalyzerTest {
 
 	@Test

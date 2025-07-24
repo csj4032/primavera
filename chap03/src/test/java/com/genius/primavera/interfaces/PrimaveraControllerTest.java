@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.client.MockRestServiceServer;
@@ -27,9 +26,10 @@ public class PrimaveraControllerTest {
 	private MockRestServiceServer serviceServer;
 
 	@Test
-	@DisplayName("User Test")
-	public void userTest() {
-		serviceServer.expect(requestTo("/users/1")).andRespond(withSuccess(new ClassPathResource("/user.json", getClass()), MediaType.APPLICATION_JSON));
+	@DisplayName("User Test (Mocked)")
+	public void userTestMock() {
+		serviceServer.expect(requestTo("/users/1"))
+			.andRespond(withSuccess("{\"id\":1,\"name\":\"mockUser\"}", MediaType.APPLICATION_JSON));
 		User user = primaveraService.getUser(1);
 		assertThat(user.getId()).isEqualTo(1);
 	}

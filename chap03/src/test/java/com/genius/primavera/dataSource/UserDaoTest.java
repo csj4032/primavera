@@ -16,13 +16,20 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.time.LocalDateTime;
 
 import javax.sql.DataSource;
 
-@SpringBootTest
-@TestMethodOrder(OrderAnnotation.class)
-@DisplayName(value = "유저 등록, 전체 조회, 삭제")
+
+@SpringBootTest(properties = {
+    "spring.datasource.url=jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE",
+    "spring.datasource.driver-class-name=org.h2.Driver",
+    "spring.datasource.username=sa",
+    "spring.datasource.password=",
+    "spring.jpa.database-platform=org.hibernate.dialect.H2Dialect"
+})
 public class UserDaoTest {
 
 	@Autowired

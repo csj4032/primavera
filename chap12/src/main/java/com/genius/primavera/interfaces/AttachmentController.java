@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import java.net.MalformedURLException;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
