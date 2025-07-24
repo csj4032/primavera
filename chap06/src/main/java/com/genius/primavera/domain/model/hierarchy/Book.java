@@ -12,7 +12,6 @@ import jakarta.persistence.Table;
 @Getter
 @Entity
 @ToString
-@Table(name = "BOOK")
 @DiscriminatorValue("B")
 public class Book extends Item {
 	private String author;

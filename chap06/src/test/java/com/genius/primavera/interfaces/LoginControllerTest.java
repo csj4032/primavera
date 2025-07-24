@@ -38,7 +38,7 @@ public class LoginControllerTest {
 	@Order(2)
 	@DisplayName("로그인 시도 : 성공")
 	public void loginIn() throws Exception {
-		mockMvc.perform(post("/login").param("email", "genius_0@gmail.com").param("password", "secret"))
+		mockMvc.perform(post("/login").param("email", "genius@primavera.com").param("password", "password123"))
 				.andExpect(status().is3xxRedirection())
 				.andExpect(header().exists("auth"))
 				.andExpect(view().name("redirect:/"));
@@ -48,7 +48,7 @@ public class LoginControllerTest {
 	@Order(3)
 	@DisplayName("로그인 시도 : 실패")
 	public void loginInFalse() throws Exception {
-		mockMvc.perform(post("/login").param("email", "genius_0@gmail.com").param("password", ""))
+		mockMvc.perform(post("/login").param("email", "genius@primavera.com").param("password", "wrongpassword"))
 				.andExpect(status().isOk())
 				.andExpect(view().name("login"))
 				.andExpect(model().attribute("message", "failure"));

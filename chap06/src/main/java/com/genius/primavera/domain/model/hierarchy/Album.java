@@ -13,7 +13,6 @@ import jakarta.persistence.Table;
 @Getter
 @Entity
 @ToString(callSuper = true)
-@Table(name = "ALBUM")
 @DiscriminatorValue("A")
 public class Album extends Item {
 

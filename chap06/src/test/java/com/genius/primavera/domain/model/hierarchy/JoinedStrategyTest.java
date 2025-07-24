@@ -7,6 +7,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.Persistence;
+
 import java.time.LocalDateTime;
 
 /**
@@ -26,51 +27,51 @@ import java.time.LocalDateTime;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class JoinedStrategyTest {
 
-	private static EntityManagerFactory entityManagerFactory;
-	private static EntityManager entityManager;
-	private static EntityTransaction entityTransaction;
+    private static EntityManagerFactory entityManagerFactory;
+    private static EntityManager entityManager;
+    private static EntityTransaction entityTransaction;
 
-	@BeforeAll
-	public static void setUp() {
-		entityManagerFactory = Persistence.createEntityManagerFactory("advance");
-		entityManager = entityManagerFactory.createEntityManager();
-		entityTransaction = entityManager.getTransaction();
-	}
+    @BeforeAll
+    public static void setUp() {
+        entityManagerFactory = Persistence.createEntityManagerFactory("advance");
+        entityManager = entityManagerFactory.createEntityManager();
+        entityTransaction = entityManager.getTransaction();
+    }
 
-	@Test
-	@Order(1)
-	@DisplayName("연락처 저장")
-	public void save() {
-		var address = new Address();
-		address.setCountry("country");
-		address.setCity("city");
-		address.setStreet("street");
-		address.setZipCode("zipCode");
-		address.setRegDt(LocalDateTime.now());
+    @Test
+    @Order(1)
+    @DisplayName("연락처 저장")
+    public void save() {
+        var address = new Address();
+        address.setCountry("country");
+        address.setCity("city");
+        address.setStreet("street");
+        address.setZipCode("zipCode");
+        address.setCreatedAt(LocalDateTime.now());
 
-		var email = new Email();
-		email.setSign("genis");
-		email.setDomain("gmail.com");
-		email.setRegDt(LocalDateTime.now());
+        var email = new Email();
+        email.setSign("genius");
+        email.setDomain("gmail.com");
+        email.setCreatedAt(LocalDateTime.now());
 
-		var mobile = new Mobile();
-		mobile.setProvider("010");
-		mobile.setNumber("00000000");
-		mobile.setRegDt(LocalDateTime.now());
+        var mobile = new Mobile();
+        mobile.setProvider("010");
+        mobile.setNumber("00000000");
+        mobile.setCreatedAt(LocalDateTime.now());
 
-		entityTransaction.begin();
-		entityManager.persist(address);
-		entityManager.persist(email);
-		entityManager.persist(mobile);
-		entityTransaction.commit();
+        entityTransaction.begin();
+        entityManager.persist(address);
+        entityManager.persist(email);
+        entityManager.persist(mobile);
+        entityTransaction.commit();
 
-	}
+    }
 
-	@Test
-	@Order(2)
-	@DisplayName("연락처 조회")
-	public void find() {
-		var contact = entityManager.find(Address.class, 1L);
-		log.info("contact : {}", contact);
-	}
+    @Test
+    @Order(2)
+    @DisplayName("연락처 조회")
+    public void find() {
+        var contact = entityManager.find(Address.class, 1L);
+        log.info("contact : {}", contact);
+    }
 }

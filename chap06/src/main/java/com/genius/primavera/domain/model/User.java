@@ -10,6 +10,7 @@ import lombok.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import jakarta.validation.groups.Default;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -43,8 +44,8 @@ public class User {
     @NotNull
     @Size(min = 1)
     private List<Role> roles;
-    private LocalDateTime regDate;
-    private LocalDateTime modDate;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     public boolean isAuthenticate(@NonNull String password) {
         return new BCryptPasswordEncoder().matches(password, this.password);

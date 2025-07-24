@@ -12,13 +12,13 @@ public interface UserMapper {
 
 	String SELECT_ID_NAME_REG_DATE_MOD_DATE_FROM_USER = """
 			SELECT 
-				ID, EMAIL, NICKNAME, PASSWORD, STATUS, REG_DT, MOD_DT 
+				ID, EMAIL, NICKNAME, PASSWORD, STATUS, CREATED_AT, UPDATED_AT 
 			FROM 
 				USER
 			""";
 	String INSERT_SQL = """
 			INSERT INTO USER 
-				(EMAIL, PASSWORD, NICKNAME, STATUS, REG_DT, MOD_DT) 
+				(EMAIL, PASSWORD, NICKNAME, STATUS, CREATED_AT, UPDATED_AT) 
 			VALUES 
 				(#{user.email}, #{user.password}, #{user.nickname}, #{user.status, typeHandler=UserStatusTypeHandler}, #{user.regDate}, #{user.modDate})
 				""";
@@ -26,8 +26,8 @@ public interface UserMapper {
 	@Results(id = "USER", value = {
 			@Result(property = "id", column = "ID"),
 			@Result(property = "name", column = "NAME"),
-			@Result(property = "regDate", column = "REG_DT"),
-			@Result(property = "modDate", column = "MOD_DT")
+			@Result(property = "created_at", column = "CREATED_AT"),
+			@Result(property = "updated_at", column = "UPDATED_AT")
 	})
 	@Select(value = SELECT_ID_NAME_REG_DATE_MOD_DATE_FROM_USER + "WHERE ID = #{id}")
 	User findById(@Param(value = "id") long id);
@@ -37,8 +37,8 @@ public interface UserMapper {
 			@Result(property = "id", column = "ID"),
 			@Result(property = "email", column = "EMAIL"),
 			@Result(property = "password", column = "PASSWORD"),
-			@Result(property = "regDate", column = "REG_DT"),
-			@Result(property = "modDate", column = "MOD_DT"),
+			@Result(property = "regDate", column = "CREATED_AT"),
+			@Result(property = "modDate", column = "UPDATED_AT"),
 			@Result(property = "roles", javaType = List.class, column = "ID", many = @Many(select = "com.genius.primavera.domain.mapper.UserRoleMapper.findByUserId"))
 	})
 	User findByIdWithRoles(@Param(value = "id") long id);
@@ -58,10 +58,10 @@ public interface UserMapper {
 
 	@Insert(value = {"""
 			<script>
-				INSERT INTO USER (EMAIL, PASSWORD, NICKNAME, STATUS, REG_DT, MOD_DT) 
+				INSERT INTO USER (EMAIL, PASSWORD, NICKNAME, STATUS, CREATED_AT, UPDATED_AT) 
 				VALUES 
 				<foreach collection='users' item='user' separator=','> 
-				(#{user.email}, #{user.password}, #{user.nickname}, #{user.status, typeHandler=UserStatusTypeHandler}, #{user.regDate}, #{user.modDate}) 
+				(#{user.email}, #{user.password}, #{user.nickname}, #{user.status, typeHandler=UserStatusTypeHandler}, #{user.createdAt}, #{user.updatedAt}) 
 				</foreach> 
 			</script>
 			"""
@@ -69,7 +69,7 @@ public interface UserMapper {
 	@Options(useGeneratedKeys = true, keyProperty = "id")
 	int saveAll(@Param("users") List<User> users);
 
-	@Update(value = "UPDATE USER SET NICKNAME = #{user.nickname}, MOD_DT = #{user.modDate} WHERE ID = #{user.id}")
+	@Update(value = "UPDATE USER SET NICKNAME = #{user.nickname}, UPDATED_AT = #{user.updatedAt} WHERE ID = #{user.id}")
 	int update(@Param("user") User user);
 
 	@Delete(value = "DELETE FROM USER")

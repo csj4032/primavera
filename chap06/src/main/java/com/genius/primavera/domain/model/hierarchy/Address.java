@@ -13,7 +13,6 @@ import jakarta.persistence.Table;
 @Getter
 @Entity
 @ToString(callSuper = true)
-@Table(name = "ADDRESS")
 @DiscriminatorValue("A")
 public class Address extends Contact {
 	@Column(name = "COUNTRY")

@@ -5,6 +5,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
 
 @Setter
@@ -16,14 +17,14 @@ import java.time.LocalDateTime;
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Contact {
 
-	@Id
-	@Column(name = "ID")
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+    @Id
+    @Column(name = "ID")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	@Column(name = "REG_DT")
-	private LocalDateTime regDt;
+    @Column(name = "CREATED_AT")
+    private LocalDateTime createdAt;
 
-	@Column(name = "MOD_DT")
-	private LocalDateTime modDt;
+    @Column(name = "UPDATED_AT")
+    private LocalDateTime updatedAt;
 }

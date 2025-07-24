@@ -7,9 +7,7 @@ import jakarta.persistence.*;
 
 @Setter
 @Getter
-@Entity
 @ToString
-@Table(name = "MOBILE")
 @NoArgsConstructor
 @AllArgsConstructor
 @DiscriminatorValue("C")

@@ -13,7 +13,6 @@ import jakarta.persistence.Table;
 @Setter
 @Getter
 @Entity
-@Table(name = "EMAIL")
 @NoArgsConstructor
 @AllArgsConstructor
 @DiscriminatorValue("B")

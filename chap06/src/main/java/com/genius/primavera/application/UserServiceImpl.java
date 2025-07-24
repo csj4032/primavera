@@ -19,7 +19,7 @@ public class UserServiceImpl implements UserService {
     public User save(User user) {
         user.setPassword(user.getPassword());
         user.setStatus(UserStatus.ON);
-        user.setRegDate(LocalDateTime.now());
+        user.setCreatedAt(LocalDateTime.now());
         userMapper.save(user);
         return user;
     }

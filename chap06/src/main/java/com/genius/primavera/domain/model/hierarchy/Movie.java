@@ -12,7 +12,6 @@ import jakarta.persistence.Table;
 @Getter
 @Entity
 @ToString
-@Table(name = "MOVIE")
 @DiscriminatorValue("C")
 public class Movie extends Item {
 }

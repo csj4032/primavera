@@ -1,6 +1,7 @@
 package com.genius.primavera.interfaces;
 
 import com.genius.primavera.application.NotFoundUserException;
+import com.genius.primavera.application.UserService;
 import com.genius.primavera.domain.model.Role;
 import com.genius.primavera.domain.model.RoleType;
 import com.genius.primavera.domain.model.User;
@@ -19,6 +20,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
 
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
@@ -34,6 +37,9 @@ public class UserControllerTest {
 
     @Mock
     private UserService userService;
+
+    @Mock
+    private RestTemplate restTemplate;
 
     @InjectMocks
     private UserController userController;

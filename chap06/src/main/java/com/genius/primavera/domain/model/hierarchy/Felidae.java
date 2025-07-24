@@ -11,6 +11,6 @@ import jakarta.persistence.*;
 @Table(name = "FELIDAE")
 public class Felidae extends Family {
 
-	@Column(name = "SYSTEM")
-	private String system;
+	@Column(name = "STRUCTURE")
+	private String structure;
 }

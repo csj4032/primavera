@@ -27,7 +27,7 @@ public final class UserTableSupport {
 		public final SqlColumn<LocalDateTime> modDate = column("MOD_DT", JDBCType.DATE);
 
 		public UserTable() {
-			super("USER");
+			super("USERS");
 		}
 	}
 }
