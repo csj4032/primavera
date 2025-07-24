@@ -1,9 +1,7 @@
 spring:
   datasource:
-    driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://localhost:3306/primavera
-    username: primavera
-    password: primavera
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    schema: classpath:sql/schema.sql
     hikari:
       auto-commit: false
       data-source-properties:
@@ -14,6 +12,9 @@ spring:
         preparedStatementCacheQueries: 0
   aop:
     proxy-target-class: true
+
+logging:
+  config: classpath:logback-spring.xml
 
 mybatis:
   configuration:

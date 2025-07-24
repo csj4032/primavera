@@ -1,29 +1,15 @@
 package com.genius.primavera.domain.relation.manyToMany;
 
+import com.genius.primavera.domain.relation.JpaTestBase;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.EntityTransaction;
-import jakarta.persistence.Persistence;
 import java.time.LocalDateTime;
 
 @Slf4j
 @DisplayName("N:N 새로운 엔티티 도출")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class ManyToManyNewEntity {
-
-	private static EntityManagerFactory entityManagerFactory;
-	private static EntityManager entityManager;
-	private static EntityTransaction entityTransaction;
-
-	@BeforeAll
-	public static void setUp() {
-		entityManagerFactory = Persistence.createEntityManagerFactory("basic");
-		entityManager = entityManagerFactory.createEntityManager();
-		entityTransaction = entityManager.getTransaction();
-	}
+public class ManyToManyNewEntity extends JpaTestBase {
 
 	@Test
 	@Order(1)

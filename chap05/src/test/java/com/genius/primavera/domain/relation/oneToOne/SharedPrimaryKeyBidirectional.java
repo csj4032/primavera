@@ -1,28 +1,13 @@
 package com.genius.primavera.domain.relation.oneToOne;
 
+import com.genius.primavera.domain.relation.JpaTestBase;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
-
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.EntityTransaction;
-import jakarta.persistence.Persistence;
 
 @Slf4j
 @DisplayName("1:1 대상 테이블에 외래 키 양방향")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class SharedPrimaryKeyBidirectional {
-
-	private static EntityManagerFactory entityManagerFactory;
-	private static EntityManager entityManager;
-	private static EntityTransaction entityTransaction;
-
-	@BeforeAll
-	public static void setUp() {
-		entityManagerFactory = Persistence.createEntityManagerFactory("basic");
-		entityManager = entityManagerFactory.createEntityManager();
-		entityTransaction = entityManager.getTransaction();
-	}
+public class SharedPrimaryKeyBidirectional extends JpaTestBase {
 
 	@Test
 	@Order(1)

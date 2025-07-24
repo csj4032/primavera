@@ -1,29 +1,15 @@
 package com.genius.primavera.domain.relation.manyToMany;
 
+import com.genius.primavera.domain.relation.JpaTestBase;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.EntityTransaction;
-import jakarta.persistence.Persistence;
 import java.util.List;
 
 @Slf4j
 @DisplayName("N:N 발행과 구독 단방향  : 발행쪽에서 구독을 참조함")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class ManyToManyUnidirectional {
-
-	private static EntityManagerFactory entityManagerFactory;
-	private static EntityManager entityManager;
-	private static EntityTransaction entityTransaction;
-
-	@BeforeAll
-	public static void setUp() {
-		entityManagerFactory = Persistence.createEntityManagerFactory("basic");
-		entityManager = entityManagerFactory.createEntityManager();
-		entityTransaction = entityManager.getTransaction();
-	}
+public class ManyToManyUnidirectional extends JpaTestBase {
 
 	@Test
 	@Order(1)

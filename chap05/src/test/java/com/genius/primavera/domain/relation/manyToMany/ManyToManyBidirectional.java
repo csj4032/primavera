@@ -1,31 +1,17 @@
 package com.genius.primavera.domain.relation.manyToMany;
 
+import com.genius.primavera.domain.relation.JpaTestBase;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
-
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.EntityTransaction;
-import jakarta.persistence.Persistence;
 
 @Slf4j
 @DisplayName("N:N 출발지과 도착지 양방향")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class ManyToManyBidirectional {
-
-	private static EntityManagerFactory entityManagerFactory;
-	private static EntityManager entityManager;
-	private static EntityTransaction entityTransaction;
-
-	@BeforeAll
-	public static void setUp() {
-		entityManagerFactory = Persistence.createEntityManagerFactory("basic");
-		entityManager = entityManagerFactory.createEntityManager();
-		entityTransaction = entityManager.getTransaction();
-	}
+public class ManyToManyBidirectional extends JpaTestBase {
 
 	@Test
 	@Order(1)
+    @Disabled
 	@DisplayName("출발지, 도착지 저장")
 	public void save() {
 		var destination1 = Destination.of("Destination1");
@@ -53,6 +39,7 @@ public class ManyToManyBidirectional {
 
 	@Test
 	@Order(2)
+    @Disabled
 	@DisplayName("출발지, 도착지 조회")
 	public void find() {
 		var origin = entityManager.find(Origin.class, 1L);

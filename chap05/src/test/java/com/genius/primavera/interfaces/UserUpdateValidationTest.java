@@ -11,7 +11,12 @@ import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWeb
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.testcontainers.containers.MySQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.List;
 
@@ -19,7 +24,25 @@ import java.util.List;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureWebTestClient
+@Testcontainers
 public class UserUpdateValidationTest {
+
+	@Container
+	private static final MySQLContainer<?> mysqlContainer = new MySQLContainer<>("mysql:8.4.0")
+			.withDatabaseName("primavera")
+			.withUsername("primavera")
+			.withPassword("primavera")
+			.withInitScript("sql/schema.sql")
+			.withCommand("--character-set-server=utf8mb4", "--collation-server=utf8mb4_unicode_ci");
+
+	@DynamicPropertySource
+	static void mysqlProperties(DynamicPropertyRegistry registry) {
+		registry.add("spring.datasource.url", mysqlContainer::getJdbcUrl);
+		registry.add("spring.datasource.username", mysqlContainer::getUsername);
+		registry.add("spring.datasource.password", mysqlContainer::getPassword);
+		System.out.println("MySQL 컨테이너 JDBC URL: " + mysqlContainer.getJdbcUrl());
+		System.out.println("MySQL 컨테이너 포트: " + mysqlContainer.getFirstMappedPort());
+	}
 
 	@Autowired
 	private TestRestTemplate restTemplate;

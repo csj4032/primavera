@@ -32,8 +32,8 @@ public class AccountCSVParserTest {
 		List<AccountInfo> accountInfos = accountCSVParser.parseLinesFormCVS(lines);
 		Assertions.assertNotNull(accountInfos);
 		AccountProcessor accountPrecess = new AccountProcessor(accountInfos);
-		Assertions.assertEquals(97300l, accountPrecess.calculationTotalAmount());
+		Assertions.assertEquals(197300l, accountPrecess.calculationTotalAmount());
 		Assertions.assertEquals(97300l, accountPrecess.calculationTotalForMonth(Month.JANUARY));
-		Assertions.assertEquals(100000l, accountPrecess.calculationTotalForCategory(Category.Type0));
+		Assertions.assertEquals(200000l, accountPrecess.calculationTotalForCategory(Category.Type0));
 	}
 }

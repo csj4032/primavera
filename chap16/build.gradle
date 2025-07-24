@@ -5,7 +5,6 @@ plugins {
 
 dependencies {
     implementation('org.springframework.boot:spring-boot-starter-batch')
-    implementation("org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}")
     implementation('org.modelmapper:modelmapper:3.2.1')
     implementation('org.projectlombok:lombok')
     implementation('com.opencsv:opencsv:5.9')

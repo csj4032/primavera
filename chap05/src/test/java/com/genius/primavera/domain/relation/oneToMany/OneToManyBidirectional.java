@@ -1,12 +1,8 @@
 package com.genius.primavera.domain.relation.oneToMany;
 
+import com.genius.primavera.domain.relation.JpaTestBase;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
-
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.EntityTransaction;
-import jakarta.persistence.Persistence;
 
 /**
  * 일대다 단방향 매핑 반대편에 다대일 단뱡향 매핑을 읽기 전용으로 추가해서 일대다 양방향 처럼 보임
@@ -15,18 +11,7 @@ import jakarta.persistence.Persistence;
 @Slf4j
 @DisplayName("1:N 고객와 연락처 양방향")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class OneToManyBidirectional {
-
-	private static EntityManagerFactory entityManagerFactory;
-	private static EntityManager entityManager;
-	private static EntityTransaction entityTransaction;
-
-	@BeforeAll
-	public static void setUp() {
-		entityManagerFactory = Persistence.createEntityManagerFactory("basic");
-		entityManager = entityManagerFactory.createEntityManager();
-		entityTransaction = entityManager.getTransaction();
-	}
+public class OneToManyBidirectional extends JpaTestBase {
 
 	@Test
 	@Order(1)
@@ -89,8 +74,10 @@ public class OneToManyBidirectional {
 	public void updateCustomByContact() {
 		var contact1 = entityManager.find(Contact.class, 1l);
 		var customer2 = Customer.of("custom2");
-		contact1.setCustomer(customer2);
+		
 		entityTransaction.begin();
+		entityManager.persist(customer2);
+		contact1.setCustomer(customer2);
 		entityManager.persist(contact1);
 		entityTransaction.commit();
 	}

@@ -6,12 +6,15 @@ plugins {
 dependencies {
     implementation "org.springframework.boot:spring-boot-starter-web"
     implementation "org.springframework.boot:spring-boot-starter-jdbc"
-    implementation "org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}"
+    implementation "com.mysql:mysql-connector-j:${mysqlVersion}"
     implementation "org.mybatis.spring.boot:mybatis-spring-boot-starter:${mybatisSpringBootStarterVersion}"
     implementation "org.reflections:reflections:${reflectionsVersion}"
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
     testImplementation "org.springframework.boot:spring-boot-starter-test"
     testImplementation "org.springframework.security:spring-security-test"
-    testImplementation 'com.h2database:h2'
     testImplementation 'org.mockito:mockito-core:4.+'
+    testImplementation "com.mysql:mysql-connector-j:${mysqlVersion}"
+    testImplementation 'org.testcontainers:testcontainers:1.19.5'
+    testImplementation 'org.testcontainers:junit-jupiter:1.19.5'
+    testImplementation 'org.testcontainers:mysql:1.19.5'
 }

@@ -3,7 +3,7 @@ spring:
     activate:
       on-profile: default
   application:
-    name: Privamera
+    name: primavera-chapter-01
   banner:
     charset: UTF-8
     location: classpath:primavera.txt

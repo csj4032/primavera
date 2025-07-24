@@ -1,6 +1,5 @@
 package com.genius.primavera.dataSource;
 
-import org.h2.jdbcx.JdbcDataSource;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -8,23 +7,46 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.testcontainers.containers.MySQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
+@Testcontainers
 public class SpringDataSourceTest {
+
+    @Container
+    private static final MySQLContainer<?> mysqlContainer = new MySQLContainer<>("mysql:8.4.0")
+            .withDatabaseName("primavera")
+            .withUsername("primavera")
+            .withPassword("primavera")
+            .withInitScript("sql/schema.sql");
+
+    // Spring 환경에 MySQL 컨테이너 속성 등록
+    @DynamicPropertySource
+    static void mysqlProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", mysqlContainer::getJdbcUrl);
+        registry.add("spring.datasource.username", mysqlContainer::getUsername);
+        registry.add("spring.datasource.password", mysqlContainer::getPassword);
+        registry.add("spring.datasource.driver-class-name", () -> "com.mysql.cj.jdbc.Driver");
+    }
 
     @Autowired
     private DataSource dataSource;
 
     @Test
-    @Disabled("Database integration test disabled - converted to mock test")
     @DisplayName(value = "스프링 빈을 이용한 데이터베이스 접속")
     public void dataSourceTest() throws SQLException {
         try (var connection = dataSource.getConnection()) {
@@ -57,16 +79,24 @@ public class SpringDataSourceTest {
     }
 
     @Test
-    @DisplayName("H2 데이터베이스 연결 테스트")
-    public void h2DataSourceTest() throws SQLException {
-        JdbcDataSource h2DataSource = new JdbcDataSource();
-        h2DataSource.setURL("jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE");
-        h2DataSource.setUser("sa");
-        h2DataSource.setPassword("");
+    @DisplayName("Docker MySQL 컨테이너 연결 테스트")
+    public void dockerMySQLDataSourceTest() throws SQLException {
+        System.out.println("MySQL 컨테이너 JDBC URL: " + mysqlContainer.getJdbcUrl());
+        System.out.println("MySQL 컨테이너 포트: " + mysqlContainer.getFirstMappedPort());
 
-        try (Connection connection = h2DataSource.getConnection()) {
-            Assertions.assertEquals("TESTDB", connection.getCatalog());
+        try (Connection connection = mysqlContainer.createConnection("")) {
+            Assertions.assertEquals("primavera", connection.getCatalog());
             Assertions.assertFalse(connection.isClosed());
+
+            try (Statement statement = connection.createStatement()) {
+                ResultSet resultSet = statement.executeQuery("SELECT 1");
+                Assertions.assertTrue(resultSet.next());
+                Assertions.assertEquals(1, resultSet.getInt(1));
+
+                resultSet = statement.executeQuery("SELECT COUNT(*) FROM USERS");
+                Assertions.assertTrue(resultSet.next());
+                Assertions.assertEquals(4, resultSet.getInt(1));
+            }
         }
     }
 }

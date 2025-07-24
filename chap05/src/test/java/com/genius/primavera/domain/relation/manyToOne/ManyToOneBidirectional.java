@@ -1,12 +1,8 @@
 package com.genius.primavera.domain.relation.manyToOne;
 
+import com.genius.primavera.domain.relation.JpaTestBase;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
-
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.EntityTransaction;
-import jakarta.persistence.Persistence;
 
 /**
  * 양방향은 외래 키가 있는 쪽이 연관관계의 주인
@@ -16,18 +12,7 @@ import jakarta.persistence.Persistence;
 @Slf4j
 @DisplayName("N:1 사원과 부서 양방향  : 부서는 사원을 참조하는 필드가 있음")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class ManyToOneBidirectional {
-
-	private static EntityManagerFactory entityManagerFactory;
-	private static EntityManager entityManager;
-	private static EntityTransaction entityTransaction;
-
-	@BeforeAll
-	public static void setUp() {
-		entityManagerFactory = Persistence.createEntityManagerFactory("basic");
-		entityManager = entityManagerFactory.createEntityManager();
-		entityTransaction = entityManager.getTransaction();
-	}
+public class ManyToOneBidirectional extends JpaTestBase {
 
 	@Test
 	@Order(1)

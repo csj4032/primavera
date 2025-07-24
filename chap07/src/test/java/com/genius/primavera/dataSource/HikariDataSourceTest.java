@@ -21,8 +21,8 @@ public class HikariDataSourceTest {
 	@DisplayName(value = "히카리 설정 초기화")
 	public static void init() {
 		configuration = new HikariConfig();
-		configuration.setDriverClassName("org.mariadb.jdbc.Driver");
-		configuration.setJdbcUrl("jdbc:mariadb://localhost:3306/primavera");
+		configuration.setDriverClassName("com.mysql.cj.jdbc.Driver");
+		configuration.setJdbcUrl("jdbc:mysql://localhost:3306/primavera?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&allowPublicKeyRetrieval=true");
 		configuration.setUsername(USER_NAME);
 		configuration.setPassword(PASS_WORLD);
 		configuration.setConnectionInitSql("SELECT 1 FROM DUAL");

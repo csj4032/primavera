@@ -10,20 +10,19 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 @Getter
 @Setter
 @ToString
-@Table(name = "USER")
+@Table(name = "MEMBER")
 @NoArgsConstructor
 @AllArgsConstructor
 @RequiredArgsConstructor(staticName = "of")
 public class Member {
 
-	@Id
-	@Column(name = "ID")
-	@GeneratedValue(strategy = IDENTITY)
-	private Long id;
+    @Id
+    @Column(name = "ID")
+    @GeneratedValue(strategy = IDENTITY)
+    private Long id;
 
-	@NonNull
-	@Column(name = "NAME")
-	private String name;
+    @NonNull
+    @Column(name = "NAME")
+    private String name;
 
-	//private Address address;
 }

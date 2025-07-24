@@ -31,7 +31,7 @@ public class ResettableServletOutputStream extends ServletOutputStream {
 		@Override
 		public void write(int w) throws IOException {
 			outputStream.write(w);
-			wrappedResponse.rawData.add(new Integer(w).byteValue());
+			wrappedResponse.rawData.add(Integer.valueOf(w).byteValue());
 		}
 	};
 

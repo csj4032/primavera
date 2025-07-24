@@ -1,6 +1,6 @@
 spring:
   application:
-    name: privamera
+    name: primavera-chapter-05
   profiles:
     active: local
     group:

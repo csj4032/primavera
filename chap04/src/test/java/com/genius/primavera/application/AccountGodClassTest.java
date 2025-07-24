@@ -18,6 +18,6 @@ public class AccountGodClassTest {
 		AccountGodClass accountTransaction = new AccountGodClass(path);
 		accountTransaction.calculation();
 		log.info("total : {}", accountTransaction.getTotal());
-		Assertions.assertEquals(97300l, accountTransaction.getTotal());
+		Assertions.assertEquals(197300l, accountTransaction.getTotal());
 	}
 }

@@ -5,5 +5,8 @@
 	   http://www.springframework.org/schema/beans/spring-beans.xsd">
 
 	<bean id="xmlBean" class="com.genius.primavera.lifecycle.XmlBean" init-method="afterPropertiesSet" destroy-method="destroy"/>
+	<bean id="xmlSpringBean" class="com.genius.primavera.PrimaveraSpringBean">
+		<constructor-arg value="xmlSpringBean"/>
+	</bean>
 
 </beans>

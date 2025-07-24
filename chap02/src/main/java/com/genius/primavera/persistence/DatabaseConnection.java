@@ -9,11 +9,11 @@ public class DatabaseConnection {
 	private DatabaseConnection() {
 	}
 
-	public static final String URL = "jdbc:mariadb://localhost:3306/primavera";
+	public static final String URL = "jdbc:mysql://localhost:3306/primavera";
 
 	public static Connection getConnection() {
 		try {
-			DriverManager.registerDriver(new org.mariadb.jdbc.Driver());
+			DriverManager.registerDriver(new com.mysql.cj.jdbc.Driver());
 			return DriverManager.getConnection(URL, "primavera", "primavera");
 		} catch (SQLException e) {
 			e.printStackTrace();

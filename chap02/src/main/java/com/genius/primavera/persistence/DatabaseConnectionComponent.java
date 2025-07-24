@@ -10,16 +10,16 @@ import java.sql.SQLException;
 @Component
 public class DatabaseConnectionComponent {
 
-	@Value(value = "${mariadb.url}")
+	@Value(value = "${mysql.url}")
 	public String url;
-	@Value(value = "${mariadb.username}")
+	@Value(value = "${mysql.username}")
 	public String username;
-	@Value(value = "${mariadb.password}")
+	@Value(value = "${mysql.password}")
 	public String password;
 
 	public Connection getConnection() {
 		try {
-			DriverManager.registerDriver(new org.mariadb.jdbc.Driver());
+			DriverManager.registerDriver(new com.mysql.cj.jdbc.Driver());
 			return DriverManager.getConnection(url, username, password);
 		} catch (SQLException e) {
 			e.printStackTrace();
