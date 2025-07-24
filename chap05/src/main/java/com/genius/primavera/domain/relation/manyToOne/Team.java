@@ -2,11 +2,11 @@ package com.genius.primavera.domain.relation.manyToOne;
 
 import lombok.*;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 import java.beans.ConstructorProperties;
 
-import static javax.persistence.GenerationType.IDENTITY;
+import static jakarta.persistence.GenerationType.IDENTITY;
 
 @Entity
 @Getter

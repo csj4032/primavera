@@ -2,7 +2,7 @@ package com.genius.primavera.domain.relation.manyToMany;
 
 import lombok.*;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Getter
 @Setter

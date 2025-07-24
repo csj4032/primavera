@@ -5,9 +5,9 @@ import lombok.*;
 import org.graalvm.polyglot.HostAccess;
 import org.hibernate.validator.constraints.ScriptAssert;
 
-import javax.validation.Valid;
-import javax.validation.constraints.*;
-import javax.validation.groups.Default;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
+import jakarta.validation.groups.Default;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;

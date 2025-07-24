@@ -3,10 +3,10 @@ package com.genius.primavera.domain.relation.oneToMany;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.Persistence;
 
 /**
  * 일대다 단방향 매핑 반대편에 다대일 단뱡향 매핑을 읽기 전용으로 추가해서 일대다 양방향 처럼 보임

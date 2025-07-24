@@ -7,9 +7,9 @@ import org.springframework.lang.NonNull;
 
 import lombok.*;
 
-import javax.validation.Valid;
-import javax.validation.constraints.*;
-import javax.validation.groups.Default;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
+import jakarta.validation.groups.Default;
 import java.time.LocalDateTime;
 import java.util.List;
 

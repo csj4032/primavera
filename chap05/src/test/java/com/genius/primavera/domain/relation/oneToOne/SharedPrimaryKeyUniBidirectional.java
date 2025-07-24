@@ -3,10 +3,10 @@ package com.genius.primavera.domain.relation.oneToOne;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.Persistence;
 
 /**
  * 객체의 참조는 User 가지고 실제 테이블의 외래키는 Address 에 존재 하도록 매핑 할 수 없음

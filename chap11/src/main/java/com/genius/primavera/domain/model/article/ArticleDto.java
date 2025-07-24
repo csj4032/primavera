@@ -2,7 +2,7 @@ package com.genius.primavera.domain.model.article;
 
 import java.time.Instant;
 
-import javax.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotEmpty;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -3,7 +3,7 @@ package com.genius.primavera.domain.model.hierarchy;
 
 import lombok.*;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Setter
 @Getter

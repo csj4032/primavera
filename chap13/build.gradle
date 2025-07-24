@@ -1,18 +1,9 @@
+plugins {
+    id 'org.springframework.boot' version '3.5.3'
+    id 'io.spring.dependency-management' version '1.1.7'
+}
+
 def querydslSrcDir = 'src/main/java'
-
-querydsl {
-    library = 'com.querydsl:querydsl-apt:4.4.0'
-    jpa = true
-    querydslSourcesDir = querydslSrcDir
-}
-
-compileQuerydsl{
-    options.annotationProcessorPath = configurations.querydsl
-}
-
-configurations {
-    querydsl.extendsFrom compileClasspath
-}
 
 sourceSets {
     main {
@@ -23,7 +14,7 @@ sourceSets {
 }
 
 dependencies {
-    compile('org.springframework.boot:spring-boot-starter-web') {
+    implementation('org.springframework.boot:spring-boot-starter-web') {
         exclude module: "spring-boot-starter-tomcat"
     }
     implementation('org.springframework.boot:spring-boot-starter-aop')
@@ -40,14 +31,14 @@ dependencies {
     implementation('org.springframework.boot:spring-boot-starter-reactor-netty')
     implementation('org.springframework.boot:spring-boot-devtools')
     implementation('org.springframework.data:spring-data-envers')
-    implementation('org.springframework.security.oauth.boot:spring-security-oauth2-autoconfigure:2.1.4.RELEASE')
-    implementation('org.thymeleaf.extras:thymeleaf-extras-springsecurity5:3.0.4.RELEASE')
-    implementation('nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:2.3.0')
-    implementation('com.navercorp.lucy:lucy-xss-servlet:2.0.0')
+    implementation("org.springframework.security:spring-security-oauth2-authorization-server:${springSecurityOauth2AutoConfigureVersion}")
+    implementation("org.thymeleaf.extras:thymeleaf-extras-springsecurity6:${thymeleafExtrasSpringSecurity6Version}")
+    implementation("nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:${thymeleafLayoutDialectVersion}")
+    implementation("com.navercorp.lucy:lucy-xss-servlet:${lucyXssServletVersion}")
     testImplementation('io.rest-assured:rest-assured:3.3.0')
-    implementation('org.mariadb.jdbc:mariadb-java-client:2.3.0')
-    implementation('org.modelmapper:modelmapper:2.3.3')
-    implementation('org.flywaydb:flyway-core:5.2.4')
+    implementation("org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}")
+    implementation('org.modelmapper:modelmapper:3.2.1')
+    implementation('org.flywaydb:flyway-core:10.10.0')
     implementation('org.projectlombok:lombok')
     implementation('org.jctools:jctools-core:2.1.2')
     implementation('com.github.ben-manes.caffeine:caffeine:2.8.5')
@@ -59,7 +50,9 @@ dependencies {
     implementation('com.squareup.retrofit2:retrofit:2.9.0')
     implementation('com.squareup.retrofit2:converter-jackson:2.9.0')
     annotationProcessor('org.projectlombok:lombok')
-    annotationProcessor('com.querydsl:querydsl-apt')
+    annotationProcessor("com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jpa")
+    annotationProcessor("jakarta.persistence:jakarta.persistence-api")
+    annotationProcessor("jakarta.annotation:jakarta.annotation-api")
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude module: 'junit'
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'

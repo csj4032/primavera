@@ -1,11 +1,16 @@
+plugins {
+    id 'org.springframework.boot' version '3.5.3'
+    id 'io.spring.dependency-management' version '1.1.7'
+}
+
 dependencies {
     implementation("org.springframework:spring-web")
     implementation("org.springframework:spring-webmvc")
     implementation('org.springframework.boot:spring-boot-autoconfigure')
     implementation('org.springframework.boot:spring-boot-autoconfigure-processor')
     annotationProcessor('org.springframework.boot:spring-boot-configuration-processor')
-    implementation('com.navercorp.lucy:lucy-xss-servlet:2.0.0')
-    implementation('jakarta.servlet:jakarta.servlet-api:4.0.4')
+    implementation('com.navercorp.lucy:lucy-xss-servlet:${lucyXssServletVersion}')
+    implementation('jakarta.servlet:jakarta.servlet-api:${jakartaServletVersion}')
     implementation('org.projectlombok:lombok')
     annotationProcessor('org.projectlombok:lombok')
 }

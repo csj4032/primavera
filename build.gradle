@@ -1,19 +1,37 @@
 plugins {
     id 'java'
     id 'jacoco'
-    id 'org.springframework.boot' version '3.4.4'
-    id 'io.spring.dependency-management' version '1.1.7'
 }
 
-tasks.test {
-    finalizedBy(tasks.jacocoTestReport) // test 작업이 끝나면 jacocoTestReport 실행
-}
-
-tasks.jacocoTestReport {
+task jacocoRootReport(type: JacocoReport) {
+    description = 'Generates an aggregate report from all subprojects'
+    group = 'reporting'
+    
+    // 모든 서브프로젝트의 jacocoTestReport에 의존
+    dependsOn {
+        subprojects.findAll { 
+            it.plugins.hasPlugin('jacoco') 
+        }.collect { 
+            it.tasks.jacocoTestReport 
+        }
+    }
+    
+    subprojects.each { subproject ->
+        if (subproject.plugins.hasPlugin('java')) {
+            additionalSourceDirs.from(subproject.sourceSets.main.allSource.srcDirs)
+            sourceDirectories.from(subproject.sourceSets.main.allSource.srcDirs)  
+            classDirectories.from(subproject.sourceSets.main.output)
+        }
+    }
+    
+    executionData.from(fileTree(dir: '.', includes: ['**/build/jacoco/test.exec']))
+    
     reports {
-        xml.required.set(true)
-        csv.required.set(false)
-        html.required.set(true)
+        xml.required = true
+        csv.required = false
+        html.required = true
+        xml.outputLocation = file("${buildDir}/reports/jacoco/test/jacocoTestReport.xml")
+        html.outputLocation = file("${buildDir}/reports/jacoco/test/html")
     }
 }
 
@@ -29,8 +47,8 @@ subprojects {
     version = '0.0.1-SNAPSHOT'
 
     apply plugin: 'java'
-    apply plugin: 'org.springframework.boot'
-    apply plugin: 'io.spring.dependency-management'
+    apply plugin: 'jacoco'
+    
 
     repositories {
         mavenCentral()
@@ -42,5 +60,19 @@ subprojects {
         annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
         testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
         testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+    }
+
+    test {
+        useJUnitPlatform()
+        finalizedBy jacocoTestReport
+    }
+    
+    jacocoTestReport {
+        dependsOn test
+        reports {
+            xml.required = true
+            csv.required = false
+            html.required = true
+        }
     }
 }

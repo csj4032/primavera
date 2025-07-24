@@ -1,5 +1,10 @@
+plugins {
+    id 'org.springframework.boot' version '3.5.3'
+    id 'io.spring.dependency-management' version '1.1.7'
+}
+
 dependencies {
-    compile('org.springframework.boot:spring-boot-starter-web') {
+    implementation('org.springframework.boot:spring-boot-starter-web') {
         exclude module: "spring-boot-starter-tomcat"
     }
     implementation('org.springframework.boot:spring-boot-starter-jdbc')
@@ -9,7 +14,7 @@ dependencies {
     implementation('org.springframework.boot:spring-boot-devtools')
     implementation('org.springframework.hateoas:spring-hateoas:1.0.2.RELEASE')
     implementation('org.springframework.plugin:spring-plugin-core:2.0.0.RELEASE')
-    implementation('org.mariadb.jdbc:mariadb-java-client:2.3.0')
+    implementation('org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}')
     implementation('org.modelmapper:modelmapper:2.3.3')
     implementation('org.projectlombok:lombok')
     implementation('org.apache.tika:tika-core:1.18')

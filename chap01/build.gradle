@@ -1,12 +1,17 @@
+plugins {
+    id 'org.springframework.boot' version '3.5.3'
+    id 'io.spring.dependency-management' version '1.1.7'
+}
+
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-jdbc")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("com.squareup.retrofit2:retrofit:${retrofitVersion}")
     implementation("com.squareup.retrofit2:converter-gson:${retrofitVersion}")
-    implementation("org.hibernate:hibernate-validator:6.0.13.Final")
+    implementation("org.hibernate.validator:hibernate-validator:${hibernateValidatorVersion}")
     implementation("com.google.code.gson:gson:${gsonVersion}")
-    implementation("javax.annotation:javax.annotation-api:${javaxAnnotationVersion}")
+    implementation("jakarta.annotation:jakarta.annotation-api:${javaxAnnotationVersion}")
     runtimeOnly("com.h2database:h2:${h2Version}")
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude module: 'junit'

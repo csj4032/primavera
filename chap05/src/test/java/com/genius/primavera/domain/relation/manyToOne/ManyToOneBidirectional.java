@@ -3,10 +3,10 @@ package com.genius.primavera.domain.relation.manyToOne;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.Persistence;
 
 /**
  * 양방향은 외래 키가 있는 쪽이 연관관계의 주인

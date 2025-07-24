@@ -1,6 +1,6 @@
 package com.genius.primavera.domain.model.mapped;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @MappedSuperclass

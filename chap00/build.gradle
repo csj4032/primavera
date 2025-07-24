@@ -1,5 +1,19 @@
+plugins {
+    id 'org.springframework.boot' version '3.5.3'
+    id 'io.spring.dependency-management' version '1.1.7'
+}
+
 dependencies {
-    implementation "org.springframework.boot:spring-boot-starter-web"
-    implementation "javax.annotation:javax.annotation-api:${javaxAnnotationVersion}"
-    compileOnly "javax.validation:validation-api:${javaxValidationVersion}"
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("jakarta.annotation:jakarta.annotation-api")
+    implementation("jakarta.validation:jakarta.validation-api")
+
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude module: 'junit'
+        exclude module: 'junit-vintage-engine'
+    }
+}
+
+bootJar {
+    mainClass.set("com.genius.primavera.PrimaveraApplication")
 }

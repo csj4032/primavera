@@ -1,5 +1,10 @@
+plugins {
+    id 'org.springframework.boot' version '3.5.3'
+    id 'io.spring.dependency-management' version '1.1.7'
+}
+
 dependencies {
-    compile('org.springframework.boot:spring-boot-starter-web') {
+    implementation('org.springframework.boot:spring-boot-starter-web') {
         exclude module: "spring-boot-starter-tomcat"
     }
     implementation('org.springframework.boot:spring-boot-starter-aop')
@@ -12,15 +17,15 @@ dependencies {
     implementation('org.springframework.boot:spring-boot-starter-thymeleaf')
     implementation('org.springframework.boot:spring-boot-devtools')
     implementation('org.springframework.boot:spring-boot-starter-security')
-    implementation('org.springframework.security.oauth.boot:spring-security-oauth2-autoconfigure:2.1.4.RELEASE')
-    implementation('org.thymeleaf.extras:thymeleaf-extras-springsecurity5:3.0.4.RELEASE')
+    implementation('org.springframework.security.oauth.boot:spring-security-oauth2-autoconfigure:${springSecurityOauth2AutoConfigureVersion}')
+    implementation('org.thymeleaf.extras:thymeleaf-extras-springsecurity6:${thymeleafExtrasSpringSecurity6Version}')
     implementation('org.springframework.boot:spring-boot-starter-undertow')
     implementation('org.springframework.boot:spring-boot-starter-reactor-netty')
-    implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:2.0.1")
-    implementation("org.mybatis.dynamic-sql:mybatis-dynamic-sql:1.1.1")
-    implementation('org.mariadb.jdbc:mariadb-java-client:2.3.0')
-    implementation('nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:2.3.0')
-    implementation('com.navercorp.lucy:lucy-xss-servlet:2.0.0')
+    implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:${mybatisSpringBootStarterVersion}")
+    implementation("org.mybatis.dynamic-sql:mybatis-dynamic-sql:${mybatisDynamicSqlVersion}")
+    implementation('org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}')
+    implementation('nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:${thymeleafLayoutDialectVersion}')
+    implementation('com.navercorp.lucy:lucy-xss-servlet:${lucyXssServletVersion}')
     implementation('org.modelmapper:modelmapper:2.3.3')
     implementation('org.flywaydb:flyway-core:5.2.4')
     implementation('org.projectlombok:lombok')

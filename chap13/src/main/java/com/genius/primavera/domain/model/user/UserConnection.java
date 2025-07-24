@@ -6,13 +6,13 @@ import com.genius.primavera.infrastructure.security.social.facebook.FacebookUser
 import com.genius.primavera.infrastructure.security.social.github.GithubUserDetails;
 import com.genius.primavera.infrastructure.security.social.google.GoogleUserDetails;
 
-import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
