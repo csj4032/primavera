@@ -1,0 +1,13 @@
+# Staging environment - Payment configuration
+example.property: "I AM IN THE DEV"
+
+# Add your staging-specific payment configuration settings below
+# These settings will override the default settings in the payment.yml file
+
+# For example, to enable a staging payment gateway, you might add:
+# payment.gateway: "staging-gateway"
+
+# To use a different API key for the staging environment, you might add:
+# payment.api_key: "your-staging-api-key"
+
+# Remember to keep this file secure and do not expose sensitive information in your version control system.

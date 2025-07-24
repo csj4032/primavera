@@ -1,0 +1,6 @@
+# Staging environment - Display configuration
+example.property: "I AM IN THE DEV"
+
+# Existing configuration properties
+property1: value1
+property2: value2

@@ -1,0 +1,36 @@
+# Staging environment - Search configuration
+example.property: "I AM IN THE DEV"
+
+# Add your search configuration settings below
+search:
+  enabled: true
+  index: my_index
+  type: my_type
+
+# Define the hosts for the search service
+hosts:
+  - host: localhost
+    port: 9200
+  - host: search-service
+    port: 9200
+
+# Configure the logging level for the search service
+logging:
+  level: debug
+
+# Set the number of shards and replicas for the search index
+index:
+  number_of_shards: 5
+  number_of_replicas: 1
+
+# Configure the analysis settings for the search index
+analysis:
+  filter:
+    my_stop:
+      type: stop
+      stopwords: [_english_]
+  analyzer:
+    my_analyzer:
+      type: custom
+      tokenizer: standard
+      filter: [lowercase, my_stop]
