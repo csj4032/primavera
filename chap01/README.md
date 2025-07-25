@@ -87,7 +87,7 @@ com:
       database:
         username: primavera
         password: primavera
-        url: jdbc:mariadb://localhost:3306/primavera
+        url: jdbc:mysql://localhost:3306/primavera
         tables: [user, role, article]
       search:
         params:
@@ -108,7 +108,7 @@ spring:
       on-profile: dev
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://localhost:3306/primavera_dev
+    url: jdbc:mysql://localhost:3306/primavera_dev
     username: dev_user
     password: dev_pass
     
@@ -125,7 +125,7 @@ spring:
       on-profile: prod
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://prod-db:3306/primavera
+    url: jdbc:mysql://prod-db:3306/primavera
     username: ${DB_USERNAME:prod_user}
     password: ${DB_PASSWORD:prod_pass}
     
@@ -359,7 +359,7 @@ public class ProfileConfiguration {
     public DataSource localDataSource() {
         return DataSourceBuilder.create()
                 .driverClassName("org.h2.Driver")
-                .url("jdbc:h2:mem:testdb")
+                .url("jdbc:mysql://localhost:3306/primavera_local")
                 .username("sa")
                 .password("")
                 .build();
@@ -369,8 +369,8 @@ public class ProfileConfiguration {
     @Profile("dev")
     public DataSource devDataSource() {
         return DataSourceBuilder.create()
-                .driverClassName("org.mariadb.jdbc.Driver")
-                .url("jdbc:mariadb://dev-db:3306/primavera")
+                .driverClassName("com.mysql.cj.jdbc.Driver")
+                .url("jdbc:mysql://dev-db:3306/primavera")
                 .username("dev_user")
                 .password("dev_pass")
                 .build();
@@ -380,8 +380,8 @@ public class ProfileConfiguration {
     @Profile("prod")
     public DataSource prodDataSource() {
         return DataSourceBuilder.create()
-                .driverClassName("org.mariadb.jdbc.Driver")
-                .url("jdbc:mariadb://prod-db:3306/primavera")
+                .driverClassName("com.mysql.cj.jdbc.Driver")
+                .url("jdbc:mysql://prod-db:3306/primavera")
                 .username("${DB_USERNAME}")
                 .password("${DB_PASSWORD}")
                 .build();

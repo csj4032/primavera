@@ -27,8 +27,8 @@ class MySQLTestContainersTest {
     @Container
     static MySQLContainer<?> mysql = new MySQLContainer<>("mysql:8.4.0")
             .withDatabaseName("primavera")
-            .withUsername("test")
-            .withPassword("test");
+            .withUsername("primavera")
+            .withPassword("primavera");
 
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {

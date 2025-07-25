@@ -26,10 +26,7 @@ class PrimaveraTestApplication {
 @Slf4j
 @SpringBootTest(classes = PrimaveraTestApplication.class, properties = {
 	"spring.main.web-application-type=none",
-	"spring.datasource.url=jdbc:h2:mem:testdb",
-	"spring.datasource.driver-class-name=org.h2.Driver",
 	"spring.jpa.hibernate.ddl-auto=create-drop",
-	"spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.H2Dialect",
 	"spring.sql.init.mode=never",
 	"spring.flyway.enabled=false",
 	"spring.application.name=primavera-test"

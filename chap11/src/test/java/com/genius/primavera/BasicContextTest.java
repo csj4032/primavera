@@ -21,12 +21,7 @@ class MinimalTestApplication {
 @Slf4j
 @SpringBootTest(classes = MinimalTestApplication.class, properties = {
     "spring.main.web-application-type=none",
-    "spring.datasource.url=jdbc:h2:mem:testdb",
-    "spring.datasource.driver-class-name=org.h2.Driver", 
-    "spring.datasource.username=sa",
-    "spring.datasource.password=",
     "spring.jpa.hibernate.ddl-auto=create-drop",
-    "spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.H2Dialect",
     "spring.sql.init.mode=never",
     "spring.flyway.enabled=false",
     "logging.level.root=WARN",
@@ -41,7 +36,7 @@ class BasicContextTest {
     @Test
     void contextLoads() {
         assertNotNull(applicationContext);
-        log.info("Spring context loaded successfully");
+        // log.info("Spring context loaded successfully");
     }
 
     @Test
@@ -49,13 +44,13 @@ class BasicContextTest {
         String[] activeProfiles = applicationContext.getEnvironment().getActiveProfiles();
         assertEquals(1, activeProfiles.length);
         assertEquals("test", activeProfiles[0]);
-        log.info("Active profile: {}", activeProfiles[0]);
+        // log.info("Active profile: {}", activeProfiles[0]);
     }
 
     @Test
     void applicationNameTest() {
         String appName = applicationContext.getEnvironment().getProperty("spring.application.name");
         assertEquals("primavera-test", appName);
-        log.info("Application name: {}", appName);
+        // log.info("Application name: {}", appName);
     }
 }

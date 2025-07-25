@@ -3,10 +3,9 @@ spring:
     name: primavera-test
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    # URL will be dynamically set by TestContainers
-    url: jdbc:mysql://localhost:3306/primavera_test?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-    username: test
-    password: test
+    url: jdbc:mysql://localhost:3306/primavera?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: primavera
+    password: primavera
   jpa:
     hibernate:
       ddl-auto: create-drop

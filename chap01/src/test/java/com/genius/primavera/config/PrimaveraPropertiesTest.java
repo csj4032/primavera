@@ -31,7 +31,7 @@ public class PrimaveraPropertiesTest {
 
         // then - 값이 정확히 바인딩되었는지 검증
         assertThat(databaseUsername).isEqualTo("test_user");
-        assertThat(databaseUrl).isEqualTo("jdbc:h2:mem:testdb");
+        assertThat(databaseUrl).isEqualTo("jdbc:mysql://localhost:3306/primavera");
         assertThat(tables).containsExactly("user", "role");
     }
 

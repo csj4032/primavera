@@ -20,7 +20,10 @@
       "Bash(grep:*)",
       "Bash(true)",
       "Bash(ls:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(docker exec:*)",
+      "Bash(docker stop:*)",
+      "Bash(docker rm:*)"
     ],
     "deny": []
   }
