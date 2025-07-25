@@ -2,25 +2,24 @@ spring:
   application:
     name: primavera-test
   datasource:
-    driver-class-name: org.h2.Driver
-    url: jdbc:h2:mem:testdb;MODE=MySQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-    username: sa
-    password: 
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    # URL will be dynamically set by TestContainers
+    url: jdbc:mysql://localhost:3306/primavera_test?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: test
+    password: test
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: create-drop
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.H2Dialect
+        dialect: org.hibernate.dialect.MySQLDialect
         show_sql: true
         format_sql: true
   flyway:
     enabled: false
   sql:
     init:
-      mode: always
-      schema-locations: classpath:schema-h2.sql
-      platform: h2
+      mode: never
 
 # OAuth2 환경변수 기본값 설정 (테스트용)
 google:

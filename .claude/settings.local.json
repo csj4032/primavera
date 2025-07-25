@@ -19,7 +19,8 @@
       "Bash(mv:*)",
       "Bash(grep:*)",
       "Bash(true)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(git push:*)"
     ],
     "deny": []
   }
