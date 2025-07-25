@@ -1,6 +1,6 @@
 plugins {
-    id 'org.springframework.boot' version '3.5.3'
-    id 'io.spring.dependency-management' version '1.1.7'
+    id 'org.springframework.boot' version "${springBootVersion}"
+    id 'io.spring.dependency-management' version "${springDependencyManagementVersion}"
 }
 
 def querydslSrcDir = 'src/main/java'
@@ -36,15 +36,15 @@ dependencies {
     implementation("nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:${thymeleafLayoutDialectVersion}")
     implementation("com.navercorp.lucy:lucy-xss-servlet:${lucyXssServletVersion}")
     implementation("com.mysql:mysql-connector-j:${mysqlVersion}")
-    testImplementation('io.rest-assured:rest-assured:3.3.0')
-    implementation('org.modelmapper:modelmapper:3.2.1')
-    implementation('org.flywaydb:flyway-core:10.10.0')
+    testImplementation("io.rest-assured:rest-assured:${restAssuredVersion}")
+    implementation("org.modelmapper:modelmapper:${modelMapperVersion}")
+    implementation("org.flywaydb:flyway-core:${flywayVersion}")
     implementation('org.projectlombok:lombok')
-    implementation('org.jctools:jctools-core:2.1.2')
-    implementation('com.github.ben-manes.caffeine:caffeine:2.8.5')
-    implementation('com.esotericsoftware:kryo:4.0.2')
-    implementation('org.xerial.snappy:snappy-java:1.1.7.6')
-    implementation('org.apache.commons:commons-pool2:2.8.0')
+    implementation("org.jctools:jctools-core:${jctoolsCoreVersion}")
+    implementation("com.github.ben-manes.caffeine:caffeine:${caffeineVersion}")
+    implementation("com.esotericsoftware:kryo:${kryoVersion}")
+    implementation("org.xerial.snappy:snappy-java:${snappyJavaVersion}")
+    implementation("org.apache.commons:commons-pool2:${commonsPoolVersion}")
     implementation('com.querydsl:querydsl-jpa')
     implementation('com.querydsl:querydsl-apt')
     implementation('com.squareup.retrofit2:retrofit:2.9.0')

@@ -1,6 +1,6 @@
 plugins {
-    id 'org.springframework.boot' version '3.5.3'
-    id 'io.spring.dependency-management' version '1.1.7'
+    id 'org.springframework.boot' version "${springBootVersion}"
+    id 'io.spring.dependency-management' version "${springDependencyManagementVersion}"
 }
 
 compileJava {
@@ -39,6 +39,6 @@ dependencies {
     testImplementation "org.springframework.security:spring-security-test:${springSecurityVersion}"
     testImplementation "org.testcontainers:junit-jupiter:${testContainersVersion}"
     testImplementation "org.testcontainers:mysql:${testContainersVersion}"
-    testImplementation "io.rest-assured:rest-assured:5.3.2"
+    testImplementation "io.rest-assured:rest-assured:${restAssuredVersion}"
     implementation "com.navercorp.lucy:lucy-xss-servlet:${lucyXssServletVersion}"
 }

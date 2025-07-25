@@ -1,6 +1,6 @@
 plugins {
-    id 'org.springframework.boot' version '3.5.3'
-    id 'io.spring.dependency-management' version '1.1.7'
+    id 'org.springframework.boot' version "${springBootVersion}"
+    id 'io.spring.dependency-management' version "${springDependencyManagementVersion}"
 }
 
 dependencyManagement {
@@ -27,13 +27,13 @@ dependencies {
     implementation('org.springframework.boot:spring-boot-devtools')
     implementation('org.springframework.boot:spring-boot-starter-undertow')
     implementation("com.navercorp.lucy:lucy-xss-servlet:${lucyXssServletVersion}")
-    implementation('org.modelmapper:modelmapper:3.2.1')
+    implementation("org.modelmapper:modelmapper:${modelMapperVersion}")
     implementation('org.projectlombok:lombok')
-    implementation('com.squareup.okhttp3:okhttp:4.2.2')
-    implementation('io.github.openfeign:feign-jackson:10.5.1')
-    implementation('io.github.openfeign:feign-gson:10.5.1')
-    implementation('io.github.openfeign:feign-okhttp:10.5.1')
-    implementation('org.ehcache:ehcache:3.8.1')
+    implementation("com.squareup.okhttp3:okhttp:${okhttpVersion}")
+    implementation("io.github.openfeign:feign-jackson:${feignVersion}")
+    implementation("io.github.openfeign:feign-gson:${feignVersion}")
+    implementation("io.github.openfeign:feign-okhttp:${feignVersion}")
+    implementation("org.ehcache:ehcache:${ehcacheVersion}")
     annotationProcessor('org.projectlombok:lombok')
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude module: 'junit'

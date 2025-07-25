@@ -2,7 +2,7 @@
 .idea
 *.iml
 *.jks
-claude.md
+CLAUDE.md
 /chap00/build
 /chap00/out
 /chap01/build

@@ -1,6 +1,7 @@
 package com.genius.primavera.interfaces;
 
 import com.genius.primavera.application.post.PostingService;
+import com.genius.primavera.config.TestSecurityConfiguration;
 import com.genius.primavera.domain.PageRequest;
 import com.genius.primavera.domain.Paged;
 import com.genius.primavera.domain.model.post.Post;
@@ -16,13 +17,20 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.testcontainers.containers.MySQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
@@ -38,11 +46,32 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Slf4j
-@SpringBootTest
+@SpringBootTest(properties = "spring.profiles.active=test")
+@EnableAutoConfiguration(exclude = {
+    org.springframework.boot.autoconfigure.security.oauth2.client.servlet.OAuth2ClientAutoConfiguration.class,
+    org.springframework.boot.autoconfigure.security.oauth2.resource.servlet.OAuth2ResourceServerAutoConfiguration.class
+})
 @AutoConfigureMockMvc
 @ExtendWith(SpringExtension.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@Testcontainers
 public class PostMockControllerTest {
+
+	@Container
+	protected static final MySQLContainer<?> mysqlContainer = new MySQLContainer<>("mysql:8.4.6")
+			.withDatabaseName("primavera")
+			.withUsername("primavera")
+			.withPassword("primavera")
+			.withInitScript("sql/schema.sql");
+
+	@DynamicPropertySource
+	static void configureProperties(DynamicPropertyRegistry registry) {
+		registry.add("spring.datasource.url", mysqlContainer::getJdbcUrl);
+		registry.add("spring.datasource.username", mysqlContainer::getUsername);
+		registry.add("spring.datasource.password", mysqlContainer::getPassword);
+		registry.add("spring.datasource.driver-class-name", () -> "com.mysql.cj.jdbc.Driver");
+		registry.add("spring.main.allow-bean-definition-overriding", () -> "true");
+	}
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -124,7 +153,7 @@ public class PostMockControllerTest {
 		MultiValueMap params = new LinkedMultiValueMap();
 		params.set("subject", "승자의 혼미");
 		params.set("contents", "카르타고의 멸망에서부터 카이사르가 역사적 무대로 등장하기 전까지를 그리고 있는 <로마인 이야기> 그 세번째 이야기.");
-		params.set("writerId", "1");
+		params.set("writerId", "2");
 		mockMvc.perform(post("/post/save").params(params)).andExpect(status().is3xxRedirection());
 	}
 }

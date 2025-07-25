@@ -9,35 +9,34 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.boot.WebApplicationType;
-import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
+import com.genius.primavera.config.BaseTestConfiguration;
 
 @Slf4j
-@SpringBootTest
-@ExtendWith(SpringExtension.class)
+@SpringBootTest(properties = {
+	"spring.datasource.url=jdbc:h2:mem:testdb",
+	"spring.datasource.driver-class-name=org.h2.Driver",
+	"spring.jpa.hibernate.ddl-auto=create-drop",
+	"spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.H2Dialect",
+	"spring.sql.init.mode=never",
+	"spring.flyway.enabled=false"
+})
+@ActiveProfiles("test") 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class PrimaveraApplicationTest {
 
-	private static ConfigurableApplicationContext configurableApplicationContext;
-	private static final String APPLICATION = "spring.config.location=classpath:/application-${spring.profiles.active:default}.yml,classpath:/social.yml";
-
-	@BeforeAll
-	public static void setUp() {
-		configurableApplicationContext = new SpringApplicationBuilder(PrimaveraApplicationTest.class)
-				.properties(APPLICATION)
-				.web(WebApplicationType.NONE)
-				.build().run();
-	}
+	@Autowired
+	private ConfigurableApplicationContext configurableApplicationContext;
 
 	@Test
 	@Order(1)
 	@DisplayName("ActiveProfile")
 	public void activeProfileTest() {
-		Assertions.assertArrayEquals(new String[]{}, configurableApplicationContext.getEnvironment().getActiveProfiles());
-		new String();
+		Assertions.assertArrayEquals(new String[]{"test"}, configurableApplicationContext.getEnvironment().getActiveProfiles());
 	}
 
 	@Test

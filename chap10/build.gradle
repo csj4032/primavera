@@ -1,6 +1,6 @@
 plugins {
-    id 'org.springframework.boot' version '3.5.3'
-    id 'io.spring.dependency-management' version '1.1.7'
+    id 'org.springframework.boot' version "${springBootVersion}"
+    id 'io.spring.dependency-management' version "${springDependencyManagementVersion}"
 }
 
 dependencies {
@@ -11,9 +11,12 @@ dependencies {
     implementation('org.springframework.boot:spring-boot-starter-json')
     implementation('org.springframework.boot:spring-boot-starter-data-jpa')
     implementation('org.springframework.boot:spring-boot-starter-thymeleaf')
+    implementation('org.springframework.boot:spring-boot-starter-validation')
     implementation('org.springframework.boot:spring-boot-devtools')
     implementation('org.springframework.boot:spring-boot-starter-security')
-    implementation("org.springframework.security.oauth.boot:spring-security-oauth2-autoconfigure:${springSecurityOauth2AutoConfigureVersion}")
+    implementation "org.springframework.boot:spring-boot-starter-oauth2-client"
+    implementation "org.springframework.security:spring-security-oauth2-client:${springSecurityVersion}"
+    implementation "org.springframework.security:spring-security-oauth2-jose:${springSecurityVersion}"
     implementation("org.thymeleaf.extras:thymeleaf-extras-springsecurity6:${thymeleafExtrasSpringSecurity6Version}")
     implementation('org.springframework.boot:spring-boot-starter-undertow')
     implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:${mybatisSpringBootStarterVersion}")
@@ -21,12 +24,14 @@ dependencies {
     implementation("com.mysql:mysql-connector-j:${mysqlVersion}")
     implementation("nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:${thymeleafLayoutDialectVersion}")
     implementation("com.navercorp.lucy:lucy-xss-servlet:${lucyXssServletVersion}")
-    implementation('org.modelmapper:modelmapper:2.3.3')
+    implementation("org.modelmapper:modelmapper:${modelMapperVersion}")
     compileOnly('org.projectlombok:lombok')
     annotationProcessor('org.projectlombok:lombok')
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude module: 'junit'
     }
     testImplementation('org.springframework.security:spring-security-test')
-    testImplementation('io.rest-assured:rest-assured:3.3.0')
+    testImplementation "org.testcontainers:junit-jupiter:${testContainersVersion}"
+    testImplementation "org.testcontainers:mysql:${testContainersVersion}"
+    testImplementation("io.rest-assured:rest-assured:${restAssuredVersion}")
 }

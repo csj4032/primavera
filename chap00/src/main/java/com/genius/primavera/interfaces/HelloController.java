@@ -16,7 +16,15 @@ public class HelloController {
 	private final WorldService worldService;
 
 	@GetMapping(value = "/greeting")
-	public String hello() {
+	public String greeting() {
 		return greetingService.hello() + " " + worldService.world();
+	}
+
+	public String hello() {
+		return greetingService.hello();
+	}
+
+	public String world() {
+		return worldService.world();
 	}
 }

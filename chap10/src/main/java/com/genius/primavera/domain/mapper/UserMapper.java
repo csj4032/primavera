@@ -49,7 +49,7 @@ public interface UserMapper {
             @Result(property = "email", column = "EMAIL"),
             @Result(property = "nickname", column = "NICKNAME"),
             @Result(property = "status", column = "STATUS"),
-            @Result(property = "connection.provider", column = "PROVIDER"),
+            @Result(property = "connection.provider", column = "PROVIDER", typeHandler = com.genius.primavera.domain.model.typehandler.ProviderTypeHandler.class),
             @Result(property = "connection.providerId", column = "PROVIDER_ID"),
             @Result(property = "connection.profileUrl", column = "PROFILE_URL"),
             @Result(property = "connection.imageUrl", column = "IMAGE_URL"),

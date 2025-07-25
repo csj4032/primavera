@@ -17,7 +17,9 @@
       "Bash(./gradlew:*)",
       "Bash(mkdir:*)",
       "Bash(mv:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(true)",
+      "Bash(ls:*)"
     ],
     "deny": []
   }

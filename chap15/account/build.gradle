@@ -1,6 +1,6 @@
 plugins {
-    id 'org.springframework.boot' version '3.5.3'
-    id 'io.spring.dependency-management' version '1.1.7'
+    id 'org.springframework.boot' version "${springBootVersion}"
+    id 'io.spring.dependency-management' version "${springDependencyManagementVersion}"
 }
 
 dependencies {
@@ -10,16 +10,16 @@ dependencies {
     implementation('org.springframework.boot:spring-boot-starter-data-redis-reactive')
     implementation('org.springframework.boot:spring-boot-devtools')
     implementation('org.springframework.cloud:spring-cloud-starter-config')
-    implementation('org.modelmapper:modelmapper:2.3.3')
+    implementation("org.modelmapper:modelmapper:${modelMapperVersion}")
     implementation('org.projectlombok:lombok')
-    implementation('com.squareup.okhttp3:okhttp:4.2.2')
-    implementation('com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.10.1')
-    implementation('com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.10.1')
+    implementation("com.squareup.okhttp3:okhttp:${okhttpVersion}")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonJsr310Version}")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:${jacksonJdk8Version}")
     annotationProcessor('org.projectlombok:lombok')
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude module: 'junit'
         exclude module: 'junit-vintage-engine'
     }
     testImplementation('org.springframework.security:spring-security-test')
-    testImplementation('io.projectreactor:reactor-test:3.3.0.RELEASE')
+    testImplementation("io.projectreactor:reactor-test:${reactorTestVersion}")
 }
