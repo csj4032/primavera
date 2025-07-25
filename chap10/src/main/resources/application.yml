@@ -2,8 +2,8 @@ spring:
   application:
     name: Privamera
   datasource:
-    driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://db.choibom.com:3306/primavera?useLegacyDatetimeCode=false&serverTimezone=Asia/Seoul
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/primavera?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&allowPublicKeyRetrieval=true
     username: primavera
     password: primavera
   banner:
@@ -17,6 +17,31 @@ spring:
   devtools:
     livereload:
       enabled: true
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${OAUTH2_GOOGLE_CLIENTID:test-client-id}
+            client-secret: ${OAUTH2_GOOGLE_CLIENTSECRET:test-client-secret}
+            scope:
+              - email
+              - profile
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+          facebook:
+            client-id: ${OAUTH2_FACEBOOK_CLIENTID:test-client-id}
+            client-secret: ${OAUTH2_FACEBOOK_CLIENTSECRET:test-client-secret}
+            scope:
+              - email
+              - public_profile
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+          github:
+            client-id: ${OAUTH2_GITHUB_CLIENTID:test-client-id}
+            client-secret: ${OAUTH2_GITHUB_CLIENTSECRET:test-client-secret}
+            scope:
+              - user:email
+              - read:user
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
 
 mybatis:
   configuration:
@@ -37,38 +62,3 @@ server:
     key-store-password: primavera
     enabled: true
   port: 8443
-
-google:
-  client:
-    clientId: ${OAUTH2_GOOGLE_CLIENTID}
-    clientSecret: ${OAUTH2_GOOGLE_CLIENTSECRET}
-    accessTokenUri: https://www.googleapis.com/oauth2/v4/token
-    userAuthorizationUri: https://accounts.google.com/o/oauth2/v2/auth
-    clientAuthenticationScheme: form
-    scope:
-      - email
-      - profile
-  resource:
-    userInfoUri: https://www.googleapis.com/oauth2/v3/userinfo
-
-facebook:
-  client:
-    clientId: ${OAUTH2_FACEBOOK_CLIENTID}
-    clientSecret: ${OAUTH2_FACEBOOK_CLIENTSECRET}
-    accessTokenUri: https://graph.facebook.com/oauth/access_token
-    userAuthorizationUri: https://www.facebook.com/dialog/oauth
-    tokenName: oauth_token
-    authenticationScheme: query
-    clientAuthenticationScheme: form
-  resource:
-    userInfoUri: https://graph.facebook.com/me?fields=id,email,name
-
-github:
-  client:
-    clientId: ${OAUTH2_GITHUB_CLIENTID}
-    clientSecret: ${OAUTH2_GITHUB_CLIENTSECRET}
-    accessTokenUri: https://github.com/login/oauth/access_token
-    userAuthorizationUri: https://github.com/login/oauth/authorize
-    clientAuthenticationScheme: form
-  resource:
-    userInfoUri: https://api.github.com/user

@@ -1,4 +1,4 @@
-package com.genius.primavera.domain.model.hierarchy;
+package com.genius.primavera.domain.hierarchy;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -10,9 +10,21 @@ import jakarta.persistence.*;
 @Getter
 @Entity
 @ToString(callSuper = true)
-@Table(name = "SCINCIDAE")
+@Table(name = "scincidae")
+@DiscriminatorValue("SCINCIDAE")
 public class Scincidae extends Family {
 
-	@Column(name = "GENUS")
-	private String genus;
+	@Column(name = "scale_type")
+	private String scaleType;
+
+	@Column(name = "burrowing_ability")
+	private String burrowingAbility;
+
+	public void setGenus(String genus) {
+		this.scaleType = genus;
+	}
+
+	public String getGenus() {
+		return this.scaleType;
+	}
 }

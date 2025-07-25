@@ -1,4 +1,4 @@
-package com.genius.primavera.domain.model.hierarchy;
+package com.genius.primavera.domain.hierarchy;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -10,9 +10,21 @@ import jakarta.persistence.*;
 @Getter
 @Entity
 @ToString(callSuper = true)
-@Table(name = "CANIDAE")
+@Table(name = "canidae")
+@DiscriminatorValue("CANIDAE")
 public class Canidae extends Family {
 
-	@Column(name = "CANINI")
-	private String canini;
+	@Column(name = "pack_size")
+	private Integer packSize;
+
+	@Column(name = "hunting_style")
+	private String huntingStyle;
+
+	public void setCanini(String canini) {
+		this.huntingStyle = canini;
+	}
+
+	public String getCanini() {
+		return this.huntingStyle;
+	}
 }

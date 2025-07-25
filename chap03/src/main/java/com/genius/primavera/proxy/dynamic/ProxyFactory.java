@@ -1,6 +1,6 @@
 package com.genius.primavera.proxy.dynamic;
 
-import com.genius.primavera.PrimaveraApplication;
+import com.genius.primavera.DataAccessApplication;
 import lombok.extern.slf4j.Slf4j;
 import org.reflections.Reflections;
 

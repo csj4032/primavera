@@ -18,6 +18,10 @@ public class HelloServiceImpl implements HelloService {
 	@Override
 	@PrimaveraLogging(type = "Service")
 	public User getUserById(Long id) {
-		return new User(id);
+		return User.builder()
+			.id(id)
+			.name("Test User")
+			.email("test@example.com")
+			.build();
 	}
 }

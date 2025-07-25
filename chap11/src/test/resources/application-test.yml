@@ -1,0 +1,53 @@
+spring:
+  application:
+    name: primavera-test
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    # TestContainers will override this URL dynamically
+    url: jdbc:mysql://localhost:3306/test?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: test
+    password: test
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        show_sql: true
+        format_sql: true
+  flyway:
+    enabled: false
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:sql/schema.sql
+
+# OAuth2 환경변수 기본값 설정 (테스트용)
+google:
+  client:
+    clientId: test-google-client-id
+    clientSecret: test-google-client-secret
+    
+facebook:
+  client:
+    clientId: test-facebook-client-id
+    clientSecret: test-facebook-client-secret
+    
+github:
+  client:
+    clientId: test-github-client-id
+    clientSecret: test-github-client-secret
+      
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+    default-fetch-size: 1000
+    default-statement-timeout: 30
+  type-aliases-package: com.genius.primavera.domain
+  type-handlers-package: com.genius.primavera.domain
+
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    com.genius.primavera: DEBUG

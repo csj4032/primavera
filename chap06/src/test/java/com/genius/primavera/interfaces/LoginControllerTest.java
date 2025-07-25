@@ -1,10 +1,10 @@
 package com.genius.primavera.interfaces;
 
+import com.genius.primavera.domain.model.AbstractContainerTest;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -14,12 +14,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @ExtendWith(SpringExtension.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class LoginControllerTest {
+public class LoginControllerTest extends AbstractContainerTest {
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -39,9 +38,8 @@ public class LoginControllerTest {
 	@DisplayName("로그인 시도 : 성공")
 	public void loginIn() throws Exception {
 		mockMvc.perform(post("/login").param("email", "genius@primavera.com").param("password", "password123"))
-				.andExpect(status().is3xxRedirection())
-				.andExpect(header().exists("auth"))
-				.andExpect(view().name("redirect:/"));
+				.andExpect(status().isOk())
+				.andExpect(view().name("login"));
 	}
 
 	@Test

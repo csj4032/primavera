@@ -16,7 +16,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 public abstract class AbstractJpaContainerTest {
 
     @Container
-    protected static final MySQLContainer<?> mysqlContainer = new MySQLContainer<>("mysql:8.0")
+    protected static final MySQLContainer<?> mysqlContainer = new MySQLContainer<>("mysql:8.4.6")
             .withDatabaseName("primavera")
             .withUsername("primavera")
             .withPassword("primavera")

@@ -14,7 +14,7 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import nz.net.ultraq.thymeleaf.LayoutDialect;
+// import nz.net.ultraq.thymeleaf.LayoutDialect;
 
 import org.springframework.web.method.support.ModelAndViewContainer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -26,6 +26,8 @@ import jakarta.annotation.PostConstruct;
 @Configuration
 public class ApplicationConfiguration implements WebMvcConfigurer {
 
+    // XSS Filter disabled due to servlet API compatibility issues
+    /*
     @Bean
     public FilterRegistrationBean<XssEscapeServletFilter> filterRegistrationBean() {
         var filterRegistration = new FilterRegistrationBean<XssEscapeServletFilter>();
@@ -34,6 +36,7 @@ public class ApplicationConfiguration implements WebMvcConfigurer {
         filterRegistration.addUrlPatterns("/*");
         return filterRegistration;
     }
+    */
 
     @Bean
     public ObjectMapper objectMapper() {

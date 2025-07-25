@@ -6,17 +6,23 @@ import com.genius.primavera.domain.model.article.WriteType;
 import com.genius.primavera.interfaces.WithMockPrimaveraUserDetails;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.security.test.context.support.WithUserDetails;
+import org.springframework.test.context.ActiveProfiles;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import com.genius.primavera.config.BaseTestConfiguration;
+import org.mockito.Mockito;
 
 import static org.mockito.BDDMockito.given;
 
 @Slf4j
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Import(BaseTestConfiguration.class)
+@Testcontainers
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@Disabled("Complex integration test with database and security - requires full Spring context")
+@ActiveProfiles("test")
 class WriteArticleServiceTest {
 
 	@Autowired

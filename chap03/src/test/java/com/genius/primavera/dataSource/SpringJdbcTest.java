@@ -33,7 +33,7 @@ import static org.mockito.Mockito.*;
 public class SpringJdbcTest {
 
     @Container
-    private static final MySQLContainer<?> mysqlContainer = new MySQLContainer<>("mysql:8.4.0")
+    private static final MySQLContainer<?> mysqlContainer = new MySQLContainer<>("mysql:8.4.6")
             .withDatabaseName("primavera")
             .withUsername("primavera")
             .withPassword("primavera")

@@ -1,6 +1,6 @@
 plugins {
-    id 'org.springframework.boot' version '3.5.3'
-    id 'io.spring.dependency-management' version '1.1.7'
+    id 'org.springframework.boot' version "${springBootVersion}"
+    id 'io.spring.dependency-management' version "${springDependencyManagementVersion}"
 }
 
 dependencies {
@@ -30,4 +30,7 @@ dependencies {
     compileOnly "jakarta.validation:jakarta.validation-api:${javaxValidationVersion}"
     testImplementation "org.springframework.boot:spring-boot-starter-test"
     implementation project(":spring-boot-starter-lucy-filter")
+    testImplementation "com.navercorp.lucy:lucy-xss-servlet:${lucyXssServletVersion}"
+    testImplementation "org.testcontainers:junit-jupiter:${testContainersVersion}"
+    testImplementation "org.testcontainers:mysql:${testContainersVersion}"
 }

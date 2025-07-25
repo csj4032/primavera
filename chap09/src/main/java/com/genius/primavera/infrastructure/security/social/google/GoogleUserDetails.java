@@ -3,11 +3,12 @@ package com.genius.primavera.infrastructure.security.social.google;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.genius.primavera.infrastructure.security.social.SocialUserDetails;
-import org.springframework.security.oauth2.common.OAuth2AccessToken;
 
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 public class GoogleUserDetails implements SocialUserDetails {
     private String sub;
     private String name;
@@ -25,8 +26,13 @@ public class GoogleUserDetails implements SocialUserDetails {
     private long expiration;
     private String accessToken;
 
-    public void setAccessToken(OAuth2AccessToken accessToken) {
-        this.accessToken = accessToken.getValue();
-        this.expiration = accessToken.getExpiration().getTime();
+    @Override
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
+    }
+
+    @Override
+    public void setExpiration(long expiration) {
+        this.expiration = expiration;
     }
 }

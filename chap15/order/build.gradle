@@ -1,6 +1,6 @@
 plugins {
-    id 'org.springframework.boot' version '3.5.3'
-    id 'io.spring.dependency-management' version '1.1.7'
+    id 'org.springframework.boot' version "${springBootVersion}"
+    id 'io.spring.dependency-management' version "${springDependencyManagementVersion}"
 }
 
 dependencies {
@@ -10,12 +10,12 @@ dependencies {
     implementation('org.springframework.boot:spring-boot-starter-tomcat')
     implementation('org.springframework.cloud:spring-cloud-starter-config')
     implementation("org.springframework.data:spring-data-r2dbc")
-    implementation('org.modelmapper:modelmapper:2.3.3')
+    implementation("org.modelmapper:modelmapper:${modelMapperVersion}")
     implementation('org.projectlombok:lombok')
-    implementation('com.squareup.okhttp3:okhttp:4.2.2')
-    implementation('org.hibernate:hibernate-validator:6.0.13.Final')
+    implementation("com.squareup.okhttp3:okhttp:${okhttpVersion}")
+    implementation("org.hibernate:hibernate-validator:${hibernateValidatorLegacyVersion}")
     compileOnly("org.mariadb:r2dbc-mariadb:0.8.4-rc")
-    compileOnly("io.r2dbc:r2dbc-pool:0.8.3.RELEASE")
+    compileOnly("io.r2dbc:r2dbc-pool:${r2dbcPoolVersion}")
     annotationProcessor('org.projectlombok:lombok')
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude module: 'junit'

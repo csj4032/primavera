@@ -12,6 +12,8 @@ spring:
         - file-warn-appender
       test:
         - console-appender
+  main:
+    allow-bean-definition-overriding: true
 
 primavera:
   logs:

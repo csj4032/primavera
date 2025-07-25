@@ -1,5 +1,6 @@
-package com.genius.primavera.domain.model.hierarchy;
+package com.genius.primavera.domain.hierarchy;
 
+import com.genius.primavera.domain.hierarchy.*;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 

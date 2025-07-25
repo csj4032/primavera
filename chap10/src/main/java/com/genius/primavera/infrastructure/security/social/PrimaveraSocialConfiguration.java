@@ -2,90 +2,90 @@ package com.genius.primavera.infrastructure.security.social;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.genius.primavera.domain.model.user.UserConnection;
-import com.genius.primavera.infrastructure.security.ClientResources;
 import com.genius.primavera.infrastructure.security.PrimaveraSocialUserDetailsService;
-import com.genius.primavera.infrastructure.security.social.facebook.FacebookOAuth2ClientAuthenticationProcessingFilter;
-import com.genius.primavera.infrastructure.security.social.github.GithubOAuth2ClientAuthenticationProcessingFilter;
-import com.genius.primavera.infrastructure.security.social.google.GoogleOAuth2ClientAuthenticationProcessingFilter;
+import com.genius.primavera.infrastructure.security.social.facebook.FacebookUserDetails;
+import com.genius.primavera.infrastructure.security.social.github.GithubUserDetails;
+import com.genius.primavera.infrastructure.security.social.google.GoogleUserDetails;
+
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.security.oauth2.resource.UserInfoTokenServices;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.oauth2.client.OAuth2ClientContext;
-import org.springframework.security.oauth2.client.OAuth2RestTemplate;
-import org.springframework.security.oauth2.client.filter.OAuth2ClientAuthenticationProcessingFilter;
-import org.springframework.security.oauth2.client.filter.OAuth2ClientContextFilter;
-import org.springframework.security.oauth2.config.annotation.web.configuration.EnableOAuth2Client;
-import org.springframework.security.oauth2.provider.OAuth2Authentication;
-import org.springframework.web.filter.CompositeFilter;
-
-import jakarta.servlet.Filter;
-import java.util.List;
+import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
+import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
 @Slf4j
 @Configuration
-@EnableOAuth2Client
 public class PrimaveraSocialConfiguration {
 
 	private final ObjectMapper objectMapper;
-	private final OAuth2ClientContext oauth2ClientContext;
 	private final PrimaveraSocialUserDetailsService primaveraSocialUserDetailsService;
 
-	public PrimaveraSocialConfiguration(ObjectMapper objectMapper, OAuth2ClientContext oauth2ClientContext, PrimaveraSocialUserDetailsService primaveraSocialUserDetailsService) {
+	public PrimaveraSocialConfiguration(ObjectMapper objectMapper, PrimaveraSocialUserDetailsService primaveraSocialUserDetailsService) {
 		this.objectMapper = objectMapper;
-		this.oauth2ClientContext = oauth2ClientContext;
 		this.primaveraSocialUserDetailsService = primaveraSocialUserDetailsService;
 	}
 
 	@Bean
-	public Filter ssoFilter() {
-		var filter = new CompositeFilter();
-		filter.setFilters(List.of(
-				ssoFilter(google(), new GoogleOAuth2ClientAuthenticationProcessingFilter((authResult, restTemplate, clazz) -> {
-					var userDetails = objectMapper.convertValue(((OAuth2Authentication) authResult).getUserAuthentication().getDetails(), clazz);
-					userDetails.setAccessToken(restTemplate.getAccessToken());
-					return primaveraSocialUserDetailsService.doAuthentication(UserConnection.valueOf(userDetails));
-				})),
-				ssoFilter(facebook(), new FacebookOAuth2ClientAuthenticationProcessingFilter(objectMapper, primaveraSocialUserDetailsService)),
-				ssoFilter(github(), new GithubOAuth2ClientAuthenticationProcessingFilter(objectMapper, primaveraSocialUserDetailsService))
-		));
-		return filter;
+	public OAuth2UserService<OAuth2UserRequest, OAuth2User> oauth2UserService() {
+		DefaultOAuth2UserService defaultService = new DefaultOAuth2UserService();
+		
+		return new OAuth2UserService<OAuth2UserRequest, OAuth2User>() {
+			@Override
+			public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
+				OAuth2User oauth2User = defaultService.loadUser(userRequest);
+				String registrationId = userRequest.getClientRegistration().getRegistrationId();
+				
+				try {
+					SocialUserDetails userDetails = convertToUserDetails(oauth2User, registrationId);
+					if (userDetails != null) {
+						String accessToken = userRequest.getAccessToken().getTokenValue();
+						long expiration = userRequest.getAccessToken().getExpiresAt() != null 
+							? userRequest.getAccessToken().getExpiresAt().toEpochMilli() 
+							: System.currentTimeMillis() + 3600000; // Default 1 hour
+						
+						userDetails.setAccessToken(accessToken);
+						userDetails.setExpiration(expiration);
+						
+						UserConnection userConnection = createUserConnection(userDetails, registrationId);
+						primaveraSocialUserDetailsService.doAuthentication(userConnection);
+					}
+				} catch (Exception e) {
+					log.error("Failed to process OAuth2 user: {}", e.getMessage(), e);
+					throw new OAuth2AuthenticationException("Failed to process OAuth2 user");
+				}
+				
+				return oauth2User;
+			}
+		};
 	}
 
-	private Filter ssoFilter(ClientResources client, OAuth2ClientAuthenticationProcessingFilter filter) {
-		var restTemplate = new OAuth2RestTemplate(client.getClient(), oauth2ClientContext);
-		filter.setRestTemplate(restTemplate);
-		var tokenServices = new UserInfoTokenServices(client.getResource().getUserInfoUri(), client.getClient().getClientId());
-		filter.setTokenServices(tokenServices);
-		tokenServices.setRestTemplate(restTemplate);
-		return filter;
+	private SocialUserDetails convertToUserDetails(OAuth2User oauth2User, String registrationId) {
+		try {
+			return switch (registrationId.toLowerCase()) {
+				case "google" -> objectMapper.convertValue(oauth2User.getAttributes(), GoogleUserDetails.class);
+				case "facebook" -> objectMapper.convertValue(oauth2User.getAttributes(), FacebookUserDetails.class);
+				case "github" -> objectMapper.convertValue(oauth2User.getAttributes(), GithubUserDetails.class);
+				default -> {
+					log.warn("Unknown OAuth2 provider: {}", registrationId);
+					yield null;
+				}
+			};
+		} catch (Exception e) {
+			log.error("Failed to convert OAuth2 user attributes for provider {}: {}", registrationId, e.getMessage());
+			return null;
+		}
 	}
 
-	@Bean
-	@ConfigurationProperties("google")
-	public ClientResources google() {
-		return new ClientResources();
-	}
-
-	@Bean
-	@ConfigurationProperties("facebook")
-	public ClientResources facebook() {
-		return new ClientResources();
-	}
-
-	@Bean
-	@ConfigurationProperties("github")
-	public ClientResources github() {
-		return new ClientResources();
-	}
-
-	@Bean
-	public FilterRegistrationBean<OAuth2ClientContextFilter> oauth2ClientFilterRegistration(OAuth2ClientContextFilter filter) {
-		var registration = new FilterRegistrationBean<OAuth2ClientContextFilter>();
-		registration.setFilter(filter);
-		registration.setOrder(-100);
-		return registration;
+	private UserConnection createUserConnection(SocialUserDetails userDetails, String registrationId) {
+		return switch (registrationId.toLowerCase()) {
+			case "google" -> UserConnection.valueOf((GoogleUserDetails) userDetails);
+			case "facebook" -> UserConnection.valueOf((FacebookUserDetails) userDetails);
+			case "github" -> UserConnection.valueOf((GithubUserDetails) userDetails);
+			default -> throw new IllegalArgumentException("Unsupported OAuth2 provider: " + registrationId);
+		};
 	}
 }

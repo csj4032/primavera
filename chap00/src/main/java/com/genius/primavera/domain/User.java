@@ -2,8 +2,6 @@ package com.genius.primavera.domain;
 
 import lombok.*;
 
-import javax.management.relation.Role;
-
 import java.time.LocalDateTime;
 import java.util.List;
 

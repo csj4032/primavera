@@ -6,7 +6,7 @@ import org.apache.ibatis.annotations.*;
 @Mapper
 public interface RoleMapper {
 
-    String INSERT_SQL = "INSERT INTO ROLE (TYPE) VALUES (#{role.type, typeHandler=RoleTypeHandler})";
+    String INSERT_SQL = "INSERT INTO ROLES (TYPE) VALUES (#{role.type, typeHandler=RoleTypeHandler})";
 
     @Insert(value = INSERT_SQL)
     @Options(useGeneratedKeys = true, keyProperty = "role.id")

@@ -1,6 +1,10 @@
 plugins {
-    id 'org.springframework.boot' version '3.5.3'
-    id 'io.spring.dependency-management' version '1.1.7'
+    id 'org.springframework.boot' version "${springBootVersion}"
+    id 'io.spring.dependency-management' version "${springDependencyManagementVersion}"
+}
+
+compileJava {
+    options.compilerArgs += ["-Xlint:deprecation"]
 }
 
 dependencies {
@@ -14,7 +18,8 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-validation"
     implementation "org.springframework.boot:spring-boot-starter-security"
     implementation "org.springframework.boot:spring-boot-starter-oauth2-client"
-    implementation "org.springframework.boot:spring-boot-starter-oauth2-authorization-server"
+    implementation "org.springframework.security:spring-security-oauth2-client:${springSecurityVersion}"
+    implementation "org.springframework.security:spring-security-oauth2-jose:${springSecurityVersion}"
     implementation "org.springframework.boot:spring-boot-devtools"
     implementation "com.github.gavlyukovskiy:p6spy-spring-boot-starter:${p6spySpringBootStarterVersion}"
     implementation "org.thymeleaf.extras:thymeleaf-extras-springsecurity6:${thymeleafExtrasSpringSecurity6Version}"
@@ -31,4 +36,9 @@ dependencies {
     compileOnly "org.jetbrains:annotations:${jetbrainsAnnotationsVersion}"
     compileOnly "jakarta.validation:jakarta.validation-api:${javaxValidationVersion}"
     testImplementation "org.springframework.boot:spring-boot-starter-test"
+    testImplementation "org.springframework.security:spring-security-test:${springSecurityVersion}"
+    testImplementation "org.testcontainers:junit-jupiter:${testContainersVersion}"
+    testImplementation "org.testcontainers:mysql:${testContainersVersion}"
+    testImplementation "io.rest-assured:rest-assured:${restAssuredVersion}"
+    implementation "com.navercorp.lucy:lucy-xss-servlet:${lucyXssServletVersion}"
 }
