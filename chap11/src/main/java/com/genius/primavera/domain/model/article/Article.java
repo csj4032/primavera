@@ -12,7 +12,7 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
-@ToString
+@ToString(exclude = {"parent", "children", "comments"})
 @NoArgsConstructor
 @AllArgsConstructor
 //@EqualsAndHashCode(of = "id")
@@ -60,13 +60,12 @@ public class Article {
 	}
 
 	public Article rootParent() {
-		if (this.getParentId() == 0) return this;
-		return parent.getParent();
+		if (this.parent == null) return this;
+		return parent.rootParent();
 	}
 
 	public long getParentId() {
-		if (Objects.isNull(parent)) return 0;
-		return this.parent.getId();
+		return this.pId;
 	}
 
 	public Article[] getSibling() {

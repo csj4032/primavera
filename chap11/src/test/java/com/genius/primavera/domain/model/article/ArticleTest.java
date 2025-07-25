@@ -19,16 +19,16 @@ class ArticleTest {
 
 	@BeforeAll
 	public static void setUp() {
-		root = Article.builder().id(0).subject("Root").build();
+		root = Article.builder().id(0).pId(0).subject("Root").level(0).build();
 
-		first = Article.builder().id(1).parent(root).subject("Root 직계 첫번째").build();
-		first_first = Article.builder().id(2).parent(first).subject("Root 직계 첫번째 first 직계 첫번째").build();
-		first_second = Article.builder().id(4).parent(first).subject("Root 직계 첫번째 first 직계 두번째").build();
-		first_second_first = Article.builder().id(5).parent(first_second).subject("Root 직계 첫번째 first 직계 두번째 first_second 첫번째").build();
+		first = Article.builder().id(1).pId(0).parent(root).subject("Root 직계 첫번째").level(1).build();
+		first_first = Article.builder().id(2).pId(1).parent(first).subject("Root 직계 첫번째 first 직계 첫번째").level(2).build();
+		first_second = Article.builder().id(4).pId(1).parent(first).subject("Root 직계 첫번째 first 직계 두번째").level(2).build();
+		first_second_first = Article.builder().id(5).pId(4).parent(first_second).subject("Root 직계 첫번째 first 직계 두번째 first_second 첫번째").level(3).build();
 
-		second = Article.builder().id(3).parent(root).subject("Root 직계 두번째").build();
+		second = Article.builder().id(3).pId(0).parent(root).subject("Root 직계 두번째").level(1).build();
 		first_second.setChildren(new Article[]{first_second_first});
-		first.setChildren(new Article[]{first_first});
+		first.setChildren(new Article[]{first_first, first_second});
 		root.setChildren(new Article[]{first, second});
 	}
 

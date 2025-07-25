@@ -2,29 +2,23 @@ package com.genius.primavera;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.FilterType;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootApplication
-@ComponentScan(excludeFilters = {
-    @ComponentScan.Filter(type = FilterType.REGEX, pattern = ".*Configuration.*"),
-    @ComponentScan.Filter(type = FilterType.REGEX, pattern = ".*Security.*"),
-    @ComponentScan.Filter(type = FilterType.REGEX, pattern = ".*OAuth.*")
-})
+@Configuration
+@EnableAutoConfiguration
+@EntityScan(basePackages = "com.genius.primavera.domain.model")
 class MinimalTestApplication {
-    public static void main(String[] args) {
-        SpringApplication.run(MinimalTestApplication.class, args);
-    }
 }
 
 @Slf4j
 @SpringBootTest(classes = MinimalTestApplication.class, properties = {
+    "spring.main.web-application-type=none",
     "spring.datasource.url=jdbc:h2:mem:testdb",
     "spring.datasource.driver-class-name=org.h2.Driver",
     "spring.datasource.username=sa",
