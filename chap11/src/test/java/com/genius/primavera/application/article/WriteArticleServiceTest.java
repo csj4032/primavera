@@ -13,13 +13,14 @@ import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.ActiveProfiles;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import com.genius.primavera.config.BaseTestConfiguration;
+import com.genius.primavera.config.WriteArticleServiceTestConfiguration;
 import org.mockito.Mockito;
 
 import static org.mockito.BDDMockito.given;
 
 @Slf4j
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Import(BaseTestConfiguration.class)
+@Import({BaseTestConfiguration.class, WriteArticleServiceTestConfiguration.class})
 @Testcontainers
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ActiveProfiles("test")
