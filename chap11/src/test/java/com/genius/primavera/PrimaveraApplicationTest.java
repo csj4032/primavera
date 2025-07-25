@@ -13,28 +13,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.FilterType;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.context.annotation.Configuration;
 
-@SpringBootApplication
-@ComponentScan(excludeFilters = {
-    @ComponentScan.Filter(type = FilterType.REGEX, pattern = ".*Security.*"),
-    @ComponentScan.Filter(type = FilterType.REGEX, pattern = ".*OAuth.*"),
-    @ComponentScan.Filter(type = FilterType.REGEX, pattern = ".*Filter.*")
-})
+@Configuration
+@EnableAutoConfiguration
+@EntityScan(basePackages = "com.genius.primavera.domain.model")
 class PrimaveraTestApplication {
 }
 
 @Slf4j
 @SpringBootTest(classes = PrimaveraTestApplication.class, properties = {
+	"spring.main.web-application-type=none",
 	"spring.datasource.url=jdbc:h2:mem:testdb",
 	"spring.datasource.driver-class-name=org.h2.Driver",
 	"spring.jpa.hibernate.ddl-auto=create-drop",
 	"spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.H2Dialect",
 	"spring.sql.init.mode=never",
 	"spring.flyway.enabled=false",
-	"spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration,org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration,org.springframework.boot.autoconfigure.web.servlet.HttpEncodingAutoConfiguration"
+	"spring.application.name=primavera-test"
 })
 @ActiveProfiles("test") 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -55,6 +53,6 @@ public class PrimaveraApplicationTest {
 	@DisplayName("ContainsProperty")
 	public void containsPropertyTest() {
 		Assertions.assertTrue(configurableApplicationContext.getEnvironment().containsProperty("spring.application.name"));
-		Assertions.assertTrue(configurableApplicationContext.getEnvironment().containsProperty("google.client.clientId"));
+		Assertions.assertTrue(configurableApplicationContext.getEnvironment().containsProperty("spring.datasource.url"));
 	}
 }

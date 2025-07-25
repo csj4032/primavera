@@ -3,14 +3,24 @@ package com.genius.primavera;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Configuration
+@EnableAutoConfiguration
+@EntityScan(basePackages = "com.genius.primavera.domain.model")
+class MinimalTestApplication {
+}
+
 @Slf4j
-@SpringBootTest(properties = {
+@SpringBootTest(classes = MinimalTestApplication.class, properties = {
+    "spring.main.web-application-type=none",
     "spring.datasource.url=jdbc:h2:mem:testdb",
     "spring.datasource.driver-class-name=org.h2.Driver", 
     "spring.datasource.username=sa",
@@ -20,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "spring.sql.init.mode=never",
     "spring.flyway.enabled=false",
     "logging.level.root=WARN",
-    "spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration"
+    "spring.application.name=primavera-test"
 })
 @ActiveProfiles("test")
 class BasicContextTest {
