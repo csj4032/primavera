@@ -59,7 +59,7 @@ public class WriteArticleServiceImpl implements WriteArticleService {
 	public Article update(ArticleDto.WriteArticle writeArticle) {
 		Article article = articleMapper.findByIdWithContent(writeArticle.getId());
 		article.setSubject(writeArticle.getSubject());
-		article.setModDt(Instant.now());
+		article.setUpdatedAt(Instant.now());
 		articleMapper.update(article);
 		articleContentMapper.update(article.getContentsId(), writeArticle.getContents());
 		return article;
@@ -70,7 +70,7 @@ public class WriteArticleServiceImpl implements WriteArticleService {
 		Article article = articleMapper.findById(id);
 		if (Objects.isNull(article)) throw new ArticleNotFoundException();
 		article.setStatus(ArticleStatus.DELETE);
-		article.setModDt(Instant.now());
+		article.setUpdatedAt(Instant.now());
 		return articleMapper.update(article);
 	}
 
@@ -89,7 +89,7 @@ public class WriteArticleServiceImpl implements WriteArticleService {
 		comment.setAuthor(getUser());
 		comment.setComment(writeComment.getComment());
 		comment.setStatus(ArticleStatus.PUBLIC);
-		comment.setRegDt(Instant.now());
+		comment.setCreateAt(Instant.now());
 		return articleCommentMapper.save(comment);
 	}
 
@@ -137,7 +137,7 @@ public class WriteArticleServiceImpl implements WriteArticleService {
 		article.setAuthor(author);
 		article.setSubject(writeArticle.getSubject());
 		article.setStatus(writeArticle.getStatus());
-		article.setRegDt(Instant.now());
+		article.setCreateAt(Instant.now());
 		return article;
 	}
 

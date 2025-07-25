@@ -74,6 +74,6 @@ public class Article {
 	}
 
 	public String toHierarchy() {
-		return IntStream.range(0, this.level).mapToObj(e -> "--").collect(Collectors.joining()) + getId() + " " + getSubject() + " " + getAuthorName() + " " + getRegDt();
+		return IntStream.range(0, this.level).mapToObj(e -> "--").collect(Collectors.joining()) + getId() + " " + getSubject() + " " + getAuthorName() + " " + getCreateAt();
 	}
 }
