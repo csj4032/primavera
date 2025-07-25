@@ -18,5 +18,5 @@ public class Comment {
     private String comment;
     private ArticleStatus status = ArticleStatus.PUBLIC;
     private Instant createAt;
-    private Instant modDt;
+    private Instant updatedAt;
 }

@@ -20,5 +20,5 @@ public class Post {
 	private String contents;
 	private PostStatus status;
 	private Instant createAt;
-	private Instant modDt;
+	private Instant updatedAt;
 }

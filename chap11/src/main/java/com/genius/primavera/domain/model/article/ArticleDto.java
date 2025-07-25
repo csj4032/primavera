@@ -33,7 +33,7 @@ public class ArticleDto {
         private int recommend;
         private int disapprove;
         private Instant createAt;
-        private Instant modDt;
+        private Instant updatedAt;
 
         public String getSubject() {
             return (level > 1 ? "[RE] " : "") + subject;
@@ -55,7 +55,7 @@ public class ArticleDto {
         private String contents;
         private CommentDto.Detail[] comments;
         private Instant createAt;
-        private Instant modDt;
+        private Instant updatedAt;
 
         public long getCommentSize() {
             return comments.length;

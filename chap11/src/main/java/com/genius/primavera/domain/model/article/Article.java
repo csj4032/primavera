@@ -33,7 +33,7 @@ public class Article {
 	private Content content;
 	private Comment[] comments;
 	private Instant createAt;
-	private Instant modDt;
+	private Instant updatedAt;
 
 	public long getAuthorId() {
 		return author.getId();

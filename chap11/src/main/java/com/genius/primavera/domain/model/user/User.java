@@ -52,5 +52,5 @@ public class User {
     @Size(min = 1)
     private List<Role> roles;
     private LocalDateTime createAt;
-    private LocalDateTime modDt;
+    private LocalDateTime updatedAt;
 }

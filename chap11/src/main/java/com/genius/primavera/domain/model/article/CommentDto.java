@@ -15,6 +15,6 @@ public class CommentDto {
         private String authorName;
         private String comment;
         private Instant createAt;
-        private Instant modDt;
+        private Instant updatedAt;
     }
 }
