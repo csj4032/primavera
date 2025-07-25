@@ -1,4 +1,4 @@
-package com.genius.primavera.domain.model.hierarchy;
+package com.genius.primavera.domain.hierarchy;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -11,24 +11,27 @@ import java.time.LocalDateTime;
 @Getter
 @Entity
 @ToString
-@Table(name = "FAMILY")
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@Table(name = "family")
+@Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "dtype")
 public abstract class Family {
 
 	@Id
-	@Column(name = "ID")
-	@GeneratedValue(strategy = GenerationType.TABLE, generator = "table_generator")
-	@TableGenerator(name = "table_generator", table = "TABLE_SEQ", schema = "advance")
-	//@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "family_generator")
-	//@SequenceGenerator(name="family_generator", sequenceName = "FAMILY_SEQ")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name = "NAME")
+	@Column(name = "name")
 	private String name;
 
-	@Column(name = "REG_DT")
+	@Column(name = "scientific_name")
+	private String scientificName;
+
+	@Column(name = "habitat")
+	private String habitat;
+
+	@Column(name = "created_at")
 	private LocalDateTime regDt;
 
-	@Column(name = "MOD_DT")
+	@Column(name = "created_at")
 	private LocalDateTime modDt;
 }

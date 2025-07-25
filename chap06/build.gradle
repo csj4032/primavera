@@ -24,4 +24,6 @@ dependencies {
     compileOnly "org.jetbrains:annotations:${jetbrainsAnnotationsVersion}"
     compileOnly "jakarta.validation:jakarta.validation-api:${javaxValidationVersion}"
     testImplementation "org.springframework.boot:spring-boot-starter-test"
+    testImplementation "org.testcontainers:junit-jupiter:${testContainersVersion}"
+    testImplementation "org.testcontainers:mysql:${testContainersVersion}"
 }

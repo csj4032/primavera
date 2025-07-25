@@ -2,6 +2,7 @@
 .idea
 *.iml
 *.jks
+claude.md
 /chap00/build
 /chap00/out
 /chap01/build
@@ -29,6 +30,8 @@
 /chap11/out
 /chap12/build
 /chap12/out
+/chap13/build
+/chap13/out
 /chap14/build
 /chap14/out
 /chap14/src/main/generated

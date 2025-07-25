@@ -1,4 +1,4 @@
-package com.genius.primavera.domain.model.hierarchy;
+package com.genius.primavera.domain.hierarchy;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -13,8 +13,10 @@ import jakarta.persistence.Table;
 @Getter
 @Entity
 @ToString(callSuper = true)
-@DiscriminatorValue("A")
+@DiscriminatorValue("ALBUM")
 public class Album extends Item {
+
+	public Album() {}
 
 	public Album(String name, int price, String artist) {
 		this.setName(name);
@@ -22,6 +24,9 @@ public class Album extends Item {
 		this.artist = artist;
 	}
 
-	@Column(name = "ARTIST")
+	@Column(name = "artist")
 	private String artist;
+
+	@Column(name = "etc")
+	private String etc;
 }

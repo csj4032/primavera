@@ -1,4 +1,4 @@
-package com.genius.primavera.domain.model.hierarchy;
+package com.genius.primavera.domain.hierarchy;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -13,14 +13,17 @@ import jakarta.persistence.Table;
 @Getter
 @Entity
 @ToString(callSuper = true)
-@DiscriminatorValue("A")
+@Table(name = "contact_addresses")
 public class Address extends Contact {
-	@Column(name = "COUNTRY")
+	@Column(name = "country")
 	private String country;
-	@Column(name = "CITY")
+	
+	@Column(name = "city")
 	private String city;
-	@Column(name = "STREET")
+	
+	@Column(name = "street")
 	private String street;
-	@Column(name = "ZIPCODE")
+	
+	@Column(name = "postal_code")
 	private String zipCode;
 }

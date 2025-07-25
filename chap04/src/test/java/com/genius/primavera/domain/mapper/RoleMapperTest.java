@@ -32,7 +32,7 @@ public class RoleMapperTest {
     public static final String CATALOG = "primavera";
 
     @Container
-    private static final MySQLContainer<?> mysqlContainer = new MySQLContainer<>("mysql:8.4.0")
+    private static final MySQLContainer<?> mysqlContainer = new MySQLContainer<>("mysql:8.4.6")
             .withDatabaseName(CATALOG)
             .withUsername(USER_NAME)
             .withPassword(PASS_WORLD)

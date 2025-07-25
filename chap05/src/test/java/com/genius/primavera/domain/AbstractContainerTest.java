@@ -13,7 +13,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Testcontainers
 public abstract class AbstractContainerTest {
     @Container
-    protected static final MySQLContainer<?> mysqlContainer = new MySQLContainer<>("mysql:8.4.0")
+    protected static final MySQLContainer<?> mysqlContainer = new MySQLContainer<>("mysql:8.4.6")
             .withDatabaseName("primavera")
             .withUsername("primavera")
             .withPassword("primavera")
