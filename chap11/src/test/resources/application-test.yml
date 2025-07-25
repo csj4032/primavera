@@ -25,29 +25,25 @@ spring:
 # OAuth2 환경변수 기본값 설정 (테스트용)
 google:
   client:
-    clientId: test-google-client-id
-    clientSecret: test-google-client-secret
-    
+    clientId: test-client-id
+    clientSecret: test-client-secret
+    redirectUri: http://localhost:8080/login/oauth2/code/google
+
 facebook:
   client:
-    clientId: test-facebook-client-id
-    clientSecret: test-facebook-client-secret
-    
+    clientId: test-facebook-id
+    clientSecret: test-facebook-secret
+    redirectUri: http://localhost:8080/login/oauth2/code/facebook
+
 github:
   client:
-    clientId: test-github-client-id
-    clientSecret: test-github-client-secret
-      
-mybatis:
-  configuration:
-    map-underscore-to-camel-case: true
-    default-fetch-size: 1000
-    default-statement-timeout: 30
-  type-aliases-package: com.genius.primavera.domain
-  type-handlers-package: com.genius.primavera.domain
+    clientId: test-github-id
+    clientSecret: test-github-secret
+    redirectUri: http://localhost:8080/login/oauth2/code/github
 
 logging:
   level:
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
     com.genius.primavera: DEBUG
+    root: WARN
