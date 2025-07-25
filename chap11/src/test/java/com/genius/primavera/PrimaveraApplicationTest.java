@@ -12,18 +12,29 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
-import com.genius.primavera.config.BaseTestConfiguration;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
+
+@SpringBootApplication
+@ComponentScan(excludeFilters = {
+    @ComponentScan.Filter(type = FilterType.REGEX, pattern = ".*Security.*"),
+    @ComponentScan.Filter(type = FilterType.REGEX, pattern = ".*OAuth.*"),
+    @ComponentScan.Filter(type = FilterType.REGEX, pattern = ".*Filter.*")
+})
+class PrimaveraTestApplication {
+}
 
 @Slf4j
-@SpringBootTest(properties = {
+@SpringBootTest(classes = PrimaveraTestApplication.class, properties = {
 	"spring.datasource.url=jdbc:h2:mem:testdb",
 	"spring.datasource.driver-class-name=org.h2.Driver",
 	"spring.jpa.hibernate.ddl-auto=create-drop",
 	"spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.H2Dialect",
 	"spring.sql.init.mode=never",
-	"spring.flyway.enabled=false"
+	"spring.flyway.enabled=false",
+	"spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration,org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration,org.springframework.boot.autoconfigure.web.servlet.HttpEncodingAutoConfiguration"
 })
 @ActiveProfiles("test") 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)

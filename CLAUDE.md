@@ -1,314 +1,475 @@
-# 스프링부트 커뮤니케이션 애플리케이션 프로젝트
+# CLAUDE.md
 
-## 프로젝트 개요
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-스프링부트 기초부터 고급까지 다루는 교육용 커뮤니케이션 애플리케이션
-각 서브 모듈별로 단계적 학습 과정을 담고 있음
+# Primavera - Spring Boot Educational Project
 
-## 개발 철학 및 원칙
+## Quick Development Commands
 
-- **TDD 우선**: 모든 기능은 테스트 먼저 작성
-- **DDD 접근**: 도메인 중심 설계로 객체 생성
-- **클린 코드**: 가독성과 유지보수성 최우선
-- **테스트 커버리지 최대화**
-- **OOP 원칙 준수**: 캡슐화, 상속, 다형성, 추상화 적극 활용
-- **SOLID 원칙 적용**: 단일책임, 개방폐쇄, 리스코프치환, 인터페이스분리, 의존성역전
-- **최신 자바 기술 활용**: 모던 자바 문법과 API 적극 사용
-- **하드코딩 금지**: 설정 파일, 상수, Enum 등을 통한 유연한 코드 작성
-- **국제화 우선**: 모든 메시지는 다국어 지원 기본 설계
-- **문서화 중시**: 각 모듈별 상세한 README와 시각적 다이어그램 제공
-- **세분화된 버전 관리**: 작은 단위의 의미있는 커밋으로 변경 이력 추적
-- **포괄적 테스트 전략**: 모든 레벨의 테스트와 실무적 검증 수행
-- **간결한 코딩 스타일**: 최대한 한 줄로 작성하는 압축적 코드 구조
-- **함수형 프로그래밍 우선**: 불변성, 순수 함수, 고차 함수 중심 개발
-- **조건식 데이터화**: 복잡한 비즈니스 룰을 데이터 구조로 변환하여 복잡도 감소
-- **레일 프로그래밍**: 실패 처리와 예외 상황을 위한 철도 지향 프로그래밍 적용
-- **마이크로 메서드**: 인터페이스 구현체는 최소 단위로 분해하여 구성
-- **이력 관리**: 모든 데이터 변경에 대한 추적 가능한 감사 로그 구현
-- **자동화된 스키마 관리**: 스키마 변경 시 자동 마이그레이션 및 문서화
-- **모듈 독립성**: 서브 모듈 간 최소한의 의존성으로 높은 응집도와 낮은 결합도 유지
-- **점진적 학습**: 중복 허용을 통한 단계별 지식 축적과 기능 발전 추적
-- **빌드 품질 보증**: 모든 테스트 통과를 빌드 성공 조건으로 강제
-- **환경 통일성**: 모든 모듈에서 동일한 MySQL 8.4.0 환경으로 테스트
+### Build and Test
+```bash
+# Build entire project
+./gradlew clean build
 
-## 자바 모던 기술 활용
+# Build specific module
+./gradlew :chap09:build
 
-- **Records**: 불변 데이터 클래스로 DTO/VO 구현
-- **Pattern Matching**: switch expressions, instanceof 패턴 매칭
-- **Text Blocks**: 멀티라인 문자열 처리
-- **Stream API**: 함수형 프로그래밍 스타일
-- **Optional**: null 안전성 보장
-- **CompletableFuture**: 비동기 프로그래밍
-- **Virtual Threads**: 고성능 동시성 처리 (Project Loom)
-- **Sealed Classes**: 제한된 상속 계층 구조
-- **Local Variable Type Inference (var)**: 타입 추론 활용
+# Run tests for specific module
+./gradlew :chap11:test
 
-## 함수형 프로그래밍 전략
+# Run specific test class
+./gradlew :chap11:test --tests MySQLContainerTest
 
-- **불변성(Immutability)**: final 키워드, Record 클래스, 불변 컬렉션 우선 사용
-- **순수 함수(Pure Functions)**: 사이드 이펙트 없는 함수 설계
-- **고차 함수(Higher-Order Functions)**: Function, Predicate, Consumer 등 적극 활용
-- **함수 조합(Function Composition)**: andThen, compose 메서드 체이닝
-- **모나드 패턴**: Optional, Stream, CompletableFuture 체이닝
-- **커링(Currying)**: 부분 적용 함수 활용
-- **Lazy Evaluation**: Stream의 지연 평가 특성 활용
+# Run application (specific chapter)
+./gradlew :chap09:bootRun
 
-## 레일웨이 지향 프로그래밍 (Railway Oriented Programming)
+# Build with parallel execution
+./gradlew build --parallel
+```
 
-- **Either 패턴**: Result<T, E> 타입으로 성공/실패 명시적 처리
-- **체이닝**: flatMap을 통한 연속적 처리 파이프라인
-- **실패 전파**: 첫 번째 실패 시점에서 자동 단락 처리
-- **컴바이네이터**: map, flatMap, orElse 등으로 결과 조합
-- **예외 안전성**: 예외 대신 타입 안전한 오류 처리
-- **복구 전략**: recover, fallback 메서드로 대안 경로 제공
-- **Validation**: 여러 검증 결과 누적 및 종합 판단
+### Database Operations
+```bash
+# Start MySQL 8.4.0 with Docker
+docker run -d --name mysql-primavera \
+  -e MYSQL_ROOT_PASSWORD=root \
+  -e MYSQL_DATABASE=primavera \
+  -e MYSQL_USER=primavera \
+  -e MYSQL_PASSWORD=primavera \
+  -p 3306:3306 mysql:8.4.0
 
-## 마이크로 메서드 전략
+# TestContainers automatically manages MySQL 8.4.0 for tests
+```
 
-- **원자적 책임**: 각 메서드는 하나의 명확한 책임만 수행
-- **함수 분해**: 복잡한 로직을 여러 작은 함수로 분할
-- **조합 우선**: 작은 메서드들을 조합하여 복잡한 기능 구현
-- **테스트 용이성**: 작은 단위로 분해하여 테스트 격리
-- **재사용성**: 작은 메서드는 다양한 곳에서 재사용 가능
-- **가독성**: 메서드 이름으로 의도를 명확히 표현
-- **디버깅**: 작은 단위로 오류 지점 정확히 파악
+### Version Management
+All dependency versions are centralized in `gradle.properties`. When adding new dependencies:
+1. Add version to appropriate category in `gradle.properties` (alphabetically ordered)
+2. Reference using `${versionVariableName}` in build.gradle files
+3. Never hardcode versions in build.gradle files
 
-## 교육적 중복 허용 전략
+## Project Architecture
 
-- **챕터별 진화**: 동일한 클래스라도 각 모듈에서 점진적으로 기능 확장
-- **학습 경로 추적**: 기초 → 고급으로 갈수록 동일 개념의 발전 과정 시각화
-- **독립적 완성도**: 각 모듈은 해당 단계에서 완전히 동작하는 독립적 시스템
-- **중복 허용**: DRY 원칙보다 교육적 효과를 우선시
-- **단계별 복잡도**: 초기 모듈은 단순하게, 후속 모듈은 점진적으로 복잡하게
-- **비교 학습**: 동일 기능의 다양한 구현 방식을 모듈별로 제시
-- **실무 시뮬레이션**: 실제 개발에서 발생하는 코드 진화 과정 재현
+### Multi-Module Educational Structure
+This is a **progressive learning project** with 18 modules (chap00-chap17 + utilities) that demonstrate Spring Boot concepts from basic to advanced. Each module is **intentionally independent** with its own complete implementation.
 
-## 데이터베이스 환경 표준화
+**Key Architectural Principle**: Educational duplication is intentionally allowed over DRY principles to demonstrate concept evolution across modules.
 
-- **MySQL 8.4.0 고정**: 모든 모듈에서 동일한 MySQL 버전 사용
-- **Docker 컨테이너**: TestContainers로 MySQL 8.4.0 컨테이너 자동 관리
-- **버전 일관성**: 개발, 테스트, 운영 환경 모두 MySQL 8.4.0으로 통일
-- **최신 기능 활용**: MySQL 8.4.0의 JSON, CTE, Window Functions 등 활용
-- **성능 최적화**: MySQL 8.4.0의 개선된 인덱스 및 쿼리 최적화 기능 사용
-- **문자셋 표준**: utf8mb4 문자셋으로 완전한 유니코드 지원
-- **타임존 설정**: UTC 기본, 필요 시 애플리케이션 레벨에서 변환
+### Module Categories
+- **chap00-04**: Core Spring Boot fundamentals
+- **chap05-08**: Web development, security, and data access
+- **chap09-13**: Advanced features (OAuth2, complex data structures)
+- **chap14-17**: Production concerns (reactive, microservices, monitoring)
+- **Utilities**: Custom Spring Boot starters
 
-## 빌드 및 테스트 전략
+### Database Strategy
+- **Production**: MySQL 8.4.0 (standardized across all modules)
+- **Testing**: TestContainers with MySQL 8.4.0 (ensures environment consistency)
+- **Schema Management**: Flyway migrations + JPA DDL auto-generation
+- **Audit Strategy**: JPA Auditing + Hibernate Envers for all entities
 
-- **빌드 시 전체 테스트 실행**: 모든 단위/통합/E2E 테스트 자동 실행
-- **테스트 실패 시 빌드 중단**: 하나라도 실패하면 빌드 실패 처리
-- **테스트 커버리지 검증**: 최소 커버리지 기준 미달 시 빌드 실패
-- **코드 품질 게이트**: SpotBugs, Checkstyle, PMD 등 정적 분석 통과 필수
-- **보안 스캔**: 의존성 취약점 검사 포함
-- **성능 테스트**: JMeter를 통한 기본 성능 검증
-- **병렬 테스트 실행**: 빌드 시간 단축을 위한 테스트 병렬 처리
-- **MySQL 8.4.0 테스트**: TestContainers로 정확한 버전 환경에서 DB 테스트
+## Development Philosophy
 
-## 모듈 독립성 전략
+### Code Quality Standards
+- **TDD First**: Write tests before implementation
+- **Functional Programming**: Prefer Stream API, Optional, immutable objects
+- **Railway-Oriented Programming**: Use Result/Either patterns for error handling
+- **Micro-Methods**: Break complex logic into composable small methods
+- **One-Line Preference**: Use method chaining, lambdas, ternary operators
 
-- **완전 격리**: 각 모듈은 다른 모듈 없이도 독립적으로 실행 가능
-- **자체 완결성**: 모든 필요한 클래스와 설정을 각 모듈 내에 포함
-- **인터페이스 분리**: 모듈 간 통신 시에만 표준 인터페이스 사용
-- **이벤트 기반 통신**: Spring Events, Message Queue를 통한 느슨한 결합
-- **독립적 배포**: 각 모듈은 개별적으로 빌드 및 배포 가능
-- **별도 테스트**: 모듈별 독립적인 테스트 수행
-- **설정 분리**: 각 모듈별 독립적인 설정 파일 관리
-- **의존성 역전**: 상위 모듈이 하위 모듈에 의존하지 않도록 설계
+### Testing Strategy (3-Layer Approach)
+1. **Unit Tests**: Mockito-based isolated testing
+2. **Integration Tests**: TestContainers with full Spring context
+3. **Manual Testing**: Postman/curl scripts for real-world validation
 
-## 데이터베이스 감사(Audit) 전략
+### Module Independence
+Each chapter module must be:
+- **Completely self-contained**: No dependencies on other chapters
+- **Independently buildable**: Can build and run without other modules
+- **Fully functional**: Complete working application at its complexity level
 
-- **이력 테이블**: 모든 엔티티에 대응하는 히스토리 테이블 생성
-- **변경 추적**: 생성, 수정, 삭제 시점과 변경자 정보 기록
-- **JPA Auditing**: @CreatedDate, @LastModifiedDate, @CreatedBy, @LastModifiedBy 활용
-- **Envers 활용**: Hibernate Envers로 자동 버전 관리
-- **이벤트 소싱**: 모든 변경을 이벤트로 저장하여 상태 재구성 가능
-- **Soft Delete**: 물리적 삭제 대신 논리적 삭제로 이력 보존
-- **감사 로그**: 누가, 언제, 무엇을, 왜 변경했는지 완전한 추적
+## Database Guidelines
 
-## 스키마 관리 자동화 전략
+### Schema Consistency
+- All modules share identical database schema concepts
+- Table/column names in UPPERCASE (e.g., USER, ROLE, ARTICLE)
+- Boolean fields stored as ENUM in database ('ACTIVE'/'INACTIVE')
+- Mandatory audit fields: CREATED_AT, UPDATED_AT, CREATED_BY, UPDATED_BY
 
-- **Flyway/Liquibase**: 버전 기반 스키마 마이그레이션 도구
-- **JPA DDL 자동화**: spring.jpa.hibernate.ddl-auto 활용한 스키마 생성
-- **ERD 자동 생성**: JPA 엔티티 → ERD 자동 변환
-- **스키마 문서화**: 테이블/컬럼 주석 자동 추출 및 문서 생성
-- **스키마 버전 관리**: Git을 통한 마이그레이션 스크립트 이력 관리
-- **CI/CD 통합**: 배포 시 자동 스키마 업데이트 및 ERD 갱신
-- **스키마 검증**: 프로덕션과 개발 환경 스키마 일치성 검증
-- **MySQL 8.4.0 호환성**: 모든 스키마가 MySQL 8.4.0에서 완벽 동작 보장
+### MySQL 8.4.0 Features
+- Use JSON columns for flexible data
+- Leverage Common Table Expressions (CTEs)
+- Implement Window Functions for analytics
+- UTF8MB4 charset for full Unicode support
 
-## 조건식 데이터화 전략
+## Modern Java Practices
 
-- **룰 엔진 패턴**: 복잡한 비즈니스 룰을 데이터 구조로 외부화
-- **조건 매핑 테이블**: Map, Enum, Record로 조건-결과 매핑
-- **전략 패턴 데이터화**: 조건별 실행 로직을 Function으로 관리
-- **결정 트리 구조**: 중첩 조건을 계층적 데이터 구조로 변환
-- **조건식 DSL**: 도메인 특화 언어로 복잡한 룰 표현
-- **Configuration 기반**: YAML/JSON으로 비즈니스 룰 외부 관리
+### Required Modern Features
+- **Records**: For DTOs and value objects
+- **Pattern Matching**: Switch expressions with instanceof
+- **Text Blocks**: Multi-line string literals
+- **Sealed Classes**: Restricted inheritance hierarchies
+- **Virtual Threads**: High-performance concurrency (Project Loom)
 
-## 디자인 패턴 활용
+### Functional Programming Patterns
+- **Immutability**: final keywords, Records, immutable collections
+- **Pure Functions**: No side effects in business logic
+- **Higher-Order Functions**: Function, Predicate, Consumer composition
+- **Monadic Patterns**: Optional, Stream, CompletableFuture chaining
 
-- **생성 패턴**: Factory, Builder, Singleton
-- **구조 패턴**: Adapter, Decorator, Facade, Proxy
-- **행동 패턴**: Strategy, Observer, Command, Template Method, State
-- **스프링 패턴**: MVC, Dependency Injection, AOP, Repository, Service Layer
-- **함수형 패턴**: Functor, Monad, Option/Maybe, Either
-- **룰 엔진 패턴**: Rule, Condition, Action 분리
-- **레일웨이 패턴**: Try, Result, Validation 모나드
-- **감사 패턴**: Audit Trail, Event Sourcing, CQRS
-- **모듈 패턴**: Facade, Mediator, Publisher-Subscriber
+## Coding Style Rules
 
-## 코딩 스타일 규칙
+### Compression Principles
+- **One-line preference**: Compress logic into single expressions where possible
+- **Method chaining**: Fluent interfaces and builder patterns
+- **Lambda expressions**: Concise functional programming
+- **Optional chaining**: Avoid null checks with Optional methods
+- **Data-driven conditions**: Replace if-else with Map/Stream/Rule objects
 
-- **한 줄 우선**: 가능한 모든 코드를 한 줄로 작성
-- **메서드 체이닝**: Stream API, Builder 패턴 등 적극 활용
-- **람다 표현식**: 간결한 함수형 프로그래밍 스타일
-- **삼항 연산자**: 조건문을 한 줄로 압축
-- **Optional 체이닝**: orElse, map, flatMap 등 활용
-- **Switch Expression**: 다중 조건 처리를 한 줄로
-- **함수형 인터페이스**: Function, Predicate, Supplier, Consumer 활용
-- **메서드 참조**: 람다 대신 메서드 참조 우선 사용
-- **데이터 기반 조건**: if-else 대신 Map, Stream, Rule 객체 활용
-- **레일웨이 체이닝**: 성공/실패 경로를 명확히 분리한 파이프라인
-- **원자적 메서드**: 인터페이스 구현은 가장 작은 단위로 분해
+### Comment Policy
+Only add comments for:
+- Complex business rules that aren't self-explanatory
+- Algorithm explanations for non-trivial logic
+- Integration points with external systems
 
-## 테스트 전략 (다층 구조)
+## Security Implementation
 
-### 1. Mock 기반 단위 테스트
+### Multi-Layer Security
+- **Transport Layer**: HTTPS/SSL with PKCS12 certificates
+- **Authentication**: OAuth2 (Google, Facebook, GitHub, Kakao)
+- **XSS Protection**: Lucy XSS Filter integration
+- **CSRF Protection**: Token-based request validation
+- **SQL Injection**: MyBatis parameter binding
 
-- **Mockito 활용**: 의존성 모킹으로 독립적 단위 테스트
-- **@MockBean**: 스프링 컨텍스트 내 빈 모킹
-- **Business Logic 집중**: 순수 비즈니스 로직 검증
-- **빠른 피드백**: 외부 의존성 없는 고속 테스트
+### Role-Based Access Control
+```
+ADMINISTRATOR → Full system access
+MANAGER → Content and limited user management
+USER → Personal profile and content creation
+```
 
-### 2. 통합 테스트
+## Internationalization Strategy
 
-- **TestContainers**: Docker 컨테이너 MySQL 8.4.0 활용
-- **@SpringBootTest**: 실제 스프링 컨텍스트 로딩
-- **End-to-End 시나리오**: 전체 플로우 검증
-- **데이터 일관성**: schema.sql 기반 격리된 테스트 환경
-- **MySQL 8.4.0 고정**: 정확한 운영 환경과 동일한 DB 버전
+All user-facing messages must support i18n:
+- Use MessageSource for all text
+- Key format: `domain.action.detail` (e.g., `user.validation.nickname.invalid`)
+- Support Korean (default) and English
+- Validation messages integrated with Bean Validation
 
-### 3. 외부 도구 기반 운영 테스트
+## Error Handling Patterns
 
-- **Postman/Insomnia**: REST API 수동 테스트 컬렉션
-- **curl 스크립트**: 명령행 기반 API 테스트
-- **JMeter**: 성능 및 부하 테스트
-- **실제 환경 검증**: 개발자가 직접 수행하는 엔드-투-엔드 테스트
+### Railway-Oriented Programming
+- Use Result<T, E> types for explicit success/failure handling
+- Chain operations with flatMap for fail-fast behavior
+- Implement recovery strategies with fallback methods
+- Avoid exceptions for business logic failures
 
-### 4. 빌드 시 자동 테스트
+## Performance Optimization
 
-- **Maven/Gradle**: test 페이즈에서 모든 테스트 자동 실행
-- **실패 시 중단**: 테스트 실패 시 빌드 프로세스 즉시 중단
-- **커버리지 측정**: JaCoCo를 통한 코드 커버리지 검증
-- **테스트 리포트**: 상세한 테스트 결과 및 커버리지 리포트 생성
+### Database Optimization
+- HikariCP connection pooling
+- Query optimization with proper indexing
+- Redis distributed caching
+- Read replica strategies for scalability
 
-## Git 커밋 전략
+### Application Optimization
+- Async processing with @Async
+- Lazy loading strategies
+- Static resource CDN integration
+- JVM tuning for G1GC
 
-- **Atomic Commits**: 하나의 논리적 변경사항당 하나의 커밋
-- **의미있는 메시지**: feat/fix/docs/test/refactor 등 타입별 명확한 메시지
-- **작은 단위 푸시**: 기능별, 테스트별, 리팩토링별 세분화된 커밋
-- **커밋 메시지 규칙**:
-- feat: 새로운 기능 추가
-- fix: 버그 수정
-- docs: 문서 수정
-- test: 테스트 코드 추가/수정
-- refactor: 코드 리팩토링
-- style: 코드 포맷팅
+## Testing Guidelines
 
-## 문서화 전략
+### TestContainers Integration
+- MySQL 8.4.0 containers for integration tests
+- Reusable test configurations in `BaseTestConfiguration`
+- Schema initialization via schema.sql
+- Test data isolation per test method
 
-- **모듈별 README**: 각 서브 모듈마다 상세한 설명 문서
-- **읽기 쉬운 구성**: 명확한 제목, 간결한 문장, 단계별 설명
-- **시각적 자료**: Mermaid 다이어그램, 플로우차트, 아키텍처 도표
-- **코드 예제**: 핵심 기능별 실제 사용 예시
-- **학습 가이드**: 초보자도 따라할 수 있는 단계별 가이드
-- **API 문서**: 주요 클래스와 메서드 설명
-- **테스트 가이드**: Mock, 통합, 운영 테스트 실행 방법
-- **ERD 자동 생성**: 엔티티 변경 시 ERD 자동 업데이트
-- **모듈 진화 가이드**: 동일 클래스의 모듈별 발전 과정 문서화
-- **중복 요소 매핑**: 모듈 간 중복 클래스/개념의 차이점 명시
-- **빌드 가이드**: 테스트 포함 빌드 실행 방법 및 요구사항
-- **DB 환경 가이드**: MySQL 8.4.0 설정 및 테스트 환경 구성 방법
+### Test Structure
+```java
+@SpringBootTest
+@Import(BaseTestConfiguration.class)
+@Testcontainers
+@ActiveProfiles("test")
+class IntegrationTest {
+    // Test implementation
+}
+```
 
-## 국제화(i18n) 전략
+## Build and Deployment
 
-- **다국어 메시지**: messages.properties (한국어, 영어 등)
-- **MessageSource 활용**: 스프링 국제화 기능 적극 사용
-- **에러 메시지 키 체계**: error.domain.field 형태의 일관된 키 네이밍
-- **Locale 기반 응답**: Accept-Language 헤더 또는 사용자 설정 기반
-- **Validation 메시지**: Bean Validation과 연동한 다국어 검증 메시지
-- **Exception 메시지**: 모든 예외 메시지 국제화 적용
+### Quality Gates
+- All tests must pass before build succeeds
+- JaCoCo coverage thresholds enforced
+- Static analysis (SpotBugs, Checkstyle, PMD)
+- Security vulnerability scanning
 
-## 설정 관리 전략
+### Environment Consistency
+- Development: MySQL 8.4.0 Docker
+- Testing: TestContainers MySQL 8.4.0
+- Production: MySQL 8.4.0 cluster
 
-- **application.yml/properties**: 환경별 설정 외부화
-- **@ConfigurationProperties**: 타입 세이프한 설정 바인딩
-- **상수 클래스**: 매직 넘버/문자열 상수화
-- **Enum 활용**: 고정값들의 타입 안전성 보장
-- **프로파일 기반**: 개발/테스트/운영 환경 분리
+## Git Workflow
 
-## 데이터베이스 설계 원칙
+### Commit Message Format
+```
+feat: add OAuth2 social login integration
+fix: resolve MySQL connection timeout issue
+docs: update API documentation
+test: add integration tests for user service
+refactor: extract payment processing logic
+```
 
-- **스키마 일관성**: 모든 서브 모듈에서 동일한 데이터베이스 스키마 사용
-- **공통 엔티티**: 모듈 간 일관된 도메인 모델 유지 (단, 모듈별 독립 구현)
-- **통합 schema.sql**: 전체 프로젝트에서 공유하는 단일 스키마 파일
-- **데이터 일관성**: 모든 모듈에서 동일한 테이블 구조와 관계 보장
-- **Boolean → Enum 변환**: boolean 속성은 DB에서 ENUM으로 저장 (예: 'ACTIVE'/'INACTIVE', 'ENABLED'/'DISABLED')
-- **이력 관리**: 모든 엔티티에 감사 필드와 히스토리 테이블 구성
-- **변경 추적**: created_at, updated_at, created_by, updated_by, version 필드 기본 포함
-- **Soft Delete**: deleted_at 필드로 논리적 삭제 구현
-- **스키마 자동화**: Flyway 마이그레이션과 ERD 자동 생성 연동
-- **모듈별 엔티티 복제**: 동일 도메인이라도 각 모듈에서 독립적으로 엔티티 관리
-- **MySQL 8.4.0 최적화**: 해당 버전의 성능 개선사항과 새로운 기능 적극 활용
+### Atomic Commits
+- One logical change per commit
+- Small, focused commits for easy review
+- Meaningful commit messages explaining the "why"
 
-## 기술 스택
+## Module Evolution Strategy
 
-- Spring Boot (기초 → 고급)
-- Java 21+ (최신 LTS 기능 활용)
-- **MySQL 8.4.0** (Docker TestContainers로 버전 고정)
-- JUnit 5, Mockito, TestContainers
-- Spring Boot Starter Web (국제화 지원)
-- Spring Data JPA (Auditing 기능)
-- Hibernate Envers (버전 관리)
-- Flyway/Liquibase (스키마 마이그레이션)
-- SchemaSpy/ERDocs (ERD 자동 생성)
-- Spring Cloud Contract (모듈 간 계약 테스트)
-- JaCoCo (코드 커버리지)
-- SpotBugs, Checkstyle, PMD (정적 분석)
-- Postman, JMeter (운영 테스트)
-- Maven/Gradle (빌드 및 테스트 자동화)
-- 기타 스프링 생태계 기술들
+### Educational Duplication Policy
+- **Concept Progression**: Same concepts implemented with increasing complexity
+- **Independent Learning**: Each module teachable without prerequisites
+- **Real-world Simulation**: Shows how codebases evolve over time
+- **Comparison Learning**: Multiple implementation approaches demonstrated
 
-## 코딩 가이드라인
+This project prioritizes educational value over traditional DRY principles, allowing intentional duplication to demonstrate concept evolution and different implementation approaches across the learning progression.
 
-시니어 스프링부트 개발자 관점에서:
+## Detailed Coding Guidelines
 
-- 테스트 우선 개발 (Red-Green-Refactor)
-- 도메인 모델 중심 설계
-- 객체지향 설계 원칙 엄격 준수
-- 적절한 디자인 패턴 적용으로 유연한 구조 구성
-- 의존성 주입 및 SOLID 원칙 준수
-- 명확한 레이어 분리 (Controller-Service-Repository)
-- 인터페이스 기반 프로그래밍
-- 불변 객체 선호 및 사이드 이펙트 최소화
-- **모듈 간 스키마 동일성 유지**: 공통 엔티티와 관계 구조 일관성 보장
-- **Boolean 필드 처리**: 데이터베이스에서 ENUM으로 저장, JPA에서 @Enumerated 활용
-- **국제화 메시지 처리**: 모든 사용자 대면 메시지는 MessageSource를 통한 다국어 지원
-- **설정 외부화**: 하드코딩 대신 설정 파일, 상수, Enum 활용
-- **최신 자바 문법 우선 사용**: Records, Pattern Matching, Stream API 등 적극 활용
-- **포괄적 문서화**: 각 모듈별 README에 아키텍처, 플로우차트, 사용법 상세 기록
-- **세밀한 버전 관리**: 작은 단위의 논리적 변경사항별로 명확한 커밋 메시지와 함께 푸시
-- **계층적 테스트**: Mock 단위 → 통합 테스트 → 외부 도구 운영 테스트 순차 수행
-- **한 줄 코딩 우선**: 메서드 체이닝, 람다, 삼항 연산자 등으로 압축적 코드 작성
-- **함수형 프로그래밍 우선**: Stream API, Optional, 불변성, 순수 함수 중심 설계
-- **조건식 데이터화**: 복잡한 if-else를 Map, Rule 객체, Strategy 패턴으로 변환
-- **레일웨이 지향 프로그래밍**: Result/Either 타입으로 실패 안전한 파이프라인 구성
-- **마이크로 메서드 구현**: 인터페이스 구현체는 최소 단위 메서드로 분해하여 조합
-- **이력 관리 의무화**: 모든 엔티티에 JPA Auditing과 Envers로 변경 이력 추적
-- **스키마 관리 자동화**: Flyway 마이그레이션과 ERD 자동 생성으로 스키마 변경 추적
-- **모듈 독립성 보장**: 서브 모듈 간 직접 의존성 금지, 인터페이스와 이벤트를 통한 통신
-- **교육적 중복 허용**: DRY 원칙보다 학습 효과를 우선하여 모듈별 독립적 구현
-- **빌드 품질 보증**: 모든 테스트 통과와 코드 품질 기준 충족을 빌드 성공 조건으로 설정
-- **MySQL 8.4.6 LTS 표준화**: 모든 모듈에서 동일한 MySQL 버전으로 개발 및 테스트 환경 통일
-- **데이터베이스 테이블 및 컬럼 그리고 키 이름은 대문자로 명명한다.**
-- **주석 정책**: 꼭 필요한 핵심 로직과 복잡한 비즈니스 규칙에만 간결한 주석 작성
+### Senior Spring Boot Developer Standards
+
+Follow these guidelines as a senior Spring Boot developer:
+
+#### Core Development Principles
+- **Test-Driven Development**: Always write tests before implementation (Red-Green-Refactor cycle)
+- **Domain-Driven Design**: Design around business domains and ubiquitous language
+- **Clean Code**: Prioritize readability and maintainability above all else
+- **SOLID Principles**: Strictly adhere to Single Responsibility, Open/Closed, Liskov Substitution, Interface Segregation, and Dependency Inversion
+- **Design Patterns**: Apply appropriate patterns for flexible and maintainable structure
+
+#### Layer Separation and Architecture
+- **Clear Layer Separation**: Controller-Service-Repository with distinct responsibilities
+- **Interface-Based Programming**: Program to interfaces, not implementations
+- **Dependency Injection**: Leverage Spring's IoC container effectively
+- **Immutable Objects**: Prefer immutable objects and minimize side effects
+
+#### Modern Java Technology Usage
+- **Records**: Use for DTOs and value objects instead of traditional POJOs
+- **Pattern Matching**: Leverage switch expressions and instanceof pattern matching
+- **Text Blocks**: Use for multi-line string literals
+- **Stream API**: Adopt functional programming style extensively
+- **Optional**: Ensure null safety with Optional chaining
+- **CompletableFuture**: Implement asynchronous programming patterns
+- **Virtual Threads**: Use for high-performance concurrency (Project Loom)
+- **Sealed Classes**: Implement restricted inheritance hierarchies
+- **Local Variable Type Inference (var)**: Use type inference appropriately
+
+#### Functional Programming Strategy
+
+##### Immutability Principles
+- **final keywords**: Use final for variables that shouldn't change
+- **Record classes**: Prefer Records over traditional POJOs for data classes
+- **Immutable collections**: Use List.of(), Set.of(), Map.of() for immutable collections
+- **Defensive copying**: Create defensive copies when exposing internal state
+
+##### Pure Functions and Higher-Order Functions
+- **Pure Functions**: Design functions without side effects
+- **Function Composition**: Use andThen(), compose() for method chaining
+- **Higher-Order Functions**: Leverage Function, Predicate, Consumer, Supplier extensively
+- **Method References**: Prefer method references over lambda expressions when possible
+
+##### Monadic Patterns
+- **Optional Chaining**: Use map(), flatMap(), orElse() instead of null checks
+- **Stream Processing**: Leverage filter(), map(), reduce() for data transformation
+- **CompletableFuture**: Chain asynchronous operations with thenApply(), thenCompose()
+
+#### Railway-Oriented Programming
+
+##### Error Handling Strategy
+- **Either Pattern**: Implement Result<T, E> types for explicit success/failure handling
+- **Chaining Operations**: Use flatMap() for continuous processing pipelines
+- **Failure Propagation**: Implement automatic short-circuit on first failure
+- **Combinators**: Use map(), flatMap(), orElse() for result composition
+- **Exception Safety**: Replace exceptions with type-safe error handling
+- **Recovery Strategies**: Implement recover() and fallback() methods for alternative paths
+- **Validation Accumulation**: Accumulate multiple validation results for comprehensive feedback
+
+#### Micro-Method Strategy
+
+##### Method Decomposition
+- **Atomic Responsibility**: Each method should have one clear, single responsibility
+- **Function Decomposition**: Break complex logic into multiple small functions
+- **Composition Over Complexity**: Combine small methods to build complex functionality
+- **Test Isolation**: Small units enable better test isolation and debugging
+- **Reusability**: Small methods can be reused across different contexts
+- **Readable Intent**: Method names should clearly express their purpose
+- **Precise Debugging**: Small units allow pinpoint error identification
+
+#### Code Compression and Style
+
+##### One-Line Preference
+- **Method Chaining**: Use fluent interfaces and builder patterns extensively
+- **Lambda Expressions**: Write concise functional programming expressions
+- **Ternary Operators**: Compress conditional logic into single lines
+- **Optional Chaining**: Use orElse(), map(), flatMap() to avoid null checks
+- **Switch Expressions**: Handle multiple conditions in single expressions
+- **Stream Operations**: Process collections functionally in one pipeline
+
+##### Data-Driven Conditionals
+- **Rule Engine Pattern**: Externalize complex business rules into data structures
+- **Condition Mapping**: Use Map, Enum, Record for condition-result mapping
+- **Strategy Pattern Data**: Manage conditional execution logic as Function objects
+- **Decision Trees**: Convert nested conditions into hierarchical data structures
+- **DSL Approach**: Create domain-specific languages for complex rule expression
+- **Configuration-Based Rules**: Manage business rules externally via YAML/JSON
+
+#### Database and Schema Guidelines
+
+##### Schema Consistency
+- **Module Schema Alignment**: Maintain identical database schemas across all modules
+- **Common Entity Models**: Keep consistent domain models (with independent module implementations)
+- **Unified Schema File**: Use single schema.sql shared across the entire project
+- **Data Consistency**: Ensure identical table structures and relationships across modules
+- **Boolean to Enum Conversion**: Store boolean attributes as database ENUMs ('ACTIVE'/'INACTIVE', 'ENABLED'/'DISABLED')
+
+##### Audit and History Management
+- **History Tables**: Create corresponding history tables for all entities
+- **Change Tracking**: Record creation, modification, deletion timestamps and actors
+- **JPA Auditing**: Use @CreatedDate, @LastModifiedDate, @CreatedBy, @LastModifiedBy
+- **Envers Integration**: Implement Hibernate Envers for automatic version management
+- **Event Sourcing**: Store all changes as events for state reconstruction capability
+- **Soft Delete**: Use logical deletion with deleted_at fields to preserve history
+- **Audit Logging**: Implement complete audit trails (who, when, what, why)
+
+##### Schema Management Automation
+- **Migration Tools**: Use Flyway/Liquibase for version-based schema migrations
+- **JPA DDL Automation**: Leverage spring.jpa.hibernate.ddl-auto for schema generation
+- **ERD Auto-Generation**: Automatically convert JPA entities to ERD diagrams
+- **Schema Documentation**: Auto-extract table/column comments for documentation
+- **Version Control**: Manage migration scripts through Git history
+- **CI/CD Integration**: Automate schema updates and ERD refresh during deployment
+- **Schema Validation**: Verify production and development environment schema consistency
+- **MySQL 8.4.0 Optimization**: Utilize version-specific performance improvements and features
+
+#### Configuration and Internationalization
+
+##### Configuration Management
+- **External Configuration**: Use application.yml/properties for environment-specific settings
+- **Type-Safe Binding**: Implement @ConfigurationProperties for type-safe configuration
+- **Constants Management**: Use constant classes instead of magic numbers/strings
+- **Enum Usage**: Ensure type safety for fixed values with enums
+- **Profile-Based Configuration**: Separate development/test/production environments
+
+##### Internationalization Strategy
+- **Multi-Language Messages**: Implement messages.properties for Korean/English support
+- **MessageSource Integration**: Use Spring's internationalization features extensively
+- **Error Message Key System**: Use consistent error.domain.field key naming convention
+- **Locale-Based Responses**: Respond based on Accept-Language header or user settings
+- **Validation Message Integration**: Connect Bean Validation with multi-language messages
+- **Exception Message Internationalization**: Apply internationalization to all exception messages
+
+#### Testing Strategy Implementation
+
+##### Multi-Layer Testing Structure
+1. **Mock-Based Unit Tests**
+   - Use Mockito for dependency mocking and isolated unit testing
+   - Apply @MockBean for Spring context bean mocking
+   - Focus on pure business logic verification
+   - Ensure fast feedback with no external dependencies
+
+2. **Integration Tests**
+   - Use TestContainers with Docker MySQL 8.4.0
+   - Load full Spring context with @SpringBootTest
+   - Verify end-to-end scenarios and complete workflows
+   - Ensure data consistency with schema.sql-based isolated test environments
+   - Maintain exact production environment parity with MySQL 8.4.0
+
+3. **External Tool-Based Operational Tests**
+   - Create manual test collections with Postman/Insomnia for REST APIs
+   - Implement command-line API tests with curl scripts
+   - Perform performance and load testing with JMeter
+   - Conduct real-world validation through developer-performed end-to-end testing
+
+4. **Build-Time Automated Testing**
+   - Execute all tests automatically during Maven/Gradle test phase
+   - Halt build process immediately upon test failures
+   - Measure code coverage with JaCoCo verification
+   - Generate detailed test results and coverage reports
+
+#### Module Independence Strategy
+
+##### Complete Isolation
+- **Independent Execution**: Each module must run independently without other modules
+- **Self-Contained Completeness**: Include all necessary classes and configurations within each module
+- **Interface-Only Communication**: Use standard interfaces only for inter-module communication
+- **Event-Based Communication**: Implement loose coupling through Spring Events and Message Queues
+- **Independent Deployment**: Enable individual module builds and deployments
+- **Separate Testing**: Perform module-specific independent testing
+- **Configuration Separation**: Manage independent configuration files per module
+- **Dependency Inversion**: Prevent upper modules from depending on lower modules
+
+#### Educational Duplication Strategy
+
+##### Progressive Learning Approach
+- **Chapter-by-Chapter Evolution**: Gradually expand functionality of the same classes across modules
+- **Learning Path Tracking**: Visualize concept development from basic to advanced
+- **Independent Completeness**: Each module functions as a complete independent system at its complexity level
+- **Duplication Over DRY**: Prioritize educational effectiveness over DRY principles
+- **Progressive Complexity**: Start simple in early modules, gradually increase complexity in later modules
+- **Comparative Learning**: Present various implementation approaches across different modules
+- **Real-World Simulation**: Reproduce actual code evolution processes found in development
+
+#### Quality Assurance and Build Strategy
+
+##### Build Quality Assurance
+- **Comprehensive Test Execution**: Automatically run all unit/integration/E2E tests during builds
+- **Failure-Triggered Build Halt**: Immediately stop build process if any test fails
+- **Coverage Threshold Verification**: Fail builds that don't meet minimum coverage requirements
+- **Code Quality Gates**: Require passing SpotBugs, Checkstyle, PMD static analysis
+- **Security Scanning**: Include dependency vulnerability checks
+- **Performance Testing**: Include basic performance validation with JMeter
+- **Parallel Test Execution**: Execute tests in parallel to reduce build time
+- **MySQL 8.4.0 Testing**: Use TestContainers to ensure exact version environment for database tests
+
+#### Database Environment Standardization
+
+##### MySQL 8.4.0 Consistency
+- **Version Lock**: Use identical MySQL 8.4.0 version across all modules
+- **Docker Container Management**: Automatically manage MySQL 8.4.0 containers with TestContainers
+- **Environment Consistency**: Unify development, testing, and production environments with MySQL 8.4.0
+- **Latest Feature Utilization**: Leverage MySQL 8.4.0's JSON, CTE, Window Functions
+- **Performance Optimization**: Use MySQL 8.4.0's improved indexing and query optimization features
+- **Character Set Standards**: Use utf8mb4 character set for complete Unicode support
+- **Timezone Configuration**: Default to UTC, convert at application level when necessary
+
+#### Specific Implementation Rules
+
+##### Database Naming Conventions
+- **Table and Column Names**: Use UPPERCASE for all database table and column names
+- **Key Naming**: Use UPPERCASE for all database key names
+- **Consistent Naming**: Apply uniform naming conventions across all modules
+
+##### Comment Policy
+- **Essential Logic Only**: Add comments only for essential core logic and complex business rules
+- **Concise Comments**: Write brief, clear comments when necessary
+- **Avoid Over-Commenting**: Don't comment obvious code or standard patterns
+
+#### Technology Stack Integration
+
+##### Core Technologies
+- **Spring Boot**: Progress from basic to advanced concepts
+- **Java 21+**: Utilize latest LTS features extensively
+- **MySQL 8.4.0**: Use Docker TestContainers for version consistency
+- **Testing**: JUnit 5, Mockito, TestContainers integration
+- **Security**: Spring Security with internationalization support
+- **ORM**: Spring Data JPA with Auditing functionality
+- **Version Management**: Hibernate Envers for automatic versioning
+- **Schema Migration**: Flyway/Liquibase for database migrations
+- **Documentation**: SchemaSpy/ERDocs for automatic ERD generation
+- **Contract Testing**: Spring Cloud Contract for inter-module testing
+- **Coverage**: JaCoCo for code coverage measurement
+- **Static Analysis**: SpotBugs, Checkstyle, PMD for code quality
+- **Operational Testing**: Postman, JMeter for real-world testing
+- **Build Automation**: Maven/Gradle with comprehensive test automation
+
+This comprehensive coding guideline ensures consistent, high-quality code across all modules while maintaining the educational project's unique requirements and constraints.

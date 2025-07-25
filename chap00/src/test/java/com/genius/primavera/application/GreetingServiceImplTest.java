@@ -12,8 +12,10 @@ class GreetingServiceImplTest {
     void helloTest() {
         // given
         GreetingService greetingService = new GreetingServiceImpl();
+
         // when
         String result = greetingService.hello();
+
         // then
         assertThat(result).isEqualTo("Hello");
     }
