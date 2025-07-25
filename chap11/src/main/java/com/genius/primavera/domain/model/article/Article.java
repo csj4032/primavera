@@ -32,7 +32,7 @@ public class Article {
 	private int disapprove;
 	private Content content;
 	private Comment[] comments;
-	private Instant regDt;
+	private Instant createAt;
 	private Instant modDt;
 
 	public long getAuthorId() {

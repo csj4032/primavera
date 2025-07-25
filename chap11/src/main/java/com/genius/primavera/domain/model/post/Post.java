@@ -19,6 +19,6 @@ public class Post {
 	private String subject;
 	private String contents;
 	private PostStatus status;
-	private Instant regDt;
+	private Instant createAt;
 	private Instant modDt;
 }

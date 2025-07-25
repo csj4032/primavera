@@ -25,7 +25,7 @@
 						<div class="user-block">
 							<img class="img-circle" th:src="${#authorization.getAuthentication().principal.imageUrl}" src="../dist/img/user1-12h:128.jpg" alt="User Image">
 							<span class="username"><a href="#" th:text="${article.authorName}">Jonathan Burke Jr.</a></span>
-							<span class="description" th:text="${'Shared publicly - ' +  article.regDt}">Shared publicly - 7:30 PM Today</span>
+							<span class="description" th:text="${'Shared publicly - ' +  article.createAt}">Shared publicly - 7:30 PM Today</span>
 						</div>
 						<div class="box-tools">
 							<button type="button" class="btn btn-box-tool" data-toggle="tooltip" title data-original-title="comments"><i class="fa fa-comments-o margin-r-5"></i><p th:text="${article.commentSize}"></p></button>
@@ -59,7 +59,7 @@
 					<div class="box-body box-comments">
 						<img class="img-circle img-sm" th:src="${comment.authorImage}" src="../dist/img/user3-128x128.jpg" alt="User Image">
 						<div class="comment-text">
-						<span class="username">[[${comment.authorName}]]<span class="text-muted pull-right" th:text="${comment.regDt}">8:03 PM Today</span></span>
+						<span class="username">[[${comment.authorName}]]<span class="text-muted pull-right" th:text="${comment.createAt}">8:03 PM Today</span></span>
 						<div th:remove="tag" th:utext="${T(org.springframework.web.util.HtmlUtils).htmlUnescape(comment.comment)}"></div></div>
 						<div class="pull-right">
 							<a href="javascript://" class="btn btn-danger btn-xs" id="comment-delete-button"><i class="fa fa-fw fa-trash"></i></a>

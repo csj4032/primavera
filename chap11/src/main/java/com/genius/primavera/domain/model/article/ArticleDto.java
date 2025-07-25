@@ -32,7 +32,7 @@ public class ArticleDto {
         private int hit;
         private int recommend;
         private int disapprove;
-        private Instant regDt;
+        private Instant createAt;
         private Instant modDt;
 
         public String getSubject() {
@@ -54,7 +54,7 @@ public class ArticleDto {
         private int disapprove;
         private String contents;
         private CommentDto.Detail[] comments;
-        private Instant regDt;
+        private Instant createAt;
         private Instant modDt;
 
         public long getCommentSize() {

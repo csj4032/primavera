@@ -25,8 +25,8 @@ import java.util.List;
 @Repository
 public interface ArticleMapper {
 
-    String SELECT_WITH_USER_SQL = "SELECT A.ID, A.P_ID, A.REFERENCE, A.STEP, A.LEVEL, A.AUTHOR, B.EMAIL, B.NICKNAME, A.SUBJECT, A.STATUS, A.HIT, A.RECOMMEND, A.DISAPPROVE, A.REG_DT, A.MOD_DT FROM ARTICLE A INNER JOIN USER B ON A.AUTHOR = B.ID ";
-    String SELECT_WITH_USER_CONTENTS_SQL = "SELECT A.ID, A.P_ID, A.REFERENCE, A.STEP, A.LEVEL, A.AUTHOR, B.EMAIL, B.NICKNAME, A.SUBJECT, A.STATUS, A.HIT, A.RECOMMEND, A.DISAPPROVE, C.ID AS CONTENTS_ID, C.CONTENTS, A.REG_DT, A.MOD_DT FROM ARTICLE A INNER JOIN USER B ON A.AUTHOR = B.ID INNER JOIN ARTICLE_CONTENT C ON A.ID = C.ARTICLE_ID ";
+    String SELECT_WITH_USER_SQL = "SELECT A.ID, A.P_ID, A.REFERENCE, A.STEP, A.LEVEL, A.AUTHOR, B.EMAIL, B.NICKNAME, A.SUBJECT, A.STATUS, A.HIT, A.RECOMMEND, A.DISAPPROVE, A.CREATED_AT, A.MOD_DT FROM ARTICLE A INNER JOIN USER B ON A.AUTHOR = B.ID ";
+    String SELECT_WITH_USER_CONTENTS_SQL = "SELECT A.ID, A.P_ID, A.REFERENCE, A.STEP, A.LEVEL, A.AUTHOR, B.EMAIL, B.NICKNAME, A.SUBJECT, A.STATUS, A.HIT, A.RECOMMEND, A.DISAPPROVE, C.ID AS CONTENTS_ID, C.CONTENTS, A.CREATED_AT, A.MOD_DT FROM ARTICLE A INNER JOIN USER B ON A.AUTHOR = B.ID INNER JOIN ARTICLE_CONTENT C ON A.ID = C.ARTICLE_ID ";
 
     @InsertProvider(type = ArticleProvider.class, method = "save")
     @Options(useGeneratedKeys = true, keyColumn = "ID", keyProperty = "id", useCache=false)
@@ -46,7 +46,7 @@ public interface ArticleMapper {
                     @Result(property = "author.nickname", column = "NICKNAME"),
                     @Result(property = "subject", column = "SUBJECT"),
                     @Result(property = "status", typeHandler = ArticleStatusTypeHandler.class, column = "STATUS"),
-                    @Result(property = "regDt", column = "REG_DT"),
+                    @Result(property = "createAt", column = "CREATED_AT"),
                     @Result(property = "modDt", column = "MOD_DT")
 
             })
@@ -65,7 +65,7 @@ public interface ArticleMapper {
                     @Result(property = "author.nickname", column = "NICKNAME"),
                     @Result(property = "subject", column = "SUBJECT"),
                     @Result(property = "status", typeHandler = ArticleStatusTypeHandler.class, column = "STATUS"),
-                    @Result(property = "regDt", column = "REG_DT"),
+                    @Result(property = "createAt", column = "CREATED_AT"),
                     @Result(property = "modDt", column = "MOD_DT")
             })
     @Select(value = SELECT_WITH_USER_SQL + " WHERE A.ID = #{id}")
@@ -83,7 +83,7 @@ public interface ArticleMapper {
             @Result(property = "author.nickname", column = "NICKNAME"),
             @Result(property = "subject", column = "SUBJECT"),
             @Result(property = "status", typeHandler = ArticleStatusTypeHandler.class, column = "STATUS"),
-            @Result(property = "regDt", column = "REG_DT"),
+            @Result(property = "createAt", column = "CREATED_AT"),
             @Result(property = "modDt", column = "MOD_DT")
     })
     @Select(SELECT_WITH_USER_SQL + " WHERE A.P_ID = #{id}")
@@ -110,7 +110,7 @@ public interface ArticleMapper {
             @Result(property = "recommend", column = "RECOMMEND"),
             @Result(property = "disapprove", column = "DISAPPROVE"),
             @Result(property = "hit", column = "HIT"),
-            @Result(property = "regDt", column = "REG_DT"),
+            @Result(property = "createAt", column = "CREATED_AT"),
             @Result(property = "modDt", column = "MOD_DT")
     })
     @Select(value = SELECT_WITH_USER_SQL + "WHERE A.STATUS = 1 ORDER BY A.REFERENCE DESC, A.STEP ASC LIMIT #{pageRequest.rowNumber} OFFSET #{pageRequest.offset}")
@@ -133,7 +133,7 @@ public interface ArticleMapper {
                     @Result(property = "disapprove", column = "DISAPPROVE"),
                     @Result(property = "content.id", column = "CONTENTS_ID"),
                     @Result(property = "content.contents", column = "CONTENTS"),
-                    @Result(property = "regDt", column = "REG_DT"),
+                    @Result(property = "createAt", column = "CREATED_AT"),
                     @Result(property = "modDt", column = "MOD_DT")
             })
     @Select(value = SELECT_WITH_USER_CONTENTS_SQL + " WHERE A.ID = #{id}")
@@ -157,7 +157,7 @@ public interface ArticleMapper {
                     @Result(property = "content.id", column = "CONTENTS_ID"),
                     @Result(property = "content.contents", column = "CONTENTS"),
                     @Result(property = "comments", javaType = Comment[].class, column = "ID", many = @Many(select = "com.genius.primavera.domain.mapper.article.ArticleCommentMapper.findByArticleId", fetchType = FetchType.DEFAULT)),
-                    @Result(property = "regDt", column = "REG_DT"),
+                    @Result(property = "createAt", column = "CREATED_AT"),
                     @Result(property = "modDt", column = "MOD_DT")
             })
     @Select(value = SELECT_WITH_USER_CONTENTS_SQL + " WHERE A.ID = #{id}")
@@ -171,13 +171,13 @@ public interface ArticleMapper {
 
     class ArticleProvider {
         public String save(Article article) {
-            String sql = "INSERT INTO ARTICLE (P_ID, REFERENCE, STEP, LEVEL, SUBJECT, AUTHOR, STATUS, REG_DT) VALUES (#{pId}, ";
+            String sql = "INSERT INTO ARTICLE (P_ID, REFERENCE, STEP, LEVEL, SUBJECT, AUTHOR, STATUS, CREATED_AT) VALUES (#{pId}, ";
             if (article.getPId() == 0l) {
                 sql += "LAST_INSERT_ID() + 1";
             } else {
                 sql += "#{reference}";
             }
-            sql += ", #{step}, #{level}, #{subject}, #{author.id}, #{status, typeHandler=ArticleStatusTypeHandler}, #{regDt})";
+            sql += ", #{step}, #{level}, #{subject}, #{author.id}, #{status, typeHandler=ArticleStatusTypeHandler}, #{createAt})";
             return sql;
         }
     }
