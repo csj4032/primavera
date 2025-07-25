@@ -70,7 +70,7 @@ public class UserConnection {
 
 	public static UserConnection valueOf(KakaoUserDetails userDetails) {
 		return UserConnection.builder()
-				.expireTime(userDetails.getExpiresIn())
+				.expireTime(userDetails.getExpiration())
 				.providerId(userDetails.getId())
 				.accessToken(userDetails.getAccessToken())
 				.email(userDetails.getEmail())

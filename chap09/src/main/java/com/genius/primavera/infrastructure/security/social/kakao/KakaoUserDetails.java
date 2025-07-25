@@ -4,9 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.genius.primavera.infrastructure.security.social.SocialUserDetails;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.security.oauth2.common.OAuth2AccessToken;
 
 @Getter
+@Setter
 public class KakaoUserDetails implements SocialUserDetails {
 	private String id;
 	@JsonProperty("kakao_account")
@@ -14,11 +14,16 @@ public class KakaoUserDetails implements SocialUserDetails {
 	@JsonProperty("access_token")
 	private String accessToken;
 	@JsonProperty("expires_in")
-	private Integer expiresIn;
+	private long expiration;
 
-	public void setAccessToken(OAuth2AccessToken accessToken) {
-		this.accessToken = accessToken.getValue();
-		this.expiresIn = -1;
+	@Override
+	public void setAccessToken(String accessToken) {
+		this.accessToken = accessToken;
+	}
+
+	@Override
+	public void setExpiration(long expiration) {
+		this.expiration = expiration;
 	}
 
 	public String getEmail() {

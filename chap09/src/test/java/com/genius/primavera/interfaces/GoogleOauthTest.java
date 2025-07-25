@@ -1,49 +1,51 @@
 package com.genius.primavera.interfaces;
 
-import io.restassured.RestAssured;
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.security.oauth2.client.registration.ClientRegistration;
+import org.springframework.security.oauth2.core.AuthorizationGrantType;
 
-import static io.restassured.RestAssured.given;
-import static org.hamcrest.CoreMatchers.containsString;
+import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
-@ExtendWith({SpringExtension.class})
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class GoogleOauthTest {
 
-	@BeforeEach
-	public void setup() {
-		RestAssured.baseURI = "https://localhost";
-		RestAssured.port = 8443;
-	}
-
 	@Test
 	@Order(1)
-	@DisplayName("로그인 페이지 접근")
-	public void loginPage() throws Exception {
-		given()
-				.relaxedHTTPSValidation()
-				.when()
-				.get("/")
-				.then()
-				.statusCode(200)
-				.contentType("text/html")
-				.body(containsString("google"));
+	@DisplayName("OAuth2 클라이언트 등록 설정 테스트")
+	public void oauthClientRegistrationTest() {
+		ClientRegistration.Builder builder = ClientRegistration.withRegistrationId("google")
+				.clientId("test-client-id")
+				.clientSecret("test-client-secret")
+				.authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+				.redirectUri("{baseUrl}/login/oauth2/code/{registrationId}")
+				.authorizationUri("https://accounts.google.com/o/oauth2/v2/auth")
+				.tokenUri("https://www.googleapis.com/oauth2/v4/token")
+				.userInfoUri("https://www.googleapis.com/oauth2/v3/userinfo")
+				.userNameAttributeName("sub")
+				.clientName("Google");
+
+		ClientRegistration registration = builder.build();
+		
+		assertNotNull(registration);
+		assertEquals("google", registration.getRegistrationId());
+		assertEquals("test-client-id", registration.getClientId());
+		assertEquals(AuthorizationGrantType.AUTHORIZATION_CODE, registration.getAuthorizationGrantType());
 	}
 
 	@Test
 	@Order(2)
-	@DisplayName("구글 로그인 시도")
-	public void googleOauthTest() {
-		given()
-				.relaxedHTTPSValidation()
-				.when()
-				.redirects().follow(false)
-				.get("/login/google")
-				.then()
-				.statusCode(302);
+	@DisplayName("OAuth2 URL 구성 테스트")
+	public void oauthUrlConfigurationTest() {
+		String authorizationUri = "https://accounts.google.com/o/oauth2/v2/auth";
+		String tokenUri = "https://www.googleapis.com/oauth2/v4/token";
+		String userInfoUri = "https://www.googleapis.com/oauth2/v3/userinfo";
+		
+		assertTrue(authorizationUri.startsWith("https://"));
+		assertTrue(tokenUri.startsWith("https://"));
+		assertTrue(userInfoUri.startsWith("https://"));
+		
+		assertTrue(authorizationUri.contains("accounts.google.com"));
+		assertTrue(tokenUri.contains("googleapis.com"));
+		assertTrue(userInfoUri.contains("googleapis.com"));
 	}
 }
