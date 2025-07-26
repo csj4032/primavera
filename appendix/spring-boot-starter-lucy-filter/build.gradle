@@ -14,15 +14,17 @@ jar {
 dependencies {
     implementation "org.springframework:spring-web"
     implementation "org.springframework:spring-webmvc"
+    implementation "org.springframework:spring-context"
     implementation "org.springframework.boot:spring-boot-autoconfigure"
     implementation "org.springframework.boot:spring-boot-autoconfigure-processor"
-    implementation "org.apache.commons:commons-lang3:3.18.0"
-    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
     implementation "jakarta.servlet:jakarta.servlet-api:${jakartaServletVersion}"
+    implementation "org.apache.commons:commons-lang3:${commonsLangVersion}"
+    implementation "org.apache.commons:commons-text:${commonsTextVersion}"
+    implementation "commons-codec:commons-codec"
     implementation "org.projectlombok:lombok:${lombokVersion}"
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
     testImplementation "org.projectlombok:lombok:${lombokVersion}"
     testImplementation "org.springframework.boot:spring-boot-starter-test"
     testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
-
 }

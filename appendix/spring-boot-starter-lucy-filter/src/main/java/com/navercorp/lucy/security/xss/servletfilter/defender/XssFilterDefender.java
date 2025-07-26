@@ -38,13 +38,13 @@ public class XssFilterDefender implements Defender {
 			switch (values.length) {
 				case 1:
 					if (isBoolean(values[0])) {
-						filter = XssFilter.getInstance(convertBoolean(values[0]));
+						filter = XssFilter.getInstance(convertBoolean(values[0]));	
 					} else {
 						filter = XssFilter.getInstance(values[0]);
 					}
 					break;
 				case 2:
-					filter = XssFilter.getInstance(values[0], convertBoolean(values[1]));
+					filter = XssFilter.getInstance(values[0], convertBoolean(values[1]));	
 					break;
 				default:
 					filter = null;

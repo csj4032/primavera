@@ -26,6 +26,7 @@ dependencies {
     implementation "org.graalvm.js:js-scriptengine:${graalvmJsVersion}"
     implementation "org.webjars:bootstrap:${bootstrapVersion}"
     implementation "org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4.1:${log4jdbcLog4j2Version}"
+    implementation "jakarta.servlet:jakarta.servlet-api"
     compileOnly "org.jetbrains:annotations:${jetbrainsAnnotationsVersion}"
     compileOnly "jakarta.validation:jakarta.validation-api:${javaxValidationVersion}"
     testImplementation "org.springframework.boot:spring-boot-starter-test"
