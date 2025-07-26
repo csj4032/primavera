@@ -369,7 +369,7 @@ public class ProfileConfiguration {
     @Profile("dev")
     public DataSource devDataSource() {
         return DataSourceBuilder.create()
-                .driverClassName("com.mysql.cj.jdbc.Driver")
+                .driverClassName("org.mariadb.jdbc.Driver")
                 .url("jdbc:mysql://dev-db:3306/primavera")
                 .username("dev_user")
                 .password("dev_pass")
@@ -380,7 +380,7 @@ public class ProfileConfiguration {
     @Profile("prod")
     public DataSource prodDataSource() {
         return DataSourceBuilder.create()
-                .driverClassName("com.mysql.cj.jdbc.Driver")
+                .driverClassName("org.mariadb.jdbc.Driver")
                 .url("jdbc:mysql://prod-db:3306/primavera")
                 .username("${DB_USERNAME}")
                 .password("${DB_PASSWORD}")

@@ -54,7 +54,7 @@ public class HikariDataSourceTest {
         log.info("MySQL 컨테이너 포트: {}", mysqlContainer.getFirstMappedPort());
 
         configuration = new HikariConfig();
-        configuration.setDriverClassName("com.mysql.cj.jdbc.Driver");
+        configuration.setDriverClassName("org.mariadb.jdbc.Driver");
         configuration.setJdbcUrl(mysqlContainer.getJdbcUrl() + "?allowPublicKeyRetrieval=true");
         configuration.setUsername(USER_NAME);
         configuration.setPassword(PASS_WORLD);

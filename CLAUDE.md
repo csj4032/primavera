@@ -828,7 +828,7 @@ src/test/resources/
 # application-local.yml
 spring:
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    driver-class-name: org.mariadb.jdbc.Driver
     url: jdbc:mysql://localhost:3306/primavera?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
     username: primavera
     password: primavera

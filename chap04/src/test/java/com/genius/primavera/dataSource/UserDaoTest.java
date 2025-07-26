@@ -36,7 +36,7 @@ public class UserDaoTest {
         registry.add("spring.datasource.url", mysqlContainer::getJdbcUrl);
         registry.add("spring.datasource.username", mysqlContainer::getUsername);
         registry.add("spring.datasource.password", mysqlContainer::getPassword);
-        registry.add("spring.datasource.driver-class-name", () -> "com.mysql.cj.jdbc.Driver");
+        registry.add("spring.datasource.driver-class-name", () -> "org.mariadb.jdbc.Driver");
         System.out.println("MySQL 컨테이너 JDBC URL: " + mysqlContainer.getJdbcUrl());
         System.out.println("MySQL 컨테이너 포트: " + mysqlContainer.getFirstMappedPort());
     }

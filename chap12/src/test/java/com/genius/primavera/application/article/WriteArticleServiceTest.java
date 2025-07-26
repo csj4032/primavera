@@ -64,7 +64,7 @@ class WriteArticleServiceTest {
 		registry.add("spring.datasource.url", mysql::getJdbcUrl);
 		registry.add("spring.datasource.username", mysql::getUsername);
 		registry.add("spring.datasource.password", mysql::getPassword);
-		registry.add("spring.datasource.driver-class-name", () -> "com.mysql.cj.jdbc.Driver");
+		registry.add("spring.datasource.driver-class-name", () -> "org.mariadb.jdbc.Driver");
 		registry.add("spring.flyway.enabled", () -> "false");
 		registry.add("spring.sql.init.mode", () -> "never");
 		

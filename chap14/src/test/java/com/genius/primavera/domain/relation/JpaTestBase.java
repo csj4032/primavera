@@ -47,7 +47,7 @@ public abstract class JpaTestBase {
         }
         
         Map<String, String> properties = new HashMap<>();
-        properties.put("jakarta.persistence.jdbc.driver", "com.mysql.cj.jdbc.Driver");
+        properties.put("jakarta.persistence.jdbc.driver", "org.mariadb.jdbc.Driver");
         properties.put("jakarta.persistence.jdbc.url", mysqlContainer.getJdbcUrl());
         properties.put("jakarta.persistence.jdbc.user", mysqlContainer.getUsername());
         properties.put("jakarta.persistence.jdbc.password", mysqlContainer.getPassword());

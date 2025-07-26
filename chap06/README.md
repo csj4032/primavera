@@ -331,7 +331,7 @@ INSERT INTO ROLES (ID, TYPE) VALUES
 ```yaml
 spring:
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    driver-class-name: org.mariadb.jdbc.Driver
     url: jdbc:mysql://localhost:3306/primavera
     username: primavera
     password: primavera

@@ -22,7 +22,7 @@
         <class>com.genius.primavera.domain.model.mapped.Professor</class>
         <class>com.genius.primavera.domain.model.mapped.Student</class>
         <properties>
-            <property name="jakarta.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
+            <property name="jakarta.persistence.jdbc.driver" value="org.mariadb.jdbc.Driver"/>
             <property name="jakarta.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/primavera"/>
             <property name="jakarta.persistence.jdbc.user" value="primavera"/>
             <property name="jakarta.persistence.jdbc.password" value="primavera"/>

@@ -37,7 +37,7 @@ public abstract class BaseJpaTest {
     public static void setUpEntityManager() {
         // TestContainers에서 동적으로 얻은 DB 연결 정보로 EntityManagerFactory 생성
         Map<String, String> properties = new HashMap<>();
-        properties.put("jakarta.persistence.jdbc.driver", "com.mysql.cj.jdbc.Driver");
+        properties.put("jakarta.persistence.jdbc.driver", "org.mariadb.jdbc.Driver");
         properties.put("jakarta.persistence.jdbc.url", mysqlContainer.getJdbcUrl());
         properties.put("jakarta.persistence.jdbc.user", mysqlContainer.getUsername());
         properties.put("jakarta.persistence.jdbc.password", mysqlContainer.getPassword());

@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
-@SpringBootTest(properties = {"spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver", "mybatis.mapper-locations=classpath:mapper/**/*.xml"})
+@SpringBootTest(properties = {"spring.datasource.driver-class-name=org.mariadb.jdbc.Driver", "mybatis.mapper-locations=classpath:mapper/**/*.xml"})
 @ActiveProfiles(value = "test")
 @ExtendWith(SpringExtension.class)
 @DisplayName(value = "권한 관련 테스트")

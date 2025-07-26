@@ -19,7 +19,7 @@ public class DatabaseConnectionComponent {
 
 	public Connection getConnection() {
 		try {
-			DriverManager.registerDriver(new com.mysql.cj.jdbc.Driver());
+			DriverManager.registerDriver(new org.mariadb.jdbc.Driver());
 			return DriverManager.getConnection(url, username, password);
 		} catch (SQLException e) {
 			e.printStackTrace();

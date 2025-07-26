@@ -25,7 +25,7 @@ public abstract class AbstractContainerTest {
         registry.add("spring.datasource.url", mysqlContainer::getJdbcUrl);
         registry.add("spring.datasource.username", mysqlContainer::getUsername);
         registry.add("spring.datasource.password", mysqlContainer::getPassword);
-        registry.add("spring.datasource.driver-class-name", () -> "com.mysql.cj.jdbc.Driver");
+        registry.add("spring.datasource.driver-class-name", () -> "org.mariadb.jdbc.Driver");
         registry.add("spring.jpa.hibernate.ddl-auto", () -> "none");
         registry.add("spring.jpa.show-sql", () -> "true");
         registry.add("spring.jpa.properties.hibernate.format_sql", () -> "true");

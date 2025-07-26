@@ -28,7 +28,7 @@ public class ProxyFactory {
 
 	private PrimaveraProxy createProxy(Object bean) {
 		InvocationHandler handler = new DynamicInvocationHandler(bean);
-		Object proxyObj = Proxy.newProxyInstance(PrimaveraApplication.class.getClassLoader(), bean.getClass().getInterfaces(), handler);
+		Object proxyObj = Proxy.newProxyInstance(DataAccessApplication.class.getClassLoader(), bean.getClass().getInterfaces(), handler);
 		return new PrimaveraProxy(Arrays.asList(bean.getClass().getInterfaces()), proxyObj);
 	}
 

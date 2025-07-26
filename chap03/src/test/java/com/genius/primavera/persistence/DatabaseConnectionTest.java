@@ -40,7 +40,7 @@ public class DatabaseConnectionTest {
     @DisplayName(value = "데이터베이스에 접속해보자")
     public void connectionTest() {
         try {
-            DriverManager.registerDriver(new com.mysql.cj.jdbc.Driver());
+            DriverManager.registerDriver(new org.mariadb.jdbc.Driver());
             Connection connection = DriverManager.getConnection(URL, "primavera", "primavera");
             assertEquals("primavera", connection.getCatalog());
         } catch (SQLException e) {

@@ -38,7 +38,7 @@ public class MyBatisTestConfiguration {
                 .url(mysql.getJdbcUrl())
                 .username(mysql.getUsername())
                 .password(mysql.getPassword())
-                .driverClassName("com.mysql.cj.jdbc.Driver")
+                .driverClassName("org.mariadb.jdbc.Driver")
                 .build();
     }
 

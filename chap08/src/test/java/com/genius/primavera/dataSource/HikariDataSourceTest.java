@@ -34,14 +34,14 @@ public class HikariDataSourceTest {
 		registry.add("spring.datasource.url", mysqlContainer::getJdbcUrl);
 		registry.add("spring.datasource.username", mysqlContainer::getUsername);
 		registry.add("spring.datasource.password", mysqlContainer::getPassword);
-		registry.add("spring.datasource.driver-class-name", () -> "com.mysql.cj.jdbc.Driver");
+		registry.add("spring.datasource.driver-class-name", () -> "org.mariadb.jdbc.Driver");
 	}
 
 	@BeforeAll
 	@DisplayName(value = "히카리 설정 초기화")
 	public static void init() {
 		configuration = new HikariConfig();
-		configuration.setDriverClassName("com.mysql.cj.jdbc.Driver");
+		configuration.setDriverClassName("org.mariadb.jdbc.Driver");
 		configuration.setJdbcUrl(mysqlContainer.getJdbcUrl());
 		configuration.setUsername(USER_NAME);
 		configuration.setPassword(PASS_WORLD);

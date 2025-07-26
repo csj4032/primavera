@@ -50,7 +50,7 @@
         
         <properties>
             <!-- MySQL 8.4.0 데이터베이스 설정 -->
-            <property name="jakarta.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
+            <property name="jakarta.persistence.jdbc.driver" value="org.mariadb.jdbc.Driver"/>
             <property name="jakarta.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/primavera?useSSL=false&amp;allowPublicKeyRetrieval=true&amp;serverTimezone=Asia/Seoul"/>
             <property name="jakarta.persistence.jdbc.user" value="primavera"/>
             <property name="jakarta.persistence.jdbc.password" value="primavera"/>
@@ -89,7 +89,7 @@
         
         <properties>
             <!-- MySQL 8.4.0 데이터베이스 설정 -->
-            <property name="jakarta.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
+            <property name="jakarta.persistence.jdbc.driver" value="org.mariadb.jdbc.Driver"/>
             <property name="jakarta.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/primavera?useSSL=false&amp;allowPublicKeyRetrieval=true&amp;serverTimezone=Asia/Seoul"/>
             <property name="jakarta.persistence.jdbc.user" value="primavera"/>
             <property name="jakarta.persistence.jdbc.password" value="primavera"/>
@@ -123,7 +123,7 @@
         <class>com.genius.primavera.domain.relation.oneToOne.Serial</class>
         
         <properties>
-            <property name="jakarta.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
+            <property name="jakarta.persistence.jdbc.driver" value="org.mariadb.jdbc.Driver"/>
             <property name="jakarta.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/primavera?useSSL=false&amp;allowPublicKeyRetrieval=true&amp;serverTimezone=Asia/Seoul"/>
             <property name="jakarta.persistence.jdbc.user" value="primavera"/>
             <property name="jakarta.persistence.jdbc.password" value="primavera"/>
@@ -148,7 +148,7 @@
         <class>com.genius.primavera.domain.relation.oneToMany.Student</class>
         
         <properties>
-            <property name="jakarta.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
+            <property name="jakarta.persistence.jdbc.driver" value="org.mariadb.jdbc.Driver"/>
             <property name="jakarta.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/primavera?useSSL=false&amp;allowPublicKeyRetrieval=true&amp;serverTimezone=Asia/Seoul"/>
             <property name="jakarta.persistence.jdbc.user" value="primavera"/>
             <property name="jakarta.persistence.jdbc.password" value="primavera"/>
@@ -173,7 +173,7 @@
         <class>com.genius.primavera.domain.relation.manyToOne.Team</class>
         
         <properties>
-            <property name="jakarta.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
+            <property name="jakarta.persistence.jdbc.driver" value="org.mariadb.jdbc.Driver"/>
             <property name="jakarta.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/primavera?useSSL=false&amp;allowPublicKeyRetrieval=true&amp;serverTimezone=Asia/Seoul"/>
             <property name="jakarta.persistence.jdbc.user" value="primavera"/>
             <property name="jakarta.persistence.jdbc.password" value="primavera"/>
@@ -204,7 +204,7 @@
         <class>com.genius.primavera.domain.relation.manyToMany.Subscriber</class>
         
         <properties>
-            <property name="jakarta.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
+            <property name="jakarta.persistence.jdbc.driver" value="org.mariadb.jdbc.Driver"/>
             <property name="jakarta.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/primavera?useSSL=false&amp;allowPublicKeyRetrieval=true&amp;serverTimezone=Asia/Seoul"/>
             <property name="jakarta.persistence.jdbc.user" value="primavera"/>
             <property name="jakarta.persistence.jdbc.password" value="primavera"/>

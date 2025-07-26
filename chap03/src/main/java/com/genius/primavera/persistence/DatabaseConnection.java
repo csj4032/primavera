@@ -13,7 +13,7 @@ public class DatabaseConnection {
 
 	public static Connection getConnection() {
 		try {
-			DriverManager.registerDriver(new com.mysql.cj.jdbc.Driver());
+			DriverManager.registerDriver(new org.mariadb.jdbc.Driver());
 			return DriverManager.getConnection(URL, "primavera", "primavera");
 		} catch (SQLException e) {
 			e.printStackTrace();

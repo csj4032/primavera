@@ -34,6 +34,7 @@ dependencies {
     implementation("io.github.openfeign:feign-gson:${feignVersion}")
     implementation("io.github.openfeign:feign-okhttp:${feignVersion}")
     implementation("org.ehcache:ehcache:${ehcacheVersion}")
+    implementation('org.jooq:jool:0.9.15')
     annotationProcessor('org.projectlombok:lombok')
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude module: 'junit'

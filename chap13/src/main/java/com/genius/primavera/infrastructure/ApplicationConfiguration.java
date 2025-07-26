@@ -6,7 +6,6 @@ import com.genius.primavera.domain.model.article.Article;
 import com.genius.primavera.domain.model.article.ArticleDto;
 import com.genius.primavera.domain.model.article.Comment;
 import com.genius.primavera.domain.model.article.CommentDto;
-import com.navercorp.lucy.security.xss.servletfilter.XssEscapeServletFilter;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;

@@ -36,7 +36,8 @@
       "Bash(echo:*)",
       "Bash(curl:*)",
       "Bash(# Update remaining ManyToMany files\nfiles=(\n  \"\"/Users/genius/Workspace/primavera/chap13/src/test/java/com/genius/primavera/domain/relation/manyToMany/ManyToManyBidirectional.java\"\"\n  \"\"/Users/genius/Workspace/primavera/chap13/src/test/java/com/genius/primavera/domain/relation/manyToMany/ManyToManyUnidirectional.java\"\"\n)\n\nfor file in \"\"${files[@]}\"\"; do\n  sed -i '''' ''s/import com\\.genius\\.primavera\\.domain\\.relation\\.JpaTestBase;/import com.genius.primavera.domain.relation.manyToMany.ManyToManyTestBase;/'' \"\"$file\"\"\n  sed -i '''' ''s/extends JpaTestBase/extends ManyToManyTestBase/'' \"\"$file\"\"\n  echo \"\"Updated $(basename $file)\"\"\ndone)",
-      "Bash(git reset:*)"
+      "Bash(git reset:*)",
+      "Bash(../gradlew:*)"
     ],
     "deny": []
   }
