@@ -1,0 +1,14 @@
+contents	::= (description | iEHExStartTag | iEHExEndTag | startTag | endTag | comment | text)+
+iEHExStartTag	::= ('<!--'|'<!') ([#x20#x9#xD#xA#xB#xC]* '[if') ([#x9-#xFFFD]*-'>') '>'
+iEHExEndTag	::= '<!--[endif]-->' | '<![endif]-->' | '<![endif]>'
+description	::= ('<!DOCTYPE' | '<?xml') ([#x9-#xFFFD]* - '>') '>'
+comment		::= '<!--' ([#x9-#xFFFD]* - '-->') '-->'
+startTag	::= '<' tagName ([#x20#x9#xD#xA#xB#xC]+ attribute)* (closeStartEnd | ([#x20#x9#xD#xA#xB#xC]* '>')?)?
+closeStartEnd	::= ([#x20#x9#xD#xA#xB#xC]* '/>')?
+endTag		::= '</' [#x20#x9#xD#xA#xB#xC]* tagName [#x20#x9#xD#xA#xB#xC]* '>'
+tagName		::= (([#x41-#x7A] - [#x5B-#x60])+ | '_' | ':') (([#x41-#x7A] - [#x5B-#x60])+ | [#x30-#x39]+ | '.' | '-' | '_' | ':')*
+attribute	::= attName ([#x20#x9#xD#xA#xB#xC]* '=' [#x20#x9#xD#xA#xB#xC]* attValue)?
+attName		::= [^/=<>#x20#x9#xD#xA#xB#xC]+
+attValue	::= ('"' [^"<]*  '"') | ("'" [^'<]* "'") | ("`" [^`<]* "`")
+				|([^"'`<>#x20#x9#xD#xA#xB#xC]+ ["'`]?)|[^<>#x20#x9#xD#xA#xB#xC]*
+text		::= [^<]* | ('<' [^<]*) |[#x00]+[^<]*
