@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: externalGateWay
+  profiles:
+    active: local
+    include:
+    - HystrixAndFeign
+
+eureka:
+  client:
+    enabled: false
+
+primavera-api:
+  ribbon:
+    listOfServers: localhost:8081,localhost:8082

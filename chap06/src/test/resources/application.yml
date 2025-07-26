@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: primavera-chapter-05
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/primavera
+    username: primavera
+    password: primavera
+  banner:
+    mode: "off"
+  devtools:
+    livereload:
+      enabled: true
+      port: 35729
+
+logging:
+  config: classpath:logback-spring.xml
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+    default-fetch-size: 1000
+    default-statement-timeout: 30
+  type-aliases-package: com.genius.primavera.domain.model
+  type-handlers-package: com.genius.primavera.domain.model

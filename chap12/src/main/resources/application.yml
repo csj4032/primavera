@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: primavera
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/primavera?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: primavera
+    password: primavera
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    sql-migration-suffixes: .sql
+    locations: classpath:db/migration
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+    default-fetch-size: 1000
+    default-statement-timeout: 30
+  type-aliases-package: com.genius.primavera.domain
+  type-handlers-package: com.genius.primavera.domain
+
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    com.genius.primavera: DEBUG
+    root: INFO

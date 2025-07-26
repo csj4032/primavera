@@ -56,6 +56,7 @@ dependencies {
     implementation('com.squareup.retrofit2:converter-jackson:2.9.0')
     annotationProcessor('org.projectlombok:lombok')
     compileOnly('org.projectlombok:lombok')
+    implementation("jakarta.persistence:jakarta.persistence-api")
     annotationProcessor("com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jpa")
     annotationProcessor("jakarta.persistence:jakarta.persistence-api")
     annotationProcessor("jakarta.annotation:jakarta.annotation-api")

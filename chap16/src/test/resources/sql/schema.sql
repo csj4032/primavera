@@ -1,0 +1,279 @@
+-- Chapter 14 Spring Data JPA 테스트를 위한 데이터베이스 스키마
+
+-- 기본 엔티티 테이블
+CREATE TABLE IF NOT EXISTS USERS (
+    ID BIGINT AUTO_INCREMENT PRIMARY KEY,
+    EMAIL VARCHAR(100) UNIQUE NOT NULL,
+    PASSWORD VARCHAR(255) NOT NULL,
+    NICKNAME VARCHAR(50) NOT NULL,
+    STATUS VARCHAR(20) DEFAULT 'ACTIVE',
+    CREATED_AT DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UPDATED_AT DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX IDX_EMAIL (EMAIL),
+    INDEX IDX_STATUS (STATUS)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS ROLES (
+    ID BIGINT AUTO_INCREMENT PRIMARY KEY,
+    NAME VARCHAR(50) UNIQUE NOT NULL,
+    DESCRIPTION VARCHAR(255),
+    CREATED_AT DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UPDATED_AT DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS USER_ROLES (
+    ID BIGINT AUTO_INCREMENT PRIMARY KEY,
+    USER_ID BIGINT NOT NULL,
+    ROLE_ID BIGINT NOT NULL,
+    GRANTED_AT DATETIME DEFAULT CURRENT_TIMESTAMP,
+    GRANTED_BY BIGINT,
+    FOREIGN KEY (USER_ID) REFERENCES USERS(ID) ON DELETE CASCADE,
+    FOREIGN KEY (ROLE_ID) REFERENCES ROLES(ID) ON DELETE CASCADE,
+    FOREIGN KEY (GRANTED_BY) REFERENCES USERS(ID) ON DELETE SET NULL,
+    UNIQUE KEY UNIQUE_USER_ROLE (USER_ID, ROLE_ID),
+    INDEX IDX_USER_ID (USER_ID),
+    INDEX IDX_ROLE_ID (ROLE_ID)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 소셜 로그인 연결 정보
+CREATE TABLE IF NOT EXISTS USER_CONNECTIONS (
+    ID BIGINT AUTO_INCREMENT PRIMARY KEY,
+    USER_ID BIGINT NOT NULL,
+    PROVIDER_ID VARCHAR(50) NOT NULL, -- google, facebook, github, kakao
+    PROVIDER_USER_ID VARCHAR(100) NOT NULL,
+    DISPLAY_NAME VARCHAR(100),
+    PROFILE_URL VARCHAR(500),
+    IMAGE_URL VARCHAR(500),
+    ACCESS_TOKEN TEXT,
+    SECRET VARCHAR(255),
+    REFRESH_TOKEN TEXT,
+    EXPIRE_TIME BIGINT,
+    CREATED_AT DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UPDATED_AT DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (USER_ID) REFERENCES USERS(ID) ON DELETE CASCADE,
+    UNIQUE KEY UNIQUE_PROVIDER_USER (PROVIDER_ID, PROVIDER_USER_ID),
+    INDEX IDX_USER_ID (USER_ID),
+    INDEX IDX_PROVIDER (PROVIDER_ID)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 게시글 테이블
+CREATE TABLE IF NOT EXISTS POSTS (
+    ID BIGINT AUTO_INCREMENT PRIMARY KEY,
+    AUTHOR_ID BIGINT NOT NULL,
+    TITLE VARCHAR(255) NOT NULL,
+    CONTENT LONGTEXT NOT NULL,
+    SUMMARY TEXT,
+    VIEW_COUNT BIGINT DEFAULT 0,
+    LIKE_COUNT BIGINT DEFAULT 0,
+    COMMENT_COUNT BIGINT DEFAULT 0,
+    STATUS VARCHAR(20) DEFAULT 'PUBLISHED', -- DRAFT, PUBLISHED, DELETED
+    PUBLISHED_AT DATETIME,
+    CREATED_AT DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UPDATED_AT DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (AUTHOR_ID) REFERENCES USERS(ID) ON DELETE CASCADE,
+    INDEX IDX_AUTHOR_ID (AUTHOR_ID),
+    INDEX IDX_STATUS (STATUS),
+    INDEX IDX_PUBLISHED_AT (PUBLISHED_AT),
+    INDEX IDX_CREATED_AT (CREATED_AT),
+    FULLTEXT IDX_TITLE_CONTENT (TITLE, CONTENT)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 아티클 테이블 (계층형 구조 지원)
+CREATE TABLE IF NOT EXISTS ARTICLES (
+    ID BIGINT AUTO_INCREMENT PRIMARY KEY,
+    PARENT_ID BIGINT DEFAULT 0,
+    REFERENCE BIGINT NOT NULL,
+    STEP INT NOT NULL DEFAULT 0,
+    LEVEL INT NOT NULL DEFAULT 0,
+    AUTHOR_ID BIGINT NOT NULL,
+    SUBJECT VARCHAR(200) NOT NULL,
+    STATUS TINYINT(3) NOT NULL DEFAULT 1,
+    HIT BIGINT NOT NULL DEFAULT 0,
+    RECOMMEND BIGINT NOT NULL DEFAULT 0,
+    DISAPPROVE BIGINT NOT NULL DEFAULT 0,
+    CREATED_AT DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UPDATED_AT DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (AUTHOR_ID) REFERENCES USERS(ID) ON DELETE CASCADE,
+    FOREIGN KEY (PARENT_ID) REFERENCES ARTICLES(ID) ON DELETE CASCADE,
+    INDEX IDX_AUTHOR_ID (AUTHOR_ID),
+    INDEX IDX_PARENT_ID (PARENT_ID),
+    INDEX IDX_REFERENCE (REFERENCE),
+    INDEX IDX_STEP (STEP),
+    INDEX IDX_LEVEL (LEVEL),
+    INDEX IDX_STATUS (STATUS)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 아티클 내용 테이블
+CREATE TABLE IF NOT EXISTS ARTICLE_CONTENTS (
+    ID BIGINT AUTO_INCREMENT PRIMARY KEY,
+    ARTICLE_ID BIGINT NOT NULL,
+    CONTENTS LONGTEXT,
+    CREATED_AT DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UPDATED_AT DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (ARTICLE_ID) REFERENCES ARTICLES(ID) ON DELETE CASCADE,
+    INDEX IDX_ARTICLE_ID (ARTICLE_ID)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 댓글 테이블 (계층형 구조 지원)
+CREATE TABLE IF NOT EXISTS COMMENTS (
+    ID BIGINT AUTO_INCREMENT PRIMARY KEY,
+    ARTICLE_ID BIGINT NOT NULL,
+    PARENT_ID BIGINT,
+    AUTHOR_ID BIGINT NOT NULL,
+    LEVEL INT NOT NULL DEFAULT 0,
+    STEP INT NOT NULL DEFAULT 0,
+    COMMENT LONGTEXT NOT NULL,
+    STATUS TINYINT(3) NOT NULL DEFAULT 1,
+    LIKE_COUNT BIGINT DEFAULT 0,
+    CREATED_AT DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UPDATED_AT DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (ARTICLE_ID) REFERENCES ARTICLES(ID) ON DELETE CASCADE,
+    FOREIGN KEY (PARENT_ID) REFERENCES COMMENTS(ID) ON DELETE CASCADE,
+    FOREIGN KEY (AUTHOR_ID) REFERENCES USERS(ID) ON DELETE CASCADE,
+    INDEX IDX_ARTICLE_ID (ARTICLE_ID),
+    INDEX IDX_PARENT_ID (PARENT_ID),
+    INDEX IDX_AUTHOR_ID (AUTHOR_ID),
+    INDEX IDX_LEVEL (LEVEL),
+    INDEX IDX_STEP (STEP),
+    INDEX IDX_STATUS (STATUS)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 첨부파일 테이블
+CREATE TABLE IF NOT EXISTS ATTACHMENTS (
+    ID BIGINT AUTO_INCREMENT PRIMARY KEY,
+    ARTICLE_ID BIGINT,
+    POST_ID BIGINT,
+    ORIGINAL_FILENAME VARCHAR(255) NOT NULL,
+    STORED_FILENAME VARCHAR(255) NOT NULL,
+    FILE_PATH VARCHAR(500) NOT NULL,
+    FILE_SIZE BIGINT NOT NULL,
+    CONTENT_TYPE VARCHAR(100),
+    DOWNLOAD_COUNT BIGINT DEFAULT 0,
+    CREATED_AT DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UPDATED_AT DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (ARTICLE_ID) REFERENCES ARTICLES(ID) ON DELETE CASCADE,
+    FOREIGN KEY (POST_ID) REFERENCES POSTS(ID) ON DELETE CASCADE,
+    INDEX IDX_ARTICLE_ID (ARTICLE_ID),
+    INDEX IDX_POST_ID (POST_ID),
+    INDEX IDX_CONTENT_TYPE (CONTENT_TYPE)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Primavera 로그 테이블 (시스템 로그)
+CREATE TABLE IF NOT EXISTS PRIMAVERA_LOGS (
+    ID BIGINT AUTO_INCREMENT PRIMARY KEY,
+    LOG_LEVEL VARCHAR(10) NOT NULL,
+    LOGGER_NAME VARCHAR(255) NOT NULL,
+    MESSAGE LONGTEXT NOT NULL,
+    EXCEPTION_MESSAGE TEXT,
+    STACK_TRACE LONGTEXT,
+    USER_ID BIGINT,
+    SESSION_ID VARCHAR(100),
+    REQUEST_URI VARCHAR(500),
+    REQUEST_METHOD VARCHAR(10),
+    USER_AGENT TEXT,
+    CLIENT_IP VARCHAR(45),
+    SERVER_NAME VARCHAR(100),
+    THREAD_NAME VARCHAR(100),
+    CREATED_AT DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (USER_ID) REFERENCES USERS(ID) ON DELETE SET NULL,
+    INDEX IDX_LOG_LEVEL (LOG_LEVEL),
+    INDEX IDX_LOGGER_NAME (LOGGER_NAME),
+    INDEX IDX_USER_ID (USER_ID),
+    INDEX IDX_CREATED_AT (CREATED_AT),
+    INDEX IDX_REQUEST_URI (REQUEST_URI)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 시퀀스 테이블 (사용자 정의 시퀀스 관리)
+CREATE TABLE IF NOT EXISTS SEQUENCES (
+    NAME VARCHAR(50) PRIMARY KEY,
+    CURRENT_VALUE BIGINT NOT NULL DEFAULT 0,
+    INCREMENT_VALUE BIGINT NOT NULL DEFAULT 1,
+    CREATED_AT DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UPDATED_AT DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 초기 테스트 데이터 삽입
+INSERT INTO USERS (EMAIL, PASSWORD, NICKNAME, STATUS) VALUES 
+('genius@primavera.com', '{bcrypt}$2a$10$N8kKAJz4rT8d.JLZ8QqC6O8.YhJQrGeFGRqF2QhPZKJf3ZcJwQq7e', 'Genius', 'ACTIVE'),
+('admin@primavera.com', '{bcrypt}$2a$10$N8kKAJz4rT8d.JLZ8QqC6O8.YhJQrGeFGRqF2QhPZKJf3ZcJwQq7e', 'Administrator', 'ACTIVE'),
+('user@primavera.com', '{bcrypt}$2a$10$N8kKAJz4rT8d.JLZ8QqC6O8.YhJQrGeFGRqF2QhPZKJf3ZcJwQq7e', 'User', 'ACTIVE'),
+('manager@primavera.com', '{bcrypt}$2a$10$N8kKAJz4rT8d.JLZ8QqC6O8.YhJQrGeFGRqF2QhPZKJf3ZcJwQq7e', 'Manager', 'ACTIVE'),
+('test@primavera.com', '{bcrypt}$2a$10$N8kKAJz4rT8d.JLZ8QqC6O8.YhJQrGeFGRqF2QhPZKJf3ZcJwQq7e', 'TestUser', 'INACTIVE');
+
+INSERT INTO ROLES (NAME, DESCRIPTION) VALUES 
+('ROLE_ADMIN', '시스템 관리자 권한'),
+('ROLE_MANAGER', '매니저 권한'),
+('ROLE_USER', '일반 사용자 권한'),
+('ROLE_GUEST', '게스트 권한');
+
+INSERT INTO USER_ROLES (USER_ID, ROLE_ID, GRANTED_BY) VALUES 
+(1, 1, NULL), -- genius -> ADMIN
+(1, 2, NULL), -- genius -> MANAGER  
+(1, 3, NULL), -- genius -> USER
+(2, 1, 1),    -- admin -> ADMIN (granted by genius)
+(2, 2, 1),    -- admin -> MANAGER (granted by genius)
+(3, 3, 2),    -- user -> USER (granted by admin)
+(4, 2, 1),    -- manager -> MANAGER (granted by genius)
+(4, 3, 1),    -- manager -> USER (granted by genius)
+(5, 4, 2);    -- test -> GUEST (granted by admin)
+
+INSERT INTO USER_CONNECTIONS (USER_ID, PROVIDER_ID, PROVIDER_USER_ID, DISPLAY_NAME, PROFILE_URL) VALUES 
+(1, 'google', 'google_123456789', 'Genius Google', 'https://accounts.google.com/profile/genius'),
+(1, 'github', 'github_genius', 'genius-dev', 'https://github.com/genius-dev'),
+(2, 'kakao', 'kakao_987654321', '관리자', 'https://story.kakao.com/admin'),
+(3, 'facebook', 'facebook_user123', '일반사용자', 'https://facebook.com/user123');
+
+INSERT INTO POSTS (AUTHOR_ID, TITLE, CONTENT, SUMMARY, STATUS, PUBLISHED_AT) VALUES 
+(1, 'Spring Boot 3.0 새로운 기능들', 'Spring Boot 3.0에서 추가된 새로운 기능들을 살펴보겠습니다...', 'Spring Boot 3.0의 주요 업데이트 내용', 'PUBLISHED', NOW()),
+(1, 'JPA 성능 최적화 가이드', 'JPA를 사용할 때 성능을 최적화하는 방법들을 정리했습니다...', 'JPA 성능 최적화 팁', 'PUBLISHED', NOW()),
+(2, 'Docker와 Kubernetes 입문', 'Docker와 Kubernetes의 기본 개념부터 실습까지...', '컨테이너 기술 입문 가이드', 'PUBLISHED', NOW()),
+(3, '프론트엔드 개발 트렌드', '2024년 프론트엔드 개발 트렌드를 분석해보겠습니다...', '최신 프론트엔드 기술 동향', 'DRAFT', NULL),
+(4, 'DevOps 도구 비교 분석', '다양한 DevOps 도구들의 장단점을 비교분석합니다...', 'DevOps 도구 선택 가이드', 'PUBLISHED', NOW());
+
+INSERT INTO ARTICLES (PARENT_ID, REFERENCE, STEP, LEVEL, AUTHOR_ID, SUBJECT, STATUS, HIT) VALUES 
+(0, 1, 0, 0, 1, 'Spring Boot 실습 가이드', 1, 150),
+(0, 2, 0, 0, 2, 'JPA 관계 매핑 완전 정복', 1, 200),
+(1, 1, 1, 1, 3, 'Re: Spring Boot 실습 가이드', 1, 50),
+(1, 1, 2, 1, 4, 'Re: Spring Boot 실습 가이드 - 추가 질문', 1, 30),
+(3, 1, 3, 2, 1, 'Re: Re: Spring Boot 실습 가이드', 1, 20),
+(0, 3, 0, 0, 4, 'TestContainers 활용법', 1, 180),
+(0, 4, 0, 0, 1, 'Docker 기반 개발 환경 구축', 1, 120);
+
+INSERT INTO ARTICLE_CONTENTS (ARTICLE_ID, CONTENTS) VALUES 
+(1, 'Spring Boot는 스프링 애플리케이션을 빠르고 쉽게 개발할 수 있도록 도와주는 프레임워크입니다. 이 가이드에서는 실제 프로젝트를 통해 Spring Boot의 핵심 기능들을 학습해보겠습니다.'),
+(2, 'JPA(Java Persistence API)의 관계 매핑은 객체지향 프로그래밍과 관계형 데이터베이스 사이의 패러다임 불일치를 해결하는 중요한 기술입니다. OneToOne, OneToMany, ManyToOne, ManyToMany 관계에 대해 상세히 알아보겠습니다.'),
+(3, '좋은 가이드 감사합니다! 혹시 Spring Boot Security 설정 부분도 추가해주실 수 있나요?'),
+(4, '저도 궁금한게 있는데, OAuth2 연동은 어떻게 하는지 알려주세요.'),
+(5, 'Security와 OAuth2에 대한 내용은 다음 포스팅에서 다루도록 하겠습니다. 기다려주세요!'),
+(6, 'TestContainers는 통합 테스트에서 실제 데이터베이스를 사용할 수 있게 해주는 도구입니다. Docker 컨테이너를 활용하여 격리된 테스트 환경을 제공합니다.'),
+(7, 'Docker를 활용한 개발 환경 구축 방법을 단계별로 설명하겠습니다. 개발팀 전체가 동일한 환경에서 작업할 수 있도록 도와드립니다.');
+
+INSERT INTO COMMENTS (ARTICLE_ID, PARENT_ID, AUTHOR_ID, LEVEL, STEP, COMMENT, STATUS) VALUES 
+(1, NULL, 2, 0, 0, '정말 유용한 가이드네요! 실습 따라하면서 많이 배웠습니다.', 1),
+(1, NULL, 3, 0, 1, 'Spring Boot 버전별 차이점도 정리해주시면 좋겠어요.', 1),
+(1, 1, 1, 1, 2, '감사합니다! 도움이 되셨다니 기쁩니다.', 1),
+(1, 2, 1, 1, 3, '버전별 차이점은 별도 포스팅으로 준비해보겠습니다.', 1),
+(2, NULL, 4, 0, 0, 'JPA 관계 매핑 부분이 항상 헷갈렸는데 이해가 잘 되네요.', 1),
+(2, NULL, 1, 0, 1, '실무에서 자주 사용하는 패턴들 위주로 설명했습니다.', 1),
+(6, NULL, 3, 0, 0, 'TestContainers 정말 편리하네요. 바로 적용해봤습니다!', 1);
+
+INSERT INTO ATTACHMENTS (ARTICLE_ID, POST_ID, ORIGINAL_FILENAME, STORED_FILENAME, FILE_PATH, FILE_SIZE, CONTENT_TYPE) VALUES 
+(1, NULL, 'spring-boot-guide.pdf', '20240101_spring-boot-guide_abc123.pdf', '/uploads/articles/1/', 2048576, 'application/pdf'),
+(2, NULL, 'jpa-examples.zip', '20240102_jpa-examples_def456.zip', '/uploads/articles/2/', 5242880, 'application/zip'),
+(6, NULL, 'testcontainers-config.yml', '20240103_testcontainers-config_ghi789.yml', '/uploads/articles/6/', 4096, 'text/yaml'),
+(NULL, 1, 'spring-boot-3-features.png', '20240104_spring-boot-3-features_jkl012.png', '/uploads/posts/1/', 1048576, 'image/png'),
+(NULL, 3, 'docker-kubernetes-architecture.png', '20240105_docker-k8s-architecture_mno345.png', '/uploads/posts/3/', 2097152, 'image/png');
+
+INSERT INTO PRIMAVERA_LOGS (LOG_LEVEL, LOGGER_NAME, MESSAGE, USER_ID, SESSION_ID, REQUEST_URI, REQUEST_METHOD, CLIENT_IP) VALUES 
+('INFO', 'com.genius.primavera.PrimaveraApplication', 'Application started successfully', NULL, NULL, NULL, NULL, '127.0.0.1'),
+('INFO', 'com.genius.primavera.interfaces.LoginController', 'User login attempt', 1, 'session123', '/login', 'POST', '192.168.1.100'),
+('INFO', 'com.genius.primavera.interfaces.LoginController', 'User login successful', 1, 'session123', '/login', 'POST', '192.168.1.100'),
+('WARN', 'com.genius.primavera.application.UserService', 'Failed login attempt for user: unknown@test.com', NULL, 'session456', '/login', 'POST', '192.168.1.200'),
+('ERROR', 'com.genius.primavera.domain.repository.UserRepository', 'Database connection timeout', NULL, NULL, '/api/users', 'GET', '10.0.0.1'),
+('DEBUG', 'com.genius.primavera.interfaces.ArticleController', 'Article retrieved successfully', 3, 'session789', '/articles/1', 'GET', '172.16.0.50');
+
+INSERT INTO SEQUENCES (NAME, CURRENT_VALUE, INCREMENT_VALUE) VALUES 
+('article_reference_seq', 10, 1),
+('post_number_seq', 100, 1),
+('user_id_seq', 1000, 1),
+('attachment_seq', 50, 1);

@@ -1,0 +1,21 @@
+plugins {
+    id 'org.springframework.boot' version "${springBootVersion}"
+    id 'io.spring.dependency-management' version "${springDependencyManagementVersion}"
+}
+
+dependencies {
+    implementation('org.springframework.boot:spring-boot-starter-batch')
+    implementation("org.modelmapper:modelmapper:${modelMapperVersion}")
+    implementation('org.projectlombok:lombok')
+    implementation("com.opencsv:opencsv:${openCsvVersion}")
+    implementation("org.openkoreantext:open-korean-text:${openKoreanTextVersion}")
+    annotationProcessor('org.projectlombok:lombok')
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+    testImplementation('org.springframework.batch:spring-batch-test')
+}
+
+bootJar {
+    mainClass = 'com.genius.primavera.PrimaveraApplication'
+}

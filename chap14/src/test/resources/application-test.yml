@@ -1,0 +1,34 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      auto-commit: false
+      data-source-properties:
+        cachePrepStmts: true
+        useServerPrepStmts: true
+        useLocalSessionState: true
+        cacheResultSetMetadata: true
+        preparedStatementCacheQueries: 250
+  jpa:
+    show-sql: true
+    generate-ddl: false
+    hibernate:
+      ddl-auto: none
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+        implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        globally_quoted_identifiers: true
+        jdbc:
+          fetch_size: 30
+          batch_size: 30
+    open-in-view: false
+  flyway:
+    enabled: false
+  aop:
+    proxy-target-class: true
+
+logging:
+  config: classpath:logback-spring.xml

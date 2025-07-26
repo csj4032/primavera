@@ -62,5 +62,13 @@ Thumbs.db
 /chap15/*/out
 /chap16/build
 /chap16/out
-/spring-boot-starter-lucy-filter/build
-/spring-boot-starter-lucy-filter/out
+/chap17/build
+/chap17/out
+/chap18/build
+/chap18/out
+/preface/build
+/preface/out
+/appendix/*/build
+/appendix/*/out
+/build
+/out
