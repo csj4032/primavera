@@ -11,7 +11,6 @@ import com.genius.primavera.domain.mapper.article.ArticleMapper;
 import com.genius.primavera.domain.model.article.*;
 import com.genius.primavera.domain.model.user.User;
 
-import org.jetbrains.annotations.NotNull;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -125,7 +124,6 @@ public class WriteArticleServiceImpl implements WriteArticleService {
 		return storageService.load(writeArticle.getFile().getOriginalFilename()).toFile();
 	}
 
-	@NotNull
 	private Comment getComment(ArticleDto.WriteComment writeComment, Article article) {
 		Comment comment = new Comment();
 		comment.setArticle(article);
@@ -140,7 +138,7 @@ public class WriteArticleServiceImpl implements WriteArticleService {
 		articleMapper.articleHit(id);
 	}
 
-	private Article getParentArticle(@NotNull ArticleDto.WriteArticle writeArticle) {
+	private Article getParentArticle(ArticleDto.WriteArticle writeArticle) {
 		if (writeArticle.getWriteType().equals(WriteType.REPLY)) {
 			Article article = articleMapper.findById(writeArticle.getPId());
 			if (Objects.isNull(article)) throw new ArticleNotFoundException();
@@ -149,7 +147,7 @@ public class WriteArticleServiceImpl implements WriteArticleService {
 		return new Article();
 	}
 
-	private Article getArticle(@NotNull Article parent, @NotNull ArticleDto.WriteArticle writeArticle, User author) {
+	private Article getArticle(Article parent, ArticleDto.WriteArticle writeArticle, User author) {
 		var article = new Article();
 		article.setPId(parent.getId());
 		article.setParent(parent);
@@ -163,7 +161,7 @@ public class WriteArticleServiceImpl implements WriteArticleService {
 		return article;
 	}
 
-	private Content getContent(@NotNull ArticleDto.WriteArticle writeArticle, @NotNull Article article) {
+	private Content getContent(ArticleDto.WriteArticle writeArticle, Article article) {
 		Content content = new Content();
 		content.setArticle(article);
 		content.setContents(writeArticle.getContents());

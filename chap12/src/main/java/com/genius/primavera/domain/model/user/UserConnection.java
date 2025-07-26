@@ -1,8 +1,9 @@
 package com.genius.primavera.domain.model.user;
 
-import com.genius.primavera.infrastructure.security.social.facebook.FacebookUserDetails;
-import com.genius.primavera.infrastructure.security.social.github.GithubUserDetails;
-import com.genius.primavera.infrastructure.security.social.google.GoogleUserDetails;
+// Commented out OAuth2 imports - these use deprecated Spring Security OAuth2 classes
+// import com.genius.primavera.infrastructure.security.social.facebook.FacebookUserDetails;
+// import com.genius.primavera.infrastructure.security.social.github.GithubUserDetails;
+// import com.genius.primavera.infrastructure.security.social.google.GoogleUserDetails;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,6 +29,10 @@ public class UserConnection {
 	private String accessToken;
 	private long expireTime;
 
+	// OAuth2 social login methods commented out temporarily
+	// These need to be migrated to Spring Security OAuth2 Client in Spring Boot 3.x
+	
+	/*
 	public static UserConnection valueOf(FacebookUserDetails userDetails) {
 		return UserConnection.builder()
 				.expireTime(userDetails.getExpiration())
@@ -66,4 +71,5 @@ public class UserConnection {
 				.profileUrl(userDetails.getProfile())
 				.build();
 	}
+	*/
 }

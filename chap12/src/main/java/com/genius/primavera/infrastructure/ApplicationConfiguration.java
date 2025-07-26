@@ -17,6 +17,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class ApplicationConfiguration implements WebMvcConfigurer {
 
+    // Temporarily commented out - XssEscapeServletFilter uses javax.servlet.Filter instead of jakarta.servlet.Filter
+    // This needs to be updated for Spring Boot 3.x compatibility
+    /*
     @Bean
     public FilterRegistrationBean<XssEscapeServletFilter> filterRegistrationBean() {
         var filterRegistration = new FilterRegistrationBean<XssEscapeServletFilter>();
@@ -25,6 +28,7 @@ public class ApplicationConfiguration implements WebMvcConfigurer {
         filterRegistration.addUrlPatterns("/*");
         return filterRegistration;
     }
+    */
 
     @Bean
     public ObjectMapper objectMapper() {
