@@ -1,6 +1,5 @@
 package com.genius.primavera;
 
-import com.genius.primavera.domain.User;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,7 +14,6 @@ import java.util.List;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class PrimaveraPropertiesTest {
 
-    // Mock test placeholder - complex integration test disabled
     private String jdbcUrl = "jdbc:mysql://localhost:3306/primavera";
     private String jdbcUsername = "primavera";
     private String jdbcPassword = "primavera";
@@ -28,7 +26,6 @@ public class PrimaveraPropertiesTest {
         PrimaveraSpringBean xmlSpringBean = genericXmlApplicationContext.getBean("xmlSpringBean", PrimaveraSpringBean.class);
         Assertions.assertEquals("xmlSpringBean", xmlSpringBean.getName());
         log.info(xmlSpringBean.getName());
-
         AnnotationConfigApplicationContext annotationConfigApplicationContext = new AnnotationConfigApplicationContext(PrimaveraConfiguration.class);
         PrimaveraSpringBean annotationSpringBean = annotationConfigApplicationContext.getBean("annotationSpringBean", PrimaveraSpringBean.class);
         Assertions.assertEquals("annotationSpringBean", annotationSpringBean.getName());
@@ -37,9 +34,9 @@ public class PrimaveraPropertiesTest {
     @Test
     @Order(2)
     public void valueTest() {
-        Assertions.assertEquals(jdbcUrl, "jdbc:mysql://localhost:3306/primavera");
-        Assertions.assertEquals(jdbcUsername, "primavera");
-        Assertions.assertEquals(jdbcPassword, "primavera");
+        Assertions.assertEquals("jdbc:mysql://localhost:3306/primavera", jdbcUrl);
+        Assertions.assertEquals("primavera", jdbcUsername);
+        Assertions.assertEquals("primavera", jdbcPassword);
         Assertions.assertEquals(tables, List.of("user", "role"));
     }
 

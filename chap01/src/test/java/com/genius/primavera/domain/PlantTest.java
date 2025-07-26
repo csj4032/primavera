@@ -100,4 +100,18 @@ class PlantTest {
         assertThat(plant1).isNotEqualTo(plant2);
         assertThat(plant1).isNotEqualTo(plant3);
     }
+
+    @Test
+    @DisplayName("Plant 기본 생성자로 생성된 객체가 정상적으로 동작해야 한다")
+    void plantDefaultConstructorTest() {
+        // given & when
+        Plant plant = new Plant();
+
+        // then
+        assertThat(plant.getId()).isEqualTo(0L); // primitive long default value
+        assertThat(plant.getName()).isNull();
+        assertThat(plant.getLocation()).isNull();
+        assertThat(plant.getManager()).isNull();
+        assertThat(plant.getEstablishedDate()).isNull();
+    }
 }

@@ -19,7 +19,13 @@ Spring Boot의 설정 시스템과 의존성 주입(Dependency Injection) 메커
 
 ## 📚 주요 학습 내용
 
-### 1. Spring Boot 환경 설정
+### 1. 순환 의존성 문제와 해결 🔄
+- **BooService ↔ FooService** 실제 순환 참조 분석
+- **생성자 주입 vs 필드 주입** 순환 참조 차이점
+- **@Lazy, ApplicationContextAware** 등 다양한 해결 방법
+- **구조 개선을 통한 근본적 해결** 전략
+
+### 2. Spring Boot 환경 설정
 
 #### 개발 환경 구축
 ```bash
@@ -311,8 +317,260 @@ public class UserService {
 ```
 
 #### 순환 의존성 해결
+
+##### 🔄 실제 순환 참조 예제: BooService ↔ FooService
+
+프로젝트의 `com.genius.primavera.application.injection` 패키지에는 실제 순환 의존성 문제를 보여주는 예제가 있습니다:
+
 ```java
-// 잘못된 예: 순환 의존성 발생
+// FooServiceImpl.java - 정상 동작 (BooService에 의존)
+@Component
+@RequiredArgsConstructor
+public class FooServiceImpl implements FooService {
+    
+    private final BooService booService;  // BooService 의존성
+    
+    @Override
+    public String foo() {
+        booService.boo();  // BooService 호출
+        return "foo";
+    }
+}
+
+// BooServiceImpl.java - 순환 참조 문제 (현재 주석 처리됨)
+@Component
+@RequiredArgsConstructor
+public class BooServiceImpl implements BooService {
+    
+    // ❌ 생성자 순환참조 경고 발생
+    // "Requested bean is currently in creation: Is there an unresolvable circular reference?"
+    // private final FooService fooService;
+    
+    // ❌ 필드 주입시 StackOverflowError 발생
+    // @Autowired
+    // private FooService fooService;
+    
+    @Override
+    public String boo() {
+        // fooService.foo();  // 호출하면 무한 루프
+        return "boo";
+    }
+}
+```
+
+##### 🚨 순환 의존성 문제점
+
+1. **생성자 주입시**: `BeanCurrentlyInCreationException` 발생
+   ```
+   Error creating bean with name 'booServiceImpl': 
+   Requested bean is currently in creation: 
+   Is there an unresolvable circular reference?
+   ```
+
+2. **필드 주입시**: `StackOverflowError` 발생
+   ```
+   java.lang.StackOverflowError
+   at FooServiceImpl.foo() -> BooServiceImpl.boo() -> FooServiceImpl.foo() -> ...
+   ```
+
+##### ✅ 순환 의존성 해결 방법들
+
+**방법 1: 구조 개선 (권장)**
+```java
+// 공통 인터페이스 추출
+public interface MessageProcessor {
+    String process(String input);
+}
+
+@Service
+@RequiredArgsConstructor
+public class FooServiceImpl implements FooService {
+    private final MessageProcessor messageProcessor; // 인터페이스 의존
+    
+    @Override
+    public String foo() {
+        return messageProcessor.process("foo");
+    }
+}
+
+@Service
+public class BooServiceImpl implements BooService, MessageProcessor {
+    @Override
+    public String boo() {
+        return "boo";
+    }
+    
+    @Override
+    public String process(String input) {
+        return "processed: " + input;
+    }
+}
+```
+
+**방법 2: @Lazy 어노테이션 사용**
+```java
+@Component
+@RequiredArgsConstructor
+public class BooServiceImpl implements BooService {
+    
+    @Lazy  // 지연 로딩으로 순환 참조 해결
+    private final FooService fooService;
+    
+    @Override
+    public String boo() {
+        fooService.foo();
+        return "boo";
+    }
+}
+```
+
+**방법 3: ApplicationContextAware 사용**
+```java
+@Component
+public class BooServiceImpl implements BooService, ApplicationContextAware {
+    
+    private ApplicationContext applicationContext;
+    
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
+    
+    @Override
+    public String boo() {
+        FooService fooService = applicationContext.getBean(FooService.class);
+        fooService.foo();
+        return "boo";
+    }
+}
+```
+
+**방법 4: @PostConstruct 사용**
+```java
+@Component
+public class BooServiceImpl implements BooService {
+    
+    @Autowired
+    private ApplicationContext applicationContext;
+    private FooService fooService;
+    
+    @PostConstruct
+    public void init() {
+        this.fooService = applicationContext.getBean(FooService.class);
+    }
+    
+    @Override
+    public String boo() {
+        fooService.foo();
+        return "boo";
+    }
+}
+```
+
+##### 🧪 순환 의존성 테스트 전략
+
+```java
+@ExtendWith(MockitoExtension.class)
+public class BooServiceTest {
+    
+    @Mock
+    private FooService fooService;  // Mock으로 순환 참조 해결
+    
+    @InjectMocks
+    private BooServiceImpl booService;
+    
+    @Test
+    @DisplayName("순환 참조 문제가 발생하지 않아야 한다")
+    void circularDependencyShouldBeHandled() {
+        // given
+        when(fooService.foo()).thenReturn("mock-foo");
+        
+        // when
+        String result = booService.boo();
+        
+        // then
+        assertEquals("boo", result);
+        verify(fooService, times(1)).foo();
+    }
+}
+```
+
+##### 📊 순환 의존성 해결방법 비교
+
+| 방법 | 장점 | 단점 | 사용 상황 |
+|------|------|------|-----------|
+| **구조 개선** | 근본적 해결, 명확한 책임 분리 | 설계 변경 필요 | 새 프로젝트, 리팩토링 가능 |
+| **@Lazy** | 간단한 적용 | 지연 로딩 성능 이슈 | 임시 해결, 레거시 코드 |
+| **ApplicationContextAware** | 유연한 Bean 접근 | Spring 컨텍스트 강결합 | 복잡한 의존성 관리 |
+| **@PostConstruct** | 생성 후 초기화 | 초기화 시점 지연 | 조건부 의존성 |
+
+##### 🔬 순환 의존성 재현 방법
+
+**1단계: 순환 의존성 활성화**
+```java
+// BooServiceImpl.java에서 주석 해제
+@Component
+@RequiredArgsConstructor
+public class BooServiceImpl implements BooService {
+    
+    private final FooService fooService; // 주석 해제
+    
+    @Override
+    public String boo() {
+        fooService.foo(); // 주석 해제
+        return "boo";
+    }
+}
+```
+
+**2단계: 애플리케이션 실행**
+```bash
+./gradlew :chap02:bootRun
+```
+
+**3단계: 예상 에러 확인**
+```
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+The dependencies of some of the beans in the application context form a cycle:
+
+┌─────┐
+|  booServiceImpl defined in file [BooServiceImpl.class]
+↑     ↓
+|  fooServiceImpl defined in file [FooServiceImpl.class]
+└─────┘
+```
+
+**4단계: @Lazy로 해결 테스트**
+```java
+@Component
+@RequiredArgsConstructor
+public class BooServiceImpl implements BooService {
+    
+    @Lazy // 추가
+    private final FooService fooService;
+    
+    @Override
+    public String boo() {
+        fooService.foo();
+        return "boo";
+    }
+}
+```
+
+##### 🎯 권장 사항
+
+1. **설계 단계에서 순환 의존성 방지**가 최우선
+2. **인터페이스 분리**와 **의존성 역전 원칙** 적용
+3. **단방향 의존성 구조** 설계
+4. 불가피한 경우에만 **@Lazy** 사용
+5. **단위 테스트에서 Mock 활용**하여 의존성 분리
+
+```java
+// 잘못된 예: 양방향 의존성
 @Service
 public class OrderService {
     @Autowired

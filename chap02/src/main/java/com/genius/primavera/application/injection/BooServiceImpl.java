@@ -8,18 +8,12 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class BooServiceImpl implements BooService {
 
-	// 생성자 순환참조 경고
-	// Requested bean is currently in creation: Is there an unresolvable circular reference?
-	//private final FooService fooService;
+    // 생성자 순환참조 경고
+    // private final FooService fooService;
 
-	// 호출시 경고
-	// java.lang.StackOverflowError
-	@Autowired
-	private FooService fooService;
-
-	@Override
-	public String boo() {
-		fooService.foo();
-		return "boo";
-	}
+    @Override
+    public String boo() {
+        // fooService.foo();
+        return "boo";
+    }
 }

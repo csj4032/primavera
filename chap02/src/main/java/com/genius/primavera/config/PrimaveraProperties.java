@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 
 @Data
-@Component
 @Validated
 @ConfigurationProperties(prefix = "com.genius.primavera")
 public class PrimaveraProperties {

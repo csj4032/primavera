@@ -87,4 +87,16 @@ class RoleTest {
         assertThat(role1).isNotEqualTo(role2);
         assertThat(role1).isNotEqualTo(role3);
     }
+
+    @Test
+    @DisplayName("Role 기본 생성자로 생성된 객체가 정상적으로 동작해야 한다")
+    void roleDefaultConstructorTest() {
+        // given & when
+        Role role = new Role();
+
+        // then
+        assertThat(role.getId()).isEqualTo(0L); // primitive long default value
+        assertThat(role.getName()).isNull();
+        assertThat(role.getDescription()).isNull();
+    }
 }

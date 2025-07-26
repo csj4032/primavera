@@ -13,5 +13,7 @@ dependencies {
     compileOnly "org.jetbrains:annotations:${jetbrainsAnnotationsVersion}"
     testImplementation "org.springframework.boot:spring-boot-starter-test"
     testImplementation "org.springframework.security:spring-security-test"
+    testImplementation "org.testcontainers:mariadb:${testContainersVersion}"
+    testImplementation "org.testcontainers:junit-jupiter:${testContainersVersion}"
     compileOnly project(":chap01")
 }

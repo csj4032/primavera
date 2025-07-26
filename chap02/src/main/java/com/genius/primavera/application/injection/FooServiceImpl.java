@@ -7,11 +7,11 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class FooServiceImpl implements FooService {
 
-	private final BooService booService;
+    private final BooService booService;
 
-	@Override
-	public String foo() {
-		booService.boo();
-		return "foo";
-	}
+    @Override
+    public String foo() {
+        booService.boo();
+        return "foo";
+    }
 }

@@ -35,21 +35,6 @@ com:
         betaFeatures: disabled
         maxUploadSize: 10MB
       cache:
-        enabled: true
-        time-to-live: 5m
-        type: local
-        max-entries: 1000
-
----
-spring:
-  config:
-    activate:
-      on-profile: test
-
-com:
-  genius:
-    primavera:
-      cache:
         enabled: false
         time-to-live: 10m
         max-entries: 2000

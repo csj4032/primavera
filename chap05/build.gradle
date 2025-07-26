@@ -17,8 +17,5 @@ dependencies {
     testImplementation "org.mybatis.spring.boot:mybatis-spring-boot-starter-test:${mybatisSpringBootStarterVersion}"
     testImplementation "org.springframework.security:spring-security-test"
     testImplementation "org.mockito:mockito-core:4.+"
-    testImplementation "org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}"
-    testImplementation "org.testcontainers:testcontainers:${testContainersVersion}"
-    testImplementation "org.testcontainers:junit-jupiter:${testContainersVersion}"
-    testImplementation "org.testcontainers:mariadb:${testContainersVersion}"
+    testImplementation project(':appendix:spring-boot-starter-test-container')
 }

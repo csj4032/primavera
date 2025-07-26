@@ -110,4 +110,116 @@ class UserTest {
         assertThat(user1).isNotEqualTo(user2);
         assertThat(user1).isNotEqualTo(user3);
     }
+
+    @Test
+    @DisplayName("User 기본 생성자로 생성된 객체의 setter 메서드가 정상적으로 동작해야 한다")
+    void userSetterMethodsTest() {
+        // given
+        User user = new User();
+        long id = 100L;
+        String email = "setter.test@example.com";
+        String password = "newPassword123";
+        String nickname = "setterTester";
+        List<Role> roles = Arrays.asList(
+            new Role(1L, "ADMIN", "Administrator role"),
+            new Role(2L, "USER", "User role")
+        );
+        LocalDateTime regDt = LocalDateTime.of(2023, 1, 1, 10, 0);
+        LocalDateTime modDt = LocalDateTime.of(2023, 12, 31, 15, 30);
+
+        // when
+        user.setId(id);
+        user.setEmail(email);
+        user.setPassword(password);
+        user.setNickname(nickname);
+        user.setRoles(roles);
+        user.setRegDt(regDt);
+        user.setModDt(modDt);
+
+        // then
+        assertThat(user.getId()).isEqualTo(id);
+        assertThat(user.getEmail()).isEqualTo(email);
+        assertThat(user.getPassword()).isEqualTo(password);
+        assertThat(user.getNickname()).isEqualTo(nickname);
+        assertThat(user.getRoles()).hasSize(2);
+        assertThat(user.getRoles()).containsExactlyElementsOf(roles);
+        assertThat(user.getRegDt()).isEqualTo(regDt);
+        assertThat(user.getModDt()).isEqualTo(modDt);
+    }
+
+    @Test
+    @DisplayName("User 단일 id 생성자로 생성된 객체의 setter 메서드가 정상적으로 동작해야 한다")
+    void userSingleIdConstructorSetterTest() {
+        // given
+        User user = new User(1L);
+        String email = "id.constructor@example.com";
+        String password = "idPassword123";
+        String nickname = "idUser";
+        LocalDateTime now = LocalDateTime.now();
+
+        // when
+        user.setEmail(email);
+        user.setPassword(password);
+        user.setNickname(nickname);
+        user.setRegDt(now);
+        user.setModDt(now);
+
+        // then
+        assertThat(user.getId()).isEqualTo(1L);
+        assertThat(user.getEmail()).isEqualTo(email);
+        assertThat(user.getPassword()).isEqualTo(password);
+        assertThat(user.getNickname()).isEqualTo(nickname);
+        assertThat(user.getRegDt()).isEqualTo(now);
+        assertThat(user.getModDt()).isEqualTo(now);
+    }
+
+    @Test
+    @DisplayName("User 기본 생성자로 생성하고 null 값 설정이 정상적으로 동작해야 한다")
+    void userSetterWithNullValuesTest() {
+        // given
+        User user = new User();
+
+        // when
+        user.setId(0L);
+        user.setEmail(null);
+        user.setPassword(null);
+        user.setNickname(null);
+        user.setRoles(null);
+        user.setRegDt(null);
+        user.setModDt(null);
+
+        // then
+        assertThat(user.getId()).isEqualTo(0L);
+        assertThat(user.getEmail()).isNull();
+        assertThat(user.getPassword()).isNull();
+        assertThat(user.getNickname()).isNull();
+        assertThat(user.getRoles()).isNull();
+        assertThat(user.getRegDt()).isNull();
+        assertThat(user.getModDt()).isNull();
+    }
+
+    @Test
+    @DisplayName("User 기본 생성자와 단일 id 생성자가 정상적으로 동작해야 한다")
+    void userConstructorTest() {
+        // given & when
+        User defaultUser = new User();
+        User idUser = new User(42L);
+
+        // then
+        assertThat(defaultUser.getId()).isEqualTo(0L); // primitive long default value
+        assertThat(defaultUser.getEmail()).isNull();
+        assertThat(defaultUser.getPassword()).isNull();
+        assertThat(defaultUser.getNickname()).isNull();
+        assertThat(defaultUser.getRoles()).isNull();
+        assertThat(defaultUser.getRegDt()).isNull();
+        assertThat(defaultUser.getModDt()).isNull();
+
+        assertThat(idUser.getId()).isEqualTo(42L);
+        assertThat(idUser.getEmail()).isNull();
+        assertThat(idUser.getPassword()).isNull();
+        assertThat(idUser.getNickname()).isNull();
+        assertThat(idUser.getRoles()).isNull();
+        assertThat(idUser.getRegDt()).isNull();
+        assertThat(idUser.getModDt()).isNull();
+    }
 }
