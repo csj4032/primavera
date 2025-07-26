@@ -12,7 +12,6 @@ public class PrimaveraService {
     private final RestTemplate restTemplate;
 
     public PrimaveraService(RestTemplateBuilder restTemplateBuilder) {
-        // MappingJackson2HttpMessageConverter를 명시적으로 설정
         this.restTemplate = restTemplateBuilder
             .messageConverters(new MappingJackson2HttpMessageConverter())
             .build();

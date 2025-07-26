@@ -39,7 +39,6 @@ dependencies {
     implementation('org.jooq:jool:0.9.15')
     implementation("org.thymeleaf.extras:thymeleaf-extras-springsecurity6:${thymeleafExtrasSpringSecurity6Version}")
     implementation("nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:${thymeleafLayoutDialectVersion}")
-    implementation("com.navercorp.lucy:lucy-xss-servlet:${lucyXssServletVersion}")
     implementation("org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}")
     testImplementation("io.rest-assured:rest-assured:${restAssuredVersion}")
     implementation("org.modelmapper:modelmapper:${modelMapperVersion}")

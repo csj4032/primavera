@@ -40,5 +40,5 @@ dependencies {
     testImplementation "org.testcontainers:junit-jupiter:${testContainersVersion}"
     testImplementation "org.testcontainers:mariadb:${testContainersVersion}"
     testImplementation "io.rest-assured:rest-assured:${restAssuredVersion}"
-    implementation "com.navercorp.lucy:lucy-xss-servlet:${lucyXssServletVersion}"
+    implementation project(":appendix:spring-boot-starter-lucy-filter")
 }

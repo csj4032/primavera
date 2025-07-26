@@ -26,7 +26,6 @@ dependencies {
     implementation('org.springframework.boot:spring-boot-starter-cache')
     implementation('org.springframework.boot:spring-boot-devtools')
     implementation('org.springframework.boot:spring-boot-starter-undertow')
-    implementation("com.navercorp.lucy:lucy-xss-servlet:${lucyXssServletVersion}")
     implementation("org.modelmapper:modelmapper:${modelMapperVersion}")
     implementation('org.projectlombok:lombok')
     implementation("com.squareup.okhttp3:okhttp:${okhttpVersion}")

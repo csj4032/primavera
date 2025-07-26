@@ -1,6 +1,6 @@
 package com.genius.primavera.proxy.dynamic;
 
-import com.genius.primavera.PrimaveraApplication;
+import com.genius.primavera.DataAccessApplication;
 import com.genius.primavera.application.DoSomething;
 import com.genius.primavera.application.DoSomethingImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +11,7 @@ public class ProxyFactoryTest {
 
 	@Test
 	public void testProxyFactory() {
-		ProxyFactory proxyFactory = new ProxyFactory(PrimaveraApplication.class.getPackage());
+		ProxyFactory proxyFactory = new ProxyFactory(DataAccessApplication.class.getPackage());
 		DoSomething primaveraProxy = proxyFactory.getBean(DoSomething.class);
 		log.info("Proxy : {}", primaveraProxy);
 		log.info("Proxy DoSomething : {}", primaveraProxy.doSomething("first"));

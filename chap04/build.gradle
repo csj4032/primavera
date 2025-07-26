@@ -4,14 +4,22 @@ plugins {
 }
 
 dependencies {
+    implementation "org.springframework.boot:spring-boot-starter-aop"
     implementation "org.springframework.boot:spring-boot-starter-web"
-    implementation "org.springframework.boot:spring-boot-starter-jdbc"
+    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+    implementation "org.springframework.boot:spring-boot-starter-security"
+    implementation "commons-io:commons-io:${commonsIoVersion}"
     implementation "org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}"
-    implementation "org.mybatis.spring.boot:mybatis-spring-boot-starter:${mybatisSpringBootStarterVersion}"
     implementation "org.reflections:reflections:${reflectionsVersion}"
-    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+    implementation "org.mybatis.spring.boot:mybatis-spring-boot-starter:${mybatisSpringBootStarterVersion}"
+    compileOnly "org.jetbrains:annotations:${jetbrainsAnnotationsVersion}"
+    compileOnly "org.projectlombok:lombok:${lombokVersion}"
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+    testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
+    implementation "org.testcontainers:testcontainers:${testContainersVersion}"
+    implementation "org.testcontainers:junit-jupiter:${testContainersVersion}"
+    implementation "org.testcontainers:mariadb:${testContainersVersion}"
+    testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
     testImplementation "org.springframework.boot:spring-boot-starter-test"
-    testImplementation "org.springframework.security:spring-security-test"
-    testImplementation "org.mockito:mockito-core:${mockitoVersion}"
-    testImplementation project(':appendix:spring-boot-starter-test-container')
+    testImplementation project(":appendix:spring-boot-starter-test-container")
 }

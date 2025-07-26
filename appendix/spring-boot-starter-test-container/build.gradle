@@ -1,7 +1,7 @@
 plugins {
     id 'java-library'
-    id 'org.springframework.boot' version '3.3.1'
-    id 'io.spring.dependency-management' version '1.1.5'
+    id 'org.springframework.boot' version "${springBootVersion}"
+    id 'io.spring.dependency-management' version "${springDependencyManagementVersion}"
 }
 
 group = 'com.genius.primavera'
@@ -15,13 +15,15 @@ configurations {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-test'
-    implementation "org.testcontainers:testcontainers:${testcontainersVersion}"
-    implementation "org.testcontainers:junit-jupiter:${testcontainersVersion}"
-    implementation "org.testcontainers:mariadb:${testcontainersVersion}"
-    implementation "org.mariadb.jdbc:mariadb-java-client:${mariadbJavaClientVersion}"
-    
+    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+    implementation "org.testcontainers:testcontainers:${testContainersVersion}"
+    implementation "org.testcontainers:junit-jupiter:${testContainersVersion}"
+    implementation "org.testcontainers:mariadb:${testContainersVersion}"
+    implementation "org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}"
     compileOnly "org.projectlombok:lombok:${lombokVersion}"
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+    compileOnly "org.jetbrains:annotations:${jetbrainsAnnotationsVersion}"
 }
 
 bootJar {
@@ -30,6 +32,7 @@ bootJar {
 
 jar {
     enabled = true
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
 test {

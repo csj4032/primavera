@@ -18,7 +18,6 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-autoconfigure"
     implementation "org.springframework.boot:spring-boot-autoconfigure-processor"
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
-    implementation "com.navercorp.lucy:lucy-xss-servlet:${lucyXssServletVersion}"
     implementation "jakarta.servlet:jakarta.servlet-api:${jakartaServletVersion}"
     implementation "org.projectlombok:lombok:${lombokVersion}"
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"

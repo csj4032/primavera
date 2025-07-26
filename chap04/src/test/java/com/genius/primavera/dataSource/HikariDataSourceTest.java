@@ -1,5 +1,6 @@
 package com.genius.primavera.dataSource;
 
+import com.genius.primavera.test.TestContainerService;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
@@ -8,12 +9,9 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.testcontainers.containers.MariaDBContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -21,43 +19,25 @@ import java.sql.SQLException;
 import static org.mockito.Mockito.*;
 
 @Slf4j
-@Testcontainers
+@ActiveProfiles("test")
 @ExtendWith(SpringExtension.class)
 public class HikariDataSourceTest {
 
-    public static final String USER_NAME = "primavera";
-    public static final String PASS_WORLD = "primavera";
-    public static final String CATALOG = "primavera";
-
-    @Container
-    private static final MariaDBContainer<?> mysqlContainer = new MariaDBContainer<>("mariadb:11.4.7")
-            .withDatabaseName(CATALOG)
-            .withUsername(USER_NAME)
-            .withPassword(PASS_WORLD);
-
-    @DynamicPropertySource
-    static void setProperties(DynamicPropertyRegistry registry) {
-        String jdbcUrl = mysqlContainer.getJdbcUrl() + "?allowPublicKeyRetrieval=true&useSSL=false";
-        registry.add("spring.datasource.url", () -> jdbcUrl);
-        registry.add("spring.datasource.username", mysqlContainer::getUsername);
-        registry.add("spring.datasource.password", mysqlContainer::getPassword);
-    }
-
+    private static MariaDBContainer<?> mariaDBContainer;
     private static HikariConfig configuration;
 
     @BeforeAll
     @DisplayName(value = "히카리 설정 초기화")
     public static void init() {
-        // 컨테이너 상태 출력
-        log.info("MySQL 컨테이너 실행 상태: {}", mysqlContainer.isRunning());
-        log.info("MySQL 컨테이너 JDBC URL: {}", mysqlContainer.getJdbcUrl());
-        log.info("MySQL 컨테이너 포트: {}", mysqlContainer.getFirstMappedPort());
-
+        mariaDBContainer = new TestContainerService().getMariaDBContainer();
+        log.info("MariaDB 컨테이너 실행 상태: {}", mariaDBContainer.isRunning());
+        log.info("MariaDB 컨테이너 JDBC URL: {}", mariaDBContainer.getJdbcUrl());
+        log.info("MariaDB 컨테이너 포트: {}", mariaDBContainer.getFirstMappedPort());
         configuration = new HikariConfig();
         configuration.setDriverClassName("org.mariadb.jdbc.Driver");
-        configuration.setJdbcUrl(mysqlContainer.getJdbcUrl() + "?allowPublicKeyRetrieval=true");
-        configuration.setUsername(USER_NAME);
-        configuration.setPassword(PASS_WORLD);
+        configuration.setJdbcUrl(mariaDBContainer.getJdbcUrl() + "?allowPublicKeyRetrieval=true");
+        configuration.setUsername(mariaDBContainer.getUsername());
+        configuration.setPassword(mariaDBContainer.getPassword());
         configuration.setConnectionInitSql("SELECT 1");
         configuration.setMaximumPoolSize(5);
         configuration.setMinimumIdle(2);
@@ -69,9 +49,7 @@ public class HikariDataSourceTest {
     public void dockerMySQLHikariTest() throws SQLException {
         try (var hikariDataSource = new HikariDataSource(configuration)) {
             var connection = hikariDataSource.getConnection();
-
-            // 데이터베이스 연결 검증
-            Assertions.assertEquals(CATALOG, connection.getCatalog());
+            Assertions.assertEquals(mariaDBContainer.getDatabaseName(), connection.getCatalog());
             Assertions.assertFalse(connection.isClosed());
             log.info("MySQL 컨테이너에 HikariCP로 연결 성공!");
         }
@@ -83,12 +61,10 @@ public class HikariDataSourceTest {
         HikariDataSource mockDataSource = mock(HikariDataSource.class);
         Connection mockConnection = mock(Connection.class);
         when(mockDataSource.getConnection()).thenReturn(mockConnection);
-        when(mockConnection.getCatalog()).thenReturn(CATALOG);
-
+        when(mockConnection.getCatalog()).thenReturn(mariaDBContainer.getDatabaseName());
         Connection connection = mockDataSource.getConnection();
         String catalog = connection.getCatalog();
-
-        Assertions.assertEquals(CATALOG, catalog);
+        Assertions.assertEquals(mariaDBContainer.getDatabaseName(), catalog);
         verify(mockDataSource).getConnection();
         verify(mockConnection).getCatalog();
     }

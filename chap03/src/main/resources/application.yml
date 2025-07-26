@@ -3,7 +3,7 @@ spring:
     activate:
       on-profile: default
   application:
-    name: primavera-chapter-02
+    name: primavera-chapter-03
   banner:
     charset: UTF-8
     location: classpath:primavera.txt
@@ -16,9 +16,3 @@ logging:
   level:
     org.springframework: debug
     com.genius.primavera: debug
-
-mariadb:
-  url: jdbc:mariadb://localhost:3306/primavera
-  username: primavera
-  password: primavera
-  allows: local, dev, prod
