@@ -99,11 +99,11 @@ public class PrimaveraSecurityConfig {
         return new InMemoryUserDetailsManager(user1, user2, user3);
     }
 
+    @SuppressWarnings("deprecation")
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setPasswordEncoder(bCryptPasswordEncoder());
-        //authProvider.setUserDetailsService(userDetailsService());
         authProvider.setUserDetailsService(primaveraUserDetailsService);
+        authProvider.setPasswordEncoder(bCryptPasswordEncoder());
         return authProvider;
     }
 }

@@ -49,6 +49,7 @@ public class PrimaveraSecurityConfiguration {
 	}
 
 	@Bean
+	@SuppressWarnings("deprecation")
 	public DaoAuthenticationProvider authenticationProvider() {
 		DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
 		provider.setUserDetailsService(primaveraUserDetailsService);

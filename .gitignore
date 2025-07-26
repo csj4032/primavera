@@ -26,8 +26,6 @@ CLAUDE.md
 .DS_Store?
 .DS_Store
 Thumbs.db
-/chap00/build
-/chap00/out
 /chap01/build
 /chap01/out
 /chap02/build

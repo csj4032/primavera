@@ -86,8 +86,9 @@ public class PrimaveraSecurityConfiguration {
 	*/
 
 	@Bean
+	@SuppressWarnings("deprecation")
 	public DaoAuthenticationProvider authenticationProvider() {
-		var authProvider = new DaoAuthenticationProvider();
+		DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
 		authProvider.setUserDetailsService(primaveraUserDetailsService);
 		return authProvider;
 	}

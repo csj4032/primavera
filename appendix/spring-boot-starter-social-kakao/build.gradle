@@ -3,6 +3,15 @@ plugins {
     id 'io.spring.dependency-management' version "${springDependencyManagementVersion}"
 }
 
+// Disable bootJar since this is a library, not an application
+bootJar {
+    enabled = false
+}
+
+jar {
+    enabled = true
+}
+
 dependencies {
     implementation("org.springframework:spring-web")
     implementation("org.springframework:spring-webmvc")
