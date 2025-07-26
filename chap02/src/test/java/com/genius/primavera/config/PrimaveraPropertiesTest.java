@@ -26,7 +26,7 @@ public class PrimaveraPropertiesTest {
         String databaseUrl = properties.getDatabase().getUrl();
         List<String> tables = properties.getDatabase().getTables();
         assertThat(databaseUsername).isEqualTo("test_user");
-        assertThat(databaseUrl).isEqualTo("jdbc:mysql://localhost:3306/primavera");
+        assertThat(databaseUrl).isEqualTo("jdbc:mysql://localhost:1109/primavera");
         assertThat(tables).containsExactly("user", "role");
     }
 

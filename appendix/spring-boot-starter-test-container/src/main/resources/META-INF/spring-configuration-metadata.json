@@ -1,0 +1,58 @@
+{
+  "groups": [
+    {
+      "name": "primavera.testcontainers",
+      "type": "com.genius.primavera.test.TestContainerProperties",
+      "sourceType": "com.genius.primavera.test.TestContainerProperties"
+    },
+    {
+      "name": "primavera.testcontainers.mariadb",
+      "type": "com.genius.primavera.test.TestContainerProperties$MariaDB",
+      "sourceType": "com.genius.primavera.test.TestContainerProperties"
+    }
+  ],
+  "properties": [
+    {
+      "name": "primavera.testcontainers.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Enable TestContainers auto-configuration",
+      "defaultValue": true
+    },
+    {
+      "name": "primavera.testcontainers.mariadb.image-name",
+      "type": "java.lang.String",
+      "description": "MariaDB Docker image name",
+      "defaultValue": "mariadb:11.4.7"
+    },
+    {
+      "name": "primavera.testcontainers.mariadb.database-name",
+      "type": "java.lang.String",
+      "description": "Database name",
+      "defaultValue": "primavera"
+    },
+    {
+      "name": "primavera.testcontainers.mariadb.username",
+      "type": "java.lang.String",
+      "description": "Database username",
+      "defaultValue": "primavera"
+    },
+    {
+      "name": "primavera.testcontainers.mariadb.password",
+      "type": "java.lang.String",
+      "description": "Database password",
+      "defaultValue": "primavera"
+    },
+    {
+      "name": "primavera.testcontainers.mariadb.reuse",
+      "type": "java.lang.Boolean",
+      "description": "Reuse containers between test runs",
+      "defaultValue": true
+    },
+    {
+      "name": "primavera.testcontainers.mariadb.init-script",
+      "type": "java.lang.String",
+      "description": "SQL script to initialize database",
+      "defaultValue": "sql/schema.sql"
+    }
+  ]
+}

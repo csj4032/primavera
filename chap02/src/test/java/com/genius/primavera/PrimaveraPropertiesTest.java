@@ -21,6 +21,7 @@ public class PrimaveraPropertiesTest {
 
     @Test
     @Order(1)
+    @DisplayName("Test Primavera Configuration")
     public void configurationTest() {
         GenericXmlApplicationContext genericXmlApplicationContext = new GenericXmlApplicationContext("classpath:configuration.xml");
         PrimaveraSpringBean xmlSpringBean = genericXmlApplicationContext.getBean("xmlSpringBean", PrimaveraSpringBean.class);
@@ -33,17 +34,11 @@ public class PrimaveraPropertiesTest {
 
     @Test
     @Order(2)
+    @DisplayName("Test Primavera Properties")
     public void valueTest() {
         Assertions.assertEquals("jdbc:mysql://localhost:3306/primavera", jdbcUrl);
         Assertions.assertEquals("primavera", jdbcUsername);
         Assertions.assertEquals("primavera", jdbcPassword);
         Assertions.assertEquals(tables, List.of("user", "role"));
-    }
-
-    @Test
-    @Order(3)
-    @Disabled("Properties test disabled - requires Spring context")
-    public void propertiesTest() {
-        Assertions.assertTrue(true);
     }
 }

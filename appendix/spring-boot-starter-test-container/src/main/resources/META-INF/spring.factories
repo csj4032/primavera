@@ -1,0 +1,5 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.genius.primavera.test.TestContainerAutoConfiguration
+
+org.springframework.boot.env.EnvironmentPostProcessor=\
+  com.genius.primavera.test.TestContainerEnvironmentPostProcessor

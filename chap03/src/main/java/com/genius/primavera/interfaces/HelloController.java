@@ -20,15 +20,14 @@ public class HelloController {
 
     @GetMapping("/hello")
     @PrimaveraLogging(type = "Controller")
-    @CrossOrigin(origins = "http://localhost:8080")
     public String helloWorld(Model model) {
         model.addAttribute("hello", helloService.getUsers());
-        return "hello";
+        return "world";
     }
 
     @GetMapping("/hello/{id}")
     @PrimaveraLogging(type = "Controller")
-    public String helloWorld(Model model, @PathVariable(name = "id") long id) {
+    public String helloWorldById(Model model, @PathVariable(name = "id") long id) {
         model.addAttribute("hello", helloService.getUserById(id));
         return "hello";
     }
