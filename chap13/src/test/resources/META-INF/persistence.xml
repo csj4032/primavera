@@ -8,7 +8,84 @@
     <persistence-unit name="advance">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
         
-        <!-- 자동 스캔 사용 -->
+        <!-- 엔티티 클래스 명시적 등록 -->
+        <class>com.genius.primavera.domain.hierarchy.Address</class>
+        <class>com.genius.primavera.domain.hierarchy.Album</class>
+        <class>com.genius.primavera.domain.hierarchy.Book</class>
+        <class>com.genius.primavera.domain.hierarchy.Canidae</class>
+        <class>com.genius.primavera.domain.hierarchy.Contact</class>
+        <class>com.genius.primavera.domain.hierarchy.Email</class>
+        <class>com.genius.primavera.domain.hierarchy.Family</class>
+        <class>com.genius.primavera.domain.hierarchy.Felidae</class>
+        <class>com.genius.primavera.domain.hierarchy.Item</class>
+        <class>com.genius.primavera.domain.hierarchy.Mobile</class>
+        <class>com.genius.primavera.domain.hierarchy.Movie</class>
+        <class>com.genius.primavera.domain.hierarchy.Scincidae</class>
+        <class>com.genius.primavera.domain.relation.manyToMany.Buyer</class>
+        <class>com.genius.primavera.domain.relation.manyToMany.Contract</class>
+        <class>com.genius.primavera.domain.relation.manyToMany.Destination</class>
+        <class>com.genius.primavera.domain.relation.manyToMany.Letter</class>
+        <class>com.genius.primavera.domain.relation.manyToMany.Origin</class>
+        <class>com.genius.primavera.domain.relation.manyToMany.Publisher</class>
+        <class>com.genius.primavera.domain.relation.manyToMany.Recipient</class>
+        <class>com.genius.primavera.domain.relation.manyToMany.Seller</class>
+        <class>com.genius.primavera.domain.relation.manyToMany.Sender</class>
+        <class>com.genius.primavera.domain.relation.manyToMany.Subscriber</class>
+        <class>com.genius.primavera.domain.relation.manyToOne.Department</class>
+        <class>com.genius.primavera.domain.relation.manyToOne.Employee</class>
+        <class>com.genius.primavera.domain.relation.manyToOne.Player</class>
+        <class>com.genius.primavera.domain.relation.manyToOne.Team</class>
+        <class>com.genius.primavera.domain.relation.oneToMany.Contact</class>
+        <class>com.genius.primavera.domain.relation.oneToMany.Customer</class>
+        <class>com.genius.primavera.domain.relation.oneToMany.Professor</class>
+        <class>com.genius.primavera.domain.relation.oneToMany.Student</class>
+        <class>com.genius.primavera.domain.relation.oneToOne.Address</class>
+        <class>com.genius.primavera.domain.relation.oneToOne.Article</class>
+        <class>com.genius.primavera.domain.relation.oneToOne.Book</class>
+        <class>com.genius.primavera.domain.relation.oneToOne.Content</class>
+        <class>com.genius.primavera.domain.relation.oneToOne.ISBN</class>
+        <class>com.genius.primavera.domain.relation.oneToOne.Member</class>
+        <class>com.genius.primavera.domain.relation.oneToOne.Product</class>
+        <class>com.genius.primavera.domain.relation.oneToOne.Serial</class>
+        
+        <properties>
+            <!-- MySQL 8.4.0 데이터베이스 설정 -->
+            <property name="jakarta.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
+            <property name="jakarta.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/primavera?useSSL=false&amp;allowPublicKeyRetrieval=true&amp;serverTimezone=Asia/Seoul"/>
+            <property name="jakarta.persistence.jdbc.user" value="primavera"/>
+            <property name="jakarta.persistence.jdbc.password" value="primavera"/>
+            
+            <!-- Hibernate 설정 -->
+            <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>
+            <property name="hibernate.hbm2ddl.auto" value="validate"/>
+            <property name="hibernate.show_sql" value="true"/>
+            <property name="hibernate.format_sql" value="true"/>
+            <property name="hibernate.use_sql_comments" value="true"/>
+            <property name="hibernate.connection.characterEncoding" value="utf8"/>
+            <property name="hibernate.connection.useUnicode" value="true"/>
+            
+            <!-- MySQL 8.4.0 특수 설정 -->
+            <property name="hibernate.hbm2ddl.import_files" value="sql/test-data.sql"/>
+        </properties>
+    </persistence-unit>
+
+    <!-- Hierarchy 매핑 전용 persistence unit -->
+    <persistence-unit name="hierarchy">
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+        
+        <!-- Hierarchy 패키지 엔티티만 등록 -->
+        <class>com.genius.primavera.domain.hierarchy.Address</class>
+        <class>com.genius.primavera.domain.hierarchy.Album</class>
+        <class>com.genius.primavera.domain.hierarchy.Book</class>
+        <class>com.genius.primavera.domain.hierarchy.Canidae</class>
+        <class>com.genius.primavera.domain.hierarchy.Contact</class>
+        <class>com.genius.primavera.domain.hierarchy.Email</class>
+        <class>com.genius.primavera.domain.hierarchy.Family</class>
+        <class>com.genius.primavera.domain.hierarchy.Felidae</class>
+        <class>com.genius.primavera.domain.hierarchy.Item</class>
+        <class>com.genius.primavera.domain.hierarchy.Mobile</class>
+        <class>com.genius.primavera.domain.hierarchy.Movie</class>
+        <class>com.genius.primavera.domain.hierarchy.Scincidae</class>
         
         <properties>
             <!-- MySQL 8.4.0 데이터베이스 설정 -->

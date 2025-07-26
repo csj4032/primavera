@@ -32,6 +32,6 @@ public abstract class Family {
 	@Column(name = "created_at")
 	private LocalDateTime regDt;
 
-	@Column(name = "created_at")
+	@Column(name = "updated_at")
 	private LocalDateTime modDt;
 }

@@ -1,26 +1,45 @@
 spring:
+  application:
+    name: primavera-chapter-13
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/primavera
+    url: jdbc:mysql://localhost:3306/primavera?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
     username: primavera
     password: primavera
     hikari:
       auto-commit: false
       data-source-properties:
-        cachePrepStmts: false
-        useServerPrepStmts: false
-        useLocalSessionState: false
-        cacheResultSetMetadata: fales
-        preparedStatementCacheQueries: 0
+        cachePrepStmts: true
+        useServerPrepStmts: true
+        useLocalSessionState: true
+        cacheResultSetMetadata: true
+        preparedStatementCacheQueries: 250
+  jpa:
+    show-sql: true
+    generate-ddl: false
+    hibernate:
+      ddl-auto: none
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+        implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        globally_quoted_identifiers: true
+        jdbc:
+          fetch_size: 30
+          batch_size: 30
+    open-in-view: false
+  flyway:
+    enabled: true
+    encoding: UTF-8
+    fail-on-missing-locations: false
   aop:
     proxy-target-class: true
 
-mybatis:
-  configuration:
-    map-underscore-to-camel-case: true
-    default-fetch-size: 1000
-    default-statement-timeout: 30
-    cache-enabled: false
-    local-cache-scope: statement
-  type-aliases-package: com.genius.primavera.domain
-  type-handlers-package: com.genius.primavera.domain
+logging:
+  config: classpath:logback-spring.xml
+
+primavera:
+  logs:
+    path: ./logs
