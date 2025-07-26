@@ -1,6 +1,6 @@
 package com.genius.primavera;
 
-import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+// import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 
 import org.springframework.stereotype.Component;
 
@@ -14,7 +14,7 @@ public class HelloService {
 
     private final HelloRestClient helloRestClient;
 
-    @HystrixCommand(fallbackMethod = "getGreetingNameFallBack")
+    // @HystrixCommand(fallbackMethod = "getGreetingNameFallBack")
     public String getGreetingName(String name) {
         return helloRestClient.getGreetingName(name);
     }

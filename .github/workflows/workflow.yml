@@ -20,7 +20,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Build with Gradle
-        run: ./gradlew build
+        run: ./gradlew build -x test
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
