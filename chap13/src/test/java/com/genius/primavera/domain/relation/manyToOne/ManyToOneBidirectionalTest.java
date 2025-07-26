@@ -12,7 +12,7 @@ import org.junit.jupiter.api.*;
 @Slf4j
 @DisplayName("N:1 사원과 부서 양방향  : 부서는 사원을 참조하는 필드가 있음")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class ManyToOneBidirectional extends JpaTestBase {
+public class ManyToOneBidirectionalTest extends JpaTestBase {
 
 	@Test
 	@Order(1)
