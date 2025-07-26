@@ -17,6 +17,7 @@ dependencies {
     implementation('org.springframework.boot:spring-boot-starter-web') {
         exclude module: "spring-boot-starter-tomcat"
     }
+    implementation('org.springframework.boot:spring-boot-starter-validation')
     implementation('org.springframework.boot:spring-boot-starter-aop')
     implementation('org.springframework.boot:spring-boot-starter-jdbc')
     implementation('org.springframework.boot:spring-boot-starter-json')
@@ -31,7 +32,7 @@ dependencies {
     implementation('org.springframework.boot:spring-boot-starter-reactor-netty')
     implementation('org.springframework.boot:spring-boot-devtools')
     implementation('org.springframework.data:spring-data-envers')
-    implementation("org.springframework.security:spring-security-oauth2-authorization-server:${springSecurityOauth2AutoConfigureVersion}")
+    implementation('org.springframework.boot:spring-boot-starter-oauth2-authorization-server')
     implementation("org.thymeleaf.extras:thymeleaf-extras-springsecurity6:${thymeleafExtrasSpringSecurity6Version}")
     implementation("nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:${thymeleafLayoutDialectVersion}")
     implementation("com.navercorp.lucy:lucy-xss-servlet:${lucyXssServletVersion}")

@@ -28,8 +28,8 @@ spring:
   flyway:
     enabled: false
     encoding: UTF-8
-    check-location: false
-    locations: classpath:db/magration
+    fail-on-missing-locations: false
+    locations: classpath:db/migration
     table: SCHEMA_HISTORY
     baseline-on-migrate: false
     baseline-description: schema history

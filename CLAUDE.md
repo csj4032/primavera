@@ -208,7 +208,81 @@ class IntegrationTest {
 - Testing: TestContainers MySQL 8.4.0
 - Production: MySQL 8.4.0 cluster
 
-## Git Workflow
+## Template Rendering Testing Strategy
+
+### Separate Template Testing Approach
+
+Since this project uses MyBatis (not JPA/Hibernate), template rendering tests are separated from controller logic tests to avoid complex dependency issues.
+
+#### 1. Template Unit Tests (Isolated)
+```java
+@SpringBootTest
+@ActiveProfiles("test")
+class ThymeleafTemplateTest {
+    @Autowired
+    private TemplateEngine templateEngine;
+    
+    @Test
+    void articleListTemplateTest() {
+        Context context = new Context();
+        context.setVariable("articles", mockArticles);
+        String result = templateEngine.process("article/list", context);
+        assertTrue(result.contains("expected content"));
+    }
+}
+```
+
+#### 2. Controller Integration Tests (Full Flow)
+```java
+@SpringBootTest
+@AutoConfigureMockMvc
+@Testcontainers
+class ArticleControllerIntegrationTest {
+    
+    private void setupCustomUserDetails() {
+        User testUser = User.builder()
+            .id(1L).nickname("Test").roles(List.of(userRole)).build();
+        PrimaveraUserDetails userDetails = PrimaveraUserDetails.of(testUser);
+        // Set SecurityContext...
+    }
+    
+    @Test
+    void articleListFullFlowTest() {
+        setupCustomUserDetails();
+        mockMvc.perform(get("/articles"))
+               .andExpect(status().isOk())
+               .andExpect(view().name("article/list"));
+    }
+}
+```
+
+#### 3. Template Existence Tests (Verification)
+```java
+@SpringBootTest
+class TemplateExistenceTest {
+    @Test
+    void articleTemplatesExist() {
+        assertTemplateExists("templates/article/list.html");
+        assertTemplateExists("templates/article/detail.html");
+    }
+}
+```
+
+#### 4. E2E Tests with Selenium (Optional)
+```bash
+# Run E2E tests only when needed
+./gradlew test -Dselenium.test=true
+```
+
+### Template Testing Best Practices
+
+- **Separation of Concerns**: Controller logic tests vs Template rendering tests
+- **Custom UserDetails**: Use PrimaveraUserDetails instead of @WithMockUser for template tests
+- **Mock Services**: Mock business logic, focus on template rendering
+- **Template Validation**: Verify essential elements are rendered correctly
+- **Responsive Testing**: Test templates on different screen sizes (E2E)
+
+## Git Workflow and File Management
 
 ### Commit Message Format
 ```
@@ -223,6 +297,103 @@ refactor: extract payment processing logic
 - One logical change per commit
 - Small, focused commits for easy review
 - Meaningful commit messages explaining the "why"
+
+### File Management Guidelines
+
+#### No Backup Files Policy
+- **Git Version Control**: Use Git as the primary backup and version control system
+- **No Manual Backups**: Never create manual backup files (*.bak, *.backup, *.old, *_backup)
+- **No Duplicate Files**: Avoid creating copies like `Article.java.old`, `config.yml.backup`
+- **Git History**: Rely on Git history for file versioning and recovery
+- **Branch Strategy**: Use branches for experimental changes instead of backup files
+
+**Bad Examples (Never Create):**
+```
+❌ ArticleMapper.java.bak
+❌ application.yml.backup
+❌ schema.sql.old
+❌ UserService_backup.java
+❌ config-backup/
+❌ test_old/
+```
+
+**Good Practices:**
+```
+✅ Use Git branches: git checkout -b feature/new-implementation
+✅ Use Git stash: git stash save "temporary work"
+✅ Use Git tags: git tag v1.0.0
+✅ Use commit history: git log --oneline
+✅ Use Git revert: git revert <commit-hash>
+```
+
+#### Git-Based Version Management
+- **Feature Branches**: Create branches for new features or experiments
+- **Commit Frequently**: Make small, incremental commits
+- **Descriptive Messages**: Write clear commit messages explaining changes
+- **Tag Releases**: Use Git tags for version marking
+- **Revert Strategy**: Use `git revert` instead of keeping old files
+
+#### IDE and Editor Settings
+Configure your IDE to avoid creating backup files:
+
+**IntelliJ IDEA:**
+```
+File → Settings → Editor → General
+☐ Safe delete (with confirmation)
+☐ Create backup files (*.~)
+```
+
+**VS Code (.vscode/settings.json):**
+```json
+{
+  "files.hotExit": "off",
+  "files.autoSaveDelay": 1000,
+  "files.exclude": {
+    "**/*.bak": true,
+    "**/*.backup": true,
+    "**/*.old": true,
+    "**/*_backup*": true
+  }
+}
+```
+
+**Eclipse:**
+```
+Window → Preferences → General → Workspace
+☐ Build automatically
+☐ Save automatically before build
+```
+
+#### .gitignore Best Practices
+Ensure .gitignore prevents accidental backup file commits:
+
+```gitignore
+# Backup files (prevent accidental commits)
+*.bak
+*.backup
+*.old
+*_backup*
+*.orig
+*.tmp
+*~
+
+# IDE backup files
+*.swp
+*.swo
+.#*
+\#*#
+
+# OS backup files
+.DS_Store?
+.DS_Store
+Thumbs.db
+```
+
+#### Code Review Guidelines
+- **Backup File Detection**: Review process should catch and reject backup files
+- **Clean Commits**: Ensure commits contain only intended changes
+- **No Temporary Files**: Reject commits with temporary or backup files
+- **Consistent Naming**: Follow project naming conventions strictly
 
 ## Module Evolution Strategy
 
@@ -441,6 +612,350 @@ Follow these guidelines as a senior Spring Boot developer:
 - **Performance Optimization**: Use MySQL 8.4.0's improved indexing and query optimization features
 - **Character Set Standards**: Use utf8mb4 character set for complete Unicode support
 - **Timezone Configuration**: Default to UTC, convert at application level when necessary
+
+#### Environment Separation Strategy
+
+##### Local vs Test Environment Distinction
+- **Complete Environment Separation**: Maintain strict separation between local development and automated testing environments
+- **Local Development Environment**: Use localhost MySQL 8.4.0 for interactive development and debugging
+- **Test Environment**: Use TestContainers MySQL 8.4.0 for automated integration testing and CI/CD
+- **Build Environment**: Ensure all builds use isolated TestContainers for consistent, reproducible results
+
+##### Local Development Environment
+- **Purpose**: Interactive development, debugging, and manual testing by developers
+- **Database**: localhost MySQL 8.4.0 (Docker or native installation)
+- **Configuration**: Use `application-local.yml` with fixed localhost connection settings
+- **Data Persistence**: Maintain data across application restarts for development continuity
+- **Schema Management**: Use Flyway migrations for schema versioning and updates
+- **Profile Activation**: Use `local` profile for development environment
+- **Execution Methods**: Multiple ways to run with local profile (detailed below)
+
+##### Profile-Based Database Auto-Selection Strategy
+
+**Core Principle: Single Profile, Automatic Database Selection**
+- **`local` Profile**: Automatically uses localhost Docker MySQL 8.4.0
+- **`test` Profile**: Automatically uses TestContainers MySQL 8.4.0
+- **No Manual Configuration**: Database environment selected based on active profile only
+
+**Profile-Based Execution Methods:**
+
+**1. Local Development (localhost Docker MySQL):**
+```bash
+# Gradle with local profile
+./gradlew :chapXX:bootRun -Dspring.profiles.active=local
+
+# Direct JAR execution
+java -Dspring.profiles.active=local -jar build/libs/chapXX.jar
+
+# IDE setup with local profile
+-Dspring.profiles.active=local
+```
+
+**2. Test Execution (TestContainers MySQL):**
+```bash
+# All tests with TestContainers (default)
+./gradlew :chapXX:test
+
+# Specific test with TestContainers
+./gradlew :chapXX:test --tests ArticleMapperProfileTest
+
+# Force test profile
+./gradlew :chapXX:test -Dspring.profiles.active=test
+```
+
+**2. IDE Configuration:**
+
+**IntelliJ IDEA Setup:**
+- Go to `Run/Debug Configurations`
+- Select your Spring Boot application
+- In `Environment Variables` or `VM Options`, add:
+  ```
+  -Dspring.profiles.active=local
+  ```
+- Or in `Program Arguments`, add:
+  ```
+  --spring.profiles.active=local
+  ```
+
+**Visual Studio Code Setup:**
+- Create/modify `.vscode/launch.json`:
+  ```json
+  {
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "type": "java",
+        "name": "Spring Boot Local",
+        "request": "launch",
+        "mainClass": "com.genius.primavera.HierarchicalCommentApplication",
+        "vmArgs": "-Dspring.profiles.active=local",
+        "projectName": "chapXX"
+      }
+    ]
+  }
+  ```
+
+**Eclipse Setup:**
+- Right-click project → `Run As` → `Run Configurations`
+- Select your application under `Java Application`
+- In `Arguments` tab, add to `VM arguments`:
+  ```
+  -Dspring.profiles.active=local
+  ```
+
+**3. Environment Variable Setup:**
+```bash
+# Linux/macOS - Add to ~/.bashrc or ~/.zshrc
+export SPRING_PROFILES_ACTIVE=local
+
+# Windows - System Environment Variables
+set SPRING_PROFILES_ACTIVE=local
+
+# Or PowerShell
+$env:SPRING_PROFILES_ACTIVE="local"
+```
+
+**4. Docker MySQL 8.4.0 Setup for Local Development:**
+```bash
+# Start MySQL container for local development
+docker run -d \
+  --name mysql-primavera-local \
+  -e MYSQL_ROOT_PASSWORD=root \
+  -e MYSQL_DATABASE=primavera \
+  -e MYSQL_USER=primavera \
+  -e MYSQL_PASSWORD=primavera \
+  -p 3306:3306 \
+  --restart=unless-stopped \
+  mysql:8.4.0
+
+# Verify container is running
+docker ps | grep mysql-primavera-local
+
+# Check logs if needed
+docker logs mysql-primavera-local
+
+# Connect to MySQL for debugging (optional)
+docker exec -it mysql-primavera-local mysql -u primavera -p primavera
+```
+
+**5. Local Development Workflow:**
+```bash
+# 1. Start MySQL container (if not running)
+docker start mysql-primavera-local
+
+# 2. Verify MySQL connectivity
+telnet localhost 3306
+
+# 3. Run application with local profile
+./gradlew :chap11:bootRun -Pprofile=local
+
+# 4. Application will start with local profile settings
+# Check logs for profile confirmation:
+# "The following profiles are active: local"
+```
+
+**6. Profile Verification:**
+- Check application logs for profile activation:
+  ```
+  INFO  --- [main] c.g.p.HierarchicalCommentApplication : The following profiles are active: local
+  ```
+- Verify database connection in logs:
+  ```
+  INFO  --- [main] com.zaxxer.hikari.HikariDataSource  : HikariPool-1 - Starting...
+  INFO  --- [main] com.zaxxer.hikari.HikariDataSource  : HikariPool-1 - Start completed.
+  ```
+
+**7. Troubleshooting Local Profile Issues:**
+
+**Common Issues:**
+- **MySQL not running**: Start Docker container
+- **Port 3306 occupied**: Check `docker ps` and stop conflicting containers
+- **Connection refused**: Verify MySQL container health with `docker logs`
+- **Profile not activated**: Check application logs for active profiles
+
+**Debug Commands:**
+```bash
+# Check if MySQL port is open
+netstat -an | grep 3306
+
+# Test MySQL connection
+mysql -h localhost -P 3306 -u primavera -p
+
+# Check Docker container status
+docker inspect mysql-primavera-local
+
+# View Spring Boot actuator info (if enabled)
+curl http://localhost:8080/actuator/env | grep profiles
+```
+
+##### Test Environment (Build/CI)
+- **Purpose**: Automated integration testing, continuous integration, and build verification
+- **Database**: TestContainers MySQL 8.4.0 (automatically managed Docker containers)
+- **Configuration**: Use `application-testcontainer.yml` with dynamic TestContainers properties
+- **Data Isolation**: Each test gets a fresh, isolated database instance
+- **Schema Management**: Use `schema.sql` initialization scripts for fast test setup
+- **Execution Command**: `./gradlew :chapXX:test` (TestContainers auto-start/stop)
+- **CI/CD Compatibility**: No external dependencies required, works in any Docker-enabled environment
+
+##### Profile-Based Configuration Management
+
+**Profile Priority and Activation Rules:**
+- **Default Profile**: `application.yml` (fallback configuration)
+- **Local Profile**: `application-local.yml` (development environment, localhost Docker MySQL)
+- **Test Profile**: `application-test.yml` (test environment, TestContainers MySQL)
+- **Profile Override**: Local/Test profiles override default settings
+- **Environment Variables**: `SPRING_PROFILES_ACTIVE` takes highest priority
+
+**Configuration File Structure:**
+```
+src/main/resources/
+├── application.yml              # Default configuration
+├── application-local.yml        # Local development (localhost Docker MySQL)
+├── application-default.yml      # Production settings
+└── application-prod.yml         # Production overrides
+
+src/test/resources/
+└── application-test.yml         # Test environment (TestContainers MySQL)
+```
+
+##### Environment-Specific Configuration
+
+**Local Environment Setup:**
+```yaml
+# application-local.yml
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/primavera?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: primavera
+    password: primavera
+  flyway:
+    enabled: true  # Use Flyway for schema management
+    encoding: UTF-8
+    fail-on-missing-locations: false
+```
+
+**Test Environment Setup:**
+```yaml
+# application-test.yml
+spring:
+  application:
+    name: primavera-test
+  flyway:
+    enabled: false  # Use schema.sql instead
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration
+```
+
+##### TestContainers Integration Standards
+
+**Container Configuration:**
+```java
+@Container
+static MySQLContainer<?> mysql = new MySQLContainer<>("mysql:8.4.0")
+    .withDatabaseName("primavera")
+    .withUsername("primavera")
+    .withPassword("primavera")
+    .withInitScript("sql/schema.sql");
+```
+
+**Dynamic Property Configuration:**
+```java
+@DynamicPropertySource
+static void configureTestProperties(DynamicPropertyRegistry registry) {
+    registry.add("spring.datasource.url", mysql::getJdbcUrl);
+    registry.add("spring.datasource.username", mysql::getUsername);
+    registry.add("spring.datasource.password", mysql::getPassword);
+    registry.add("spring.datasource.driver-class-name", () -> "com.mysql.cj.jdbc.Driver");
+}
+```
+
+##### Profile-Based Test Code Organization
+
+**Unified Integration Test Structure (Recommended):**
+```java
+@ProfileBasedIntegrationTest
+@ActiveProfiles("test")  // or "local"
+@DisplayName("Your Integration Test Description")
+class YourIntegrationTest {
+    
+    @Autowired
+    private YourMapper yourMapper;
+    
+    @Test
+    @DisplayName("Test description")
+    void testMethod() {
+        // Test automatically uses appropriate database based on profile
+        // - test profile: TestContainers MySQL 8.4.0
+        // - local profile: localhost Docker MySQL 8.4.0
+    }
+}
+```
+
+**Legacy Direct TestContainers Structure (Alternative):**
+```java
+@SpringBootTest(classes = TestApplication.class)
+@Testcontainers
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@ActiveProfiles("test")
+@Transactional
+@Rollback(false)
+class YourIntegrationTest {
+    
+    @Container
+    static MySQLContainer<?> mysql = new MySQLContainer<>("mysql:8.4.0")
+        .withDatabaseName("primavera")
+        .withUsername("primavera")
+        .withPassword("primavera")
+        .withInitScript("sql/schema.sql");
+
+    @DynamicPropertySource
+    static void configureProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", mysql::getJdbcUrl);
+        registry.add("spring.datasource.username", mysql::getUsername);
+        registry.add("spring.datasource.password", mysql::getPassword);
+        registry.add("spring.datasource.driver-class-name", () -> "com.mysql.cj.jdbc.Driver");
+    }
+}
+```
+
+**Profile-Based Test Application Configuration:**
+```java
+@EnableAutoConfiguration(exclude = {
+    SecurityAutoConfiguration.class,
+    HibernateJpaAutoConfiguration.class,
+    JpaRepositoriesAutoConfiguration.class
+})
+@MapperScan("com.genius.primavera.domain.mapper")
+class TestApplication {
+    // Profile-aware test application - automatically selects database
+}
+```
+
+##### Build Integration Requirements
+
+- **Local Development**: Developers must have localhost MySQL 8.4.0 running for `bootRun` tasks
+- **Automated Testing**: All `test` tasks must use TestContainers exclusively
+- **CI/CD Pipeline**: Build servers require only Docker for TestContainers, no external MySQL needed
+- **Module Independence**: Each module's tests run in complete isolation with their own TestContainers
+- **Performance Optimization**: Use TestContainers reuse feature where appropriate to reduce test execution time
+- **Database Version Consistency**: Both local and test environments must use identical MySQL 8.4.0 version
+
+##### Environment Validation
+
+**Local Environment Validation:**
+- Verify localhost:3306 MySQL connectivity before development
+- Ensure Flyway migrations run successfully
+- Validate schema compatibility with production environment
+
+**Test Environment Validation:**
+- Confirm TestContainers can start MySQL 8.4.0 successfully
+- Verify schema.sql initialization works correctly
+- Validate test isolation and data cleanup between tests
+
+This environment separation strategy ensures development efficiency while maintaining test reliability and CI/CD compatibility.
 
 #### Specific Implementation Rules
 

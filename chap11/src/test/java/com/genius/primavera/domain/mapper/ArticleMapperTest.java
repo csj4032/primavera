@@ -1,6 +1,5 @@
 package com.genius.primavera.domain.mapper;
 
-import com.genius.primavera.config.BaseTestConfiguration;
 import com.genius.primavera.domain.mapper.article.ArticleMapper;
 import com.genius.primavera.domain.model.article.Article;
 import com.genius.primavera.domain.model.article.ArticleStatus;
@@ -14,10 +13,16 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.transaction.annotation.Transactional;
+import org.testcontainers.containers.MySQLContainer;
+import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.Instant;
@@ -25,14 +30,46 @@ import java.util.List;
 
 import lombok.extern.slf4j.Slf4j;
 
+@EnableAutoConfiguration(exclude = {SecurityAutoConfiguration.class})
+@org.mybatis.spring.annotation.MapperScan("com.genius.primavera.domain.mapper")
+class ArticleMapperTestApplication {
+}
+
+/**
+ * ArticleMapper 통합 테스트
+ * 
+ * 환경:
+ * - TestContainers MySQL 8.4.0 자동 관리
+ * - Spring Security 비활성화
+ * - MyBatis 매퍼 기반 데이터 접근
+ */
 @Slf4j
-@SpringBootTest
-@Import(BaseTestConfiguration.class)
+@SpringBootTest(classes = ArticleMapperTestApplication.class)
 @Testcontainers
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ActiveProfiles("test")
 @Transactional
+@Rollback(false)
 class ArticleMapperTest {
+
+	@Container
+	static MySQLContainer<?> mysql = new MySQLContainer<>("mysql:8.4.0")
+		.withDatabaseName("primavera")
+		.withUsername("primavera")
+		.withPassword("primavera")
+		.withInitScript("sql/schema.sql");
+
+	@DynamicPropertySource
+	static void configureTestProperties(DynamicPropertyRegistry registry) {
+		registry.add("spring.datasource.url", mysql::getJdbcUrl);
+		registry.add("spring.datasource.username", mysql::getUsername);
+		registry.add("spring.datasource.password", mysql::getPassword);
+		registry.add("spring.datasource.driver-class-name", () -> "com.mysql.cj.jdbc.Driver");
+		registry.add("spring.flyway.enabled", () -> "false");
+		registry.add("spring.sql.init.mode", () -> "never");
+		
+		log.info("🐳 TestContainers MySQL configured: {}", mysql.getJdbcUrl());
+	}
 
 	@Autowired
 	private ArticleMapper articleMapper;
@@ -48,8 +85,8 @@ class ArticleMapperTest {
 
 	@BeforeAll
 	public static void setUp() {
-		user = User.builder().id(1).nickname("최성조").build();
-		user2 = User.builder().id(2).nickname("홍길동").build();
+		user = User.builder().id(1L).nickname("Genius").build();
+		user2 = User.builder().id(2L).nickname("Son").build();
 	}
 
 	@Test
@@ -105,7 +142,24 @@ class ArticleMapperTest {
 	@DisplayName("게시글 조회")
 	public void findAllArticle() {
 		List<Article> articles = articleMapper.findAll();
+		log.info("🔍 Article count: {}", articles.size());
+		articles.forEach(article -> {
+			log.info("📄 Article: {}", article.toString());
+			if (article.getAuthor() != null) {
+				log.info("👤 Author - ID: {}, Nickname: {}, Email: {}", 
+					article.getAuthor().getId(), 
+					article.getAuthor().getNickname(),
+					article.getAuthor().getEmail());
+			} else {
+				log.warn("⚠️ Author is null for article ID: {}", article.getId());
+			}
+		});
 		Assertions.assertEquals(6, articles.size());
-		articles.forEach(e -> System.out.println(e.toString()));
+		
+		// 사용자 정보 검증
+		Article firstArticle = articles.get(0);
+		Assertions.assertNotNull(firstArticle.getAuthor(), "Article의 author가 null이면 안됩니다");
+		Assertions.assertNotNull(firstArticle.getAuthor().getNickname(), "Author의 nickname이 null이면 안됩니다");
+		log.info("✅ 사용자 정보 조회 성공: {} (ID: {})", firstArticle.getAuthor().getNickname(), firstArticle.getAuthor().getId());
 	}
 }

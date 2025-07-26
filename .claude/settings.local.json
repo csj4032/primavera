@@ -23,7 +23,17 @@
       "Bash(git push:*)",
       "Bash(docker exec:*)",
       "Bash(docker stop:*)",
-      "Bash(docker rm:*)"
+      "Bash(docker rm:*)",
+      "Bash(for dir in front configuration order product)",
+      "Bash(do)",
+      "Bash(if [ -f \"/Users/genius/Workspace/primavera/chap15/$dir/build.gradle\" ])",
+      "Bash(then)",
+      "Bash(if ! grep -q \"spring-cloud-dependencies\" \"/Users/genius/Workspace/primavera/chap15/$dir/build.gradle\")",
+      "Bash(sed:*)",
+      "Bash(fi)",
+      "Bash(done)",
+      "Bash(do grep -q \"spring-cloud-dependencies\" \"$dir/build.gradle\")",
+      "Bash(echo:*)"
     ],
     "deny": []
   }

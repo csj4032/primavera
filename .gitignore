@@ -1,8 +1,31 @@
+# Build and IDE files
 .gradle
 .idea
 *.iml
 *.jks
+
+# Project documentation
 CLAUDE.md
+
+# Backup files (prevent accidental commits)
+*.bak
+*.backup
+*.old
+*_backup*
+*.orig
+*.tmp
+*~
+
+# IDE backup files
+*.swp
+*.swo
+.#*
+\#*#
+
+# OS backup files
+.DS_Store?
+.DS_Store
+Thumbs.db
 /chap00/build
 /chap00/out
 /chap01/build

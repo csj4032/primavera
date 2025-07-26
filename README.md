@@ -108,6 +108,119 @@ docker-compose up -d mariadb redis
 ./gradlew clean build
 ```
 
+## 🧪 테스팅 환경 가이드
+
+### Profile 기반 자동 데이터베이스 선택
+Primavera는 Spring Profile에 따라 **자동으로** 데이터베이스 환경을 선택합니다:
+
+| Profile | 데이터베이스 | 용도 | 실행 방법 |
+|---------|-------------|------|-----------|
+| **`local`** | 🐳 **localhost Docker MySQL 8.4.0** | 로컬 개발, 디버깅 | `./gradlew :chapXX:bootRun -Dspring.profiles.active=local` |
+| **`test`** | 🧪 **TestContainers MySQL 8.4.0** | 자동화 테스트, CI/CD | `./gradlew :chapXX:test` |
+
+### 🏠 로컬 개발 환경 설정
+
+#### 1. Docker MySQL 8.4.0 시작
+```bash
+# MySQL 컨테이너 실행 (한 번만 실행)
+docker run -d \
+  --name mysql-primavera-local \
+  -e MYSQL_ROOT_PASSWORD=root \
+  -e MYSQL_DATABASE=primavera \
+  -e MYSQL_USER=primavera \
+  -e MYSQL_PASSWORD=primavera \
+  -p 3306:3306 \
+  --restart=unless-stopped \
+  mysql:8.4.0
+
+# 컨테이너 상태 확인
+docker ps | grep mysql-primavera-local
+```
+
+#### 2. 로컬 개발 서버 실행
+```bash
+# 특정 챕터를 로컬 환경에서 실행
+./gradlew :chap11:bootRun -Dspring.profiles.active=local
+
+# 애플리케이션 접속
+open http://localhost:8080
+```
+
+#### 3. IDE 설정 (IntelliJ IDEA)
+1. `Run/Debug Configurations` 선택
+2. `VM Options`에 추가: `-Dspring.profiles.active=local`
+3. 또는 `Program Arguments`에 추가: `--spring.profiles.active=local`
+
+### 🧪 테스트 환경 실행
+
+#### 1. 자동화 테스트 (TestContainers)
+```bash
+# 모든 테스트 실행 (TestContainers 자동 관리)
+./gradlew :chap11:test
+
+# 특정 테스트 클래스 실행
+./gradlew :chap11:test --tests ArticleMapperProfileTest
+
+# 테스트 결과 확인
+./gradlew :chap11:test --continue
+```
+
+#### 2. Profile 기반 통합 테스트 작성
+```java
+@ProfileBasedIntegrationTest
+@ActiveProfiles("test")  // TestContainers MySQL 자동 사용
+@DisplayName("Article 통합 테스트")
+class ArticleIntegrationTest {
+    
+    @Autowired
+    private ArticleMapper articleMapper;
+    
+    @Test
+    @DisplayName("게시글 저장 및 조회")
+    void shouldSaveAndRetrieveArticle() {
+        // 실제 MySQL 8.4.0에서 테스트 (TestContainers)
+        Article article = Article.builder()
+            .subject("테스트 게시글")
+            .status(ArticleStatus.PUBLIC)
+            .build();
+            
+        int result = articleMapper.save(article);
+        assertEquals(1, result);
+    }
+}
+```
+
+### 🚀 환경별 실행 요약
+
+#### 로컬 개발 워크플로우
+```bash
+# 1. MySQL 컨테이너 시작 (최초 1회)
+docker start mysql-primavera-local
+
+# 2. 로컬 환경으로 애플리케이션 실행
+./gradlew :chap11:bootRun -Dspring.profiles.active=local
+
+# 3. 브라우저에서 확인
+# http://localhost:8080
+```
+
+#### 테스트 실행 워크플로우  
+```bash
+# TestContainers가 자동으로 MySQL 컨테이너 관리
+./gradlew :chap11:test
+
+# 테스트 완료 후 컨테이너 자동 정리
+# (추가 설정 불필요)
+```
+
+### 💡 주요 특징
+
+✅ **환경 자동 선택**: Profile만 지정하면 DB 환경 자동 결정  
+✅ **Docker 기반**: 모든 환경에서 MySQL 8.4.0 동일 버전 사용  
+✅ **CI/CD 친화적**: TestContainers로 외부 의존성 없는 테스트  
+✅ **개발 효율성**: 로컬은 빠른 개발, 테스트는 격리된 환경  
+✅ **버전 일관성**: 개발/테스트/프로덕션 동일한 MySQL 8.4.0  
+
 ### 3. 개발 환경 설정
 ![IntelliJ, Gradle](https://github.com/csj4032/primavera/blob/master/gradle.png)
 

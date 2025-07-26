@@ -15,7 +15,7 @@ import lombok.*;
 @ToString(exclude = {"parent", "children", "comments"})
 @NoArgsConstructor
 @AllArgsConstructor
-//@EqualsAndHashCode(of = "id")
+@EqualsAndHashCode(of = "id")
 public class Article {
 	private long id;
 	private long pId;

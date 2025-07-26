@@ -1,24 +1,32 @@
 spring:
   application:
     name: primavera-test
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/primavera?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-    username: primavera
-    password: primavera
-  jpa:
-    hibernate:
-      ddl-auto: create-drop
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.MySQLDialect
-        show_sql: true
-        format_sql: true
+  
+  # 테스트 환경 - TestContainers가 동적으로 DataSource 설정
+  # 실제 MySQL 8.4.0 컨테이너 사용
+  
   flyway:
-    enabled: false
+    enabled: false  # schema.sql 사용
+  
   sql:
     init:
       mode: never
+  
+  # JPA 완전 비활성화 (MyBatis 전용)
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration
+      - org.springframework.boot.autoconfigure.jdbc.JpaDataSourceAutoConfiguration
+
+# MyBatis 설정
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+    default-fetch-size: 1000
+    default-statement-timeout: 30
+  type-aliases-package: com.genius.primavera.domain
+  type-handlers-package: com.genius.primavera.domain
 
 # OAuth2 환경변수 기본값 설정 (테스트용)
 google:

@@ -21,9 +21,9 @@ public class MyBatisTestConfiguration {
 
     @Container
     static MySQLContainer<?> mysql = new MySQLContainer<>(DockerImageName.parse("mysql:8.4.0"))
-            .withDatabaseName("primavera_test")
-            .withUsername("test")
-            .withPassword("test")
+            .withDatabaseName("primavera")
+            .withUsername("primavera")
+            .withPassword("primavera")
             .withInitScript("sql/schema.sql")
             .withReuse(true);
 
