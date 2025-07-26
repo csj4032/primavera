@@ -5,7 +5,7 @@ import com.opencsv.bean.ColumnPositionMappingStrategy;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
 import lombok.extern.slf4j.Slf4j;
-import org.jooq.lambda.tuple.Tuple2;
+import org.javatuples.Pair;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.openkoreantext.processor.KoreanTokenJava;
@@ -55,7 +55,7 @@ class KakaoTalkChatRepositoryTest {
 		log.info("countMessagesByUser {}", countMessagesByUser);
 
 		// User 별 <메세지, 날짜>
-		Map<String, List<Tuple2<String, LocalDateTime>>> countMessageAndDateByUser = kakaoTalkChats.stream().collect(Collectors.groupingBy(KakaoTalkChat::getUser, Collectors.mapping(kakaoTalkChat -> new Tuple2<>(kakaoTalkChat.getMessage(), kakaoTalkChat.getDate()), Collectors.toList())));
+		Map<String, List<Pair<String, LocalDateTime>>> countMessageAndDateByUser = kakaoTalkChats.stream().collect(Collectors.groupingBy(KakaoTalkChat::getUser, Collectors.mapping(kakaoTalkChat -> Pair.with(kakaoTalkChat.getMessage(), kakaoTalkChat.getDate()), Collectors.toList())));
 		log.info("countMessageAndDateByUser {}", countMessageAndDateByUser);
 
 		// User 메세지 갯수

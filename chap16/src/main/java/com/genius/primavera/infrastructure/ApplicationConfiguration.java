@@ -18,6 +18,7 @@ import com.genius.primavera.infrastructure.serializer.KryoSerializer;
 import com.genius.primavera.infrastructure.serializer.SnappyRedisSerializer;
 import com.navercorp.lucy.security.xss.servletfilter.XssEscapeServletFilter;
 
+import io.lettuce.core.ClientOptions;
 import io.lettuce.core.resource.DefaultClientResources;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 // import org.jetbrains.annotations.NotNull; // Not used
@@ -47,14 +48,14 @@ import java.time.format.DateTimeFormatter;
 @EnableJpaAuditing
 public class ApplicationConfiguration implements WebMvcConfigurer {
 
-	@Bean
-	public FilterRegistrationBean<XssEscapeServletFilter> filterRegistrationBean() {
-		var filterRegistration = new FilterRegistrationBean<XssEscapeServletFilter>();
-		filterRegistration.setFilter(new XssEscapeServletFilter());
-		filterRegistration.setOrder(1);
-		filterRegistration.addUrlPatterns("/*");
-		return filterRegistration;
-	}
+	// @Bean
+	// public FilterRegistrationBean filterRegistrationBean() {
+	// 	var filterRegistration = new FilterRegistrationBean();
+	// 	filterRegistration.setFilter(new XssEscapeServletFilter());
+	// 	filterRegistration.setOrder(1);
+	// 	filterRegistration.addUrlPatterns("/*");
+	// 	return filterRegistration;
+	// }
 
 	@Bean
 	public ObjectMapper objectMapper() {
@@ -113,7 +114,7 @@ public class ApplicationConfiguration implements WebMvcConfigurer {
 		return LettucePoolingClientConfiguration.builder()
 				.poolConfig(genericObjectPoolConfig())
 				.commandTimeout(Duration.ofMillis(100000))
-				.clientOptions()
+				.clientOptions(ClientOptions.builder().build())
 				.shutdownTimeout(Duration.ofMillis(100000))
 				.clientResources(DefaultClientResources.create()).build();
 	}

@@ -99,7 +99,7 @@ git clone https://github.com/csj4032/primavera.git
 cd primavera
 
 # 데이터베이스 실행 (Docker)
-docker-compose up -d mariadb redis
+docker-compose up -d mysql redis
 
 # 특정 챕터 실행 (예: chap10)
 ./gradlew :chap10:bootRun
@@ -601,7 +601,6 @@ chore: 빌드 설정 등 기타 변경
 ## 👥 기여자
 
 - [csj4032](https://github.com/csj4032) - 프로젝트 창시자 및 메인 개발자
-- [Claude](https://claude.ai) - 문서화 및 코드 리뷰 지원
 
 ## 🙏 감사의 말
 
