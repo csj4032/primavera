@@ -8,8 +8,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.event.RecordApplicationEvents;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -22,33 +20,6 @@ public class SpringBootStarterApplicationTest {
     @Autowired
     private ApplicationContext context;
 
-    @TestConfiguration
-    static class TestConfig {
-        @Bean
-        public WorldService worldService() {
-            return new WorldService() {
-                @Override
-                public String world() {
-                    return "World!!!";
-                }
-
-                @Override
-                public String hello() {
-                    return "Hello!!!";
-                }
-            };
-        }
-
-        @Bean
-        public GreetingService greetingService() {
-            return () -> "Hello";
-        }
-
-        @Bean
-        public HelloController helloController(WorldService worldService, GreetingService greetingService) {
-            return new HelloController(greetingService, worldService);
-        }
-    }
 
 
     @Test
@@ -109,7 +80,7 @@ public class SpringBootStarterApplicationTest {
     @DisplayName("ApplicationContext에 GreetingService 빈이 정상적으로 등록되어 있다.")
     void greetingServiceBeanIsRegistered() {
         // given
-        Object greetingService = context.getBean("greetingService");
+        Object greetingService = context.getBean("greetingServiceImpl");
         // then
         assertThat(greetingService).isNotNull();
     }
