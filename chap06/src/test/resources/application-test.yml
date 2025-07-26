@@ -1,28 +1,27 @@
 spring:
   datasource:
-    type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/primavera?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&allowPublicKeyRetrieval=true
-    username: primavera
-    password: primavera
-    hikari:
-      connection-test-query: SELECT 1 FROM DUAL
     schema: classpath:sql/schema.sql
-    data: classpath:data-test.sql
-    initialization-mode: always
-  banner:
-    charset: UTF-8
-    location: classpath:primavera.txt
-  thymeleaf:
-    cache: false
-    enabled: true
-    prefix: classpath:/templates/
-    suffix: .html
+    hikari:
+      auto-commit: false
+      data-source-properties:
+        cachePrepStmts: false
+        useServerPrepStmts: false
+        useLocalSessionState: false
+        cacheResultSetMetadata: fales
+        preparedStatementCacheQueries: 0
+  aop:
+    proxy-target-class: true
+
+logging:
+  config: classpath:logback-spring.xml
 
 mybatis:
   configuration:
     map-underscore-to-camel-case: true
     default-fetch-size: 1000
     default-statement-timeout: 30
+    cache-enabled: false
+    local-cache-scope: statement
   type-aliases-package: com.genius.primavera.domain
   type-handlers-package: com.genius.primavera.domain

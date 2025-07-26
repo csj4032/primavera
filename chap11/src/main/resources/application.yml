@@ -1,16 +1,47 @@
 spring:
   application:
-    name: primavera
+    name: Privamera
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/primavera?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://localhost:3306/primavera?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&allowPublicKeyRetrieval=true
     username: primavera
     password: primavera
-  flyway:
+  banner:
+    charset: UTF-8
+    location: classpath:primavera.txt
+  thymeleaf:
+    cache: false
     enabled: true
-    baseline-on-migrate: true
-    sql-migration-suffixes: .sql
-    locations: classpath:db/migration
+    prefix: classpath:/templates/
+    suffix: .html
+  devtools:
+    livereload:
+      enabled: true
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${OAUTH2_GOOGLE_CLIENTID:test-client-id}
+            client-secret: ${OAUTH2_GOOGLE_CLIENTSECRET:test-client-secret}
+            scope:
+              - email
+              - profile
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+          facebook:
+            client-id: ${OAUTH2_FACEBOOK_CLIENTID:test-client-id}
+            client-secret: ${OAUTH2_FACEBOOK_CLIENTSECRET:test-client-secret}
+            scope:
+              - email
+              - public_profile
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+          github:
+            client-id: ${OAUTH2_GITHUB_CLIENTID:test-client-id}
+            client-secret: ${OAUTH2_GITHUB_CLIENTSECRET:test-client-secret}
+            scope:
+              - user:email
+              - read:user
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
 
 mybatis:
   configuration:
@@ -21,8 +52,13 @@ mybatis:
   type-handlers-package: com.genius.primavera.domain
 
 logging:
-  level:
-    org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
-    com.genius.primavera: DEBUG
-    root: INFO
+  config: classpath:logback.xml
+
+server:
+  ssl:
+    key-alias: primavera
+    key-store: chap10/primavera.p12
+    key-store-type: PKCS12
+    key-store-password: primavera
+    enabled: true
+  port: 8443

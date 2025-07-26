@@ -1,11 +1,9 @@
 package com.genius.primavera.domain.model;
 
 import com.genius.primavera.application.validator.Nickname;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.lang.NonNull;
-
 import lombok.*;
+import org.graalvm.polyglot.HostAccess;
+import org.hibernate.validator.constraints.ScriptAssert;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
@@ -13,8 +11,8 @@ import jakarta.validation.groups.Default;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
-@Slf4j
 @Getter
 @Setter
 @Builder
@@ -22,6 +20,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(of = {"id", "email"})
+@ScriptAssert(lang = "graal.js", script = "_this.isComplex(_this.regDate, _this.modDate)", message = "등록일자와 수정일자는 필수 입니다.")
 public class User {
 
     public interface SaveGroup extends Default {
@@ -47,7 +46,11 @@ public class User {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public boolean isAuthenticate(@NonNull String password) {
-        return new BCryptPasswordEncoder().matches(password, this.password);
+    private Boolean isComplex;
+
+    @HostAccess.Export
+    public Boolean isComplex(LocalDateTime createdAt, LocalDateTime modDate) {
+        if (!Objects.isNull(createdAt) && !Objects.isNull(modDate)) return createdAt.isBefore(modDate);
+        return true;
     }
 }

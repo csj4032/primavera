@@ -1,6 +1,6 @@
 package com.genius.primavera.domain.model.typehandler;
 
-import com.genius.primavera.domain.model.user.RoleType;
+import com.genius.primavera.domain.model.RoleType;
 
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;

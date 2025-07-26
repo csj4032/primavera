@@ -1,57 +1,397 @@
-# Chapter 02 - MVC와 AOP 🎯
+# Chapter 01 - 설정과 의존성 주입 ⚙️
 
 ## 📋 개요
-Spring MVC 아키텍처 패턴과 AOP(Aspect-Oriented Programming)를 통한 횡단 관심사 분리를 학습하는 챕터입니다. 웹 계층의 구성 요소와 관점 지향 프로그래밍의 핵심 개념을 실무 중심으로 익힙니다.
+Spring Boot의 설정 시스템과 의존성 주입(Dependency Injection) 메커니즘을 마스터하는 챕터입니다. `@ConfigurationProperties`를 통한 타입 안전한 설정 관리와 다양한 Bean Scope, 생성자 기반 의존성 주입의 모든 것을 학습합니다.
 
 ## 🎯 학습 목표
-- **Spring MVC 아키텍처** 패턴 완전 이해
-- **AOP를 통한 횡단 관심사** 분리 구현
-- **인터셉터와 필터 체인** 설계 및 활용
-- **@Aspect, @Around** 어노테이션 마스터
-- **ResponseBodyAdvice** 를 통한 응답 처리
+- **@ConfigurationProperties**를 통한 타입 안전한 설정 관리
+- **Bean Scope와 라이프사이클** 완전 이해
+- **생성자 기반 의존성 주입** 마스터
+- **프로파일별 환경 설정** 전략 구축
+- **YAML vs Properties** 차이점과 활용법
 
 ## 🛠️ 핵심 기술 스택
-- **Spring Web MVC** - 웹 애플리케이션 아키텍처
-- **Spring AOP** - 관점 지향 프로그래밍
-- **AspectJ** - AOP 프레임워크
-- **MariaDB** - 관계형 데이터베이스
-- **Docker** - 컨테이너 기반 개발 환경
+- **Spring Boot 3.5.3** - Configuration Management
+- **Spring Context** - IoC Container & DI
+- **YAML Configuration** - 계층적 설정 관리
+- **Lombok** - 코드 간소화 도구
+- **JUnit 5** - 현대적 테스트 프레임워크
 
 ## 📚 주요 학습 내용
 
-### 1. Spring MVC 아키텍처 이해
+### 1. Spring Boot 환경 설정
 
-#### MVC 패턴 구성 요소
+#### 개발 환경 구축
+```bash
+# JDK 21 설치 확인
+java -version
 
-| 구성 요소 | 역할 | 주요 책임 |
-|----------|-----|----------|
-| **Model** | 데이터와 비즈니스 로직 | 애플리케이션의 정보 및 데이터 처리 |
-| **View** | 사용자 인터페이스 | 사용자가 보고 상호작용하는 화면 |
-| **Controller** | 요청 처리 및 흐름 제어 | Model과 View 사이의 중계 역할 |
+# Gradle 프로젝트 초기화
+spring init --build=gradle --java-version=21 \
+    --dependencies=web,configuration-processor \
+    --groupId=com.genius.primavera primavera
 
-#### Spring Web MVC 요청 처리 흐름
-
-```mermaid
-flowchart LR
-    Client[클라이언트] --> DispatcherServlet[DispatcherServlet]
-    DispatcherServlet --> HandlerMapping[HandlerMapping]
-    HandlerMapping --> Controller[Controller]
-    Controller --> ModelAndView[ModelAndView]
-    ModelAndView --> ViewResolver[ViewResolver]
-    ViewResolver --> View[View]
-    View --> Client
+# Gradle Wrapper 업데이트
+./gradlew wrapper --gradle-version 8.12.1
 ```
 
-**상세 처리 단계:**
-1. **클라이언트 요청**: HTTP 요청이 DispatcherServlet에 전달
-2. **핸들러 매핑**: 요청 URL에 맞는 Controller 메서드 검색
-3. **컨트롤러 실행**: 비즈니스 로직 처리 및 Model 데이터 생성
-4. **뷰 리졸버**: 논리적 뷰 이름을 실제 뷰로 변환
-5. **뷰 렌더링**: Model 데이터를 사용하여 최종 응답 생성
-6. **응답 반환**: 완성된 HTML을 클라이언트에게 전송
+#### Gradle 설정 (build.gradle)
+```gradle
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.5.3'
+    id 'io.spring.dependency-management' version '1.1.6'
+}
 
-### 2. Hello World Controller 구현
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
 
+test {
+    useJUnitPlatform()
+}
+```
+
+### 2. YAML 기반 설정 관리
+
+#### application.yml 구조화
+```yaml
+# 기본 프로파일 설정
+spring:
+  profiles:
+    default: local
+  application:
+    name: Primavera
+  banner:
+    charset: UTF-8
+    location: classpath:primavera.txt
+
+# 로깅 설정
+logging:
+  level:
+    org.springframework: info
+    com.genius.primavera: debug
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+# 커스텀 설정
+com:
+  genius:
+    primavera:
+      database:
+        username: primavera
+        password: primavera
+        url: jdbc:mysql://localhost:3306/primavera
+        tables: [user, role, article]
+      search:
+        params:
+          keyword: genius
+          page: 1
+          sort: desc
+      users:
+        - id: 1
+          email: genius@primavera.com
+        - id: 2
+          email: admin@primavera.com
+
+---
+# 개발 환경 설정
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/primavera_dev
+    username: dev_user
+    password: dev_pass
+    
+logging:
+  level:
+    org.springframework.web: debug
+    org.hibernate.SQL: debug
+
+---
+# 운영 환경 설정
+spring:
+  config:
+    activate:
+      on-profile: prod
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mysql://prod-db:3306/primavera
+    username: ${DB_USERNAME:prod_user}
+    password: ${DB_PASSWORD:prod_pass}
+    
+logging:
+  level:
+    org.springframework: warn
+    com.genius.primavera: info
+```
+
+### 3. @ConfigurationProperties 타입 안전한 설정
+
+#### 설정 클래스 정의
+```java
+@Data
+@Component
+@ConfigurationProperties(prefix = "com.genius.primavera")
+public class PrimaveraProperties {
+    
+    private Database database = new Database();
+    private Search search = new Search();
+    private List<User> users = new ArrayList<>();
+    
+    @Data
+    public static class Database {
+        private String username;
+        private String password;
+        private String url;
+        private List<String> tables = new ArrayList<>();
+    }
+    
+    @Data
+    public static class Search {
+        private Params params = new Params();
+        
+        @Data
+        public static class Params {
+            private String keyword;
+            private Integer page = 1;
+            private String sort = "asc";
+        }
+    }
+    
+    @Data
+    public static class User {
+        private Long id;
+        private String email;
+    }
+}
+```
+
+#### 설정 검증 (Validation)
+```java
+@Data
+@Component
+@ConfigurationProperties(prefix = "com.genius.primavera.database")
+@Validated
+public class DatabaseProperties {
+    
+    @NotBlank(message = "데이터베이스 사용자명은 필수입니다")
+    private String username;
+    
+    @NotBlank(message = "데이터베이스 비밀번호는 필수입니다")
+    @Size(min = 8, message = "비밀번호는 최소 8자 이상이어야 합니다")
+    private String password;
+    
+    @NotBlank(message = "데이터베이스 URL은 필수입니다")
+    @Pattern(regexp = "^jdbc:.*", message = "올바른 JDBC URL 형식이 아닙니다")
+    private String url;
+    
+    @NotEmpty(message = "최소 하나의 테이블 설정이 필요합니다")
+    private List<String> tables = new ArrayList<>();
+}
+```
+
+### 4. Bean 스코프와 라이프사이클
+
+#### Bean Scope 정의
+```java
+@Configuration
+public class BeanScopeConfiguration {
+    
+    // 싱글톤 스코프 (기본값)
+    @Bean
+    @Scope("singleton")
+    public DatabaseService singletonService() {
+        return new DatabaseService();
+    }
+    
+    // 프로토타입 스코프
+    @Bean
+    @Scope("prototype")
+    public RequestHandler prototypeHandler() {
+        return new RequestHandler();
+    }
+    
+    // 웹 스코프 (Request)
+    @Bean
+    @Scope(value = WebApplicationContext.SCOPE_REQUEST, 
+           proxyMode = ScopedProxyMode.TARGET_CLASS)
+    public UserContext requestScopedContext() {
+        return new UserContext();
+    }
+    
+    // 웹 스코프 (Session)
+    @Bean
+    @Scope(value = WebApplicationContext.SCOPE_SESSION,
+           proxyMode = ScopedProxyMode.TARGET_CLASS)
+    public ShoppingCart sessionScopedCart() {
+        return new ShoppingCart();
+    }
+}
+```
+
+#### Bean 라이프사이클 관리
+```java
+@Component
+public class LifecycleBean implements InitializingBean, DisposableBean {
+    
+    private static final Logger log = LoggerFactory.getLogger(LifecycleBean.class);
+    
+    // 의존성 주입 완료 후 초기화
+    @PostConstruct
+    public void postConstruct() {
+        log.info("@PostConstruct: 빈 초기화 시작");
+    }
+    
+    // InitializingBean 인터페이스 구현
+    @Override
+    public void afterPropertiesSet() {
+        log.info("afterPropertiesSet: 모든 프로퍼티 설정 완료");
+    }
+    
+    // 커스텀 초기화 메서드
+    @Bean(initMethod = "customInit")
+    public void customInit() {
+        log.info("customInit: 커스텀 초기화 메서드 실행");
+    }
+    
+    // 빈 소멸 전 정리 작업
+    @PreDestroy
+    public void preDestroy() {
+        log.info("@PreDestroy: 빈 소멸 준비");
+    }
+    
+    // DisposableBean 인터페이스 구현
+    @Override
+    public void destroy() {
+        log.info("destroy: 빈 소멸 처리");
+    }
+}
+```
+
+### 5. 의존성 주입 패턴
+
+#### 생성자 기반 의존성 주입 (권장)
+```java
+@Service
+@RequiredArgsConstructor
+public class UserService {
+    
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
+    
+    // 생성자가 하나인 경우 @Autowired 생략 가능
+    // Lombok의 @RequiredArgsConstructor가 생성자 자동 생성
+    
+    public User createUser(UserCreateRequest request) {
+        String encodedPassword = passwordEncoder.encode(request.getPassword());
+        
+        User user = User.builder()
+                .email(request.getEmail())
+                .password(encodedPassword)
+                .nickname(request.getNickname())
+                .build();
+        
+        User savedUser = userRepository.save(user);
+        emailService.sendWelcomeEmail(savedUser.getEmail());
+        
+        return savedUser;
+    }
+}
+```
+
+#### 순환 의존성 해결
+```java
+// 잘못된 예: 순환 의존성 발생
+@Service
+public class OrderService {
+    @Autowired
+    private PaymentService paymentService; // PaymentService가 OrderService 참조
+}
+
+@Service
+public class PaymentService {
+    @Autowired
+    private OrderService orderService; // 순환 의존성!
+}
+
+// 올바른 해결방법 1: 구조 개선
+@Service
+@RequiredArgsConstructor
+public class OrderService {
+    private final PaymentProcessor paymentProcessor; // 인터페이스 사용
+}
+
+@Service
+@RequiredArgsConstructor
+public class PaymentService implements PaymentProcessor {
+    // OrderService 의존성 제거
+}
+
+// 올바른 해결방법 2: @Lazy 사용 (임시방편)
+@Service
+@RequiredArgsConstructor
+public class OrderService {
+    @Lazy
+    private final PaymentService paymentService;
+}
+```
+
+### 6. 프로파일별 환경 설정
+
+#### 프로파일별 Bean 등록
+```java
+@Configuration
+public class ProfileConfiguration {
+    
+    @Bean
+    @Profile("local")
+    public DataSource localDataSource() {
+        return DataSourceBuilder.create()
+                .driverClassName("org.h2.Driver")
+                .url("jdbc:mysql://localhost:3306/primavera_local")
+                .username("sa")
+                .password("")
+                .build();
+    }
+    
+    @Bean
+    @Profile("dev")
+    public DataSource devDataSource() {
+        return DataSourceBuilder.create()
+                .driverClassName("com.mysql.cj.jdbc.Driver")
+                .url("jdbc:mysql://dev-db:3306/primavera")
+                .username("dev_user")
+                .password("dev_pass")
+                .build();
+    }
+    
+    @Bean
+    @Profile("prod")
+    public DataSource prodDataSource() {
+        return DataSourceBuilder.create()
+                .driverClassName("com.mysql.cj.jdbc.Driver")
+                .url("jdbc:mysql://prod-db:3306/primavera")
+                .username("${DB_USERNAME}")
+                .password("${DB_PASSWORD}")
+                .build();
+    }
+}
+```
+
+## 🔧 실습 예제
+
+### Hello World Controller
 ```java
 @Slf4j
 @RestController
@@ -60,522 +400,155 @@ flowchart LR
 public class HelloController {
     
     private final PrimaveraProperties properties;
+    private final Environment environment;
     
     @GetMapping
     public ResponseEntity<Map<String, Object>> helloWorld() {
-        log.info("Hello World 요청 처리 시작");
-        
         Map<String, Object> response = new HashMap<>();
-        response.put("message", "Hello Primavera World!");
-        response.put("timestamp", LocalDateTime.now());
-        response.put("version", "2.0.0");
+        response.put("message", "Hello Primavera!");
+        response.put("activeProfiles", environment.getActiveProfiles());
         response.put("database", properties.getDatabase());
+        response.put("users", properties.getUsers());
         
-        log.info("Hello World 응답 데이터 생성 완료");
+        log.info("Hello World 요청 처리 완료");
         return ResponseEntity.ok(response);
     }
     
-    @GetMapping("/health")
-    public ResponseEntity<String> healthCheck() {
-        return ResponseEntity.ok("Application is running!");
+    @GetMapping("/config")
+    public ResponseEntity<PrimaveraProperties> getConfiguration() {
+        return ResponseEntity.ok(properties);
     }
 }
 ```
 
-### 3. Spring AOP 핵심 개념
-
-#### AOP 주요 용어 정리
-
-| 용어 | 설명 | 예시 |
-|------|------|------|
-| **Aspect** | 포인트컷과 어드바이스의 결합 | 로깅, 트랜잭션, 보안 |
-| **Join Point** | 어드바이스가 적용될 수 있는 지점 | 메서드 호출, 예외 발생 |
-| **Pointcut** | 어드바이스가 적용될 조인 포인트 선별 | `@Around("execution(* com.genius..*.*(..))")` |
-| **Advice** | 실제 부가 기능 구현체 | Before, After, Around |
-| **Weaving** | 타깃에 애스펙트를 적용하는 과정 | 런타임, 컴파일타임, 로드타임 |
-| **Target** | 부가 기능이 적용될 대상 객체 | 비즈니스 로직 클래스 |
-
-#### Advice 타입별 특징
-
-```java
-@Aspect
-@Component
-@Slf4j
-public class PrimaveraLoggingAspect {
-    
-    // 메서드 실행 전 처리
-    @Before("execution(* com.genius.primavera.interfaces.*.*(..))")
-    public void beforeAdvice(JoinPoint joinPoint) {
-        String methodName = joinPoint.getSignature().getName();
-        log.info("🔍 [BEFORE] 메서드 실행 시작: {}", methodName);
-    }
-    
-    // 메서드 정상 완료 후 처리
-    @AfterReturning(pointcut = "execution(* com.genius.primavera.interfaces.*.*(..))", 
-                    returning = "result")
-    public void afterReturningAdvice(JoinPoint joinPoint, Object result) {
-        String methodName = joinPoint.getSignature().getName();
-        log.info("✅ [AFTER-RETURNING] 메서드 정상 완료: {} -> 결과: {}", methodName, result);
-    }
-    
-    // 예외 발생 시 처리
-    @AfterThrowing(pointcut = "execution(* com.genius.primavera.interfaces.*.*(..))", 
-                   throwing = "exception")
-    public void afterThrowingAdvice(JoinPoint joinPoint, Exception exception) {
-        String methodName = joinPoint.getSignature().getName();
-        log.error("❌ [AFTER-THROWING] 메서드 예외 발생: {} -> 예외: {}", methodName, exception.getMessage());
-    }
-    
-    // 결과에 관계없이 실행 후 처리
-    @After("execution(* com.genius.primavera.interfaces.*.*(..))")
-    public void afterAdvice(JoinPoint joinPoint) {
-        String methodName = joinPoint.getSignature().getName();
-        log.info("🔚 [AFTER] 메서드 실행 종료: {}", methodName);
-    }
-    
-    // 메서드 실행 전후 모두 제어
-    @Around("execution(* com.genius.primavera.interfaces.*.*(..))")
-    public Object aroundAdvice(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
-        String methodName = proceedingJoinPoint.getSignature().getName();
-        long startTime = System.currentTimeMillis();
-        
-        log.info("🚀 [AROUND-BEFORE] 메서드 실행 시작: {}", methodName);
-        
-        try {
-            // 실제 메서드 실행
-            Object result = proceedingJoinPoint.proceed();
-            
-            long endTime = System.currentTimeMillis();
-            log.info("⏱️ [AROUND-AFTER] 메서드 실행 완료: {} (소요시간: {}ms)", 
-                    methodName, endTime - startTime);
-            
-            return result;
-        } catch (Exception e) {
-            log.error("💥 [AROUND-ERROR] 메서드 실행 중 예외 발생: {} -> {}", methodName, e.getMessage());
-            throw e;
-        }
-    }
-}
-```
-
-### 4. Pointcut 표현식 마스터
-
-#### 다양한 Pointcut 패턴
-
-```java
-@Aspect
-@Component
-public class AdvancedPointcutAspect {
-    
-    // 특정 패키지의 모든 메서드
-    @Pointcut("execution(* com.genius.primavera.interfaces..*.*(..))")
-    public void interfaceLayer() {}
-    
-    // 특정 어노테이션이 붙은 메서드
-    @Pointcut("@annotation(org.springframework.web.bind.annotation.GetMapping)")
-    public void getMappingMethods() {}
-    
-    // 특정 클래스의 public 메서드
-    @Pointcut("execution(public * com.genius.primavera.interfaces.HelloController.*(..))")
-    public void helloControllerPublicMethods() {}
-    
-    // 반환 타입이 ResponseEntity인 메서드
-    @Pointcut("execution(org.springframework.http.ResponseEntity com.genius.primavera.interfaces.*.*(..))")
-    public void responseEntityMethods() {}
-    
-    // 복합 조건 (AND, OR, NOT)
-    @Pointcut("interfaceLayer() && getMappingMethods()")
-    public void getEndpoints() {}
-    
-    @Around("getEndpoints()")
-    public Object monitorGetEndpoints(ProceedingJoinPoint joinPoint) throws Throwable {
-        // GET 엔드포인트 모니터링 로직
-        return joinPoint.proceed();
-    }
-}
-```
-
-### 5. Spring Interceptor 구현
-
-#### 커스텀 인터셉터 개발
-
-```java
-@Slf4j
-@Component
-public class PrimaveraInterceptor implements HandlerInterceptor {
-    
-    // 컨트롤러 메서드 실행 전
-    @Override
-    public boolean preHandle(HttpServletRequest request, 
-                           HttpServletResponse response, 
-                           Object handler) throws Exception {
-        
-        String requestURI = request.getRequestURI();
-        String method = request.getMethod();
-        String userAgent = request.getHeader("User-Agent");
-        
-        log.info("🌐 [PRE-HANDLE] 요청 수신 - {} {} (User-Agent: {})", 
-                method, requestURI, userAgent);
-        
-        // 요청 시작 시간 기록
-        request.setAttribute("startTime", System.currentTimeMillis());
-        
-        // true 반환: 계속 진행, false 반환: 요청 중단
-        return true;
-    }
-    
-    // 컨트롤러 메서드 실행 후, 뷰 렌더링 전
-    @Override
-    public void postHandle(HttpServletRequest request, 
-                          HttpServletResponse response, 
-                          Object handler, 
-                          ModelAndView modelAndView) throws Exception {
-        
-        log.info("📝 [POST-HANDLE] 컨트롤러 처리 완료 - 응답 상태: {}", response.getStatus());
-        
-        if (modelAndView != null) {
-            log.info("🎨 [POST-HANDLE] ModelAndView: {}", modelAndView.getViewName());
-        }
-    }
-    
-    // 요청 처리 완료 후 (뷰 렌더링 완료 후)
-    @Override
-    public void afterCompletion(HttpServletRequest request, 
-                               HttpServletResponse response, 
-                               Object handler, 
-                               Exception ex) throws Exception {
-        
-        Long startTime = (Long) request.getAttribute("startTime");
-        if (startTime != null) {
-            long endTime = System.currentTimeMillis();
-            long executionTime = endTime - startTime;
-            
-            log.info("✅ [AFTER-COMPLETION] 요청 처리 완료 - 총 소요시간: {}ms", executionTime);
-        }
-        
-        if (ex != null) {
-            log.error("❌ [AFTER-COMPLETION] 요청 처리 중 예외 발생: {}", ex.getMessage());
-        }
-    }
-}
-```
-
-#### 인터셉터 등록 설정
-
-```java
-@Configuration
-@RequiredArgsConstructor
-public class WebMvcConfiguration implements WebMvcConfigurer {
-    
-    private final PrimaveraInterceptor primaveraInterceptor;
-    
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(primaveraInterceptor)
-                .addPathPatterns("/**")          // 모든 경로에 적용
-                .excludePathPatterns(            // 제외할 경로
-                    "/health",
-                    "/actuator/**",
-                    "/static/**",
-                    "/css/**",
-                    "/js/**",
-                    "/images/**"
-                );
-    }
-    
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOrigins("http://localhost:3000")
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                .allowedHeaders("*")
-                .allowCredentials(true);
-    }
-}
-```
-
-### 6. ResponseBodyAdvice 활용
-
-#### 전역 응답 처리기
-
-```java
-@RestControllerAdvice
-@Slf4j
-public class GlobalResponseAdvice implements ResponseBodyAdvice<Object> {
-    
-    @Override
-    public boolean supports(MethodParameter returnType, 
-                           Class<? extends HttpMessageConverter<?>> converterType) {
-        // 모든 Controller 응답에 적용
-        return true;
-    }
-    
-    @Override
-    public Object beforeBodyWrite(Object body, 
-                                 MethodParameter returnType, 
-                                 MediaType selectedContentType,
-                                 Class<? extends HttpMessageConverter<?>> selectedConverterType, 
-                                 ServerHttpRequest request, 
-                                 ServerHttpResponse response) {
-        
-        String uri = request.getURI().getPath();
-        log.info("📤 [RESPONSE] 응답 데이터 처리: {} -> {}", uri, body);
-        
-        // API 응답 표준화
-        if (body instanceof String) {
-            // String 응답은 그대로 반환
-            return body;
-        }
-        
-        // 성공 응답 래핑
-        ApiResponse<?> apiResponse = ApiResponse.success(body);
-        response.getHeaders().add("X-Response-Time", String.valueOf(System.currentTimeMillis()));
-        
-        return apiResponse;
-    }
-}
-
-// 표준 API 응답 형태
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class ApiResponse<T> {
-    private boolean success;
-    private String message;
-    private T data;
-    private LocalDateTime timestamp;
-    
-    public static <T> ApiResponse<T> success(T data) {
-        return new ApiResponse<>(true, "Success", data, LocalDateTime.now());
-    }
-    
-    public static <T> ApiResponse<T> error(String message) {
-        return new ApiResponse<>(false, message, null, LocalDateTime.now());
-    }
-}
-```
-
-### 7. MariaDB Docker 설정
-
-#### Docker 컨테이너 생성 및 관리
-
-```bash
-# MariaDB 이미지 검색 및 다운로드
-docker search mariadb
-docker pull mariadb:10.11
-
-# 컨테이너 생성 및 실행
-docker run --name primavera-mariadb \
-    -d \
-    -p 3306:3306 \
-    -e MYSQL_ROOT_HOST=% \
-    -e MYSQL_ROOT_PASSWORD=root \
-    -e MYSQL_USER=primavera \
-    -e MYSQL_PASSWORD=primavera \
-    -e MYSQL_DATABASE=primavera \
-    -v mariadb_data:/var/lib/mysql \
-    mariadb:10.11
-
-# 컨테이너 상태 확인
-docker ps
-
-# 데이터베이스 접속
-docker exec -it primavera-mariadb bash
-mysql -u primavera -h 127.0.0.1 -p primavera
-
-# 기본 확인 쿼리
-SHOW DATABASES;
-USE primavera;
-SHOW TABLES;
-```
-
-#### 컨테이너 라이프사이클 관리
-
-```bash
-# 컨테이너 중지/시작/재시작
-docker stop primavera-mariadb
-docker start primavera-mariadb
-docker restart primavera-mariadb
-
-# 컨테이너 및 볼륨 삭제
-docker rm primavera-mariadb
-docker rm -v primavera-mariadb  # 볼륨까지 삭제
-
-# 로그 확인
-docker logs primavera-mariadb
-docker logs -f primavera-mariadb  # 실시간 로그
-```
-
-## 🔧 실습 예제
-
-### 데이터베이스 연결 테스트
-
+### Configuration 테스트
 ```java
 @SpringBootTest
-@Transactional
-class DatabaseConnectionTest {
-    
-    @Autowired
-    private DataSource dataSource;
-    
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
-    
-    @Test
-    @DisplayName("데이터베이스 연결 상태 확인")
-    void testDatabaseConnection() throws SQLException {
-        // Given
-        assertThat(dataSource).isNotNull();
-        
-        // When
-        try (Connection connection = dataSource.getConnection()) {
-            // Then
-            assertThat(connection.isValid(5)).isTrue();
-            log.info("✅ 데이터베이스 연결 성공: {}", connection.getMetaData().getURL());
-        }
-    }
-    
-    @Test
-    @DisplayName("JdbcTemplate을 통한 쿼리 실행 테스트")
-    void testJdbcTemplateQuery() {
-        // Given & When
-        String result = jdbcTemplate.queryForObject("SELECT 'Hello Primavera' as message", String.class);
-        
-        // Then
-        assertThat(result).isEqualTo("Hello Primavera");
-        log.info("📊 쿼리 실행 결과: {}", result);
-    }
-}
-```
-
-### 통합 테스트
-
-```java
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestMethodOrder(OrderAnnotation.class)
-class HelloControllerIntegrationTest {
+class ConfigurationTest {
     
     @Autowired
-    private TestRestTemplate restTemplate;
+    private PrimaveraProperties properties;
+    
+    @Autowired
+    private ApplicationContext context;
     
     @Test
     @Order(1)
-    @DisplayName("Hello World 엔드포인트 통합 테스트")
-    void testHelloWorldEndpoint() {
-        // Given
-        String url = "/";
-        
-        // When
-        ResponseEntity<Map> response = restTemplate.getForEntity(url, Map.class);
-        
-        // Then
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody()).containsKey("message");
-        assertThat(response.getBody().get("message")).isEqualTo("Hello Primavera World!");
-        
-        log.info("🎯 통합 테스트 성공: {}", response.getBody());
+    @DisplayName("설정 프로퍼티가 올바르게 바인딩되는지 확인")
+    void testConfigurationBinding() {
+        // Given & When & Then
+        assertThat(properties.getDatabase().getUsername()).isEqualTo("primavera");
+        assertThat(properties.getDatabase().getTables()).contains("user", "role");
+        assertThat(properties.getSearch().getParams().getPage()).isEqualTo(1);
+        assertThat(properties.getUsers()).hasSize(2);
     }
     
     @Test
     @Order(2)
-    @DisplayName("Health Check 엔드포인트 테스트")
-    void testHealthCheckEndpoint() {
-        // Given
-        String url = "/health";
+    @DisplayName("Bean이 올바른 스코프로 등록되는지 확인")
+    void testBeanScope() {
+        // Singleton 빈 테스트
+        Object bean1 = context.getBean("singletonService");
+        Object bean2 = context.getBean("singletonService");
+        assertThat(bean1).isSameAs(bean2);
         
-        // When
-        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-        
-        // Then
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody()).isEqualTo("Application is running!");
+        // Prototype 빈 테스트
+        Object prototype1 = context.getBean("prototypeHandler");
+        Object prototype2 = context.getBean("prototypeHandler");
+        assertThat(prototype1).isNotSameAs(prototype2);
     }
 }
 ```
 
 ## 🧪 테스트 전략
 
-### MockMvc를 이용한 웹 계층 테스트
+### JUnit 5 설정
+```gradle
+dependencies {
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api'
+    testImplementation 'org.junit.jupiter:junit-jupiter-params'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+}
 
+test {
+    useJUnitPlatform()
+}
+```
+
+### 테스트 프로파일 설정
 ```java
-@WebMvcTest(HelloController.class)
-class HelloControllerTest {
-    
-    @Autowired
-    private MockMvc mockMvc;
-    
-    @MockBean
-    private PrimaveraProperties properties;
+@SpringBootTest
+@ActiveProfiles("test")
+@TestPropertySource(properties = {
+    "com.genius.primavera.database.username=test_user",
+    "com.genius.primavera.database.password=test_pass"
+})
+class ProfileTest {
     
     @Test
-    @DisplayName("Hello World API Mock 테스트")
-    void testHelloWorldWithMockMvc() throws Exception {
-        // Given
-        when(properties.getDatabase()).thenReturn(new PrimaveraProperties.Database());
-        
-        // When & Then
-        mockMvc.perform(get("/"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.data.message").value("Hello Primavera World!"))
-                .andDo(print());
+    void testProfileSpecificConfiguration() {
+        // 테스트 전용 설정 검증
     }
 }
 ```
 
-## 📊 성능 모니터링
+## 📊 Bean Scope 비교표
 
-### AOP 기반 성능 측정
+| 스코프 | 생명주기 | 사용 사례 | 주의사항 |
+|-------|---------|----------|---------|
+| **singleton** | 컨테이너당 하나 | 상태가 없는 서비스 | 스레드 안전성 고려 |
+| **prototype** | 요청시마다 생성 | 상태를 가진 객체 | 메모리 누수 주의 |
+| **request** | HTTP 요청당 하나 | 웹 요청 컨텍스트 | 웹 환경에서만 사용 |
+| **session** | HTTP 세션당 하나 | 사용자 세션 데이터 | 세션 만료 고려 |
+| **application** | ServletContext당 하나 | 애플리케이션 전역 | 웹 애플리케이션 레벨 |
 
-```java
-@Aspect
-@Component
-@Slf4j
-public class PerformanceMonitoringAspect {
-    
-    @Around("execution(* com.genius.primavera.interfaces.*.*(..))")
-    public Object measureExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable {
-        StopWatch stopWatch = new StopWatch();
-        stopWatch.start();
-        
-        try {
-            Object result = joinPoint.proceed();
-            return result;
-        } finally {
-            stopWatch.stop();
-            String methodName = joinPoint.getSignature().toShortString();
-            long executionTime = stopWatch.getTotalTimeMillis();
-            
-            if (executionTime > 1000) {
-                log.warn("⚠️ [SLOW-QUERY] 느린 메서드 감지: {} ({}ms)", methodName, executionTime);
-            } else {
-                log.info("⚡ [PERFORMANCE] 메서드 실행 시간: {} ({}ms)", methodName, executionTime);
-            }
-        }
-    }
-}
+## 🚀 애플리케이션 실행
+
+### 개발 환경 실행
+```bash
+# 기본 프로파일로 실행
+./gradlew bootRun
+
+# 특정 프로파일로 실행
+./gradlew bootRun --args='--spring.profiles.active=dev'
+
+# JAR 파일 빌드 및 실행
+./gradlew build
+java -jar build/libs/chap01-0.0.1-SNAPSHOT.jar --spring.profiles.active=prod
+```
+
+### Docker 환경 실행
+```bash
+# 다중 프로파일 지원
+docker run -p 8080:8080 \
+    -e SPRING_PROFILES_ACTIVE=prod \
+    -e DB_USERNAME=prod_user \
+    -e DB_PASSWORD=prod_pass \
+    primavera:latest
 ```
 
 ## 📖 참고 자료
 
 ### 공식 문서
-- [Spring Web MVC](https://docs.spring.io/spring-framework/docs/current/reference/html/web.html#mvc)
-- [Spring AOP](https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#aop)
-- [AspectJ Programming Guide](https://www.eclipse.org/aspectj/doc/released/progguide/index.html)
+- [Spring Boot Configuration](https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.external-config)
+- [Spring Framework IoC Container](https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#beans)
+- [Bean Scopes](https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#beans-factory-scopes)
 
-### 아키텍처 참고
-- [MVC Context Hierarchy](https://docs.spring.io/spring-framework/docs/current/reference/html/web.html#mvc-servlet-context-hierarchy)
-- [Handler Interceptors](https://docs.spring.io/spring-framework/docs/current/reference/html/web.html#mvc-handlermapping-interceptor)
-- [MariaDB Connector/J](https://mariadb.com/kb/en/library/about-mariadb-connector-j/)
+### 모범 사례
+- [Constructor-based vs Setter-based DI](https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#beans-constructor-injection)
+- [Configuration Properties](https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.external-config.typesafe-configuration-properties)
+- [Profile-specific Configuration](https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.profiles)
 
 ## 🚀 다음 단계
 
-다음 Chapter에서는 **데이터 접근 계층**을 학습합니다:
-- HikariCP 커넥션 풀 최적화
-- JdbcTemplate을 통한 SQL 실행
-- 다중 데이터소스 구성
-- 선언적 트랜잭션 관리
+다음 Chapter에서는 **MVC와 AOP**를 학습합니다:
+- Spring MVC 아키텍처 패턴 구현
+- AOP를 통한 횡단 관심사 분리
+- 인터셉터와 필터 체인 활용
+- 관점 지향 프로그래밍 실습
 
 ---
 
-**🎓 학습 포인트**: AOP는 로깅, 트랜잭션, 보안 등 횡단 관심사를 효과적으로 분리할 수 있는 강력한 도구입니다. Spring MVC의 요청 처리 흐름을 이해하면 웹 애플리케이션의 전체적인 동작 원리를 파악할 수 있습니다.
+**🎓 학습 포인트**: 생성자 기반 의존성 주입은 불변성, 테스트 용이성, 순환 의존성 방지에 핵심적입니다. @ConfigurationProperties와 프로파일을 활용한 환경별 설정 관리는 실무에서 매우 중요한 기술입니다.

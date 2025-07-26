@@ -2,8 +2,10 @@ package com.genius.primavera.infrastructure.security.social.facebook;
 
 import com.genius.primavera.infrastructure.security.social.SocialUserDetails;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 public class FacebookUserDetails implements SocialUserDetails {
     private String id;
     private String email;

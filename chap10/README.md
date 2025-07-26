@@ -1,24 +1,102 @@
-## chap10
+## chap09
 
-### Test
-* https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-testing.html
-* MockMvc
-* WithUserDetails
-* MockBean
+### build.gradle spring-security-oauth2-client 추가
 
-### Thymeleaf
-* https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html
+```
+compile('org.springframework.security.oauth.boot:spring-security-oauth2-autoconfigure:2.3.4.RELEASE')
+```
 
-### Pagination
-* 페이지는 전체 아이템 수, 현재 페이지, 페이지 당 아이템, 페이지 노출 수를 이용
+#### Application.yml 추가
+```
+server:
+  ssl:
+    key-alias: primavera
+    key-store: chap09/primavera.p12
+    key-store-type: PKCS12
+    key-store-password: primavera
+    enabled: true
+  port: 8443
 
-#### Paged
-* 페이징을 위한 정보와 아이템을 관리
+google:
+  client:
+    clientId: ${OAUTH2_GOOGLE_CLIENTID}
+    clientSecret: ${OAUTH2_GOOGLE_CLIENTSECRET}
+    accessTokenUri: https://www.googleapis.com/oauth2/v4/token
+    userAuthorizationUri: https://accounts.google.com/o/oauth2/v2/auth
+    clientAuthenticationScheme: form
+    scope:
+      - email
+      - profile
+  resource:
+    userInfoUri: https://www.googleapis.com/oauth2/v3/userinfo
 
-#### PageRequest
-* 페이징을 위한 기본 정보를 관리
+facebook:
+  client:
+    clientId: ${OAUTH2_FACEBOOK_CLIENTID}
+    clientSecret: ${OAUTH2_FACEBOOK_CLIENTSECRET}
+    accessTokenUri: https://graph.facebook.com/oauth/access_token
+    userAuthorizationUri: https://www.facebook.com/dialog/oauth
+    tokenName: oauth_token
+    authenticationScheme: query
+    clientAuthenticationScheme: form
+  resource:
+    https://graph.facebook.com/me?fields=id,email,name
 
-#### PageRequest
-* 페이징을 위한 기본 정보를 관리
+github:
+  client:
+    clientId: ${OAUTH2_GITHUB_CLIENTID}
+    clientSecret: ${OAUTH2_GITHUB_CLIENTSECRET}
+    accessTokenUri: https://github.com/login/oauth/access_token
+    userAuthorizationUri: https://github.com/login/oauth/authorize
+    clientAuthenticationScheme: form
+  resource:
+    userInfoUri: https://api.github.com/user
 
-### wysihtml5 에디터 적용
+kakao:
+  client:
+    clientId: ${OAUTH2_KAKAO_CLIENTID}
+    accessTokenUri: https://kauth.kakao.com/oauth/token
+    userAuthorizationUri: https://kauth.kakao.com/oauth/authorize
+    authenticationScheme: form
+    clientAuthenticationScheme: form
+  resource:
+    userInfoUri: https://kapi.kakao.com/v2/user/me
+```
+
+### Flow
+* AuthorizationCodeAccessTokenProvider
+* OAuth2ClientAuthenticationProcessingFilter
+* OAuth2RestTemplate
+* OAuth2AccessTokenSupport
+* DefaultClientAuthenticationHandler
+
+### Application SSL
+
+#### Key Generation
+```
+keytool -genkeypair -alias primavera -storetype PKCS12 -keyalg RSA -keysize 2048  -keystore primavera.p12 -validity 3650
+```
+
+#### Local Damian
+* host 파일 수정
+
+```
+127.0.0.1       local.primavera.com
+```
+
+#### Social Authorization Callback URL
+ * https://localhost:8443/login/google
+ * https://localhost:8443/login/facebook
+ * https://localhost:8443/login/github
+ * https://localhost:8443/login/kakao
+
+### ETC
+* https://spring.io/guides/tutorials/spring-boot-oauth2/
+* https://developers.payco.com/guide/development/start
+* https://console.cloud.google.com
+  * https://developers.google.com/identity/protocols/oauth2
+* https://developers.facebook.com
+  * https://developers.facebook.com/docs/facebook-login/manually-build-a-login-flow/
+* https://github.com
+  * https://developer.github.com/apps/building-oauth-apps/authorizing-oauth-apps/
+* https://github.com/spring-projects/spring-security/wiki/OAuth-2.0-Migration-Guide

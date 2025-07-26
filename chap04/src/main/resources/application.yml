@@ -1,22 +1,20 @@
 spring:
   application:
-    name: privamera
-  profiles:
-    active: local
-    group:
-      local:
-        - console-appender
-        - file-debug-appender
-        - file-error-appender
-        - file-info-appender
-        - file-warn-appender
-      test:
-        - console-appender
+    name: primavera-chapter-03
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/primavera
+    username: primavera
+    password: primavera
+  banner:
+    charset: UTF-8
+    location: classpath:primavera.txt
 
 server:
   tomcat:
     use-apr: never
 
-primavera:
-  logs:
-    path: ./logs
+logging:
+  level:
+    org.springframework: debug
+    com.genius.primavera: debug

@@ -2,7 +2,6 @@ package com.genius.primavera.interfaces;
 
 import com.genius.primavera.application.user.UserService;
 import com.genius.primavera.domain.model.user.User;
-import com.genius.primavera.infrastructure.aspect.PrimaveraLogging;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,7 +25,6 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 
-	@PrimaveraLogging(type = "UserController")
 	@GetMapping(value = "/{id}")
 	public long getUserById(@PathVariable(value = "id") long id) {
 		return id;

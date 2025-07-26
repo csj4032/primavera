@@ -9,21 +9,21 @@ import com.genius.primavera.domain.model.article.WriteType;
 
 public interface WriteArticleService {
 
-    Article save(ArticleDto.WriteArticle writeArticle) throws ArticleNotFoundException;
+	Article save(ArticleDto.WriteArticle writeArticle) throws ArticleNotFoundException;
 
-    Article update(ArticleDto.WriteArticle writeArticle);
+	Article update(ArticleDto.WriteArticle writeArticle);
 
-    int delete(long id);
+	int delete(long id);
 
-    Article findById(long id);
+	Article findById(long id);
 
-    ArticleDto.DetailArticle hitAndFindArticle(long id);
+	ArticleDto.DetailArticle hitAndFindArticle(long id);
 
-    ArticleDto.DetailArticle findByIdWithContentAndComment(long id);
+	ArticleDto.DetailArticle findByIdWithContentAndComment(long id);
 
-    Paged<ArticleDto.ListArticle> findForPageable(PageRequest pageRequest);
+	Paged<ArticleDto.ListArticle> findForPageable(PageRequest pageRequest);
 
-    ArticleDto.FormArticle findByForForm(WriteType type, long id);
+	ArticleDto.FormArticle findByForForm(WriteType type, long id);
 
-    int comment(ArticleDto.WriteComment writeComment);
+	int comment(ArticleDto.WriteComment writeComment);
 }

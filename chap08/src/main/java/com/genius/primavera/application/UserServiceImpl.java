@@ -3,17 +3,18 @@ package com.genius.primavera.application;
 import com.genius.primavera.domain.mapper.UserMapper;
 import com.genius.primavera.domain.model.User;
 import com.genius.primavera.domain.model.UserStatus;
-import lombok.RequiredArgsConstructor;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
 @Service
-@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-	private final UserMapper userMapper;
+	@Autowired
+	private UserMapper userMapper;
 
 	@Override
 	public User save(User user) {
@@ -30,7 +31,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public User findByEmail(String email) {
-		return userMapper.findByEmail(email);
+	public User signIn(String userId, String password) {
+		return null;
 	}
 }

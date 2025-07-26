@@ -4,14 +4,22 @@ plugins {
 }
 
 dependencies {
-    implementation "org.springframework.boot:spring-boot-starter-aop"
-    implementation "org.springframework.boot:spring-boot-starter-web"
-    implementation "org.springframework.boot:spring-boot-starter-thymeleaf"
-    implementation "org.springframework.boot:spring-boot-starter-validation"
-    implementation "commons-io:commons-io:${commonsIoVersion}"
-    implementation "com.mysql:mysql-connector-j:${mysqlVersion}"
-    compileOnly "org.jetbrains:annotations:${jetbrainsAnnotationsVersion}"
-    testImplementation "org.springframework.boot:spring-boot-starter-test"
-    testImplementation "org.springframework.security:spring-security-test"
-    compileOnly project(":chap00")
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-jdbc")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("com.squareup.retrofit2:retrofit:${retrofitVersion}")
+    implementation("com.squareup.retrofit2:converter-gson:${retrofitVersion}")
+    implementation("org.hibernate.validator:hibernate-validator:${hibernateValidatorVersion}")
+    implementation("com.google.code.gson:gson:${gsonVersion}")
+    implementation("jakarta.annotation:jakarta.annotation-api:${javaxAnnotationVersion}")
+    runtimeOnly("com.h2database:h2:${h2Version}")
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude module: 'junit'
+        exclude module: 'junit-vintage-engine'
+    }
+
+    compileOnly("org.projectlombok:lombok:${lombokVersion}")
+    annotationProcessor("org.projectlombok:lombok:${lombokVersion}")
+    testCompileOnly("org.projectlombok:lombok:${lombokVersion}")
+    testAnnotationProcessor("org.projectlombok:lombok:${lombokVersion}")
 }

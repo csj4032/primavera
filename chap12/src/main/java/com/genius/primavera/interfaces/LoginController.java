@@ -1,7 +1,5 @@
 package com.genius.primavera.interfaces;
 
-import com.genius.primavera.infrastructure.aspect.PrimaveraLogging;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -13,7 +11,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 @RequiredArgsConstructor
 public class LoginController {
 
-    @PrimaveraLogging(type = "LoginController")
     @GetMapping(value = "/login")
     public String loginForm() {
         return "login";

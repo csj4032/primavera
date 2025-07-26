@@ -1,20 +1,16 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    schema: classpath:sql/schema.sql
+    url: jdbc:mysql://localhost:3306/primavera?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: primavera
+    password: primavera
     hikari:
       auto-commit: false
-      data-source-properties:
-        cachePrepStmts: false
-        useServerPrepStmts: false
-        useLocalSessionState: false
-        cacheResultSetMetadata: fales
-        preparedStatementCacheQueries: 0
+  sql:
+    init:
+      mode: always
   aop:
     proxy-target-class: true
-
-logging:
-  config: classpath:logback-spring.xml
 
 mybatis:
   configuration:

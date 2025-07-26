@@ -8,7 +8,7 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 /**
- * Chapter 04 - MyBatis 테스트를 위한 TestContainers 추상 클래스
+ * Chapter 03 - Spring JDBC 테스트를 위한 TestContainers 추상 클래스
  * MySQL 컨테이너를 사용하여 데이터베이스 테스트 환경을 제공합니다.
  */
 @Testcontainers
@@ -16,7 +16,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 public abstract class AbstractContainerTest {
 
     @Container
-    protected static final MySQLContainer<?> mysqlContainer = new MySQLContainer<>("mysql:8.4.6")
+    protected static final MySQLContainer<?> mysqlContainer = new MySQLContainer<>("mysql:8.0")
             .withDatabaseName("primavera")
             .withUsername("primavera")
             .withPassword("primavera")

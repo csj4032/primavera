@@ -15,24 +15,29 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-import lombok.RequiredArgsConstructor;
-
 import static java.util.stream.Collectors.toList;
 
 @Component
-@RequiredArgsConstructor
-public class PrimaveraSocialUserDetailsService extends PrimaveraUserDetailsService {
+public class PrimaveraSocialUserDetailsService implements UserDetailsService {
 
-    private final UserService userService;
+    @Autowired
+    private UserService userService;
 
     public UsernamePasswordAuthenticationToken doAuthentication(UserConnection userConnection) {
-        if (!userService.isExistUser(userConnection.getEmail())) {
-            userService.signUp(userConnection);
+        User user = userService.findByEmail(userConnection.getEmail());
+        if (user == null) {
+            return setAuthenticationToken(userService.signUp(userConnection));
         }
-        return setAuthenticationToken((PrimaveraUserDetails) loadUserByUsername(userConnection.getEmail()));
+        return setAuthenticationToken(user);
     }
 
-    private UsernamePasswordAuthenticationToken setAuthenticationToken(PrimaveraUserDetails primaveraUserDetails) {
-        return new UsernamePasswordAuthenticationToken(primaveraUserDetails, null, primaveraUserDetails.getAuthorities());
+    private UsernamePasswordAuthenticationToken setAuthenticationToken(User user) {
+        List<? extends GrantedAuthority> authorities = user.getRoles().stream().map(role -> new SimpleGrantedAuthority("ROLE_" + role.getType().toString())).collect(toList());
+        return new UsernamePasswordAuthenticationToken(new PrimaveraUserDetails(user), null, authorities);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return null;
     }
 }

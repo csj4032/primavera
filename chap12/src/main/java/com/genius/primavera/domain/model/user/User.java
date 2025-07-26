@@ -25,8 +25,8 @@ import lombok.ToString;
 @Setter
 @Builder
 @ToString
+@AllArgsConstructor
 @NoArgsConstructor
-@AllArgsConstructor(staticName = "of")
 @EqualsAndHashCode(of = {"id", "email"})
 public class User {
 
@@ -51,6 +51,6 @@ public class User {
     @NotNull
     @Size(min = 1)
     private List<Role> roles;
-    private LocalDateTime regDt;
-    private LocalDateTime modDt;
+    private LocalDateTime createAt;
+    private LocalDateTime updatedAt;
 }

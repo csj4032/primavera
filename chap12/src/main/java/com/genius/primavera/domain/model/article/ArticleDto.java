@@ -1,9 +1,6 @@
 package com.genius.primavera.domain.model.article;
 
-import org.springframework.web.multipart.MultipartFile;
-
 import java.time.Instant;
-import java.util.List;
 
 import jakarta.validation.constraints.NotEmpty;
 
@@ -23,7 +20,6 @@ public class ArticleDto {
         private long author;
         private String contents;
         private WriteType writeType = WriteType.FORM;
-        private MultipartFile file;
     }
 
     @Getter
@@ -36,8 +32,8 @@ public class ArticleDto {
         private int hit;
         private int recommend;
         private int disapprove;
-        private Instant regDt;
-        private Instant modDt;
+        private Instant createAt;
+        private Instant updatedAt;
 
         public String getSubject() {
             return (level > 1 ? "[RE] " : "") + subject;
@@ -58,9 +54,8 @@ public class ArticleDto {
         private int disapprove;
         private String contents;
         private CommentDto.Detail[] comments;
-        private List<Attachment> attachments;
-        private Instant regDt;
-        private Instant modDt;
+        private Instant createAt;
+        private Instant updatedAt;
 
         public long getCommentSize() {
             return comments.length;

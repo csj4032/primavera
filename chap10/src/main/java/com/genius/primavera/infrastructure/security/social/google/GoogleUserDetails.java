@@ -5,8 +5,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.genius.primavera.infrastructure.security.social.SocialUserDetails;
 
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 public class GoogleUserDetails implements SocialUserDetails {
     private String sub;
     private String name;

@@ -3,10 +3,6 @@ plugins {
     id 'io.spring.dependency-management' version "${springDependencyManagementVersion}"
 }
 
-compileJava {
-    options.compilerArgs += ["-Xlint:deprecation"]
-}
-
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web") {
         exclude module: "spring-boot-starter-tomcat"
@@ -16,16 +12,16 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-jdbc"
     implementation "org.springframework.boot:spring-boot-starter-thymeleaf"
     implementation "org.springframework.boot:spring-boot-starter-validation"
-    implementation "org.springframework.boot:spring-boot-starter-security"
-    implementation "org.springframework.boot:spring-boot-starter-oauth2-client"
-    implementation "org.springframework.security:spring-security-oauth2-client:${springSecurityVersion}"
-    implementation "org.springframework.security:spring-security-oauth2-jose:${springSecurityVersion}"
     implementation "org.springframework.boot:spring-boot-devtools"
-    implementation "com.github.gavlyukovskiy:p6spy-spring-boot-starter:${p6spySpringBootStarterVersion}"
+    implementation "org.springframework.security:spring-security-config:${springSecurityVersion}"
+    implementation "org.springframework.security:spring-security-core:${springSecurityVersion}"
+    implementation "org.springframework.security:spring-security-crypto:${springSecurityVersion}"
+    implementation "org.springframework.security:spring-security-web:${springSecurityVersion}"
     implementation "org.thymeleaf.extras:thymeleaf-extras-springsecurity6:${thymeleafExtrasSpringSecurity6Version}"
     implementation "org.mybatis.spring.boot:mybatis-spring-boot-starter:${mybatisSpringBootStarterVersion}"
-    implementation "org.mybatis.dynamic-sql:mybatis-dynamic-sql:${mybatisDynamicSqlVersion}"
+    implementation "com.github.gavlyukovskiy:p6spy-spring-boot-starter:${p6spySpringBootStarterVersion}"
     implementation "com.mysql:mysql-connector-j:${mysqlVersion}"
+    implementation "org.mybatis.dynamic-sql:mybatis-dynamic-sql:${mybatisDynamicSqlVersion}"
     implementation "org.hibernate:hibernate-core:${hibernateVersion}"
     implementation "nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:${thymeleafLayoutDialectVersion}"
     implementation "org.graalvm.js:js:${graalvmJsVersion}"
@@ -39,6 +35,5 @@ dependencies {
     testImplementation "org.springframework.security:spring-security-test:${springSecurityVersion}"
     testImplementation "org.testcontainers:junit-jupiter:${testContainersVersion}"
     testImplementation "org.testcontainers:mysql:${testContainersVersion}"
-    testImplementation "io.rest-assured:rest-assured:${restAssuredVersion}"
-    implementation "com.navercorp.lucy:lucy-xss-servlet:${lucyXssServletVersion}"
+    implementation project(":appendix:spring-boot-starter-lucy-filter")
 }

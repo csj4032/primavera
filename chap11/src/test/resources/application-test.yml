@@ -1,25 +1,27 @@
 spring:
-  application:
-    name: primavera-test
-  
-  # 테스트 환경 - TestContainers가 동적으로 DataSource 설정
-  # 실제 MySQL 8.4.0 컨테이너 사용
-  
-  flyway:
-    enabled: false  # schema.sql 사용
-  
-  sql:
-    init:
-      mode: never
-  
-  # JPA 완전 비활성화 (MyBatis 전용)
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/primavera?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: primavera
+    password: primavera
+  banner:
+    charset: UTF-8
+    location: classpath:primavera.txt
+  thymeleaf:
+    cache: false
+    enabled: true
+    prefix: classpath:/templates/
+    suffix: .html
   autoconfigure:
     exclude:
-      - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
-      - org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration
-      - org.springframework.boot.autoconfigure.jdbc.JpaDataSourceAutoConfiguration
+      - org.springframework.boot.autoconfigure.security.oauth2.client.servlet.OAuth2ClientAutoConfiguration
+      - org.springframework.boot.autoconfigure.security.oauth2.resource.servlet.OAuth2ResourceServerAutoConfiguration
 
-# MyBatis 설정
+server:
+  ssl:
+    enabled: false
+  port: 8080
+
 mybatis:
   configuration:
     map-underscore-to-camel-case: true
@@ -28,28 +30,8 @@ mybatis:
   type-aliases-package: com.genius.primavera.domain
   type-handlers-package: com.genius.primavera.domain
 
-# OAuth2 환경변수 기본값 설정 (테스트용)
-google:
-  client:
-    clientId: test-client-id
-    clientSecret: test-client-secret
-    redirectUri: http://localhost:8080/login/oauth2/code/google
-
-facebook:
-  client:
-    clientId: test-facebook-id
-    clientSecret: test-facebook-secret
-    redirectUri: http://localhost:8080/login/oauth2/code/facebook
-
-github:
-  client:
-    clientId: test-github-id
-    clientSecret: test-github-secret
-    redirectUri: http://localhost:8080/login/oauth2/code/github
-
 logging:
   level:
-    org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
     com.genius.primavera: DEBUG
-    root: WARN
+    org.springframework.security: DEBUG
+    org.springframework.boot.autoconfigure: DEBUG

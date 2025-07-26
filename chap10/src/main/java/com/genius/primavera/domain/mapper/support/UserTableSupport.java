@@ -1,6 +1,6 @@
 package com.genius.primavera.domain.mapper.support;
 
-import com.genius.primavera.domain.model.user.UserStatus;
+import com.genius.primavera.domain.model.UserStatus;
 
 import org.mybatis.dynamic.sql.SqlColumn;
 import org.mybatis.dynamic.sql.SqlTable;

@@ -1,40 +1,60 @@
-## chap07
+## chap06
 
-### ApplicationConfiguration
-* ApplicationConfiguration.java 어플리케이션 설정
+### Thymeleaf and AdminLTE
+* Thymeleaf 의존성, Layout 설정
 
-### Filter
-* org.springframework.boot.web.servlet.filter 패키지
 ```
-2019-04-16 19:14:35.999 DEBUG 48150 --- [  restartedMain] .s.b.w.s.f.OrderedHiddenHttpMethodFilter : Filter 'hiddenHttpMethodFilter' configured for use
-2019-04-16 19:14:35.999 DEBUG 48150 --- [  restartedMain] o.s.b.w.s.f.OrderedRequestContextFilter  : Filter 'requestContextFilter' configured for use
-2019-04-16 19:14:35.999 DEBUG 48150 --- [  restartedMain] s.b.w.s.f.OrderedCharacterEncodingFilter : Filter 'characterEncodingFilter' configured for use
-2019-04-16 19:14:35.999 DEBUG 48150 --- [  restartedMain] o.s.b.w.s.f.OrderedFormContentFilter     : Filter 'formContentFilter' configured for use
-2019-04-16 19:14:36.001 DEBUG 48150 --- [  restartedMain] io.undertow                              : starting undertow server io.undertow.Undertow@b3f2d5b
-``` 
-
-### lucy-xss-filter
-* [참고](https://github.com/naver/lucy-xss-filter)
-```
-@Bean
-public FilterRegistrationBean<XssEscapeServletFilter> filterRegistrationBean() {
-    FilterRegistrationBean<XssEscapeServletFilter> filterRegistration = new FilterRegistrationBean<>();
-    filterRegistration.setFilter(new XssEscapeServletFilter());
-    filterRegistration.setOrder(1);
-    filterRegistration.addUrlPatterns("/*");
-    return filterRegistration;
-}
+thymeleaf:
+  cache: false
+  enabled: true
+  prefix: classpath:/templates/
+  suffix: .html
 ```
 
-### Undertow
 ```
-dependencies {
-    implementation('org.springframework.boot:spring-boot-starter-web') {
-        exclude module: "spring-boot-starter-tomcat"
-    }
-    compile('org.springframework.boot:spring-boot-starter-undertow')
-}
+implementation('org.springframework.boot:spring-boot-starter-thymeleaf')
+compile('nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:2.3.0')
+```
+
+* AdminLTE 추가
+* 로그인, 로그아웃 기능 추가
+
+### Log4Jdbc
+
+* build.gradle
+```
+compile('org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4.1:1.16')
+```
+
+* application.yml
+```
+datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+    url: jdbc:log4jdbc:mariadb://localhost:3306/primavera
+    username: primavera
+    password: primavera
+    hikari:
+      connection-test-query: SELECT 1 FROM DUAL
+```
+
+* log4jdbc.log4j2.properties
+```
+log4jdbc.spylogdelegator.name = net.sf.log4jdbc.log.slf4j.Slf4jSpyLogDelegator
+log4jdbc.dump.sql.maxlinelength = 0
+```
+* logback.xml
+```    
+<logger name="jdbc.sqlonly" level="DEBUG"/>
+<logger name="jdbc.resultsettable" level="DEBUG"/>
+```
+
+### JPA Relation Advance
+```sql
+CREATE DATABASE advance DEFAULT CHARACTER SET utf8mb4;
+GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, ALTER ON advance.* TO 'relation'@'%';
 ```
 
 ### ETC
-* Chain of Responsibility Pattern 참고
+* thymeleaf [참고](https://www.thymeleaf.org/)
+* adminLTE [참고](https://adminlte.io)

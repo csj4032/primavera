@@ -1,9 +1,6 @@
 package com.genius.primavera.domain;
 
-
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;

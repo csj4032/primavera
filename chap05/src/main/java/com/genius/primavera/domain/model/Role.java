@@ -2,9 +2,6 @@ package com.genius.primavera.domain.model;
 
 import lombok.*;
 
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
-
 @Getter
 @Setter
 @ToString
@@ -12,9 +9,6 @@ import jakarta.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Role {
-	@NotNull
-	@Min(value = 1)
 	private long id;
-	@NotNull
 	private RoleType type;
 }

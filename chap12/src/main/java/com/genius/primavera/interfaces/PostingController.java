@@ -3,7 +3,6 @@ package com.genius.primavera.interfaces;
 import com.genius.primavera.application.post.PostingService;
 import com.genius.primavera.domain.PageRequest;
 import com.genius.primavera.domain.model.post.PostDto;
-import com.genius.primavera.infrastructure.aspect.PrimaveraLogging;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -14,17 +13,18 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Controller
-@RequiredArgsConstructor
 public class PostingController {
 
     private final PostingService postService;
 
-    @PrimaveraLogging(type = "PostingController")
+    public PostingController(PostingService postingService) {
+        this.postService = postingService;
+    }
+
     @GetMapping("/posts")
     public String listForPageable(Model model, PageRequest pageRequest, @RequestParam(value = "keyword", defaultValue = "", required = false) String keyword) {
         model.addAttribute("page", postService.findForPageable(pageRequest, keyword));

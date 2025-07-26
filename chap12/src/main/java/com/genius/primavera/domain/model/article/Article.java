@@ -1,21 +1,21 @@
 package com.genius.primavera.domain.model.article;
 
 import com.genius.primavera.domain.model.user.User;
-import lombok.*;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import lombok.*;
+
 @Getter
 @Setter
 @Builder
-@ToString
+@ToString(exclude = {"parent", "children", "comments"})
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(of = "id")
 public class Article {
 	private long id;
 	private long pId;
@@ -32,11 +32,8 @@ public class Article {
 	private int disapprove;
 	private Content content;
 	private Comment[] comments;
-	@Builder.Default
-	private List<Attachment> attachments = new ArrayList<>();
-	private Attachment saveAttachment;
-	private Instant regDt;
-	private Instant modDt;
+	private Instant createAt;
+	private Instant updatedAt;
 
 	public long getAuthorId() {
 		return author.getId();
@@ -63,13 +60,12 @@ public class Article {
 	}
 
 	public Article rootParent() {
-		if (this.getParentId() == 0) return this;
-		return parent.getParent();
+		if (this.parent == null) return this;
+		return parent.rootParent();
 	}
 
 	public long getParentId() {
-		if (Objects.isNull(parent)) return 0;
-		return this.parent.getId();
+		return this.pId;
 	}
 
 	public Article[] getSibling() {
@@ -77,15 +73,7 @@ public class Article {
 		return parent.getChildren();
 	}
 
-	public void setContents(String contents) {
-		content.setContents(contents);
-	}
-
-	public long getParentReference() {
-		return parent.getReference();
-	}
-
-	public int getParentStep() {
-		return parent.getStep();
+	public String toHierarchy() {
+		return IntStream.range(0, this.level).mapToObj(e -> "--").collect(Collectors.joining()) + getId() + " " + getSubject() + " " + getAuthorName() + " " + getCreateAt();
 	}
 }

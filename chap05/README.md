@@ -1,395 +1,71 @@
-# Chapter 05: 고급 유효성 검증 및 웹 API 개발
+## chap04
 
-## 📋 개요
+### Logback File Configuration
 
-이 챕터에서는 Spring Boot와 MyBatis를 활용한 고급 유효성 검증 시스템과 RESTful API 개발을 다룹니다. 사용자 관리 시스템을 통해 복잡한 비즈니스 규칙 검증, 커스텀 Validator 구현, 그리고 TestContainers를 활용한 통합 테스트를 학습합니다.
-
-## 🏗️ 아키텍처
-
-### 계층 구조
+### Mybatis Auto Configuration
 ```
-┌─────────────────────────────────────┐
-│        Interface Layer              │  ← REST Controllers, AJAX Endpoints
-├─────────────────────────────────────┤
-│        Application Layer            │  ← Business Services, Custom Validators
-├─────────────────────────────────────┤
-│        Domain Layer                 │  ← Models, Mappers, Type Handlers
-└─────────────────────────────────────┘
-```
-
-### 주요 컴포넌트
-- **Domain Models**: 풍부한 유효성 검증이 포함된 엔티티
-- **MyBatis Mappers**: 어노테이션 기반 SQL 매핑
-- **Custom Validators**: 비즈니스 규칙에 특화된 검증 로직
-- **REST Controllers**: 그룹 기반 유효성 검증을 지원하는 API
-
-## 🛠️ 기술 스택
-
-### 핵심 기술
-- **Spring Boot 3.5.3**: 메인 프레임워크
-- **MyBatis 3.x**: SQL 매핑 및 동적 쿼리
-- **Jakarta Bean Validation**: 선언적 유효성 검증
-- **GraalVM JavaScript**: 복잡한 검증 로직 스크립팅
-- **BCrypt**: 비밀번호 암호화
-
-### 데이터베이스
-- **MySQL 8.0**: 주 데이터베이스
-- **TestContainers**: 통합 테스트용 컨테이너
-
-### 테스트 도구
-- **JUnit 5**: 테스트 프레임워크
-- **TestRestTemplate**: REST API 테스트
-- **TestContainers**: 데이터베이스 통합 테스트
-
-## 📁 프로젝트 구조
-
-```
-chap05/
-├── src/main/java/com/genius/primavera/
-│   ├── PrimaveraApplication.java                    # 메인 애플리케이션
-│   ├── application/                                 # 응용 계층
-│   │   ├── UserService.java                        # 서비스 인터페이스
-│   │   ├── UserServiceImpl.java                    # 서비스 구현체
-│   │   └── validator/                              # 커스텀 검증자
-│   │       ├── Nickname.java                       # 닉네임 검증 어노테이션
-│   │       └── NicknameValidator.java              # 닉네임 검증 로직
-│   ├── domain/                                     # 도메인 계층
-│   │   ├── model/                                  # 도메인 모델
-│   │   │   ├── User.java                          # 사용자 엔티티
-│   │   │   ├── Role.java                          # 권한 엔티티
-│   │   │   ├── UserRole.java                      # 사용자-권한 연관
-│   │   │   ├── RoleType.java                      # 권한 타입 enum
-│   │   │   ├── UserStatus.java                    # 사용자 상태 enum
-│   │   │   ├── TypeHandlerException.java          # 타입 핸들러 예외
-│   │   │   └── typehandler/                       # MyBatis 타입 핸들러
-│   │   │       ├── RoleTypeHandler.java           # 권한 타입 변환
-│   │   │       └── UserStatusTypeHandler.java     # 상태 변환
-│   │   └── mapper/                                 # 데이터 접근 계층
-│   │       ├── UserMapper.java                    # 사용자 매퍼
-│   │       ├── UserRoleMapper.java                # 권한 매퍼
-│   │       └── support/                           # 매퍼 지원 클래스
-│   │           └── UserTableSupport.java          # MyBatis Dynamic SQL 지원
-│   └── interfaces/                                 # 인터페이스 계층
-│       ├── UserController.java                    # 사용자 REST API
-│       └── AjaxController.java                    # AJAX 엔드포인트
-├── src/test/java/com/genius/primavera/
-│   ├── domain/                                     # 테스트 인프라
-│   │   ├── AbstractContainerTest.java             # 컨테이너 테스트 기반 클래스
-│   │   └── AbstractJpaContainerTest.java          # JPA 테스트 기반 클래스
-│   └── interfaces/                                 # 인터페이스 테스트
-│       ├── AjaxControllerTest.java                # AJAX API 테스트
-│       ├── UserSaveValidationTest.java            # 사용자 등록 검증 테스트
-│       └── UserUpdateValidationTest.java          # 사용자 수정 검증 테스트
-└── src/test/resources/
-    └── sql/
-        └── schema.sql                              # 테스트 DB 스키마
-```
-
-## 🔍 주요 기능
-
-### 1. 고급 유효성 검증 시스템
-
-#### 다층 검증 구조
-```java
-@Getter @Setter @Builder
-@ScriptAssert(lang = "graal.js", 
-    script = "_this.isComplex(_this.regDate, _this.modDate)", 
-    message = "등록일자와 수정일자는 필수 입니다.")
-public class User {
-    @Min(value = 1, groups = UpdateGroup.class)
-    private long id;
-    
-    @Email
-    private String email;
-    
-    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&+=])(?=\\S+$).{8,20}$")
-    private String password;
-    
-    @Nickname  // 커스텀 검증자
-    private String nickname;
-    
-    @NotNull(groups = UpdateGroup.class)
-    private UserStatus status;
-}
-```
-
-#### 커스텀 검증자
-```java
-@Constraint(validatedBy = NicknameValidator.class)
-@Target({ElementType.FIELD})
-@Retention(RetentionPolicy.RUNTIME)
-public @interface Nickname {
-    String message() default "올바르지 않은 별명입니다.";
-    Class<?>[] groups() default {};
-    Class<? extends Payload>[] payload() default {};
-}
-```
-
-#### 검증 그룹 활용
-```java
-@PostMapping("/save")
-@Validated(User.SaveGroup.class)
-public ResponseEntity<User> save(@Valid @RequestBody User user) {
-    // 저장 시에만 적용되는 검증 규칙
-}
-
-@PostMapping("/update")  
-@Validated(User.UpdateGroup.class)
-public ResponseEntity<User> update(@Valid @RequestBody User user) {
-    // 수정 시에만 적용되는 검증 규칙 (ID 필수)
-}
-```
-
-### 2. MyBatis 고급 매핑
-
-#### 어노테이션 기반 매핑
-```java
-@Mapper
-public interface UserMapper {
-    @Results(id = "USER_WITH_ROLES", value = {
-        @Result(property = "id", column = "ID"),
-        @Result(property = "email", column = "EMAIL"),
-        @Result(property = "roles", javaType = List.class, column = "ID", 
-                many = @Many(select = "com.genius.primavera.domain.mapper.UserRoleMapper.findByUserId"))
-    })
-    @Select("SELECT ID, EMAIL, NICKNAME, PASSWORD, STATUS, CREATED_AT, UPDATED_AT FROM USERS WHERE ID = #{id}")
-    User findByIdWithRoles(@Param("id") long id);
-}
-```
-
-#### 커스텀 타입 핸들러
-```java
-@Component
-public class UserStatusTypeHandler extends BaseTypeHandler<UserStatus> {
-    @Override
-    public void setNonNullParameter(PreparedStatement ps, int i, UserStatus parameter, JdbcType jdbcType) 
-            throws SQLException {
-        ps.setInt(i, parameter.getValue());
-    }
-    
-    @Override
-    public UserStatus getNullableResult(ResultSet rs, String columnName) throws SQLException {
-        return UserStatus.findByValue(rs.getInt(columnName));
-    }
-}
-```
-
-### 3. TestContainers 통합 테스트
-
-#### 컨테이너 기반 테스트 설정
-```java
-@Testcontainers
-public abstract class AbstractContainerTest {
-    @Container
-    protected static final MySQLContainer<?> mysqlContainer = new MySQLContainer<>("mysql:8.0")
-            .withDatabaseName("primavera")
-            .withUsername("primavera")
-            .withPassword("primavera")
-            .withInitScript("sql/schema.sql")
-            .withCommand("--character-set-server=utf8mb4", "--collation-server=utf8mb4_unicode_ci");
-
-    @DynamicPropertySource
-    static void setProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", mysqlContainer::getJdbcUrl);
-        registry.add("spring.datasource.username", mysqlContainer::getUsername);
-        registry.add("spring.datasource.password", mysqlContainer::getPassword);
-    }
-}
-```
-
-#### 포괄적인 검증 테스트
-```java
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@DisplayName("사용자 등록 유효성 검증 테스트")
-public class UserSaveValidationTest extends AbstractContainerTest {
-    
-    @Test
-    @DisplayName("잘못된 이메일 형식 유효성 검증")
-    public void saveAndReturnUserIllegalEmail() {
-        User source = User.builder()
-            .email("genius@")  // 잘못된 이메일 형식
-            .password("Secret0!")
-            .nickname("genius")
-            .roles(List.of(new Role(1, RoleType.USER)))
-            .build();
-        
-        ResponseEntity<User> response = restTemplate.postForEntity("/users/save", source, User.class);
-        assertEquals(400, response.getStatusCodeValue());
-    }
-}
-```
-
-## 🚀 실행 방법
-
-### 1. 환경 요구사항
-- **Java 17+**
-- **Docker** (TestContainers 사용)
-- **MySQL 8.0** (로컬 실행 시)
-
-### 2. 애플리케이션 실행
-```bash
-# 1. 프로젝트 루트에서 빌드
-./gradlew :chap05:build
-
-# 2. 애플리케이션 실행
-./gradlew :chap05:bootRun
-
-# 3. 테스트 실행
-./gradlew :chap05:test
-```
-
-### 3. API 엔드포인트
-
-#### 사용자 관리 API
-```http
-# 사용자 조회
-GET /users/{id}
-
-# 사용자 등록 (SaveGroup 검증)
-POST /users/save
-Content-Type: application/json
-{
-    "email": "user@example.com",
-    "password": "Complex1!",
-    "nickname": "nickname",
-    "roles": [{"id": 1, "type": "USER"}]
-}
-
-# 사용자 수정 (UpdateGroup 검증)
-POST /users/update
-Content-Type: application/json
-{
-    "id": 1,
-    "nickname": "newNickname",
-    "status": "ON"
-}
-```
-
-#### AJAX API
-```http
-# AJAX 테스트 페이지
-GET /ajax
-
-# HTML 응답
-GET /ajax/html
-
-# JSON 응답
-GET /ajax/form
-
-# 파라미터 처리
-GET /ajax/form/data?id=1&email=test@example.com
-```
-
-## 🧪 테스트 전략
-
-### 1. 유효성 검증 테스트
-- **이메일 형식 검증**: 정규표현식 기반 검증
-- **비밀번호 복잡성**: 대소문자, 숫자, 특수문자 조합
-- **닉네임 검증**: 한글, 영문, 숫자 조합 및 길이 제한
-- **권한 검증**: 필수 권한 및 유효한 권한 ID 검증
-- **날짜 로직 검증**: GraalVM JavaScript를 통한 복잡한 날짜 검증
-
-### 2. 통합 테스트
-- **TestContainers**: 실제 MySQL 컨테이너 사용
-- **전체 애플리케이션 컨텍스트**: 모든 레이어 통합 테스트
-- **HTTP 클라이언트 테스트**: TestRestTemplate 활용
-
-### 3. 테스트 데이터
-```sql
--- 테스트용 사용자 데이터
-INSERT INTO USERS (ID, EMAIL, PASSWORD, NICKNAME, STATUS, CREATED_AT, UPDATED_AT) VALUES 
-(1, 'genius@gmail.com', '$2a$10$N8kKAJz4rT8d.JLZ8QqC6O8.YhJQrGeFGRqF2QhPZKJf3ZcJwQq7e', 
- 'genius', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-
--- 권한 데이터
-INSERT INTO ROLES (ID, TYPE) VALUES 
-(1, 1), -- ADMINISTRATOR
-(2, 2), -- MANAGER  
-(3, 3); -- USER
-```
-
-## 📚 학습 포인트
-
-### 1. 고급 유효성 검증
-- **검증 그룹**: 상황별 다른 검증 규칙 적용
-- **커스텀 검증자**: 비즈니스 로직에 특화된 검증
-- **스크립트 검증**: JavaScript를 활용한 복잡한 검증 로직
-
-### 2. MyBatis 고급 기능
-- **중첩 결과 매핑**: 연관 관계 매핑
-- **타입 핸들러**: 커스텀 타입 변환
-- **동적 SQL**: MyBatis Dynamic SQL 활용
-
-### 3. 테스트 자동화
-- **컨테이너 기반 테스트**: 실제 환경과 동일한 테스트
-- **테스트 격리**: 각 테스트 독립적 실행
-- **포괄적 커버리지**: 다양한 검증 시나리오 테스트
-
-## 🔧 설정
-
-### application-local.yml
-```yaml
-spring:
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/primavera
-    username: primavera
-    password: primavera
-    hikari:
-      auto-commit: false
-      data-source-properties:
-        cachePrepStmts: false
-        useServerPrepStmts: false
-        useLocalSessionState: false
-        cacheResultSetMetadata: false
-        preparedStatementCacheQueries: 0
-  aop:
-    proxy-target-class: true
-
 mybatis:
   configuration:
     map-underscore-to-camel-case: true
     default-fetch-size: 1000
     default-statement-timeout: 30
-    cache-enabled: false
-    local-cache-scope: statement
   type-aliases-package: com.genius.primavera.domain
   type-handlers-package: com.genius.primavera.domain
 ```
 
-### build.gradle
-```gradle
-dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
-    implementation 'org.springframework.boot:spring-boot-devtools'
-    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter'
-    implementation 'org.graalvm.js:js:20.2.0'
-    implementation 'org.graalvm.js:js-scriptengine:20.2.0'
-    implementation 'com.mysql:mysql-connector-j'
-    
-    testImplementation 'org.testcontainers:mysql'
-    testImplementation 'org.testcontainers:junit-jupiter'
-}
+### WINNER TABLE
+```
+CREATE TABLE IF NOT EXISTS WINNER (
+    ID int(11) NOT NULL AUTO_INCREMENT,
+    USER_ID int(45) NOT NULL,
+    WINNER enum('WINNER','LOSER') NOT NULL,
+    REG_DT datetime NOT NULL,
+    PRIMARY KEY (ID)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 ```
 
-## 🎯 주요 특징
+### Spring Boot Test
+* WinnerServiceIsolationTest
+* WinnerServicePropagationTest
+* RoleMapperTest
+* UserMapperTest (Dynamic Sql)
+* WinnerMapperTest
 
-- ✅ **다층 유효성 검증**: 어노테이션, 커스텀 검증자, 스크립트 검증
-- ✅ **검증 그룹 지원**: 상황별 검증 규칙 적용
-- ✅ **MyBatis 고급 매핑**: 중첩 결과, 타입 핸들러
-- ✅ **컨테이너 기반 테스트**: TestContainers 활용
-- ✅ **RESTful API**: 표준 HTTP 상태 코드 활용
-- ✅ **한국어 지원**: 다국어 메시지 및 한글 닉네임 검증
-- ✅ **LiveReload**: 개발 생산성 향상을 위한 실시간 새로고침
+### ACID (원자성, 일관성, 격리성, 지속성)
+* 원자성(Atomicity) : 트랜잭션은 연속적인 액션들로 이루어진 원자성 작업, 트랜잭션의 액션은 전부다 수행되거나 아무것도 수행되지 안도록 보장 
+* 일관성(Consistency) : 트랜잭션의 액션이 모두 완료되면 커밋되고 데이터 및 리소스는 비즈니스 규칙에 맞게 일관된 상태를 유지
+* 격리성(Isolation) : 동일한 데이터 여러 트랜잭션이 동시에 처리할 경우 데이터가 변질되지 않게 하려면 각각의 트랜잭션을 격리
+* 지속성(Durability) : 트랜잭션 완료 후 그 결과는 설령 시스템이 실패 하더라도 살마남아야 함 (보통 트랜잭션 결과물은 퍼시스턴스 저장소에 씌어짐)
 
-## 📖 참고 자료
+### Spring Propagation
+| 전달 속성 | 설명 |
+|---|---|
+| REQUIRED | 진행 중인 트랜잭션이 있으면 현재 메서드를 그 트랜잭션에서 실행하되, 그렇지 않을 경우 새 트랜잭션을 시작해서 실행 |
+| REQUIRES_NEW | 항상 새 트랜잭션을 시작해 현재 메서드를 실행하고 진행 중인 트랜잭션이 있으면 잠시 중단 |
+| SUPPORTS | 진행 중인 트랜잭션이 있으면 현재 메서드를 그 트랜잭션 내에서 실행하되, 그렇지 않을 경우 트랜잭션 없이 실행 |
+| NOT_SUPPORTED | 트랜잭션 없이 현재 메서드를 실행하고 진행 중인 트랜잭션이 있으면 잠시 중단 시킴 |
+| MANDATORY | 반드시 트랜잭션을 걸고 현재 메서드를 실행하되 진행 중인 트랜잭션이 없으면 예외를 던짐 |
+| NEVER | 반드시 트랜잭션 없이 현재 메서드를 실행하되 진행 중인 트랜잭션이 있으면 예외를 던짐 |
+| NESTED | 진행 중인 트랜잭션이 있으면 현재 메서드를 이 트랜잭션의 중첩 트랜잭션 내에서 실행함. 진행 중인 트랜잭션에 영향을 받음. 진행 중인 트랜잭션이 없으면 새 트랜잭션을 시작해서 실행함 이 기능은 스프링에서만 사용됨 |
 
-- [Spring MVC Test Framework](https://docs.spring.io/spring/docs/current/spring-framework-reference/testing.html#spring-mvc-test-framework)
-- [Spring-boot-data-source-decorator](https://github.com/gavlyukovskiy/spring-boot-data-source-decorator)
-- [Migration from Nashorn to GraalVM JavaScript](https://golb.hplar.ch/2020/04/java-javascript-engine.html)
-- [Hibernate Validator](https://docs.jboss.org/hibernate/stable/validator/reference/en-US/html_single/)
-- [LiveReload Extensions](http://livereload.com/extensions/)
+### Read phenomena
+* Dirty read : T2가 수정 후 커밋하지 않은 필드을 T1이 읽는 상황에서 나중에 T2가 롤백하면 T1이 읽은 필드는 일시적인 값으로 더 이상 유효하지 않음
+* Nonrepeatable read : 어떤 필드를 T1이 읽은 후 T2가 수정할 경우, T1이 같은 필드를 다시 읽으면 다른 값을 얻음 
+* Phantom read : T1이 테이블의 로우 몇 개를 읽은 후 T2가 같은 테이블에 새 로우를 삽입할 경우, 나중에 T1이 같은 테이블을 다시 읽으면 T2가 삽입한 로우가 보임
+* Lost updates : T1, T2 모두 어떤 로우를 수정하려고 읽고 그 로우의 상태에 따라 수정하려는 경우. T1이 먼저 로우를 수정 후 커밋하기 전 T2가 T1이 수정한 로우를 똑같이 수정했다면 T1이 커밋한 후에 T2 역시 커밋을 하게 되면 T1이 수정한 로우를 T2가 덮어쓰게 되어 T1이 수정 한 내용이 소실
 
-이 챕터를 통해 실무에서 요구되는 견고한 유효성 검증 시스템과 통합 테스트 기법을 습득할 수 있습니다.
+### Spring Isolation
+
+| 격리 수준 | 설명 |
+|---|---|
+| DEFAULT | 데이터베이스 기본 격리 수준을 사용. 대다수 데이터베이스는 READ_COMMITTED 기본 격리 수준 |
+| READ_UNCOMMITTED | 다른 트랜잭션이 아직 커밋하지 않은 값을 트랜잭션이 읽을 수 있음. 오염된 값 읽기, 재현 불가한 읽기, 허상 읽기 문제가 발생 |
+| READ_COMMITTED | 한 트랜잭션이 다른 트랜잭션이 커밋한 값만 읽을 수 있음. 오염된 값 읽기 문제는 해결. 재현 불가한 일기, 허상 읽기 문제는 남음 |
+| REPEATABLE_READ | 트랜잭션이 어떤 필드를 여러 번 읽어도 동일한 값을 읽도록 보장. 트랜잭션이 지속되는 동안에는 다른 트랜잭션이 해당 필드를 변경 할 수 없음. 오염된 값 읽기, 재현 불가한 읽기 문제는 해결되지만 허상 읽기는 여젼히 숙제 |
+| SERIALIZABLE | 트랜잭션이 테이블을 여러 번 읽어도 정확히 동일한 로우를 읽도록 보장. 트랜잭션이 지속되는 동안에는 다른 트랜잭션이 해당 테이블에 삽입 수정, 삭제를 할 수 없음. 동시성 문제는 모두 해소되지만 성능은 현저히 떨어짐 |
+
+### ETC
+* logback [참고](https://logback.qos.ch/)
+* mybatis [참고](http://www.mybatis.org/mybatis-3/)
+* mybatis Dynamic SQL [참고](http://www.mybatis.org/mybatis-dynamic-sql/docs/introduction.html)
+* spring-boot-autoconfigure [참고](http://www.mybatis.org/spring-boot-starter/mybatis-spring-boot-autoconfigure/)

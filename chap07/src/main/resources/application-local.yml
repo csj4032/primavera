@@ -16,7 +16,6 @@ spring:
     prefix: classpath:/templates/
     suffix: .html
 
-
 mybatis:
   configuration:
     map-underscore-to-camel-case: true

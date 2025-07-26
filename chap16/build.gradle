@@ -3,31 +3,62 @@ plugins {
     id 'io.spring.dependency-management' version "${springDependencyManagementVersion}"
 }
 
+def querydslSrcDir = 'src/main/java'
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java', querydslSrcDir]
+        }
+    }
+}
+
 dependencies {
     implementation('org.springframework.boot:spring-boot-starter-web') {
         exclude module: "spring-boot-starter-tomcat"
     }
+    implementation('org.springframework.boot:spring-boot-starter-validation')
+    implementation('org.springframework.boot:spring-boot-starter-aop')
     implementation('org.springframework.boot:spring-boot-starter-jdbc')
+    implementation('org.springframework.boot:spring-boot-starter-json')
     implementation('org.springframework.boot:spring-boot-starter-data-jpa')
+    implementation('org.springframework.boot:spring-boot-starter-data-mongodb')
+    implementation('org.springframework.boot:spring-boot-starter-data-redis')
+    implementation('org.springframework.boot:spring-boot-starter-data-mongodb-reactive')
+    implementation('org.springframework.boot:spring-boot-starter-webflux')
+    implementation('org.springframework.boot:spring-boot-starter-thymeleaf')
+    implementation('org.springframework.boot:spring-boot-starter-security')
     implementation('org.springframework.boot:spring-boot-starter-undertow')
-    implementation('org.springframework.boot:spring-boot-starter-hateoas')
+    implementation('org.springframework.boot:spring-boot-starter-reactor-netty')
     implementation('org.springframework.boot:spring-boot-devtools')
-    implementation('org.mariadb.jdbc:mariadb-java-client:3.5.1')
-    implementation("org.modelmapper:modelmapper:3.2.1")
+    implementation('org.springframework.data:spring-data-envers')
+    implementation('org.springframework.boot:spring-boot-starter-oauth2-authorization-server')
+    implementation("org.thymeleaf.extras:thymeleaf-extras-springsecurity6:${thymeleafExtrasSpringSecurity6Version}")
+    implementation("nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:${thymeleafLayoutDialectVersion}")
+    implementation("com.navercorp.lucy:lucy-xss-servlet:${lucyXssServletVersion}")
+    implementation("com.mysql:mysql-connector-j:${mysqlVersion}")
+    testImplementation("io.rest-assured:rest-assured:${restAssuredVersion}")
+    implementation("org.modelmapper:modelmapper:${modelMapperVersion}")
+    implementation("org.flywaydb:flyway-core:${flywayVersion}")
     implementation('org.projectlombok:lombok')
-    implementation("org.apache.tika:tika-core:1.18")
-    implementation('org.apache.tika:tika-parsers:1.18')
-    implementation('org.apache.pdfbox:jbig2-imageio:3.0.3')
-    implementation("org.xerial:sqlite-jdbc:3.50.1.0")
-    implementation('com.github.jai-imageio:jai-imageio-jpeg2000:1.3.0')
-    implementation('org.apache.poi:poi:4.1.1')
-    implementation('org.apache.poi:poi-ooxml:4.1.1')
-    implementation('org.apache.poi:poi-scratchpad:4.1.1')
-    implementation("com.monitorjbl:xlsx-streamer:2.1.0")
-    implementation("org.javatuples:javatuples:1.2")
-    implementation("io.sentry:sentry-logback:1.7.30")
-    implementation("com.opencsv:opencsv:5.3")
-    implementation("org.openkoreantext:open-korean-text:2.3.1")
+    implementation("org.jctools:jctools-core:${jctoolsCoreVersion}")
+    implementation("com.github.ben-manes.caffeine:caffeine:${caffeineVersion}")
+    implementation("com.esotericsoftware:kryo:${kryoVersion}")
+    implementation("org.xerial.snappy:snappy-java:${snappyJavaVersion}")
+    implementation("org.apache.commons:commons-pool2:${commonsPoolVersion}")
+    implementation('com.querydsl:querydsl-jpa')
+    implementation('com.querydsl:querydsl-apt')
+    implementation('com.squareup.retrofit2:retrofit:2.9.0')
+    implementation('com.squareup.retrofit2:converter-jackson:2.9.0')
     annotationProcessor('org.projectlombok:lombok')
-    testImplementation('org.springframework.boot:spring-boot-starter-test')
+    annotationProcessor("com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jpa")
+    annotationProcessor("jakarta.persistence:jakarta.persistence-api")
+    annotationProcessor("jakarta.annotation:jakarta.annotation-api")
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude module: 'junit'
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+    testImplementation('org.springframework.security:spring-security-test')
+
+    //implementation project(":spring-boot-starter-lucy-filter")
 }

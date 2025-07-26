@@ -1,7 +1,7 @@
 package com.genius.primavera.infrastructure.security;
 
-import com.genius.primavera.application.user.UserService;
-import com.genius.primavera.domain.model.user.User;
+import com.genius.primavera.application.UserService;
+import com.genius.primavera.domain.model.User;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;

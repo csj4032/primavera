@@ -14,48 +14,11 @@ spring:
     enabled: true
     prefix: classpath:/templates/
     suffix: .html
-  devtools:
-    livereload:
-      enabled: true
-  security:
-    oauth2:
-      client:
-        registration:
-          google:
-            client-id: ${OAUTH2_GOOGLE_CLIENTID}
-            client-secret: ${OAUTH2_GOOGLE_CLIENTSECRET}
-            scope:
-              - email
-              - profile
-            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
-          facebook:
-            client-id: ${OAUTH2_FACEBOOK_CLIENTID}
-            client-secret: ${OAUTH2_FACEBOOK_CLIENTSECRET}
-            scope:
-              - email
-              - public_profile
-            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
-          github:
-            client-id: ${OAUTH2_GITHUB_CLIENTID}
-            client-secret: ${OAUTH2_GITHUB_CLIENTSECRET}
-            scope:
-              - user:email
-              - read:user
-            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
-          kakao:
-            client-id: ${OAUTH2_KAKAO_CLIENTID}
-            client-secret: ${OAUTH2_KAKAO_CLIENTSECRET:}
-            authorization-grant-type: authorization_code
-            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
-            scope:
-              - profile_nickname
-              - account_email
-        provider:
-          kakao:
-            authorization-uri: https://kauth.kakao.com/oauth/authorize
-            token-uri: https://kauth.kakao.com/oauth/token
-            user-info-uri: https://kapi.kakao.com/v2/user/me
-            user-name-attribute: id
+  lucy-filter:
+    enabled: true
+    name: lucy-filter
+    order: 0
+    addUrlPatterns: /*
 
 mybatis:
   configuration:
@@ -67,20 +30,3 @@ mybatis:
 
 logging:
   config: classpath:logback.xml
-  level:
-    com.genius.primavera: DEBUG
-    org.springframework.boot: INFO
-    org.springframework.security: DEBUG
-    org.springframework.web: INFO
-    jdbc.sqlonly: INFO
-    jdbc.sqltiming: INFO
-
-server:
-  ssl:
-    key-alias: primavera
-    key-store: chap09/primavera.p12
-    key-store-type: PKCS12
-    key-store-password: primavera
-    enabled: true
-  port: 8443
-

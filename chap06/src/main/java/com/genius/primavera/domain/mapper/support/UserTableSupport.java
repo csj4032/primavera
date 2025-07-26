@@ -23,11 +23,11 @@ public final class UserTableSupport {
 		public final SqlColumn<String> password = column("PASSWORD", JDBCType.VARCHAR);
 		public final SqlColumn<String> nickname = column("NICKNAME", JDBCType.VARCHAR);
 		public final SqlColumn<UserStatus> status = column("STATUS", JDBCType.VARCHAR, "UserStatusTypeHandler");
-		public final SqlColumn<LocalDateTime> regDate = column("REG_DT", JDBCType.DATE);
-		public final SqlColumn<LocalDateTime> modDate = column("MOD_DT", JDBCType.DATE);
+		public final SqlColumn<LocalDateTime> regDate = column("REG_DATE", JDBCType.DATE);
+		public final SqlColumn<LocalDateTime> modDate = column("MOD_DATE", JDBCType.DATE);
 
 		public UserTable() {
-			super("USERS");
+			super("USER");
 		}
 	}
 }

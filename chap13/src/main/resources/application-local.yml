@@ -1,45 +1,43 @@
 spring:
   application:
-    name: primavera-chapter-13
+    name: Privamera
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/primavera?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://localhost:3306/primavera?useLegacyDatetimeCode=false&serverTimezone=Asia/Seoul
     username: primavera
     password: primavera
-    hikari:
-      auto-commit: false
-      data-source-properties:
-        cachePrepStmts: true
-        useServerPrepStmts: true
-        useLocalSessionState: true
-        cacheResultSetMetadata: true
-        preparedStatementCacheQueries: 250
-  jpa:
-    show-sql: true
-    generate-ddl: false
-    hibernate:
-      ddl-auto: none
-      naming:
-        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
-        implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.MySQLDialect
-        globally_quoted_identifiers: true
-        jdbc:
-          fetch_size: 30
-          batch_size: 30
-    open-in-view: false
+  banner:
+    charset: UTF-8
+    location: classpath:primavera.txt
+  thymeleaf:
+    cache: false
+    enabled: true
+    prefix: classpath:/templates/
+    suffix: .html
+  devtools:
+    livereload:
+      enabled: true
   flyway:
     enabled: true
     encoding: UTF-8
     fail-on-missing-locations: false
-  aop:
-    proxy-target-class: true
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+    default-fetch-size: 1000
+    default-statement-timeout: 30
+  type-aliases-package: com.genius.primavera.domain
+  type-handlers-package: com.genius.primavera.domain
 
 logging:
-  config: classpath:logback-spring.xml
+  config: classpath:logback.xml
 
-primavera:
-  logs:
-    path: ./logs
+server:
+  ssl:
+    key-alias: primavera
+    key-store: chap10/primavera.p12
+    key-store-type: PKCS12
+    key-store-password: primavera
+    enabled: true
+  port: 8443

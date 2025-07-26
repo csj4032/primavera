@@ -1,7 +1,7 @@
 package com.genius.primavera.infrastructure.security;
 
 import com.genius.primavera.infrastructure.filter.PrimaveraFilter;
-import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -9,14 +9,11 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -26,7 +23,9 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import java.util.List;
+import jakarta.servlet.Filter;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Configuration
@@ -34,38 +33,54 @@ import java.util.List;
 @EnableMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
 public class PrimaveraSecurityConfiguration {
 
-	private final AuthenticationSuccessHandler successHandler = (request, response, authentication) -> {
-		log.info("success : " + request.getContextPath());
-		response.sendRedirect("/index");
-	};
-	
-	private final AuthenticationFailureHandler failureHandler = (request, response, authentication) -> {
-		log.info("failure : " + request.getContextPath());
-		response.sendRedirect("/login?error=true");
-	};
+	private AuthenticationSuccessHandler successHandler = (request, response, authentication) -> log.info("success : " + request.getContextPath());
+	private AuthenticationFailureHandler failureHandler = (request, response, authentication) -> log.info("failure : " + request.getContextPath());
 
 	private final PrimaveraUserDetailsService primaveraUserDetailsService;
-	
-	@Autowired(required = false)
-	private OAuth2UserService<OAuth2UserRequest, OAuth2User> oauth2UserService;
-	
-	@Autowired(required = false)
-	private ClientRegistrationRepository clientRegistrationRepository;
+	private final OAuth2UserService<OAuth2UserRequest, OAuth2User> oauth2UserService;
 
-	public PrimaveraSecurityConfiguration(PrimaveraUserDetailsService primaveraUserDetailsService) {
+	public PrimaveraSecurityConfiguration(PrimaveraUserDetailsService primaveraUserDetailsService, OAuth2UserService<OAuth2UserRequest, OAuth2User> oauth2UserService) {
 		this.primaveraUserDetailsService = primaveraUserDetailsService;
+		this.oauth2UserService = oauth2UserService;
 	}
 
 	@Bean
+	public UserDetailsService inMemoryUserDetailsService() {
+		PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+		UserDetails genius = User.withUsername("Genius")
+				.password("{bcrypt}$2a$10$7UEHLpn1r4gZY2qxiZFJ5.7wa3Hdz8IXgxUtFogy0Ac10fh7TG4V.")
+				.roles("USER")
+				.build();
+		UserDetails marcus = User.withUsername("Marcus Tullius Cicero")
+				.password(encoder.encode("password"))
+				.roles("MANAGER")
+				.build();
+		UserDetails julius = User.withUsername("Julius Caesar")
+				.password(encoder.encode("password"))
+				.roles("ADMINISTRATOR")
+				.build();
+		return new InMemoryUserDetailsManager(genius, marcus, julius);
+	}
+
+
+	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		var httpConfig = http
+		return http
 				.csrf(csrf -> csrf.disable())
 				.authorizeHttpRequests(authz -> authz
-						.requestMatchers(HttpMethod.GET, "/resources/**", "/bower_components/**", "/dist/**", "/plugins/**", "/favicon.ico").permitAll()
-						.requestMatchers("/auth/**", "/login/**", "/error", "/oauth2/**").permitAll()
+						.requestMatchers("/resources/**", "/bower_components/**", "/dist/**", "/plugins/**", "/favicon.ico").permitAll()
+						.requestMatchers("/auth/**", "/login/**", "/error").permitAll()
 						.anyRequest().authenticated()
 				)
 				.addFilterBefore(new PrimaveraFilter(), UsernamePasswordAuthenticationFilter.class)
+				.oauth2Login(oauth2 -> oauth2
+						.loginPage("/login")
+						.defaultSuccessUrl("/index", true)
+						.failureUrl("/login?error=true")
+						.userInfoEndpoint(userInfo -> userInfo
+							.userService(oauth2UserService)
+						)
+				)
 				.formLogin(form -> form
 						.usernameParameter("email")
 						.passwordParameter("password")
@@ -75,46 +90,18 @@ public class PrimaveraSecurityConfiguration {
 						.defaultSuccessUrl("/index", true)
 						.failureHandler(failureHandler)
 						.failureUrl("/login?error=true")
-				);
-		
-		// Only configure OAuth2 if the necessary beans are available
-		if (oauth2UserService != null && clientRegistrationRepository != null) {
-			httpConfig.oauth2Login(oauth2 -> oauth2
-					.loginPage("/login")
-					.userInfoEndpoint(userInfo -> userInfo
-							.userService(oauth2UserService)
-					)
-					.successHandler(successHandler)
-					.failureHandler(failureHandler)
-			);
-		}
-		
-		httpConfig.logout(logout -> logout
-				.logoutUrl("/signout")
-				.deleteCookies("JSESSIONID")
-		);
-		
-		return httpConfig.build();
-	}
-
-	@Bean
-	public UserDetailsService userDetailsService() {
-		var encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
-		var genius = new User("Genius", "{bcrypt}$2a$10$7UEHLpn1r4gZY2qxiZFJ5.7wa3Hdz8IXgxUtFogy0Ac10fh7TG4V.", List.of(new SimpleGrantedAuthority("USER")));
-		var marcus = new User("Marcus Tullius Cicero", "{bcrypt}$2a$10$7UEHLpn1r4gZY2qxiZFJ5.7wa3Hdz8IXgxUtFogy0Ac10fh7TG4V.", List.of(new SimpleGrantedAuthority("USER")));
-		var julius = new User("Julius Caesar", "{bcrypt}$2a$10$7UEHLpn1r4gZY2qxiZFJ5.7wa3Hdz8IXgxUtFogy0Ac10fh7TG4V.", List.of(new SimpleGrantedAuthority("USER")));
-		return new InMemoryUserDetailsManager(genius, marcus, julius);
+				)
+				.logout(logout -> logout
+						.logoutUrl("/signout")
+						.deleteCookies("JSESSIONID")
+				)
+				.build();
 	}
 
 	@Bean
 	public DaoAuthenticationProvider authenticationProvider() {
-		var authProvider = new DaoAuthenticationProvider();
+		DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
 		authProvider.setUserDetailsService(primaveraUserDetailsService);
 		return authProvider;
-	}
-
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return PasswordEncoderFactories.createDelegatingPasswordEncoder();
 	}
 }

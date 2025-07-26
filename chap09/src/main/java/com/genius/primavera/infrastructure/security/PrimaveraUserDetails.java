@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 public class PrimaveraUserDetails implements UserDetails {
 
-    private User user;
+    private final User user;
 
     public PrimaveraUserDetails(User user) {
         this.user = user;
@@ -20,7 +20,7 @@ public class PrimaveraUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return user.getRoles().stream().map(role -> new SimpleGrantedAuthority("ROLE_" + role.getType().toString())).collect(Collectors.toList());
+        return user.getRoles().stream().map(role -> new SimpleGrantedAuthority("ROLE_"+ role.getType().toString())).collect(Collectors.toList());
     }
 
     @Override
@@ -51,9 +51,5 @@ public class PrimaveraUserDetails implements UserDetails {
     @Override
     public boolean isEnabled() {
         return user.getStatus().equals(UserStatus.ON);
-    }
-
-    public String getImageUrl() {
-        return user.getConnection().getImageUrl();
     }
 }

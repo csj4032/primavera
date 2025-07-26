@@ -1,6 +1,6 @@
 package com.genius.primavera.domain.model.typehandler;
 
-import com.genius.primavera.domain.model.user.UserStatus;
+import com.genius.primavera.domain.model.UserStatus;
 
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;

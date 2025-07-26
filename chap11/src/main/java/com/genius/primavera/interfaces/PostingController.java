@@ -37,12 +37,12 @@ public class PostingController {
         return "post/detail";
     }
 
-    @GetMapping("/posts/form")
+    @GetMapping("/post/form")
     public String form() {
         return "post/form";
     }
 
-    @PostMapping("/posts/save")
+    @PostMapping("/post/save")
     @PreAuthorize("#requestForSave.writerId == authentication.principal.userId")
     public String save(@Validated PostDto.RequestForSave requestForSave) {
         postService.save(requestForSave);

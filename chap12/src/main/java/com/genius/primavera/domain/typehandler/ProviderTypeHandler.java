@@ -1,6 +1,7 @@
 package com.genius.primavera.domain.model.typehandler;
 
 import com.genius.primavera.domain.model.user.ProviderType;
+
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.MappedJdbcTypes;
@@ -10,7 +11,7 @@ import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.stream.Stream;
+import java.util.Arrays;
 
 @MappedJdbcTypes(JdbcType.INTEGER)
 @MappedTypes(ProviderType.class)
@@ -37,6 +38,6 @@ public class ProviderTypeHandler<E extends Enum<E>> extends BaseTypeHandler<Prov
     }
 
     private ProviderType getRoleType(int type) {
-        return Stream.of(ProviderType.values()).filter(e -> e.getValue() == type).findFirst().orElseThrow();
+        return Arrays.stream(ProviderType.values()).filter(e -> e.getValue() == type).findFirst().orElseThrow();
     }
 }

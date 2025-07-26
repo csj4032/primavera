@@ -1,6 +1,5 @@
 package com.genius.primavera.domain.model.user;
 
-// Commented out OAuth2 imports - these use deprecated Spring Security OAuth2 classes
 // import com.genius.primavera.infrastructure.security.social.facebook.FacebookUserDetails;
 // import com.genius.primavera.infrastructure.security.social.github.GithubUserDetails;
 // import com.genius.primavera.infrastructure.security.social.google.GoogleUserDetails;
@@ -29,9 +28,7 @@ public class UserConnection {
 	private String accessToken;
 	private long expireTime;
 
-	// OAuth2 social login methods commented out temporarily
-	// These need to be migrated to Spring Security OAuth2 Client in Spring Boot 3.x
-	
+	// OAuth2 Social login methods disabled - enable when OAuth2 dependencies are restored
 	/*
 	public static UserConnection valueOf(FacebookUserDetails userDetails) {
 		return UserConnection.builder()

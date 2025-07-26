@@ -4,17 +4,14 @@ plugins {
 }
 
 dependencies {
+    implementation "org.springframework.boot:spring-boot-starter-aop"
     implementation "org.springframework.boot:spring-boot-starter-web"
-    implementation "org.springframework.boot:spring-boot-starter-jdbc"
+    implementation "org.springframework.boot:spring-boot-starter-thymeleaf"
+    implementation "org.springframework.boot:spring-boot-starter-validation"
+    implementation "commons-io:commons-io:${commonsIoVersion}"
     implementation "com.mysql:mysql-connector-j:${mysqlVersion}"
-    implementation "org.mybatis.spring.boot:mybatis-spring-boot-starter:${mybatisSpringBootStarterVersion}"
-    implementation "org.reflections:reflections:${reflectionsVersion}"
-    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+    compileOnly "org.jetbrains:annotations:${jetbrainsAnnotationsVersion}"
     testImplementation "org.springframework.boot:spring-boot-starter-test"
     testImplementation "org.springframework.security:spring-security-test"
-    testImplementation "org.mockito:mockito-core:${mockitoVersion}"
-    testImplementation "com.mysql:mysql-connector-j:${mysqlVersion}"
-    testImplementation "org.testcontainers:testcontainers:${testContainersVersion}"
-    testImplementation "org.testcontainers:junit-jupiter:${testContainersVersion}"
-    testImplementation "org.testcontainers:mysql:${testContainersVersion}"
+    compileOnly project(":chap01")
 }

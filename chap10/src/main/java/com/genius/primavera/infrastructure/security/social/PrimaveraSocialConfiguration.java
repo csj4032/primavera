@@ -1,11 +1,12 @@
 package com.genius.primavera.infrastructure.security.social;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.genius.primavera.domain.model.user.UserConnection;
+import com.genius.primavera.domain.model.UserConnection;
 import com.genius.primavera.infrastructure.security.PrimaveraSocialUserDetailsService;
 import com.genius.primavera.infrastructure.security.social.facebook.FacebookUserDetails;
 import com.genius.primavera.infrastructure.security.social.github.GithubUserDetails;
 import com.genius.primavera.infrastructure.security.social.google.GoogleUserDetails;
+import com.genius.primavera.infrastructure.security.social.kakao.KakaoUserDetails;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -69,6 +70,7 @@ public class PrimaveraSocialConfiguration {
 				case "google" -> objectMapper.convertValue(oauth2User.getAttributes(), GoogleUserDetails.class);
 				case "facebook" -> objectMapper.convertValue(oauth2User.getAttributes(), FacebookUserDetails.class);
 				case "github" -> objectMapper.convertValue(oauth2User.getAttributes(), GithubUserDetails.class);
+				case "kakao" -> objectMapper.convertValue(oauth2User.getAttributes(), KakaoUserDetails.class);
 				default -> {
 					log.warn("Unknown OAuth2 provider: {}", registrationId);
 					yield null;
@@ -85,6 +87,7 @@ public class PrimaveraSocialConfiguration {
 			case "google" -> UserConnection.valueOf((GoogleUserDetails) userDetails);
 			case "facebook" -> UserConnection.valueOf((FacebookUserDetails) userDetails);
 			case "github" -> UserConnection.valueOf((GithubUserDetails) userDetails);
+			case "kakao" -> UserConnection.valueOf((KakaoUserDetails) userDetails);
 			default -> throw new IllegalArgumentException("Unsupported OAuth2 provider: " + registrationId);
 		};
 	}

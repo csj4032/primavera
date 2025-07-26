@@ -4,9 +4,9 @@ import com.genius.primavera.application.article.WriteArticleService;
 import com.genius.primavera.domain.PageRequest;
 import com.genius.primavera.domain.model.article.ArticleDto;
 import com.genius.primavera.domain.model.article.WriteType;
-import com.genius.primavera.infrastructure.aspect.PrimaveraLogging;
 
 import org.apache.ibatis.annotations.Param;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,23 +16,21 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import jakarta.validation.Valid;
-
-import lombok.RequiredArgsConstructor;
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
-@RequiredArgsConstructor
 public class ArticleController {
 
-	private final WriteArticleService writeArticleService;
+	@Autowired
+	private WriteArticleService writeArticleService;
 
-	@PrimaveraLogging(type = "ArticleController")
 	@GetMapping(value = "/articles")
 	public String articles(Model model, PageRequest pageRequest) {
 		model.addAttribute("page", writeArticleService.findForPageable(pageRequest));
 		return "article/list";
 	}
 
-	@PrimaveraLogging(type = "ArticleController")
 	@GetMapping(value = "/articles/{id:[0-9]+}")
 	public String detail(@PathVariable(value = "id") long id, Model model) {
 		model.addAttribute("article", writeArticleService.hitAndFindArticle(id));

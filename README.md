@@ -59,21 +59,21 @@ Spring Boot를 이용한 현대적인 웹 애플리케이션 개발을 체계적
 
 ```
 primavera/
+├── 📖 Preface
+│   └── preface/            # Spring Boot 서문 및 소개
 ├── 📚 Learning Modules
-│   ├── chap00-04/          # 🎯 기초: Spring Boot 핵심 개념
-│   ├── chap05-08/          # 🔧 중급: 데이터, 보안, 템플릿
-│   ├── chap09-13/          # 🚀 고급: OAuth2, 마이크로서비스
-│   └── chap14-17/          # 💼 실무: 배포, 모니터링, 최적화
-├── 🔧 Infrastructure
-│   ├── config/             # 환경별 설정 파일
-│   ├── docker/             # Docker 컨테이너 구성
-│   └── k8s/                # Kubernetes 매니페스트
-├── 🧩 Custom Starters
-│   ├── spring-boot-starter-lucy-filter/    # XSS 보안 필터
-│   └── spring-boot-starter-social-kakao/   # 카카오 소셜 로그인
-└── 🌤️ Cloud Native
-    ├── hello/              # Spring Cloud 튜토리얼
-    └── chap15/             # 마이크로서비스 아키텍처
+│   ├── chap01-05/          # 🎯 기초: Spring Boot 핵심 개념
+│   ├── chap06-09/          # 🔧 중급: 데이터, 보안, 템플릿
+│   ├── chap10-14/          # 🚀 고급: OAuth2, 마이크로서비스
+│   └── chap15-18/          # 💼 실무: 배포, 모니터링, 최적화
+├── 🧩 Appendix
+│   ├── appendix/
+│   │   ├── spring-boot-starter-lucy-filter/    # XSS 보안 필터
+│   │   └── spring-boot-starter-social-kakao/   # 카카오 소셜 로그인
+└── 🔧 Infrastructure
+    ├── config/             # 환경별 설정 파일
+    ├── docker/             # Docker 컨테이너 구성
+    └── k8s/                # Kubernetes 매니페스트
 ```
 
 ## 📊 데이터베이스 스키마
@@ -101,8 +101,8 @@ cd primavera
 # 데이터베이스 실행 (Docker)
 docker-compose up -d mariadb redis
 
-# 특정 챕터 실행 (예: chap09)
-./gradlew :chap09:bootRun
+# 특정 챕터 실행 (예: chap10)
+./gradlew :chap10:bootRun
 
 # 전체 빌드 및 테스트
 ./gradlew clean build
@@ -226,9 +226,9 @@ docker start mysql-primavera-local
 
 ## 📚 학습 로드맵
 
-### 🎯 Phase 1: Spring Boot 기초 (chap00-04)
+### 🎯 Phase 1: Spring Boot 기초 (chap01-05)
 
-#### **Chapter 00** - Spring Boot 시작하기
+#### **Chapter 01** - Spring Boot 시작하기
 - **학습 목표**: Spring Boot 핵심 개념 이해
 - **주요 내용**:
   - `@SpringBootApplication` 어노테이션 분석
@@ -237,7 +237,7 @@ docker start mysql-primavera-local
   - Domain-Driven Design 기초
 - **핵심 파일**: `PrimaveraApplication.java`
 
-#### **Chapter 01** - 설정과 의존성 주입
+#### **Chapter 02** - 설정과 의존성 주입
 - **학습 목표**: Spring Boot 설정 시스템 마스터
 - **주요 내용**:
   - `@ConfigurationProperties`를 통한 타입 안전한 설정
@@ -246,7 +246,7 @@ docker start mysql-primavera-local
   - 프로필별 환경 설정
 - **핵심 클래스**: `PrimaveraProperties`, `PrimaveraConfiguration`
 
-#### **Chapter 02** - MVC와 AOP
+#### **Chapter 03** - MVC와 AOP
 - **학습 목표**: 웹 계층 및 관점 지향 프로그래밍 구현
 - **주요 내용**:
   - Spring MVC 아키텍처 패턴
@@ -255,7 +255,7 @@ docker start mysql-primavera-local
   - `@Aspect`, `@Around` 활용
 - **핵심 클래스**: `PrimaveraLoggingAspect`, `PrimaveraInterceptor`
 
-#### **Chapter 03** - 데이터 접근 계층
+#### **Chapter 04** - 데이터 접근 계층
 - **학습 목표**: 데이터베이스 연동 및 트랜잭션 관리
 - **주요 내용**:
   - HikariCP 커넥션 풀 최적화
@@ -264,7 +264,7 @@ docker start mysql-primavera-local
   - 선언적 트랜잭션 관리
 - **핵심 클래스**: `UserDao`, `PrimaveraDao`
 
-#### **Chapter 04** - MyBatis와 로깅
+#### **Chapter 05** - MyBatis와 로깅
 - **학습 목표**: ORM 프레임워크와 로깅 시스템 구축
 - **주요 내용**:
   - MyBatis 매퍼 어노테이션 기반 구성
@@ -273,9 +273,9 @@ docker start mysql-primavera-local
   - SQL 로깅 및 성능 모니터링
 - **주요 설정**: `logback-spring.xml`, MyBatis 매퍼
 
-### 🔧 Phase 2: 중급 웹 개발 (chap05-08)
+### 🔧 Phase 2: 중급 웹 개발 (chap06-09)
 
-#### **Chapter 05** - 고급 유효성 검증 ⭐ *Enhanced*
+#### **Chapter 06** - 고급 유효성 검증 ⭐ *Enhanced*
 - **학습 목표**: 엔터프라이즈급 데이터 검증 시스템 구축
 - **주요 내용**:
   - Jakarta Bean Validation (JSR-380)
@@ -289,7 +289,7 @@ docker start mysql-primavera-local
   - 실시간 유효성 검증 피드백
 - **핵심 클래스**: `NicknameValidator`, `AbstractContainerTest`
 
-#### **Chapter 06** - Thymeleaf와 JPA
+#### **Chapter 07** - Thymeleaf와 JPA
 - **학습 목표**: 서버사이드 렌더링과 ORM 구현
 - **주요 내용**:
   - Thymeleaf 템플릿 엔진 마스터
@@ -298,7 +298,7 @@ docker start mysql-primavera-local
   - Log4Jdbc를 통한 SQL 모니터링
 - **UI/UX**: 반응형 관리자 인터페이스 구현
 
-#### **Chapter 07** - 보안 필터와 XSS 방어
+#### **Chapter 08** - 보안 필터와 XSS 방어
 - **학습 목표**: 웹 보안 강화 및 필터 체인 구현
 - **주요 내용**:
   - Lucy XSS Filter를 통한 XSS 공격 차단
@@ -307,7 +307,7 @@ docker start mysql-primavera-local
   - 보안 헤더 설정
 - **보안 강화**: 다층 보안 아키텍처 구현
 
-#### **Chapter 08** - Spring Security 기초
+#### **Chapter 09** - Spring Security 기초
 - **학습 목표**: 인증 및 권한 관리 시스템 구축
 - **주요 내용**:
   - Spring Security 필터 체인 이해
@@ -317,9 +317,9 @@ docker start mysql-primavera-local
   - 커스텀 Spring Boot Starter 개발
 - **디자인 패턴**: Chain of Responsibility 패턴 적용
 
-### 🚀 Phase 3: 고급 기능 구현 (chap09-13)
+### 🚀 Phase 3: 고급 기능 구현 (chap10-14)
 
-#### **Chapter 09** - OAuth2 소셜 로그인 & HTTPS ⭐ *Currently Active*
+#### **Chapter 10** - OAuth2 소셜 로그인 & HTTPS ⭐ *Currently Active*
 - **학습 목표**: 현대적인 인증 시스템 및 보안 통신 구현
 - **주요 내용**:
   - **다중 OAuth2 제공자**: Google, Facebook, GitHub, Kakao 통합
@@ -332,7 +332,7 @@ docker start mysql-primavera-local
   - 환경별 클라이언트 자격 증명 관리
   - 도메인 주도 설계 원칙 적용
 
-#### **Chapter 10** - 게시판 시스템
+#### **Chapter 11** - 게시판 시스템
 - **학습 목표**: 완전한 CRUD 기능을 가진 게시판 구현
 - **주요 내용**:
   - RESTful API 설계
@@ -341,7 +341,7 @@ docker start mysql-primavera-local
   - 권한별 접근 제어
   - MockMvc 기반 통합 테스트
 
-#### **Chapter 11** - 계층형 댓글 & Flyway
+#### **Chapter 12** - 계층형 댓글 & Flyway
 - **학습 목표**: 복잡한 데이터 구조 및 데이터베이스 마이그레이션
 - **주요 내용**:
   - 계층형 댓글 시스템 설계
@@ -349,7 +349,7 @@ docker start mysql-primavera-local
   - Flyway 데이터베이스 마이그레이션
   - 재귀적 데이터 처리 알고리즘
 
-#### **Chapter 12** - 고급 권한 관리
+#### **Chapter 13** - 고급 권한 관리
 - **학습 목표**: 메서드 수준 보안 및 파일 처리
 - **주요 내용**:
   - `@PreAuthorize`, `@PostAuthorize` 활용
@@ -357,7 +357,7 @@ docker start mysql-primavera-local
   - 파일 업로드/다운로드 구현
   - 이미지 리사이징 및 최적화
 
-#### **Chapter 13** - JPA 고급 & 외부 API
+#### **Chapter 14** - JPA 고급 & 외부 API
 - **학습 목표**: 고급 ORM 기능 및 외부 서비스 통합
 - **주요 내용**:
   - JPA/Hibernate 고급 매핑
@@ -365,9 +365,9 @@ docker start mysql-primavera-local
   - ModelMapper를 통한 DTO 변환
   - 카카오 API 클라이언트 구현
 
-### 💼 Phase 4: 실무 및 배포 (chap14-17)
+### 💼 Phase 4: 실무 및 배포 (chap15-18)
 
-#### **Chapter 14** - 리액티브 프로그래밍
+#### **Chapter 15** - 리액티브 프로그래밍
 - **학습 목표**: 비동기 및 리액티브 시스템 구현
 - **주요 내용**:
   - Spring WebFlux 기반 리액티브 API
@@ -375,7 +375,7 @@ docker start mysql-primavera-local
   - 백프레셔 및 에러 처리
   - 리액티브 데이터베이스 접근
 
-#### **Chapter 15** - 마이크로서비스 아키텍처
+#### **Chapter 16** - 마이크로서비스 아키텍처
 - **학습 목표**: 분산 시스템 설계 및 구현
 - **주요 내용**:
   - **서비스 분리**: Account, Product, Order, Front, Configuration
@@ -384,7 +384,7 @@ docker start mysql-primavera-local
   - **캐싱**: Redis 기반 분산 캐시
 - **아키텍처 패턴**: 마이크로서비스 분해 전략
 
-#### **Chapter 16** - 파일 처리 & 모니터링
+#### **Chapter 17** - 파일 처리 & 모니터링
 - **학습 목표**: 파일 시스템 통합 및 애플리케이션 모니터링
 - **주요 내용**:
   - Apache POI를 통한 Excel 파일 처리
@@ -392,7 +392,7 @@ docker start mysql-primavera-local
   - Sentry 통합 에러 트래킹
   - PostgreSQL 고급 기능 활용
 
-#### **Chapter 17** - CI/CD & 운영
+#### **Chapter 18** - CI/CD & 운영
 - **학습 목표**: 완전 자동화된 배포 파이프라인 구축
 - **주요 내용**:
   - **CI/CD 파이프라인**: GitHub Actions, Travis CI
@@ -492,7 +492,7 @@ public class KakaoOAuth2Properties {
 ### 환경별 배포
 ```bash
 # 개발 환경
-./gradlew :chap09:bootRun --args='--spring.profiles.active=dev'
+./gradlew :chap10:bootRun --args='--spring.profiles.active=dev'
 
 # 스테이징 환경
 docker-compose -f docker-compose.staging.yml up

@@ -17,15 +17,19 @@ spring:
   devtools:
     livereload:
       enabled: true
+  flyway:
+    enabled: true
+    encoding: UTF-8
+    fail-on-missing-locations: false
 
 logging:
   config: classpath:logback.xml
 
 server:
-  port: 8080
-
-sentry:
-  dns: https://4084f8500752461897ebbfe3a067d36c@sentry.io/5166811
-  environment: local
-  servername: chap15
-  release: 0.0.1-SNAPSHOT
+  ssl:
+    key-alias: primavera
+    key-store: chap10/primavera.p12
+    key-store-type: PKCS12
+    key-store-password: primavera
+    enabled: true
+  port: 8443
