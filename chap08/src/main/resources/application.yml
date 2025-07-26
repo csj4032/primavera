@@ -1,6 +1,6 @@
 spring:
   application:
-    name: privamera
+    name: SecurityFilterApplication
   profiles:
     active: local
     group:
@@ -14,6 +14,12 @@ spring:
         - console-appender
   main:
     allow-bean-definition-overriding: true
+
+  lucy-filter:
+    enabled: true
+    name: lucyXssFilter
+    order: 1
+    addUrlPatterns: /*
 
 primavera:
   logs:
