@@ -14,5 +14,6 @@ public class Product {
 	private Long id;
 	private Long group;
 	private String name;
+	@Builder.Default
 	private BigDecimal price = BigDecimal.ZERO;
 }

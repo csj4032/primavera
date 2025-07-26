@@ -38,9 +38,9 @@ public class ProxyFactory {
 
 	private Object instantiateClass(Class<?> aClass) {
 		try {
-			return aClass.newInstance();
-		} catch (InstantiationException | IllegalAccessException e) {
-			throw new RuntimeException("Could not instantiate class " + aClass);
+			return aClass.getDeclaredConstructor().newInstance();
+		} catch (Exception e) {
+			throw new RuntimeException("Could not instantiate class " + aClass, e);
 		}
 	}
 
