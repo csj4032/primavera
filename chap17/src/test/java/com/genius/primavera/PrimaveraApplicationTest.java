@@ -40,6 +40,6 @@ public class PrimaveraApplicationTest {
     @DisplayName("ContainsProperty")
     public void containsPropertyTest() {
         Assertions.assertTrue(configurableApplicationContext.getEnvironment().containsProperty("spring.application.name"));
-        Assertions.assertTrue(configurableApplicationContext.getEnvironment().containsProperty("google.client.clientId"));
+        Assertions.assertTrue(configurableApplicationContext.getEnvironment().containsProperty("sentry.dns"));
     }
 }

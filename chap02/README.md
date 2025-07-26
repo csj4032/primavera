@@ -1,4 +1,4 @@
-# Chapter 01 - 설정과 의존성 주입 ⚙️
+# Chapter 02 - 설정과 의존성 주입 ⚙️
 
 ## 📋 개요
 Spring Boot의 설정 시스템과 의존성 주입(Dependency Injection) 메커니즘을 마스터하는 챕터입니다. `@ConfigurationProperties`를 통한 타입 안전한 설정 관리와 다양한 Bean Scope, 생성자 기반 의존성 주입의 모든 것을 학습합니다.

@@ -1,4 +1,4 @@
-## chap06
+## chap07
 
 ### Thymeleaf and AdminLTE
 * Thymeleaf 의존성, Layout 설정

@@ -1,3 +1,3 @@
-## chap14
+## chap15:product
 
-### OrderServer - WebFlux
+### ProductServer - WebFlux

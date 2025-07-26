@@ -63,12 +63,12 @@ public class ExcelImportControllerTest {
 
 		@BeforeAll
 		public void setUp() throws IOException {
-			Math.ceil(1);
-			//multipartFile = new MockMultipartFile("file", resource.getInputStream());
-			//excelImportRequest = new ExcelImportRequest("20191225.txt", multipartFile);
-			//excelImportResponse = new ExcelImportResponse("Honda", excelImportRequest.getSize());
+			resource = resourceLoader.getResource("classpath:20191225.xlsx");
+			multipartFile = new MockMultipartFile("file", "20191225.xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", resource.getInputStream());
+			excelImportRequest = new ExcelImportRequest("20191225.xlsx", multipartFile);
+			excelImportResponse = new ExcelImportResponse("Honda", excelImportRequest.getSize());
 			multiValueMap = new LinkedMultiValueMap() {{
-				add("name", "20191225.txt");
+				add("name", "20191225.xlsx");
 			}};
 		}
 

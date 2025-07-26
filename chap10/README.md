@@ -1,4 +1,4 @@
-## chap09
+## chap10
 
 ### build.gradle spring-security-oauth2-client 추가
 

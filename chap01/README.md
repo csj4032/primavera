@@ -1,4 +1,4 @@
-# Chapter 00 - Spring Boot 시작하기 🌱
+# Chapter 01 - Spring Boot 시작하기 🌱
 
 ## 📋 개요
 Spring Boot의 핵심 개념과 애플리케이션 구동 원리를 이해하는 기초 챕터입니다. `@SpringBootApplication` 어노테이션의 내부 동작과 자동 구성(Auto Configuration) 메커니즘을 심도 있게 학습합니다.

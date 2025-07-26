@@ -10,7 +10,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
@@ -23,7 +23,7 @@ public class FinancialTemplate implements ExcelImportTemplate<Row, Financial> {
 
 	@Override
 	public List<Financial> read(Function<Row, Financial> function) {
-		List<Financial> list = Collections.emptyList();
+		List<Financial> list = new ArrayList<>();
 		try (Workbook workbook = StreamingReader.builder().open(inputStream)) {
 			Iterator<Sheet> sheets = workbook.sheetIterator();
 			while (sheets.hasNext()) {
