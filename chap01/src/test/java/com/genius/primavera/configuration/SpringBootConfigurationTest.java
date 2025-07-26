@@ -25,7 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * 3. 테스트 환경에서 컨텍스트 로딩의 기준점으로 사용됨
  * 4. @SpringBootApplication 내부에 포함됨
  */
-@SpringBootTest(classes = SpringBootStarterApplication.class)
+@SpringBootTest(classes = {SpringBootStarterApplication.class, SpringBootConfigurationTest.InnerConfiguration.class})
 @ActiveProfiles("test")
 public class SpringBootConfigurationTest {
 

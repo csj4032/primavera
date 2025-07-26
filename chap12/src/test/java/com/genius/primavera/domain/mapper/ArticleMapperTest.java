@@ -21,7 +21,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.transaction.annotation.Transactional;
-import org.testcontainers.containers.MySQLContainer;
+import org.testcontainers.containers.MariaDBContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
@@ -53,7 +53,7 @@ class ArticleMapperTestApplication {
 class ArticleMapperTest {
 
 	@Container
-	static MySQLContainer<?> mysql = new MySQLContainer<>("mysql:8.4.0")
+	static MariaDBContainer<?> mysql = new MariaDBContainer<>("mariadb:11.4.7")
 		.withDatabaseName("primavera")
 		.withUsername("primavera")
 		.withPassword("primavera")

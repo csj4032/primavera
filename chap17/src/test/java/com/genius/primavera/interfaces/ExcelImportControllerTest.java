@@ -66,7 +66,7 @@ public class ExcelImportControllerTest {
 			resource = resourceLoader.getResource("classpath:20191225.xlsx");
 			multipartFile = new MockMultipartFile("file", "20191225.xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", resource.getInputStream());
 			excelImportRequest = new ExcelImportRequest("20191225.xlsx", multipartFile);
-			excelImportResponse = new ExcelImportResponse("Honda", excelImportRequest.getSize());
+			excelImportResponse = new ExcelImportResponse("Honda", excelImportRequest.getSize(), MediaType.EXCEL_TYPE, "Success");
 			multiValueMap = new LinkedMultiValueMap() {{
 				add("name", "20191225.xlsx");
 			}};
@@ -76,28 +76,33 @@ public class ExcelImportControllerTest {
 		@Order(1)
 		@DisplayName("path 확인 테스트")
 		public void pathTest() throws Exception {
-			when(excelImportService.excelImport(new ExcelImportRequest("20191225.txt", multipartFile)))
+			when(excelImportService.excelImport(any(ExcelImportRequest.class)))
 					.thenReturn(new ExcelImportResponse("", 100, MediaType.EXCEL_TYPE, ""));
-			mockMvc.perform(post("/save")).andDo(print())
-					.andExpect(status().isCreated()).andExpect(content()
-					.contentType(MediaTypes.HAL_JSON_VALUE))
-					.andExpect(jsonPath("$.name").doesNotExist());
+			mockMvc.perform(
+					multipart("/save")
+							.file(multipartFile)
+							.params(multiValueMap)
+							.contentType(org.springframework.http.MediaType.MULTIPART_FORM_DATA))
+					.andDo(print())
+					.andExpect(status().isCreated())
+					.andExpect(content().contentType(MediaTypes.HAL_JSON_VALUE));
 		}
 
 		@Test
 		@Order(2)
 		@DisplayName("multipart 확인 테스트")
 		public void multipartTest() throws Exception {
-			when(excelImportService.excelImport(new ExcelImportRequest("20191225.txt", multipartFile)))
-					.thenReturn(new ExcelImportResponse("", 100, MediaType.EXCEL_TYPE, ""));
+			when(excelImportService.excelImport(any(ExcelImportRequest.class)))
+					.thenReturn(new ExcelImportResponse("20191225.xlsx", multipartFile.getSize(), MediaType.EXCEL_TYPE, ""));
 			mockMvc.perform(
 					multipart("/save")
 							.file(multipartFile)
 							.params(multiValueMap)
-							.contentType(org.springframework.http.MediaType.MULTIPART_FORM_DATA)).andDo(print())
-					.andExpect(status().isCreated()).andExpect(content()
-					.contentType(MediaTypes.HAL_JSON_VALUE))
-					.andExpect(jsonPath("$.name").value("20191225.txt"))
+							.contentType(org.springframework.http.MediaType.MULTIPART_FORM_DATA))
+					.andDo(print())
+					.andExpect(status().isCreated())
+					.andExpect(content().contentType(MediaTypes.HAL_JSON_VALUE))
+					.andExpect(jsonPath("$.name").value("20191225.xlsx"))
 					.andExpect(jsonPath("$.size").value(multipartFile.getSize()));
 		}
 

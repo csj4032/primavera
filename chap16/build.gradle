@@ -40,7 +40,7 @@ dependencies {
     implementation("org.thymeleaf.extras:thymeleaf-extras-springsecurity6:${thymeleafExtrasSpringSecurity6Version}")
     implementation("nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:${thymeleafLayoutDialectVersion}")
     implementation("com.navercorp.lucy:lucy-xss-servlet:${lucyXssServletVersion}")
-    implementation("com.mysql:mysql-connector-j:${mysqlVersion}")
+    implementation("org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}")
     testImplementation("io.rest-assured:rest-assured:${restAssuredVersion}")
     implementation("org.modelmapper:modelmapper:${modelMapperVersion}")
     implementation("org.flywaydb:flyway-core:${flywayVersion}")
@@ -68,7 +68,7 @@ dependencies {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
     testImplementation('org.springframework.security:spring-security-test')
-    testImplementation("org.testcontainers:mysql:${testContainersVersion}")
+    testImplementation("org.testcontainers:mariadb:${testContainersVersion}")
     testImplementation("org.testcontainers:junit-jupiter:${testContainersVersion}")
     testImplementation("javax.persistence:javax.persistence-api:2.2")
     testImplementation("javax.servlet:javax.servlet-api:4.0.1")

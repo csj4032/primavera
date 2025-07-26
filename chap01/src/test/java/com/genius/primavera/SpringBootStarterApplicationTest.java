@@ -14,7 +14,7 @@ import org.springframework.test.context.event.RecordApplicationEvents;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(classes = SpringBootStarterApplicationTest.TestConfig.class)
+@SpringBootTest(classes = SpringBootStarterApplication.class)
 @RecordApplicationEvents
 public class SpringBootStarterApplicationTest {
 
@@ -60,7 +60,7 @@ public class SpringBootStarterApplicationTest {
         String helloResult = worldService.hello();
         // then
         assertThat(worldService).isNotNull();
-        assertThat(helloResult).isEqualTo("Hello!!!");
+        assertThat(helloResult).isEqualTo("World!!!");
     }
 
     @Test

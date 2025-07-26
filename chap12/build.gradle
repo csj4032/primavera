@@ -32,7 +32,7 @@ dependencies {
     implementation('com.navercorp.lucy:lucy-xss-servlet:' + lucyXssServletVersion)
     implementation("org.modelmapper:modelmapper:${modelMapperVersion}")
     implementation("org.flywaydb:flyway-core:${flywayVersion}")
-    implementation("com.mysql:mysql-connector-j:${mysqlVersion}")
+    implementation("org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}")
     implementation('org.jetbrains:annotations:' + jetbrainsAnnotationsVersion)
     compileOnly('org.projectlombok:lombok')
     annotationProcessor('org.projectlombok:lombok')
@@ -42,7 +42,7 @@ dependencies {
     }
     testImplementation('org.springframework.security:spring-security-test')
     testImplementation "org.testcontainers:junit-jupiter:${testContainersVersion}"
-    testImplementation "org.testcontainers:mysql:${testContainersVersion}"
+    testImplementation "org.testcontainers:mariadb:${testContainersVersion}"
     testImplementation("io.rest-assured:rest-assured:${restAssuredVersion}")
     testRuntimeOnly('com.h2database:h2:' + h2Version)
 }

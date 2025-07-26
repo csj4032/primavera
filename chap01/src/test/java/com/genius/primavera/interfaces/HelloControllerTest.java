@@ -25,18 +25,12 @@ class HelloControllerTest {
     @InjectMocks
     private HelloController helloController;
 
-    @BeforeEach
-    void setUp() {
-        // Mock 객체의 기본 동작 설정
-        when(greetingService.hello()).thenReturn("Hello");
-        when(worldService.world()).thenReturn("World!!!");
-    }
-
     @Test
     @DisplayName("greeting() 메서드는 'Hello World!!!'를 반환해야 한다")
     void greetingTest() {
         // given
-        // 이미 setUp()에서 mock 설정 완료
+        when(greetingService.hello()).thenReturn("Hello");
+        when(worldService.world()).thenReturn("World!!!");
 
         // when
         String result = helloController.greeting();
@@ -49,7 +43,7 @@ class HelloControllerTest {
     @DisplayName("hello() 메서드는 GreetingService의 hello() 메서드 결과를 반환해야 한다")
     void helloTest() {
         // given
-        // 이미 setUp()에서 mock 설정 완료
+        when(greetingService.hello()).thenReturn("Hello");
 
         // when
         String result = helloController.hello();
@@ -62,7 +56,7 @@ class HelloControllerTest {
     @DisplayName("world() 메서드는 WorldService의 world() 메서드 결과를 반환해야 한다")
     void worldTest() {
         // given
-        // 이미 setUp()에서 mock 설정 완료
+        when(worldService.world()).thenReturn("World!!!");
 
         // when
         String result = helloController.world();

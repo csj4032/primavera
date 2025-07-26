@@ -18,7 +18,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ./gradlew :chap11:test
 
 # Run specific test class
-./gradlew :chap11:test --tests MySQLContainerTest
+./gradlew :chap11:test --tests MariaDBContainerTest
 
 # Run application (specific chapter)
 ./gradlew :chap09:bootRun
@@ -29,15 +29,18 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### Database Operations
 ```bash
-# Start MySQL 8.4.0 with Docker
-docker run -d --name mysql-primavera \
-  -e MYSQL_ROOT_PASSWORD=root \
-  -e MYSQL_DATABASE=primavera \
-  -e MYSQL_USER=primavera \
-  -e MYSQL_PASSWORD=primavera \
-  -p 3306:3306 mysql:8.4.0
+# Start MariaDB 11.4.7 with Docker
+docker run -d --name mariadb-primavera \
+  -e MARIADB_ROOT_PASSWORD=root \
+  -e MARIADB_DATABASE=primavera \
+  -e MARIADB_USER=primavera \
+  -e MARIADB_PASSWORD=primavera \
+  -p 3306:3306 mariadb:11.4.7
 
-# TestContainers automatically manages MySQL 8.4.0 for tests
+# Use docker-compose for complete setup (recommended)
+docker-compose up -d
+
+# TestContainers automatically manages MariaDB 11.4.7 for tests
 ```
 
 ### Version Management
@@ -61,8 +64,8 @@ This is a **progressive learning project** with 18 modules (chap00-chap17 + util
 - **Utilities**: Custom Spring Boot starters
 
 ### Database Strategy
-- **Production**: MySQL 8.4.0 (standardized across all modules)
-- **Testing**: TestContainers with MySQL 8.4.0 (ensures environment consistency)
+- **Production**: MariaDB 11.4.7 (standardized across all modules)
+- **Testing**: TestContainers with MariaDB 11.4.7 (ensures environment consistency)
 - **Schema Management**: Flyway migrations + JPA DDL auto-generation
 - **Audit Strategy**: JPA Auditing + Hibernate Envers for all entities
 
@@ -94,7 +97,7 @@ Each chapter module must be:
 - Boolean fields stored as ENUM in database ('ACTIVE'/'INACTIVE')
 - Mandatory audit fields: CREATED_AT, UPDATED_AT, CREATED_BY, UPDATED_BY
 
-### MySQL 8.4.0 Features
+### MariaDB 11.4.7 Features
 - Use JSON columns for flexible data
 - Leverage Common Table Expressions (CTEs)
 - Implement Window Functions for analytics
@@ -179,7 +182,7 @@ All user-facing messages must support i18n:
 ## Testing Guidelines
 
 ### TestContainers Integration
-- MySQL 8.4.0 containers for integration tests
+- MariaDB 11.4.7 containers for integration tests
 - Reusable test configurations in `BaseTestConfiguration`
 - Schema initialization via schema.sql
 - Test data isolation per test method
@@ -204,9 +207,9 @@ class IntegrationTest {
 - Security vulnerability scanning
 
 ### Environment Consistency
-- Development: MySQL 8.4.0 Docker
-- Testing: TestContainers MySQL 8.4.0
-- Production: MySQL 8.4.0 cluster
+- Development: MariaDB 11.4.7 Docker
+- Testing: TestContainers MariaDB 11.4.7
+- Production: MariaDB 11.4.7 cluster
 
 ## Template Rendering Testing Strategy
 
@@ -520,7 +523,7 @@ Follow these guidelines as a senior Spring Boot developer:
 - **Version Control**: Manage migration scripts through Git history
 - **CI/CD Integration**: Automate schema updates and ERD refresh during deployment
 - **Schema Validation**: Verify production and development environment schema consistency
-- **MySQL 8.4.0 Optimization**: Utilize version-specific performance improvements and features
+- **MariaDB 11.4.7 Optimization**: Utilize version-specific performance improvements and features
 
 #### Configuration and Internationalization
 
@@ -549,11 +552,11 @@ Follow these guidelines as a senior Spring Boot developer:
    - Ensure fast feedback with no external dependencies
 
 2. **Integration Tests**
-   - Use TestContainers with Docker MySQL 8.4.0
+   - Use TestContainers with Docker MariaDB 11.4.7
    - Load full Spring context with @SpringBootTest
    - Verify end-to-end scenarios and complete workflows
    - Ensure data consistency with schema.sql-based isolated test environments
-   - Maintain exact production environment parity with MySQL 8.4.0
+   - Maintain exact production environment parity with MariaDB 11.4.7
 
 3. **External Tool-Based Operational Tests**
    - Create manual test collections with Postman/Insomnia for REST APIs
@@ -600,16 +603,16 @@ Follow these guidelines as a senior Spring Boot developer:
 - **Security Scanning**: Include dependency vulnerability checks
 - **Performance Testing**: Include basic performance validation with JMeter
 - **Parallel Test Execution**: Execute tests in parallel to reduce build time
-- **MySQL 8.4.0 Testing**: Use TestContainers to ensure exact version environment for database tests
+- **MariaDB 11.4.7 Testing**: Use TestContainers to ensure exact version environment for database tests
 
 #### Database Environment Standardization
 
-##### MySQL 8.4.0 Consistency
-- **Version Lock**: Use identical MySQL 8.4.0 version across all modules
-- **Docker Container Management**: Automatically manage MySQL 8.4.0 containers with TestContainers
-- **Environment Consistency**: Unify development, testing, and production environments with MySQL 8.4.0
-- **Latest Feature Utilization**: Leverage MySQL 8.4.0's JSON, CTE, Window Functions
-- **Performance Optimization**: Use MySQL 8.4.0's improved indexing and query optimization features
+##### MariaDB 11.4.7 Consistency
+- **Version Lock**: Use identical MariaDB 11.4.7 version across all modules
+- **Docker Container Management**: Automatically manage MariaDB 11.4.7 containers with TestContainers
+- **Environment Consistency**: Unify development, testing, and production environments with MariaDB 11.4.7
+- **Latest Feature Utilization**: Leverage MariaDB 11.4.7's JSON, CTE, Window Functions
+- **Performance Optimization**: Use MariaDB 11.4.7's improved indexing and query optimization features
 - **Character Set Standards**: Use utf8mb4 character set for complete Unicode support
 - **Timezone Configuration**: Default to UTC, convert at application level when necessary
 
@@ -617,13 +620,13 @@ Follow these guidelines as a senior Spring Boot developer:
 
 ##### Local vs Test Environment Distinction
 - **Complete Environment Separation**: Maintain strict separation between local development and automated testing environments
-- **Local Development Environment**: Use localhost MySQL 8.4.0 for interactive development and debugging
-- **Test Environment**: Use TestContainers MySQL 8.4.0 for automated integration testing and CI/CD
+- **Local Development Environment**: Use localhost MariaDB 11.4.7 for interactive development and debugging
+- **Test Environment**: Use TestContainers MariaDB 11.4.7 for automated integration testing and CI/CD
 - **Build Environment**: Ensure all builds use isolated TestContainers for consistent, reproducible results
 
 ##### Local Development Environment
 - **Purpose**: Interactive development, debugging, and manual testing by developers
-- **Database**: localhost MySQL 8.4.0 (Docker or native installation)
+- **Database**: localhost MariaDB 11.4.7 (Docker or native installation)
 - **Configuration**: Use `application-local.yml` with fixed localhost connection settings
 - **Data Persistence**: Maintain data across application restarts for development continuity
 - **Schema Management**: Use Flyway migrations for schema versioning and updates
@@ -633,8 +636,8 @@ Follow these guidelines as a senior Spring Boot developer:
 ##### Profile-Based Database Auto-Selection Strategy
 
 **Core Principle: Single Profile, Automatic Database Selection**
-- **`local` Profile**: Automatically uses localhost Docker MySQL 8.4.0
-- **`test` Profile**: Automatically uses TestContainers MySQL 8.4.0
+- **`local` Profile**: Automatically uses localhost Docker MariaDB 11.4.7
+- **`test` Profile**: Automatically uses TestContainers MariaDB 11.4.7
 - **No Manual Configuration**: Database environment selected based on active profile only
 
 **Profile-Based Execution Methods:**
@@ -715,35 +718,35 @@ set SPRING_PROFILES_ACTIVE=local
 $env:SPRING_PROFILES_ACTIVE="local"
 ```
 
-**4. Docker MySQL 8.4.0 Setup for Local Development:**
+**4. Docker MariaDB 11.4.7 Setup for Local Development:**
 ```bash
-# Start MySQL container for local development
+# Start MariaDB container for local development
 docker run -d \
-  --name mysql-primavera-local \
-  -e MYSQL_ROOT_PASSWORD=root \
-  -e MYSQL_DATABASE=primavera \
-  -e MYSQL_USER=primavera \
-  -e MYSQL_PASSWORD=primavera \
+  --name mariadb-primavera-local \
+  -e MARIADB_ROOT_PASSWORD=root \
+  -e MARIADB_DATABASE=primavera \
+  -e MARIADB_USER=primavera \
+  -e MARIADB_PASSWORD=primavera \
   -p 3306:3306 \
   --restart=unless-stopped \
-  mysql:8.4.0
+  mariadb:11.4.7
 
 # Verify container is running
-docker ps | grep mysql-primavera-local
+docker ps | grep mariadb-primavera-local
 
 # Check logs if needed
-docker logs mysql-primavera-local
+docker logs mariadb-primavera-local
 
-# Connect to MySQL for debugging (optional)
-docker exec -it mysql-primavera-local mysql -u primavera -p primavera
+# Connect to MariaDB for debugging (optional)
+docker exec -it mariadb-primavera-local mysql -u primavera -p primavera
 ```
 
 **5. Local Development Workflow:**
 ```bash
-# 1. Start MySQL container (if not running)
-docker start mysql-primavera-local
+# 1. Start MariaDB container (if not running)
+docker start mariadb-primavera-local
 
-# 2. Verify MySQL connectivity
+# 2. Verify MariaDB connectivity
 telnet localhost 3306
 
 # 3. Run application with local profile
@@ -768,21 +771,21 @@ telnet localhost 3306
 **7. Troubleshooting Local Profile Issues:**
 
 **Common Issues:**
-- **MySQL not running**: Start Docker container
+- **MariaDB not running**: Start Docker container
 - **Port 3306 occupied**: Check `docker ps` and stop conflicting containers
-- **Connection refused**: Verify MySQL container health with `docker logs`
+- **Connection refused**: Verify MariaDB container health with `docker logs`
 - **Profile not activated**: Check application logs for active profiles
 
 **Debug Commands:**
 ```bash
-# Check if MySQL port is open
+# Check if MariaDB port is open
 netstat -an | grep 3306
 
-# Test MySQL connection
+# Test MariaDB connection
 mysql -h localhost -P 3306 -u primavera -p
 
 # Check Docker container status
-docker inspect mysql-primavera-local
+docker inspect mariadb-primavera-local
 
 # View Spring Boot actuator info (if enabled)
 curl http://localhost:8080/actuator/env | grep profiles
@@ -790,7 +793,7 @@ curl http://localhost:8080/actuator/env | grep profiles
 
 ##### Test Environment (Build/CI)
 - **Purpose**: Automated integration testing, continuous integration, and build verification
-- **Database**: TestContainers MySQL 8.4.0 (automatically managed Docker containers)
+- **Database**: TestContainers MariaDB 11.4.7 (automatically managed Docker containers)
 - **Configuration**: Use `application-testcontainer.yml` with dynamic TestContainers properties
 - **Data Isolation**: Each test gets a fresh, isolated database instance
 - **Schema Management**: Use `schema.sql` initialization scripts for fast test setup
@@ -854,7 +857,7 @@ spring:
 **Container Configuration:**
 ```java
 @Container
-static MySQLContainer<?> mysql = new MySQLContainer<>("mysql:8.4.0")
+static MariaDBContainer<?> mariadb = new MariaDBContainer<>("mariadb:11.4.7")
     .withDatabaseName("primavera")
     .withUsername("primavera")
     .withPassword("primavera")
@@ -865,10 +868,10 @@ static MySQLContainer<?> mysql = new MySQLContainer<>("mysql:8.4.0")
 ```java
 @DynamicPropertySource
 static void configureTestProperties(DynamicPropertyRegistry registry) {
-    registry.add("spring.datasource.url", mysql::getJdbcUrl);
-    registry.add("spring.datasource.username", mysql::getUsername);
-    registry.add("spring.datasource.password", mysql::getPassword);
-    registry.add("spring.datasource.driver-class-name", () -> "com.mysql.cj.jdbc.Driver");
+    registry.add("spring.datasource.url", mariadb::getJdbcUrl);
+    registry.add("spring.datasource.username", mariadb::getUsername);
+    registry.add("spring.datasource.password", mariadb::getPassword);
+    registry.add("spring.datasource.driver-class-name", () -> "org.mariadb.jdbc.Driver");
 }
 ```
 
@@ -888,8 +891,8 @@ class YourIntegrationTest {
     @DisplayName("Test description")
     void testMethod() {
         // Test automatically uses appropriate database based on profile
-        // - test profile: TestContainers MySQL 8.4.0
-        // - local profile: localhost Docker MySQL 8.4.0
+        // - test profile: TestContainers MariaDB 11.4.7
+        // - local profile: localhost Docker MariaDB 11.4.7
     }
 }
 ```
@@ -905,7 +908,7 @@ class YourIntegrationTest {
 class YourIntegrationTest {
     
     @Container
-    static MySQLContainer<?> mysql = new MySQLContainer<>("mysql:8.4.0")
+    static MariaDBContainer<?> mariadb = new MariaDBContainer<>("mariadb:11.4.7")
         .withDatabaseName("primavera")
         .withUsername("primavera")
         .withPassword("primavera")
@@ -913,10 +916,10 @@ class YourIntegrationTest {
 
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", mysql::getJdbcUrl);
-        registry.add("spring.datasource.username", mysql::getUsername);
-        registry.add("spring.datasource.password", mysql::getPassword);
-        registry.add("spring.datasource.driver-class-name", () -> "com.mysql.cj.jdbc.Driver");
+        registry.add("spring.datasource.url", mariadb::getJdbcUrl);
+        registry.add("spring.datasource.username", mariadb::getUsername);
+        registry.add("spring.datasource.password", mariadb::getPassword);
+        registry.add("spring.datasource.driver-class-name", () -> "org.mariadb.jdbc.Driver");
     }
 }
 ```
@@ -936,12 +939,12 @@ class TestApplication {
 
 ##### Build Integration Requirements
 
-- **Local Development**: Developers must have localhost MySQL 8.4.0 running for `bootRun` tasks
+- **Local Development**: Developers must have localhost MariaDB 11.4.7 running for `bootRun` tasks
 - **Automated Testing**: All `test` tasks must use TestContainers exclusively
 - **CI/CD Pipeline**: Build servers require only Docker for TestContainers, no external MySQL needed
 - **Module Independence**: Each module's tests run in complete isolation with their own TestContainers
 - **Performance Optimization**: Use TestContainers reuse feature where appropriate to reduce test execution time
-- **Database Version Consistency**: Both local and test environments must use identical MySQL 8.4.0 version
+- **Database Version Consistency**: Both local and test environments must use identical MariaDB 11.4.7 version
 
 ##### Environment Validation
 
@@ -951,7 +954,7 @@ class TestApplication {
 - Validate schema compatibility with production environment
 
 **Test Environment Validation:**
-- Confirm TestContainers can start MySQL 8.4.0 successfully
+- Confirm TestContainers can start MariaDB 11.4.7 successfully
 - Verify schema.sql initialization works correctly
 - Validate test isolation and data cleanup between tests
 
@@ -974,7 +977,7 @@ This environment separation strategy ensures development efficiency while mainta
 ##### Core Technologies
 - **Spring Boot**: Progress from basic to advanced concepts
 - **Java 21+**: Utilize latest LTS features extensively
-- **MySQL 8.4.0**: Use Docker TestContainers for version consistency
+- **MariaDB 11.4.7**: Use Docker TestContainers for version consistency
 - **Testing**: JUnit 5, Mockito, TestContainers integration
 - **Security**: Spring Security with internationalization support
 - **ORM**: Spring Data JPA with Auditing functionality

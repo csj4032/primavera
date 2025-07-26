@@ -21,10 +21,12 @@ import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.boot.context.event.ApplicationStartingEvent;
 import org.springframework.boot.web.servlet.context.ServletWebServerInitializedEvent;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.event.EventListener;
 
 @SpringBootConfiguration
 @EnableAutoConfiguration
+@ComponentScan
 public class SpringBootStarterApplication {
     @Generated
     private static final Logger log = LoggerFactory.getLogger(SpringBootStarterApplication.class);
@@ -47,20 +49,6 @@ public class SpringBootStarterApplication {
         springApplication.run(args);
     }
 
-    @Bean
-    public WorldService worldService() {
-        return new WorldServiceImpl();
-    }
-
-    @Bean
-    public GreetingService greetingService() {
-        return new GreetingServiceImpl();
-    }
-
-    @Bean
-    public HelloController helloController(GreetingService greetingService, WorldService worldService) {
-        return new HelloController(greetingService, worldService);
-    }
 
     @EventListener({ApplicationStartingEvent.class})
     public void applicationStartingEvent(ApplicationStartingEvent applicationStartingEvent) {

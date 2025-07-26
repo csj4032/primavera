@@ -16,9 +16,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TypeController {
 
-	@PostMapping(value = "/type", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> type(@RequestParam List<Long> strings) {
-		System.out.println(strings);
-		return new ResponseEntity<>("{\"name\":\"genius.choi\"}", HttpStatus.OK);
-	}
+    @PostMapping(value = "/type", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> type(@RequestParam List<Long> strings) {
+        log.info("Received strings: {}", strings);
+        return new ResponseEntity<>("{\"name\":\"genius.choi\"}", HttpStatus.OK);
+    }
 }

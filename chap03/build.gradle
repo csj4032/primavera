@@ -9,7 +9,7 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-thymeleaf"
     implementation "org.springframework.boot:spring-boot-starter-validation"
     implementation "commons-io:commons-io:${commonsIoVersion}"
-    implementation "com.mysql:mysql-connector-j:${mysqlVersion}"
+    implementation "org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}"
     compileOnly "org.jetbrains:annotations:${jetbrainsAnnotationsVersion}"
     testImplementation "org.springframework.boot:spring-boot-starter-test"
     testImplementation "org.springframework.security:spring-security-test"

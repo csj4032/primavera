@@ -8,7 +8,7 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
-import org.testcontainers.containers.MySQLContainer;
+import org.testcontainers.containers.MariaDBContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.utility.DockerImageName;
 
@@ -20,7 +20,7 @@ import org.springframework.boot.jdbc.DataSourceBuilder;
 public class MyBatisTestConfiguration {
 
     @Container
-    static MySQLContainer<?> mysql = new MySQLContainer<>(DockerImageName.parse("mysql:8.4.0"))
+    static MariaDBContainer<?> mysql = new MariaDBContainer<>(DockerImageName.parse("mariadb:11.4.7"))
             .withDatabaseName("primavera")
             .withUsername("primavera")
             .withPassword("primavera")

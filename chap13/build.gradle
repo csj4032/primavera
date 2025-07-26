@@ -25,7 +25,7 @@ dependencies {
     implementation('org.springframework.boot:spring-boot-starter-reactor-netty')
     implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.4")
     implementation("org.mybatis.dynamic-sql:mybatis-dynamic-sql:1.5.2")
-    implementation('org.mariadb.jdbc:mariadb-java-client:3.5.1')
+    implementation('org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}')
     implementation('nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.4.0')
     implementation('com.navercorp.lucy:lucy-xss-servlet:2.0.1')
     implementation("org.modelmapper:modelmapper:3.2.1")

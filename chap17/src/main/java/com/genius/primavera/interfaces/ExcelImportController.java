@@ -21,7 +21,7 @@ public class ExcelImportController {
 	private final ExcelImportService excelImportService;
 	private final Validator validator;
 
-	@PostMapping("/save")
+	@PostMapping(value = "/save", produces = "application/hal+json")
 	public ResponseEntity<ExcelImportResponse> save(ExcelImportRequest excelRequest) throws IOException {
 		log.info("{}", validator.toString());
 		return new ResponseEntity<>(excelImportService.excelImport(excelRequest), HttpStatus.CREATED);

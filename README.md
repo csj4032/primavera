@@ -16,7 +16,7 @@ Spring Boot를 이용한 현대적인 웹 애플리케이션 개발을 체계적
 - **Gradle 8.12.1**
 
 ### Database & Persistence
-- **MySQL/MariaDB 10.3.14** (Primary Database)
+- **MySQL/MariaDB 11.4.7** (Primary Database)
 - **Redis** (Caching & Session Storage)
 - **PostgreSQL** (Advanced Features)
 - **H2** (Testing)

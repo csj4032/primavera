@@ -21,7 +21,7 @@ dependencies {
     implementation('org.springframework.boot:spring-boot-starter-undertow')
     implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:${mybatisSpringBootStarterVersion}")
     implementation("org.mybatis.dynamic-sql:mybatis-dynamic-sql:${mybatisDynamicSqlVersion}")
-    implementation("com.mysql:mysql-connector-j:${mysqlVersion}")
+    implementation("org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}")
     implementation("nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:${thymeleafLayoutDialectVersion}")
     implementation("com.navercorp.lucy:lucy-xss-servlet:${lucyXssServletVersion}")
     implementation("org.modelmapper:modelmapper:${modelMapperVersion}")
@@ -32,6 +32,6 @@ dependencies {
     }
     testImplementation('org.springframework.security:spring-security-test')
     testImplementation "org.testcontainers:junit-jupiter:${testContainersVersion}"
-    testImplementation "org.testcontainers:mysql:${testContainersVersion}"
+    testImplementation "org.testcontainers:mariadb:${testContainersVersion}"
     testImplementation("io.rest-assured:rest-assured:${restAssuredVersion}")
 }
