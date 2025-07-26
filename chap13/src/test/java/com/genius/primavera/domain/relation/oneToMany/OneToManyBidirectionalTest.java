@@ -11,7 +11,7 @@ import org.junit.jupiter.api.*;
 @Slf4j
 @DisplayName("1:N 고객와 연락처 양방향")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class OneToManyBidirectional extends JpaTestBase {
+public class OneToManyBidirectionalTest extends JpaTestBase {
 
 	@Test
 	@Order(1)

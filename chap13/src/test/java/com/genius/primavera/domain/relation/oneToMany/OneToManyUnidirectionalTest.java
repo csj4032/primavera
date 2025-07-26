@@ -12,7 +12,7 @@ import org.junit.jupiter.api.*;
 @Slf4j
 @DisplayName("1:N 교수와 학생 단방향")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class OneToManyUnidirectional extends JpaTestBase {
+public class OneToManyUnidirectionalTest extends JpaTestBase {
 
 	@Test
 	@Order(1)

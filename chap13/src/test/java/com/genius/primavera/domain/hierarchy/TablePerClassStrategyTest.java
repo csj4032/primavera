@@ -1,13 +1,10 @@
 package com.genius.primavera.domain.hierarchy;
 
+import com.genius.primavera.BaseHierarchyJpaTest;
 import com.genius.primavera.domain.hierarchy.*;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.EntityTransaction;
-import jakarta.persistence.Persistence;
 import java.time.LocalDateTime;
 
 /**
@@ -23,18 +20,7 @@ import java.time.LocalDateTime;
 @Slf4j
 @DisplayName("클래스마다 테이블 매핑")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class TablePerClassStrategyTest {
-
-	private static EntityManagerFactory entityManagerFactory;
-	private static EntityManager entityManager;
-	private static EntityTransaction entityTransaction;
-
-	@BeforeAll
-	public static void setUp() {
-		entityManagerFactory = Persistence.createEntityManagerFactory("advance");
-		entityManager = entityManagerFactory.createEntityManager();
-		entityTransaction = entityManager.getTransaction();
-	}
+public class TablePerClassStrategyTest extends BaseHierarchyJpaTest {
 
 	@Test
 	@Order(1)

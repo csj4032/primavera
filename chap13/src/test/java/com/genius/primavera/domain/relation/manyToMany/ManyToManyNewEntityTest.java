@@ -1,6 +1,5 @@
 package com.genius.primavera.domain.relation.manyToMany;
 
-import com.genius.primavera.domain.relation.JpaTestBase;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 
@@ -9,7 +8,7 @@ import java.time.LocalDateTime;
 @Slf4j
 @DisplayName("N:N 새로운 엔티티 도출")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class ManyToManyNewEntity extends JpaTestBase {
+public class ManyToManyNewEntityTest extends ManyToManyTestBase {
 
 	@Test
 	@Order(1)

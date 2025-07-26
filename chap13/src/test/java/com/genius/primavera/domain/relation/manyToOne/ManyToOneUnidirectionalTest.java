@@ -7,7 +7,7 @@ import org.junit.jupiter.api.*;
 @Slf4j
 @DisplayName("N:1 플레이어와 팀 단방향  : 팀에는 플레이어을 참조하는 필드가 없음")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class ManyToOneUnidirectional extends JpaTestBase {
+public class ManyToOneUnidirectionalTest extends JpaTestBase {
 
 	@Test
 	@Order(1)

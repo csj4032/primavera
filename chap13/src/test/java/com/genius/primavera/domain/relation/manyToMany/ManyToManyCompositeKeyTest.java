@@ -1,15 +1,12 @@
 package com.genius.primavera.domain.relation.manyToMany;
 
-import com.genius.primavera.domain.relation.JpaTestBase;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
-
-import java.time.LocalDateTime;
 
 @Slf4j
 @DisplayName("N:N 새로운 복합키 도출")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class ManyToManyCompositeKey extends JpaTestBase {
+public class ManyToManyCompositeKeyTest extends ManyToManyTestBase {
 
 	@Test
 	@Order(1)

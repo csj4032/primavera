@@ -10,7 +10,7 @@ import org.junit.jupiter.api.*;
 @Slf4j
 @DisplayName("1:1 대상 테이블에 외래 키 단방향")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class SharedPrimaryKeyUniBidirectional extends JpaTestBase {
+public class SharedPrimaryKeyUniBidirectionalTest extends JpaTestBase {
 
 	@Test
 	@Order(1)

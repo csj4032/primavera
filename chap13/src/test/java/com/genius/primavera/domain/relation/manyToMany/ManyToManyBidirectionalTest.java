@@ -1,13 +1,12 @@
 package com.genius.primavera.domain.relation.manyToMany;
 
-import com.genius.primavera.domain.relation.JpaTestBase;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 
 @Slf4j
 @DisplayName("N:N 출발지과 도착지 양방향")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class ManyToManyBidirectional extends JpaTestBase {
+public class ManyToManyBidirectionalTest extends ManyToManyTestBase {
 
 	@Test
 	@Order(1)

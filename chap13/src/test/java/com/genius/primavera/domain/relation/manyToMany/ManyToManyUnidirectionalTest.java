@@ -1,6 +1,5 @@
 package com.genius.primavera.domain.relation.manyToMany;
 
-import com.genius.primavera.domain.relation.JpaTestBase;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 
@@ -9,7 +8,7 @@ import java.util.List;
 @Slf4j
 @DisplayName("N:N 발행과 구독 단방향  : 발행쪽에서 구독을 참조함")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class ManyToManyUnidirectional extends JpaTestBase {
+public class ManyToManyUnidirectionalTest extends ManyToManyTestBase {
 
 	@Test
 	@Order(1)
