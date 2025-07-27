@@ -1,4 +1,7 @@
 spring:
+  config:
+    activate:
+      on-profile: default
   application:
     name: primavera-chapter-04
   datasource:
