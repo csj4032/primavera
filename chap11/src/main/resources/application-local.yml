@@ -1,11 +1,12 @@
 spring:
-  application:
-    name: Privamera
+  config:
+    activate:
+      on-profile: local
   jackson:
     time-zone: UTC
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://localhost:1109/primavera?serverTimezone=UTC
+    url: jdbc:mariadb://localhost:1109/primavera?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&allowPublicKeyRetrieval=true
     username: primavera
     password: primavera
   banner:
@@ -24,40 +25,26 @@ spring:
       client:
         registration:
           google:
-            client-id: ${OAUTH2_GOOGLE_CLIENTID}
-            client-secret: ${OAUTH2_GOOGLE_CLIENTSECRET}
+            client-id: ${OAUTH2_GOOGLE_CLIENTID:test-client-id}
+            client-secret: ${OAUTH2_GOOGLE_CLIENTSECRET:test-client-secret}
             scope:
               - email
               - profile
             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
           facebook:
-            client-id: ${OAUTH2_FACEBOOK_CLIENTID}
-            client-secret: ${OAUTH2_FACEBOOK_CLIENTSECRET}
+            client-id: ${OAUTH2_FACEBOOK_CLIENTID:test-client-id}
+            client-secret: ${OAUTH2_FACEBOOK_CLIENTSECRET:test-client-secret}
             scope:
               - email
               - public_profile
             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
           github:
-            client-id: ${OAUTH2_GITHUB_CLIENTID}
-            client-secret: ${OAUTH2_GITHUB_CLIENTSECRET}
+            client-id: ${OAUTH2_GITHUB_CLIENTID:test-client-id}
+            client-secret: ${OAUTH2_GITHUB_CLIENTSECRET:test-client-secret}
             scope:
               - user:email
               - read:user
             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
-          kakao:
-            client-id: ${OAUTH2_KAKAO_CLIENTID}
-            client-secret: ${OAUTH2_KAKAO_CLIENTSECRET:}
-            authorization-grant-type: authorization_code
-            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
-            scope:
-              - profile_nickname
-              - account_email
-        provider:
-          kakao:
-            authorization-uri: https://kauth.kakao.com/oauth/authorize
-            token-uri: https://kauth.kakao.com/oauth/token
-            user-info-uri: https://kapi.kakao.com/v2/user/me
-            user-name-attribute: id
 
 mybatis:
   configuration:
@@ -69,13 +56,6 @@ mybatis:
 
 logging:
   config: classpath:logback.xml
-  level:
-    com.genius.primavera: DEBUG
-    org.springframework.boot: INFO
-    org.springframework.security: DEBUG
-    org.springframework.web: INFO
-    jdbc.sqlonly: INFO
-    jdbc.sqltiming: INFO
 
 server:
   ssl:
@@ -85,4 +65,3 @@ server:
     key-store-password: primavera
     enabled: true
   port: 8443
-

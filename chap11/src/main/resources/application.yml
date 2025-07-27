@@ -1,9 +1,6 @@
 spring:
   application:
     name: BoardSystemApplication
-  config:
-    activate:
-      on-profile: default
   jackson:
     time-zone: UTC
   datasource:
@@ -22,31 +19,6 @@ spring:
   devtools:
     livereload:
       enabled: true
-  security:
-    oauth2:
-      client:
-        registration:
-          google:
-            client-id: ${OAUTH2_GOOGLE_CLIENTID:test-client-id}
-            client-secret: ${OAUTH2_GOOGLE_CLIENTSECRET:test-client-secret}
-            scope:
-              - email
-              - profile
-            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
-          facebook:
-            client-id: ${OAUTH2_FACEBOOK_CLIENTID:test-client-id}
-            client-secret: ${OAUTH2_FACEBOOK_CLIENTSECRET:test-client-secret}
-            scope:
-              - email
-              - public_profile
-            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
-          github:
-            client-id: ${OAUTH2_GITHUB_CLIENTID:test-client-id}
-            client-secret: ${OAUTH2_GITHUB_CLIENTSECRET:test-client-secret}
-            scope:
-              - user:email
-              - read:user
-            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
 
 mybatis:
   configuration:
@@ -62,7 +34,7 @@ logging:
 server:
   ssl:
     key-alias: primavera
-    key-store: chap10/primavera.p12
+    key-store: infrastructure/certs/primavera.p12
     key-store-type: PKCS12
     key-store-password: primavera
     enabled: true
