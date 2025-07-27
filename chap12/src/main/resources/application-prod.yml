@@ -33,7 +33,7 @@ logging:
 server:
   ssl:
     key-alias: primavera
-    key-store: ${SSL_KEYSTORE_PATH:chap12/primavera.p12}
+    key-store: ${SSL_KEYSTORE_PATH:infrastructure/certs/primavera.p12}
     key-store-type: PKCS12
     key-store-password: ${SSL_KEYSTORE_PASSWORD:primavera}
     enabled: true
