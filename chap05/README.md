@@ -1,4 +1,23 @@
-## chap05
+## Chap05 - MyBatis, Logging, Transaction 관리
+
+### 개요
+MyBatis를 활용한 데이터 액세스 계층 구현과 Spring Transaction 관리, Logback을 통한 로깅 설정을 다루는 모듈입니다. 트랜잭션 전파(Propagation)와 격리 수준(Isolation Level)의 실제 구현 사례를 포함합니다.
+
+### 주요 기능
+- MyBatis 기반 데이터 액세스 계층 구현
+- Spring Transaction 전파 및 격리 수준 테스트
+- Logback을 통한 로깅 설정 및 파일 출력
+- Dynamic SQL을 활용한 동적 쿼리 생성
+- TypeHandler를 통한 Enum 타입 매핑
+- 리팩토링 예제 (God Class → SRP 적용)
+
+### 기술 스택
+- Spring Boot 3.x
+- MyBatis + MyBatis Dynamic SQL
+- MariaDB 11.4.7
+- Logback
+- TestContainers
+- Lombok
 
 ### Logback File Configuration
 
@@ -63,6 +82,89 @@ CREATE TABLE IF NOT EXISTS WINNER (
 | READ_COMMITTED | 한 트랜잭션이 다른 트랜잭션이 커밋한 값만 읽을 수 있음. 오염된 값 읽기 문제는 해결. 재현 불가한 일기, 허상 읽기 문제는 남음 |
 | REPEATABLE_READ | 트랜잭션이 어떤 필드를 여러 번 읽어도 동일한 값을 읽도록 보장. 트랜잭션이 지속되는 동안에는 다른 트랜잭션이 해당 필드를 변경 할 수 없음. 오염된 값 읽기, 재현 불가한 읽기 문제는 해결되지만 허상 읽기는 여젼히 숙제 |
 | SERIALIZABLE | 트랜잭션이 테이블을 여러 번 읽어도 정확히 동일한 로우를 읽도록 보장. 트랜잭션이 지속되는 동안에는 다른 트랜잭션이 해당 테이블에 삽입 수정, 삭제를 할 수 없음. 동시성 문제는 모두 해소되지만 성능은 현저히 떨어짐 |
+
+## 핵심 구현 요소
+
+### 1. 트랜잭션 관리 (WinnerService)
+- **@Transactional 어노테이션 기반 선언적 트랜잭션 관리**
+- **Propagation 속성별 구현**:
+  - REQUIRED: 기본 트랜잭션 전파
+  - REQUIRES_NEW: 새로운 트랜잭션 생성
+  - NESTED: 중첩 트랜잭션 처리
+  - NOT_SUPPORTED: 트랜잭션 없이 실행
+- **Isolation Level 구현**:
+  - READ_UNCOMMITTED: Dirty Read 허용
+  - READ_COMMITTED: Committed 데이터만 읽기
+  - REPEATABLE_READ: 반복 읽기 보장
+- **롤백 제어**: rollbackFor, noRollbackFor 속성 활용
+
+### 2. MyBatis 매퍼 구현
+- **UserMapper**: Dynamic SQL을 활용한 동적 쿼리
+- **RoleMapper**: 기본 CRUD 작업
+- **WinnerMapper**: 트랜잭션 테스트용 매퍼
+- **UserTableSupport**: MyBatis Dynamic SQL 지원
+
+### 3. TypeHandler 구현
+- **RoleTypeHandler**: RoleType Enum ↔ String 변환
+- **UserStatusTypeHandler**: UserStatus Enum ↔ String 변환
+
+### 4. 리팩토링 예제 (Account 패키지)
+- **AccountGodClass**: 모든 책임을 가진 God Class (안티패턴)
+- **리팩토링된 구조**:
+  - AccountParser: CSV 파싱 책임
+  - AccountProcessor: 계산 로직 책임
+  - AccountAnalyzer: 분석 및 출력 책임
+  - AccountInfo: 도메인 모델
+- **단일 책임 원칙(SRP) 적용**
+
+### 5. Logging 설정
+- **레벨별 파일 분리**: DEBUG, INFO, WARN, ERROR
+- **콘솔 및 파일 동시 출력**
+- **일별 로그 파일 롤링**
+- **MyBatis SQL 로깅 설정**
+
+## 테스트 클래스
+
+### 트랜잭션 테스트
+- **WinnerServiceIsolationTest**: 격리 수준별 동작 검증
+- **WinnerServicePropagationTest**: 전파 속성별 동작 검증
+
+### 매퍼 테스트
+- **UserMapperTest**: Dynamic SQL 테스트
+- **RoleMapperTest**: 기본 CRUD 테스트
+- **WinnerMapperTest**: Insert 및 조회 테스트
+
+### 리팩토링 테스트
+- **AccountGodClassTest**: God Class 테스트
+- **AccountAnalyzerTest**: 리팩토링된 클래스 테스트
+- **AccountCSVParserTest**: CSV 파서 단위 테스트
+
+## 실행 방법
+
+### 1. 데이터베이스 설정
+```bash
+# MariaDB 11.4.7 실행
+docker run -d --name mariadb-primavera \
+  -e MARIADB_ROOT_PASSWORD=root \
+  -e MARIADB_DATABASE=primavera \
+  -e MARIADB_USER=primavera \
+  -e MARIADB_PASSWORD=primavera \
+  -p 3306:3306 mariadb:11.4.7
+```
+
+### 2. 애플리케이션 실행
+```bash
+./gradlew :chap05:bootRun
+```
+
+### 3. 테스트 실행
+```bash
+# 전체 테스트
+./gradlew :chap05:test
+
+# 특정 테스트
+./gradlew :chap05:test --tests WinnerServicePropagationTest
+```
 
 ### ETC
 * logback [참고](https://logback.qos.ch/)

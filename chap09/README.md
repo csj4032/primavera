@@ -1,9 +1,34 @@
-## chap09
+## chap09 - Spring Security 기본 구현
 
-### build.gradle spring-security 추가
-```
-compile('org.springframework.security:spring-security-config:5.1.5.RELEASE')
-compile('org.springframework.security:spring-security-web:5.1.5.RELEASE')
+### 개요
+Spring Security를 활용한 기본 인증/인가 시스템 구현 모듈로, 사용자 인증, 권한 관리, 세션 보안 등의 핵심 보안 기능을 포함합니다.
+
+### 주요 기능
+- Spring Security 6.x 기반 보안 설정
+- 사용자 인증 및 권한 관리 (USER, MANAGER, ADMINISTRATOR)
+- 커스텀 UserDetails 및 UserDetailsService 구현
+- Form 기반 로그인/로그아웃
+- Lucy XSS Filter 통합
+- Chain of Responsibility 패턴을 활용한 검증 프로세스
+- MyBatis 기반 사용자 관리
+
+### 기술 스택
+- Spring Boot 3.x
+- Spring Security 6.x
+- MyBatis
+- MariaDB 11.4.7
+- Thymeleaf + Spring Security Dialect
+- Lucy XSS Filter
+- BCrypt Password Encoder
+
+### build.gradle 주요 의존성
+```gradle
+implementation "org.springframework.security:spring-security-config:${springSecurityVersion}"
+implementation "org.springframework.security:spring-security-core:${springSecurityVersion}"
+implementation "org.springframework.security:spring-security-crypto:${springSecurityVersion}"
+implementation "org.springframework.security:spring-security-web:${springSecurityVersion}"
+implementation "org.thymeleaf.extras:thymeleaf-extras-springsecurity6:${thymeleafExtrasSpringSecurity6Version}"
+implementation project(":appendix:spring-boot-starter-lucy-filter")
 ```
 
 ### Logging default.xml 변경
@@ -101,65 +126,72 @@ compile('org.springframework.security:spring-security-web:5.1.5.RELEASE')
 
 ## 설정 (SecurityConfig)
 
-```java
+### Spring Security 6.x 기반 설정
+Spring Boot 3.x와 Spring Security 6.x로 업그레이드되면서 설정 방식이 변경되었습니다:
+- `WebSecurityConfigurerAdapter` 대신 `SecurityFilterChain` 빈 사용
+- Lambda DSL 기반 설정
+- `antMatchers()` → `requestMatchers()`로 변경
 
+```java
 @Slf4j
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
-public class PrimaveraSecurityConfig extends WebSecurityConfigurerAdapter {
+@RequiredArgsConstructor
+public class PrimaveraSecurityConfig {
 
-    private AuthenticationSuccessHandler successHandler = (request, response, authentication) -> log.info("success : " + request.getContextPath());
-    private AuthenticationFailureHandler failureHandler = (request, response, authentication) -> log.info("failure : " + request.getContextPath());
+    private final AuthenticationSuccessHandler successHandler = (request, response, authentication) -> log.info("success : {}", request.getContextPath());
+    private final AuthenticationFailureHandler failureHandler = (request, response, authentication) -> log.info("failure : {}", request.getContextPath());
 
-    @Autowired
-    private PrimaveraUserDetailsService primaveraUserDetailsService;
+    private final PrimaveraUserDetailsService primaveraUserDetailsService;
 
-    @Override
-    protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
-        PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
-        auth.inMemoryAuthentication()
-                .withUser("Genius").password("{bcrypt}$2a$10$7UEHLpn1r4gZY2qxiZFJ5.7wa3Hdz8IXgxUtFogy0Ac10fh7TG4V.").roles("USER")
-                .and()
-                .withUser("Marcus Tullius Cicero").password(encoder.encode("password")).roles("MANAGER")
-                .and()
-                .withUser("Julius Caesar").password(encoder.encode("password")).roles("ADMINISTRATOR");
-        auth.authenticationProvider(authenticationProvider());
-    }
-
-    @Override
-    public void configure(WebSecurity webSecurity) throws Exception {
-        webSecurity.ignoring().antMatchers(HttpMethod.GET, "/resources/**", "/bower_components/**", "/dist/**", "/plugins/**", "/favicon.ico");
-    }
-
-    @Override
-    protected void configure(final HttpSecurity http) throws Exception {
-        http
-                .csrf().disable()
-                .authorizeRequests()
-                .antMatchers("/login").permitAll()
-                .anyRequest().authenticated()
-                .and()
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+        httpSecurity
+                .cors(corsCustomizer -> corsCustomizer.configurationSource(request -> {
+                    CorsConfiguration configuration = new CorsConfiguration();
+                    configuration.setAllowedOriginPatterns(Collections.singletonList("*"));
+                    configuration.setAllowedMethods(Collections.singletonList("*"));
+                    configuration.setAllowCredentials(true);
+                    configuration.setAllowedHeaders(Collections.singletonList("*"));
+                    configuration.setMaxAge(3600L);
+                    configuration.setExposedHeaders(Collections.singletonList("Authorization"));
+                    return configuration;
+                }))
+                .csrf(AbstractHttpConfigurer::disable)
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
+                .authorizeHttpRequests(auth ->
+                        auth
+                                .requestMatchers(HttpMethod.GET, "/resources/**", "/bower_components/**", "/dist/**", "/plugins/**", "/favicon.ico").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/login", "/login/**").permitAll()
+                                .anyRequest().authenticated()
+                )
                 .addFilterAfter(new PrimaveraFilter(), UsernamePasswordAuthenticationFilter.class)
-                .formLogin()
-                .usernameParameter("email")
-                .passwordParameter("password")
-                .loginPage("/login")
-                .loginProcessingUrl("/signin")
-                .successHandler(successHandler)
-                .defaultSuccessUrl("/index", true)
-                .failureHandler(failureHandler)
-                .failureUrl("/login?error=true")
-                .and()
-                .logout()
-                .logoutUrl("/signout")
-                .deleteCookies("JSESSIONID");
+                .authenticationProvider(authenticationProvider())
+                .formLogin(form -> form
+                        .loginPage("/login")
+                        .loginProcessingUrl("/signin")
+                        .usernameParameter("email")
+                        .passwordParameter("password")
+                        .successHandler(successHandler)
+                        .defaultSuccessUrl("/index", true)
+                        .failureHandler(failureHandler)
+                        .failureUrl("/login?error=true"))
+                .logout(logout -> logout
+                        .logoutUrl("/signout")
+                        .deleteCookies("JSESSIONID"))
+                .httpBasic(AbstractHttpConfigurer::disable);
+        return httpSecurity.build();
     }
 
     @Bean
-    public DaoAuthenticationProvider authenticationProvider() {
+    public BCryptPasswordEncoder bCryptPasswordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         authProvider.setUserDetailsService(primaveraUserDetailsService);
+        authProvider.setPasswordEncoder(bCryptPasswordEncoder());
         return authProvider;
     }
 }
@@ -250,6 +282,67 @@ public class PasswordEncoderTest {
     }
 }
 ```
+
+## 핵심 구현 요소
+
+### 1. 사용자 인증 체계
+- **PrimaveraUserDetails**: Spring Security의 UserDetails 인터페이스 구현
+  - User 엔티티를 Spring Security가 이해할 수 있는 형태로 변환
+  - 권한(Authorities)을 ROLE_ 접두사와 함께 반환
+  - 계정 상태(만료, 잠금, 활성화) 관리
+
+- **PrimaveraUserDetailsService**: 데이터베이스에서 사용자 정보 로드
+  - UserService를 통해 이메일로 사용자 검색
+  - UsernameNotFoundException 처리
+
+### 2. 보안 필터 체인
+- **PrimaveraFilter**: UsernamePasswordAuthenticationFilter 이후에 추가되는 커스텀 필터
+- **Lucy XSS Filter**: XSS 공격 방지를 위한 필터 통합
+
+### 3. Chain of Responsibility 패턴
+- **ProcessChain**: 유효성 검증을 위한 책임 연쇄 패턴 구현
+- **Process 구현체들**:
+  - FromValidationProcess
+  - ToValidationProcess
+  - MessageValidationProcess
+
+### 4. 도메인 모델
+- **User**: 사용자 엔티티 (Validation Group 포함)
+- **Role**: 권한 정보 (RoleType enum)
+- **UserStatus**: 사용자 상태 (ON, OFF, DORMANT, BLOCK, LEAVE)
+- **UserRole**: User와 Role의 다대다 관계 매핑
+
+### 5. MyBatis TypeHandler
+- **RoleTypeHandler**: RoleType enum 처리
+- **UserStatusTypeHandler**: UserStatus enum 처리
+
+### 6. 사용자 정의 Validator
+- **@Nickname**: 닉네임 검증 어노테이션
+- **NicknameValidator**: 닉네임 검증 로직 구현
+
+## 실행 방법
+
+### 1. 데이터베이스 설정
+```bash
+# MariaDB 11.4.7 실행
+docker run -d --name mariadb-primavera \
+  -e MARIADB_ROOT_PASSWORD=root \
+  -e MARIADB_DATABASE=primavera \
+  -e MARIADB_USER=primavera \
+  -e MARIADB_PASSWORD=primavera \
+  -p 1109:3306 mariadb:11.4.7
+```
+
+### 2. 애플리케이션 실행
+```bash
+./gradlew :chap09:bootRun
+```
+
+### 3. 접속 정보
+- URL: http://localhost:8080
+- 테스트 계정:
+  - Email: Genius@gmail.com / Password: secret (USER, MANAGER, ADMINISTRATOR 권한)
+  - 데이터베이스 기반 사용자도 로그인 가능
 
 ### 참고
 * Spring Security3 (피터 뮬라리엔)
