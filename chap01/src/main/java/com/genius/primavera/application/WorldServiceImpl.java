@@ -4,14 +4,15 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class WorldServiceImpl implements WorldService {
-    @Override
-    public String world() {
-        return "World!!!";
-    }
 
     @Override
     public String hello() {
-        return "World!!!";
+        return "Hello";
+    }
+
+    @Override
+    public String world() {
+        return "World";
     }
 }
 

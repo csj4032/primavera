@@ -18,7 +18,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @SpringBootConfiguration 심화 분석을 위한 테스트
- *
  * @SpringBootConfiguration은 다음과 같은 특징을 가집니다:
  * 1. 내부적으로 @Configuration을 포함하여 빈 정의의 소스임을 나타냄
  * 2. 애플리케이션당 하나만 존재해야 함 (컴포넌트 스캔 시작점)
@@ -32,12 +31,15 @@ public class SpringBootConfigurationTest {
     @Autowired
     private ApplicationContext applicationContext;
 
+    /**
+     * @SpringBootConfiguration이 적용된 클래스는 일반적으로 애플리케이션의 시작점 역할을 합니다.
+     * 이 테스트는 해당 클래스가 올바르게 로드되고, 필요한 빈들이 등록되는지 검증합니다.
+     */
     @Test
     @DisplayName("@SpringBootConfiguration이 적용된 클래스가 정확히 하나 존재해야 한다")
     void shouldHaveExactlyOneSpringBootConfiguration() {
         // when
         String[] configBeanNames = applicationContext.getBeanNamesForAnnotation(SpringBootConfiguration.class);
-
         // then
         // 애플리케이션 내에 @SpringBootConfiguration이 적용된 클래스는 정확히 하나만 있어야 함
         assertThat(configBeanNames).hasSize(1);
@@ -45,6 +47,10 @@ public class SpringBootConfigurationTest {
         assertThat(configBeanNames[0]).isEqualTo("springBootStarterApplication");
     }
 
+    /**
+     * @SpringBootConfiguration은 @Configuration을 메타 어노테이션으로 포함하고 있습니다.
+     * 이 테스트는 해당 클래스가 @Configuration 특성을 가지는지 검증합니다.
+     */
     @Test
     @DisplayName("@SpringBootConfiguration이 적용된 클래스는 @Configuration 특성을 가져야 한다")
     void shouldHaveConfigurationCharacteristics() {
@@ -57,6 +63,10 @@ public class SpringBootConfigurationTest {
         assertThat(configBeanNames).contains(springBootConfigBeanNames[0]);
     }
 
+    /**
+     * @SpringBootConfiguration은 CGLIB 프록시로 생성되어야 합니다.
+     * 이 테스트는 해당 클래스가 CGLIB 프록시로 생성되는지 검증합니다.
+     */
     @Test
     @DisplayName("@SpringBootConfiguration의 proxyBeanMethods 속성이 정상 동작해야 한다")
     void shouldRespectProxyBeanMethodsAttribute() {
@@ -69,6 +79,11 @@ public class SpringBootConfigurationTest {
         assertThat(configBean.getClass().getName()).contains("$$");
     }
 
+    /**
+     * @SpringBootConfiguration이 적용된 클래스는 애플리케이션의 시작점 역할을 하며,
+     * 필요한 빈들을 등록해야 합니다.
+     * 이 테스트는 해당 클래스에 정의된 빈들이 올바르게 등록되는지 검증합니다.
+     */
     @Test
     @DisplayName("메인 애플리케이션 클래스에 정의된 빈들이 등록되어야 한다")
     void shouldRegisterBeansDefinedInConfiguration() {
@@ -83,7 +98,8 @@ public class SpringBootConfigurationTest {
     }
 
     /**
-     * 내부 @Configuration 클래스 - @SpringBootConfiguration과 함께 사용 가능
+     * 내부 @Configuration 클래스를 테스트합니다.
+     * 이 클래스는 @SpringBootConfiguration이 적용된 클래스 내부에 정의되어야 합니다.
      */
     @Configuration
     static class InnerConfiguration {
@@ -93,6 +109,10 @@ public class SpringBootConfigurationTest {
         }
     }
 
+    /**
+     * 내부 @Configuration 클래스에 정의된 빈이 올바르게 등록되는지 검증합니다.
+     * 이 테스트는 @SpringBootConfiguration과 함께 동작하는지 확인합니다.
+     */
     @Test
     @DisplayName("내부 @Configuration 클래스가 @SpringBootConfiguration과 함께 동작해야 한다")
     void shouldWorkWithNestedConfigurations() {
@@ -104,6 +124,10 @@ public class SpringBootConfigurationTest {
         assertThat(hasInnerConfigBean).isTrue();
     }
 
+    /**
+     * @SpringBootConfiguration이 적용된 클래스는 컴포넌트 스캔의 시작점 역할을 합니다.
+     * 이 테스트는 해당 클래스가 컴포넌트 스캔을 통해 필요한 빈들을 등록하는지 검증합니다.
+     */
     @Test
     @DisplayName("@SpringBootConfiguration은 컴포넌트 스캔의 시작점이 되어야 한다")
     void shouldBeComponentScanningStartingPoint() {
@@ -119,7 +143,8 @@ public class SpringBootConfigurationTest {
     }
 
     /**
-     * 추가 테스트: SpringBootConfiguration의 메타 어노테이션 분석
+     * @SpringBootConfiguration은 @Configuration을 메타 어노테이션으로 포함해야 합니다.
+     * 이 테스트는 해당 클래스가 @Configuration 특성을 가지는지 검증합니다.
      */
     @Test
     @DisplayName("@SpringBootConfiguration은 @Configuration을 메타 어노테이션으로 포함해야 한다")
@@ -134,6 +159,10 @@ public class SpringBootConfigurationTest {
         assertThat(hasConfigurationAnnotation).isTrue();
     }
 
+    /**
+     * @SpringBootConfiguration이 적용된 클래스는 내부에 정의된 @Bean 메서드를 캐싱해야 합니다.
+     * 이 테스트는 해당 클래스가 CGLIB 프록시로 생성되어야 함을 검증합니다.
+     */
     @Test
     @DisplayName("@SpringBootConfiguration이 적용된 클래스는 내부에 정의된 @Bean 메서드를 캐싱해야 한다")
     void shouldCacheBeanMethods() {

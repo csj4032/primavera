@@ -5,6 +5,8 @@ import lombok.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Setter
+@Getter
 @Builder
 @ToString
 @EqualsAndHashCode(of = {"id", "email"})
@@ -34,59 +36,4 @@ public class User {
 		this.modDt = modDt;
 	}
 
-	public long getId() {
-		return id;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public String getNickname() {
-		return nickname;
-	}
-
-	public List<Role> getRoles() {
-		return roles;
-	}
-
-	public LocalDateTime getRegDt() {
-		return regDt;
-	}
-
-	public LocalDateTime getModDt() {
-		return modDt;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public void setNickname(String nickname) {
-		this.nickname = nickname;
-	}
-
-	public void setRoles(List<Role> roles) {
-		this.roles = roles;
-	}
-
-	public void setRegDt(LocalDateTime regDt) {
-		this.regDt = regDt;
-	}
-
-	public void setModDt(LocalDateTime modDt) {
-		this.modDt = modDt;
-	}
 }

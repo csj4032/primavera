@@ -141,6 +141,118 @@ flowchart TD
 
 ## 🔧 실습 예제
 
+### Bean 등록 방식 학습 예제
+
+Spring에서 Bean을 등록하는 다양한 방법을 학습할 수 있는 예제입니다.
+
+**1. 어노테이션 기반 등록 (@RestController)**
+```java
+@RestController
+@RequiredArgsConstructor
+public class HelloController {
+    private final GreetingService greetingService;
+    private final WorldService worldService;
+    
+    @GetMapping("/greeting")
+    public String greeting() {
+        return greetingService.hello() + " " + worldService.world();
+    }
+}
+```
+
+**2. 프로그래매틱 등록 (ApplicationContextInitializer)**
+```java
+SpringApplication springApplication = new SpringApplicationBuilder(SpringBootStarterApplication.class)
+    .initializers((applicationContext) -> {
+        if (applicationContext instanceof GenericApplicationContext genericContext) {
+            // 서비스 Bean 등록
+            genericContext.registerBean(WorldService.class, WorldServiceImpl.class);
+            genericContext.registerBean(GreetingService.class, GreetingServiceImpl.class);
+            
+            // 컨트롤러 Bean 등록 (의존성 주입 포함)
+            genericContext.registerBean(HelloController.class, () -> {
+                WorldService worldService = genericContext.getBean(WorldService.class);
+                GreetingService greetingService = genericContext.getBean(GreetingService.class);
+                return new HelloController(greetingService, worldService);
+            });
+        }
+    })
+    .build();
+```
+
+**⚠️ 주의사항: Bean 중복 등록**
+- 위 두 방식을 동시에 사용하면 Bean 중복 등록으로 인한 충돌이 발생할 수 있습니다.
+- 충돌 발생 시 해결 방법:
+  1. `SpringBootStarterApplication`의 HelloController 등록 부분 주석 처리
+  2. `HelloController`의 `@RestController` 어노테이션 제거
+- 실제 개발에서는 일관된 방식 하나만 선택하여 사용하세요.
+
+### Spring Boot 이벤트 처리 학습
+
+애플리케이션 생명주기의 다양한 이벤트를 처리하는 방법을 학습할 수 있습니다.
+
+```java
+@SpringBootApplication
+public class SpringBootStarterApplication {
+    
+    // 1. 애플리케이션 시작 이벤트
+    @EventListener({ApplicationStartingEvent.class})
+    public void applicationStartingEvent(ApplicationStartingEvent event) {
+        log.info("[SpringBoot] ApplicationStartingEvent: {}", event);
+    }
+    
+    // 2. 웹 서버 초기화 이벤트
+    @EventListener({ServletWebServerInitializedEvent.class})
+    public void servletWebServerInitializedEvent(ServletWebServerInitializedEvent event) {
+        log.info("[SpringBoot] ServletWebServerInitializedEvent: {}", event);
+    }
+    
+    // 3. 애플리케이션 컨텍스트 초기화 이벤트
+    @EventListener({ApplicationContextInitializedEvent.class})
+    public void applicationContextInitializedEvent(ApplicationContextInitializedEvent event) {
+        log.info("[SpringBoot] ApplicationContextInitializedEvent: {}", event);
+    }
+    
+    // 4. Bean 초기화 후 처리
+    @PostConstruct
+    private void postConstruct() {
+        log.info("[SpringBoot] @PostConstruct 호출");
+    }
+    
+    // 5. 애플리케이션 시작 완료 이벤트
+    @EventListener({ApplicationStartedEvent.class})
+    public void applicationStartedEvent(ApplicationStartedEvent event) {
+        log.info("[SpringBoot] ApplicationStartedEvent: {}", event);
+    }
+    
+    // 6. 애플리케이션 준비 완료 이벤트
+    @EventListener({ApplicationReadyEvent.class})
+    public void applicationReadyEvent(ApplicationReadyEvent event) {
+        log.info("[SpringBoot] ApplicationReadyEvent: {}", event);
+    }
+    
+    // 7. 애플리케이션 시작 후 실행되는 Runner들
+    @Bean
+    protected ApplicationRunner applicationRunner() {
+        return (args) -> log.info("[SpringBoot] ApplicationRunner Args: {}", (Object) args);
+    }
+    
+    @Bean
+    protected CommandLineRunner commandLineRunner() {
+        return (args) -> log.info("[SpringBoot] CommandLineRunner Args: {}", (Object) args);
+    }
+}
+```
+
+**이벤트 실행 순서:**
+1. ApplicationStartingEvent → 애플리케이션 시작
+2. ApplicationContextInitializedEvent → 컨텍스트 초기화
+3. ServletWebServerInitializedEvent → 웹 서버 초기화
+4. @PostConstruct → Bean 후처리
+5. ApplicationStartedEvent → 시작 완료
+6. ApplicationReadyEvent → 준비 완료
+7. ApplicationRunner/CommandLineRunner → 사용자 정의 실행
+
 ### 핵심 애플리케이션 클래스
 
 ```java
