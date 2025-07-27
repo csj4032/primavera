@@ -19,11 +19,14 @@ CREATE DATABASE IF NOT EXISTS primavera_mybatis CHARACTER SET utf8mb4 COLLATE ut
 -- 3. MyBatis 게시판 데이터베이스 (chap12-chap13)
 CREATE DATABASE IF NOT EXISTS primavera_mybatis_board CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
--- 4. JPA 고급 데이터베이스 (chap14-chap16)
+-- 4. JPA 고급 데이터베이스 (chap14-chap15)
 CREATE DATABASE IF NOT EXISTS primavera_jpa_advanced CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
--- 5. JPA 게시판 데이터베이스 (chap17+)
+-- 5. JPA 게시판 데이터베이스 (chap16-chap17)
 CREATE DATABASE IF NOT EXISTS primavera_jpa_board CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- 6. 마이크로서비스 데이터베이스 (chap18)
+CREATE DATABASE IF NOT EXISTS primavera_microservices CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- 6. 테스트용 데이터베이스
 CREATE DATABASE IF NOT EXISTS primavera_test CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -38,6 +41,7 @@ GRANT ALL PRIVILEGES ON primavera_mybatis.* TO 'primavera'@'%';
 GRANT ALL PRIVILEGES ON primavera_mybatis_board.* TO 'primavera'@'%';
 GRANT ALL PRIVILEGES ON primavera_jpa_advanced.* TO 'primavera'@'%';
 GRANT ALL PRIVILEGES ON primavera_jpa_board.* TO 'primavera'@'%';
+GRANT ALL PRIVILEGES ON primavera_microservices.* TO 'primavera'@'%';
 GRANT ALL PRIVILEGES ON primavera_test.* TO 'primavera'@'%';
 
 FLUSH PRIVILEGES;
@@ -377,7 +381,7 @@ ON DUPLICATE KEY UPDATE NEXT_VAL = VALUES(NEXT_VAL);
 
 -- ==============================================
 -- 3. JPA 고급 데이터베이스 (primavera_jpa_advanced)
--- 대상: chap14 (JPA 관계 매핑)
+-- 대상: chap14, chap15 (JPA 관계 매핑, Reactive Programming)
 -- ==============================================
 
 USE primavera_jpa_advanced;
@@ -976,7 +980,7 @@ ON DUPLICATE KEY UPDATE ARTICLE_ID = VALUES(ARTICLE_ID);
 
 -- ==============================================
 -- 5. JPA 게시판 데이터베이스 (primavera_jpa_board)
--- 대상: chap17+ (파일 처리, Reactive 등)
+-- 대상: chap16, chap17 (파일 처리, CI/CD 등)
 -- ==============================================
 
 USE primavera_jpa_board;
@@ -1283,7 +1287,107 @@ VALUES (2, '2024-01-01', '10:30:00', '김철수', '새해 복 많이 받으세�
 ON DUPLICATE KEY UPDATE FILE_UPLOAD_ID = VALUES(FILE_UPLOAD_ID);
 
 -- ==============================================
--- 6. 테스트용 데이터베이스 (primavera_test)
+-- 6. 마이크로서비스 데이터베이스 (primavera_microservices)
+-- 대상: chap18 (마이크로서비스 아키텍처)
+-- ==============================================
+
+USE primavera_microservices;
+
+-- 마이크로서비스용 기본 사용자 테이블
+CREATE TABLE IF NOT EXISTS MS_USERS
+(
+    ID         BIGINT AUTO_INCREMENT PRIMARY KEY,
+    EMAIL      VARCHAR(100) UNIQUE NOT NULL,
+    PASSWORD   VARCHAR(255)        NOT NULL,
+    NICKNAME   VARCHAR(50)         NOT NULL,
+    STATUS     VARCHAR(20) DEFAULT 'ACTIVE',
+    CREATED_AT DATETIME    DEFAULT CURRENT_TIMESTAMP,
+    UPDATED_AT DATETIME    DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    SERVICE_ID VARCHAR(50)         NOT NULL, -- 서비스 식별자
+    INDEX IDX_MS_EMAIL (EMAIL),
+    INDEX IDX_MS_STATUS (STATUS),
+    INDEX IDX_MS_SERVICE_ID (SERVICE_ID)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_unicode_ci;
+
+-- 주문 서비스 테이블
+CREATE TABLE IF NOT EXISTS MS_ORDERS
+(
+    ID            BIGINT AUTO_INCREMENT PRIMARY KEY,
+    ORDER_NUMBER  VARCHAR(50) UNIQUE NOT NULL,
+    USER_ID       BIGINT            NOT NULL,
+    TOTAL_AMOUNT  DECIMAL(12, 2)    NOT NULL,
+    ORDER_STATUS  VARCHAR(20) DEFAULT 'PENDING',
+    PAYMENT_STATUS VARCHAR(20) DEFAULT 'UNPAID',
+    CREATED_AT    DATETIME    DEFAULT CURRENT_TIMESTAMP,
+    UPDATED_AT    DATETIME    DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (USER_ID) REFERENCES MS_USERS (ID) ON DELETE CASCADE,
+    INDEX IDX_MS_ORDER_NUMBER (ORDER_NUMBER),
+    INDEX IDX_MS_ORDER_STATUS (ORDER_STATUS)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_unicode_ci;
+
+-- 상품 서비스 테이블
+CREATE TABLE IF NOT EXISTS MS_PRODUCTS
+(
+    ID          BIGINT AUTO_INCREMENT PRIMARY KEY,
+    PRODUCT_CODE VARCHAR(50) UNIQUE NOT NULL,
+    NAME        VARCHAR(255)       NOT NULL,
+    DESCRIPTION TEXT,
+    PRICE       DECIMAL(10, 2)     NOT NULL,
+    STOCK       INT       DEFAULT 0,
+    STATUS      VARCHAR(20) DEFAULT 'ACTIVE',
+    CREATED_AT  DATETIME  DEFAULT CURRENT_TIMESTAMP,
+    UPDATED_AT  DATETIME  DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX IDX_MS_PRODUCT_CODE (PRODUCT_CODE),
+    INDEX IDX_MS_PRODUCT_STATUS (STATUS)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_unicode_ci;
+
+-- 계정 서비스 테이블
+CREATE TABLE IF NOT EXISTS MS_ACCOUNTS
+(
+    ID           BIGINT AUTO_INCREMENT PRIMARY KEY,
+    USER_ID      BIGINT       NOT NULL,
+    ACCOUNT_TYPE VARCHAR(20)  NOT NULL, -- SAVINGS, CHECKING, CREDIT
+    BALANCE      DECIMAL(15, 2) DEFAULT 0.00,
+    CURRENCY     VARCHAR(3)     DEFAULT 'KRW',
+    STATUS       VARCHAR(20)    DEFAULT 'ACTIVE',
+    CREATED_AT   DATETIME       DEFAULT CURRENT_TIMESTAMP,
+    UPDATED_AT   DATETIME       DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (USER_ID) REFERENCES MS_USERS (ID) ON DELETE CASCADE,
+    INDEX IDX_MS_ACCOUNT_USER_ID (USER_ID),
+    INDEX IDX_MS_ACCOUNT_TYPE (ACCOUNT_TYPE)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_unicode_ci;
+
+-- 마이크로서비스 데이터 삽입
+INSERT INTO MS_USERS (ID, EMAIL, PASSWORD, NICKNAME, STATUS, SERVICE_ID)
+VALUES (1, 'front@primavera.com', '{bcrypt}$2a$10$N8kKAJz4rT8d.JLZ8QqC6O8.YhJQrGeFGRqF2QhPZKJf3ZcJwQq7e', 'FrontUser', 'ACTIVE', 'front-service'),
+       (2, 'account@primavera.com', '{bcrypt}$2a$10$N8kKAJz4rT8d.JLZ8QqC6O8.YhJQrGeFGRqF2QhPZKJf3ZcJwQq7e', 'AccountUser', 'ACTIVE', 'account-service'),
+       (3, 'product@primavera.com', '{bcrypt}$2a$10$N8kKAJz4rT8d.JLZ8QqC6O8.YhJQrGeFGRqF2QhPZKJf3ZcJwQq7e', 'ProductUser', 'ACTIVE', 'product-service'),
+       (4, 'order@primavera.com', '{bcrypt}$2a$10$N8kKAJz4rT8d.JLZ8QqC6O8.YhJQrGeFGRqF2QhPZKJf3ZcJwQq7e', 'OrderUser', 'ACTIVE', 'order-service')
+ON DUPLICATE KEY UPDATE EMAIL = VALUES(EMAIL);
+
+INSERT INTO MS_PRODUCTS (PRODUCT_CODE, NAME, DESCRIPTION, PRICE, STOCK)
+VALUES ('PRD001', 'Spring Boot 완전정복', 'Spring Boot 교육서적', 35000.00, 100),
+       ('PRD002', 'Java 프로그래밍 마스터', 'Java 고급 프로그래밍 가이드', 42000.00, 50),
+       ('PRD003', 'Microservices 아키텍처', '마이크로서비스 설계 패턴', 38000.00, 75)
+ON DUPLICATE KEY UPDATE PRODUCT_CODE = VALUES(PRODUCT_CODE);
+
+INSERT INTO MS_ACCOUNTS (USER_ID, ACCOUNT_TYPE, BALANCE, CURRENCY)
+VALUES (1, 'CHECKING', 1000000.00, 'KRW'),
+       (2, 'SAVINGS', 5000000.00, 'KRW'),
+       (3, 'CHECKING', 2500000.00, 'KRW'),
+       (4, 'SAVINGS', 3000000.00, 'KRW')
+ON DUPLICATE KEY UPDATE USER_ID = VALUES(USER_ID);
+
+-- ==============================================
+-- 7. 테스트용 데이터베이스 (primavera_test)
 -- ==============================================
 
 USE primavera_test;
@@ -1339,20 +1443,22 @@ ON DUPLICATE KEY UPDATE AUTHOR_ID = VALUES(AUTHOR_ID);
 --    - chap07: MyBatis 고급 기능 (동적 쿼리, 커스텀 TypeHandler)
 --    - chap11: MyBatis 최적화 및 성능 튜닝
 --    
--- 3. primavera_jpa_advanced (JPA 고급 데이터베이스)
---    - chap14: JPA 관계 매핑 (OneToOne, OneToMany, ManyToOne, ManyToMany)
---    - chap15: JPA 고급 기능 (상속, 임베디드, 컬렉션 매핑)
---    - chap16: JPA 성능 최적화 (페치 조인, 배치 처리)
---    
--- 4. primavera_mybatis_board (MyBatis 게시판 데이터베이스)
+-- 3. primavera_mybatis_board (MyBatis 게시판 데이터베이스)
 --    - chap12: MyBatis 기반 계층형 게시판 구현
 --    - chap13: MyBatis 기반 고급 게시판 기능 (검색, 정렬, 페이징)
 --    
--- 5. primavera_jpa_board (JPA 게시판 데이터베이스)
---    - chap17: 파일 처리 시스템 (Excel, CSV, PDF)
---    - chap18+: Reactive Programming, Microservices
+-- 4. primavera_jpa_advanced (JPA 고급 데이터베이스)
+--    - chap14: JPA 관계 매핑 (OneToOne, OneToMany, ManyToOne, ManyToMany)
+--    - chap15: Reactive Programming (Spring WebFlux, R2DBC)
 --    
--- 6. primavera_test (테스트용 데이터베이스)
+-- 5. primavera_jpa_board (JPA 게시판 데이터베이스)
+--    - chap16: 파일 처리 시스템 (Excel, CSV, PDF)
+--    - chap17: CI/CD 및 배포 자동화
+--    
+-- 6. primavera_microservices (마이크로서비스 데이터베이스)
+--    - chap18: 마이크로서비스 아키텍처 (Front, Account, Product, Configuration)
+--    
+-- 7. primavera_test (테스트용 데이터베이스)
 --    - 모든 모듈의 TestContainers 기반 통합 테스트
 --    - CI/CD 파이프라인에서 사용
 

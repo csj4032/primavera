@@ -1,4 +1,7 @@
 spring:
+  config:
+    activate:
+      on-profile: local
   cloud:
     vault:
       host: localhost
@@ -15,8 +18,6 @@ spring:
         profile-separator: '/'
         default-context: DataAccessApplication
         application-name: DataAccessApplication
-  config:
-    import: vault://secret/DataAccessApplication/local
 
 logging:
   level:

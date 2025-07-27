@@ -1,567 +1,619 @@
-# Chapter 16 - Reactive Programming & Advanced Integration
+# Chapter 17 - 파일 처리 & 에러 모니터링 📊
 
-## 개요
-Chapter 16은 리액티브 프로그래밍과 고급 시스템 통합을 다루는 Spring Boot 애플리케이션입니다. Spring WebFlux, MongoDB Reactive, Redis 캐싱, 외부 API 통합(Kakao), 그리고 다양한 데이터 저장소 간의 복합적인 데이터 처리를 구현합니다.
+## 📋 개요
 
-## 주요 기능
-- **리액티브 프로그래밍**: Spring WebFlux를 활용한 비동기 논블로킹 웹 개발
-- **멀티 데이터소스**: MariaDB, MongoDB, Redis 통합 운영
-- **외부 API 통합**: Retrofit2를 활용한 Kakao API 연동
-- **고급 캐싱**: Redis와 Local Cache를 활용한 다층 캐싱 전략
-- **파일 처리**: 첨부파일 업로드/다운로드 및 스토리지 관리
-- **실시간 차트**: Reactive WebFlux 기반 스트리밍 차트 데이터
-- **OAuth2 보안**: 소셜 로그인 및 JWT 기반 인증
-- **로깅 시스템**: MongoDB를 활용한 구조화된 로그 저장
+chap17은 **파일 처리와 에러 모니터링**을 중심으로 한 고급 Spring Boot 애플리케이션입니다. Excel/CSV 파일 업로드 및 처리, 다양한 파일 포맷 검증, 그리고 Sentry를 통한 실시간 에러 트래킹 시스템을 통합적으로 학습할 수 있습니다.
 
-## 기술 스택
+## 🎯 학습 목표
 
-### 핵심 프레임워크
-- Spring Boot 3.x
-- Spring WebFlux (Reactive Web)
-- Spring Data JPA
-- Spring Data MongoDB Reactive
-- Spring Data Redis
-- Spring Security OAuth2
+- **🗂️ 대용량 파일 처리**: Apache POI, Tika를 활용한 다양한 파일 형식 지원
+- **✅ 파일 검증 시스템**: 체인 오브 리스폰시빌리티 패턴 기반 검증 체계
+- **📈 에러 모니터링**: Sentry 통합을 통한 실시간 에러 트래킹
+- **📊 데이터 분석**: 한국어 형태소 분석 및 통계 처리
+- **🏭 팩토리 패턴**: 파일 타입별 처리 로직 분리
 
-### 데이터베이스
-- MariaDB 11.x (주 데이터베이스)
-- MongoDB (로그 및 NoSQL 데이터)
-- Redis (캐싱 및 세션)
+## 🛠️ 핵심 기술 스택
 
-### 리액티브 스택
-- Reactor Netty
-- MongoDB Reactive Driver
-- WebFlux Reactive Thymeleaf
+### File Processing
+- **Apache POI 4.1.1** - Excel 파일 읽기/쓰기
+- **Apache Tika 1.18** - 파일 형식 감지 및 메타데이터 추출
+- **OpenCSV 5.3** - CSV 파일 파싱
+- **XLSX Streamer 2.1.0** - 대용량 Excel 스트리밍 처리
 
-### 외부 통합
-- Retrofit2 (HTTP Client)
-- Kakao API 연동
-- OAuth2 Social Login
+### Text & Language Processing  
+- **Open Korean Text 2.3.1** - 한국어 형태소 분석
+- **JavaTuples 1.2** - 데이터 페어링 및 그룹화
 
-### 성능 최적화
-- Caffeine (Local Cache)
-- Kryo (직렬화)
-- Snappy (압축)
-- jOOλ (함수형 프로그래밍)
+### Monitoring & Error Tracking
+- **Sentry 1.7.30** - 실시간 에러 추적 및 모니터링
+- **Spring Boot Actuator** - 애플리케이션 상태 모니터링
 
-### 프론트엔드
-- Thymeleaf 템플릿
-- AdminLTE UI Framework
-- jQuery UI Components
-- Chart.js 시각화
+### Infrastructure
+- **Undertow** - 고성능 논블로킹 서버
+- **MariaDB 11.4.7** - 관계형 데이터베이스
+- **Spring HATEOAS** - RESTful API 설계
 
-## 프로젝트 구조
+## 📚 주요 학습 내용
 
-```
-chap16/
-├── src/main/java/com/genius/primavera/
-│   ├── ReactiveProgrammingApplication.java         # 메인 애플리케이션
-│   ├── application/                                # 비즈니스 로직
-│   │   ├── cache/                                  # 캐싱 전략
-│   │   │   ├── LocalCache.java                   # Caffeine 로컬 캐시
-│   │   │   └── RedisCache.java                   # Redis 분산 캐시
-│   │   ├── article/                                # 게시글 서비스
-│   │   │   ├── WriteArticleService.java          # 게시글 작성 서비스
-│   │   │   └── WriteArticleServiceImpl.java      # 구현체
-│   │   ├── post/                                   # 포스트 서비스
-│   │   │   ├── PostingService.java               # 포스팅 서비스
-│   │   │   └── PostingServiceImpl.java           # 구현체
-│   │   ├── storage/                                # 파일 스토리지
-│   │   │   ├── StorageService.java               # 스토리지 인터페이스
-│   │   │   ├── FileSystemStorageService.java     # 파일시스템 구현
-│   │   │   └── StorageProperties.java            # 설정 속성
-│   │   ├── logging/                                # 로깅 시스템
-│   │   │   ├── PrimaveraLogService.java          # 로그 서비스
-│   │   │   ├── PrimaveraLogServiceImpl.java      # 구현체
-│   │   │   └── MongoSequenceGeneratorService.java # MongoDB 시퀀스
-│   │   ├── user/                                   # 사용자 서비스
-│   │   │   ├── UserService.java                  # 사용자 서비스
-│   │   │   └── UserServiceImpl.java              # 구현체
-│   │   └── validator/                              # 검증 로직
-│   │       ├── Nickname.java                     # 닉네임 검증 어노테이션
-│   │       └── NicknameValidator.java            # 검증기 구현
-│   ├── domain/                                     # 도메인 모델
-│   │   ├── model/                                  # 엔티티 모델
-│   │   │   ├── BaseEntity.java                   # 공통 엔티티
-│   │   │   ├── user/                              # 사용자 도메인
-│   │   │   │   ├── User.java                     # 사용자 엔티티
-│   │   │   │   ├── Role.java                     # 역할 엔티티
-│   │   │   │   ├── UserConnection.java           # 소셜 연결
-│   │   │   │   └── UserStatus.java               # 사용자 상태
-│   │   │   ├── article/                           # 게시글 도메인
-│   │   │   │   ├── Article.java                  # 게시글 엔티티
-│   │   │   │   ├── Comment.java                  # 댓글 엔티티
-│   │   │   │   ├── Attachment.java               # 첨부파일
-│   │   │   │   └── ArticleStatus.java            # 게시글 상태
-│   │   │   ├── post/                              # 포스트 도메인
-│   │   │   │   ├── Post.java                     # 포스트 엔티티
-│   │   │   │   └── PostStatus.java               # 포스트 상태
-│   │   │   ├── kakao/                             # 카카오 도메인
-│   │   │   │   └── KakaoFriend.java              # 카카오 친구
-│   │   │   └── PrimaveraLog.java                 # 로그 엔티티 (MongoDB)
-│   │   ├── converter/                              # JPA 컨버터
-│   │   │   ├── EnumAttributeConverter.java       # Enum 컨버터 기반
-│   │   │   ├── UserStatusAttributeConverter.java  # 사용자 상태 컨버터
-│   │   │   └── ArticleStatusAttributeConverter.java # 게시글 상태 컨버터
-│   │   └── repository/                             # 저장소 인터페이스
-│   │       ├── UserRepository.java               # 사용자 저장소
-│   │       ├── PrimaveraLogRepository.java       # 로그 저장소 (MongoDB)
-│   │       ├── article/                           # 게시글 저장소
-│   │       │   ├── ArticleRepository.java        # 게시글 저장소
-│   │       │   └── CommentRepository.java        # 댓글 저장소
-│   │       └── post/                              # 포스트 저장소
-│   │           └── PostRepository.java           # 포스트 저장소
-│   ├── infrastructure/                             # 인프라스트럭처
-│   │   ├── ApplicationConfiguration.java          # 애플리케이션 설정
-│   │   ├── KakaoRetrofitClientConfiguration.java  # Kakao API 설정
-│   │   ├── aspect/                                # AOP 관점
-│   │   │   ├── PrimaveraLogging.java             # 로깅 어노테이션
-│   │   │   └── PrimaveraLoggingAspect.java       # 로깅 관점
-│   │   ├── security/                              # 보안 설정
-│   │   │   ├── PrimaveraSecurityConfiguration.java # 보안 설정
-│   │   │   ├── PrimaveraUserDetailsService.java   # 사용자 세부정보 서비스
-│   │   │   └── PrimaveraAuthenticationSuccessHandler.java # 인증 성공 핸들러
-│   │   ├── serializer/                            # 직렬화
-│   │   │   ├── KryoRedisSerializer.java          # Kryo Redis 직렬화
-│   │   │   └── SnappyRedisSerializer.java        # Snappy 압축 직렬화
-│   │   └── filter/                                # 필터
-│   │       └── PrimaveraFilter.java              # 커스텀 필터
-│   └── interfaces/                                 # 웹 계층
-│       ├── ArticleController.java                 # 게시글 컨트롤러
-│       ├── PostingController.java                 # 포스팅 컨트롤러
-│       ├── ChartController.java                   # 차트 컨트롤러 (Reactive)
-│       ├── AttachmentController.java              # 첨부파일 컨트롤러
-│       ├── UserController.java                    # 사용자 컨트롤러
-│       └── LoginController.java                   # 로그인 컨트롤러
-└── src/main/resources/
-    ├── application-default.yml                    # 기본 설정
-    ├── application-local.yml                      # 로컬 환경 설정
-    ├── social.yml                                 # 소셜 로그인 설정
-    ├── templates/                                 # Thymeleaf 템플릿
-    │   ├── layouts/                               # 레이아웃
-    │   ├── fragments/                             # 프래그먼트
-    │   ├── article/                               # 게시글 템플릿
-    │   ├── post/                                  # 포스트 템플릿
-    │   └── chart.html                            # 리액티브 차트
-    └── static/                                    # 정적 리소스
-        ├── plugins/                               # jQuery 플러그인
-        │   ├── bootstrap-slider/
-        │   ├── iCheck/
-        │   └── jvectormap/
-        └── dist/                                  # 빌드된 자산
+### 1. 파일 업로드 및 검증 시스템
+
+#### Chain of Responsibility 패턴 기반 검증
+
+```java
+@Service
+@RequiredArgsConstructor
+public class ExcelImportServiceImpl implements ExcelImportService {
+    
+    private final Map<String, List<Validator>> validatorGroup;
+    
+    @Override
+    public ExcelImportResponse excelImport(ExcelImportRequest request) {
+        // 검증 체인 실행
+        boolean valid = validatorGroup.get("sizeAndTypeValidation")
+            .stream()
+            .allMatch(v -> v.validate(request));
+            
+        if (valid) {
+            return new ExcelTypeFile(request).getExcelImportResponse();
+        }
+        return new UnknownFile(request).getExcelImportResponse();
+    }
+}
 ```
 
-## 주요 컴포넌트
+#### 다중 검증기 구현
 
-### 1. 리액티브 웹 시스템
-- **ChartController**: WebFlux 기반 스트리밍 차트 데이터
-- **MongoDB Reactive**: 비동기 NoSQL 데이터 처리
-- **Thymeleaf Reactive**: 리액티브 템플릿 렌더링
+```java
+// 파일 크기 검증
+@Slf4j
+public class FileSizeValidator implements Validator {
+    @Override
+    public boolean validate(ExcelImportRequest request) {
+        try {
+            long size = IOUtils.toByteArray(request.getInputStream()).length;
+            log.info("File Size: {}", size);
+            return size > 0;
+        } catch (IOException e) {
+            log.error(e.getMessage());
+            return false;
+        }
+    }
+}
 
-### 2. 다층 캐싱 시스템
-- **LocalCache (Caffeine)**: JVM 레벨 고속 캐싱
-- **RedisCache**: 분산 캐싱 및 세션 저장소
-- **Cache Chain**: 로컬 → Redis → DB 순차 조회 최적화
-
-### 3. 멀티 데이터소스 통합
-- **MariaDB**: 주요 관계형 데이터 (JPA)
-- **MongoDB**: 로그 및 NoSQL 데이터 (Reactive)
-- **Redis**: 캐싱 및 세션 관리
-
-### 4. 외부 시스템 통합
-- **Kakao API**: Retrofit2를 통한 친구 목록 조회
-- **OAuth2 Social Login**: Google, Facebook, GitHub, Kakao 로그인
-- **File Storage**: 첨부파일 업로드/다운로드 시스템
-
-### 5. 고급 데이터 처리
-- **QueryDSL**: 타입 안전 동적 쿼리
-- **JPA Envers**: 엔티티 변경 이력 추적
-- **Custom Converters**: Enum 기반 상태 변환
-
-## 설정
-
-### 멀티 데이터소스 설정
-```yaml
-spring:
-  datasource:                    # MariaDB
-    driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://localhost:3306/primavera
-  data:
-    mongodb:                     # MongoDB
-      host: localhost
-      port: 27017
-      database: primavera
-    redis:                       # Redis
-      host: localhost
-      port: 6379
+// 미디어 타입 검증
+public class MediaTypeValidation implements Validator {
+    @Override
+    public boolean validate(ExcelImportRequest request) {
+        try {
+            String mediaType = new Tika().detect(request.getInputStream());
+            return ALLOWED_TYPES.contains(mediaType);
+        } catch (IOException e) {
+            return false;
+        }
+    }
+}
 ```
 
-### HashiCorp Vault 설정
+### 2. Factory Pattern을 통한 파일 타입별 처리
 
-#### 개발 환경 Vault 구성
-```yaml
-spring:
-  cloud:
-    vault:
-      host: localhost
-      port: 8200
-      scheme: http
-      authentication: TOKEN
-      token: primavera-dev-token
-      kv:
-        enabled: true
-        backend: secret
-        profile-separator: '/'
+#### Abstract Factory 구현
+
+```java
+public abstract class AbstractResponseFactory {
+    protected ExcelImportRequest excelImportRequest;
+    
+    public AbstractResponseFactory(ExcelImportRequest request) {
+        this.excelImportRequest = request;
+    }
+    
+    public abstract ExcelImportResponse getExcelImportResponse();
+}
+
+// Excel 파일 전용 팩토리
+public class ExcelTypeFile extends AbstractResponseFactory {
+    public ExcelTypeFile(ExcelImportRequest request) {
+        super(request);
+    }
+    
+    @Override
+    public ExcelImportResponse getExcelImportResponse() {
+        return ExcelImportResponse.builder()
+            .mediaType(getMediaType())
+            .fileSize(getFileSize())
+            .fileName(excelImportRequest.getName())
+            .data(processExcelData())
+            .build();
+    }
+}
 ```
 
-#### Vault 시크릿 엔진 초기화
-```bash
-# Key-Value v2 시크릿 엔진 활성화
-export VAULT_ADDR=http://localhost:8200
-export VAULT_TOKEN=primavera-dev-token
+### 3. Apache POI를 활용한 Excel 처리
 
-vault secrets enable -path=secret kv-v2
+#### Financial 데이터 모델 매핑
 
-# 애플리케이션 시크릿 저장
-vault kv put secret/primavera/chap16 \
-  datasource.password=primavera \
-  mongodb.password=primavera \
-  oauth2.google.client-secret=your-google-secret \
-  oauth2.kakao.client-secret=your-kakao-secret \
-  jwt.secret=your-jwt-secret-key
-
-# 환경별 시크릿 저장
-vault kv put secret/primavera/chap16/local \
-  datasource.url=jdbc:mariadb://localhost:3306/primavera \
-  mongodb.host=localhost
-
-vault kv put secret/primavera/chap16/prod \
-  datasource.url=jdbc:mariadb://prod-db:3306/primavera \
-  mongodb.host=prod-mongo
+```java
+@Getter
+@Setter
+@Builder
+@ToString
+public class Financial {
+    private String segment;
+    private String country;
+    private String product;
+    private String discountBand;
+    private Double unitsSold;
+    private BigDecimal manufacturingPrice;
+    private BigDecimal salePrice;
+    private BigDecimal grossSales;
+    private String discounts;
+    private BigDecimal sales;
+    private BigDecimal cogs;
+    private BigDecimal profit;
+    private Instant date;
+    
+    // Row 데이터를 Financial 객체로 변환
+    public static Financial of(Row row) {
+        return Financial.builder()
+            .segment(row.getCell(0).getStringCellValue())
+            .country(row.getCell(1).getStringCellValue())
+            .product(row.getCell(2).getStringCellValue())
+            .discountBand(row.getCell(3).getStringCellValue())
+            .unitsSold(row.getCell(4).getNumericCellValue())
+            .manufacturingPrice(BigDecimal.valueOf(row.getCell(5).getNumericCellValue()))
+            .salePrice(BigDecimal.valueOf(row.getCell(6).getNumericCellValue()))
+            .grossSales(BigDecimal.valueOf(row.getCell(7).getNumericCellValue()))
+            .discounts(row.getCell(8).getStringCellValue())
+            .sales(BigDecimal.valueOf(row.getCell(9).getNumericCellValue()))
+            .cogs(BigDecimal.valueOf(row.getCell(10).getNumericCellValue()))
+            .profit(BigDecimal.valueOf(row.getCell(11).getNumericCellValue()))
+            .date(row.getCell(12).getDateCellValue().toInstant())
+            .build();
+    }
+}
 ```
 
-#### Vault 시크릿 조회 및 관리
-```bash
-# 저장된 시크릿 조회
-vault kv get secret/primavera/chap16
-vault kv get secret/primavera/chap16/local
+#### 함수형 프로그래밍 기반 Excel 템플릿
 
-# 시크릿 버전 확인
-vault kv metadata get secret/primavera/chap16
+```java
+@FunctionalInterface
+public interface ExcelImportTemplate<T, R> {
+    List<R> read(final Function<T, R> function);
+}
 
-# 시크릿 업데이트
-vault kv patch secret/primavera/chap16 jwt.secret=new-secret-key
-
-# 시크릿 삭제
-vault kv delete secret/primavera/chap16
+// 사용 예시
+public class FinancialTemplate implements ExcelImportTemplate<Row, Financial> {
+    
+    private final Workbook workbook;
+    
+    @Override
+    public List<Financial> read(final Function<Row, Financial> function) {
+        return StreamSupport.stream(workbook.getSheetAt(0).spliterator(), false)
+            .skip(1) // 헤더 행 제외
+            .map(function)
+            .collect(Collectors.toList());
+    }
+}
 ```
 
-### 리액티브 Thymeleaf 설정
-```yaml
-spring:
-  thymeleaf:
-    reactive:
-      chunked-mode-view-names: chart
-      max-chunk-size: 8192
+### 4. CSV 파일 처리 및 한국어 분석
+
+#### KakaoTalk 채팅 데이터 모델
+
+```java
+@Getter
+@Setter
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
+public class KakaoTalkChat {
+    
+    @CsvDate(value = "yyyy-MM-dd HH:mm:ss")
+    @CsvBindByPosition(position = 0, required = true)
+    @CsvBindByName
+    private LocalDateTime date;
+    
+    @CsvBindByPosition(position = 1, required = true)
+    @CsvBindByName
+    private String user;
+    
+    @CsvBindByPosition(position = 2, required = true)
+    @CsvBindByName
+    private String message;
+}
 ```
 
-### Kakao API 설정
-```yaml
-kakao:
-  api:
-    url: https://kapi.kakao.com
-    talk-social:
-      friend-list: v1/api/talk/friends
+#### 한국어 형태소 분석 및 통계 처리
+
+```java
+@Test
+public void kakaoRepository() throws IOException {
+    // CSV 파일 파싱
+    var kakaoTalkChats = kakaoTalkChatRepository
+        .getKakaoTalkChatByName("kakaoTalk/chat/kakaoTalk_Chat.csv");
+    
+    // 사용자별 메시지 수 통계 (상위 10명)
+    Map<String, Long> countMessageByUserOrder = kakaoTalkChats.stream()
+        .collect(Collectors.groupingBy(KakaoTalkChat::getUser, Collectors.counting()))
+        .entrySet().stream()
+        .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
+        .limit(10)
+        .collect(Collectors.toMap(
+            Map.Entry::getKey, 
+            Map.Entry::getValue, 
+            (e1, e2) -> e1, 
+            LinkedHashMap::new
+        ));
+    
+    // 한국어 형태소 분석을 통한 단어 빈도 분석
+    Map<String, Long> wordCount = kakaoTalkChats.parallelStream()
+        .map(e -> tokensToJavaKoreanTokenList(tokenize(normalize(e.getMessage()))))
+        .flatMap(e -> e.stream())
+        .filter(e -> e.getPos().equals(Noun)) // 명사만 추출
+        .collect(Collectors.groupingBy(KoreanTokenJava::getText, Collectors.counting()))
+        .entrySet().stream()
+        .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
+        .limit(10)
+        .collect(Collectors.toMap(
+            Map.Entry::getKey, 
+            Map.Entry::getValue, 
+            (e1, e2) -> e1, 
+            LinkedHashMap::new
+        ));
+    
+    log.info("Top 10 words: {}", wordCount);
+}
 ```
 
-### SSL/HTTPS 설정
-```yaml
-server:
-  ssl:
-    key-alias: primavera
-    key-store: chap10/primavera.p12
-    key-store-type: PKCS12
-    enabled: true
-  port: 8443
-```
+### 5. Sentry 에러 모니터링 시스템
 
-### Spring Cloud Vault 통합 설정
+#### 커스텀 Sentry Auto Configuration
 
-#### application-vault.yml
-```yaml
-spring:
-  cloud:
-    vault:
-      host: localhost
-      port: 8200
-      scheme: http
-      authentication: TOKEN
-      token: primavera-dev-token
-      connection-timeout: 5000
-      read-timeout: 15000
-      config:
-        order: -10
-      generic:
-        enabled: false
-      kv:
-        enabled: true
-        backend: secret
-        profile-separator: '/'
-        default-context: primavera/chap16
-        application-name: primavera
-        profiles: local,prod
-  config:
-    import: vault://
-```
-
-#### VaultConfiguration.java 예시
 ```java
 @Configuration
-@EnableConfigurationProperties
-public class VaultConfiguration {
-    
-    @Value("${spring.cloud.vault.token}")
-    private String vaultToken;
+@ConditionalOnClass(Sentry.class)
+@EnableConfigurationProperties(SentryProperties.class)
+public class SentryAutoConfiguration {
     
     @Bean
-    public VaultTemplate vaultTemplate() {
-        VaultEndpoint endpoint = VaultEndpoint.create("localhost", 8200);
-        endpoint.setScheme("http");
+    public SentryClient sentry(SentryProperties properties) {
+        SentryClient sentryClient = Sentry.init(properties.getDns());
+        sentryClient.setEnvironment(properties.getEnvironment());
+        sentryClient.setServerName(properties.getServername());
+        sentryClient.setRelease(properties.getRelease());
+        return sentryClient;
+    }
+}
+```
+
+#### Enable 어노테이션을 통한 간편 설정
+
+```java
+@Target({ElementType.TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Inherited
+@Import({SentryAutoConfiguration.class})
+public @interface EnableSentry {
+}
+
+// 메인 애플리케이션에서 사용
+@Slf4j
+@EnableSentry  // 한 줄로 Sentry 모니터링 활성화
+@SpringBootApplication
+public class FileProcessingMonitoringApplication {
+    // ...
+}
+```
+
+#### Sentry 설정 프로퍼티
+
+```yaml
+sentry:
+  dns: https://4084f8500752461897ebbfe3a067d36c@sentry.io/5166811
+  environment: production
+  servername: chap17
+  release: 0.0.1-SNAPSHOT
+```
+
+### 6. RESTful API 및 HATEOAS 구현
+
+#### 파일 업로드 컨트롤러
+
+```java
+@Slf4j
+@RestController
+@RequiredArgsConstructor
+public class ExcelImportController {
+    
+    private final ExcelImportService excelImportService;
+    private final Validator validator;
+    
+    @PostMapping(value = "/save", produces = "application/hal+json")
+    public ResponseEntity<ExcelImportResponse> save(ExcelImportRequest request) 
+            throws IOException {
         
-        ClientAuthentication authentication = new TokenAuthentication(vaultToken);
+        log.info("Validator: {}", validator.toString());
+        ExcelImportResponse response = excelImportService.excelImport(request);
         
-        return new VaultTemplate(endpoint, authentication);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+}
+```
+
+#### HATEOAS 응답 형식
+
+```java
+@Getter
+@Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class ExcelImportResponse {
+    private String fileName;
+    private String mediaType;
+    private long fileSize;
+    private List<Financial> data;
+    private LocalDateTime processedAt;
+    
+    // HATEOAS 링크 정보 포함
+    private List<Link> links;
+}
+```
+
+### 7. 고급 파일 처리 패턴
+
+#### Multipart File 인터페이스 구현
+
+```java
+public class ExcelImportRequest implements ExcelFileValid {
+    
+    private String name;
+    private MultipartFile file;
+    
+    public long getSize() {
+        if (Objects.isNull(file)) return 0;
+        return file.getSize();
     }
     
-    @ConfigurationProperties("datasource")
-    @Component
-    public static class DatabaseProperties {
-        private String url;
-        private String username;
-        private String password;
-        // getters/setters
-    }
-    
-    @ConfigurationProperties("oauth2")
-    @Component
-    public static class OAuth2Properties {
-        private Google google = new Google();
-        private Kakao kakao = new Kakao();
-        
-        public static class Google {
-            private String clientId;
-            private String clientSecret;
-            // getters/setters
-        }
-        
-        public static class Kakao {
-            private String clientId;
-            private String clientSecret;
-            // getters/setters
+    @Override
+    public InputStream getInputStream() {
+        try {
+            return this.getFile().getInputStream();
+        } catch (IOException | NullPointerException e) {
+            log.error(e.getMessage());
+            return EmptyInputStream.INSTANCE;
         }
     }
 }
 ```
 
-## 실행 방법
+#### 파일 크기 제한 설정
 
-### 로컬 환경 실행
+```yaml
+spring:
+  servlet:
+    multipart:
+      max-file-size: 128KB    # 개별 파일 최대 크기
+      max-request-size: 128KB  # 전체 요청 최대 크기
+```
+
+## 🔧 실습 예제
+
+### 파일 업로드 테스트
+
 ```bash
-./gradlew :chap16:bootRun -Dspring.profiles.active=local
+# Excel 파일 업로드 테스트
+curl -X POST http://localhost:8080/save \
+  -H "Content-Type: multipart/form-data" \
+  -F "name=financial-data" \
+  -F "file=@20191225.xlsx"
+
+# CSV 파일 업로드 테스트  
+curl -X POST http://localhost:8080/save \
+  -H "Content-Type: multipart/form-data" \
+  -F "name=kakao-chat" \
+  -F "file=@kakaoTalk_Chat.csv"
 ```
 
-### 필수 서비스 시작
-```bash
-# MariaDB 시작
-docker run -d --name mariadb-primavera -p 3306:3306 \
-  -e MARIADB_ROOT_PASSWORD=root \
-  -e MARIADB_DATABASE=primavera \
-  mariadb:11.4.7
+### 응답 예시
 
-# MongoDB 시작
-docker run -d --name mongodb-primavera -p 27017:27017 \
-  -e MONGO_INITDB_ROOT_USERNAME=primavera \
-  -e MONGO_INITDB_ROOT_PASSWORD=primavera \
-  mongo:7.0
-
-# Redis 시작
-docker run -d --name redis-primavera -p 6379:6379 redis:7.2
-
-# HashiCorp Vault 시작 (개발 모드)
-docker run -d --name vault-primavera -p 8200:8200 \
-  -e VAULT_DEV_ROOT_TOKEN_ID=primavera-dev-token \
-  -e VAULT_DEV_LISTEN_ADDRESS=0.0.0.0:8200 \
-  --cap-add=IPC_LOCK \
-  hashicorp/vault:1.15
-
-# Vault 초기화 확인
-curl -H "X-Vault-Token: primavera-dev-token" \
-  http://localhost:8200/v1/sys/health
+```json
+{
+  "fileName": "financial-data",
+  "mediaType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  "fileSize": 65432,
+  "processedAt": "2024-01-20T15:30:45",
+  "data": [
+    {
+      "segment": "Government",
+      "country": "Canada", 
+      "product": "Carretera",
+      "discountBand": "None",
+      "unitsSold": 1618.5,
+      "manufacturingPrice": 3.0,
+      "salePrice": 20.0,
+      "grossSales": 32370.0,
+      "sales": 32370.0,
+      "cogs": 16185.0,
+      "profit": 16185.0,
+      "date": "2014-01-01T00:00:00Z"
+    }
+  ],
+  "_links": {
+    "self": {
+      "href": "http://localhost:8080/save"
+    },
+    "download": {
+      "href": "http://localhost:8080/download/financial-data"
+    }
+  }
+}
 ```
 
-### 테스트 실행
-```bash
-./gradlew :chap16:test
-```
+## 🧪 테스트 전략
 
-## API 엔드포인트
+### 통합 테스트
 
-### 게시글 관리
-```
-GET    /articles          # 게시글 목록
-GET    /articles/{id}     # 게시글 상세
-POST   /articles          # 게시글 작성
-PUT    /articles/{id}     # 게시글 수정
-DELETE /articles/{id}     # 게시글 삭제
-```
-
-### 리액티브 차트
-```
-GET    /chart             # 리액티브 차트 페이지 (SSE)
-```
-
-### 첨부파일
-```
-POST   /attachments       # 파일 업로드
-GET    /attachments/{id}  # 파일 다운로드
-```
-
-### 사용자 관리
-```
-GET    /users             # 사용자 목록
-GET    /users/profile     # 프로필 조회
-POST   /users/register    # 회원가입
-```
-
-## 테스트
-
-### 주요 테스트 클래스
-- **CacheChainTest**: 다층 캐싱 전략 테스트
-- **KakaoFriendTest**: Kakao API 통합 테스트
-- **RedisMultiInsertTest**: Redis 대량 삽입 성능 테스트
-- **ArticleRepositoryTest**: 게시글 저장소 테스트
-- **PostingControllerTest**: 포스팅 컨트롤러 통합 테스트
-
-### TestContainers 활용
 ```java
 @SpringBootTest
-@Testcontainers
-class AbstractJpaContainerTest {
-    @Container
-    static MariaDBContainer<?> mariadb = new MariaDBContainer<>("mariadb:11.4.7");
+@ActiveProfiles("test")
+class ExcelImportControllerTest {
     
-    @Container
-    static MongoDBContainer mongodb = new MongoDBContainer("mongo:7.0");
+    @Autowired
+    private MockMvc mockMvc;
     
-    @Container
-    static GenericContainer<?> redis = new GenericContainer<>("redis:7.2");
+    @Test
+    @DisplayName("Excel 파일 업로드 및 처리 통합 테스트")
+    void shouldProcessExcelFile() throws Exception {
+        MockMultipartFile file = new MockMultipartFile(
+            "file",
+            "test.xlsx",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            getClass().getResourceAsStream("/20191225.xlsx")
+        );
+        
+        mockMvc.perform(multipart("/save")
+                .file(file)
+                .param("name", "test-financial-data"))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.fileName").value("test-financial-data"))
+                .andExpect(jsonPath("$.mediaType").exists())
+                .andExpect(jsonPath("$.fileSize").exists())
+                .andExpect(jsonPath("$.data").isArray());
+    }
 }
 ```
 
-## 성능 최적화
+### 파일 검증 테스트
 
-### 캐싱 전략
-1. **L1 Cache (Caffeine)**: JVM 내 고속 메모리 캐시
-2. **L2 Cache (Redis)**: 분산 환경 공유 캐시
-3. **Cache Aside Pattern**: 캐시 미스 시 DB 조회 후 캐시 저장
+```java
+@Test
+@DisplayName("파일 크기 검증 테스트")
+void shouldValidateFileSize() {
+    FileSizeValidator validator = new FileSizeValidator();
+    ExcelImportRequest request = createTestRequest();
+    
+    boolean result = validator.validate(request);
+    
+    assertTrue(result);
+}
+```
 
-### 직렬화 최적화
-- **Kryo**: 바이너리 직렬화로 성능 향상
-- **Snappy**: 고속 압축으로 네트워크 대역폭 절약
+## 📊 성능 최적화
 
-### 리액티브 스트리밍
-- **Backpressure**: 데이터 생산/소비 속도 조절
-- **Non-blocking I/O**: 높은 동시성 처리
+### 대용량 파일 스트리밍 처리
 
-## 특징
+```java
+// XLSX Streamer를 사용한 메모리 효율적인 처리
+public List<Financial> processLargeExcelFile(InputStream inputStream) {
+    try (Workbook workbook = StreamingReader.builder()
+            .rowCacheSize(100)    // 메모리에 캐시할 행 수
+            .bufferSize(4096)     // 버퍼 크기
+            .open(inputStream)) {
+            
+        return StreamSupport.stream(workbook.getSheetAt(0).spliterator(), false)
+            .skip(1) // 헤더 제외
+            .map(Financial::of)
+            .collect(Collectors.toList());
+    }
+}
+```
 
-1. **하이브리드 아키텍처**: 전통적 MVC와 리액티브 패러다임 결합
-2. **멀티 스토어 전략**: 각 데이터 특성에 맞는 최적 저장소 선택
-3. **고가용성 캐싱**: 장애 상황에서도 안정적인 데이터 제공
-4. **실시간 데이터**: WebFlux 기반 실시간 차트 및 알림
-5. **외부 시스템 통합**: 다양한 외부 API와의 안정적 연동
-6. **보안 강화**: OAuth2 + JWT 기반 다중 인증 체계
-7. **확장 가능**: 마이크로서비스 전환 가능한 모듈 구조
+### 병렬 처리를 통한 성능 향상
 
-## 민감정보 관리
+```java
+// 병렬 스트림을 활용한 한국어 형태소 분석
+Map<String, Long> wordCount = kakaoTalkChats.parallelStream()
+    .map(this::extractNouns)
+    .flatMap(Collection::stream)
+    .collect(Collectors.groupingBy(
+        Function.identity(), 
+        Collectors.counting()
+    ));
+```
 
-### HashiCorp Vault 보안 가이드라인
+## 🚀 실행 방법
 
-#### 프로덕션 환경 설정
+### 환경 설정
+
+1. **MariaDB 데이터베이스 시작**
 ```bash
-# 프로덕션용 Vault 서버 실행 (TLS 활성화)
-docker run -d --name vault-prod \
-  -p 8200:8200 \
-  -v vault-data:/vault/data \
-  -v vault-config:/vault/config \
-  --cap-add=IPC_LOCK \
-  hashicorp/vault:1.15 \
-  vault server -config=/vault/config/vault.hcl
-
-# 프로덕션용 설정 파일 (vault.hcl)
-storage "file" {
-  path = "/vault/data"
-}
-
-listener "tcp" {
-  address = "0.0.0.0:8200"
-  tls_cert_file = "/vault/config/vault.crt"
-  tls_key_file = "/vault/config/vault.key"
-}
-
-api_addr = "https://vault.primavera.com:8200"
-cluster_addr = "https://vault.primavera.com:8201"
-ui = true
+# Infrastructure Docker 환경 시작
+cd infrastructure
+docker-compose up -d
 ```
 
-#### 시크릿 로테이션 전략
+2. **애플리케이션 실행**
 ```bash
-# 데이터베이스 패스워드 로테이션
-vault write secret/primavera/chap16 \
-  datasource.password=$(openssl rand -base64 32) \
-  mongodb.password=$(openssl rand -base64 32)
-
-# JWT 시크릿 로테이션 (주기적 실행)
-vault kv patch secret/primavera/chap16 \
-  jwt.secret=$(openssl rand -base64 64)
-
-# API 키 로테이션
-vault kv patch secret/primavera/chap16 \
-  oauth2.google.client-secret=new-google-secret \
-  oauth2.kakao.client-secret=new-kakao-secret
+./gradlew :chap17:bootRun
 ```
 
-#### 접근 정책 설정
+3. **테스트 실행**
 ```bash
-# 애플리케이션용 정책 생성
-vault policy write primavera-app - <<EOF
-path "secret/data/primavera/chap16/*" {
-  capabilities = ["read"]
-}
-path "secret/metadata/primavera/chap16/*" {
-  capabilities = ["list", "read"]
-}
-EOF
-
-# 개발자용 정책 생성
-vault policy write primavera-dev - <<EOF
-path "secret/data/primavera/chap16/*" {
-  capabilities = ["create", "read", "update", "delete", "list"]
-}
-EOF
-
-# 토큰 생성
-vault token create -policy="primavera-app" -ttl=24h
-vault token create -policy="primavera-dev" -ttl=8h
+./gradlew :chap17:test
 ```
 
-## 주의사항
+### API 엔드포인트
 
-1. 로컬 환경에서는 MariaDB (포트 3306), MongoDB (포트 27017), Redis (포트 6379), Vault (포트 8200) 필요
-2. Kakao API 연동 시 유효한 API 키를 Vault에 저장하여 관리
-3. HTTPS 사용 시 인증서 파일(primavera.p12) 경로 확인 필요
-4. 리액티브 스택과 전통적 JPA의 혼용으로 트랜잭션 관리 주의
-5. 캐시 일관성 보장을 위한 적절한 TTL 및 무효화 전략 설정 필요
-6. **Vault 보안**: 프로덕션에서는 반드시 TLS 활성화 및 토큰 기반 인증 사용
-7. **시크릿 로테이션**: 정기적인 패스워드 및 API 키 로테이션 정책 수립
-8. **접근 제어**: 최소 권한 원칙에 따른 Vault 정책 설정
+| 엔드포인트 | 메서드 | 설명 | Content-Type |
+|-----------|--------|------|--------------|
+| `/save` | POST | 파일 업로드 및 처리 | multipart/form-data |
+| `/actuator/health` | GET | 헬스 체크 | application/json |
+| `/actuator/info` | GET | 애플리케이션 정보 | application/json |
+
+## 📈 모니터링 및 로깅
+
+### Sentry 대시보드 활용
+
+- **실시간 에러 추적**: 파일 처리 중 발생하는 예외 상황 모니터링
+- **성능 메트릭**: 파일 처리 시간 및 메모리 사용량 추적
+- **사용자 세션**: 파일 업로드 패턴 분석
+
+### 구조화된 로깅
+
+```xml
+<!-- logback.xml 설정 -->
+<configuration>
+    <appender name="SENTRY" class="io.sentry.logback.SentryAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>WARN</level>
+        </filter>
+    </appender>
+    
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+    
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="SENTRY"/>
+    </root>
+</configuration>
+```
+
+## 📖 참고 자료
+
+### 공식 문서
+- [Apache POI Documentation](https://poi.apache.org/components/spreadsheet/)
+- [Apache Tika Documentation](https://tika.apache.org/1.18/gettingstarted.html)
+- [Sentry Java Documentation](https://docs.sentry.io/platforms/java/)
+- [Spring HATEOAS Reference](https://docs.spring.io/spring-hateoas/docs/current/reference/html/)
+
+### 라이브러리 가이드
+- [OpenCSV User Guide](http://opencsv.sourceforge.net/)
+- [Open Korean Text Processing](https://github.com/twitter/twitter-korean-text)
+- [XLSX Streamer](https://github.com/monitorjbl/excel-streaming-reader)
+
+## 🚀 다음 단계
+
+다음 Chapter에서는 **CI/CD 파이프라인 구축**을 학습합니다:
+- GitHub Actions를 통한 자동화된 빌드
+- Docker 컨테이너 배포
+- Kubernetes 오케스트레이션
+- 모니터링 및 알럿 시스템 구축
+
+---
+
+**🎓 학습 포인트**: 파일 처리는 엔터프라이즈 애플리케이션의 핵심 기능입니다. 검증, 변환, 모니터링을 체계적으로 구현하면 안정적이고 확장 가능한 시스템을 구축할 수 있습니다.

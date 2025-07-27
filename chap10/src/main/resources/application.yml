@@ -1,6 +1,6 @@
 spring:
   application:
-    name: Privamera
+    name: OAuth2SocialLoginApplication
   jackson:
     time-zone: UTC
   datasource:
