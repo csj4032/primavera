@@ -49,7 +49,10 @@
       "Bash(docker logs:*)",
       "Bash(docker volume:*)",
       "Bash(sudo ls:*)",
-      "WebFetch(domain:github.com)"
+      "WebFetch(domain:github.com)",
+      "Bash(brew install:*)",
+      "Bash(bfg:*)",
+      "Bash(git gc:*)"
     ],
     "deny": []
   }

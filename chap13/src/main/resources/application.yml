@@ -1,6 +1,6 @@
 spring:
   application:
-    name: Privamera
+    name: AdvancedAuthorizationApplication
   jackson:
     time-zone: UTC
   mvc:
