@@ -1,102 +1,261 @@
-# Chapter 18: Spring Batch와 CI/CD 배포
+# Chapter 17 - Enterprise Data Pipeline with Spring Batch, Kafka & Debezium
 
 ## 개요
-이 챕터는 Spring Batch를 활용한 대용량 데이터 처리와 CI/CD 파이프라인 구축에 대해 다룹니다. CSV 파일을 읽어 데이터를 변환하고 데이터베이스에 저장하는 배치 작업을 구현합니다.
+Chapter 17은 **엔터프라이즈급 실시간 데이터 파이프라인**을 구현하는 프로젝트입니다. **Spring Batch**로 초기 대용량 인덱싱을 수행하고, **Debezium CDC + Kafka**로 실시간 변경사항을 감지하여 Elasticsearch를 업데이트하는 완전한 데이터 파이프라인을 구축합니다.
 
-## 주요 기능
-
-### 1. Spring Batch 구성
-- **Job**: `importUserJob` - 사용자 데이터를 가져와 처리하는 배치 작업
-- **Step**: `step1` - 단일 스텝으로 구성된 배치 프로세스
-- **Chunk Size**: 10개 단위로 데이터 처리
-
-### 2. 배치 처리 흐름
+## 서브모듈 구조
 ```
-CSV 파일 읽기 → 데이터 변환 (대문자 변환) → 데이터베이스 저장 → 결과 검증
+chap17/
+├── batch/          # Spring Batch 기반 초기 전체 인덱싱
+└── streaming/      # Kafka + Debezium CDC 기반 실시간 업데이트
 ```
 
-### 3. 구성 요소
+## 아키텍처 개요
 
-#### ItemReader
-- **FlatFileItemReader**: CSV 파일(`sample-data.csv`)에서 Person 데이터를 읽음
-- 구분자: 쉼표(,)
-- 필드: firstName, lastName
-
-#### ItemProcessor
-- Person 객체의 firstName과 lastName을 대문자로 변환
-- 변환 과정을 로그로 출력
-
-#### ItemWriter
-- **JdbcBatchItemWriter**: 변환된 데이터를 PEOPLE 테이블에 저장
-- SQL: `INSERT INTO PEOPLE (FIRST_NAME, LAST_NAME) VALUES (:firstName, :lastName)`
-
-#### JobExecutionListener
-- 배치 작업 완료 후 데이터베이스에서 저장된 데이터를 조회하여 검증
-
-## 기술 스택
-- Spring Boot 3.x
-- Spring Batch
-- MariaDB
-- Lombok
-- OpenCSV
-- Open Korean Text (한국어 자연어 처리)
-- ModelMapper
-
-## 프로젝트 구조
+### 전체 데이터 파이프라인
 ```
-chap18/
-├── src/main/java/com/genius/primavera/
-│   ├── CiCdDeploymentApplication.java    # 메인 애플리케이션 및 배치 설정
-│   └── domain/
-│       └── Person.java                    # Person 도메인 모델
-├── src/main/resources/
-│   ├── application.yml                    # 애플리케이션 설정
-│   └── sample-data.csv                    # 샘플 데이터 파일
-└── build.gradle                           # 빌드 설정
+┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
+│   MariaDB       │    │   Apache Kafka   │    │ Elasticsearch   │
+│  (Source DB)    │────│ + Debezium CDC   │────│ (Search Index)  │
+└─────────────────┘    └──────────────────┘    └─────────────────┘
+         │                       │                       │
+         │                       │                       │
+    ┌────▼────────┐        ┌────▼─────┐         ┌───────▼────────┐
+    │ Spring Batch │        │  Kafka   │         │   Search API   │
+    │ (초기 인덱싱)  │        │ Consumer │         │    Service     │
+    └─────────────┘        └──────────┘         └────────────────┘
+```
+
+## Phase 1: Spring Batch 초기 인덱싱 (chap17/batch)
+
+### 주요 기능
+- **대용량 전체 인덱싱**: Products + Sellers + Categories 조합
+- **Chunk 기반 처리**: 효율적인 메모리 사용
+- **Elasticsearch Bulk API**: 고성능 인덱싱
+
+### 기술 스택
+- Spring Boot 3.x + Spring Batch 5.x
+- Spring Data JPA
+- Elasticsearch Java Client 8.x
+- MariaDB 11.x
+
+### 처리 흐름
+```
+Database JOIN Query → ItemReader → ItemProcessor → ItemWriter → Elasticsearch
+     ↓                   ↓              ↓             ↓            ↓
+   관계형 데이터        데이터 읽기    비정규화 변환  Bulk 인덱싱    검색 준비
+```
+
+## Phase 2: Kafka Streaming 실시간 업데이트 (chap17/streaming)
+
+### 주요 기능
+- **Debezium CDC**: MariaDB binlog 변경 감지
+- **Kafka Streams**: 실시간 이벤트 처리
+- **Delta Indexing**: 변경된 데이터만 Elasticsearch 업데이트
+
+### 기술 스택
+- Spring Boot 3.x + Spring Kafka
+- Debezium CDC Connector
+- Kafka Connect + Kafka Streams
+- Elasticsearch Java Client 8.x
+
+### CDC 파이프라인
+```
+MariaDB binlog → Debezium → Kafka Topics → Spring Kafka Consumer → Elasticsearch
+     ↓              ↓           ↓              ↓                    ↓
+   데이터 변경      CDC 감지    이벤트 발행    실시간 처리           즉시 업데이트
+```
+
+## 인프라 구성 (infrastructure/docker-compose.yml)
+
+### 서비스 구성
+- **MariaDB**: 소스 데이터베이스 (binlog 활성화)
+- **Zookeeper**: Kafka 메타데이터 관리
+- **Kafka**: 메시지 브로커
+- **Kafka Connect**: Debezium CDC 커넥터
+- **Debezium UI**: CDC 모니터링 대시보드
+- **Elasticsearch**: 검색 인덱스
+
+### 포트 구성
+```
+MariaDB:        3306 (chap17 모듈용)
+Kafka:          9092
+Kafka Connect:  8083
+Debezium UI:    8080
+Elasticsearch:  9200, 9300
+Zookeeper:      2181
+```
+
+## 데이터 모델
+
+### 원본 테이블 (MariaDB)
+```sql
+PRODUCTS        - 상품 기본 정보
+├── id, name, description, price, status
+├── seller_id   (FK → SELLERS)
+├── category_id (FK → CATEGORIES)
+└── created_at, updated_at
+
+SELLERS         - 판매자 정보  
+├── id, name, email, phone
+├── business_number, rating
+└── created_at
+
+CATEGORIES      - 카테고리 정보
+├── id, name, parent_id
+├── level, path, is_active
+└── created_at
+```
+
+### Elasticsearch Document
+```json
+{
+  "productId": 1,
+  "name": "고성능 게이밍 노트북",
+  "description": "최신 RTX 그래픽카드 탑재",
+  "price": 1500000,
+  "status": "ACTIVE",
+  
+  "seller": {
+    "id": 101,
+    "name": "테크스토어",
+    "email": "contact@techstore.com",
+    "rating": 4.8
+  },
+  
+  "category": {
+    "id": 301,
+    "name": "노트북",
+    "fullPath": "전자제품 > 컴퓨터 > 노트북",
+    "level": 3
+  },
+  
+  "searchKeywords": ["게이밍", "노트북", "RTX"],
+  "priceRange": "HIGH",
+  "combinedText": "고성능 게이밍 노트북...",
+  "indexedAt": "2025-01-27T10:30:00Z",
+  "lastModified": "2025-01-27T10:30:00Z"
+}
 ```
 
 ## 실행 방법
 
-### 1. 데이터베이스 준비
-```sql
--- PEOPLE 테이블 생성 (자동 생성되지 않는 경우)
-CREATE TABLE PEOPLE (
-    FIRST_NAME VARCHAR(100),
-    LAST_NAME VARCHAR(100)
-);
-```
-
-### 2. 애플리케이션 실행
+### 1. 인프라 시작
 ```bash
-./gradlew :chap18:bootRun
+cd infrastructure
+docker-compose up -d
+
+# 서비스 상태 확인
+docker-compose ps
 ```
 
-### 3. 실행 결과
-- sample-data.csv의 데이터가 대문자로 변환되어 데이터베이스에 저장됨
-- 배치 작업 완료 후 저장된 데이터가 콘솔에 출력됨
+### 2. Debezium Connector 설정
+```bash
+# MariaDB Connector 등록
+curl -X POST http://localhost:8083/connectors \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "mariadb-connector",
+    "config": {
+      "connector.class": "io.debezium.connector.mysql.MySqlConnector",
+      "tasks.max": "1",
+      "database.hostname": "mariadb",
+      "database.port": "3306",
+      "database.user": "primavera",
+      "database.password": "primavera",
+      "database.server.id": "184054",
+      "database.server.name": "primavera",
+      "database.include.list": "primavera",
+      "table.include.list": "primavera.PRODUCTS,primavera.SELLERS,primavera.CATEGORIES",
+      "database.history.kafka.bootstrap.servers": "kafka:29092",
+      "database.history.kafka.topic": "schema-changes.primavera",
+      "include.schema.changes": "true",
+      "transforms": "unwrap",
+      "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState"
+    }
+  }'
+```
 
-## 주요 특징
+### 3. Phase 1: 초기 인덱싱 실행
+```bash
+# 전체 상품 데이터 인덱싱
+./gradlew :chap17:batch:bootRun
+```
 
-### 1. 함수형 Bean 등록
-- XML이나 어노테이션 대신 프로그래밍 방식으로 Bean 등록
-- `GenericApplicationContext`를 사용한 동적 Bean 정의
+### 4. Phase 2: 실시간 스트리밍 시작
+```bash
+# CDC 기반 실시간 업데이트 시작
+./gradlew :chap17:streaming:bootRun
+```
 
-### 2. 배치 처리 최적화
-- Chunk 기반 처리로 메모리 효율성 향상
-- 트랜잭션 관리를 통한 데이터 무결성 보장
+### 5. 테스트 및 확인
+```bash
+# Elasticsearch 인덱스 확인
+curl -X GET "localhost:9200/product_catalog_v1/_count"
 
-### 3. CI/CD 친화적 설계
-- 명령줄 실행 지원 (SpringApplication.exit)
-- 배치 작업 완료 후 시스템 종료
+# 실시간 업데이트 테스트 (MariaDB에서 데이터 변경)
+mysql -h localhost -P 3306 -u primavera -p primavera
+UPDATE PRODUCTS SET price = 2000000 WHERE id = 1;
+
+# Kafka Topics 확인
+docker exec kafka-primavera kafka-topics --list --bootstrap-server localhost:9092
+
+# CDC 이벤트 확인
+docker exec kafka-primavera kafka-console-consumer \
+  --bootstrap-server localhost:9092 \
+  --topic primavera.primavera.PRODUCTS \
+  --from-beginning
+```
+
+## 모니터링
+
+### Debezium UI
+- **URL**: http://localhost:8080
+- **기능**: CDC 커넥터 상태, 스키마 변경 추적
+
+### Kafka Topics
+- `primavera.primavera.PRODUCTS`: 상품 변경 이벤트
+- `primavera.primavera.SELLERS`: 판매자 변경 이벤트  
+- `primavera.primavera.CATEGORIES`: 카테고리 변경 이벤트
+
+### Elasticsearch Monitoring
+```bash
+# 클러스터 상태
+curl -X GET "localhost:9200/_cluster/health?pretty"
+
+# 인덱스 통계
+curl -X GET "localhost:9200/product_catalog_v1/_stats?pretty"
+```
 
 ## 확장 가능성
-- 다양한 파일 형식 지원 (Excel, JSON 등)
-- 병렬 처리 및 파티셔닝
-- 오류 처리 및 재시도 메커니즘
-- 스케줄링 통합 (Spring Scheduler, Quartz)
-- 모니터링 및 알림 기능
 
-## 로깅 설정
-- Spring Framework: DEBUG 레벨
-- 애플리케이션 코드: DEBUG 레벨
-- 배치 처리 과정의 상세한 로그 출력
+### 1. 멀티 소스 지원
+- 여러 데이터베이스의 변경사항 통합
+- 다양한 CDC 소스 (Oracle, PostgreSQL 등)
+
+### 2. 스케일링
+- Kafka 파티셔닝을 통한 수평 확장
+- 여러 Consumer 그룹으로 병렬 처리
+
+### 3. 고급 변환
+- Kafka Streams를 활용한 복합 이벤트 처리
+- 실시간 집계 및 파생 데이터 생성
+
+## 학습 포인트
+
+### 1. Enterprise Integration Patterns
+- **Change Data Capture**: 실시간 데이터 동기화
+- **Event Sourcing**: 이벤트 기반 아키텍처
+- **CQRS**: 명령과 조회 책임 분리
+
+### 2. Kafka Ecosystem
+- **Kafka Connect**: 외부 시스템 연동
+- **Kafka Streams**: 스트림 처리
+- **Schema Registry**: 스키마 진화 관리
+
+### 3. Operational Excellence
+- **모니터링**: 실시간 파이프라인 상태 추적
+- **백프레셔**: 시스템 과부하 방지
+- **오류 복구**: Dead Letter Queue 패턴
+
+이 프로젝트는 **실무에서 사용되는 엔터프라이즈급 데이터 파이프라인**의 완전한 구현체로, Spring Batch의 배치 처리와 Kafka의 실시간 스트리밍을 조합한 하이브리드 아키텍처를 학습할 수 있습니다.

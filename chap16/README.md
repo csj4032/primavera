@@ -1,18 +1,36 @@
-# Chapter 17 - 파일 처리 & 에러 모니터링 📊
+# Chapter 16 - Java Data Processing Libraries Showcase 📊
 
 ## 📋 개요
 
-chap17은 **파일 처리와 에러 모니터링**을 중심으로 한 고급 Spring Boot 애플리케이션입니다. Excel/CSV 파일 업로드 및 처리, 다양한 파일 포맷 검증, 그리고 Sentry를 통한 실시간 에러 트래킹 시스템을 통합적으로 학습할 수 있습니다.
+chap16은 **Java 생태계의 다양한 데이터 처리 라이브러리**를 종합적으로 다루는 쇼케이스 프로젝트입니다. 파일 처리부터 DataFrame 조작, 함수형 프로그래밍, 머신러닝까지 - Java에서 사용할 수 있는 강력한 데이터 처리 도구들을 실무 예제와 함께 학습할 수 있습니다.
 
 ## 🎯 학습 목표
 
+- **📊 DataFrame 라이브러리**: TableSaw를 활용한 Pandas 스타일 데이터 조작
+- **🔧 함수형 프로그래밍**: jOOλ(jool), Vavr, Eclipse Collections 비교 분석
+- **🤖 머신러닝**: Weka, Smile을 활용한 데이터 분석 및 예측 모델
 - **🗂️ 대용량 파일 처리**: Apache POI, Tika를 활용한 다양한 파일 형식 지원
-- **✅ 파일 검증 시스템**: 체인 오브 리스폰시빌리티 패턴 기반 검증 체계
-- **📈 에러 모니터링**: Sentry 통합을 통한 실시간 에러 트래킹
+- **📈 실시간 스트림 처리**: 다양한 스트림 처리 라이브러리 비교
 - **📊 데이터 분석**: 한국어 형태소 분석 및 통계 처리
-- **🏭 팩토리 패턴**: 파일 타입별 처리 로직 분리
+- **📈 에러 모니터링**: Sentry 통합을 통한 실시간 에러 트래킹
 
 ## 🛠️ 핵심 기술 스택
+
+### DataFrame & Data Manipulation Libraries
+- **TableSaw 0.43.1** - Java의 Pandas 대안, DataFrame 조작 및 시각화
+- **Weka 3.8.6** - 머신러닝 및 데이터 마이닝 툴킷
+- **Smile 3.1.1** - 고성능 머신러닝 라이브러리
+- **Apache Commons Math 3.6.1** - 수학 연산 및 통계 처리
+
+### Functional Programming & Collections
+- **jOOλ(jool) 0.9.15** - SQL 스타일 함수형 프로그래밍 유틸리티
+- **Vavr 0.10.4** - 함수형 프로그래밍 라이브러리 (불변 컬렉션, 패턴 매칭)
+- **Eclipse Collections 11.1.0** - 고성능 컬렉션 프레임워크
+- **JavaTuples 1.2** - 타입 안전 튜플 구현
+
+### Stream Processing & Data Flow
+- **Easy Flows 0.3.0** - 워크플로우 엔진 및 데이터 파이프라인
+- **StreamWork 1.0.0** - 스트림 기반 데이터 처리
 
 ### File Processing
 - **Apache POI 4.1.1** - Excel 파일 읽기/쓰기
@@ -22,7 +40,6 @@ chap17은 **파일 처리와 에러 모니터링**을 중심으로 한 고급 Sp
 
 ### Text & Language Processing  
 - **Open Korean Text 2.3.1** - 한국어 형태소 분석
-- **JavaTuples 1.2** - 데이터 페어링 및 그룹화
 
 ### Monitoring & Error Tracking
 - **Sentry 1.7.30** - 실시간 에러 추적 및 모니터링

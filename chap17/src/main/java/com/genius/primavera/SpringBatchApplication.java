@@ -33,9 +33,9 @@ import javax.sql.DataSource;
 @Slf4j
 @EnableBatchProcessing
 @SpringBootApplication
-public class CiCdDeploymentApplication {
+public class SpringBatchApplication {
 	public static void main(String[] args) {
-		SpringApplication springApplication = new SpringApplicationBuilder(CiCdDeploymentApplication.class)
+		SpringApplication springApplication = new SpringApplicationBuilder(SpringBatchApplication.class)
 				.initializers((GenericApplicationContext applicationContext) -> {
 					applicationContext.registerBean("jobExecutionListenerSupport", JobExecutionListenerSupport.class, () -> new JobExecutionListenerSupport() {
 						@Autowired

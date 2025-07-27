@@ -8,12 +8,12 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 
 @SpringBootApplication
 @EnableConfigurationProperties(ThymeleafProperties.class)
-public class ReactiveProgrammingApplication {
+public class AdvancedJpaApplication {
 
 	private static final String APPLICATION = "spring.config.location=classpath:/application-${spring.profiles.active:default}.yml,classpath:/social.yml";
 
 	public static void main(String[] args) {
-		new SpringApplicationBuilder(ReactiveProgrammingApplication.class)
+		new SpringApplicationBuilder(AdvancedJpaApplication.class)
 				.bannerMode(Banner.Mode.OFF)
 				.properties(APPLICATION)
 				.build()

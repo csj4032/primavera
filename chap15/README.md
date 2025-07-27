@@ -1,37 +1,47 @@
-# Chapter 16 - Reactive Programming & Advanced Integration
+# Chapter 15 - Advanced JPA & Hybrid Architecture
 
 ## 개요
-Chapter 16은 리액티브 프로그래밍과 고급 시스템 통합을 다루는 Spring Boot 애플리케이션입니다. Spring WebFlux, MongoDB Reactive, Redis 캐싱, 외부 API 통합(Kakao), 그리고 다양한 데이터 저장소 간의 복합적인 데이터 처리를 구현합니다.
+Chapter 15는 **JPA 고급 기능과 하이브리드 아키텍처**를 다루는 Spring Boot 애플리케이션입니다. MyBatis 기반 게시판을 JPA로 전환하면서 Spring WebFlux, MongoDB Reactive, Redis 캐싱을 부분적으로 도입한 **전통적 MVC와 리액티브의 혼합 아키텍처**를 구현합니다.
 
 ## 주요 기능
-- **리액티브 프로그래밍**: Spring WebFlux를 활용한 비동기 논블로킹 웹 개발
-- **멀티 데이터소스**: MariaDB, MongoDB, Redis 통합 운영
+- **JPA 고급 기능**: Spring Data JPA, QueryDSL, Auditing, Envers 활용
+- **MyBatis → JPA 전환**: 기존 MyBatis 기반 게시판을 JPA로 마이그레이션
+- **하이브리드 아키텍처**: 전통적 MVC + 일부 리액티브 컴포넌트 혼합
+- **멀티 데이터소스**: MariaDB (JPA), MongoDB (Reactive), Redis 통합 운영
+- **고급 캐싱**: Redis와 Caffeine을 활용한 다층 캐싱 전략
 - **외부 API 통합**: Retrofit2를 활용한 Kakao API 연동
-- **고급 캐싱**: Redis와 Local Cache를 활용한 다층 캐싱 전략
-- **파일 처리**: 첨부파일 업로드/다운로드 및 스토리지 관리
-- **실시간 차트**: Reactive WebFlux 기반 스트리밍 차트 데이터
+- **실시간 차트**: 일부 기능에서 WebFlux 기반 스트리밍 적용
 - **OAuth2 보안**: 소셜 로그인 및 JWT 기반 인증
-- **로깅 시스템**: MongoDB를 활용한 구조화된 로그 저장
+- **파일 처리**: 첨부파일 업로드/다운로드 및 스토리지 관리
+- **구조화된 로깅**: MongoDB를 활용한 리액티브 로그 저장
 
 ## 기술 스택
 
 ### 핵심 프레임워크
 - Spring Boot 3.x
-- Spring WebFlux (Reactive Web)
-- Spring Data JPA
-- Spring Data MongoDB Reactive
-- Spring Data Redis
+- **Spring Data JPA** (주요 데이터 접근 계층)
+- **QueryDSL** (타입 안전 쿼리)
+- Spring WebFlux (리액티브 컴포넌트용)
+- Spring Data MongoDB Reactive (로깅용)
+- Spring Data Redis (캐싱용)
 - Spring Security OAuth2
 
 ### 데이터베이스
-- MariaDB 11.x (주 데이터베이스)
-- MongoDB (로그 및 NoSQL 데이터)
-- Redis (캐싱 및 세션)
+- **MariaDB 11.x** (주 데이터베이스 - JPA 사용)
+- **MongoDB** (로그 및 NoSQL 데이터 - Reactive 사용)
+- **Redis** (캐싱 및 세션)
 
-### 리액티브 스택
-- Reactor Netty
-- MongoDB Reactive Driver
-- WebFlux Reactive Thymeleaf
+### JPA 고급 기능
+- **Spring Data JPA**: Repository 패턴 및 쿼리 메서드
+- **QueryDSL**: 타입 안전 동적 쿼리 생성
+- **JPA Auditing**: 엔티티 생성/수정 시간 자동 관리
+- **Hibernate Envers**: 엔티티 변경 이력 추적
+- **Custom Converters**: Enum 기반 상태 변환
+
+### 하이브리드 리액티브 스택 (일부 기능)
+- Reactor Netty (WebFlux용)
+- MongoDB Reactive Driver (로깅용)
+- WebFlux Reactive Thymeleaf (차트용)
 
 ### 외부 통합
 - Retrofit2 (HTTP Client)
@@ -53,9 +63,9 @@ Chapter 16은 리액티브 프로그래밍과 고급 시스템 통합을 다루�
 ## 프로젝트 구조
 
 ```
-chap16/
+chap15/
 ├── src/main/java/com/genius/primavera/
-│   ├── ReactiveProgrammingApplication.java         # 메인 애플리케이션
+│   ├── AdvancedJpaApplication.java                 # 메인 애플리케이션
 │   ├── application/                                # 비즈니스 로직
 │   │   ├── cache/                                  # 캐싱 전략
 │   │   │   ├── LocalCache.java                   # Caffeine 로컬 캐시
@@ -153,30 +163,39 @@ chap16/
 
 ## 주요 컴포넌트
 
-### 1. 리액티브 웹 시스템
-- **ChartController**: WebFlux 기반 스트리밍 차트 데이터
-- **MongoDB Reactive**: 비동기 NoSQL 데이터 처리
-- **Thymeleaf Reactive**: 리액티브 템플릿 렌더링
+### 1. JPA 고급 데이터 접근 계층
+- **Repository Pattern**: Spring Data JPA 기반 데이터 접근
+- **QueryDSL Integration**: 복합 조건 검색 및 동적 쿼리
+- **JPA Auditing**: BaseEntity를 통한 생성/수정 시간 자동 관리
+- **Entity Relationships**: User-Article-Comment 연관관계 매핑
+- **Custom Converters**: Enum 상태 값의 데이터베이스 저장 최적화
 
-### 2. 다층 캐싱 시스템
+### 2. 하이브리드 아키텍처
+- **전통적 MVC**: 게시판 CRUD는 JPA + Thymeleaf
+- **리액티브 컴포넌트**: 차트 및 로깅만 WebFlux 적용
+- **선택적 적용**: 필요한 부분에만 리액티브 패턴 도입
+
+### 3. 다층 캐싱 시스템
 - **LocalCache (Caffeine)**: JVM 레벨 고속 캐싱
 - **RedisCache**: 분산 캐싱 및 세션 저장소
 - **Cache Chain**: 로컬 → Redis → DB 순차 조회 최적화
 
-### 3. 멀티 데이터소스 통합
+### 4. 멀티 데이터소스 통합
 - **MariaDB**: 주요 관계형 데이터 (JPA)
 - **MongoDB**: 로그 및 NoSQL 데이터 (Reactive)
 - **Redis**: 캐싱 및 세션 관리
 
-### 4. 외부 시스템 통합
+### 5. 외부 시스템 통합
 - **Kakao API**: Retrofit2를 통한 친구 목록 조회
 - **OAuth2 Social Login**: Google, Facebook, GitHub, Kakao 로그인
 - **File Storage**: 첨부파일 업로드/다운로드 시스템
 
-### 5. 고급 데이터 처리
+### 6. 고급 데이터 처리
 - **QueryDSL**: 타입 안전 동적 쿼리
 - **JPA Envers**: 엔티티 변경 이력 추적
 - **Custom Converters**: Enum 기반 상태 변환
+- **Pagination**: Spring Data의 페이징 및 정렬 기능
+- **Projection**: 필요한 필드만 선택하는 최적화된 쿼리
 
 ## 설정
 
@@ -223,7 +242,7 @@ export VAULT_TOKEN=primavera-dev-token
 vault secrets enable -path=secret kv-v2
 
 # 애플리케이션 시크릿 저장
-vault kv put secret/primavera/chap16 \
+vault kv put secret/primavera/chap15 \
   datasource.password=primavera \
   mongodb.password=primavera \
   oauth2.google.client-secret=your-google-secret \
@@ -231,11 +250,11 @@ vault kv put secret/primavera/chap16 \
   jwt.secret=your-jwt-secret-key
 
 # 환경별 시크릿 저장
-vault kv put secret/primavera/chap16/local \
+vault kv put secret/primavera/chap15/local \
   datasource.url=jdbc:mariadb://localhost:3306/primavera \
   mongodb.host=localhost
 
-vault kv put secret/primavera/chap16/prod \
+vault kv put secret/primavera/chap15/prod \
   datasource.url=jdbc:mariadb://prod-db:3306/primavera \
   mongodb.host=prod-mongo
 ```
@@ -243,17 +262,17 @@ vault kv put secret/primavera/chap16/prod \
 #### Vault 시크릿 조회 및 관리
 ```bash
 # 저장된 시크릿 조회
-vault kv get secret/primavera/chap16
-vault kv get secret/primavera/chap16/local
+vault kv get secret/primavera/chap15
+vault kv get secret/primavera/chap15/local
 
 # 시크릿 버전 확인
-vault kv metadata get secret/primavera/chap16
+vault kv metadata get secret/primavera/chap15
 
 # 시크릿 업데이트
-vault kv patch secret/primavera/chap16 jwt.secret=new-secret-key
+vault kv patch secret/primavera/chap15 jwt.secret=new-secret-key
 
 # 시크릿 삭제
-vault kv delete secret/primavera/chap16
+vault kv delete secret/primavera/chap15
 ```
 
 ### 리액티브 Thymeleaf 설정
@@ -307,7 +326,7 @@ spring:
         enabled: true
         backend: secret
         profile-separator: '/'
-        default-context: primavera/chap16
+        default-context: primavera/chap15
         application-name: primavera
         profiles: local,prod
   config:
@@ -367,7 +386,7 @@ public class VaultConfiguration {
 
 ### 로컬 환경 실행
 ```bash
-./gradlew :chap16:bootRun -Dspring.profiles.active=local
+./gradlew :chap15:bootRun -Dspring.profiles.active=local
 ```
 
 ### 필수 서비스 시작
@@ -401,7 +420,7 @@ curl -H "X-Vault-Token: primavera-dev-token" \
 
 ### 테스트 실행
 ```bash
-./gradlew :chap16:test
+./gradlew :chap15:test
 ```
 
 ## API 엔드포인트
@@ -517,16 +536,16 @@ ui = true
 #### 시크릿 로테이션 전략
 ```bash
 # 데이터베이스 패스워드 로테이션
-vault write secret/primavera/chap16 \
+vault write secret/primavera/chap15 \
   datasource.password=$(openssl rand -base64 32) \
   mongodb.password=$(openssl rand -base64 32)
 
 # JWT 시크릿 로테이션 (주기적 실행)
-vault kv patch secret/primavera/chap16 \
+vault kv patch secret/primavera/chap15 \
   jwt.secret=$(openssl rand -base64 64)
 
 # API 키 로테이션
-vault kv patch secret/primavera/chap16 \
+vault kv patch secret/primavera/chap15 \
   oauth2.google.client-secret=new-google-secret \
   oauth2.kakao.client-secret=new-kakao-secret
 ```
@@ -535,17 +554,17 @@ vault kv patch secret/primavera/chap16 \
 ```bash
 # 애플리케이션용 정책 생성
 vault policy write primavera-app - <<EOF
-path "secret/data/primavera/chap16/*" {
+path "secret/data/primavera/chap15/*" {
   capabilities = ["read"]
 }
-path "secret/metadata/primavera/chap16/*" {
+path "secret/metadata/primavera/chap15/*" {
   capabilities = ["list", "read"]
 }
 EOF
 
 # 개발자용 정책 생성
 vault policy write primavera-dev - <<EOF
-path "secret/data/primavera/chap16/*" {
+path "secret/data/primavera/chap15/*" {
   capabilities = ["create", "read", "update", "delete", "list"]
 }
 EOF

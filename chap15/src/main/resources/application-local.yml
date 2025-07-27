@@ -1,37 +1,100 @@
 spring:
   application:
-    name: Privamera
-  jackson:
-    time-zone: UTC
+    name: advanced-jpa-local
+    
+  # 로컬 개발용 MariaDB (infrastructure docker-compose)
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://localhost:1109/primavera?useLegacyDatetimeCode=false&serverTimezone=UTC
+    url: jdbc:mariadb://localhost:1109/primavera_jpa_advanced?useLegacyDatetimeCode=false&serverTimezone=UTC
     username: primavera
     password: primavera
-  banner:
-    charset: UTF-8
-    location: classpath:primavera.txt
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 20000
+      
+  # JPA 개발 설정
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+        
+  # 로컬 개발용 MongoDB
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: primavera_jpa_advanced_local
+      # 인증 없이 사용 (로컬 개발)
+      
+    # 로컬 개발용 Redis
+    redis:
+      host: localhost
+      port: 6379
+      # 패스워드 없이 사용 (로컬 개발)
+      
+  # 템플릿 캐시 비활성화 (개발용)
   thymeleaf:
     cache: false
-    enabled: true
-    prefix: classpath:/templates/
-    suffix: .html
+    reactive:
+      chunked-mode-view-names: chart,stream,debug
+      
+  # 개발 도구 활성화
   devtools:
     livereload:
       enabled: true
+    restart:
+      enabled: true
+      additional-paths: src/main/resources/templates
+      additional-exclude: static/**,public/**
+      
+  # Flyway 활성화 (로컬 개발)
   flyway:
     enabled: true
     encoding: UTF-8
     fail-on-missing-locations: false
-
+    baseline-on-migrate: true
+    
+# 로컬 개발 로깅
 logging:
-  config: classpath:logback.xml
-
+  level:
+    root: INFO
+    com.genius.primavera: DEBUG
+    org.springframework.web: DEBUG
+    org.springframework.data: DEBUG
+    org.springframework.security: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    reactor.netty.http.server: DEBUG
+    org.springframework.data.mongodb: DEBUG
+    
+# 로컬 서버 설정
 server:
+  port: 8080
+  http2:
+    enabled: false
   ssl:
-    key-alias: primavera
-    key-store: infrastructure/certs/primavera.p12
-    key-store-type: PKCS12
-    key-store-password: primavera
-    enabled: true
-  port: 8443
+    enabled: false
+  error:
+    include-stacktrace: always
+    include-message: always
+    include-binding-errors: always
+    
+# 로컬 스토리지
+storage:
+  location: local-uploads
+  
+# 액추에이터 전체 노출 (로컬 개발)
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+      show-components: always

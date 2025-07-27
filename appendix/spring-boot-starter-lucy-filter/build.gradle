@@ -22,7 +22,7 @@ dependencies {
     implementation "org.apache.commons:commons-text:${commonsTextVersion}"
     implementation "commons-codec:commons-codec"
     implementation "org.projectlombok:lombok:${lombokVersion}"
-    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+    // annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
     testImplementation "org.projectlombok:lombok:${lombokVersion}"
     testImplementation "org.springframework.boot:spring-boot-starter-test"

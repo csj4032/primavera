@@ -22,7 +22,7 @@ dependencies {
     implementation "org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}"
     compileOnly "org.projectlombok:lombok:${lombokVersion}"
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
-    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+    // annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
     compileOnly "org.jetbrains:annotations:${jetbrainsAnnotationsVersion}"
 }
 

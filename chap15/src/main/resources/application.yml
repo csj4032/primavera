@@ -1,18 +1,36 @@
 spring:
   application:
-    name: ReactiveProgrammingApplication
+    name: advanced-jpa
+  profiles:
+    active: default
+    
+  # Jackson 설정
   jackson:
     time-zone: UTC
+    serialization:
+      write-dates-as-timestamps: false
+    deserialization:
+      fail-on-unknown-properties: false
+      
+  # 관계형 데이터베이스 (MariaDB)
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://localhost:3306/primavera?useLegacyDatetimeCode=false&serverTimezone=UTC
+    url: jdbc:mariadb://localhost:3306/primavera_jpa_advanced?useLegacyDatetimeCode=false&serverTimezone=UTC
     username: primavera
     password: primavera
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      
+  # JPA/Hibernate 설정
   jpa:
-    show-sql: true
+    show-sql: false
     generate-ddl: false
     hibernate:
-      ddl-auto: none
+      ddl-auto: validate
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
         implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
@@ -23,23 +41,61 @@ spring:
         jdbc:
           fetch_size: 30
           batch_size: 30
+        format_sql: false
+        use_sql_comments: false
     open-in-view: false
+    
+  # MongoDB 리액티브 설정
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      authentication-database: admin
+      database: primavera_jpa_advanced
+      username: primavera
+      password: primavera
+      
+    # Redis 설정
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 2000ms
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+          
+  # 배너 설정
   banner:
     charset: UTF-8
     location: classpath:primavera.txt
+    
+  # Thymeleaf 리액티브 설정
   thymeleaf:
     template-resolver-order: 1
-    cache: false
+    cache: true
     enabled: true
     prefix: classpath:/templates/
     suffix: .html
+    encoding: UTF-8
+    mode: HTML
     reactive:
-      chunked-mode-view-names: chart
+      chunked-mode-view-names: chart,stream
       max-chunk-size: 8192
+      media-types: 
+        - text/html
+        - application/json
     check-template: false
+    
+  # 개발 도구
   devtools:
     livereload:
-      enabled: true
+      enabled: false
+    restart:
+      enabled: false
+      
+  # Flyway 설정
   flyway:
     enabled: false
     encoding: UTF-8
@@ -48,36 +104,98 @@ spring:
     table: SCHEMA_HISTORY
     baseline-on-migrate: false
     baseline-description: schema history
+    
+  # AOP 설정
   aop:
     proxy-target-class: true
-  data:
-    mongodb:
-      host: localhost
-      port: 27017
-      authentication-database: admin
-      database: primavera
-      username: primavera
-      password: primavera
+    
+  # 웹플럭스 설정
+  webflux:
+    base-path: /
+    static-path-pattern: /static/**
+    
+  # 보안 설정
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID:your-google-client-id}
+            client-secret: ${GOOGLE_CLIENT_SECRET:your-google-client-secret}
+          kakao:
+            client-id: ${KAKAO_CLIENT_ID:your-kakao-client-id}
+            client-secret: ${KAKAO_CLIENT_SECRET:your-kakao-client-secret}
 
+# 로깅 설정
 logging:
-  config: classpath:logback.xml
+  level:
+    root: INFO
+    com.genius.primavera: DEBUG
+    org.springframework.web: DEBUG
+    org.springframework.data: DEBUG
+    reactor.netty: INFO
+    io.netty: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: logs/advanced-jpa.log
+    max-size: 10MB
+    max-history: 30
 
+# 서버 설정
 server:
+  port: 8443
+  http2:
+    enabled: true
   ssl:
+    enabled: false
     key-alias: primavera
     key-store: infrastructure/certs/primavera.p12
     key-store-type: PKCS12
     key-store-password: primavera
-    enabled: false
-  port: 8081
-  http2:
-    enabled: false
+  error:
+    include-message: always
+    include-binding-errors: always
+  compression:
+    enabled: true
+  netty:
+    connection-timeout: 30s
+    idle-timeout: 60s
 
+# 파일 스토리지 설정
 storage:
-  location: upload
+  location: upload-files
+  max-file-size: 10MB
+  max-request-size: 10MB
 
+# 외부 API 설정
 kakao:
   api:
     url: https://kapi.kakao.com
     talk-social:
       friend-list: v1/api/talk/friends
+    timeout: 5000
+    
+# 캐시 설정
+cache:
+  caffeine:
+    spec: "maximumSize=1000,expireAfterWrite=10m"
+  redis:
+    ttl: 600
+    
+# 액추에이터 설정
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,loggers,beans
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: when-authorized
+  health:
+    redis:
+      enabled: true
+    mongo:
+      enabled: true

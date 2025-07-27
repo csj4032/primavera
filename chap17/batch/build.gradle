@@ -1,0 +1,87 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot'
+    id 'io.spring.dependency-management'
+    id 'org.graalvm.buildtools.native'
+}
+
+group = 'com.genius.primavera'
+version = '1.0.0-SNAPSHOT'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-batch'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    
+    // Database
+    runtimeOnly "org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}"
+    
+    // Elasticsearch
+    implementation "co.elastic.clients:elasticsearch-java:${elasticsearchVersion}"
+    implementation "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
+    
+    // Utilities
+    implementation "org.apache.commons:commons-lang3:${commonsLang3Version}"
+    implementation "org.apache.commons:commons-csv:${commonsCsvVersion}"
+    
+    // Test
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.batch:spring-batch-test'
+    testImplementation "org.testcontainers:junit-jupiter:${testContainersVersion}"
+    testImplementation "org.testcontainers:mariadb:${testContainersVersion}"
+    testImplementation "org.testcontainers:elasticsearch:${testContainersVersion}"
+    
+    // Annotation processors
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+    
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+// Native build configuration
+graalvmNative {
+    binaries {
+        main {
+            imageName = 'product-batch-indexer'
+            mainClass = 'com.genius.primavera.batch.ProductBatchApplication'
+            useFatJar = false
+        }
+    }
+}
+
+// Application configuration
+springBoot {
+    mainClass = 'com.genius.primavera.batch.ProductBatchApplication'
+    buildInfo()
+}
+
+// JAR configuration
+jar {
+    enabled = false
+    archiveClassifier = ''
+}
+
+bootJar {
+    archiveFileName = 'product-batch-indexer.jar'
+    launchScript()
+}

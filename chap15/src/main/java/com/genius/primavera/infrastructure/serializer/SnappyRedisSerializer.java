@@ -8,7 +8,7 @@ import org.xerial.snappy.Snappy;
 import java.io.Serializable;
 
 /**
- * https://github.com/cboursinos/java-spring-redis-compression-snappy-kryo
+ * <a href="https://github.com/cboursinos/java-spring-redis-compression-snappy-kryo">...</a>
  */
 public class SnappyRedisSerializer<T> implements RedisSerializer<T> {
 

@@ -48,14 +48,14 @@ import java.time.format.DateTimeFormatter;
 @EnableJpaAuditing
 public class ApplicationConfiguration implements WebMvcConfigurer {
 
-	// @Bean
-	// public FilterRegistrationBean filterRegistrationBean() {
-	// 	var filterRegistration = new FilterRegistrationBean();
-	// 	filterRegistration.setFilter(new XssEscapeServletFilter());
-	// 	filterRegistration.setOrder(1);
-	// 	filterRegistration.addUrlPatterns("/*");
-	// 	return filterRegistration;
-	// }
+	 @Bean
+	 public FilterRegistrationBean filterRegistrationBean() {
+	 	var filterRegistration = new FilterRegistrationBean();
+	 	filterRegistration.setFilter(new XssEscapeServletFilter());
+	 	filterRegistration.setOrder(1);
+	 	filterRegistration.addUrlPatterns("/*");
+	 	return filterRegistration;
+	 }
 
 	@Bean
 	public ObjectMapper objectMapper() {

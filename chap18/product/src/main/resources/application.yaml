@@ -4,6 +4,14 @@ spring:
   cloud:
     config:
       uri: http://localhost:8888
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: primavera_products
+      username: root
+      password: primavera
+      authentication-database: admin
 
 server:
   tomcat:
