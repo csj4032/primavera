@@ -196,6 +196,66 @@ spring:
       port: 6379
 ```
 
+### HashiCorp Vault 설정
+
+#### 개발 환경 Vault 구성
+```yaml
+spring:
+  cloud:
+    vault:
+      host: localhost
+      port: 8200
+      scheme: http
+      authentication: TOKEN
+      token: primavera-dev-token
+      kv:
+        enabled: true
+        backend: secret
+        profile-separator: '/'
+```
+
+#### Vault 시크릿 엔진 초기화
+```bash
+# Key-Value v2 시크릿 엔진 활성화
+export VAULT_ADDR=http://localhost:8200
+export VAULT_TOKEN=primavera-dev-token
+
+vault secrets enable -path=secret kv-v2
+
+# 애플리케이션 시크릿 저장
+vault kv put secret/primavera/chap16 \
+  datasource.password=primavera \
+  mongodb.password=primavera \
+  oauth2.google.client-secret=your-google-secret \
+  oauth2.kakao.client-secret=your-kakao-secret \
+  jwt.secret=your-jwt-secret-key
+
+# 환경별 시크릿 저장
+vault kv put secret/primavera/chap16/local \
+  datasource.url=jdbc:mariadb://localhost:3306/primavera \
+  mongodb.host=localhost
+
+vault kv put secret/primavera/chap16/prod \
+  datasource.url=jdbc:mariadb://prod-db:3306/primavera \
+  mongodb.host=prod-mongo
+```
+
+#### Vault 시크릿 조회 및 관리
+```bash
+# 저장된 시크릿 조회
+vault kv get secret/primavera/chap16
+vault kv get secret/primavera/chap16/local
+
+# 시크릿 버전 확인
+vault kv metadata get secret/primavera/chap16
+
+# 시크릿 업데이트
+vault kv patch secret/primavera/chap16 jwt.secret=new-secret-key
+
+# 시크릿 삭제
+vault kv delete secret/primavera/chap16
+```
+
 ### 리액티브 Thymeleaf 설정
 ```yaml
 spring:
@@ -225,6 +285,84 @@ server:
   port: 8443
 ```
 
+### Spring Cloud Vault 통합 설정
+
+#### application-vault.yml
+```yaml
+spring:
+  cloud:
+    vault:
+      host: localhost
+      port: 8200
+      scheme: http
+      authentication: TOKEN
+      token: primavera-dev-token
+      connection-timeout: 5000
+      read-timeout: 15000
+      config:
+        order: -10
+      generic:
+        enabled: false
+      kv:
+        enabled: true
+        backend: secret
+        profile-separator: '/'
+        default-context: primavera/chap16
+        application-name: primavera
+        profiles: local,prod
+  config:
+    import: vault://
+```
+
+#### VaultConfiguration.java 예시
+```java
+@Configuration
+@EnableConfigurationProperties
+public class VaultConfiguration {
+    
+    @Value("${spring.cloud.vault.token}")
+    private String vaultToken;
+    
+    @Bean
+    public VaultTemplate vaultTemplate() {
+        VaultEndpoint endpoint = VaultEndpoint.create("localhost", 8200);
+        endpoint.setScheme("http");
+        
+        ClientAuthentication authentication = new TokenAuthentication(vaultToken);
+        
+        return new VaultTemplate(endpoint, authentication);
+    }
+    
+    @ConfigurationProperties("datasource")
+    @Component
+    public static class DatabaseProperties {
+        private String url;
+        private String username;
+        private String password;
+        // getters/setters
+    }
+    
+    @ConfigurationProperties("oauth2")
+    @Component
+    public static class OAuth2Properties {
+        private Google google = new Google();
+        private Kakao kakao = new Kakao();
+        
+        public static class Google {
+            private String clientId;
+            private String clientSecret;
+            // getters/setters
+        }
+        
+        public static class Kakao {
+            private String clientId;
+            private String clientSecret;
+            // getters/setters
+        }
+    }
+}
+```
+
 ## 실행 방법
 
 ### 로컬 환경 실행
@@ -248,6 +386,17 @@ docker run -d --name mongodb-primavera -p 27017:27017 \
 
 # Redis 시작
 docker run -d --name redis-primavera -p 6379:6379 redis:7.2
+
+# HashiCorp Vault 시작 (개발 모드)
+docker run -d --name vault-primavera -p 8200:8200 \
+  -e VAULT_DEV_ROOT_TOKEN_ID=primavera-dev-token \
+  -e VAULT_DEV_LISTEN_ADDRESS=0.0.0.0:8200 \
+  --cap-add=IPC_LOCK \
+  hashicorp/vault:1.15
+
+# Vault 초기화 확인
+curl -H "X-Vault-Token: primavera-dev-token" \
+  http://localhost:8200/v1/sys/health
 ```
 
 ### 테스트 실행
@@ -334,10 +483,85 @@ class AbstractJpaContainerTest {
 6. **보안 강화**: OAuth2 + JWT 기반 다중 인증 체계
 7. **확장 가능**: 마이크로서비스 전환 가능한 모듈 구조
 
+## 민감정보 관리
+
+### HashiCorp Vault 보안 가이드라인
+
+#### 프로덕션 환경 설정
+```bash
+# 프로덕션용 Vault 서버 실행 (TLS 활성화)
+docker run -d --name vault-prod \
+  -p 8200:8200 \
+  -v vault-data:/vault/data \
+  -v vault-config:/vault/config \
+  --cap-add=IPC_LOCK \
+  hashicorp/vault:1.15 \
+  vault server -config=/vault/config/vault.hcl
+
+# 프로덕션용 설정 파일 (vault.hcl)
+storage "file" {
+  path = "/vault/data"
+}
+
+listener "tcp" {
+  address = "0.0.0.0:8200"
+  tls_cert_file = "/vault/config/vault.crt"
+  tls_key_file = "/vault/config/vault.key"
+}
+
+api_addr = "https://vault.primavera.com:8200"
+cluster_addr = "https://vault.primavera.com:8201"
+ui = true
+```
+
+#### 시크릿 로테이션 전략
+```bash
+# 데이터베이스 패스워드 로테이션
+vault write secret/primavera/chap16 \
+  datasource.password=$(openssl rand -base64 32) \
+  mongodb.password=$(openssl rand -base64 32)
+
+# JWT 시크릿 로테이션 (주기적 실행)
+vault kv patch secret/primavera/chap16 \
+  jwt.secret=$(openssl rand -base64 64)
+
+# API 키 로테이션
+vault kv patch secret/primavera/chap16 \
+  oauth2.google.client-secret=new-google-secret \
+  oauth2.kakao.client-secret=new-kakao-secret
+```
+
+#### 접근 정책 설정
+```bash
+# 애플리케이션용 정책 생성
+vault policy write primavera-app - <<EOF
+path "secret/data/primavera/chap16/*" {
+  capabilities = ["read"]
+}
+path "secret/metadata/primavera/chap16/*" {
+  capabilities = ["list", "read"]
+}
+EOF
+
+# 개발자용 정책 생성
+vault policy write primavera-dev - <<EOF
+path "secret/data/primavera/chap16/*" {
+  capabilities = ["create", "read", "update", "delete", "list"]
+}
+EOF
+
+# 토큰 생성
+vault token create -policy="primavera-app" -ttl=24h
+vault token create -policy="primavera-dev" -ttl=8h
+```
+
 ## 주의사항
 
-1. 로컬 환경에서는 MariaDB (포트 1109), MongoDB (포트 27017), Redis (포트 6379) 필요
-2. Kakao API 연동 시 유효한 API 키 설정 필요
+1. 로컬 환경에서는 MariaDB (포트 3306), MongoDB (포트 27017), Redis (포트 6379), Vault (포트 8200) 필요
+2. Kakao API 연동 시 유효한 API 키를 Vault에 저장하여 관리
 3. HTTPS 사용 시 인증서 파일(primavera.p12) 경로 확인 필요
 4. 리액티브 스택과 전통적 JPA의 혼용으로 트랜잭션 관리 주의
 5. 캐시 일관성 보장을 위한 적절한 TTL 및 무효화 전략 설정 필요
+6. **Vault 보안**: 프로덕션에서는 반드시 TLS 활성화 및 토큰 기반 인증 사용
+7. **시크릿 로테이션**: 정기적인 패스워드 및 API 키 로테이션 정책 수립
+8. **접근 제어**: 최소 권한 원칙에 따른 Vault 정책 설정

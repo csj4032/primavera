@@ -19,6 +19,10 @@ import java.sql.SQLException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * TestContainers MariaDB를 사용한 데이터베이스 연결 테스트.
+ * 소켓 연결, JDBC 연결, JdbcTemplate 작업을 검증합니다.
+ */
 @Slf4j
 @SpringBootTest
 @ActiveProfiles("test")

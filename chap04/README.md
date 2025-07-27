@@ -184,9 +184,119 @@ spring:
 - [Tomcat DataSource](https://tomcat.apache.org/tomcat-9.0-doc/jdbc-pool.html)
 - [DBCP2 DataSource](https://commons.apache.org/proper/commons-dbcp/)
 
+## 민감정보 보안 문제와 해결방안
+
+### 🚨 Chapter 03에서 발견된 보안 취약점
+
+**문제점**: Chapter 03의 테스트 설정에서 민감정보가 평문으로 노출됨
+```yaml
+# chap03/src/test/resources/application-test.yml
+datasource:
+  url: jdbc:mariadb://localhost:1109/primavera?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
+  username: primavera
+  password: primavera  # ❌ 평문 노출
+```
+
+**보안 위험**:
+- 데이터베이스 패스워드 평문 노출
+- 소스코드 저장소에 민감정보 커밋
+- 테스트 환경에서 프로덕션 정보 유출 위험
+
+### ✅ Chapter 04의 해결방안: HashiCorp Vault 통합
+
+#### 1. Vault 설치 및 초기화
+
+Vault는 인프라스트럭처에서 통합 관리됩니다. 자세한 설치 및 설정 방법은 [infrastructure/README.md](../infrastructure/README.md)를 참조하세요.
+
+```bash
+# 인프라스트럭처 시작 (MariaDB + Vault)
+cd ../infrastructure
+docker-compose up -d
+
+# Vault 시크릿 초기화
+./vault-init.sh
+```
+
+#### 2. Spring Cloud Vault 설정
+```yaml
+# application-vault.yml
+spring:
+  cloud:
+    vault:
+      host: localhost
+      port: 8200
+      scheme: http
+      authentication: TOKEN
+      token: primavera-dev-token
+      kv:
+        enabled: true
+        backend: secret
+        default-context: primavera/chap04
+  config:
+    import: vault://
+```
+
+#### 3. 보안 강화된 데이터소스 설정
+```yaml
+# application.yml (민감정보 제거)
+spring:
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    # URL, username, password는 Vault에서 자동 주입
+```
+
+### 보안 모범 사례
+
+#### 시크릿 로테이션 전략
+```bash
+# 정기적 패스워드 변경
+vault kv patch secret/primavera/chap04 \
+  datasource.password=$(openssl rand -base64 32)
+
+# 버전 관리 및 롤백
+vault kv metadata get secret/primavera/chap04
+vault kv undelete -versions=2 secret/primavera/chap04
+```
+
+#### 접근 정책 설정
+```bash
+# 애플리케이션용 제한된 정책
+vault policy write chap04-app - <<EOF
+path "secret/data/primavera/chap04/*" {
+  capabilities = ["read"]
+}
+EOF
+
+# 개발자용 관리 정책
+vault policy write chap04-dev - <<EOF
+path "secret/data/primavera/chap04/*" {
+  capabilities = ["create", "read", "update", "delete", "list"]
+}
+EOF
+```
+
+#### 환경별 토큰 관리
+```bash
+# 애플리케이션용 토큰 (제한된 권한)
+vault token create -policy="chap04-app" -ttl=24h
+
+# 개발자용 토큰 (관리 권한)
+vault token create -policy="chap04-dev" -ttl=8h
+```
+
+### 구현 효과
+
+1. **보안 강화**: 평문 패스워드 완전 제거
+2. **중앙 관리**: 모든 시크릿의 중앙집중식 관리
+3. **감사 추적**: Vault를 통한 접근 로그 및 감사 기능
+4. **자동 로테이션**: 정기적 시크릿 갱신 자동화
+5. **환경 분리**: 개발/테스트/프로덕션 환경별 시크릿 격리
+
 ## 주의사항
 
-1. 로컬 환경에서는 포트 1109의 MariaDB 사용
-2. 프로덕션 환경에서는 적절한 커넥션 풀 크기 설정 필요
+1. 로컬 환경에서는 포트 1109의 MariaDB, 8200의 Vault 사용
+2. 프로덕션 환경에서는 Vault TLS 활성화 필수
 3. 동적 프록시는 인터페이스 기반으로만 동작
-4. 비밀번호는 반드시 암호화하여 저장
+4. **보안 필수**: 모든 민감정보는 Vault를 통해 관리
+5. **토큰 보안**: Vault 토큰은 환경변수로 관리, 코드에 하드코딩 금지
+6. **정기 로테이션**: 데이터베이스 패스워드 및 API 키 정기 변경

@@ -1,50 +1,12 @@
-// ==========================================
-// CHAP04 - Security & MyBatis Integration
-// ==========================================
-// Dependencies inherited from root build.gradle:
-// - spring-boot-starter-web ✓
-// - lombok (compileOnly + annotationProcessor) ✓  
-// - spring-boot-starter-test ✓
-// - slf4j-api ✓
-// - jetbrains annotations ✓
-// - jakarta.validation-api (compileOnly) ✓
-// Note: plugins block removed (inherited from root)
-// ==========================================
-
 dependencies {
-    // ==========================================
-    // AOP Dependencies
-    // ==========================================
     aopDependencies.each { dep -> implementation dep }
-    
-    // ==========================================
-    // Database Dependencies  
-    // ==========================================
     databaseDependencies.each { dep -> implementation dep }
-    
-    // ==========================================
-    // MyBatis Dependencies
-    // ==========================================
     mybatisDependencies.each { dep -> implementation dep }
-    
-    // ==========================================
-    // TestContainers Dependencies
-    // ==========================================
     testContainersDependencies.each { dep -> testImplementation dep }
-    
-    // ==========================================
-    // Security Dependencies
-    // ==========================================
     implementation "org.springframework.boot:spring-boot-starter-security"
-    
-    // ==========================================
-    // Utility Dependencies
-    // ==========================================
+    implementation "org.springframework.cloud:spring-cloud-starter-vault-config:${springCloudVaultVersion}"
+    implementation "org.springframework.cloud:spring-cloud-vault-config-databases:${springCloudVaultVersion}"
     implementation "commons-io:commons-io:${commonsIoVersion}"
     implementation "org.reflections:reflections:${reflectionsVersion}"
-    
-    // ==========================================
-    // Module Dependencies
-    // ==========================================
     testImplementation project(":appendix:spring-boot-starter-test-container")
 }

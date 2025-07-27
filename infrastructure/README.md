@@ -30,7 +30,9 @@ Primavera 프로젝트의 **인프라스트럭처 설정 및 관리**를 위한 
 infrastructure/
 ├── README.md              # 📖 이 문서
 ├── docker-compose.yml     # 🐳 Docker Compose 설정
-└── init.sql              # 🗃️ 데이터베이스 초기화 스크립트
+├── init.sql              # 🗃️ 데이터베이스 초기화 스크립트
+├── vault-init.sh         # 🔐 Vault 시크릿 초기화 스크립트
+└── certs-init.sh         # 🔒 SSL 인증서 생성 스크립트
 ```
 
 ### 🎯 주요 특징
@@ -40,6 +42,8 @@ infrastructure/
 - **자동 초기화**: 컨테이너 시작 시 스키마 및 테스트 데이터 자동 생성
 - **영구 저장**: Docker 볼륨을 통한 데이터 영속성 보장
 - **UTF8MB4 지원**: 완전한 유니코드 문자 지원
+- **HashiCorp Vault**: 민감정보 중앙집중식 보안 관리
+- **SSL 인증서**: 개발용 HTTPS 지원을 위한 자체 서명 인증서
 
 ---
 
@@ -77,15 +81,20 @@ newgrp docker
 |------|---------------|-----------|
 | **메모리** | 2GB RAM | 4GB+ RAM |
 | **디스크** | 2GB 여유 공간 | 5GB+ 여유 공간 |
-| **포트** | 1109 포트 사용 가능 | - |
+| **포트** | 1109, 8200 포트 사용 가능 | - |
 
 ### 3. 포트 충돌 확인
 
 ```bash
-# 포트 1109 사용 여부 확인
+# 포트 1109 (MariaDB) 사용 여부 확인
 netstat -an | grep 1109
 # 또는
 lsof -i :1109
+
+# 포트 8200 (Vault) 사용 여부 확인
+netstat -an | grep 8200
+# 또는
+lsof -i :8200
 
 # 사용 중이면 해당 프로세스 종료
 sudo kill -9 [PID]
@@ -113,10 +122,24 @@ docker-compose up -d
 docker-compose ps
 ```
 
+**Docker 네트워크 자동 생성:**
+- Docker Compose가 시작되면 `primavera-network`라는 브리지 네트워크가 자동으로 생성됩니다
+- 모든 컨테이너는 이 네트워크를 통해 서로 통신할 수 있습니다
+- 컨테이너 간 통신 시 컨테이너 이름을 호스트명으로 사용합니다 (예: `mariadb`, `vault`)
+
+```bash
+# 네트워크 확인
+docker network ls | grep primavera
+
+# 네트워크 상세 정보
+docker network inspect infrastructure_primavera-network
+```
+
 **예상 출력:**
 ```
-NAME                IMAGE            COMMAND                  SERVICE   CREATED         STATUS         PORTS
-mariadb-primavera   mariadb:11.4.7   "docker-entrypoint.s…"   mariadb   2 minutes ago   Up 2 minutes   0.0.0.0:1109->3306/tcp
+NAME                IMAGE               COMMAND                  SERVICE   CREATED         STATUS         PORTS
+mariadb-primavera   mariadb:11.4.7      "docker-entrypoint.s…"   mariadb   2 minutes ago   Up 2 minutes   0.0.0.0:1109->3306/tcp
+vault-primavera     hashicorp/vault:1.15 "docker-entrypoint.s…"   vault     2 minutes ago   Up 2 minutes   0.0.0.0:8200->8200/tcp
 ```
 
 ### 3. 데이터베이스 초기화 확인
@@ -148,8 +171,46 @@ sys
 ### 4. 연결 테스트
 
 ```bash
-# 연결 테스트
+# MariaDB 연결 테스트
 docker exec mariadb-primavera mariadb -u primavera -pprimavera -e "SELECT 'Connection successful!' AS status;"
+
+# Vault 상태 확인
+curl -s http://localhost:8200/v1/sys/health | jq
+```
+
+### 5. Vault 시크릿 초기화
+
+```bash
+# Vault 초기화 스크립트 실행
+./vault-init.sh
+
+# 또는 수동으로 기본 시크릿 설정
+export VAULT_ADDR='http://localhost:8200'
+export VAULT_TOKEN='primavera-dev-token'
+
+# 시크릿 엔진 활성화
+vault secrets enable -path=secret kv-v2
+
+# Chapter 04 시크릿 설정
+vault kv put secret/primavera/chap04 \
+  spring.datasource.url=jdbc:mariadb://localhost:1109/primavera \
+  spring.datasource.username=primavera \
+  spring.datasource.password=primavera
+```
+
+### 6. SSL 인증서 생성 (선택사항)
+
+HTTPS를 사용하는 Chapter 10 등을 위한 인증서 생성:
+
+```bash
+# SSL 인증서 생성 스크립트 실행
+./certs-init.sh
+
+# /etc/hosts 파일에 도메인 추가 (macOS/Linux)
+echo "127.0.0.1 local.primavera.com" | sudo tee -a /etc/hosts
+
+# Windows의 경우 C:\Windows\System32\drivers\etc\hosts 파일에 추가:
+# 127.0.0.1 local.primavera.com
 ```
 
 ---
@@ -247,10 +308,84 @@ services:
       - mariadb_data:/var/lib/mysql
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    networks:
+      - primavera-network
+
+  vault:
+    image: hashicorp/vault:1.15
+    container_name: vault-primavera
+    restart: unless-stopped
+    cap_add:
+      - IPC_LOCK
+    environment:
+      VAULT_DEV_ROOT_TOKEN_ID: primavera-dev-token
+      VAULT_DEV_LISTEN_ADDRESS: 0.0.0.0:8200
+    ports:
+      - "8200:8200"
+    volumes:
+      - vault_data:/vault/data
+    networks:
+      - primavera-network
+
+volumes:
+  mariadb_data:
+    driver: local
+  vault_data:
+    driver: local
+
+networks:
+  primavera-network:
+    driver: bridge  # 브리지 네트워크로 컨테이너 간 통신 지원
+```
+
+### 🌐 Docker 네트워크 설명
+
+#### 네트워크 구성
+- **네트워크 이름**: `primavera-network`
+- **드라이버**: `bridge` (기본 Docker 브리지 네트워크)
+- **실제 생성 이름**: `infrastructure_primavera-network` (프로젝트명_네트워크명)
+
+#### 네트워크 특징
+1. **자동 DNS 해석**: 컨테이너 이름으로 서로 통신 가능
+   - MariaDB → Vault: `vault:8200`
+   - Vault → MariaDB: `mariadb:3306`
+   
+2. **격리된 통신**: 같은 네트워크의 컨테이너끼리만 통신 가능
+
+3. **Spring Boot 설정 예시**:
+   ```yaml
+   # 컨테이너 내부에서 실행될 때
+   spring:
+     datasource:
+       url: jdbc:mariadb://mariadb:3306/primavera  # 'mariadb' 호스트명 사용
+   
+   # 호스트에서 실행될 때
+   spring:
+     datasource:
+       url: jdbc:mariadb://localhost:1109/primavera  # 포워딩된 포트 사용
+   ```
+
+#### 네트워크 관리 명령어
+```bash
+# 네트워크 목록 확인
+docker network ls
+
+# primavera 네트워크 상세 정보
+docker network inspect infrastructure_primavera-network
+
+# 네트워크에 연결된 컨테이너 확인
+docker network inspect infrastructure_primavera-network | jq '.[0].Containers'
+
+# 수동으로 네트워크 생성 (docker-compose가 자동으로 생성하므로 일반적으로 불필요)
+docker network create --driver bridge primavera-network
+
+# 네트워크 삭제 (주의: 연결된 컨테이너가 없어야 함)
+docker network rm infrastructure_primavera-network
 ```
 
 ### 🔐 인증 정보
 
+#### MariaDB
 | 항목 | 값 | 용도 |
 |------|----|----- |
 | **Root 사용자** | `root` / `root` | 관리자 접근 |
@@ -258,14 +393,28 @@ services:
 | **포트** | `1109` (외부) → `3306` (내부) | 데이터베이스 접근 |
 | **기본 데이터베이스** | `primavera` | 레거시 호환 |
 
+#### HashiCorp Vault
+| 항목 | 값 | 용도 |
+|------|----|----- |
+| **개발 토큰** | `primavera-dev-token` | 개발 환경 접근 |
+| **포트** | `8200` | Vault API/UI 접근 |
+| **UI 접속** | http://localhost:8200 | 웹 인터페이스 |
+| **시크릿 경로** | `secret/primavera/*` | 프로젝트 시크릿 |
+
 ### 📁 볼륨 설정
 
 ```bash
-# 볼륨 위치 확인
+# MariaDB 볼륨 위치 확인
 docker volume inspect infrastructure_mariadb_data
 
-# 볼륨 크기 확인
+# MariaDB 볼륨 크기 확인
 docker exec mariadb-primavera df -h /var/lib/mysql
+
+# Vault 볼륨 위치 확인
+docker volume inspect infrastructure_vault_data
+
+# Vault 볼륨 크기 확인
+docker exec vault-primavera df -h /vault/data
 ```
 
 ---
@@ -308,10 +457,13 @@ docker-compose logs -f mariadb
 docker-compose logs --tail=100 mariadb
 
 # 리소스 사용량 확인
-docker stats mariadb-primavera
+docker stats mariadb-primavera vault-primavera
 
-# 컨테이너 내부 접속
+# MariaDB 컨테이너 내부 접속
 docker exec -it mariadb-primavera /bin/bash
+
+# Vault 컨테이너 내부 접속
+docker exec -it vault-primavera /bin/sh
 ```
 
 ### 🗃️ 데이터베이스 관리
@@ -333,6 +485,30 @@ docker exec -i mariadb-primavera mariadb -u root -proot < init.sql
 
 # 단일 쿼리 실행
 docker exec mariadb-primavera mariadb -u root -proot -e "SHOW DATABASES;"
+```
+
+### 🔐 Vault 시크릿 관리
+
+```bash
+# === Vault 시크릿 접근 ===
+
+# Vault CLI로 접속
+export VAULT_ADDR='http://localhost:8200'
+export VAULT_TOKEN='primavera-dev-token'
+
+# 시크릿 목록 조회
+vault kv list secret/primavera
+
+# 특정 챕터 시크릿 조회
+vault kv get secret/primavera/chap04
+
+# 시크릿 저장
+vault kv put secret/primavera/chap04 \
+  spring.datasource.password=new-secure-password
+
+# Vault UI 접속
+# 브라우저에서 http://localhost:8200 접속
+# 토큰: primavera-dev-token
 ```
 
 ### 💾 백업 및 복원
@@ -584,10 +760,14 @@ echo -e "\n3. 데이터베이스 목록:"
 docker exec mariadb-primavera mariadb -u root -proot -e "SHOW DATABASES;" 2>/dev/null
 
 echo -e "\n4. 리소스 사용량:"
-docker stats mariadb-primavera --no-stream --format "table {{.Container}}\t{{.CPUPerc}}\t{{.MemUsage}}\t{{.MemPerc}}"
+docker stats mariadb-primavera vault-primavera --no-stream --format "table {{.Container}}\t{{.CPUPerc}}\t{{.MemUsage}}\t{{.MemPerc}}"
 
 echo -e "\n5. 포트 바인딩:"
 docker port mariadb-primavera
+docker port vault-primavera
+
+echo -e "\n6. Vault 상태:"
+curl -s http://localhost:8200/v1/sys/health | jq .
 ```
 
 ```bash
@@ -726,6 +906,7 @@ docker exec -i mariadb-primavera mariadb -u root -proot < backup_all.sql
 
 - **Docker Compose 문서**: https://docs.docker.com/compose/
 - **MariaDB 11.4.7 문서**: https://mariadb.com/kb/en/changes-improvements-in-mariadb-1147/
+- **HashiCorp Vault 문서**: https://developer.hashicorp.com/vault/docs
 - **Primavera 프로젝트**: https://github.com/csj4032/primavera
 
 ### 🐛 이슈 리포트
@@ -754,6 +935,6 @@ docker-compose logs --tail=50 mariadb
 
 [⭐ GitHub에서 스타 주기](https://github.com/csj4032/primavera) | [📖 전체 문서 보기](https://github.com/csj4032/primavera/wiki) | [🐛 이슈 리포트](https://github.com/csj4032/primavera/issues)
 
-**현재 상태**: ✅ MariaDB 11.4.7 | 🗃️ 6개 데이터베이스 | 🔐 보안 설정 완료
+**현재 상태**: ✅ MariaDB 11.4.7 | 🔐 HashiCorp Vault 1.15 | 🗃️ 6개 데이터베이스 | 🔒 보안 설정 완료
 
 </div>
