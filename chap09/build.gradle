@@ -1,39 +1,97 @@
-plugins {
-    id 'org.springframework.boot' version "${springBootVersion}"
-    id 'io.spring.dependency-management' version "${springDependencyManagementVersion}"
-}
+// ==========================================
+// CHAP09 - Full Spring Security Implementation
+// ==========================================
+// Dependencies inherited from root build.gradle:
+// - spring-boot-starter-web ✓ (Tomcat excluded, Undertow used)
+// - lombok (compileOnly + annotationProcessor) ✓  
+// - spring-boot-starter-test ✓
+// - slf4j-api ✓
+// - jetbrains annotations ✓ (duplicated below, will use inherited)
+// - jakarta.validation-api (compileOnly) ✓ (duplicated below, will use inherited)
+// Note: plugins block removed (inherited from root)
+// ==========================================
 
 dependencies {
+    // ==========================================
+    // Web Server Dependencies (Undertow instead of Tomcat)
+    // ==========================================
     implementation("org.springframework.boot:spring-boot-starter-web") {
         exclude module: "spring-boot-starter-tomcat"
     }
-    implementation("org.springframework.boot:spring-boot-starter-undertow")
-    implementation "org.springframework.boot:spring-boot-starter-aop"
-    implementation "org.springframework.boot:spring-boot-starter-jdbc"
-    implementation "org.springframework.boot:spring-boot-starter-thymeleaf"
-    implementation "org.springframework.boot:spring-boot-starter-validation"
-    implementation "org.springframework.boot:spring-boot-devtools"
-    implementation "org.springframework.security:spring-security-config:${springSecurityVersion}"
-    implementation "org.springframework.security:spring-security-core:${springSecurityVersion}"
-    implementation "org.springframework.security:spring-security-crypto:${springSecurityVersion}"
-    implementation "org.springframework.security:spring-security-web:${springSecurityVersion}"
+    implementation "org.springframework.boot:spring-boot-starter-undertow"
+    
+    // ==========================================
+    // AOP Dependencies
+    // ==========================================
+    aopDependencies.each { dep -> implementation dep }
+    
+    // ==========================================
+    // Database Dependencies  
+    // ==========================================
+    databaseDependencies.each { dep -> implementation dep }
+    
+    // ==========================================
+    // MyBatis Dependencies
+    // ==========================================
+    mybatisDependencies.each { dep -> implementation dep }
+    
+    // ==========================================
+    // Thymeleaf Dependencies
+    // ==========================================
+    thymeleafDependencies.each { dep -> implementation dep }
+    
+    // ==========================================
+    // Validation Dependencies
+    // ==========================================
+    validationDependencies.each { dep -> implementation dep }
+    
+    // ==========================================
+    // Development Dependencies
+    // ==========================================
+    developmentDependencies.each { dep -> implementation dep }
+    
+    // ==========================================
+    // Logging Dependencies
+    // ==========================================
+    loggingDependencies.each { dep -> implementation dep }
+    
+    // ==========================================
+    // Web UI Dependencies
+    // ==========================================
+    webUiDependencies.each { dep -> implementation dep }
+    
+    // ==========================================
+    // TestContainers Dependencies
+    // ==========================================
+    testContainersDependencies.each { dep -> testImplementation dep }
+    
+    // ==========================================
+    // Full Security Dependencies
+    // ==========================================
+    securityDependencies.each { dep -> implementation dep }
+    
+    // ==========================================
+    // Thymeleaf Security Integration
+    // ==========================================
     implementation "org.thymeleaf.extras:thymeleaf-extras-springsecurity6:${thymeleafExtrasSpringSecurity6Version}"
-    implementation "org.mybatis.spring.boot:mybatis-spring-boot-starter:${mybatisSpringBootStarterVersion}"
-    implementation "com.github.gavlyukovskiy:p6spy-spring-boot-starter:${p6spySpringBootStarterVersion}"
-    implementation "org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}"
-    implementation "org.mybatis.dynamic-sql:mybatis-dynamic-sql:${mybatisDynamicSqlVersion}"
+    
+    // ==========================================
+    // Hibernate Dependencies
+    // ==========================================
     implementation "org.hibernate:hibernate-core:${hibernateVersion}"
-    implementation "nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:${thymeleafLayoutDialectVersion}"
-    implementation "org.graalvm.js:js:${graalvmJsVersion}"
-    implementation "org.graalvm.js:js-scriptengine:${graalvmJsVersion}"
-    implementation "org.webjars:bootstrap:${bootstrapVersion}"
-    implementation "org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4.1:${log4jdbcLog4j2Version}"
-    implementation "commons-codec:commons-codec:${commonsCodecVersion}"
-    compileOnly "org.jetbrains:annotations:${jetbrainsAnnotationsVersion}"
-    compileOnly "jakarta.validation:jakarta.validation-api:${javaxValidationVersion}"
-    testImplementation "org.springframework.boot:spring-boot-starter-test"
+    
+    // ==========================================
+    // Security Test Dependencies
+    // ==========================================
     testImplementation "org.springframework.security:spring-security-test:${springSecurityVersion}"
-    testImplementation "org.testcontainers:junit-jupiter:${testContainersVersion}"
-    testImplementation "org.testcontainers:mariadb:${testContainersVersion}"
+    
+    // ==========================================
+    // Codec Dependencies
+    // ==========================================
+    implementation "commons-codec:commons-codec:${commonsCodecVersion}"
+    
+    // ==========================================
+    // XSS Protection Module
+    // ==========================================
     implementation project(":appendix:spring-boot-starter-lucy-filter")
 }

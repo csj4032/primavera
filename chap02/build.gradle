@@ -1,25 +1,31 @@
-plugins {
-    id 'org.springframework.boot' version "${springBootVersion}"
-    id 'io.spring.dependency-management' version "${springDependencyManagementVersion}"
-}
+// ==========================================
+// CHAP02 - Basic Spring Boot with JPA
+// ==========================================
+// Dependencies inherited from root build.gradle:
+// - spring-boot-starter-web ✓
+// - lombok (compileOnly + annotationProcessor) ✓  
+// - spring-boot-starter-test ✓
+// - slf4j-api ✓
+// - jetbrains annotations ✓
+// ==========================================
 
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("org.springframework.boot:spring-boot-starter-jdbc")
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    implementation("com.squareup.retrofit2:retrofit:${retrofitVersion}")
-    implementation("com.squareup.retrofit2:converter-gson:${retrofitVersion}")
-    implementation("org.hibernate.validator:hibernate-validator:${hibernateValidatorVersion}")
-    implementation("com.google.code.gson:gson:${gsonVersion}")
-    implementation("jakarta.annotation:jakarta.annotation-api:${javaxAnnotationVersion}")
-    runtimeOnly("com.h2database:h2:${h2Version}")
-    testImplementation('org.springframework.boot:spring-boot-starter-test') {
-        exclude module: 'junit'
-        exclude module: 'junit-vintage-engine'
-    }
-
-    compileOnly("org.projectlombok:lombok:${lombokVersion}")
-    annotationProcessor("org.projectlombok:lombok:${lombokVersion}")
-    testCompileOnly("org.projectlombok:lombok:${lombokVersion}")
-    testAnnotationProcessor("org.projectlombok:lombok:${lombokVersion}")
+    // ==========================================
+    // JPA & Database Dependencies
+    // ==========================================
+    implementation "org.springframework.boot:spring-boot-starter-data-jpa"
+    runtimeOnly "com.h2database:h2:${h2Version}"
+    
+    // ==========================================
+    // HTTP Client Dependencies
+    // ==========================================
+    implementation "com.squareup.retrofit2:retrofit:${retrofitVersion}"
+    implementation "com.squareup.retrofit2:converter-gson:${retrofitVersion}"
+    implementation "com.google.code.gson:gson:${gsonVersion}"
+    
+    // ==========================================
+    // Additional Dependencies  
+    // ==========================================
+    implementation "org.hibernate.validator:hibernate-validator:${hibernateValidatorVersion}"
+    implementation "jakarta.annotation:jakarta.annotation-api:${javaxAnnotationVersion}"
 }

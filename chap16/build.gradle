@@ -1,7 +1,16 @@
-plugins {
-    id 'org.springframework.boot' version "${springBootVersion}"
-    id 'io.spring.dependency-management' version "${springDependencyManagementVersion}"
-}
+// ==========================================
+// CHAP16 - Advanced Features with QueryDSL, Redis, OAuth2 Server
+// ==========================================
+// Dependencies inherited from root build.gradle:
+// - spring-boot-starter-web ✓ (Tomcat excluded, Undertow used)
+// - lombok (compileOnly + annotationProcessor) ✓ (duplicated below, will remove)  
+// - spring-boot-starter-test ✓ (exclusions handled by root)
+// - slf4j-api ✓
+// - jetbrains annotations ✓ (duplicated below, will remove)
+// - jakarta.validation-api (compileOnly) ✓
+// Note: plugins block removed (inherited from root)
+// Note: Uses hardcoded versions for some dependencies in original
+// ==========================================
 
 def querydslSrcDir = 'src/main/java'
 
@@ -14,63 +23,142 @@ sourceSets {
 }
 
 dependencies {
+    // ==========================================
+    // Web Server Dependencies (Undertow + WebFlux)
+    // ==========================================
     implementation('org.springframework.boot:spring-boot-starter-web') {
         exclude module: "spring-boot-starter-tomcat"
     }
-    implementation('org.springframework.boot:spring-boot-starter-validation')
-    implementation('org.springframework.boot:spring-boot-starter-aop')
-    implementation('org.springframework.boot:spring-boot-starter-jdbc')
-    implementation('org.springframework.boot:spring-boot-starter-json')
-    implementation('org.springframework.boot:spring-boot-starter-data-jpa')
-    implementation('org.springframework.boot:spring-boot-starter-data-mongodb')
-    implementation('org.springframework.boot:spring-boot-starter-data-redis')
-    implementation('org.springframework.boot:spring-boot-starter-data-mongodb-reactive')
-    implementation('org.springframework.boot:spring-boot-starter-webflux')
-    implementation('org.springframework.boot:spring-boot-starter-thymeleaf')
-    implementation('org.springframework.boot:spring-boot-starter-security')
-    implementation('org.springframework.boot:spring-boot-starter-undertow')
-    implementation('org.springframework.boot:spring-boot-starter-reactor-netty')
-    implementation('org.springframework.boot:spring-boot-devtools')
-    implementation('org.springframework.data:spring-data-envers')
-    implementation('org.springframework.boot:spring-boot-starter-oauth2-authorization-server')
-    implementation('org.springframework.boot:spring-boot-starter-oauth2-client')
-    implementation('org.springframework.boot:spring-boot-starter-oauth2-resource-server')
-    compileOnly("org.jetbrains:annotations:${jetbrainsAnnotationsVersion}")
-    implementation('org.jooq:jool:0.9.15')
-    implementation("org.thymeleaf.extras:thymeleaf-extras-springsecurity6:${thymeleafExtrasSpringSecurity6Version}")
-    implementation("nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:${thymeleafLayoutDialectVersion}")
-    implementation("org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}")
-    testImplementation("io.rest-assured:rest-assured:${restAssuredVersion}")
-    implementation("org.modelmapper:modelmapper:${modelMapperVersion}")
-    implementation("org.flywaydb:flyway-core:${flywayVersion}")
-    implementation('org.projectlombok:lombok')
-    implementation("org.jctools:jctools-core:${jctoolsCoreVersion}")
-    implementation("com.github.ben-manes.caffeine:caffeine:${caffeineVersion}")
-    implementation("com.esotericsoftware:kryo:${kryoVersion}")
-    implementation("org.xerial.snappy:snappy-java:${snappyJavaVersion}")
-    implementation("org.apache.commons:commons-pool2:${commonsPoolVersion}")
-    implementation('com.querydsl:querydsl-jpa')
-    implementation('com.querydsl:querydsl-apt')
-    implementation('com.squareup.retrofit2:retrofit:2.9.0')
-    implementation('com.squareup.retrofit2:converter-jackson:2.9.0')
-    annotationProcessor('org.projectlombok:lombok')
-    compileOnly('org.projectlombok:lombok')
-    implementation("jakarta.persistence:jakarta.persistence-api")
-    implementation("javax.persistence:javax.persistence-api:2.2")
-    implementation("javax.servlet:javax.servlet-api:4.0.1")
-    annotationProcessor("com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jpa")
-    annotationProcessor("jakarta.persistence:jakarta.persistence-api")
-    annotationProcessor("jakarta.annotation:jakarta.annotation-api")
-    annotationProcessor("javax.persistence:javax.persistence-api:2.2")
-    testImplementation('org.springframework.boot:spring-boot-starter-test') {
-        exclude module: 'junit'
-        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
-    }
-    testImplementation('org.springframework.security:spring-security-test')
-    testImplementation("org.testcontainers:mariadb:${testContainersVersion}")
-    testImplementation("org.testcontainers:junit-jupiter:${testContainersVersion}")
-    testImplementation("javax.persistence:javax.persistence-api:2.2")
-    testImplementation("javax.servlet:javax.servlet-api:4.0.1")
-
+    implementation 'org.springframework.boot:spring-boot-starter-undertow'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    implementation 'org.springframework.boot:spring-boot-starter-reactor-netty'
+    
+    // ==========================================
+    // AOP Dependencies
+    // ==========================================
+    aopDependencies.each { dep -> implementation dep }
+    
+    // ==========================================
+    // Database Dependencies  
+    // ==========================================
+    databaseDependencies.each { dep -> implementation dep }
+    
+    // ==========================================
+    // Validation Dependencies
+    // ==========================================
+    validationDependencies.each { dep -> implementation dep }
+    
+    // ==========================================
+    // Development Dependencies
+    // ==========================================
+    developmentDependencies.each { dep -> implementation dep }
+    
+    // ==========================================
+    // Thymeleaf Dependencies
+    // ==========================================
+    thymeleafDependencies.each { dep -> implementation dep }
+    
+    // ==========================================
+    // TestContainers Dependencies
+    // ==========================================
+    testContainersDependencies.each { dep -> testImplementation dep }
+    
+    // ==========================================
+    // JPA & Data Dependencies
+    // ==========================================
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-json'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    
+    // ==========================================
+    // MongoDB Dependencies (Reactive)
+    // ==========================================
+    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb-reactive'
+    
+    // ==========================================
+    // Security & OAuth2 Server Dependencies
+    // ==========================================
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-authorization-server'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
+    
+    // ==========================================
+    // Thymeleaf Security Integration
+    // ==========================================
+    implementation "org.thymeleaf.extras:thymeleaf-extras-springsecurity6:${thymeleafExtrasSpringSecurity6Version}"
+    
+    // ==========================================
+    // Spring Data Envers
+    // ==========================================
+    implementation 'org.springframework.data:spring-data-envers'
+    
+    // ==========================================
+    // Object Mapping & Database Migration
+    // ==========================================
+    implementation "org.modelmapper:modelmapper:${modelMapperVersion}"
+    implementation "org.flywaydb:flyway-core:${flywayVersion}"
+    
+    // ==========================================
+    // Performance & Caching Dependencies
+    // ==========================================
+    implementation "org.jctools:jctools-core:${jctoolsCoreVersion}"
+    implementation "com.github.ben-manes.caffeine:caffeine:${caffeineVersion}"
+    implementation "com.esotericsoftware:kryo:${kryoVersion}"
+    implementation "org.xerial.snappy:snappy-java:${snappyJavaVersion}"
+    implementation "org.apache.commons:commons-pool2:${commonsPoolVersion}"
+    
+    // ==========================================
+    // QueryDSL Dependencies
+    // ==========================================
+    implementation 'com.querydsl:querydsl-jpa'
+    implementation 'com.querydsl:querydsl-apt'
+    annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jpa"
+    
+    // ==========================================
+    // HTTP Client Dependencies (hardcoded versions from original)
+    // ==========================================
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-jackson:2.9.0'
+    
+    // ==========================================
+    // Functional Programming Dependencies
+    // ==========================================
+    implementation 'org.jooq:jool:0.9.15'
+    
+    // ==========================================
+    // JPA API Dependencies (legacy compatibility)
+    // ==========================================
+    implementation "jakarta.persistence:jakarta.persistence-api"
+    implementation "javax.persistence:javax.persistence-api:2.2"
+    implementation "javax.servlet:javax.servlet-api:4.0.1"
+    
+    // ==========================================
+    // Additional Annotation Processors
+    // ==========================================
+    annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+    annotationProcessor "jakarta.annotation:jakarta.annotation-api"
+    annotationProcessor "javax.persistence:javax.persistence-api:2.2"
+    
+    // ==========================================
+    // Security Test Dependencies
+    // ==========================================
+    testImplementation 'org.springframework.security:spring-security-test'
+    
+    // ==========================================
+    // API Testing Dependencies
+    // ==========================================
+    testImplementation "io.rest-assured:rest-assured:${restAssuredVersion}"
+    
+    // ==========================================
+    // Test Legacy API Dependencies
+    // ==========================================
+    testImplementation "javax.persistence:javax.persistence-api:2.2"
+    testImplementation "javax.servlet:javax.servlet-api:4.0.1"
+    
+    // ==========================================
+    // XSS Protection Module (commented out in original)
+    // ==========================================
     //implementation project(":spring-boot-starter-lucy-filter")
 }

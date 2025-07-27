@@ -1,25 +1,50 @@
-plugins {
-    id 'org.springframework.boot' version "${springBootVersion}"
-    id 'io.spring.dependency-management' version "${springDependencyManagementVersion}"
-}
+// ==========================================
+// CHAP04 - Security & MyBatis Integration
+// ==========================================
+// Dependencies inherited from root build.gradle:
+// - spring-boot-starter-web ✓
+// - lombok (compileOnly + annotationProcessor) ✓  
+// - spring-boot-starter-test ✓
+// - slf4j-api ✓
+// - jetbrains annotations ✓
+// - jakarta.validation-api (compileOnly) ✓
+// Note: plugins block removed (inherited from root)
+// ==========================================
 
 dependencies {
-    implementation "org.springframework.boot:spring-boot-starter-aop"
-    implementation "org.springframework.boot:spring-boot-starter-web"
-    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+    // ==========================================
+    // AOP Dependencies
+    // ==========================================
+    aopDependencies.each { dep -> implementation dep }
+    
+    // ==========================================
+    // Database Dependencies  
+    // ==========================================
+    databaseDependencies.each { dep -> implementation dep }
+    
+    // ==========================================
+    // MyBatis Dependencies
+    // ==========================================
+    mybatisDependencies.each { dep -> implementation dep }
+    
+    // ==========================================
+    // TestContainers Dependencies
+    // ==========================================
+    testContainersDependencies.each { dep -> testImplementation dep }
+    
+    // ==========================================
+    // Security Dependencies
+    // ==========================================
     implementation "org.springframework.boot:spring-boot-starter-security"
+    
+    // ==========================================
+    // Utility Dependencies
+    // ==========================================
     implementation "commons-io:commons-io:${commonsIoVersion}"
-    implementation "org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}"
     implementation "org.reflections:reflections:${reflectionsVersion}"
-    implementation "org.mybatis.spring.boot:mybatis-spring-boot-starter:${mybatisSpringBootStarterVersion}"
-    compileOnly "org.jetbrains:annotations:${jetbrainsAnnotationsVersion}"
-    compileOnly "org.projectlombok:lombok:${lombokVersion}"
-    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
-    testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
-    implementation "org.testcontainers:testcontainers:${testContainersVersion}"
-    implementation "org.testcontainers:junit-jupiter:${testContainersVersion}"
-    implementation "org.testcontainers:mariadb:${testContainersVersion}"
-    testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
-    testImplementation "org.springframework.boot:spring-boot-starter-test"
+    
+    // ==========================================
+    // Module Dependencies
+    // ==========================================
     testImplementation project(":appendix:spring-boot-starter-test-container")
 }

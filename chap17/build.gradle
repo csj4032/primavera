@@ -1,34 +1,86 @@
-plugins {
-    id 'org.springframework.boot' version "${springBootVersion}"
-    id 'io.spring.dependency-management' version "${springDependencyManagementVersion}"
-}
+// ==========================================
+// CHAP17 - HATEOAS & Document Processing & Analytics
+// ==========================================
+// Dependencies inherited from root build.gradle:
+// - spring-boot-starter-web ✓ (Tomcat excluded, Undertow used)
+// - lombok (compileOnly + annotationProcessor) ✓ (duplicated below, will remove)  
+// - spring-boot-starter-test ✓
+// - slf4j-api ✓
+// - jetbrains annotations ✓
+// - jakarta.validation-api (compileOnly) ✓
+// Note: plugins block removed (inherited from root)
+// Note: Uses hardcoded versions for some dependencies in original
+// ==========================================
 
 dependencies {
+    // ==========================================
+    // Web Server Dependencies (Undertow instead of Tomcat)
+    // ==========================================
     implementation('org.springframework.boot:spring-boot-starter-web') {
         exclude module: "spring-boot-starter-tomcat"
     }
-    implementation('org.springframework.boot:spring-boot-starter-jdbc')
-    implementation('org.springframework.boot:spring-boot-starter-data-jpa')
-    implementation('org.springframework.boot:spring-boot-starter-undertow')
-    implementation('org.springframework.boot:spring-boot-starter-hateoas')
-    implementation('org.springframework.boot:spring-boot-devtools')
-    implementation("org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}")
-    implementation("org.modelmapper:modelmapper:3.2.1")
-    implementation('org.projectlombok:lombok')
-    implementation("org.apache.tika:tika-core:1.18")
-    implementation('org.apache.tika:tika-parsers:1.18')
-    implementation('org.apache.pdfbox:jbig2-imageio:3.0.3')
-    implementation("org.xerial:sqlite-jdbc:3.50.1.0")
-    implementation('com.github.jai-imageio:jai-imageio-jpeg2000:1.3.0')
-    implementation('org.apache.poi:poi:4.1.1')
-    implementation('org.apache.poi:poi-ooxml:4.1.1')
-    implementation('org.apache.poi:poi-scratchpad:4.1.1')
-    implementation("com.monitorjbl:xlsx-streamer:2.1.0")
-    implementation("org.javatuples:javatuples:1.2")
-    implementation('org.jooq:jool:0.9.15')
-    implementation("io.sentry:sentry-logback:1.7.30")
-    implementation("com.opencsv:opencsv:5.3")
-    implementation("org.openkoreantext:open-korean-text:2.3.1")
-    annotationProcessor('org.projectlombok:lombok')
-    testImplementation('org.springframework.boot:spring-boot-starter-test')
+    implementation 'org.springframework.boot:spring-boot-starter-undertow'
+    
+    // ==========================================
+    // Database Dependencies  
+    // ==========================================
+    databaseDependencies.each { dep -> implementation dep }
+    
+    // ==========================================
+    // Development Dependencies
+    // ==========================================
+    developmentDependencies.each { dep -> implementation dep }
+    
+    // ==========================================
+    // JPA Dependencies
+    // ==========================================
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    
+    // ==========================================
+    // HATEOAS Dependencies
+    // ==========================================
+    implementation 'org.springframework.boot:spring-boot-starter-hateoas'
+    
+    // ==========================================
+    // Object Mapping Dependencies (hardcoded version from original)
+    // ==========================================
+    implementation "org.modelmapper:modelmapper:3.2.1"
+    
+    // ==========================================
+    // Document Processing Dependencies (Apache Tika)
+    // ==========================================
+    implementation "org.apache.tika:tika-core:1.18"
+    implementation 'org.apache.tika:tika-parsers:1.18'
+    implementation 'org.apache.pdfbox:jbig2-imageio:3.0.3'
+    implementation 'com.github.jai-imageio:jai-imageio-jpeg2000:1.3.0'
+    
+    // ==========================================
+    // Office Document Processing Dependencies (Apache POI)
+    // ==========================================
+    implementation 'org.apache.poi:poi:4.1.1'
+    implementation 'org.apache.poi:poi-ooxml:4.1.1'
+    implementation 'org.apache.poi:poi-scratchpad:4.1.1'
+    implementation "com.monitorjbl:xlsx-streamer:2.1.0"
+    
+    // ==========================================
+    // SQLite Dependencies
+    // ==========================================
+    implementation "org.xerial:sqlite-jdbc:3.50.1.0"
+    
+    // ==========================================
+    // Data Processing Dependencies
+    // ==========================================
+    implementation "org.javatuples:javatuples:1.2"
+    implementation 'org.jooq:jool:0.9.15'
+    implementation "com.opencsv:opencsv:5.3"
+    
+    // ==========================================
+    // Korean Text Processing Dependencies
+    // ==========================================
+    implementation "org.openkoreantext:open-korean-text:2.3.1"
+    
+    // ==========================================
+    // Monitoring & Logging Dependencies
+    // ==========================================
+    implementation "io.sentry:sentry-logback:1.7.30"
 }

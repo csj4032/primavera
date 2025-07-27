@@ -1,19 +1,41 @@
-plugins {
-    id 'org.springframework.boot' version "${springBootVersion}"
-    id 'io.spring.dependency-management' version "${springDependencyManagementVersion}"
-}
+// ==========================================
+// CHAP18 - Spring Batch Processing
+// ==========================================
+// Dependencies inherited from root build.gradle:
+// - spring-boot-starter-web ✓
+// - lombok (compileOnly + annotationProcessor) ✓ (duplicated below, will remove)  
+// - spring-boot-starter-test ✓ (exclusions handled by root)
+// - slf4j-api ✓
+// - jetbrains annotations ✓
+// - jakarta.validation-api (compileOnly) ✓
+// Note: plugins block removed (inherited from root)
+// ==========================================
 
 dependencies {
-    implementation('org.springframework.boot:spring-boot-starter-batch')
-    implementation("org.modelmapper:modelmapper:${modelMapperVersion}")
-    implementation('org.projectlombok:lombok')
-    implementation("com.opencsv:opencsv:${openCsvVersion}")
-    implementation("org.openkoreantext:open-korean-text:${openKoreanTextVersion}")
-    annotationProcessor('org.projectlombok:lombok')
-    testImplementation('org.springframework.boot:spring-boot-starter-test') {
-        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
-    }
-    testImplementation('org.springframework.batch:spring-batch-test')
+    // ==========================================
+    // Spring Batch Dependencies
+    // ==========================================
+    implementation 'org.springframework.boot:spring-boot-starter-batch'
+    
+    // ==========================================
+    // Object Mapping Dependencies
+    // ==========================================
+    implementation "org.modelmapper:modelmapper:${modelMapperVersion}"
+    
+    // ==========================================
+    // CSV Processing Dependencies
+    // ==========================================
+    implementation "com.opencsv:opencsv:${openCsvVersion}"
+    
+    // ==========================================
+    // Korean Text Processing Dependencies
+    // ==========================================
+    implementation "org.openkoreantext:open-korean-text:${openKoreanTextVersion}"
+    
+    // ==========================================
+    // Batch Test Dependencies
+    // ==========================================
+    testImplementation 'org.springframework.batch:spring-batch-test'
 }
 
 bootJar {

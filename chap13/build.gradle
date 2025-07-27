@@ -1,42 +1,115 @@
-plugins {
-    id 'org.springframework.boot' version "${springBootVersion}"
-    id 'io.spring.dependency-management' version "${springDependencyManagementVersion}"
-}
+// ==========================================
+// CHAP13 - Reactive MongoDB & WebFlux
+// ==========================================
+// Dependencies inherited from root build.gradle:
+// - spring-boot-starter-web ✓ (Tomcat excluded, Undertow used)
+// - lombok (compileOnly + annotationProcessor) ✓ (duplicated below, will remove)  
+// - spring-boot-starter-test ✓ (exclusions handled by root)
+// - slf4j-api ✓
+// - jetbrains annotations ✓
+// - jakarta.validation-api (compileOnly) ✓
+// Note: plugins block removed (inherited from root)
+// Note: Uses hardcoded versions for some dependencies in original
+// ==========================================
 
 dependencies {
+    // ==========================================
+    // Web Server Dependencies (Undertow + WebFlux)
+    // ==========================================
     implementation('org.springframework.boot:spring-boot-starter-web') {
         exclude module: "spring-boot-starter-tomcat"
     }
-    implementation('org.springframework.boot:spring-boot-starter-validation')
-    implementation('org.springframework.boot:spring-boot-starter-aop')
-    implementation('org.springframework.boot:spring-boot-starter-jdbc')
-    implementation('org.springframework.boot:spring-boot-starter-json')
-    implementation('org.springframework.boot:spring-boot-starter-data-jpa')
-    implementation('org.springframework.boot:spring-boot-starter-data-mongodb')
-    implementation('org.springframework.boot:spring-boot-starter-data-mongodb-reactive')
-    implementation('org.springframework.boot:spring-boot-starter-webflux')
-    implementation('org.springframework.boot:spring-boot-starter-thymeleaf')
-    implementation('org.springframework.boot:spring-boot-devtools')
-    implementation('org.springframework.boot:spring-boot-starter-security')
-    implementation('org.springframework.security:spring-security-oauth2-client')
-    implementation('org.springframework.security:spring-security-oauth2-jose')
-    implementation('org.thymeleaf.extras:thymeleaf-extras-springsecurity6:3.1.3.RELEASE')
-    implementation('org.springframework.boot:spring-boot-starter-undertow')
-    implementation('org.springframework.boot:spring-boot-starter-reactor-netty')
-    implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.4")
-    implementation("org.mybatis.dynamic-sql:mybatis-dynamic-sql:1.5.2")
-    implementation("org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}")
-    implementation('nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.4.0')
-    implementation("org.modelmapper:modelmapper:3.2.1")
-    implementation("org.flywaydb:flyway-core:10.10.0")
-    implementation('org.projectlombok:lombok')
-    implementation("org.jctools:jctools-core:2.1.2")
+    implementation 'org.springframework.boot:spring-boot-starter-undertow'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    implementation 'org.springframework.boot:spring-boot-starter-reactor-netty'
+    
+    // ==========================================
+    // AOP Dependencies
+    // ==========================================
+    aopDependencies.each { dep -> implementation dep }
+    
+    // ==========================================
+    // Database Dependencies  
+    // ==========================================
+    databaseDependencies.each { dep -> implementation dep }
+    
+    // ==========================================
+    // Validation Dependencies
+    // ==========================================
+    validationDependencies.each { dep -> implementation dep }
+    
+    // ==========================================
+    // Development Dependencies
+    // ==========================================
+    developmentDependencies.each { dep -> implementation dep }
+    
+    // ==========================================
+    // Thymeleaf Dependencies
+    // ==========================================
+    thymeleafDependencies.each { dep -> implementation dep }
+    
+    // ==========================================
+    // JPA & Data Dependencies
+    // ==========================================
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-json'
+    
+    // ==========================================
+    // MongoDB Dependencies (Reactive)
+    // ==========================================
+    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb-reactive'
+    
+    // ==========================================
+    // Security & OAuth2 Dependencies
+    // ==========================================
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.security:spring-security-oauth2-client'
+    implementation 'org.springframework.security:spring-security-oauth2-jose'
+    
+    // ==========================================
+    // Thymeleaf Security Integration (hardcoded version from original)
+    // ==========================================
+    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6:3.1.3.RELEASE'
+    
+    // ==========================================
+    // MyBatis Dependencies (hardcoded versions from original)
+    // ==========================================
+    implementation "org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.4"
+    implementation "org.mybatis.dynamic-sql:mybatis-dynamic-sql:1.5.2"
+    
+    // ==========================================
+    // Thymeleaf Layout (hardcoded version from original)
+    // ==========================================
+    implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.4.0'
+    
+    // ==========================================
+    // Object Mapping Dependencies (hardcoded version from original)
+    // ==========================================
+    implementation "org.modelmapper:modelmapper:3.2.1"
+    
+    // ==========================================
+    // Database Migration Dependencies (hardcoded version from original)
+    // ==========================================
+    implementation "org.flywaydb:flyway-core:10.10.0"
+    
+    // ==========================================
+    // Concurrency Dependencies
+    // ==========================================
+    implementation "org.jctools:jctools-core:2.1.2"
+    
+    // ==========================================
+    // Security Test Dependencies
+    // ==========================================
+    testImplementation 'org.springframework.security:spring-security-test'
+    
+    // ==========================================
+    // API Testing Dependencies (hardcoded version from original)
+    // ==========================================
+    testImplementation "io.rest-assured:rest-assured:5.5.0"
+    
+    // ==========================================
+    // XSS Protection Module
+    // ==========================================
     implementation project(":appendix:spring-boot-starter-lucy-filter")
-    annotationProcessor('org.projectlombok:lombok')
-    testImplementation('org.springframework.boot:spring-boot-starter-test') {
-        exclude module: 'junit'
-        exclude module: 'junit-vintage-engine'
-    }
-    testImplementation('org.springframework.security:spring-security-test')
-    testImplementation("io.rest-assured:rest-assured:5.5.0")
 }

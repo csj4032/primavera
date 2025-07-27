@@ -1,28 +1,65 @@
-plugins {
-    id 'org.springframework.boot' version "${springBootVersion}"
-    id 'io.spring.dependency-management' version "${springDependencyManagementVersion}"
-}
+// ==========================================
+// CHAP05 - Advanced MyBatis & Testing
+// ==========================================
+// Dependencies inherited from root build.gradle:
+// - spring-boot-starter-web ✓
+// - lombok (compileOnly + annotationProcessor) ✓  
+// - spring-boot-starter-test ✓
+// - slf4j-api ✓
+// - jetbrains annotations ✓
+// - jakarta.validation-api (compileOnly) ✓
+// Note: plugins block removed (inherited from root)
+// ==========================================
 
 dependencies {
-    implementation "org.springframework.boot:spring-boot-starter-aop"
-    implementation "org.springframework.boot:spring-boot-starter-jdbc"
-    implementation "org.springframework.boot:spring-boot-starter-web"
-    implementation "org.mybatis.spring.boot:mybatis-spring-boot-starter:${mybatisSpringBootStarterVersion}"
-    implementation "org.mybatis.dynamic-sql:mybatis-dynamic-sql:${mybatisDynamicSqlVersion}"
-    implementation "org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}"
+    // ==========================================
+    // AOP Dependencies
+    // ==========================================
+    aopDependencies.each { dep -> implementation dep }
+    
+    // ==========================================
+    // Database Dependencies  
+    // ==========================================
+    databaseDependencies.each { dep -> implementation dep }
+    
+    // ==========================================
+    // MyBatis Dependencies
+    // ==========================================
+    mybatisDependencies.each { dep -> implementation dep }
+    
+    // ==========================================
+    // TestContainers Dependencies
+    // ==========================================
+    testContainersDependencies.each { dep -> testImplementation dep }
+    
+    // ==========================================
+    // Validation Dependencies
+    // ==========================================
     compileOnly "org.hibernate:hibernate-validator:${hibernateValidatorVersion}"
+    
+    // ==========================================
+    // Connection Pool Dependencies
+    // ==========================================
     compileOnly "com.zaxxer:HikariCP:${hikariCPVersion}"
-    testImplementation "org.springframework.boot:spring-boot-starter-test"
+    
+    // ==========================================
+    // Security Test Dependencies
+    // ==========================================
     testImplementation "org.springframework.security:spring-security-crypto:${springSecurityVersion}"
-    testImplementation "org.mybatis.spring.boot:mybatis-spring-boot-starter-test:${mybatisSpringBootStarterVersion}"
     testImplementation "org.springframework.security:spring-security-test"
+    
+    // ==========================================
+    // MyBatis Test Dependencies
+    // ==========================================
+    testImplementation "org.mybatis.spring.boot:mybatis-spring-boot-starter-test:${mybatisSpringBootStarterVersion}"
+    
+    // ==========================================
+    // Additional Test Dependencies
+    // ==========================================
     testImplementation "org.mockito:mockito-core:4.+"
+    
+    // ==========================================
+    // Module Dependencies
+    // ==========================================
     testImplementation project(':appendix:spring-boot-starter-test-container')
-    compileOnly "org.projectlombok:lombok:${lombokVersion}"
-    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
-    testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
-    testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
-    implementation "org.testcontainers:testcontainers:${testContainersVersion}"
-    implementation "org.testcontainers:junit-jupiter:${testContainersVersion}"
-    implementation "org.testcontainers:mariadb:${testContainersVersion}"
 }
