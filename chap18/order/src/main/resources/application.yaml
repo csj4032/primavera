@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: order
+  profiles:
+    active: default
+  cloud:
+    config:
+      uri: http://localhost:8888
+  r2dbc:
+    url: r2dbc:pool:mariadb://localhost:3306/primavera?useLegacyDatetimeCode=false&serverTimezone=Asia/Seoul
+    username: primavera
+    password: primavera
+    pool:
+      initial-size: 10
+      max-size: 20
+      max-idle-time: 300m
+      validation-query: SELECT 1
+
+server:
+  port: 8082
+  tomcat:
+    threads:
+      max: 1
+
+logging:
+  level:
+    org.springframework: debug

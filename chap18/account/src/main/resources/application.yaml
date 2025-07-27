@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: account
+  profiles:
+    active: default
+  cloud:
+    config:
+      uri: http://localhost:8888
+
+server:
+  port: 8081
+  tomcat:
+    threads:
+      max: 1
+
+logging:
+  level:
+    org.springframework: DEBUG

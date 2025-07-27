@@ -1,0 +1,41 @@
+package com.genius.primavera;
+
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.containers.MariaDBContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+
+/**
+ * Chapter 14 - Spring Data JPA 테스트를 위한 TestContainers 추상 클래스
+ * MySQL 컨테이너를 사용하여 데이터베이스 테스트 환경을 제공합니다.
+ */
+@Testcontainers
+@DataJpaTest
+public abstract class AbstractJpaContainerTest {
+
+    @Container
+    protected static final MariaDBContainer<?> mysqlContainer = new MariaDBContainer<>("mariadb:11.4.7")
+            .withDatabaseName("primavera")
+            .withUsername("primavera")
+            .withPassword("primavera")
+            .withInitScript("sql/schema.sql");
+
+    @DynamicPropertySource
+    static void configureProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", mysqlContainer::getJdbcUrl);
+        registry.add("spring.datasource.username", mysqlContainer::getUsername);
+        registry.add("spring.datasource.password", mysqlContainer::getPassword);
+        registry.add("spring.datasource.driver-class-name", () -> "org.mariadb.jdbc.Driver");
+        
+        // JPA 설정
+        registry.add("spring.jpa.hibernate.ddl-auto", () -> "validate");
+        registry.add("spring.jpa.show-sql", () -> "true");
+        registry.add("spring.jpa.properties.hibernate.format_sql", () -> "true");
+        registry.add("spring.jpa.properties.hibernate.use_sql_comments", () -> "true");
+        registry.add("spring.jpa.properties.hibernate.jdbc.batch_size", () -> "20");
+        registry.add("spring.jpa.properties.hibernate.order_inserts", () -> "true");
+        registry.add("spring.jpa.properties.hibernate.order_updates", () -> "true");
+    }
+}

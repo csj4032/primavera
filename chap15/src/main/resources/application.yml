@@ -1,0 +1,83 @@
+spring:
+  application:
+    name: ReactiveProgrammingApplication
+  jackson:
+    time-zone: UTC
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://localhost:3306/primavera?useLegacyDatetimeCode=false&serverTimezone=UTC
+    username: primavera
+    password: primavera
+  jpa:
+    show-sql: true
+    generate-ddl: false
+    hibernate:
+      ddl-auto: none
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+        implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MariaDBDialect
+        globally_quoted_identifiers: true
+        jdbc:
+          fetch_size: 30
+          batch_size: 30
+    open-in-view: false
+  banner:
+    charset: UTF-8
+    location: classpath:primavera.txt
+  thymeleaf:
+    template-resolver-order: 1
+    cache: false
+    enabled: true
+    prefix: classpath:/templates/
+    suffix: .html
+    reactive:
+      chunked-mode-view-names: chart
+      max-chunk-size: 8192
+    check-template: false
+  devtools:
+    livereload:
+      enabled: true
+  flyway:
+    enabled: false
+    encoding: UTF-8
+    fail-on-missing-locations: false
+    locations: classpath:db/migration
+    table: SCHEMA_HISTORY
+    baseline-on-migrate: false
+    baseline-description: schema history
+  aop:
+    proxy-target-class: true
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      authentication-database: admin
+      database: primavera
+      username: primavera
+      password: primavera
+
+logging:
+  config: classpath:logback.xml
+
+server:
+  ssl:
+    key-alias: primavera
+    key-store: infrastructure/certs/primavera.p12
+    key-store-type: PKCS12
+    key-store-password: primavera
+    enabled: false
+  port: 8081
+  http2:
+    enabled: false
+
+storage:
+  location: upload
+
+kakao:
+  api:
+    url: https://kapi.kakao.com
+    talk-social:
+      friend-list: v1/api/talk/friends

@@ -1,0 +1,37 @@
+spring:
+  application:
+    name: Privamera
+  jackson:
+    time-zone: UTC
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://localhost:1109/primavera?useLegacyDatetimeCode=false&serverTimezone=UTC
+    username: primavera
+    password: primavera
+  banner:
+    charset: UTF-8
+    location: classpath:primavera.txt
+  thymeleaf:
+    cache: false
+    enabled: true
+    prefix: classpath:/templates/
+    suffix: .html
+  devtools:
+    livereload:
+      enabled: true
+  flyway:
+    enabled: true
+    encoding: UTF-8
+    fail-on-missing-locations: false
+
+logging:
+  config: classpath:logback.xml
+
+server:
+  ssl:
+    key-alias: primavera
+    key-store: infrastructure/certs/primavera.p12
+    key-store-type: PKCS12
+    key-store-password: primavera
+    enabled: true
+  port: 8443

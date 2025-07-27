@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: front
+  profiles:
+    active: default
+  cloud:
+    config:
+      uri: http://localhost:8888
+
+server:
+  port: 8080
+  tomcat:
+    threads:
+      max: 1
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh
+
+logging:
+  level:
+    org.springframework: debug
