@@ -5,7 +5,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
@@ -22,10 +22,10 @@ public abstract class BaseEntity implements Serializable {
 
 	@CreatedDate
 	@Column(name = "REG_DT", updatable = false)
-	private LocalDateTime createdAt;
+	private Instant createdAt;
 
 	@LastModifiedDate
 	@Column(name = "MOD_DT")
-	private LocalDateTime updatedAt;
+	private Instant updatedAt;
 
 }

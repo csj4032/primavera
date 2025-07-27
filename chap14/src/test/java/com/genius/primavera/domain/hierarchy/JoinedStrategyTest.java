@@ -5,7 +5,7 @@ import com.genius.primavera.domain.hierarchy.*;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 /**
  * 장점
@@ -33,17 +33,17 @@ public class JoinedStrategyTest extends BaseHierarchyJpaTest {
         address.setCity("city");
         address.setStreet("street");
         address.setZipCode("zipCode");
-        address.setCreatedAt(LocalDateTime.now());
+        address.setCreatedAt(Instant.now());
 
         var email = new Email();
         email.setSign("genius");
         email.setDomain("gmail.com");
-        email.setCreatedAt(LocalDateTime.now());
+        email.setCreatedAt(Instant.now());
 
         var mobile = new Mobile();
         mobile.setProvider("010");
         mobile.setNumber("00000000");
-        mobile.setCreatedAt(LocalDateTime.now());
+        mobile.setCreatedAt(Instant.now());
 
         entityTransaction.begin();
         entityManager.persist(address);

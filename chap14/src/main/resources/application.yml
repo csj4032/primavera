@@ -3,6 +3,8 @@ spring:
     name: primavera-chapter-05
   profiles:
     active: local
+  jackson:
+    time-zone: UTC
     group:
       local:
         - console-appender

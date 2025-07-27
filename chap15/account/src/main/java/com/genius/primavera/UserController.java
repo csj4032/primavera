@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.annotation.PostConstruct;
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @RestController
 @RequiredArgsConstructor

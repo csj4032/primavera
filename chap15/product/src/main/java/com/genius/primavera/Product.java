@@ -6,7 +6,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Getter
 @Setter
@@ -24,5 +24,5 @@ public class Product {
 	@Builder.Default
 	private BigDecimal price = BigDecimal.ZERO;
 	private Long stock;
-	private LocalDateTime createDate;
+	private Instant createDate;
 }

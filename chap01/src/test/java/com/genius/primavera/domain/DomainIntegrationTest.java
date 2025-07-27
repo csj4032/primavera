@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 
@@ -35,8 +35,8 @@ class DomainIntegrationTest {
                 .password("securePassword123")
                 .nickname("공장장")
                 .roles(Arrays.asList(adminRole, managerRole))
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
+                .createdAt(Instant.now())
+                .updatedAt(Instant.now())
                 .build();
 
         // 3. Plant 생성
@@ -82,8 +82,8 @@ class DomainIntegrationTest {
                 .password("securePassword456")
                 .nickname("지역책임자")
                 .roles(Arrays.asList(multiManagerRole))
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
+                .createdAt(Instant.now())
+                .updatedAt(Instant.now())
                 .build();
 
         // 3. 여러 Plant 생성

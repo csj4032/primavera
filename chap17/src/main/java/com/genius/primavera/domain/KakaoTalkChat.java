@@ -5,7 +5,7 @@ import com.opencsv.bean.CsvBindByPosition;
 import com.opencsv.bean.CsvDate;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Getter
 @Setter
@@ -17,7 +17,7 @@ public class KakaoTalkChat {
 	@CsvDate(value = "yyyy-MM-dd HH:mm:ss")
 	@CsvBindByPosition(position = 0, required = true)
 	@CsvBindByName
-	private LocalDateTime date;
+	private Instant date;
 	@CsvBindByPosition(position = 1, required = true)
 	@CsvBindByName
 	private String user;

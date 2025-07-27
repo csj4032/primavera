@@ -1,7 +1,7 @@
 package com.genius.primavera.domain.model.mapped;
 
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @MappedSuperclass
 public class BaseEntity {
@@ -13,7 +13,7 @@ public class BaseEntity {
 	@Column(name = "NAME")
 	private String name;
 	@Column(name = "CREATED_AT")
-	private LocalDateTime createdAt;
+	private Instant createdAt;
 	@Column(name = "UPDATED_AT")
-	private LocalDateTime updatedAt;
+	private Instant updatedAt;
 }

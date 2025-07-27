@@ -5,7 +5,7 @@ import com.genius.primavera.domain.hierarchy.*;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 /**
  * 장점
@@ -29,17 +29,17 @@ public class TablePerClassStrategyTest extends BaseHierarchyJpaTest {
 		var canidae = new Canidae();
 		canidae.setName("개과");
 		canidae.setCanini("갈기늑대속");
-		canidae.setCreatedAt(LocalDateTime.now());
+		canidae.setCreatedAt(Instant.now());
 
 		var scincidae = new Scincidae();
 		scincidae.setName("고양이과");
 		scincidae.setGenus("치타");
-		scincidae.setCreatedAt(LocalDateTime.now());
+		scincidae.setCreatedAt(Instant.now());
 
 		var felidae = new Felidae();
 		felidae.setName("도마뱀");
 		felidae.setSystem("목도리");
-		felidae.setCreatedAt(LocalDateTime.now());
+		felidae.setCreatedAt(Instant.now());
 
 		entityTransaction.begin();
 		entityManager.persist(canidae);

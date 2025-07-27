@@ -11,7 +11,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import jakarta.validation.groups.Default;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 
 @Slf4j
@@ -44,8 +44,8 @@ public class User {
     @NotNull
     @Size(min = 1)
     private List<Role> roles;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private Instant createdAt;
+    private Instant updatedAt;
 
     public boolean isAuthenticate(@NonNull String password) {
         return new BCryptPasswordEncoder().matches(password, this.password);

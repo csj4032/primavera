@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 /**
  * PlantTest는 Plant 도메인 객체의 생성, 비교, 기본 생성자 동작 등을 테스트합니다.
@@ -19,8 +19,8 @@ public class PlantTest {
         long id = 1L;
         String name = "서울 공장";
         String location = "서울시 강남구";
-        User manager = new User(101L, "manager@example.com", "password", "공장장", null, LocalDateTime.now(), LocalDateTime.now());
-        LocalDateTime establishedDate = LocalDateTime.of(2020, 1, 1, 0, 0);
+        User manager = new User(101L, "manager@example.com", "password", "공장장", null, Instant.now(), Instant.now());
+        Instant establishedDate = Instant.parse("2020-01-01T00:00:00Z");
         Plant plant = new Plant(id, name, location, manager, establishedDate);
         assertThat(plant.getId()).isEqualTo(id);
         assertThat(plant.getName()).isEqualTo(name);
@@ -36,7 +36,7 @@ public class PlantTest {
         String name = "서울 공장";
         String location = "서울시 강남구";
         User manager = User.builder().id(101L).email("manager@example.com").build();
-        LocalDateTime establishedDate = LocalDateTime.of(2020, 1, 1, 0, 0);
+        Instant establishedDate = Instant.parse("2020-01-01T00:00:00Z");
         Plant plant = Plant.builder()
                 .id(id)
                 .name(name)

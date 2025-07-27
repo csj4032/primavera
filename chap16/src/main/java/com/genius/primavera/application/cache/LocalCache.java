@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import jakarta.annotation.PostConstruct;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -25,11 +25,11 @@ public class LocalCache {
 	@PostConstruct
 	public void init() {
 		cache = Caffeine.newBuilder().expireAfterWrite(30, TimeUnit.SECONDS).maximumSize(100).build((id) -> getTempById(id));
-		cache.asMap().put(1L, Optional.of(new Temp(1L, LocalDateTime.now())));
-		cache.asMap().put(2L, Optional.of(new Temp(2L, LocalDateTime.now())));
-		cache.asMap().put(3L, Optional.of(new Temp(3L, LocalDateTime.now())));
-		cache.asMap().put(4L, Optional.of(new Temp(4L, LocalDateTime.now())));
-		cache.asMap().put(5L, Optional.of(new Temp(5L, LocalDateTime.now())));
+		cache.asMap().put(1L, Optional.of(new Temp(1L, Instant.now())));
+		cache.asMap().put(2L, Optional.of(new Temp(2L, Instant.now())));
+		cache.asMap().put(3L, Optional.of(new Temp(3L, Instant.now())));
+		cache.asMap().put(4L, Optional.of(new Temp(4L, Instant.now())));
+		cache.asMap().put(5L, Optional.of(new Temp(5L, Instant.now())));
 	}
 
 	public Optional<Temp> getTempById(Long id) {

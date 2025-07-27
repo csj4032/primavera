@@ -8,7 +8,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @Setter
 @ConfigurationProperties(prefix = "spring.lucy-filter")
 public class LucyFilterDelegatingProperties {
-	private String name;
-	private int order;
-	private String[] addUrlPatterns;
+    private boolean enabled = true;
+    private String name;
+    private int order;
+    private String[] addUrlPatterns;
 }

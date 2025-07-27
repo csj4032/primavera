@@ -14,7 +14,7 @@ import org.springframework.core.io.ClassPathResource;
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -55,7 +55,7 @@ class KakaoTalkChatRepositoryTest {
 		log.info("countMessagesByUser {}", countMessagesByUser);
 
 		// User 별 <메세지, 날짜>
-		Map<String, List<Pair<String, LocalDateTime>>> countMessageAndDateByUser = kakaoTalkChats.stream().collect(Collectors.groupingBy(KakaoTalkChat::getUser, Collectors.mapping(kakaoTalkChat -> Pair.with(kakaoTalkChat.getMessage(), kakaoTalkChat.getDate()), Collectors.toList())));
+		Map<String, List<Pair<String, Instant>>> countMessageAndDateByUser = kakaoTalkChats.stream().collect(Collectors.groupingBy(KakaoTalkChat::getUser, Collectors.mapping(kakaoTalkChat -> Pair.with(kakaoTalkChat.getMessage(), kakaoTalkChat.getDate()), Collectors.toList())));
 		log.info("countMessageAndDateByUser {}", countMessageAndDateByUser);
 
 		// User 메세지 갯수

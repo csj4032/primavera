@@ -43,5 +43,5 @@ dependencies {
     testImplementation "org.testcontainers:junit-jupiter:${testContainersVersion}"
     testImplementation "org.testcontainers:mariadb:${testContainersVersion}"
     testImplementation("io.rest-assured:rest-assured:${restAssuredVersion}")
-    testRuntimeOnly('com.h2database:h2:' + h2Version)
+    implementation project(":appendix:spring-boot-starter-lucy-filter")
 }

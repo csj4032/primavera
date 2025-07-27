@@ -3,6 +3,8 @@ spring:
     name: privamera
   profiles:
     active: local
+  jackson:
+    time-zone: UTC
     group:
       local:
         - console-appender

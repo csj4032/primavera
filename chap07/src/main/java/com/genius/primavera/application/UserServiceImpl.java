@@ -6,7 +6,7 @@ import com.genius.primavera.domain.model.UserStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 
 @Service
@@ -19,7 +19,7 @@ public class UserServiceImpl implements UserService {
     public User save(User user) {
         user.setPassword(user.getPassword());
         user.setStatus(UserStatus.ON);
-        user.setCreatedAt(LocalDateTime.now());
+        user.setCreatedAt(Instant.now());
         userMapper.save(user);
         return user;
     }

@@ -5,7 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Getter
 @Builder
@@ -16,12 +16,12 @@ public class Plant {
     private String name;
     private String location;
     private User manager;
-    private LocalDateTime establishedDate;
+    private Instant establishedDate;
 
     public Plant() {
     }
 
-    public Plant(long id, String name, String location, User manager, LocalDateTime establishedDate) {
+    public Plant(long id, String name, String location, User manager, Instant establishedDate) {
         this.id = id;
         this.name = name;
         this.location = location;

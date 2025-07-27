@@ -9,7 +9,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import jakarta.validation.groups.Default;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
 
@@ -43,13 +43,13 @@ public class User {
     @NotNull
     @Size(min = 1)
     private List<Role> roles;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private Instant createdAt;
+    private Instant updatedAt;
 
     private Boolean isComplex;
 
     @HostAccess.Export
-    public Boolean isComplex(LocalDateTime createdAt, LocalDateTime modDate) {
+    public Boolean isComplex(Instant createdAt, Instant modDate) {
         if (!Objects.isNull(createdAt) && !Objects.isNull(modDate)) return createdAt.isBefore(modDate);
         return true;
     }

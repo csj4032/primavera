@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Getter
 @Builder
@@ -15,5 +15,5 @@ public class User {
     private Long id;
     private String name;
     private String email;
-    private LocalDateTime createdAt;
+    private Instant createdAt;
 }

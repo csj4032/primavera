@@ -12,7 +12,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 
 @ExtendWith(SpringExtension.class)
@@ -94,7 +94,7 @@ public class UserSaveValidationTest extends AbstractContainerTest {
     @Order(9)
     @DisplayName("등록일자와 수정일자 순서 검증")
     public void saveAndRegDateModDate() {
-        User source = User.builder().id(1L).email("genius@gmail.com").password("Secret0!").createdAt(LocalDateTime.now().plusDays(1)).updatedAt(LocalDateTime.now()).nickname("genius").roles(List.of(new Role(1, null))).build();
+        User source = User.builder().id(1L).email("genius@gmail.com").password("Secret0!").createdAt(Instant.now().plusDays(1)).updatedAt(Instant.now()).nickname("genius").roles(List.of(new Role(1, null))).build();
         saveUser(source);
     }
 

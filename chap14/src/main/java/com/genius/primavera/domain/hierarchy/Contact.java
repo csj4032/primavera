@@ -6,7 +6,7 @@ import lombok.ToString;
 
 import jakarta.persistence.*;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Setter
 @Getter
@@ -23,5 +23,5 @@ public abstract class Contact {
     private String name;
 
     @Column(name = "created_at")
-    private LocalDateTime createdAt;
+    private Instant createdAt;
 }

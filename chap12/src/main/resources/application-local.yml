@@ -1,6 +1,6 @@
 spring:
   application:
-    name: primavera-local
+    name: HierarchicalCommentApplication
   
   # 로컬 개발 환경 - Docker MySQL 8.4.0 사용
   datasource:

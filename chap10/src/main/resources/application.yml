@@ -1,9 +1,11 @@
 spring:
   application:
     name: Privamera
+  jackson:
+    time-zone: UTC
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://localhost:1109/primavera
+    url: jdbc:mariadb://localhost:1109/primavera?serverTimezone=UTC
     username: primavera
     password: primavera
   banner:

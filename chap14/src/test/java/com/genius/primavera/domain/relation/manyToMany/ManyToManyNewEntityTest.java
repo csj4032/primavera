@@ -3,7 +3,7 @@ package com.genius.primavera.domain.relation.manyToMany;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Slf4j
 @DisplayName("N:N 새로운 엔티티 도출")
@@ -19,10 +19,10 @@ public class ManyToManyNewEntityTest extends ManyToManyTestBase {
 		var seller1 = Seller.of("seller1");
 		var seller2 = Seller.of("seller2");
 
-		var contract1 = new Contract(null, buyer1, seller1, LocalDateTime.now());
-		var contract2 = new Contract(null, buyer1, seller2, LocalDateTime.now());
-		var contract3 = new Contract(null, buyer2, seller1, LocalDateTime.now());
-		var contract4 = new Contract(null, buyer2, seller2, LocalDateTime.now());
+		var contract1 = new Contract(null, buyer1, seller1, Instant.now());
+		var contract2 = new Contract(null, buyer1, seller2, Instant.now());
+		var contract3 = new Contract(null, buyer2, seller1, Instant.now());
+		var contract4 = new Contract(null, buyer2, seller2, Instant.now());
 
 		entityTransaction.begin();
 		entityManager.persist(buyer1);

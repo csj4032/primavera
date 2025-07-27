@@ -7,27 +7,15 @@ import com.genius.primavera.domain.model.article.ArticleDto;
 import com.genius.primavera.domain.model.article.Comment;
 import com.genius.primavera.domain.model.article.CommentDto;
 import com.navercorp.lucy.security.xss.servletfilter.XssEscapeServletFilter;
-
 import org.modelmapper.ModelMapper;
-import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-// import nz.net.ultraq.thymeleaf.LayoutDialect;
-
-import org.springframework.web.method.support.ModelAndViewContainer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
-import java.util.TimeZone;
-
-import jakarta.annotation.PostConstruct;
 
 @Configuration
 public class ApplicationConfiguration implements WebMvcConfigurer {
 
-    // XSS Filter disabled due to servlet API compatibility issues
-    /*
     @Bean
     public FilterRegistrationBean<XssEscapeServletFilter> filterRegistrationBean() {
         var filterRegistration = new FilterRegistrationBean<XssEscapeServletFilter>();
@@ -36,7 +24,6 @@ public class ApplicationConfiguration implements WebMvcConfigurer {
         filterRegistration.addUrlPatterns("/*");
         return filterRegistration;
     }
-    */
 
     @Bean
     public ObjectMapper objectMapper() {
@@ -50,11 +37,13 @@ public class ApplicationConfiguration implements WebMvcConfigurer {
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.createTypeMap(Article.class, ArticleDto.DetailArticle.class).addMappings(mapper -> {
             mapper.map(src -> src.getAuthorName(), ArticleDto.DetailArticle::setAuthorName);
-            mapper.map(src -> src.getContents(), ArticleDto.DetailArticle::setContents);});
+            mapper.map(src -> src.getContents(), ArticleDto.DetailArticle::setContents);
+        });
 
         modelMapper.createTypeMap(Comment.class, CommentDto.Detail.class).addMappings(mapper -> {
             mapper.map(src -> src.getAuthor().getNickname(), CommentDto.Detail::setAuthorName);
-            mapper.map(src -> src.getAuthor().getConnection().getImageUrl(), CommentDto.Detail::setAuthorImage);});
+            mapper.map(src -> src.getAuthor().getConnection().getImageUrl(), CommentDto.Detail::setAuthorImage);
+        });
 
         return modelMapper;
     }

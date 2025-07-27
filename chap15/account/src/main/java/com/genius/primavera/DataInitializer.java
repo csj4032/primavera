@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 import reactor.core.publisher.Flux;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Slf4j
 @Component
@@ -29,7 +29,7 @@ public class DataInitializer implements CommandLineRunner {
 
     private User[] newUserInstance(int n) {
         User[] users = new User[n];
-        for (int i = 0; i < n; i++) users[i] = new User(i, "Name" + i, LocalDateTime.now());
+        for (int i = 0; i < n; i++) users[i] = new User(i, "Name" + i, Instant.now());
         return users;
     }
 }

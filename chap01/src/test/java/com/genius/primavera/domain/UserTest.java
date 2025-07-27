@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 
@@ -20,7 +20,7 @@ class UserTest {
         String password = "password123";
         String nickname = "tester";
         List<Role> roles = Arrays.asList(new Role(), new Role());
-        LocalDateTime now = LocalDateTime.now();
+        Instant now = Instant.now();
 
         // when
         User user = new User(id, email, password, nickname, roles, now, now);
@@ -44,7 +44,7 @@ class UserTest {
         String password = "password123";
         String nickname = "tester";
         List<Role> roles = Arrays.asList(new Role(), new Role());
-        LocalDateTime now = LocalDateTime.now();
+        Instant now = Instant.now();
 
         // when
         User user = User.builder()
@@ -155,7 +155,7 @@ class UserTest {
         String email = "id.constructor@example.com";
         String password = "idPassword123";
         String nickname = "idUser";
-        LocalDateTime now = LocalDateTime.now();
+        Instant now = Instant.now();
 
         // when
         user.setEmail(email);

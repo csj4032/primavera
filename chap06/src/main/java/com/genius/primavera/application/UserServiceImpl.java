@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Service
 @RequiredArgsConstructor
@@ -19,7 +19,7 @@ public class UserServiceImpl implements UserService {
     public User save(User user) {
         user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
         user.setStatus(UserStatus.ON);
-        user.setCreatedAt(LocalDateTime.now());
+        user.setCreatedAt(Instant.now());
         userMapper.save(user);
         return user;
     }

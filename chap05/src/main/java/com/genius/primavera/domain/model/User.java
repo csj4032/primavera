@@ -2,7 +2,7 @@ package com.genius.primavera.domain.model;
 
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 
 @Getter
@@ -19,6 +19,6 @@ public class User {
 	private String nickname;
 	private UserStatus status;
 	private List<Role> roles;
-	private LocalDateTime regDate;
-	private LocalDateTime modDate;
+	private Instant regDate;
+	private Instant modDate;
 }

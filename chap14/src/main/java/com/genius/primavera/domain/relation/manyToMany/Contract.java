@@ -3,7 +3,7 @@ package com.genius.primavera.domain.relation.manyToMany;
 import lombok.*;
 
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 import static jakarta.persistence.GenerationType.IDENTITY;
 
@@ -30,5 +30,5 @@ public class Contract {
 	private Seller seller;
 
 	@Column(name = "REGISTERED_AT")
-	LocalDateTime registeredAt;
+	Instant registeredAt;
 }

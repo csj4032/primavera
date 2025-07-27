@@ -4,7 +4,6 @@ import com.genius.primavera.domain.model.user.User;
 import lombok.*;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 
 @Getter

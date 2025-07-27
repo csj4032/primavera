@@ -4,6 +4,8 @@ spring:
       on-profile: default
   application:
     name: primavera-chapter-03
+  jackson:
+    time-zone: UTC
   banner:
     charset: UTF-8
     location: classpath:primavera.txt

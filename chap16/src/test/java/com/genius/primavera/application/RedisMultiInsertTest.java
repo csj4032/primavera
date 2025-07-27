@@ -11,7 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,7 +33,7 @@ public class RedisMultiInsertTest {
 	@RepeatedTest(5)
 	public void singleInsert() {
 		for (long j = 0; j < 350_000L; j++) {
-			redisTemplate.opsForValue().set(String.valueOf(j), new Temp(j, LocalDateTime.now()));
+			redisTemplate.opsForValue().set(String.valueOf(j), new Temp(j, Instant.now()));
 		}
 	}
 
@@ -41,7 +41,7 @@ public class RedisMultiInsertTest {
 	@RepeatedTest(350)
 	public void multiInsert() {
 		Map<String, Temp> map = new HashMap<>();
-		for (long j = 0; j < 10000L; j++) map.put(String.valueOf(j), new Temp(j, LocalDateTime.now()));
+		for (long j = 0; j < 10000L; j++) map.put(String.valueOf(j), new Temp(j, Instant.now()));
 		redisTemplate.opsForValue().multiSet(map);
 	}
 

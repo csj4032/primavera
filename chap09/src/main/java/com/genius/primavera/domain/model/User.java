@@ -2,7 +2,7 @@ package com.genius.primavera.domain.model;
 
 import com.genius.primavera.application.validator.Nickname;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 
 import jakarta.validation.Valid;
@@ -50,6 +50,6 @@ public class User {
 	@NotNull
 	@Size(min = 1)
 	private List<Role> roles;
-	private LocalDateTime regDate;
-	private LocalDateTime modDate;
+	private Instant regDate;
+	private Instant modDate;
 }

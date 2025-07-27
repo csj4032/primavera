@@ -2,7 +2,7 @@ package com.genius.primavera.domain;
 
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 
 @Setter
@@ -16,10 +16,10 @@ public class User {
     private String password;
     private String nickname;
     private List<String> roles; // javax.management.relation.Role을 String으로 변경
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private Instant createdAt;
+    private Instant updatedAt;
 
-    public User(long id, String email, String password, String nickname, List<String> roles, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public User(long id, String email, String password, String nickname, List<String> roles, Instant createdAt, Instant updatedAt) {
         this.id = id;
         this.email = email;
         this.password = password;

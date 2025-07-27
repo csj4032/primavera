@@ -11,7 +11,7 @@ import org.mybatis.dynamic.sql.select.render.SelectStatementProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,7 +47,7 @@ public class UserMapperTest {
                     .password(password)
                     .status(status)
                     .roles(roles)
-                    .regDate(LocalDateTime.now()).modDate(LocalDateTime.now()).build());
+                    .regDate(Instant.now()).modDate(Instant.now()).build());
         }
 
         bulkUsers = new ArrayList<>();
@@ -58,10 +58,10 @@ public class UserMapperTest {
                     .password(password)
                     .status(status)
                     .roles(roles)
-                    .regDate(LocalDateTime.now()).modDate(LocalDateTime.now()).build());
+                    .regDate(Instant.now()).modDate(Instant.now()).build());
         }
 
-        source = User.builder().email("primavera@gmail.com").nickname("primavera").password(password).status(UserStatus.ON).roles(roles).regDate(LocalDateTime.now()).modDate(LocalDateTime.now()).build();
+        source = User.builder().email("primavera@gmail.com").nickname("primavera").password(password).status(UserStatus.ON).roles(roles).regDate(Instant.now()).modDate(Instant.now()).build();
     }
 
     @Test
@@ -93,7 +93,7 @@ public class UserMapperTest {
     @DisplayName(value = "특정 아이디 유저 수정")
     public void update() {
         source.setNickname("spring");
-        source.setModDate(LocalDateTime.now());
+        source.setModDate(Instant.now());
         userMapper.update(source);
         User destination = userMapper.findById(source.getId());
         Assertions.assertEquals(destination.getNickname(), source.getNickname());

@@ -16,7 +16,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import java.sql.*;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
@@ -52,8 +52,8 @@ public class WinnerServiceIsolationTest {
 		status = transactionManager.getTransaction(definition);
 		sqlSession = sqlSessionFactory.openSession();
 		WinnerMapper winnerMapper = sqlSession.getMapper(WinnerMapper.class);
-		winnerMapper.insertWinner(Winner.builder().id(1).userId(1).winner(WinnerType.LOSER).createdAt(LocalDateTime.now()).build());
-		winnerMapper.insertWinner(Winner.builder().id(2).userId(2).winner(WinnerType.LOSER).createdAt(LocalDateTime.now()).build());
+		winnerMapper.insertWinner(Winner.builder().id(1).userId(1).winner(WinnerType.LOSER).createdAt(Instant.now()).build());
+		winnerMapper.insertWinner(Winner.builder().id(2).userId(2).winner(WinnerType.LOSER).createdAt(Instant.now()).build());
 	}
 
 	@Test
@@ -113,7 +113,7 @@ public class WinnerServiceIsolationTest {
 		TransactionStatus status2 = transactionManager.getTransaction(definition2);
 		SqlSession localSqlSession2 = sqlSessionFactory.openSession();
 		WinnerMapper localWinnerMapper = localSqlSession2.getMapper(WinnerMapper.class);
-		localWinnerMapper.updateWinner(Winner.builder().id(1).winner(WinnerType.WINNER).createdAt(LocalDateTime.now()).build());
+		localWinnerMapper.updateWinner(Winner.builder().id(1).winner(WinnerType.WINNER).createdAt(Instant.now()).build());
 		transactionManager.commit(status2);
 
 		localSqlSession.clearCache();
@@ -140,7 +140,7 @@ public class WinnerServiceIsolationTest {
 		TransactionStatus status2 = transactionManager.getTransaction(definition2);
 		SqlSession localSqlSession2 = sqlSessionFactory.openSession();
 		WinnerMapper localWinnerMapper = localSqlSession2.getMapper(WinnerMapper.class);
-		localWinnerMapper.updateWinner(Winner.builder().id(1).userId(1).winner(WinnerType.LOSER).createdAt(LocalDateTime.now()).build());
+		localWinnerMapper.updateWinner(Winner.builder().id(1).userId(1).winner(WinnerType.LOSER).createdAt(Instant.now()).build());
 		transactionManager.commit(status2);
 
 		localSqlSession.clearCache();
@@ -169,8 +169,8 @@ public class WinnerServiceIsolationTest {
 		TransactionStatus status2 = transactionManager.getTransaction(definition2);
 		SqlSession localSqlSession2 = sqlSessionFactory.openSession();
 		WinnerMapper localWinnerMapper = localSqlSession2.getMapper(WinnerMapper.class);
-		localWinnerMapper.insertWinner(Winner.builder().id(3).userId(3).winner(WinnerType.LOSER).createdAt(LocalDateTime.now()).build());
-		localWinnerMapper.insertWinner(Winner.builder().id(4).userId(4).winner(WinnerType.LOSER).createdAt(LocalDateTime.now()).build());
+		localWinnerMapper.insertWinner(Winner.builder().id(3).userId(3).winner(WinnerType.LOSER).createdAt(Instant.now()).build());
+		localWinnerMapper.insertWinner(Winner.builder().id(4).userId(4).winner(WinnerType.LOSER).createdAt(Instant.now()).build());
 		transactionManager.commit(status2);
 
 		localSqlSession.clearCache();
@@ -197,8 +197,8 @@ public class WinnerServiceIsolationTest {
 		TransactionStatus status2 = transactionManager.getTransaction(definition2);
 		SqlSession localSqlSession2 = sqlSessionFactory.openSession();
 		WinnerMapper localWinnerMapper = localSqlSession2.getMapper(WinnerMapper.class);
-		localWinnerMapper.insertWinner(Winner.builder().id(5).userId(5).winner(WinnerType.WINNER).createdAt(LocalDateTime.now()).build());
-		localWinnerMapper.insertWinner(Winner.builder().id(6).userId(6).winner(WinnerType.WINNER).createdAt(LocalDateTime.now()).build());
+		localWinnerMapper.insertWinner(Winner.builder().id(5).userId(5).winner(WinnerType.WINNER).createdAt(Instant.now()).build());
+		localWinnerMapper.insertWinner(Winner.builder().id(6).userId(6).winner(WinnerType.WINNER).createdAt(Instant.now()).build());
 		transactionManager.commit(status2);
 
 		localSqlSession.clearCache();

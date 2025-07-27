@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 import lombok.RequiredArgsConstructor;
 
@@ -123,7 +123,7 @@ public class WriteArticleServiceImpl implements WriteArticleService {
 		article.setAuthor(author);
 		article.setSubject(writeArticle.getSubject());
 		article.setStatus(writeArticle.getStatus());
-		article.setCreatedAt(LocalDateTime.now());
+		article.setCreatedAt(Instant.now());
 		return article;
 	}
 

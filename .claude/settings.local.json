@@ -39,7 +39,12 @@
       "Bash(git reset:*)",
       "Bash(../gradlew:*)",
       "Bash(cat:*)",
-      "Bash(docker-compose:*)"
+      "Bash(docker-compose:*)",
+      "Bash(for:*)",
+      "Bash(do echo \"Processing $file\")",
+      "Bash(do if grep -q \"LocalDateTime\" \"$file\")",
+      "Bash(then echo \"Contains LocalDateTime: $file\")",
+      "Bash(then echo \"Processing $file\")"
     ],
     "deny": []
   }

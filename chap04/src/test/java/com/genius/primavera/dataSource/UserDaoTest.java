@@ -16,7 +16,7 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import javax.sql.DataSource;
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
@@ -57,7 +57,7 @@ public class UserDaoTest {
     @Order(1)
     @DisplayName("유저 등록")
     public void saveUser() {
-        int result = userDao.saveUser("mbappé@gmail.com", passwordEncoder.encode("password"), "Mbappé", "A", LocalDateTime.now());
+        int result = userDao.saveUser("mbappé@gmail.com", passwordEncoder.encode("password"), "Mbappé", "A", Instant.now());
         Assertions.assertEquals(1, result);
         System.out.println("유저가 성공적으로 등록되었습니다.");
     }

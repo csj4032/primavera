@@ -3,7 +3,7 @@ package com.genius.primavera;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +16,7 @@ public class UserDao {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public int saveUser(String email, String password, String nickname, String status, LocalDateTime createdAt) {
+    public int saveUser(String email, String password, String nickname, String status, Instant createdAt) {
         return jdbcTemplate.update("INSERT INTO USERS (EMAIL, PASSWORD, NICKNAME, STATUS, CREATED_AT) VALUES (?, ?, ?, ?, ?)",
                 email, password, nickname, status, createdAt);
     }
