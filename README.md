@@ -92,20 +92,228 @@ docker --version
 docker-compose --version
 ```
 
-### 2. 프로젝트 클론 및 실행
+### 2. Infrastructure Docker 환경 구성
+
+#### 📦 Infrastructure 디렉토리 구성
+```
+infrastructure/
+├── docker-compose.yml    # MariaDB 11.4.7 컨테이너 설정
+└── init.sql             # 초기 데이터베이스 스크립트
+```
+
+#### 🚀 Docker Compose 실행 (필수)
+chap03 이상의 모든 모듈 실행 전에 반드시 데이터베이스 환경을 구성해야 합니다.
+
 ```bash
-# 프로젝트 클론
+# 1. 프로젝트 클론
 git clone https://github.com/csj4032/primavera.git
 cd primavera
 
-# 데이터베이스 실행 (Docker)
-docker-compose up -d mysql redis
+# 2. Infrastructure 디렉토리로 이동
+cd infrastructure
+
+# 3. Docker Compose로 MariaDB 컨테이너 시작
+docker-compose up -d
+
+# 4. 컨테이너 상태 확인
+docker-compose ps
+
+# 출력 예시:
+#     Name                   Command               State            Ports
+# ----------------------------------------------------------------
+# mariadb-primavera   docker-entrypoint.sh mysqld   Up      0.0.0.0:1109->3306/tcp
+
+# 5. 컨테이너 로그 확인 (선택사항)
+docker-compose logs -f mariadb
+```
+
+#### 🔍 MariaDB 컨테이너 상세 확인
+
+**컨테이너 정보 조회:**
+```bash
+# 실행 중인 컨테이너 확인
+docker ps | grep mariadb-primavera
+
+# 컨테이너 상세 정보 확인
+docker inspect mariadb-primavera
+
+# 네트워크 정보 확인
+docker network ls
+docker network inspect infrastructure_default
+```
+
+**포트 및 연결 확인:**
+```bash
+# 포트 1109 바인딩 확인
+netstat -an | grep 1109
+# 또는
+lsof -i :1109
+
+# 예상 결과:
+# tcp46  *:1109  *:*  LISTEN
+
+# MariaDB 서비스 접근성 테스트
+telnet localhost 1109
+# 연결 성공 시: Connected to localhost.
+```
+
+#### 💽 MariaDB 직접 접속 및 확인
+
+**CLI를 통한 접속:**
+```bash
+# 방법 1: 컨테이너 내부 접속
+docker exec -it mariadb-primavera mysql -u primavera -p
+# 비밀번호: primavera
+
+# 방법 2: 호스트에서 직접 접속 (MariaDB 클라이언트 설치 시)
+mysql -h localhost -P 1109 -u primavera -p primavera
+# 비밀번호: primavera
+
+# 방법 3: root 계정으로 접속
+docker exec -it mariadb-primavera mysql -u root -p
+# 비밀번호: root
+```
+
+**기본 데이터베이스 확인:**
+```sql
+-- 접속 성공 후 실행할 쿼리들
+
+-- 1. 버전 정보 확인
+SELECT VERSION();
+-- 결과: 11.4.7-MariaDB
+
+-- 2. 생성된 데이터베이스 확인
+SHOW DATABASES;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| primavera          |
+| primavera_test     |
++--------------------+
+
+-- 3. primavera 데이터베이스 선택 및 문자셋 확인
+USE primavera;
+SELECT @@character_set_database, @@collation_database;
+-- 결과: utf8mb4, utf8mb4_unicode_ci
+
+-- 4. 권한 확인
+SHOW GRANTS FOR 'primavera'@'%';
+-- 결과: GRANT ALL PRIVILEGES ON `primavera`.* TO `primavera`@`%`
+
+-- 5. 테이블 확인 (초기에는 비어있음)
+SHOW TABLES;
+-- Empty set (0.00 sec)
+
+-- 6. 연결 정보 확인
+SELECT USER(), DATABASE(), CONNECTION_ID();
+-- 결과: primavera@%, primavera, [connection_id]
+```
+
+**Docker 컨테이너 관리 명령어:**
+```bash
+# === 컨테이너 라이프사이클 관리 ===
+
+# 컨테이너 중지
+docker-compose stop
+# 또는 특정 서비스만: docker-compose stop mariadb
+
+# 컨테이너 시작 (이미 생성된 경우)
+docker-compose start
+
+# 컨테이너 재시작
+docker-compose restart
+
+# 컨테이너 완전 삭제 (데이터 보존)
+docker-compose down
+
+# 컨테이너 및 볼륨까지 삭제 (데이터 삭제)
+docker-compose down -v
+
+# === 상태 모니터링 ===
+
+# 서비스 상태 확인
+docker-compose ps
+
+# 실시간 로그 모니터링
+docker-compose logs -f mariadb
+
+# 최근 로그 100줄 확인
+docker-compose logs --tail=100 mariadb
+
+# 리소스 사용량 확인
+docker stats mariadb-primavera
+
+# === 문제 해결 ===
+
+# 컨테이너 강제 재생성
+docker-compose down
+docker-compose up -d --force-recreate
+
+# 모든 정지된 컨테이너 정리
+docker container prune
+
+# 사용하지 않는 볼륨 정리
+docker volume prune
+
+# 사용하지 않는 네트워크 정리
+docker network prune
+```
+
+#### 🔧 외부 도구를 통한 접속
+
+**DBeaver, HeidiSQL, MySQL Workbench 등:**
+```
+Connection Settings:
+┌─────────────────────┬──────────────────┐
+│ Host                │ localhost        │
+│ Port                │ 1109             │
+│ Username            │ primavera        │
+│ Password            │ primavera        │
+│ Database            │ primavera        │
+│ Driver              │ MariaDB/MySQL    │
+└─────────────────────┴──────────────────┘
+```
+
+**IntelliJ IDEA Database Tool:**
+1. Database Tool Window 열기
+2. '+' → Data Source → MariaDB
+3. 위 설정 정보 입력
+4. Test Connection → Success 확인
+
+### 3. 프로젝트 실행
+```bash
+# Infrastructure가 정상 실행된 후 메인 디렉토리로 이동
+cd ../
 
 # 특정 챕터 실행 (예: chap10)
 ./gradlew :chap10:bootRun
 
 # 전체 빌드 및 테스트
 ./gradlew clean build
+```
+
+#### ⚠️ 중요 주의사항
+
+**필수 사전 작업:**
+- chap03 이상의 모든 모듈은 MariaDB 데이터베이스가 필요합니다
+- Infrastructure Docker 환경이 구동된 상태에서만 애플리케이션 실행 가능
+- 포트 1109가 사용 중이지 않은지 확인 필요
+
+**문제 해결:**
+```bash
+# 포트 충돌 시
+sudo lsof -i :1109
+# 결과에서 PID 확인 후 종료: sudo kill -9 [PID]
+
+# 컨테이너 시작 실패 시
+docker-compose down -v  # 완전 정리
+docker system prune     # Docker 시스템 정리
+docker-compose up -d    # 재시작
+
+# 데이터베이스 연결 실패 시
+docker-compose logs mariadb  # 로그 확인
+docker exec -it mariadb-primavera mysqladmin ping  # 서비스 확인
 ```
 
 ## 🧪 테스팅 환경 가이드
