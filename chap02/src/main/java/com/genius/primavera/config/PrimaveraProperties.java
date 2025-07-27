@@ -17,6 +17,31 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Spring Boot Configuration Properties 학습용 클래스
+ * 
+ * 이 클래스는 @ConfigurationProperties와 Bean Validation을 활용한
+ * 타입 안전한 설정 관리 방법을 학습하기 위한 예제입니다.
+ * 
+ * 학습 포인트:
+ * - @ConfigurationProperties(prefix = "com.genius.primavera") 사용법
+ * - @ConfigurationPropertiesScan으로 자동 스캔 및 Bean 등록
+ * - 중첩된 Configuration Properties 구조 (Static Inner Class)
+ * - Bean Validation (@NotBlank, @Min, @Pattern 등) 통합
+ * - @Validated 어노테이션으로 유효성 검증 활성화
+ * - 복합 타입 바인딩 (List, Map, Duration, Boolean)
+ * - 프로파일별 설정 오버라이드 (application.yml의 test 프로파일)
+ * 
+ * application.yml 설정 구조:
+ * com.genius.primavera:
+ *   database: 데이터베이스 연결 정보 (validation 포함)
+ *   search: 검색 엔진 설정 (중첩 구조)
+ *   users: 사용자 정보 리스트
+ *   features: 기능 플래그 맵
+ *   cache: 캐시 설정 (Duration 타입 활용)
+ * 
+ * @author Genius
+ */
 @Data
 @Validated
 @ConfigurationProperties(prefix = "com.genius.primavera")

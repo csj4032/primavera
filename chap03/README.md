@@ -406,6 +406,178 @@ docker logs primavera-mariadb
 docker logs -f primavera-mariadb  # 실시간 로그
 ```
 
+## 🚀 사전 준비: Infrastructure Docker 환경 구성
+
+### 1. Docker Compose를 통한 MariaDB 실행
+
+chap03 실행 전에 반드시 MariaDB 11.4.7 데이터베이스를 구성해야 합니다.
+
+#### Infrastructure 디렉토리 구성
+```
+infrastructure/
+├── docker-compose.yml    # MariaDB 11.4.7 컨테이너 설정
+└── init.sql             # 초기 데이터베이스 스크립트
+```
+
+#### Docker Compose 실행 방법
+```bash
+# 1. Infrastructure 디렉토리로 이동
+cd infrastructure
+
+# 2. Docker Compose로 MariaDB 컨테이너 시작
+docker-compose up -d
+
+# 3. 컨테이너 상태 확인
+docker-compose ps
+
+# 4. 로그 확인 (선택사항)
+docker-compose logs -f mariadb
+```
+
+#### 실행 결과 확인
+```bash
+# 컨테이너 정보 확인
+docker ps | grep mariadb-primavera
+
+# 출력 예시:
+# CONTAINER ID   IMAGE           COMMAND                  CREATED         STATUS         PORTS                    NAMES
+# 1234567890ab   mariadb:11.4.7  "docker-entrypoint.s…"  2 minutes ago   Up 2 minutes   0.0.0.0:1109->3306/tcp   mariadb-primavera
+```
+
+### 2. 데이터베이스 접속 테스트
+
+#### CLI를 통한 직접 접속
+```bash
+# MariaDB 컨테이너 내부 접속
+docker exec -it mariadb-primavera mysql -u primavera -p
+
+# 비밀번호 입력: primavera
+
+# 데이터베이스 확인
+MariaDB [(none)]> SHOW DATABASES;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| primavera          |
+| primavera_test     |
++--------------------+
+
+MariaDB [(none)]> USE primavera;
+MariaDB [primavera]> SELECT VERSION();
++-----------------+
+| VERSION()       |
++-----------------+
+| 11.4.7-MariaDB  |
++-----------------+
+```
+
+#### 외부 도구를 통한 접속 (DBeaver, HeidiSQL 등)
+```
+Host: localhost
+Port: 1109
+Username: primavera
+Password: primavera
+Database: primavera
+```
+
+### 3. Docker Compose 환경 설정 상세
+
+#### docker-compose.yml 주요 설정
+```yaml
+version: '3.8'
+
+services:
+  mariadb:
+    image: mariadb:11.4.7
+    container_name: mariadb-primavera
+    restart: unless-stopped
+    environment:
+      MARIADB_ROOT_PASSWORD: root
+      MARIADB_DATABASE: primavera
+      MARIADB_USER: primavera
+      MARIADB_PASSWORD: primavera
+      MARIADB_AUTO_UPGRADE: 1
+    ports:
+      - "1109:3306"    # 외부 포트 1109 → 내부 포트 3306
+    volumes:
+      - mariadb_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+```
+
+**주요 특징:**
+- **MariaDB 11.4.7**: 최신 LTS 버전 사용
+- **포트 1109**: 기본 3306 포트와 충돌 방지
+- **UTF8MB4**: 완전한 유니코드 지원
+- **영구 볼륨**: 컨테이너 재시작 시 데이터 보존
+- **자동 초기화**: init.sql 스크립트 자동 실행
+
+### 4. 환경 관리 명령어
+
+#### 컨테이너 라이프사이클
+```bash
+# 서비스 시작
+docker-compose up -d
+
+# 서비스 중지
+docker-compose stop
+
+# 서비스 재시작
+docker-compose restart
+
+# 서비스 완전 삭제 (볼륨 포함)
+docker-compose down -v
+
+# 상태 모니터링
+docker-compose ps
+docker-compose logs mariadb
+```
+
+#### 문제 해결
+```bash
+# 포트 충돌 확인
+netstat -an | grep 1109
+lsof -i :1109
+
+# 컨테이너 강제 재생성
+docker-compose down
+docker-compose up -d --force-recreate
+
+# 볼륨 재생성 (데이터 초기화)
+docker-compose down -v
+docker volume prune
+docker-compose up -d
+```
+
+### 5. chap03 애플리케이션 연동 확인
+
+#### application.yml 설정 확인
+```yaml
+spring:
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://localhost:1109/primavera
+    username: primavera
+    password: primavera
+```
+
+#### 연결 테스트 실행
+```bash
+# chap03 애플리케이션 실행
+cd ../chap03
+./gradlew bootRun
+
+# 로그에서 연결 성공 확인
+# HikariPool-1 - Starting...
+# HikariPool-1 - Start completed.
+```
+
+**⚠️ 주의사항:**
+- chap03 실행 전에 반드시 Infrastructure Docker 환경이 구동되어 있어야 합니다.
+- 데이터베이스 연결 실패 시 포트(1109) 및 네트워크 상태를 확인하세요.
+- 컨테이너 초기 시작 시 1-2분의 시간이 소요될 수 있습니다.
+
 ## 🔧 실습 예제
 
 ### 데이터베이스 연결 테스트
