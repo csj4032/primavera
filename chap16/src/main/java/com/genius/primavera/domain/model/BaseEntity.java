@@ -22,10 +22,10 @@ public abstract class BaseEntity implements Serializable {
 
 	@CreatedDate
 	@Column(name = "REG_DT", updatable = false)
-	private LocalDateTime regDt;
+	private LocalDateTime createdAt;
 
 	@LastModifiedDate
 	@Column(name = "MOD_DT")
-	private LocalDateTime modDt;
+	private LocalDateTime updatedAt;
 
 }

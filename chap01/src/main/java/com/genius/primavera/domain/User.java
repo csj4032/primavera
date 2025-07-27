@@ -16,8 +16,8 @@ public class User {
 	private String password;
 	private String nickname;
 	private List<Role> roles;
-	private LocalDateTime regDt;
-	private LocalDateTime modDt;
+	private LocalDateTime createdAt;
+	private LocalDateTime updatedAt;
 
 	public User() {
 	}
@@ -26,14 +26,14 @@ public class User {
 		this.id = id;
 	}
 
-	public User(long id, String email, String password, String nickname, List<Role> roles, LocalDateTime regDt, LocalDateTime modDt) {
+	public User(long id, String email, String password, String nickname, List<Role> roles, LocalDateTime createdAt, LocalDateTime updatedAt) {
 		this.id = id;
 		this.email = email;
 		this.password = password;
 		this.nickname = nickname;
 		this.roles = roles;
-		this.regDt = regDt;
-		this.modDt = modDt;
+		this.createdAt = createdAt;
+		this.updatedAt = updatedAt;
 	}
 
 }

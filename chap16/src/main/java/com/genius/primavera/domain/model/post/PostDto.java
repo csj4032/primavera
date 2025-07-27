@@ -41,7 +41,7 @@ public class PostDto {
         private long id;
         private String subject;
         private String writerNickName;
-        private Instant regDt;
-        private Instant modDt;
+        private Instant createdAt;
+        private Instant updatedAt;
     }
 }
