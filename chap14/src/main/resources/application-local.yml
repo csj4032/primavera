@@ -1,6 +1,4 @@
 spring:
-  application:
-    name: primavera-chapter-13
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
     url: jdbc:mariadb://localhost:1109/primavera?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true

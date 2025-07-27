@@ -1,6 +1,6 @@
 spring:
   application:
-    name: Privamera
+    name: CiCdDeploymentApplication
   jackson:
     time-zone: UTC
   datasource:

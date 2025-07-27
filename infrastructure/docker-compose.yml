@@ -29,15 +29,17 @@ services:
       VAULT_DEV_ROOT_TOKEN_ID: primavera-dev-token
       VAULT_DEV_LISTEN_ADDRESS: 0.0.0.0:8200
       VAULT_LOG_LEVEL: info
+      VAULT_ADDR: http://127.0.0.1:8200
     ports:
       - "8200:8200"
     volumes:
       - vault_data:/vault/data
+      - vault_tokens:/vault/tokens
       - ./vault:/vault/config
     networks:
       - primavera-network
     healthcheck:
-      test: ["CMD", "vault", "status"]
+      test: ["CMD", "sh", "-c", "VAULT_ADDR=http://127.0.0.1:8200 vault status"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -52,7 +54,9 @@ services:
       VAULT_ADDR: http://vault:8200
       VAULT_TOKEN: primavera-dev-token
     volumes:
-      - ./vault-init.sh:/vault-init.sh:ro
+      - vault_tokens:/vault/tokens
+      - ./vault:/vault/config
+      - ./vault-init.sh:/vault-init.sh
     networks:
       - primavera-network
     command: |
@@ -60,8 +64,7 @@ services:
         echo 'Waiting for Vault to be ready...'
         sleep 10
         apk add --no-cache curl jq
-        chmod +x /vault-init.sh
-        /vault-init.sh
+        sh /vault-init.sh
       "
     restart: "no"
 
@@ -69,6 +72,8 @@ volumes:
   mariadb_data:
     driver: local
   vault_data:
+    driver: local
+  vault_tokens:
     driver: local
 
 networks:

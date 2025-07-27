@@ -10,9 +10,9 @@ Spring Boot를 이용한 현대적인 웹 애플리케이션 개발을 체계적
 
 ### Core Framework
 - **Java 21** (Switch expressions, Text blocks, Records)
-- **Spring Boot 3.5.3** (최신 LTS 버전)
+- **Spring Boot 3.3.6** (현재 안정 LTS 버전)
 - **Spring Security 6.4.4** with OAuth2 Client
-- **Spring Cloud 2024.0.1**
+- **Spring Cloud 2023.0.4** (Leyton)
 - **Gradle 8.12.1**
 
 ## 📦 공통 의존성 관리 시스템
@@ -166,6 +166,7 @@ git commit -m "deps: update spring boot to 3.5.4"
 ### Security & Authentication
 - **Spring Security 6.4.4**
 - **OAuth2 Client** (Google, Facebook, GitHub, Kakao)
+- **HashiCorp Vault** (중앙집중식 민감정보 관리)
 - **Lucy XSS Filter 2.0.1** (XSS Protection)
 - **SSL/HTTPS** with PKCS12
 - **JWT Token** Support
@@ -834,9 +835,37 @@ spring:
 ### 다층 보안 아키텍처
 - **HTTPS/SSL**: 전송 계층 암호화
 - **OAuth2**: 표준 인증 프로토콜
+- **HashiCorp Vault**: 민감정보 중앙집중식 보안 관리
 - **XSS 보호**: Lucy Filter 기반 입력 검증
 - **CSRF 보호**: 토큰 기반 요청 검증
 - **SQL 인젝션 방어**: MyBatis 파라미터 바인딩
+
+### 민감정보 관리 (HashiCorp Vault)
+Primavera는 데이터베이스 패스워드, OAuth2 클라이언트 시크릿, JWT 시크릿 등 모든 민감정보를 HashiCorp Vault를 통해 중앙집중식으로 관리합니다.
+
+#### 주요 특징
+- **중앙집중식 관리**: 모든 환경(local, test, prod)의 민감정보를 Vault에서 통합 관리
+- **정책 기반 접근 제어**: 애플리케이션용(읽기 전용), 개발자용(전체 권한) 토큰 분리
+- **자동 토큰 생성**: Docker Compose 실행 시 토큰 자동 생성 및 저장
+- **환경별 시크릿 분리**: local/test/prod 환경별 독립적인 시크릿 관리
+
+#### 사용 예시
+```bash
+# 토큰 파일 확인
+cat infrastructure/vault/app-token.txt
+
+# Spring Boot에서 Vault 설정 활용
+./gradlew :chap04:bootRun \
+  -Dspring.profiles.active=vault,local \
+  -Dvault.token=$(cat infrastructure/vault/app-token.txt)
+```
+
+#### 지원되는 시크릿 경로
+- `secret/primavera/common`: 공통 설정 (DB 드라이버, 암호화 알고리즘 등)
+- `secret/primavera/local/*`: 로컬 개발 환경 설정
+- `secret/primavera/test/*`: 테스트 환경 설정  
+- `secret/primavera/prod/*`: 프로덕션 환경 설정
+- `secret/primavera/*/security`: OAuth2 클라이언트 시크릿, JWT 시크릿 등
 
 ### 인증 및 권한 관리
 ```yaml

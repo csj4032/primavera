@@ -500,12 +500,29 @@ docker exec mariadb-primavera mariadb -u root -proot -e "SHOW DATABASES;"
 
 ### 🔐 Vault 시크릿 관리
 
+#### 토큰 생성 및 저장
+
+Docker Compose 실행 시 Vault 토큰이 자동으로 생성되어 `infrastructure/vault/` 폴더에 저장됩니다:
+
+```bash
+# 생성되는 토큰 파일들
+infrastructure/vault/
+├── app-token.txt     # 애플리케이션용 읽기 전용 토큰
+├── dev-token.txt     # 개발자용 전체 권한 토큰
+└── tokens.json       # 토큰 메타데이터 포함 JSON
+
+# 토큰 사용 방법
+export VAULT_TOKEN=$(cat infrastructure/vault/app-token.txt)
+```
+
+#### Vault CLI 사용
+
 ```bash
 # === Vault 시크릿 접근 ===
 
 # Vault CLI로 접속
 export VAULT_ADDR='http://localhost:8200'
-export VAULT_TOKEN='primavera-dev-token'
+export VAULT_TOKEN=$(cat infrastructure/vault/app-token.txt)
 
 # 시크릿 목록 조회
 vault kv list secret/primavera
@@ -519,14 +536,101 @@ vault kv get secret/primavera/local/jpa-advanced
 vault kv get secret/primavera/local/jpa-board
 vault kv get secret/primavera/local/security
 
-# 시크릿 저장/업데이트
+# 시크릿 저장/업데이트 (개발자 토큰 필요)
+export VAULT_TOKEN=$(cat infrastructure/vault/dev-token.txt)
 vault kv put secret/primavera/local/basic \
   spring.datasource.password=new-secure-password
 
 # Vault UI 접속
 # 브라우저에서 http://localhost:8200 접속
-# 토큰: primavera-dev-token
+# 토큰: infrastructure/vault/app-token.txt 파일 내용 사용
 ```
+
+#### 토큰 정책 및 권한
+
+```bash
+# 애플리케이션 토큰 (읽기 전용)
+- 정책: primavera-app-read
+- TTL: 720시간 (30일)
+- 권한: secret/primavera/* 경로 읽기 전용
+
+# 개발자 토큰 (전체 권한)
+- 정책: primavera-dev-full
+- TTL: 168시간 (7일)
+- 권한: secret/primavera/* 경로 전체 권한
+```
+
+#### Spring Cloud Vault 설정 가이드
+
+**📁 경로 구조 원리**
+
+Spring Cloud Vault는 다음 순서로 Vault 경로를 탐색합니다:
+
+1. `/secret/{application-name}/{profile}` - 앱별 + 프로필별 설정
+2. `/secret/{application-name}` - 앱별 공통 설정  
+3. `/secret/{default-context}/{profile}` - 공유 + 프로필별 설정
+4. `/secret/{default-context}` - 전체 앱 공유 설정
+
+**🔧 주요 설정 속성**
+
+- **`application-name`**: 특정 애플리케이션만의 전용 설정 경로
+  - 기본값: `spring.application.name` 속성값 사용
+  - 예시: `primavera` → `/secret/primavera/*` 경로 탐색
+
+- **`default-context`**: 여러 애플리케이션이 공유하는 공통 설정 경로
+  - 기본값: `"application"`
+  - 예시: `application` → `/secret/application/*` 경로 탐색
+
+**🎯 Primavera 프로젝트 설정 예시**
+
+```yaml
+# application-local.yml
+spring:
+  cloud:
+    vault:
+      host: localhost
+      port: 8200
+      scheme: http
+      authentication: TOKEN
+      token: ${VAULT_TOKEN}
+      kv:
+        enabled: true
+        backend: secret
+        default-context: primavera
+        application-name: primavera
+  config:
+    import: vault://secret/primavera/local/basic
+```
+
+**⚙️ 계층적 시크릿 구조**
+
+```
+secret/
+├── primavera/                    # application-name 기반
+│   ├── common                   # 모든 환경 공통 설정
+│   ├── local/
+│   │   ├── basic               # 로컬 환경 + 기본 모듈
+│   │   ├── mybatis            # 로컬 환경 + MyBatis 모듈
+│   │   └── security           # 로컬 환경 + 보안 설정
+│   ├── test/                   # 테스트 환경 설정
+│   └── prod/                   # 운영 환경 설정
+```
+
+**💡 권장 설정 패턴**
+
+```yaml
+# 명확한 경로 지정 (권장)
+spring:
+  config:
+    import: vault://secret/primavera/local/basic
+  cloud:
+    vault:
+      kv:
+        default-context: ""  # 기본 탐색 비활성화
+        application-name: primavera
+```
+
+이렇게 설정하면 정확히 원하는 시크릿 경로만 접근하여 성능과 보안을 모두 향상시킬 수 있습니다.
 
 ### 💾 백업 및 복원
 

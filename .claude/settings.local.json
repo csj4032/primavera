@@ -45,7 +45,11 @@
       "Bash(do if grep -q \"LocalDateTime\" \"$file\")",
       "Bash(then echo \"Contains LocalDateTime: $file\")",
       "Bash(then echo \"Processing $file\")",
-      "Bash(chmod:*)"
+      "Bash(chmod:*)",
+      "Bash(docker logs:*)",
+      "Bash(docker volume:*)",
+      "Bash(sudo ls:*)",
+      "WebFetch(domain:github.com)"
     ],
     "deny": []
   }

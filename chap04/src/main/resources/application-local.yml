@@ -5,7 +5,7 @@ spring:
       port: 8200
       scheme: http
       authentication: TOKEN
-      token: ${VAULT_TOKEN:primavera-dev-token}
+      token: ${VAULT_TOKEN}
       connection-timeout: 5000
       read-timeout: 15000
       fail-fast: true
@@ -13,12 +13,13 @@ spring:
         enabled: true
         backend: secret
         profile-separator: '/'
-        default-context: primavera
-        application-name: primavera
+        default-context: DataAccessApplication
+        application-name: DataAccessApplication
   config:
-    import: vault://
+    import: vault://secret/DataAccessApplication/local
 
 logging:
   level:
     org.springframework.cloud.vault: DEBUG
     org.springframework.vault: DEBUG
+    com.zaxxer.hikari: DEBUG

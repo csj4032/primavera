@@ -27,19 +27,20 @@ public class SecureDataSourceConfiguration {
     @Primary
     public DataSource secureDataSource() {
         log.info("Vault 기반 보안 DataSource 설정 시작");
+
         HikariConfig config = new HikariConfig();
         config.setJdbcUrl(databaseProperties.getUrl());
         config.setUsername(databaseProperties.getUsername());
         config.setPassword(databaseProperties.getPassword());
         config.setDriverClassName(databaseProperties.getDriverClassName());
-        
+
         config.setMaximumPoolSize(20);
         config.setMinimumIdle(5);
         config.setConnectionTimeout(30000);
         config.setIdleTimeout(600000);
         config.setMaxLifetime(1800000);
         config.setLeakDetectionThreshold(60000);
-        
+
         config.addDataSourceProperty("cachePrepStmts", "true");
         config.addDataSourceProperty("prepStmtCacheSize", "250");
         config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
@@ -50,17 +51,17 @@ public class SecureDataSourceConfiguration {
         config.addDataSourceProperty("cacheServerConfiguration", "true");
         config.addDataSourceProperty("elideSetAutoCommits", "true");
         config.addDataSourceProperty("maintainTimeStats", "false");
-        
+
         // 연결 검증 설정
         config.setConnectionTestQuery("SELECT 1");
         config.setValidationTimeout(3000);
-        
+
         HikariDataSource dataSource = new HikariDataSource(config);
-        
-        log.info("Vault 기반 보안 DataSource 설정 완료 - URL: {}, Username: {}", 
-                maskUrl(databaseProperties.getUrl()), 
+
+        log.info("Vault 기반 보안 DataSource 설정 완료 - URL: {}, Username: {}",
+                maskUrl(databaseProperties.getUrl()),
                 maskUsername(databaseProperties.getUsername()));
-        
+
         return dataSource;
     }
 

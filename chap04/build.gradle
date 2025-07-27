@@ -3,7 +3,6 @@ dependencies {
     databaseDependencies.each { dep -> implementation dep }
     mybatisDependencies.each { dep -> implementation dep }
     testContainersDependencies.each { dep -> testImplementation dep }
-    implementation "org.springframework.boot:spring-boot-starter-security"
     implementation "org.springframework.cloud:spring-cloud-starter-vault-config:${springCloudVaultVersion}"
     implementation "org.springframework.cloud:spring-cloud-vault-config-databases:${springCloudVaultVersion}"
     implementation "commons-io:commons-io:${commonsIoVersion}"

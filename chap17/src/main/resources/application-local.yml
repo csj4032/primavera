@@ -1,6 +1,4 @@
 spring:
-  application:
-    name: Privamera
   jackson:
     time-zone: UTC
   datasource:

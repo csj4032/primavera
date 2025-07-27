@@ -1,6 +1,6 @@
 spring:
   application:
-    name: Privamera
+    name: FileProcessingMonitoringApplication
   jackson:
     time-zone: UTC
   mvc:

@@ -227,11 +227,11 @@ spring:
       port: 8200
       scheme: http
       authentication: TOKEN
-      token: primavera-dev-token
+      token: ${VAULT_TOKEN}  # 환경변수에서 토큰 주입
       kv:
         enabled: true
         backend: secret
-        default-context: primavera/chap04
+        default-context: primavera/local/basic  # chap04는 basic 데이터베이스 사용
   config:
     import: vault://
 ```
@@ -247,42 +247,34 @@ spring:
 
 ### 보안 모범 사례
 
-#### 시크릿 로테이션 전략
+#### 애플리케이션 토큰 사용
 ```bash
-# 정기적 패스워드 변경
-vault kv patch secret/primavera/chap04 \
-  datasource.password=$(openssl rand -base64 32)
+# 1. vault-init 실행 후 생성된 애플리케이션 토큰 확인
+docker-compose logs vault-init | grep "애플리케이션 토큰"
 
-# 버전 관리 및 롤백
-vault kv metadata get secret/primavera/chap04
-vault kv undelete -versions=2 secret/primavera/chap04
+# 2. 환경변수에 토큰 설정
+export VAULT_TOKEN=***REMOVED***
+
+# 3. Spring Boot 애플리케이션 실행
+./gradlew :chap04:bootRun -Dspring.profiles.active=vault,local
 ```
 
-#### 접근 정책 설정
+#### 토큰 검증 및 권한 확인
 ```bash
-# 애플리케이션용 제한된 정책
-vault policy write chap04-app - <<EOF
-path "secret/data/primavera/chap04/*" {
-  capabilities = ["read"]
-}
-EOF
+# 토큰 정보 확인
+vault token lookup $VAULT_TOKEN
 
-# 개발자용 관리 정책
-vault policy write chap04-dev - <<EOF
-path "secret/data/primavera/chap04/*" {
-  capabilities = ["create", "read", "update", "delete", "list"]
-}
-EOF
+# 시크릿 접근 권한 테스트
+vault kv get secret/primavera/local/basic
+
+# 정책 확인
+vault token capabilities secret/data/primavera/local/basic
 ```
 
 #### 환경별 토큰 관리
-```bash
-# 애플리케이션용 토큰 (제한된 권한)
-vault token create -policy="chap04-app" -ttl=24h
-
-# 개발자용 토큰 (관리 권한)
-vault token create -policy="chap04-dev" -ttl=8h
-```
+- **애플리케이션 토큰**: 읽기 전용, 30일 TTL
+- **개발자 토큰**: 전체 권한, 7일 TTL
+- **자동 갱신**: vault-init 스크립트 재실행으로 새 토큰 생성
 
 ### 구현 효과
 

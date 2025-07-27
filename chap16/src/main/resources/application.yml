@@ -1,6 +1,6 @@
 spring:
   application:
-    name: Privamera
+    name: ReactiveProgrammingApplication
   jackson:
     time-zone: UTC
   datasource:
