@@ -1,16 +1,3 @@
-// ==========================================
-// CHAP15 - Spring Cloud Dependencies Management
-// ==========================================
-// Dependencies inherited from root build.gradle:
-// - spring-boot-starter-web ✓
-// - lombok (compileOnly + annotationProcessor) ✓  
-// - spring-boot-starter-test ✓
-// - slf4j-api ✓
-// - jetbrains annotations ✓
-// - jakarta.validation-api (compileOnly) ✓
-// Note: This module only configures Spring Cloud BOM
-// ==========================================
-
 plugins {
     id 'io.spring.dependency-management' version "${springDependencyManagementVersion}"
 }

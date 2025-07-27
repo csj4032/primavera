@@ -38,6 +38,7 @@ infrastructure/
 ### 🎯 주요 특징
 
 - **MariaDB 11.4.7**: 최신 안정 버전 사용
+- **Redis 7**: 세션 저장소 및 캐싱 지원
 - **6개 분리 데이터베이스**: 모듈별 목적에 따른 데이터베이스 분리
 - **자동 초기화**: 컨테이너 시작 시 스키마 및 테스트 데이터 자동 생성
 - **영구 저장**: Docker 볼륨을 통한 데이터 영속성 보장
@@ -81,7 +82,7 @@ newgrp docker
 |------|---------------|-----------|
 | **메모리** | 2GB RAM | 4GB+ RAM |
 | **디스크** | 2GB 여유 공간 | 5GB+ 여유 공간 |
-| **포트** | 1109, 8200 포트 사용 가능 | - |
+| **포트** | 1109, 6379, 8200 포트 사용 가능 | - |
 
 ### 3. 포트 충돌 확인
 
@@ -90,6 +91,11 @@ newgrp docker
 netstat -an | grep 1109
 # 또는
 lsof -i :1109
+
+# 포트 6379 (Redis) 사용 여부 확인
+netstat -an | grep 6379
+# 또는
+lsof -i :6379
 
 # 포트 8200 (Vault) 사용 여부 확인
 netstat -an | grep 8200
@@ -139,6 +145,7 @@ docker network inspect infrastructure_primavera-network
 ```
 NAME                IMAGE               COMMAND                  SERVICE   CREATED         STATUS         PORTS
 mariadb-primavera   mariadb:11.4.7      "docker-entrypoint.s…"   mariadb   2 minutes ago   Up 2 minutes   0.0.0.0:1109->3306/tcp
+redis-primavera     redis:7-alpine      "docker-entrypoint.s…"   redis     2 minutes ago   Up 2 minutes   0.0.0.0:6379->6379/tcp
 vault-primavera     hashicorp/vault:1.15 "docker-entrypoint.s…"   vault     2 minutes ago   Up 2 minutes   0.0.0.0:8200->8200/tcp
 ```
 
@@ -173,6 +180,9 @@ sys
 ```bash
 # MariaDB 연결 테스트
 docker exec mariadb-primavera mariadb -u primavera -pprimavera -e "SELECT 'Connection successful!' AS status;"
+
+# Redis 연결 테스트
+docker exec redis-primavera redis-cli ping
 
 # Vault 상태 확인
 curl -s http://localhost:8200/v1/sys/health | jq
@@ -322,6 +332,18 @@ services:
     networks:
       - primavera-network
 
+  redis:
+    image: redis:7-alpine
+    container_name: redis-primavera
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - primavera-network
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+
   vault:
     image: hashicorp/vault:1.15
     container_name: vault-primavera
@@ -341,6 +363,8 @@ services:
 volumes:
   mariadb_data:
     driver: local
+  redis_data:
+    driver: local
   vault_data:
     driver: local
 
@@ -359,7 +383,8 @@ networks:
 #### 네트워크 특징
 1. **자동 DNS 해석**: 컨테이너 이름으로 서로 통신 가능
    - MariaDB → Vault: `vault:8200`
-   - Vault → MariaDB: `mariadb:3306`
+   - Redis → MariaDB: `mariadb:3306`
+   - Vault → Redis: `redis:6379`
    
 2. **격리된 통신**: 같은 네트워크의 컨테이너끼리만 통신 가능
 
@@ -369,11 +394,17 @@ networks:
    spring:
      datasource:
        url: jdbc:mariadb://mariadb:3306/primavera  # 'mariadb' 호스트명 사용
+     redis:
+       host: redis  # 'redis' 호스트명 사용
+       port: 6379
    
    # 호스트에서 실행될 때
    spring:
      datasource:
        url: jdbc:mariadb://localhost:1109/primavera  # 포워딩된 포트 사용
+     redis:
+       host: localhost  # 'localhost' 사용
+       port: 6379
    ```
 
 #### 네트워크 관리 명령어
@@ -404,6 +435,14 @@ docker network rm infrastructure_primavera-network
 | **포트** | `1109` (외부) → `3306` (내부) | 데이터베이스 접근 |
 | **기본 데이터베이스** | `primavera` | 레거시 호환 |
 
+#### Redis
+| 항목 | 값 | 용도 |
+|------|----|----- |
+| **포트** | `6379` | Redis 접근 |
+| **메모리 제한** | `256MB` | 메모리 사용량 제한 |
+| **데이터 지속성** | `appendonly yes` | AOF 로그 활성화 |
+| **삭제 정책** | `allkeys-lru` | 메모리 부족 시 LRU 삭제 |
+
 #### HashiCorp Vault
 | 항목 | 값 | 용도 |
 |------|----|----- |
@@ -420,6 +459,12 @@ docker volume inspect infrastructure_mariadb_data
 
 # MariaDB 볼륨 크기 확인
 docker exec mariadb-primavera df -h /var/lib/mysql
+
+# Redis 볼륨 위치 확인
+docker volume inspect infrastructure_redis_data
+
+# Redis 볼륨 크기 확인
+docker exec redis-primavera df -h /data
 
 # Vault 볼륨 위치 확인
 docker volume inspect infrastructure_vault_data
@@ -468,10 +513,13 @@ docker-compose logs -f mariadb
 docker-compose logs --tail=100 mariadb
 
 # 리소스 사용량 확인
-docker stats mariadb-primavera vault-primavera
+docker stats mariadb-primavera redis-primavera vault-primavera
 
 # MariaDB 컨테이너 내부 접속
 docker exec -it mariadb-primavera /bin/bash
+
+# Redis 컨테이너 내부 접속
+docker exec -it redis-primavera /bin/sh
 
 # Vault 컨테이너 내부 접속
 docker exec -it vault-primavera /bin/sh
@@ -496,6 +544,29 @@ docker exec -i mariadb-primavera mariadb -u root -proot < init.sql
 
 # 단일 쿼리 실행
 docker exec mariadb-primavera mariadb -u root -proot -e "SHOW DATABASES;"
+
+### 🔴 Redis 데이터 관리
+
+```bash
+# === Redis 데이터 접근 ===
+
+# Redis CLI 접속
+docker exec -it redis-primavera redis-cli
+
+# 키 목록 확인
+docker exec redis-primavera redis-cli KEYS "*"
+
+# 특정 키 값 조회 (예: 세션 데이터)
+docker exec redis-primavera redis-cli GET "session:*"
+
+# 모든 키 삭제 (주의!)
+docker exec redis-primavera redis-cli FLUSHALL
+
+# Redis 메모리 사용량 확인
+docker exec redis-primavera redis-cli INFO memory
+
+# Redis 연결 수 확인
+docker exec redis-primavera redis-cli INFO clients
 ```
 
 ### 🔐 Vault 시크릿 관리
@@ -881,10 +952,11 @@ echo -e "\n3. 데이터베이스 목록:"
 docker exec mariadb-primavera mariadb -u root -proot -e "SHOW DATABASES;" 2>/dev/null
 
 echo -e "\n4. 리소스 사용량:"
-docker stats mariadb-primavera vault-primavera --no-stream --format "table {{.Container}}\t{{.CPUPerc}}\t{{.MemUsage}}\t{{.MemPerc}}"
+docker stats mariadb-primavera redis-primavera vault-primavera --no-stream --format "table {{.Container}}\t{{.CPUPerc}}\t{{.MemUsage}}\t{{.MemPerc}}"
 
 echo -e "\n5. 포트 바인딩:"
 docker port mariadb-primavera
+docker port redis-primavera
 docker port vault-primavera
 
 echo -e "\n6. Vault 상태:"
@@ -1056,6 +1128,6 @@ docker-compose logs --tail=50 mariadb
 
 [⭐ GitHub에서 스타 주기](https://github.com/csj4032/primavera) | [📖 전체 문서 보기](https://github.com/csj4032/primavera/wiki) | [🐛 이슈 리포트](https://github.com/csj4032/primavera/issues)
 
-**현재 상태**: ✅ MariaDB 11.4.7 | 🔐 HashiCorp Vault 1.15 | 🗃️ 6개 데이터베이스 | 🔒 보안 설정 완료
+**현재 상태**: ✅ MariaDB 11.4.7 | 🔴 Redis 7 | 🔐 HashiCorp Vault 1.15 | 🗃️ 6개 데이터베이스 | 🔒 보안 설정 완료
 
 </div>

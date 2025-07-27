@@ -68,12 +68,32 @@ services:
       "
     restart: "no"
 
+  # Redis - Session store & caching for microservices
+  redis:
+    image: redis:7-alpine
+    container_name: redis-primavera
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - primavera-network
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
 volumes:
   mariadb_data:
     driver: local
   vault_data:
     driver: local
   vault_tokens:
+    driver: local
+  redis_data:
     driver: local
 
 networks:

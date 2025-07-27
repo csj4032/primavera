@@ -10,20 +10,19 @@ dependencyManagement {
 }
 
 dependencies {
-    implementation('org.springframework.boot:spring-boot-starter-webflux')
-    //implementation('org.springframework.boot:spring-boot-starter-web')
-    implementation('org.springframework.boot:spring-boot-starter-aop')
-    implementation('org.springframework.boot:spring-boot-devtools')
-    implementation('org.springframework.boot:spring-boot-starter-tomcat')
-    implementation('org.springframework.cloud:spring-cloud-starter-config')
-    implementation("org.modelmapper:modelmapper:${modelMapperVersion}")
-    implementation('org.projectlombok:lombok')
-    implementation("com.squareup.okhttp3:okhttp:${okhttpVersion}")
-    implementation("org.yaml:snakeyaml:${snakeyamlVersion}")
-    implementation("org.hibernate:hibernate-validator:${hibernateValidatorLegacyVersion}")
-    annotationProcessor('org.projectlombok:lombok')
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
+    implementation 'org.springframework.boot:spring-boot-devtools'
+    implementation 'org.springframework.cloud:spring-cloud-starter-config'
+    implementation "com.squareup.okhttp3:okhttp:${okhttpVersion}"
+    implementation "org.modelmapper:modelmapper:${modelMapperVersion}"
+    implementation 'org.projectlombok:lombok'
+    implementation "org.yaml:snakeyaml:${snakeyamlVersion}"
+    implementation "org.hibernate:hibernate-validator:${hibernateValidatorLegacyVersion}"
+    annotationProcessor 'org.projectlombok:lombok'
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude module: 'junit'
+        exclude module: 'junit-vintage-engine'
     }
-    testImplementation('org.springframework.security:spring-security-test')
+    testImplementation 'org.springframework.security:spring-security-test'
 }

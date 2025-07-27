@@ -27,8 +27,8 @@ public class FrontApplication {
 	@Bean
 	public RestTemplate restTemplate(RestTemplateBuilder builder) {
 		return builder
-				.connectTimeout(Duration.ofMillis(1000))
-				.readTimeout(Duration.ofMillis(3000))
+				.setConnectTimeout(Duration.ofMillis(1000))
+				.setReadTimeout(Duration.ofMillis(3000))
 				.build();
 	}
 }

@@ -10,20 +10,21 @@ dependencyManagement {
 }
 
 dependencies {
-    implementation('org.springframework.boot:spring-boot-starter-webflux')
-    implementation('org.springframework.boot:spring-boot-starter-aop')
-    implementation('org.springframework.boot:spring-boot-devtools')
-    implementation('org.springframework.boot:spring-boot-starter-tomcat')
-    implementation('org.springframework.boot:spring-boot-starter-data-mongodb')
-    implementation('org.springframework.boot:spring-boot-starter-data-mongodb-reactive')
-    implementation('org.springframework.cloud:spring-cloud-starter-config')
-    // implementation('org.springframework.security:spring-security-rsa')  // Dependency not available in current Spring Cloud version
-    implementation("org.modelmapper:modelmapper:${modelMapperVersion}")
-    implementation('org.projectlombok:lombok')
-    implementation("com.squareup.okhttp3:okhttp:${okhttpVersion}")
-    annotationProcessor('org.projectlombok:lombok')
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
+    implementation 'org.springframework.boot:spring-boot-devtools'
+    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb-reactive'
+    implementation 'org.springframework.cloud:spring-cloud-starter-config'
+    implementation 'org.springframework.boot:spring-boot-starter-cache'
+    implementation 'com.github.ben-manes.caffeine:caffeine'
+    implementation "org.modelmapper:modelmapper:${modelMapperVersion}"
+    implementation 'org.projectlombok:lombok'
+    implementation "com.squareup.okhttp3:okhttp:${okhttpVersion}"
+    annotationProcessor 'org.projectlombok:lombok'
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude module: 'junit'
+        exclude module: 'junit-vintage-engine'
     }
-    testImplementation('org.springframework.security:spring-security-test')
+    testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation "io.projectreactor:reactor-test:${reactorTestVersion}"
 }
