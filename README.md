@@ -15,6 +15,144 @@ Spring Boot를 이용한 현대적인 웹 애플리케이션 개발을 체계적
 - **Spring Cloud 2024.0.1**
 - **Gradle 8.12.1**
 
+## 📦 공통 의존성 관리 시스템
+
+Primavera 프로젝트는 **공통 의존성 그룹** 시스템을 통해 모든 서브모듈의 라이브러리를 중앙에서 관리합니다. 이를 통해 버전 일관성을 보장하고 중복을 제거하여 유지보수성을 크게 향상시켰습니다.
+
+### 🎯 공통 의존성 그룹 목록
+
+| 그룹명 | 포함 라이브러리 | 사용 목적 |
+|--------|----------------|-----------|
+| **`databaseDependencies`** | spring-boot-starter-jdbc, mariadb-java-client | 데이터베이스 연결 |
+| **`aopDependencies`** | spring-boot-starter-aop | 관점 지향 프로그래밍 |
+| **`mybatisDependencies`** | mybatis-spring-boot-starter, mybatis-dynamic-sql | MyBatis ORM |
+| **`thymeleafDependencies`** | spring-boot-starter-thymeleaf, thymeleaf-layout-dialect | 템플릿 엔진 |
+| **`securityDependencies`** | spring-security-* (config, core, crypto, web) | Spring Security |
+| **`testContainersDependencies`** | testcontainers (junit-jupiter, mariadb) | 통합 테스트 |
+| **`validationDependencies`** | spring-boot-starter-validation, jakarta.validation-api | Bean Validation |
+| **`developmentDependencies`** | spring-boot-devtools | 개발 도구 |
+| **`loggingDependencies`** | p6spy-spring-boot-starter, log4jdbc-log4j2 | SQL 로깅 |
+| **`webUiDependencies`** | bootstrap, graalvm-js | 웹 UI 라이브러리 |
+
+### 💡 의존성 그룹 사용법
+
+각 서브모듈의 `build.gradle`에서 필요한 기능별 의존성 그룹을 선택적으로 적용할 수 있습니다:
+
+```gradle
+// 기본 plugins 및 dependencies는 root build.gradle에서 자동 상속
+
+dependencies {
+    // AOP 기능이 필요한 경우
+    aopDependencies.each { dep -> implementation dep }
+    
+    // Database 연결이 필요한 경우  
+    databaseDependencies.each { dep -> implementation dep }
+    
+    // MyBatis가 필요한 경우
+    mybatisDependencies.each { dep -> implementation dep }
+    
+    // Thymeleaf 템플릿이 필요한 경우
+    thymeleafDependencies.each { dep -> implementation dep }
+    
+    // Spring Security가 필요한 경우
+    securityDependencies.each { dep -> implementation dep }
+    
+    // TestContainers가 필요한 경우
+    testContainersDependencies.each { dep -> testImplementation dep }
+    
+    // Bean Validation이 필요한 경우
+    validationDependencies.each { dep -> implementation dep }
+    
+    // Development Tools가 필요한 경우
+    developmentDependencies.each { dep -> implementation dep }
+    
+    // SQL Logging이 필요한 경우
+    loggingDependencies.each { dep -> implementation dep }
+    
+    // Web UI 기능이 필요한 경우
+    webUiDependencies.each { dep -> implementation dep }
+    
+    // ==========================================
+    // 모듈별 전용 Dependencies만 추가
+    // ==========================================
+    implementation "your.custom:library:version"
+}
+```
+
+### 📋 실제 사용 예시
+
+#### **chap01** - 간단한 웹 애플리케이션
+```gradle
+dependencies {
+    // 기본 dependencies는 root에서 자동 제공
+    // 추가 필요한 dependencies만 선언
+    implementation("jakarta.annotation:jakarta.annotation-api")
+}
+```
+
+#### **chap03** - AOP + Database 기능
+```gradle
+dependencies {
+    // AOP 기능 사용
+    aopDependencies.each { dep -> implementation dep }
+    
+    // Database 연결 기능 사용
+    databaseDependencies.each { dep -> implementation dep }
+    
+    // TestContainers 기능 사용
+    testContainersDependencies.each { dep -> implementation dep }
+    
+    // 모듈 전용 dependencies
+    implementation "commons-io:commons-io:${commonsIoVersion}"
+}
+```
+
+#### **chap07** - 복합 기능 웹 애플리케이션
+```gradle
+dependencies {
+    // 여러 기능을 조합하여 사용
+    aopDependencies.each { dep -> implementation dep }
+    databaseDependencies.each { dep -> implementation dep }
+    mybatisDependencies.each { dep -> implementation dep }
+    thymeleafDependencies.each { dep -> implementation dep }
+    validationDependencies.each { dep -> implementation dep }
+    developmentDependencies.each { dep -> implementation dep }
+    loggingDependencies.each { dep -> implementation dep }
+    webUiDependencies.each { dep -> implementation dep }
+    testContainersDependencies.each { dep -> testImplementation dep }
+    
+    // 모듈 전용 dependencies
+    implementation "org.springframework.security:spring-security-crypto:${springSecurityVersion}"
+    implementation "org.hibernate:hibernate-core:${hibernateVersion}"
+}
+```
+
+### ✅ 공통 의존성 시스템의 장점
+
+1. **🎯 중복 제거**: 반복되는 dependencies 선언 최소화
+2. **📐 버전 일관성**: 모든 모듈에서 동일한 라이브러리 버전 사용
+3. **🔧 유지보수성**: `gradle.properties`에서 중앙 집중식 버전 관리
+4. **⚡ 개발 효율성**: 필요한 기능만 선택적으로 빠르게 적용
+5. **🛡️ 의존성 충돌 방지**: 검증된 라이브러리 조합 사용
+6. **📚 학습 친화성**: 기능별로 그룹화되어 이해하기 쉬움
+
+### 🔄 버전 업데이트 워크플로우
+
+```bash
+# 1. gradle.properties에서 원하는 라이브러리 버전 업데이트
+vi gradle.properties
+
+# 2. 전체 프로젝트 빌드 테스트
+./gradlew clean build
+
+# 3. 개별 모듈 테스트
+./gradlew :chap07:test
+
+# 4. 변경사항 커밋
+git add gradle.properties
+git commit -m "deps: update spring boot to 3.5.4"
+```
+
 ### Database & Persistence
 - **MySQL/MariaDB 11.4.7** (Primary Database)
 - **Redis** (Caching & Session Storage)

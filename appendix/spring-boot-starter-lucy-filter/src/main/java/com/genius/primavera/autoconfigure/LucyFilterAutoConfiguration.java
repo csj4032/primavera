@@ -30,8 +30,8 @@ public class LucyFilterAutoConfiguration {
 	@AutoConfigureAfter(LucyFilterApplicationConfiguration.class)
 	protected static class LucyFilterApplicationConfigurationAdapter {
 
-		private XssEscapeServletFilter xssEscapeServletFilter;
-		private LucyFilterDelegatingProperties lucyFilterDelegatingProperties;
+		private final XssEscapeServletFilter xssEscapeServletFilter;
+		private final LucyFilterDelegatingProperties lucyFilterDelegatingProperties;
 
 		public LucyFilterApplicationConfigurationAdapter(XssEscapeServletFilter xssEscapeServletFilter, LucyFilterDelegatingProperties lucyFilterDelegatingProperties) {
 			log.info("LucyFilterApplicationConfigurationAdapter");

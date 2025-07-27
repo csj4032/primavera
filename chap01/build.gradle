@@ -1,13 +1,11 @@
-plugins {
-    id 'org.springframework.boot' version "${springBootVersion}"
-    id 'io.spring.dependency-management' version "${springDependencyManagementVersion}"
-}
+// plugins 및 기본 dependencies는 root build.gradle에서 상속
 
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter-web")
+    // 모든 기본 dependencies는 root build.gradle에서 제공
+    // 추가 필요한 dependencies만 여기에 선언
     implementation("jakarta.annotation:jakarta.annotation-api")
-    implementation("jakarta.validation:jakarta.validation-api")
-
+    
+    // JUnit 제외 설정은 모듈별로 필요시 오버라이드
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude module: 'junit'
         exclude module: 'junit-vintage-engine'
