@@ -52,7 +52,456 @@ chap16은 **Java 생태계의 다양한 데이터 처리 라이브러리**를 �
 
 ## 📚 주요 학습 내용
 
-### 1. 파일 업로드 및 검증 시스템
+### 1. TableSaw DataFrame 조작 (Pandas 스타일)
+
+#### DataFrame 생성 및 기본 조작
+
+```java
+@Test
+@DisplayName("TableSaw DataFrame 기본 조작")
+void tablesawBasicOperations() {
+    // CSV에서 DataFrame 생성
+    Table financialData = Table.read().csv("financial_data.csv");
+    
+    // 기본 정보 확인
+    System.out.println("Shape: " + financialData.shape());
+    System.out.println("Column Names: " + financialData.columnNames());
+    System.out.println("Structure:\n" + financialData.structure());
+    
+    // 데이터 필터링 (Pandas의 df[df['column'] > value] 스타일)
+    Table highProfitData = financialData.where(
+        financialData.numberColumn("Profit").isGreaterThan(10000)
+    );
+    
+    // 그룹화 및 집계 (Pandas의 groupby 스타일)
+    Table countryStats = financialData
+        .summarize("Sales", AggregateFunctions.sum, AggregateFunctions.mean)
+        .by("Country");
+    
+    System.out.println("Country Statistics:\n" + countryStats);
+    
+    // 새로운 컬럼 추가 (계산된 컬럼)
+    financialData.addColumns(
+        financialData.numberColumn("Sales")
+            .subtract(financialData.numberColumn("COGS"))
+            .setName("Gross Profit")
+    );
+}
+```
+
+#### 고급 DataFrame 연산
+
+```java
+@Test
+@DisplayName("TableSaw 고급 DataFrame 연산")
+void tablesawAdvancedOperations() {
+    Table sales = Table.read().csv("sales.csv");
+    
+    // 피벗 테이블 생성 (Pandas의 pivot_table 스타일)
+    Table pivotTable = sales.xTabCounts("Country", "Product");
+    
+    // 윈도우 함수 (이동 평균 계산)
+    DoubleColumn salesColumn = sales.numberColumn("Sales");
+    DoubleColumn movingAverage = salesColumn.rolling(3).mean().setName("Moving_Avg_3");
+    sales.addColumns(movingAverage);
+    
+    // 상위/하위 N개 레코드
+    Table top10 = sales.sortDescendingOn("Sales").first(10);
+    
+    // 데이터 타입 변환 및 결측치 처리
+    sales.replaceColumn("Date", 
+        sales.dateColumn("Date").map(LocalDate::toString));
+    
+    // 조건부 컬럼 생성 (Pandas의 np.where 스타일)
+    StringColumn salesCategory = sales.numberColumn("Sales").map(
+        value -> value > 50000 ? "High" : value > 20000 ? "Medium" : "Low"
+    ).setName("Sales_Category");
+    
+    sales.addColumns(salesCategory);
+}
+```
+
+### 2. jOOλ(jool) 함수형 프로그래밍
+
+#### SQL 스타일 데이터 조작
+
+```java
+@Test
+@DisplayName("jOOλ SQL 스타일 데이터 처리")
+void joolSqlStyleProcessing() {
+    List<Financial> financials = loadFinancialData();
+    
+    // SQL SELECT 스타일 - 컬럼 선택 및 변환
+    List<Tuple2<String, Double>> countryTotalSales = Seq.seq(financials)
+        .groupBy(Financial::getCountry)
+        .map(group -> tuple(
+            group.v1, 
+            group.v2.sumDouble(Financial::getSales)
+        ))
+        .sorted(Comparator.comparing(Tuple2::v2, reverseOrder()))
+        .toList();
+    
+    // SQL WHERE 스타일 - 복합 조건 필터링
+    List<Financial> filteredData = Seq.seq(financials)
+        .filter(f -> f.getSales() > 10000)
+        .filter(f -> f.getCountry().equals("Canada"))
+        .filter(f -> f.getProduct().startsWith("Car"))
+        .toList();
+    
+    // SQL HAVING 스타일 - 그룹화 후 조건 적용
+    Map<String, Double> productAvgProfit = Seq.seq(financials)
+        .groupBy(Financial::getProduct)
+        .filter(group -> group.v2.size() >= 5) // HAVING COUNT(*) >= 5
+        .toMap(
+            group -> group.v1,
+            group -> group.v2.averageDouble(Financial::getProfit)
+        );
+}
+```
+
+#### 함수형 파이프라인 구축
+
+```java
+@Test
+@DisplayName("jOOλ 함수형 파이프라인")
+void joolFunctionalPipeline() {
+    List<Financial> data = loadFinancialData();
+    
+    // 복잡한 데이터 변환 파이프라인
+    Map<String, List<Tuple3<String, Double, String>>> 
+        countryProductAnalysis = Seq.seq(data)
+        
+        // 1단계: 수익성 있는 제품만 필터링
+        .filter(f -> f.getProfit() > 0)
+        
+        // 2단계: 국가별 그룹화
+        .groupBy(Financial::getCountry)
+        
+        // 3단계: 각 국가의 상위 제품 분석
+        .toMap(
+            entry -> entry.v1, // 국가명
+            entry -> Seq.seq(entry.v2)
+                .groupBy(Financial::getProduct)
+                .map(productGroup -> tuple(
+                    productGroup.v1, // 제품명
+                    productGroup.v2.sumDouble(Financial::getProfit), // 총 수익
+                    productGroup.v2.maxBy(Financial::getProfit)
+                        .map(Financial::getDiscountBand)
+                        .orElse("Unknown") // 최고 수익 할인 밴드
+                ))
+                .sorted(Comparator.comparing(Tuple3::v2, reverseOrder()))
+                .limit(3) // 상위 3개 제품
+                .toList()
+        );
+}
+```
+
+### 3. Vavr 함수형 프로그래밍
+
+#### 불변 컬렉션 및 패턴 매칭
+
+```java
+@Test
+@DisplayName("Vavr 불변 컬렉션 및 패턴 매칭")
+void vavrImmutableCollections() {
+    // 불변 List 생성 및 조작
+    List<Financial> immutableList = List.ofAll(loadFinancialData());
+    
+    // 함수형 변환 체인
+    List<String> topCountries = immutableList
+        .groupBy(Financial::getCountry)
+        .mapValues(countryData -> countryData.sumBy(Financial::getSales))
+        .toList()
+        .sortBy(Tuple2::_2, Comparator.reverseOrder())
+        .take(5)
+        .map(Tuple2::_1);
+    
+    // Try 모나드를 활용한 안전한 처리
+    String result = immutableList.headOption()
+        .map(financial -> Try.of(() -> 
+            financial.getSales() / financial.getCogs()
+        ))
+        .getOrElse(Try.success(0.0))
+        .map(ratio -> String.format("Profit Margin: %.2f%%", ratio * 100))
+        .getOrElse("계산 실패");
+    
+    // Option 모나드 체인
+    Option<Financial> bestPerformer = immutableList
+        .filter(f -> f.getCountry().equals("USA"))
+        .maxBy(Financial::getProfit);
+    
+    String analysis = bestPerformer
+        .map(f -> f.getProduct() + " - $" + f.getProfit())
+        .getOrElse("데이터 없음");
+}
+```
+
+#### Either 모나드를 활용한 에러 처리
+
+```java
+@Test
+@DisplayName("Vavr Either 모나드 에러 처리")
+void vavrEitherErrorHandling() {
+    
+    // Either를 반환하는 안전한 계산 함수
+    Function<Financial, Either<String, Double>> calculateMargin = financial ->
+        financial.getSales() == 0 
+            ? Either.left("매출이 0입니다")
+            : Either.right((financial.getSales() - financial.getCogs()) / financial.getSales());
+    
+    List<Financial> data = List.ofAll(loadFinancialData());
+    
+    // Either 체인을 통한 안전한 데이터 처리
+    List<Either<String, Tuple2<String, Double>>> results = data
+        .map(financial -> calculateMargin.apply(financial)
+            .map(margin -> Tuple.of(financial.getProduct(), margin))
+        );
+    
+    // 성공과 실패 분리 처리
+    List<Tuple2<String, Double>> successful = results
+        .filter(Either::isRight)
+        .map(Either::get);
+        
+    List<String> errors = results
+        .filter(Either::isLeft)
+        .map(Either::getLeft);
+    
+    log.info("성공한 계산: {}", successful.size());
+    log.info("실패한 계산: {}", errors);
+}
+```
+
+### 4. Eclipse Collections 고성능 컬렉션
+
+#### 메모리 효율적인 Primitive Collections
+
+```java
+@Test
+@DisplayName("Eclipse Collections Primitive Collections")
+void eclipseCollectionsPrimitives() {
+    List<Financial> data = loadFinancialData();
+    
+    // Primitive 컬렉션으로 메모리 효율성 극대화
+    DoubleList salesData = new DoubleArrayList();
+    IntList monthData = new IntArrayList();
+    
+    data.forEach(financial -> {
+        salesData.add(financial.getSales());
+        monthData.add(financial.getDate().getMonthValue());
+    });
+    
+    // 고성능 통계 계산
+    double totalSales = salesData.sum();
+    double avgSales = salesData.average();
+    double maxSales = salesData.max();
+    double minSales = salesData.min();
+    
+    // 월별 매출 그룹화 (primitive 기반)
+    IntObjectMap<DoubleList> salesByMonth = new IntObjectHashMap<>();
+    
+    for (int i = 0; i < monthData.size(); i++) {
+        int month = monthData.get(i);
+        double sales = salesData.get(i);
+        
+        salesByMonth.getIfAbsentPut(month, DoubleArrayList::new)
+                   .add(sales);
+    }
+    
+    // 월별 통계 계산
+    IntObjectMap<DoubleSummaryStatistics> monthlyStats = salesByMonth
+        .collectValues((month, monthSales) -> new DoubleSummaryStatistics(
+            monthSales.sum(),
+            monthSales.average(),
+            monthSales.max(),
+            monthSales.min(),
+            monthSales.size()
+        ));
+}
+```
+
+#### 고급 컬렉션 연산
+
+```java
+@Test
+@DisplayName("Eclipse Collections 고급 연산")
+void eclipseCollectionsAdvanced() {
+    MutableList<Financial> data = Lists.mutable.ofAll(loadFinancialData());
+    
+    // Partition (조건에 따른 분할)
+    PartitionMutableList<Financial> partitioned = 
+        data.partition(f -> f.getProfit() > 5000);
+    
+    MutableList<Financial> profitable = partitioned.getSelected();
+    MutableList<Financial> unprofitable = partitioned.getRejected();
+    
+    // GroupBy with aggregation
+    Multimap<String, Financial> byCountry = data.groupBy(Financial::getCountry);
+    
+    MutableMap<String, Double> countryTotals = byCountry.keyMultiValuePairsView()
+        .toMap(
+            Pair::getOne,
+            pair -> pair.getTwo().sumOfDouble(Financial::getSales)
+        );
+    
+    // Zip 연산 (두 컬렉션 결합)
+    MutableList<String> products = data.collect(Financial::getProduct);
+    MutableList<Double> profits = data.collect(Financial::getProfit);
+    
+    MutableList<Pair<String, Double>> productProfitPairs = 
+        products.zip(profits);
+    
+    // Cartesian Product (직교곱)
+    MutableList<String> categories = Lists.mutable.of("Electronics", "Clothing", "Food");
+    MutableList<String> regions = Lists.mutable.of("North", "South", "East", "West");
+    
+    MutableList<Pair<String, String>> categoryRegionCombos = 
+        categories.flatCollect(cat -> 
+            regions.collect(region -> Tuples.pair(cat, region))
+        );
+}
+```
+
+### 5. Weka 머신러닝 통합
+
+#### 데이터 전처리 및 모델 학습
+
+```java
+@Test
+@DisplayName("Weka 머신러닝 파이프라인")
+void wekaMachineLearningPipeline() throws Exception {
+    // 1. 데이터 로딩 및 Weka Instances 변환
+    List<Financial> financialData = loadFinancialData();
+    Instances dataset = convertToWekaInstances(financialData);
+    
+    // 2. 데이터 전처리
+    // 결측치 제거
+    RemoveMissingValues removeMissing = new RemoveMissingValues();
+    removeMissing.setInputFormat(dataset);
+    dataset = Filter.useFilter(dataset, removeMissing);
+    
+    // 수치형 속성 정규화
+    Normalize normalize = new Normalize();
+    normalize.setInputFormat(dataset);
+    dataset = Filter.useFilter(dataset, normalize);
+    
+    // 3. 훈련/테스트 분할
+    dataset.randomize(new Random(42));
+    int trainSize = (int) Math.round(dataset.numInstances() * 0.8);
+    int testSize = dataset.numInstances() - trainSize;
+    
+    Instances trainSet = new Instances(dataset, 0, trainSize);
+    Instances testSet = new Instances(dataset, trainSize, testSize);
+    
+    // 4. 분류 모델 훈련 (Random Forest)
+    RandomForest classifier = new RandomForest();
+    classifier.setNumIterations(100);
+    classifier.buildClassifier(trainSet);
+    
+    // 5. 모델 평가
+    Evaluation eval = new Evaluation(trainSet);
+    eval.evaluateModel(classifier, testSet);
+    
+    log.info("정확도: {}", eval.pctCorrect());
+    log.info("혼동 행렬:\n{}", eval.toMatrixString());
+    log.info("분류 리포트:\n{}", eval.toClassDetailsString());
+}
+
+private Instances convertToWekaInstances(List<Financial> data) {
+    // Weka Instances 생성 로직
+    ArrayList<Attribute> attributes = new ArrayList<>();
+    attributes.add(new Attribute("sales"));
+    attributes.add(new Attribute("cogs"));
+    attributes.add(new Attribute("profit"));
+    
+    // 범주형 타겟 변수 (High/Medium/Low profit)
+    ArrayList<String> profitCategories = new ArrayList<>();
+    profitCategories.add("Low");
+    profitCategories.add("Medium"); 
+    profitCategories.add("High");
+    attributes.add(new Attribute("profit_category", profitCategories));
+    
+    Instances instances = new Instances("financial_data", attributes, data.size());
+    instances.setClassIndex(instances.numAttributes() - 1);
+    
+    // 데이터 인스턴스 추가
+    for (Financial financial : data) {
+        double[] values = new double[]{
+            financial.getSales(),
+            financial.getCogs(),
+            financial.getProfit(),
+            determineProfitCategory(financial.getProfit())
+        };
+        instances.add(new DenseInstance(1.0, values));
+    }
+    
+    return instances;
+}
+```
+
+### 6. Smile 고성능 머신러닝
+
+#### 고급 회귀 분석
+
+```java
+@Test
+@DisplayName("Smile 회귀 분석 및 예측")
+void smileRegressionAnalysis() {
+    List<Financial> data = loadFinancialData();
+    
+    // 특성 행렬 준비
+    double[][] features = data.stream()
+        .map(f -> new double[]{
+            f.getUnitsSold(),
+            f.getManufacturingPrice(),
+            f.getSalePrice(),
+            encodeCategory(f.getDiscountBand())
+        })
+        .toArray(double[][]::new);
+    
+    // 타겟 변수 (매출)
+    double[] targets = data.stream()
+        .mapToDouble(Financial::getSales)
+        .toArray();
+    
+    // 훈련/테스트 분할
+    int trainSize = (int) (features.length * 0.8);
+    double[][] trainX = Arrays.copyOfRange(features, 0, trainSize);
+    double[] trainY = Arrays.copyOfRange(targets, 0, trainSize);
+    double[][] testX = Arrays.copyOfRange(features, trainSize, features.length);
+    double[] testY = Arrays.copyOfRange(targets, trainSize, targets.length);
+    
+    // Random Forest 회귀 모델
+    RandomForest model = RandomForest.fit(
+        Formula.lhs("sales"), 
+        DataFrame.of(trainX, "units", "mfg_price", "sale_price", "discount"),
+        trainY
+    );
+    
+    // 예측 수행
+    double[] predictions = model.predict(
+        DataFrame.of(testX, "units", "mfg_price", "sale_price", "discount")
+    );
+    
+    // 모델 성능 평가
+    double rmse = RMSE.of(testY, predictions);
+    double mae = MAE.of(testY, predictions);
+    double r2 = cor(testY, predictions);
+    
+    log.info("RMSE: {}", rmse);
+    log.info("MAE: {}", mae);
+    log.info("R²: {}", r2 * r2);
+    
+    // 특성 중요도 분석
+    double[] importance = model.importance();
+    String[] featureNames = {"Units Sold", "Mfg Price", "Sale Price", "Discount"};
+    
+    for (int i = 0; i < importance.length; i++) {
+        log.info("특성 중요도 - {}: {}", featureNames[i], importance[i]);
+    }
+}
+```
+
+### 7. 파일 업로드 및 검증 시스템
 
 #### Chain of Responsibility 패턴 기반 검증
 
