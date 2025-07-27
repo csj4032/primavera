@@ -123,7 +123,7 @@ public class WriteArticleServiceImpl implements WriteArticleService {
 		article.setAuthor(author);
 		article.setSubject(writeArticle.getSubject());
 		article.setStatus(writeArticle.getStatus());
-		article.setRegDt(LocalDateTime.now());
+		article.setCreatedAt(LocalDateTime.now());
 		return article;
 	}
 

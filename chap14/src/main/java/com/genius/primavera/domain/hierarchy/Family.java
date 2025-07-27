@@ -30,8 +30,8 @@ public abstract class Family {
 	private String habitat;
 
 	@Column(name = "created_at")
-	private LocalDateTime regDt;
+	private LocalDateTime createdAt;
 
 	@Column(name = "updated_at")
-	private LocalDateTime modDt;
+	private LocalDateTime updatedAt;
 }

@@ -1,6 +1,6 @@
 spring:
   application:
-    name: primavera-chapter-05
+    name: VaadinApplication
   profiles:
     active: local
     group:

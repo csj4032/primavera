@@ -1,22 +1,7 @@
-// plugins 및 기본 dependencies는 root build.gradle에서 상속
-
 dependencies {
-    // ==========================================
-    // 공통 Dependency Groups 사용 예시
-    // ==========================================
-    
-    // AOP 기능 사용
     aopDependencies.each { dep -> implementation dep }
-    
-    // Database 연결 기능 사용
     databaseDependencies.each { dep -> implementation dep }
-    
-    // TestContainers 기능 사용
     testContainersDependencies.each { dep -> implementation dep }
-    
-    // ==========================================
-    // chap03 모듈 전용 Dependencies
-    // ==========================================
     implementation "commons-io:commons-io:${commonsIoVersion}"
     testImplementation project(":appendix:spring-boot-starter-test-container")
     compileOnly project(":chap01")

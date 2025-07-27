@@ -35,8 +35,8 @@ public class Article {
 	@Builder.Default
 	private List<Attachment> attachments = new ArrayList<>();
 	private Attachment saveAttachment;
-	private Instant regDt;
-	private Instant modDt;
+	private Instant createdAt;
+	private Instant updatedAt;
 
 	public long getAuthorId() {
 		return author.getId();

@@ -35,8 +35,8 @@ class DomainIntegrationTest {
                 .password("securePassword123")
                 .nickname("공장장")
                 .roles(Arrays.asList(adminRole, managerRole))
-                .regDt(LocalDateTime.now())
-                .modDt(LocalDateTime.now())
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
                 .build();
 
         // 3. Plant 생성
@@ -82,8 +82,8 @@ class DomainIntegrationTest {
                 .password("securePassword456")
                 .nickname("지역책임자")
                 .roles(Arrays.asList(multiManagerRole))
-                .regDt(LocalDateTime.now())
-                .modDt(LocalDateTime.now())
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
                 .build();
 
         // 3. 여러 Plant 생성

@@ -14,5 +14,5 @@ public class Winner {
 	private long id;
 	private long userId;
 	private WinnerType winner;
-	private LocalDateTime regDt;
+	private LocalDateTime createdAt;
 }

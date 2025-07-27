@@ -31,8 +31,8 @@ class UserTest {
         assertThat(user.getPassword()).isEqualTo(password);
         assertThat(user.getNickname()).isEqualTo(nickname);
         assertThat(user.getRoles()).hasSize(2);
-        assertThat(user.getRegDt()).isEqualTo(now);
-        assertThat(user.getModDt()).isEqualTo(now);
+        assertThat(user.getCreatedAt()).isEqualTo(now);
+        assertThat(user.getUpdatedAt()).isEqualTo(now);
     }
 
     @Test
@@ -53,8 +53,8 @@ class UserTest {
                 .password(password)
                 .nickname(nickname)
                 .roles(roles)
-                .regDt(now)
-                .modDt(now)
+                .createdAt(now)
+                .updatedAt(now)
                 .build();
 
         // then
@@ -63,8 +63,8 @@ class UserTest {
         assertThat(user.getPassword()).isEqualTo(password);
         assertThat(user.getNickname()).isEqualTo(nickname);
         assertThat(user.getRoles()).hasSize(2);
-        assertThat(user.getRegDt()).isEqualTo(now);
-        assertThat(user.getModDt()).isEqualTo(now);
+        assertThat(user.getCreatedAt()).isEqualTo(now);
+        assertThat(user.getUpdatedAt()).isEqualTo(now);
     }
 
     @Test
@@ -124,8 +124,8 @@ class UserTest {
             new Role(1L, "ADMIN", "Administrator role"),
             new Role(2L, "USER", "User role")
         );
-        LocalDateTime regDt = LocalDateTime.of(2023, 1, 1, 10, 0);
-        LocalDateTime modDt = LocalDateTime.of(2023, 12, 31, 15, 30);
+        LocalDateTime createdAt = LocalDateTime.of(2023, 1, 1, 10, 0);
+        LocalDateTime updatedAt = LocalDateTime.of(2023, 12, 31, 15, 30);
 
         // when
         user.setId(id);
@@ -133,8 +133,8 @@ class UserTest {
         user.setPassword(password);
         user.setNickname(nickname);
         user.setRoles(roles);
-        user.setRegDt(regDt);
-        user.setModDt(modDt);
+        user.setCreatedAt(createdAt);
+        user.setUpdatedAt(updatedAt);
 
         // then
         assertThat(user.getId()).isEqualTo(id);
@@ -143,8 +143,8 @@ class UserTest {
         assertThat(user.getNickname()).isEqualTo(nickname);
         assertThat(user.getRoles()).hasSize(2);
         assertThat(user.getRoles()).containsExactlyElementsOf(roles);
-        assertThat(user.getRegDt()).isEqualTo(regDt);
-        assertThat(user.getModDt()).isEqualTo(modDt);
+        assertThat(user.getCreatedAt()).isEqualTo(createdAt);
+        assertThat(user.getUpdatedAt()).isEqualTo(updatedAt);
     }
 
     @Test
@@ -161,16 +161,16 @@ class UserTest {
         user.setEmail(email);
         user.setPassword(password);
         user.setNickname(nickname);
-        user.setRegDt(now);
-        user.setModDt(now);
+        user.setCreatedAt(now);
+        user.setUpdatedAt(now);
 
         // then
         assertThat(user.getId()).isEqualTo(1L);
         assertThat(user.getEmail()).isEqualTo(email);
         assertThat(user.getPassword()).isEqualTo(password);
         assertThat(user.getNickname()).isEqualTo(nickname);
-        assertThat(user.getRegDt()).isEqualTo(now);
-        assertThat(user.getModDt()).isEqualTo(now);
+        assertThat(user.getCreatedAt()).isEqualTo(now);
+        assertThat(user.getUpdatedAt()).isEqualTo(now);
     }
 
     @Test
@@ -185,8 +185,8 @@ class UserTest {
         user.setPassword(null);
         user.setNickname(null);
         user.setRoles(null);
-        user.setRegDt(null);
-        user.setModDt(null);
+        user.setCreatedAt(null);
+        user.setUpdatedAt(null);
 
         // then
         assertThat(user.getId()).isEqualTo(0L);
@@ -194,8 +194,8 @@ class UserTest {
         assertThat(user.getPassword()).isNull();
         assertThat(user.getNickname()).isNull();
         assertThat(user.getRoles()).isNull();
-        assertThat(user.getRegDt()).isNull();
-        assertThat(user.getModDt()).isNull();
+        assertThat(user.getCreatedAt()).isNull();
+        assertThat(user.getUpdatedAt()).isNull();
     }
 
     @Test
@@ -211,15 +211,15 @@ class UserTest {
         assertThat(defaultUser.getPassword()).isNull();
         assertThat(defaultUser.getNickname()).isNull();
         assertThat(defaultUser.getRoles()).isNull();
-        assertThat(defaultUser.getRegDt()).isNull();
-        assertThat(defaultUser.getModDt()).isNull();
+        assertThat(defaultUser.getCreatedAt()).isNull();
+        assertThat(defaultUser.getUpdatedAt()).isNull();
 
         assertThat(idUser.getId()).isEqualTo(42L);
         assertThat(idUser.getEmail()).isNull();
         assertThat(idUser.getPassword()).isNull();
         assertThat(idUser.getNickname()).isNull();
         assertThat(idUser.getRoles()).isNull();
-        assertThat(idUser.getRegDt()).isNull();
-        assertThat(idUser.getModDt()).isNull();
+        assertThat(idUser.getCreatedAt()).isNull();
+        assertThat(idUser.getUpdatedAt()).isNull();
     }
 }

@@ -1,38 +1,13 @@
-// plugins 및 기본 dependencies는 root build.gradle에서 상속
-
 dependencies {
-    // ==========================================
-    // 공통 Dependency Groups 사용 (chap07의 복합 기능)
-    // ==========================================
-    
-    // AOP 기능
     aopDependencies.each { dep -> implementation dep }
-    
-    // Database 연결 및 MyBatis
     databaseDependencies.each { dep -> implementation dep }
     mybatisDependencies.each { dep -> implementation dep }
-    
-    // Thymeleaf 템플릿 엔진
     thymeleafDependencies.each { dep -> implementation dep }
-    
-    // Validation 기능
     validationDependencies.each { dep -> implementation dep }
-    
-    // Development Tools
     developmentDependencies.each { dep -> implementation dep }
-    
-    // Logging 관련
     loggingDependencies.each { dep -> implementation dep }
-    
-    // Web UI 관련
     webUiDependencies.each { dep -> implementation dep }
-    
-    // TestContainers
     testContainersDependencies.each { dep -> testImplementation dep }
-    
-    // ==========================================
-    // chap07 모듈 전용 Dependencies
-    // ==========================================
     implementation "org.springframework.security:spring-security-crypto:${springSecurityVersion}"
     implementation "org.hibernate:hibernate-core:${hibernateVersion}"
 }

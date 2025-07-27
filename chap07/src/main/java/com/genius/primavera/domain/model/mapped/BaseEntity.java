@@ -12,8 +12,8 @@ public class BaseEntity {
 	private Long id;
 	@Column(name = "NAME")
 	private String name;
-	@Column(name = "REG_DT")
-	private LocalDateTime regDt;
-	@Column(name = "MOD_DT")
-	private LocalDateTime modDt;
+	@Column(name = "CREATED_AT")
+	private LocalDateTime createdAt;
+	@Column(name = "UPDATED_AT")
+	private LocalDateTime updatedAt;
 }
