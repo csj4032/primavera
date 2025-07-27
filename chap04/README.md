@@ -252,8 +252,8 @@ spring:
 # 1. vault-init 실행 후 생성된 애플리케이션 토큰 확인
 docker-compose logs vault-init | grep "애플리케이션 토큰"
 
-# 2. 환경변수에 토큰 설정
-export VAULT_TOKEN=***REMOVED***
+# 2. 환경변수에 토큰 설정 (실제 토큰으로 교체)
+export VAULT_TOKEN=<your-vault-token-here>
 
 # 3. Spring Boot 애플리케이션 실행
 ./gradlew :chap04:bootRun -Dspring.profiles.active=vault,local
