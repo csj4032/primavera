@@ -178,10 +178,21 @@ docker exec mariadb-primavera mariadb -u primavera -pprimavera -e "SELECT 'Conne
 curl -s http://localhost:8200/v1/sys/health | jq
 ```
 
-### 5. Vault 시크릿 초기화
+### 5. Vault 시크릿 자동 초기화
+
+Docker Compose 시작 시 Vault 초기화가 자동으로 실행됩니다:
 
 ```bash
-# Vault 초기화 스크립트 실행
+# 백그라운드에서 서비스 시작 (Vault 자동 초기화 포함)
+docker-compose up -d
+
+# 초기화 로그 확인
+docker-compose logs vault-init
+```
+
+**수동 초기화 (필요시):**
+```bash
+# Vault 초기화 스크립트 수동 실행
 ./vault-init.sh
 
 # 또는 수동으로 기본 시크릿 설정
@@ -191,8 +202,8 @@ export VAULT_TOKEN='primavera-dev-token'
 # 시크릿 엔진 활성화
 vault secrets enable -path=secret kv-v2
 
-# Chapter 04 시크릿 설정
-vault kv put secret/primavera/chap04 \
+# 프로젝트 시크릿 설정 예시 (환경별)
+vault kv put secret/primavera/local \
   spring.datasource.url=jdbc:mariadb://localhost:1109/primavera \
   spring.datasource.username=primavera \
   spring.datasource.password=primavera
@@ -499,11 +510,17 @@ export VAULT_TOKEN='primavera-dev-token'
 # 시크릿 목록 조회
 vault kv list secret/primavera
 
-# 특정 챕터 시크릿 조회
-vault kv get secret/primavera/chap04
+# 프로젝트 시크릿 조회 (환경별, 데이터베이스별)
+vault kv get secret/primavera/common
+vault kv get secret/primavera/local/basic
+vault kv get secret/primavera/local/mybatis
+vault kv get secret/primavera/local/mybatis-board
+vault kv get secret/primavera/local/jpa-advanced
+vault kv get secret/primavera/local/jpa-board
+vault kv get secret/primavera/local/security
 
-# 시크릿 저장
-vault kv put secret/primavera/chap04 \
+# 시크릿 저장/업데이트
+vault kv put secret/primavera/local/basic \
   spring.datasource.password=new-secure-password
 
 # Vault UI 접속

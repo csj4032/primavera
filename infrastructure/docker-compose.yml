@@ -42,6 +42,29 @@ services:
       timeout: 5s
       retries: 5
 
+  vault-init:
+    image: hashicorp/vault:1.15
+    container_name: vault-init-primavera
+    depends_on:
+      vault:
+        condition: service_healthy
+    environment:
+      VAULT_ADDR: http://vault:8200
+      VAULT_TOKEN: primavera-dev-token
+    volumes:
+      - ./vault-init.sh:/vault-init.sh:ro
+    networks:
+      - primavera-network
+    command: |
+      sh -c "
+        echo 'Waiting for Vault to be ready...'
+        sleep 10
+        apk add --no-cache curl jq
+        chmod +x /vault-init.sh
+        /vault-init.sh
+      "
+    restart: "no"
+
 volumes:
   mariadb_data:
     driver: local

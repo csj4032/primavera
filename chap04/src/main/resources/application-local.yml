@@ -1,0 +1,24 @@
+spring:
+  cloud:
+    vault:
+      host: localhost
+      port: 8200
+      scheme: http
+      authentication: TOKEN
+      token: ${VAULT_TOKEN:primavera-dev-token}
+      connection-timeout: 5000
+      read-timeout: 15000
+      fail-fast: true
+      kv:
+        enabled: true
+        backend: secret
+        profile-separator: '/'
+        default-context: primavera
+        application-name: primavera
+  config:
+    import: vault://
+
+logging:
+  level:
+    org.springframework.cloud.vault: DEBUG
+    org.springframework.vault: DEBUG
