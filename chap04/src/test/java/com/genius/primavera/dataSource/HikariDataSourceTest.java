@@ -12,9 +12,14 @@ import org.springframework.test.context.ActiveProfiles;
 import javax.sql.DataSource;
 import java.sql.SQLException;
 
+/**
+ * @ActiveProfiles("test")만 존재할 경우 Vault 연결 정보을 이용
+ * @EnablePrimaveraTestcontainers 사용할 경우 testcontainers를 이용하여 MariaDB 컨테이너를 실행
+ */
 @Slf4j
 @SpringBootTest
 @ActiveProfiles("test")
+@EnablePrimaveraTestcontainers(ContainerType.MARIADB)
 public class HikariDataSourceTest {
 
     @Autowired

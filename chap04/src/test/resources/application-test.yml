@@ -2,8 +2,7 @@ spring:
   application:
     name: DataAccessApplication
   config:
-    activate:
-      on-profile: test
+    import: "optional:vault:"
   cloud:
     vault:
       host: localhost
@@ -36,7 +35,7 @@ primavera:
       enabled: true
       dockerImageName: mariadb:11.4.7
       driverClassName: org.mariadb.jdbc.Driver
-      databaseName: primavera
+      databaseName: primavera111
       username: primavera
       password: primavera
       initScript: sql/schema.sql
