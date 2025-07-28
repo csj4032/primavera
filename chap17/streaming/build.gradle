@@ -1,17 +1,5 @@
 plugins {
-    id 'java'
-    id 'org.springframework.boot'
-    id 'io.spring.dependency-management'
     id 'org.graalvm.buildtools.native'
-}
-
-group = 'com.genius.primavera'
-version = '1.0.0-SNAPSHOT'
-
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
-    }
 }
 
 configurations {
@@ -20,19 +8,15 @@ configurations {
     }
 }
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     
-    // Kafka
-    implementation 'org.springframework.kafka:spring-kafka'
-    implementation "org.apache.kafka:kafka-streams:${kafkaVersion}"
+    // Kafka Connect API (required by Debezium embedded)
+    implementation "org.apache.kafka:connect-api:${kafkaVersion}"
+    implementation "org.apache.kafka:connect-runtime:${kafkaVersion}"
     
     // Database
     runtimeOnly "org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}"
@@ -41,18 +25,19 @@ dependencies {
     implementation "co.elastic.clients:elasticsearch-java:${elasticsearchVersion}"
     implementation "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
     
-    // Debezium (for CDC event model classes)
-    implementation "io.debezium:debezium-api:${debeziumVersion}"
+    // Debezium Embedded (for CDC without Kafka)
     implementation "io.debezium:debezium-embedded:${debeziumVersion}"
+    implementation "io.debezium:debezium-connector-mariadb:${debeziumVersion}"
+    
+    // JSON processing for CDC events
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonVersion}"
     
     // Utilities
     implementation "org.apache.commons:commons-lang3:${commonsLang3Version}"
     
     // Test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework.kafka:spring-kafka-test'
     testImplementation "org.testcontainers:junit-jupiter:${testContainersVersion}"
-    testImplementation "org.testcontainers:kafka:${testContainersVersion}"
     testImplementation "org.testcontainers:mariadb:${testContainersVersion}"
     testImplementation "org.testcontainers:elasticsearch:${testContainersVersion}"
     

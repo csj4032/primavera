@@ -1,43 +1,31 @@
-// ==========================================
-// CHAP18 - Spring Batch Processing
-// ==========================================
-// Dependencies inherited from root build.gradle:
-// - spring-boot-starter-web ✓
-// - lombok (compileOnly + annotationProcessor) ✓ (duplicated below, will remove)  
-// - spring-boot-starter-test ✓ (exclusions handled by root)
-// - slf4j-api ✓
-// - jetbrains annotations ✓
-// - jakarta.validation-api (compileOnly) ✓
-// Note: plugins block removed (inherited from root)
-// ==========================================
-
-dependencies {
-    // ==========================================
-    // Spring Batch Dependencies
-    // ==========================================
-    implementation 'org.springframework.boot:spring-boot-starter-batch'
-    
-    // ==========================================
-    // Object Mapping Dependencies
-    // ==========================================
-    implementation "org.modelmapper:modelmapper:${modelMapperVersion}"
-    
-    // ==========================================
-    // CSV Processing Dependencies
-    // ==========================================
-    implementation "com.opencsv:opencsv:${openCsvVersion}"
-    
-    // ==========================================
-    // Korean Text Processing Dependencies
-    // ==========================================
-    implementation "org.openkoreantext:open-korean-text:${openKoreanTextVersion}"
-    
-    // ==========================================
-    // Batch Test Dependencies
-    // ==========================================
-    testImplementation 'org.springframework.batch:spring-batch-test'
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version "${springBootVersion}" apply false
+    id 'io.spring.dependency-management' version "${springDependencyManagementVersion}"
+    id 'org.graalvm.buildtools.native' version '0.10.2' apply false
 }
 
-bootJar {
-    mainClass = 'com.genius.primavera.PrimaveraApplication'
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management'
+
+    group = 'com.genius.primavera'
+    version = '1.0.0-SNAPSHOT'
+
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(21)
+        }
+    }
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencyManagement {
+        imports {
+            mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+        }
+    }
 }
