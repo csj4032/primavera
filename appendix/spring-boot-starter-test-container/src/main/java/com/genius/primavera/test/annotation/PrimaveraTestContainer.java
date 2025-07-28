@@ -14,14 +14,17 @@ import java.lang.annotation.*;
 @Inherited
 @SpringBootTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@Import(TestContainerAutoConfiguration.class)
+@Import({TestContainerAutoConfiguration.class, PrimaveraTestContainerConfiguration.class})
 public @interface PrimaveraTestContainer {
 
     @AliasFor(annotation = SpringBootTest.class)
     SpringBootTest.WebEnvironment webEnvironment() default SpringBootTest.WebEnvironment.RANDOM_PORT;
 
     @AliasFor(annotation = SpringBootTest.class)
-    String[] properties() default {};
+    String[] properties() default {
+        "primavera.testcontainers.enabled=true",
+        "primavera.testcontainers.service.enabled=true"
+    };
 
     @AliasFor(annotation = SpringBootTest.class)
     Class<?>[] classes() default {};

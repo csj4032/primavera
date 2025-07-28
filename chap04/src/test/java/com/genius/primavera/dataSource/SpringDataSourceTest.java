@@ -7,9 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -17,8 +15,8 @@ import java.sql.SQLException;
 
 import static org.mockito.Mockito.*;
 
-@SpringBootTest(properties = {"spring.cloud.vault.enabled=false"})
-@PrimaveraTestContainer(databaseName = "primavera2")
+@SpringBootTest()
+@PrimaveraTestContainer
 @ExtendWith(SpringExtension.class)
 public class SpringDataSourceTest {
 
@@ -30,7 +28,7 @@ public class SpringDataSourceTest {
     public void dataSourceTest() throws SQLException {
         try (var connection = dataSource.getConnection()) {
             Assertions.assertEquals("com.zaxxer.hikari.pool.HikariProxyConnection", connection.getClass().getName());
-            Assertions.assertEquals("primavera2", connection.getCatalog());
+            Assertions.assertEquals("primavera", connection.getCatalog());
         }
     }
 

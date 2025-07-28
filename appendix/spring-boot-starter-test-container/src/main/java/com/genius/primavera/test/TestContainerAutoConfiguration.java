@@ -9,8 +9,10 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MapPropertySource;
+import com.genius.primavera.test.annotation.PrimaveraTestContainer;
 import org.testcontainers.containers.MariaDBContainer;
 
 import java.util.HashMap;
@@ -19,18 +21,47 @@ import java.util.Map;
 @Slf4j
 @AutoConfiguration
 @ConditionalOnClass(MariaDBContainer.class)
-@ConditionalOnProperty(name = "primavera.testcontainers.enabled", havingValue = "true", matchIfMissing = false)
-@Import(TestContainerAutoConfiguration.DataSourceConfiguration.class)
+@ConditionalOnProperty(name = "primavera.testcontainers.enabled", havingValue = "true", matchIfMissing = true)
+@Import({TestContainerAutoConfiguration.DataSourceConfiguration.class, PrimaveraTestContainerBeanPostProcessor.class})
 public class TestContainerAutoConfiguration {
 
     @Bean
     @ConditionalOnProperty(name = "primavera.testcontainers.service.enabled", havingValue = "true", matchIfMissing = true)
-    public TestContainerService testContainerService(
-            @Value("${primavera.testcontainers.database-name:primavera}") String databaseName,
-            @Value("${primavera.testcontainers.username:primavera}") String username,
-            @Value("${primavera.testcontainers.password:primavera}") String password,
-            @Value("${primavera.testcontainers.mariadb-version:mariadb:11.4.7}") String mariadbVersion,
-            @Value("${primavera.testcontainers.init-script:sql/schema.sql}") String initScript) {
+    public TestContainerService testContainerService(ConfigurableEnvironment environment) {
+        // 스택 트레이스에서 테스트 클래스 찾아서 어노테이션 읽기
+        String databaseName = "primavera";
+        String username = "primavera";
+        String password = "primavera";
+        String mariadbVersion = "mariadb:11.4.7";
+        String initScript = "sql/schema.sql";
+        
+        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+        for (StackTraceElement element : stackTrace) {
+            try {
+                Class<?> clazz = Class.forName(element.getClassName());
+                PrimaveraTestContainer annotation = AnnotationUtils.findAnnotation(clazz, PrimaveraTestContainer.class);
+                if (annotation != null) {
+                    databaseName = annotation.databaseName();
+                    username = annotation.username();
+                    password = annotation.password();
+                    mariadbVersion = annotation.mariadbVersion();
+                    initScript = annotation.enableInitScript() ? annotation.initScript() : "none";
+                    log.info("어노테이션에서 찾은 databaseName: {}", databaseName);
+                    break;
+                }
+            } catch (ClassNotFoundException e) {
+                // 무시
+            }
+        }
+        
+        // 환경 변수에서도 확인 (우선순위: 환경변수 > 어노테이션)
+        databaseName = environment.getProperty("primavera.testcontainers.database-name", databaseName);
+        username = environment.getProperty("primavera.testcontainers.username", username);  
+        password = environment.getProperty("primavera.testcontainers.password", password);
+        mariadbVersion = environment.getProperty("primavera.testcontainers.mariadb-version", mariadbVersion);
+        initScript = environment.getProperty("primavera.testcontainers.init-script", initScript);
+        
+        log.info("최종 TestContainerService 생성 - databaseName: {}", databaseName);
         return new TestContainerService(databaseName, username, password, mariadbVersion, initScript);
     }
 
