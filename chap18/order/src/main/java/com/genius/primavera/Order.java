@@ -5,6 +5,9 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @Builder
@@ -23,10 +26,39 @@ public class Order {
 	@Id
 	@Column("ID")
 	private Long id;
+	
+	@Column("ORDER_ID")
+	private String orderId;
+	
 	@Column("USER_ID")
 	private Long userId;
+	
+	@Column("CUSTOMER_ID")
+	private String customerId;
+	
 	@Column("PRODUCT_ID")
 	private Long productId;
+	
 	@Column("AMOUNT")
 	private Long amount;
+	
+	@Column("TOTAL_AMOUNT")
+	private BigDecimal totalAmount;
+	
+	@Column("STATUS")
+	@Builder.Default
+	private OrderStatus status = OrderStatus.PENDING;
+	
+	@Column("CREATED_AT")
+	private LocalDateTime createdAt;
+	
+	@Column("UPDATED_AT")
+	private LocalDateTime updatedAt;
+	
+	public enum OrderStatus {
+		PENDING,           // 대기중
+		INVENTORY_CONFIRMED, // 재고 확인됨
+		CANCELLED,         // 취소됨
+		COMPLETED          // 완료됨
+	}
 }

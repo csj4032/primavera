@@ -20,6 +20,13 @@ dependencies {
     implementation "org.modelmapper:modelmapper:${modelMapperVersion}"
     implementation 'org.projectlombok:lombok'
     implementation "com.squareup.okhttp3:okhttp:${okhttpVersion}"
+    
+    // Kafka dependencies
+    implementation 'org.springframework.kafka:spring-kafka'
+    implementation "org.apache.kafka:kafka-streams:${kafkaVersion}"
+    implementation "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonVersion}"
+    
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude module: 'junit'
