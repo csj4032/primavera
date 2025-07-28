@@ -1,10 +1,8 @@
 spring:
   application:
-    name: privamera
+    name: ThymeleafJpaApplication
   profiles:
     active: local
-  jackson:
-    time-zone: UTC
     group:
       local:
         - console-appender
@@ -14,6 +12,8 @@ spring:
         - file-warn-appender
       test:
         - console-appender
+  jackson:
+    time-zone: UTC
 
 server:
   tomcat:

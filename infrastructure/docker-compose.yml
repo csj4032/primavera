@@ -213,7 +213,8 @@ services:
 
   # Sentry Web - Error tracking and monitoring
   sentry-web:
-    image: sentry:24.1.0
+    image: getsentry/sentry:24.1.0
+    platform: linux/amd64
     container_name: sentry-web-primavera
     restart: unless-stopped
     depends_on:
@@ -248,7 +249,8 @@ services:
 
   # Sentry Cron - Background task scheduler
   sentry-cron:
-    image: sentry:24.1.0
+    image: getsentry/sentry:24.1.0
+    platform: linux/amd64
     container_name: sentry-cron-primavera
     restart: unless-stopped
     depends_on:
@@ -271,7 +273,8 @@ services:
 
   # Sentry Worker - Background task processor
   sentry-worker:
-    image: sentry:24.1.0
+    image: getsentry/sentry:24.1.0
+    platform: linux/amd64
     container_name: sentry-worker-primavera
     restart: unless-stopped
     depends_on:

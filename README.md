@@ -282,17 +282,32 @@ docker --version
 docker-compose --version
 ```
 
-### 2. Infrastructure Docker 환경 구성
+### 2. Infrastructure Docker 환경 구성 ⚡ **2025년 1월 업데이트**
 
 #### 📦 Infrastructure 디렉토리 구성
 ```
 infrastructure/
-├── docker-compose.yml    # MariaDB 11.4.7 컨테이너 설정
-└── init.sql             # 초기 데이터베이스 스크립트
+├── docker-compose.yml    # 통합 인프라 컨테이너 설정
+├── init.sql             # 초기 데이터베이스 스크립트
+├── vault/               # HashiCorp Vault 설정
+└── vault-init.sh        # Vault 초기화 스크립트
 ```
 
+#### 🔧 Infrastructure 서비스 구성
+
+| 서비스 | 포트 | 용도 | 비고 |
+|--------|------|------|------|
+| **MariaDB** | 1109 → 3306 | 메인 관계형 데이터베이스 | 모든 챕터 공통 사용 |
+| **HashiCorp Vault** | 8200 | 설정 관리 및 시크릿 저장 | chap10+ 보안 설정용 |
+| **Redis** | 6379 | 캐싱 및 세션 저장소 | 마이크로서비스 세션 공유 |
+| **MongoDB** | 27017 | 문서 데이터베이스 | chap18 Product Service용 |
+| **Apache Kafka** | 9092 | 메시지 브로커 | chap18 이벤트 스트리밍 |
+| **Zookeeper** | 2181 | Kafka 코디네이터 | Kafka 의존성 |
+| **Elasticsearch** | 9200, 9300 | 검색 엔진 | chap17 데이터 파이프라인 |
+| **Sentry** | 9000 | 에러 모니터링 | Self-hosted 에러 추적 |
+
 #### 🚀 Docker Compose 실행 (필수)
-chap03 이상의 모든 모듈 실행 전에 반드시 데이터베이스 환경을 구성해야 합니다.
+chap03 이상의 모든 모듈 실행 전에 반드시 통합 인프라 환경을 구성해야 합니다.
 
 ```bash
 # 1. 프로젝트 클론
@@ -302,7 +317,7 @@ cd primavera
 # 2. Infrastructure 디렉토리로 이동
 cd infrastructure
 
-# 3. Docker Compose로 MariaDB 컨테이너 시작
+# 3. Docker Compose로 전체 인프라 시작
 docker-compose up -d
 
 # 4. 컨테이너 상태 확인
@@ -310,12 +325,39 @@ docker-compose ps
 
 # 출력 예시:
 #     Name                   Command               State            Ports
-# ----------------------------------------------------------------
-# mariadb-primavera   docker-entrypoint.sh mysqld   Up      0.0.0.0:1109->3306/tcp
+# --------------------------------------------------------------------------
+# mariadb-primavera      docker-entrypoint.sh mysqld   Up      0.0.0.0:1109->3306/tcp
+# vault-primavera        vault server -dev             Up      0.0.0.0:8200->8200/tcp
+# redis-primavera        redis-server --appendonly     Up      0.0.0.0:6379->6379/tcp
+# mongodb-primavera      mongod                         Up      0.0.0.0:27017->27017/tcp
+# kafka-primavera        /etc/confluent/docker/run      Up      0.0.0.0:9092->9092/tcp
+# elasticsearch-primavera /bin/tini -- /usr/local/bin/  Up      0.0.0.0:9200->9200/tcp
+# sentry-web-primavera   sentry run web                 Up      0.0.0.0:9000->9000/tcp
 
-# 5. 컨테이너 로그 확인 (선택사항)
+# 5. 특정 서비스 로그 확인
 docker-compose logs -f mariadb
+docker-compose logs -f sentry-web
 ```
+
+#### 💡 Infrastructure 업데이트 내용 (2025년 1월)
+
+**✅ 추가된 서비스:**
+- **Self-hosted Sentry**: 온프레미스 에러 모니터링 시스템
+- **HashiCorp Vault**: 보안 설정 및 시크릿 관리
+- **Redis**: 고성능 캐싱 및 세션 저장소
+- **MongoDB**: 문서 지향 데이터베이스
+- **Kafka + Zookeeper**: 이벤트 스트리밍 플랫폼
+- **Elasticsearch**: 검색 및 분석 엔진
+
+**🗑️ 제거된 서비스:**
+- **Kafka Connect + Debezium UI**: 포트 충돌 및 미사용으로 제거
+  - chap17에서는 Debezium Embedded 사용
+  - chap18 Product Service (포트 8083)와 충돌 해결
+
+**🎯 장점:**
+- **통합 관리**: 모든 인프라를 단일 docker-compose로 관리
+- **포트 최적화**: 서비스 간 포트 충돌 완전 해결
+- **리소스 효율성**: 실제 사용되는 서비스만 구성
 
 #### 🔍 MariaDB 컨테이너 상세 확인
 
@@ -848,9 +890,13 @@ spring:
 
 ### 🚀 Phase 3: 고급 기능 구현 (chap10-14)
 
-#### **Chapter 10** - OAuth2 소셜 로그인 & HTTPS ⭐ *Currently Active*
+#### **Chapter 10** - OAuth2 소셜 로그인 & HTTPS
 - **학습 목표**: 현대적인 인증 시스템 및 보안 통신 구현
 - **주요 내용**:
+  - Spring Security OAuth2 Client로 4개 소셜 로그인 통합 (Google, Facebook, GitHub, Kakao)
+  - PKCS12 인증서 기반 HTTPS/SSL 보안 통신
+  - Lucy XSS Filter 통합으로 웹 보안 강화
+  - 소셜 계정과 내부 사용자 시스템 연동
   - **다중 OAuth2 제공자**: Google, Facebook, GitHub, Kakao 통합
   - **HTTPS/SSL 구성**: PKCS12 키스토어 및 자체 서명 인증서
   - **Spring Security 6.4.4**: 최신 보안 설정 및 필터 체인

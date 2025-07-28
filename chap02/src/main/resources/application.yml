@@ -42,9 +42,16 @@ com:
 
 ---
 spring:
+  profiles:
+    active: local
   config:
     activate:
-      on-profile: test
+      on-profile: local
+  jackson:
+    time-zone: UTC
+  banner:
+    charset: UTF-8
+    location: classpath:primavera.txt
 
 com:
   genius:

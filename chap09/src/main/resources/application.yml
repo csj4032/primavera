@@ -1,31 +1,28 @@
 spring:
   application:
     name: SpringSecurityBasicApplication
+  profiles:
+    active: local
+    group:
+      local:
+        - console-appender
+        - file-debug-appender
+        - file-error-appender
+        - file-info-appender
+        - file-warn-appender
+      test:
+        - console-appender
   jackson:
     time-zone: UTC
-  datasource:
-    driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://localhost:1109/primavera?serverTimezone=UTC
-    username: primavera
-    password: primavera
-  thymeleaf:
-    cache: false
-    enabled: true
-    prefix: classpath:/templates/
-    suffix: .html
   lucy-filter:
     enabled: true
     name: lucy-filter
     order: 0
     addUrlPatterns: /*
 
-mybatis:
-  configuration:
-    map-underscore-to-camel-case: true
-    default-fetch-size: 1000
-    default-statement-timeout: 30
-  type-aliases-package: com.genius.primavera.domain
-  type-handlers-package: com.genius.primavera.domain
-
 logging:
-  config: classpath:logback.xml
+  config: classpath:logback-spring.xml
+
+primavera:
+  logs:
+    path: ./logs

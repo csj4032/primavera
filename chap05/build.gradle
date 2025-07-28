@@ -1,65 +1,13 @@
-// ==========================================
-// CHAP05 - Advanced MyBatis & Testing
-// ==========================================
-// Dependencies inherited from root build.gradle:
-// - spring-boot-starter-web ✓
-// - lombok (compileOnly + annotationProcessor) ✓  
-// - spring-boot-starter-test ✓
-// - slf4j-api ✓
-// - jetbrains annotations ✓
-// - jakarta.validation-api (compileOnly) ✓
-// Note: plugins block removed (inherited from root)
-// ==========================================
-
 dependencies {
-    // ==========================================
-    // AOP Dependencies
-    // ==========================================
     aopDependencies.each { dep -> implementation dep }
-    
-    // ==========================================
-    // Database Dependencies  
-    // ==========================================
     databaseDependencies.each { dep -> implementation dep }
-    
-    // ==========================================
-    // MyBatis Dependencies
-    // ==========================================
     mybatisDependencies.each { dep -> implementation dep }
-    
-    // ==========================================
-    // TestContainers Dependencies
-    // ==========================================
     testContainersDependencies.each { dep -> testImplementation dep }
-    
-    // ==========================================
-    // Validation Dependencies
-    // ==========================================
     compileOnly "org.hibernate:hibernate-validator:${hibernateValidatorVersion}"
-    
-    // ==========================================
-    // Connection Pool Dependencies
-    // ==========================================
     compileOnly "com.zaxxer:HikariCP:${hikariCPVersion}"
-    
-    // ==========================================
-    // Security Test Dependencies
-    // ==========================================
     testImplementation "org.springframework.security:spring-security-crypto:${springSecurityVersion}"
     testImplementation "org.springframework.security:spring-security-test"
-    
-    // ==========================================
-    // MyBatis Test Dependencies
-    // ==========================================
     testImplementation "org.mybatis.spring.boot:mybatis-spring-boot-starter-test:${mybatisSpringBootStarterVersion}"
-    
-    // ==========================================
-    // Additional Test Dependencies
-    // ==========================================
     testImplementation "org.mockito:mockito-core:4.+"
-    
-    // ==========================================
-    // Module Dependencies
-    // ==========================================
     testImplementation project(':appendix:spring-boot-starter-test-container')
 }

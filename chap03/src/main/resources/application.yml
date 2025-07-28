@@ -1,14 +1,13 @@
 spring:
+  profiles:
+    active: local
   config:
     activate:
-      on-profile: default
+      on-profile: local
   application:
     name: MvcAopApplication
   jackson:
     time-zone: UTC
-  banner:
-    charset: UTF-8
-    location: classpath:primavera.txt
 
 server:
   tomcat:

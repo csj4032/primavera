@@ -1,16 +1,19 @@
 spring:
   application:
     name: OAuth2SocialLoginApplication
+  profiles:
+    active: local
+    group:
+      local:
+        - console-appender
+        - file-debug-appender
+        - file-error-appender
+        - file-info-appender
+        - file-warn-appender
+      test:
+        - console-appender
   jackson:
     time-zone: UTC
-  datasource:
-    driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://localhost:1109/primavera?serverTimezone=UTC
-    username: primavera
-    password: primavera
-  banner:
-    charset: UTF-8
-    location: classpath:primavera.txt
   thymeleaf:
     cache: false
     enabled: true
@@ -68,21 +71,5 @@ mybatis:
   type-handlers-package: com.genius.primavera.domain
 
 logging:
-  config: classpath:logback.xml
-  level:
-    com.genius.primavera: DEBUG
-    org.springframework.boot: INFO
-    org.springframework.security: DEBUG
-    org.springframework.web: INFO
-    jdbc.sqlonly: INFO
-    jdbc.sqltiming: INFO
-
-server:
-  ssl:
-    key-alias: primavera
-    key-store: infrastructure/certs/primavera.p12
-    key-store-type: PKCS12
-    key-store-password: primavera
-    enabled: true
-  port: 8443
+  config: classpath:logback-spring.xml
 

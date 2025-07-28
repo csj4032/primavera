@@ -11,10 +11,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class MyBatisLoggingApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(MyBatisLoggingApplication.class, args);
 		log.debug("PrimaveraApplication Start Debug");
-		log.info("PrimaveraApplication Start Info");
+		log.info("PrimaveraApplication Start Info");  
 		log.warn("PrimaveraApplication Start Warn");
 		log.error("PrimaveraApplication Start Error");
+		SpringApplication.run(MyBatisLoggingApplication.class, args);
 	}
 }

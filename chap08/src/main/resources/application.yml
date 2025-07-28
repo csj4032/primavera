@@ -3,8 +3,6 @@ spring:
     name: SecurityFilterApplication
   profiles:
     active: local
-  jackson:
-    time-zone: UTC
     group:
       local:
         - console-appender
@@ -14,6 +12,8 @@ spring:
         - file-warn-appender
       test:
         - console-appender
+  jackson:
+    time-zone: UTC
   main:
     allow-bean-definition-overriding: true
 
@@ -22,6 +22,9 @@ spring:
     name: lucyXssFilter
     order: 1
     addUrlPatterns: /*
+
+logging:
+  config: classpath:logback-spring.xml
 
 primavera:
   logs:

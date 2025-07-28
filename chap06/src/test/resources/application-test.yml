@@ -1,7 +1,6 @@
 spring:
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    schema: classpath:sql/schema.sql
     hikari:
       auto-commit: false
       data-source-properties:

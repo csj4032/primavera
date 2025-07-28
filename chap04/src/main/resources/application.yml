@@ -1,6 +1,11 @@
 spring:
   application:
     name: DataAccessApplication
+  profiles:
+    active: local
+  config:
+    activate:
+      on-profile: local
   jackson:
     time-zone: UTC
   datasource:
@@ -8,9 +13,6 @@ spring:
     url: jdbc:mariadb://localhost:1109/primavera?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
     username: primavera
     password: primavera
-  banner:
-    charset: UTF-8
-    location: classpath:primavera.txt
 
 server:
   tomcat:
