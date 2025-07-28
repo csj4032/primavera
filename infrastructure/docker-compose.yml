@@ -162,50 +162,6 @@ services:
       timeout: 10s
       retries: 5
 
-  # Kafka Connect - Debezium CDC connector
-  kafka-connect:
-    image: quay.io/debezium/connect:2.5
-    container_name: kafka-connect-primavera
-    restart: unless-stopped
-    depends_on:
-      kafka:
-        condition: service_healthy
-      mariadb:
-        condition: service_started
-    environment:
-      BOOTSTRAP_SERVERS: kafka:29092
-      GROUP_ID: debezium-cluster
-      CONFIG_STORAGE_TOPIC: connect-configs
-      OFFSET_STORAGE_TOPIC: connect-offsets
-      STATUS_STORAGE_TOPIC: connect-status
-      KEY_CONVERTER: org.apache.kafka.connect.json.JsonConverter
-      VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
-      CONNECT_KEY_CONVERTER_SCHEMAS_ENABLE: 'false'
-      CONNECT_VALUE_CONVERTER_SCHEMAS_ENABLE: 'false'
-    ports:
-      - "8083:8083"
-    networks:
-      - primavera-network
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8083/connectors"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  # Debezium UI - CDC monitoring and management
-  debezium-ui:
-    image: quay.io/debezium/debezium-ui:2.5
-    container_name: debezium-ui-primavera
-    restart: unless-stopped
-    depends_on:
-      kafka-connect:
-        condition: service_healthy
-    environment:
-      KAFKA_CONNECT_URIS: http://kafka-connect:8083
-    ports:
-      - "8080:8080"
-    networks:
-      - primavera-network
 
   # Elasticsearch - Search engine for product indexing
   elasticsearch:
@@ -235,6 +191,107 @@ services:
       timeout: 5s
       retries: 5
 
+  # Sentry PostgreSQL - Database for error tracking
+  sentry-postgres:
+    image: postgres:13
+    container_name: sentry-postgres-primavera
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: sentrypassword
+      POSTGRES_USER: sentry
+      POSTGRES_DB: sentry
+      TZ: UTC
+    volumes:
+      - sentry_postgres_data:/var/lib/postgresql/data
+    networks:
+      - primavera-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sentry"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Sentry Web - Error tracking and monitoring
+  sentry-web:
+    image: sentry:24.1.0
+    container_name: sentry-web-primavera
+    restart: unless-stopped
+    depends_on:
+      sentry-postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      SENTRY_SECRET_KEY: "primavera-sentry-secret-key-change-in-production"
+      SENTRY_POSTGRES_HOST: sentry-postgres
+      SENTRY_POSTGRES_PORT: 5432
+      SENTRY_DB_NAME: sentry
+      SENTRY_DB_USER: sentry
+      SENTRY_DB_PASSWORD: sentrypassword
+      SENTRY_REDIS_HOST: redis
+      SENTRY_REDIS_PORT: 6379
+      SENTRY_SINGLE_ORGANIZATION: 'true'
+      SENTRY_USE_SSL: 'false'
+      SENTRY_WEB_HOST: 0.0.0.0
+      SENTRY_WEB_PORT: 9000
+    ports:
+      - "9000:9000"
+    volumes:
+      - sentry_data:/var/lib/sentry/files
+    networks:
+      - primavera-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/_health/"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Sentry Cron - Background task scheduler
+  sentry-cron:
+    image: sentry:24.1.0
+    container_name: sentry-cron-primavera
+    restart: unless-stopped
+    depends_on:
+      sentry-postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: sentry run cron
+    environment:
+      SENTRY_SECRET_KEY: "primavera-sentry-secret-key-change-in-production"
+      SENTRY_POSTGRES_HOST: sentry-postgres
+      SENTRY_POSTGRES_PORT: 5432
+      SENTRY_DB_NAME: sentry
+      SENTRY_DB_USER: sentry
+      SENTRY_DB_PASSWORD: sentrypassword
+      SENTRY_REDIS_HOST: redis
+      SENTRY_REDIS_PORT: 6379
+    networks:
+      - primavera-network
+
+  # Sentry Worker - Background task processor
+  sentry-worker:
+    image: sentry:24.1.0
+    container_name: sentry-worker-primavera
+    restart: unless-stopped
+    depends_on:
+      sentry-postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: sentry run worker
+    environment:
+      SENTRY_SECRET_KEY: "primavera-sentry-secret-key-change-in-production"
+      SENTRY_POSTGRES_HOST: sentry-postgres
+      SENTRY_POSTGRES_PORT: 5432
+      SENTRY_DB_NAME: sentry
+      SENTRY_DB_USER: sentry
+      SENTRY_DB_PASSWORD: sentrypassword
+      SENTRY_REDIS_HOST: redis
+      SENTRY_REDIS_PORT: 6379
+    networks:
+      - primavera-network
+
 volumes:
   mariadb_data:
     driver: local
@@ -255,6 +312,10 @@ volumes:
   kafka_data:
     driver: local
   elasticsearch_data:
+    driver: local
+  sentry_postgres_data:
+    driver: local
+  sentry_data:
     driver: local
 
 networks:

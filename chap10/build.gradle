@@ -1,109 +1,29 @@
-// ==========================================
-// CHAP10 - OAuth2 Social Login Integration
-// ==========================================
-// Dependencies inherited from root build.gradle:
-// - spring-boot-starter-web ✓ (Tomcat excluded, Undertow used)
-// - lombok (compileOnly + annotationProcessor) ✓  
-// - spring-boot-starter-test ✓
-// - slf4j-api ✓
-// - jetbrains annotations ✓ (duplicated below, will use inherited)
-// - jakarta.validation-api (compileOnly) ✓ (duplicated below, will use inherited)
-// Note: plugins block removed (inherited from root)
-// ==========================================
-
 compileJava {
     options.compilerArgs += ["-Xlint:deprecation"]
 }
 
 dependencies {
-    // ==========================================
-    // Web Server Dependencies (Undertow instead of Tomcat)
-    // ==========================================
     implementation("org.springframework.boot:spring-boot-starter-web") {
         exclude module: "spring-boot-starter-tomcat"
     }
     implementation "org.springframework.boot:spring-boot-starter-undertow"
-    
-    // ==========================================
-    // AOP Dependencies
-    // ==========================================
     aopDependencies.each { dep -> implementation dep }
-    
-    // ==========================================
-    // Database Dependencies  
-    // ==========================================
     databaseDependencies.each { dep -> implementation dep }
-    
-    // ==========================================
-    // MyBatis Dependencies
-    // ==========================================
     mybatisDependencies.each { dep -> implementation dep }
-    
-    // ==========================================
-    // Thymeleaf Dependencies
-    // ==========================================
     thymeleafDependencies.each { dep -> implementation dep }
-    
-    // ==========================================
-    // Validation Dependencies
-    // ==========================================
     validationDependencies.each { dep -> implementation dep }
-    
-    // ==========================================
-    // Development Dependencies
-    // ==========================================
     developmentDependencies.each { dep -> implementation dep }
-    
-    // ==========================================
-    // Logging Dependencies
-    // ==========================================
     loggingDependencies.each { dep -> implementation dep }
-    
-    // ==========================================
-    // Web UI Dependencies
-    // ==========================================
     webUiDependencies.each { dep -> implementation dep }
-    
-    // ==========================================
-    // TestContainers Dependencies
-    // ==========================================
     testContainersDependencies.each { dep -> testImplementation dep }
-    
-    // ==========================================
-    // Security & OAuth2 Dependencies
-    // ==========================================
     implementation "org.springframework.boot:spring-boot-starter-security"
     implementation "org.springframework.boot:spring-boot-starter-oauth2-client"
     implementation "org.springframework.security:spring-security-oauth2-client:${springSecurityVersion}"
     implementation "org.springframework.security:spring-security-oauth2-jose:${springSecurityVersion}"
-    
-    // ==========================================
-    // Thymeleaf Security Integration
-    // ==========================================
     implementation "org.thymeleaf.extras:thymeleaf-extras-springsecurity6:${thymeleafExtrasSpringSecurity6Version}"
-    
-    // ==========================================
-    // Hibernate Dependencies
-    // ==========================================
     implementation "org.hibernate:hibernate-core:${hibernateVersion}"
-    
-    // ==========================================
-    // Security Test Dependencies
-    // ==========================================
     testImplementation "org.springframework.security:spring-security-test:${springSecurityVersion}"
-    
-    // ==========================================
-    // API Testing Dependencies
-    // ==========================================
     testImplementation "io.rest-assured:rest-assured:${restAssuredVersion}"
-    
-    // ==========================================
-    // Codec Dependencies
-    // ==========================================
     implementation "commons-codec:commons-codec:${commonsCodecVersion}"
-    
-    // ==========================================
-    // XSS Protection Module
-    // ==========================================
     implementation project(":appendix:spring-boot-starter-lucy-filter")
 }

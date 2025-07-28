@@ -27,5 +27,5 @@ server:
 sentry:
   dns: https://4084f8500752461897ebbfe3a067d36c@sentry.io/5166811
   environment: local
-  servername: chap15
+  servername: chap16
   release: 0.0.1-SNAPSHOT

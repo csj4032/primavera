@@ -1,18 +1,22 @@
-# Chapter 16 - Java Data Processing Libraries Showcase 📊
+# Chapter 16 - AWS S3 + JOOQ File Processing System 🔄
 
 ## 📋 개요
 
-chap16은 **Java 생태계의 다양한 데이터 처리 라이브러리**를 종합적으로 다루는 쇼케이스 프로젝트입니다. 파일 처리부터 DataFrame 조작, 함수형 프로그래밍, 머신러닝까지 - Java에서 사용할 수 있는 강력한 데이터 처리 도구들을 실무 예제와 함께 학습할 수 있습니다.
+chap16은 **AWS S3 클라우드 스토리지와 JOOQ를 활용한 파일 처리 시스템**을 다루는 실무 중심 프로젝트입니다. 로컬 파일 업로드부터 S3 클라우드 저장, 데이터 가공 처리, JOOQ 기반 데이터베이스 저장까지 - 현대 클라우드 환경에서의 완전한 파일 처리 워크플로우를 학습할 수 있습니다.
 
 ## 🎯 학습 목표
 
-- **📊 DataFrame 라이브러리**: TableSaw를 활용한 Pandas 스타일 데이터 조작
-- **🔧 함수형 프로그래밍**: jOOλ(jool), Vavr, Eclipse Collections 비교 분석
-- **🤖 머신러닝**: Weka, Smile을 활용한 데이터 분석 및 예측 모델
-- **🗂️ 대용량 파일 처리**: Apache POI, Tika를 활용한 다양한 파일 형식 지원
-- **📈 실시간 스트림 처리**: 다양한 스트림 처리 라이브러리 비교
-- **📊 데이터 분석**: 한국어 형태소 분석 및 통계 처리
-- **📈 에러 모니터링**: Sentry 통합을 통한 실시간 에러 트래킹
+### 3가지 파일 처리 시나리오 마스터
+1. **📤 로컬 파일 업로드 → 가공 → 데이터베이스 저장**: 전통적인 파일 처리 워크플로우
+2. **☁️ 로컬 파일 업로드 → AWS S3 업로드**: 클라우드 스토리지 활용한 파일 백업
+3. **📥 S3 다운로드 → 가공 → JOOQ 데이터베이스 저장**: 클라우드 기반 데이터 파이프라인
+
+### 핵심 기술 습득
+- **☁️ AWS S3**: 클라우드 객체 스토리지 서비스 통합
+- **🔧 JOOQ**: 타입 안전 SQL 쿼리 빌더 및 코드 생성
+- **📊 데이터 가공**: TableSaw, jOOλ을 활용한 함수형 데이터 처리
+- **🔄 워크플로우 엔진**: Easy Flows를 통한 파일 처리 파이프라인 구축
+- **📈 모니터링**: Sentry 통합을 통한 실시간 에러 트래킹
 
 ## 🛠️ 핵심 기술 스택
 
@@ -505,6 +509,8 @@ void smileRegressionAnalysis() {
 
 #### Chain of Responsibility 패턴 기반 검증
 
+chap16에서는 **Chain of Responsibility 패턴**을 활용하여 파일 업로드 시 다단계 검증을 수행합니다. 이 패턴을 통해 각 검증 단계를 독립적으로 관리하고 유연하게 확장할 수 있습니다.
+
 ```java
 @Service
 @RequiredArgsConstructor
@@ -514,7 +520,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     
     @Override
     public ExcelImportResponse excelImport(ExcelImportRequest request) {
-        // 검증 체인 실행
+        // 검증 체인 실행 - 모든 검증기가 통과해야 성공
         boolean valid = validatorGroup.get("sizeAndTypeValidation")
             .stream()
             .allMatch(v -> v.validate(request));
@@ -527,38 +533,146 @@ public class ExcelImportServiceImpl implements ExcelImportService {
 }
 ```
 
-#### 다중 검증기 구현
+#### 검증기 인터페이스 및 구현체
+
+##### 1. 공통 Validator 인터페이스
 
 ```java
-// 파일 크기 검증
+public interface Validator {
+    boolean validate(ExcelImportRequest excelImportRequest);
+}
+```
+
+##### 2. 파일 크기 검증기
+
+```java
 @Slf4j
 public class FileSizeValidator implements Validator {
     @Override
-    public boolean validate(ExcelImportRequest request) {
+    public boolean validate(ExcelImportRequest excelImportRequest) {
+        log.info("File Size Validator");
         try {
-            long size = IOUtils.toByteArray(request.getInputStream()).length;
-            log.info("File Size: {}", size);
-            return size > 0;
+            long size = IOUtils.toByteArray(excelImportRequest.getInputStream()).length;
+            log.info("File Size : {}", size);
+            return size > 0; // 파일 크기가 0보다 큰지 검증
         } catch (IOException e) {
             log.error(e.getMessage());
             return false;
         }
     }
 }
+```
 
-// 미디어 타입 검증
+##### 3. 미디어 타입 검증기
+
+```java
+@Slf4j
 public class MediaTypeValidation implements Validator {
+    
+    private static final CharSequence APPLICATION_X_TIKA_OOXML = "application/x-tika-ooxml";
+    
     @Override
-    public boolean validate(ExcelImportRequest request) {
+    public boolean validate(ExcelImportRequest excelImportRequest) {
+        log.info("Media Type Validator");
+        Tika tika = new Tika();
         try {
-            String mediaType = new Tika().detect(request.getInputStream());
-            return ALLOWED_TYPES.contains(mediaType);
+            String mediaType = tika.detect(excelImportRequest.getInputStream());
+            log.info("mediaType : {}", mediaType);
+            return mediaType.contains(APPLICATION_X_TIKA_OOXML); // Excel 파일 형식 검증
         } catch (IOException e) {
+            log.error(e.getMessage());
             return false;
         }
     }
 }
 ```
+
+##### 4. Null 검증기
+
+```java
+@Slf4j
+public class NullValidator implements Validator {
+    @Override
+    public boolean validate(ExcelImportRequest excelImportRequest) {
+        log.info("Null Validation");
+        return excelImportRequest != null; // 요청 객체가 null이 아닌지 검증
+    }
+}
+```
+
+##### 5. 버전 검증기
+
+```java
+@Slf4j
+public class VersionValidation implements Validator {
+    @Override
+    public boolean validate(ExcelImportRequest excelImportRequest) {
+        log.info("version validator");
+        return false; // 현재는 항상 실패 (구현 예정)
+    }
+}
+```
+
+#### 검증 체인 구성 및 확장성
+
+##### 검증기 그룹 설정
+
+```java
+@Configuration
+public class ValidatorConfiguration {
+    
+    @Bean
+    public Map<String, List<Validator>> validatorGroup() {
+        Map<String, List<Validator>> groups = new HashMap<>();
+        
+        // 파일 크기 및 타입 검증 그룹
+        groups.put("sizeAndTypeValidation", Arrays.asList(
+            new NullValidator(),
+            new FileSizeValidator(),
+            new MediaTypeValidation()
+        ));
+        
+        // 추가 검증 그룹 예시
+        groups.put("securityValidation", Arrays.asList(
+            new VirusScanner(),
+            new MaliciousContentDetector()
+        ));
+        
+        return groups;
+    }
+}
+```
+
+##### 검증 실패 처리
+
+```java
+// 검증 실패 시 UnknownFile 팩토리로 처리
+public class UnknownFile extends AbstractResponseFactory {
+    public UnknownFile(ExcelImportRequest request) {
+        super(request);
+    }
+    
+    @Override
+    public ExcelImportResponse getExcelImportResponse() {
+        return ExcelImportResponse.builder()
+            .fileName(excelImportRequest.getName())
+            .mediaType("unknown")
+            .fileSize(0L)
+            .data(Collections.emptyList())
+            .error("파일 검증에 실패했습니다")
+            .build();
+    }
+}
+```
+
+#### 검증 시스템의 장점
+
+1. **확장 가능성**: 새로운 검증기를 쉽게 추가할 수 있음
+2. **독립성**: 각 검증기는 독립적으로 작동하며 테스트 가능
+3. **재사용성**: 검증기를 다른 검증 그룹에서 재사용 가능
+4. **유연성**: 검증 그룹을 동적으로 구성하여 다양한 검증 시나리오 지원
+5. **로깅**: 각 검증 단계별 상세한 로그 제공
+6. **에러 핸들링**: 검증 실패 시 명확한 에러 처리
 
 ### 2. Factory Pattern을 통한 파일 타입별 처리
 
@@ -732,6 +846,59 @@ public void kakaoRepository() throws IOException {
 
 ### 5. Sentry 에러 모니터링 시스템
 
+#### Infrastructure Docker Sentry 사용
+
+chap16에서는 **infrastructure Docker Compose에 구성된 Self-hosted Sentry**를 사용합니다. 클라우드 Sentry 대신 온프레미스 환경에서 완전한 제어권을 가지고 에러 모니터링을 수행할 수 있습니다.
+
+##### Infrastructure Sentry 구성 확인
+
+```bash
+# 1. Infrastructure Docker 환경 시작
+cd infrastructure
+docker-compose up -d
+
+# 2. Sentry 웹 UI 접속
+# http://localhost:9000
+
+# 3. Sentry 상태 확인
+docker-compose ps | grep sentry
+```
+
+##### Infrastructure Sentry 컨테이너 구성
+
+```yaml
+# infrastructure/docker-compose.yml에 구성된 Sentry 서비스들
+services:
+  # Sentry PostgreSQL - 에러 추적용 데이터베이스
+  sentry-postgres:
+    image: postgres:13
+    container_name: sentry-postgres-primavera
+    environment:
+      POSTGRES_PASSWORD: sentrypassword
+      POSTGRES_USER: sentry
+      POSTGRES_DB: sentry
+
+  # Sentry Web - 에러 추적 및 모니터링 웹 인터페이스
+  sentry-web:
+    image: sentry:24.1.0
+    container_name: sentry-web-primavera
+    ports:
+      - "9000:9000"  # 웹 UI 접속 포트
+    environment:
+      SENTRY_SECRET_KEY: "primavera-sentry-secret-key-change-in-production"
+      SENTRY_SINGLE_ORGANIZATION: 'true'
+
+  # Sentry Cron - 백그라운드 작업 스케줄러
+  sentry-cron:
+    image: sentry:24.1.0
+    command: sentry run cron
+
+  # Sentry Worker - 백그라운드 작업 처리기
+  sentry-worker:
+    image: sentry:24.1.0
+    command: sentry run worker
+```
+
 #### 커스텀 Sentry Auto Configuration
 
 ```java
@@ -771,15 +938,31 @@ public class FileProcessingMonitoringApplication {
 }
 ```
 
-#### Sentry 설정 프로퍼티
+#### Local Infrastructure Sentry 설정
 
 ```yaml
+# application-local.yml
 sentry:
-  dns: https://4084f8500752461897ebbfe3a067d36c@sentry.io/5166811
+  dns: http://localhost:9000/api/1/project/1/store/  # Infrastructure Sentry URL
+  environment: local-development
+  servername: chap16-local
+  release: 0.0.1-SNAPSHOT
+
+# application.yml (Production)
+sentry:
+  dns: https://4084f8500752461897ebbfe3a067d36c@sentry.io/5166811  # 클라우드 Sentry (옵션)
   environment: production
-  servername: chap17
+  servername: chap16
   release: 0.0.1-SNAPSHOT
 ```
+
+#### Self-hosted Sentry 장점
+
+1. **데이터 프라이버시**: 에러 데이터가 외부로 전송되지 않음
+2. **비용 절약**: 무제한 에러 수집 및 사용자 수
+3. **커스터마이징**: 필요에 따른 Sentry 설정 변경 가능
+4. **네트워크 격리**: 내부 네트워크에서만 접근 가능
+5. **법적 요구사항**: 데이터 주권 및 컴플라이언스 준수
 
 ### 6. RESTful API 및 HATEOAS 구현
 

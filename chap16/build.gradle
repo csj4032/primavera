@@ -35,12 +35,6 @@ dependencies {
     // Data Analysis & Machine Learning
     implementation "nz.ac.waikato.cms.weka:weka-stable:${wekaVersion}"
     implementation "org.apache.commons:commons-math3:${commonsMath3Version}"
-    implementation "smile:smile-core:${smileVersion}"
-    implementation "smile:smile-data:${smileVersion}"
-    
-    // Stream Processing & Data Manipulation
-    implementation "com.github.streamwork:streamwork:${streamworkVersion}"
-    implementation "org.jeasy:easy-flows:${easyFlowsVersion}"
     
     // CSV and Data Format Processing
     implementation "com.opencsv:opencsv:5.3"
