@@ -1,13 +1,13 @@
-# Chapter 17 - Enterprise Data Pipeline with Spring Batch, Kafka & Debezium
+# Chapter 17 - Enterprise Data Pipeline with Spring Batch & Debezium Embedded
 
 ## 개요
-Chapter 17은 **엔터프라이즈급 실시간 데이터 파이프라인**을 구현하는 프로젝트입니다. **Spring Batch**로 초기 대용량 인덱싱을 수행하고, **Debezium CDC + Kafka**로 실시간 변경사항을 감지하여 Elasticsearch를 업데이트하는 완전한 데이터 파이프라인을 구축합니다.
+Chapter 17은 **엔터프라이즈급 데이터 파이프라인**을 구현하는 프로젝트입니다. **Spring Batch**로 초기 대용량 인덱싱을 수행하고, **Debezium Embedded**로 실시간 변경사항을 감지하여 Elasticsearch를 업데이트하는 완전한 데이터 파이프라인을 구축합니다.
 
 ## 서브모듈 구조
 ```
 chap17/
 ├── batch/          # Spring Batch 기반 초기 전체 인덱싱
-└── streaming/      # Kafka + Debezium CDC 기반 실시간 업데이트
+└── streaming/      # Debezium Embedded 기반 실시간 CDC 업데이트
 ```
 
 ## 아키텍처 개요
@@ -15,14 +15,14 @@ chap17/
 ### 전체 데이터 파이프라인
 ```
 ┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
-│   MariaDB       │    │   Apache Kafka   │    │ Elasticsearch   │
-│  (Source DB)    │────│ + Debezium CDC   │────│ (Search Index)  │
+│   MariaDB       │    │ Debezium         │    │ Elasticsearch   │
+│  (Source DB)    │────│ Embedded CDC     │────│ (Search Index)  │
 └─────────────────┘    └──────────────────┘    └─────────────────┘
          │                       │                       │
          │                       │                       │
     ┌────▼────────┐        ┌────▼─────┐         ┌───────▼────────┐
-    │ Spring Batch │        │  Kafka   │         │   Search API   │
-    │ (초기 인덱싱)  │        │ Consumer │         │    Service     │
+    │ Spring Batch │        │  CDC     │         │   Search API   │
+    │ (초기 인덱싱)  │        │ Engine   │         │    Service     │
     └─────────────┘        └──────────┘         └────────────────┘
 ```
 
@@ -32,6 +32,7 @@ chap17/
 - **대용량 전체 인덱싱**: Products + Sellers + Categories 조합
 - **Chunk 기반 처리**: 효율적인 메모리 사용
 - **Elasticsearch Bulk API**: 고성능 인덱싱
+- **재시작 가능**: 실패 시 중단 지점부터 재개
 
 ### 기술 스택
 - Spring Boot 3.x + Spring Batch 5.x
@@ -46,45 +47,33 @@ Database JOIN Query → ItemReader → ItemProcessor → ItemWriter → Elastics
    관계형 데이터        데이터 읽기    비정규화 변환  Bulk 인덱싱    검색 준비
 ```
 
-## Phase 2: Kafka Streaming 실시간 업데이트 (chap17/streaming)
+## Phase 2: Debezium Embedded 실시간 업데이트 (chap17/streaming)
 
 ### 주요 기능
-- **Debezium CDC**: MariaDB binlog 변경 감지
-- **Kafka Streams**: 실시간 이벤트 처리
+- **Debezium Embedded Engine**: Kafka 없이 직접 CDC 처리
+- **MariaDB binlog 모니터링**: 실시간 변경 감지
 - **Delta Indexing**: 변경된 데이터만 Elasticsearch 업데이트
+- **경량 아키텍처**: 별도의 Kafka 인프라 불필요
 
 ### 기술 스택
-- Spring Boot 3.x + Spring Kafka
-- Debezium CDC Connector
-- Kafka Connect + Kafka Streams
+- Spring Boot 3.x
+- Debezium Embedded Engine
+- Debezium MariaDB Connector
 - Elasticsearch Java Client 8.x
+- Kafka Connect API (Debezium 내부 사용)
 
 ### CDC 파이프라인
 ```
-MariaDB binlog → Debezium → Kafka Topics → Spring Kafka Consumer → Elasticsearch
-     ↓              ↓           ↓              ↓                    ↓
-   데이터 변경      CDC 감지    이벤트 발행    실시간 처리           즉시 업데이트
+MariaDB binlog → Debezium Embedded → Change Events → Event Handler → Elasticsearch
+     ↓              ↓                    ↓               ↓              ↓
+   데이터 변경      CDC 감지           이벤트 생성      실시간 처리     즉시 업데이트
 ```
 
-## 인프라 구성 (infrastructure/docker-compose.yml)
-
-### 서비스 구성
-- **MariaDB**: 소스 데이터베이스 (binlog 활성화)
-- **Zookeeper**: Kafka 메타데이터 관리
-- **Kafka**: 메시지 브로커
-- **Kafka Connect**: Debezium CDC 커넥터
-- **Debezium UI**: CDC 모니터링 대시보드
-- **Elasticsearch**: 검색 인덱스
-
-### 포트 구성
-```
-MariaDB:        3306 (chap17 모듈용)
-Kafka:          9092
-Kafka Connect:  8083
-Debezium UI:    8080
-Elasticsearch:  9200, 9300
-Zookeeper:      2181
-```
+### Debezium Embedded 장점
+- **인프라 단순화**: Kafka 클러스터 불필요
+- **낮은 지연시간**: 직접 이벤트 처리
+- **운영 간소화**: 관리 포인트 감소
+- **리소스 효율**: 메모리/CPU 사용량 최소화
 
 ## 데이터 모델
 
@@ -140,40 +129,31 @@ CATEGORIES      - 카테고리 정보
 
 ## 실행 방법
 
-### 1. 인프라 시작
+### 1. MariaDB 설정
 ```bash
-cd infrastructure
-docker-compose up -d
+# MariaDB binlog 활성화 확인
+docker exec -it mariadb-primavera mysql -u root -p
 
-# 서비스 상태 확인
-docker-compose ps
+# binlog 설정 확인
+SHOW VARIABLES LIKE 'log_bin';
+SHOW VARIABLES LIKE 'binlog_format';
+SHOW VARIABLES LIKE 'server_id';
+
+# 필요시 설정 (my.cnf)
+[mysqld]
+log-bin=mysql-bin
+binlog-format=ROW
+server-id=1
 ```
 
-### 2. Debezium Connector 설정
+### 2. Elasticsearch 시작
 ```bash
-# MariaDB Connector 등록
-curl -X POST http://localhost:8083/connectors \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "mariadb-connector",
-    "config": {
-      "connector.class": "io.debezium.connector.mysql.MySqlConnector",
-      "tasks.max": "1",
-      "database.hostname": "mariadb",
-      "database.port": "3306",
-      "database.user": "primavera",
-      "database.password": "primavera",
-      "database.server.id": "184054",
-      "database.server.name": "primavera",
-      "database.include.list": "primavera",
-      "table.include.list": "primavera.PRODUCTS,primavera.SELLERS,primavera.CATEGORIES",
-      "database.history.kafka.bootstrap.servers": "kafka:29092",
-      "database.history.kafka.topic": "schema-changes.primavera",
-      "include.schema.changes": "true",
-      "transforms": "unwrap",
-      "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState"
-    }
-  }'
+# Docker로 Elasticsearch 실행
+docker run -d --name elasticsearch-primavera \
+  -p 9200:9200 -p 9300:9300 \
+  -e "discovery.type=single-node" \
+  -e "xpack.security.enabled=false" \
+  elasticsearch:8.12.0
 ```
 
 ### 3. Phase 1: 초기 인덱싱 실행
@@ -182,9 +162,9 @@ curl -X POST http://localhost:8083/connectors \
 ./gradlew :chap17:batch:bootRun
 ```
 
-### 4. Phase 2: 실시간 스트리밍 시작
+### 4. Phase 2: 실시간 CDC 시작
 ```bash
-# CDC 기반 실시간 업데이트 시작
+# Debezium Embedded 기반 실시간 업데이트
 ./gradlew :chap17:streaming:bootRun
 ```
 
@@ -197,65 +177,108 @@ curl -X GET "localhost:9200/product_catalog_v1/_count"
 mysql -h localhost -P 3306 -u primavera -p primavera
 UPDATE PRODUCTS SET price = 2000000 WHERE id = 1;
 
-# Kafka Topics 확인
-docker exec kafka-primavera kafka-topics --list --bootstrap-server localhost:9092
+# Elasticsearch에서 변경 확인
+curl -X GET "localhost:9200/product_catalog_v1/_doc/1"
+```
 
-# CDC 이벤트 확인
-docker exec kafka-primavera kafka-console-consumer \
-  --bootstrap-server localhost:9092 \
-  --topic primavera.primavera.PRODUCTS \
-  --from-beginning
+## Debezium Embedded 설정
+
+### application.yml 설정 예시
+```yaml
+debezium:
+  name: "mariadb-embedded-connector"
+  connector:
+    class: "io.debezium.connector.mariadb.MariaDbConnector"
+  offset:
+    storage: "org.apache.kafka.connect.storage.FileOffsetBackingStore"
+    storage.file.filename: "/tmp/offsets.dat"
+    flush.interval.ms: 60000
+  database:
+    hostname: "localhost"
+    port: 3306
+    user: "primavera"
+    password: "primavera"
+    server.id: 184054
+    server.name: "primavera"
+    include.list: "primavera"
+    table.include.list: "primavera.PRODUCTS,primavera.SELLERS,primavera.CATEGORIES"
+    history: "io.debezium.relational.history.FileDatabaseHistory"
+    history.file.filename: "/tmp/dbhistory.dat"
+```
+
+### 이벤트 핸들러 구현
+```java
+@Component
+public class DebeziumChangeEventHandler {
+    
+    @EventListener
+    public void handleChangeEvent(ChangeEvent<String, String> event) {
+        String key = event.key();
+        String value = event.value();
+        Operation operation = event.operation();
+        
+        switch (operation) {
+            case CREATE, UPDATE -> indexToElasticsearch(value);
+            case DELETE -> deleteFromElasticsearch(key);
+        }
+    }
+}
 ```
 
 ## 모니터링
 
-### Debezium UI
-- **URL**: http://localhost:8080
-- **기능**: CDC 커넥터 상태, 스키마 변경 추적
+### JMX Metrics
+- **처리된 이벤트 수**: debezium.streaming.events.processed
+- **처리 지연시간**: debezium.streaming.lag.ms
+- **오류 발생률**: debezium.streaming.errors.rate
 
-### Kafka Topics
-- `primavera.primavera.PRODUCTS`: 상품 변경 이벤트
-- `primavera.primavera.SELLERS`: 판매자 변경 이벤트  
-- `primavera.primavera.CATEGORIES`: 카테고리 변경 이벤트
-
-### Elasticsearch Monitoring
+### 로그 모니터링
 ```bash
-# 클러스터 상태
-curl -X GET "localhost:9200/_cluster/health?pretty"
+# Debezium 이벤트 로그
+tail -f logs/spring.log | grep "io.debezium"
 
-# 인덱스 통계
-curl -X GET "localhost:9200/product_catalog_v1/_stats?pretty"
+# Elasticsearch 인덱싱 로그
+tail -f logs/spring.log | grep "elasticsearch.indexing"
+```
+
+### 상태 확인 엔드포인트
+```bash
+# 애플리케이션 헬스체크
+curl http://localhost:8080/actuator/health
+
+# CDC 상태 확인
+curl http://localhost:8080/actuator/cdc/status
 ```
 
 ## 확장 가능성
 
 ### 1. 멀티 소스 지원
 - 여러 데이터베이스의 변경사항 통합
-- 다양한 CDC 소스 (Oracle, PostgreSQL 등)
+- 다양한 CDC 소스 (PostgreSQL, MongoDB 등)
 
-### 2. 스케일링
-- Kafka 파티셔닝을 통한 수평 확장
-- 여러 Consumer 그룹으로 병렬 처리
+### 2. 고급 변환
+- 이벤트 필터링 및 변환 로직
+- 복합 이벤트 처리 및 집계
 
-### 3. 고급 변환
-- Kafka Streams를 활용한 복합 이벤트 처리
-- 실시간 집계 및 파생 데이터 생성
+### 3. 오류 처리
+- Dead Letter Queue 패턴
+- 재시도 및 복구 메커니즘
 
 ## 학습 포인트
 
-### 1. Enterprise Integration Patterns
-- **Change Data Capture**: 실시간 데이터 동기화
-- **Event Sourcing**: 이벤트 기반 아키텍처
-- **CQRS**: 명령과 조회 책임 분리
+### 1. Change Data Capture (CDC)
+- **binlog 기반 CDC**: 데이터베이스 변경 실시간 감지
+- **이벤트 기반 아키텍처**: 느슨한 결합과 확장성
+- **최종 일관성**: 분산 시스템의 데이터 동기화
 
-### 2. Kafka Ecosystem
-- **Kafka Connect**: 외부 시스템 연동
-- **Kafka Streams**: 스트림 처리
-- **Schema Registry**: 스키마 진화 관리
+### 2. Debezium Embedded
+- **경량 CDC**: Kafka 없이 CDC 구현
+- **라이브러리 통합**: Spring Boot와 원활한 통합
+- **오프셋 관리**: 재시작 시 이어서 처리
 
-### 3. Operational Excellence
-- **모니터링**: 실시간 파이프라인 상태 추적
-- **백프레셔**: 시스템 과부하 방지
-- **오류 복구**: Dead Letter Queue 패턴
+### 3. 운영 최적화
+- **백프레셔 처리**: 시스템 과부하 방지
+- **배치와 스트리밍 조합**: 초기 로드와 실시간 업데이트
+- **모니터링과 알림**: 실시간 파이프라인 관리
 
-이 프로젝트는 **실무에서 사용되는 엔터프라이즈급 데이터 파이프라인**의 완전한 구현체로, Spring Batch의 배치 처리와 Kafka의 실시간 스트리밍을 조합한 하이브리드 아키텍처를 학습할 수 있습니다.
+이 프로젝트는 **경량화된 엔터프라이즈급 데이터 파이프라인**의 구현으로, Spring Batch의 배치 처리와 Debezium Embedded의 실시간 CDC를 조합한 효율적인 아키텍처를 학습할 수 있습니다.

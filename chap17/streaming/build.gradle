@@ -13,37 +13,20 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    
-    // Kafka Connect API (required by Debezium embedded)
     implementation "org.apache.kafka:connect-api:${kafkaVersion}"
     implementation "org.apache.kafka:connect-runtime:${kafkaVersion}"
-    
-    // Database
     runtimeOnly "org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}"
-    
-    // Elasticsearch
     implementation "co.elastic.clients:elasticsearch-java:${elasticsearchVersion}"
     implementation "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
-    
-    // Debezium Embedded (for CDC without Kafka)
     implementation "io.debezium:debezium-embedded:${debeziumVersion}"
     implementation "io.debezium:debezium-connector-mariadb:${debeziumVersion}"
-    
-    // JSON processing for CDC events
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonVersion}"
-    
-    // Utilities
     implementation "org.apache.commons:commons-lang3:${commonsLang3Version}"
-    
-    // Test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation "org.testcontainers:junit-jupiter:${testContainersVersion}"
     testImplementation "org.testcontainers:mariadb:${testContainersVersion}"
     testImplementation "org.testcontainers:elasticsearch:${testContainersVersion}"
-    
-    // Annotation processors
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
-    
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
@@ -51,7 +34,6 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
-// Native build configuration
 graalvmNative {
     binaries {
         main {
@@ -62,13 +44,11 @@ graalvmNative {
     }
 }
 
-// Application configuration
 springBoot {
     mainClass = 'com.genius.primavera.streaming.ProductStreamingApplication'
     buildInfo()
 }
 
-// JAR configuration
 jar {
     enabled = false
     archiveClassifier = ''
