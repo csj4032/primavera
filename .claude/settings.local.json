@@ -55,7 +55,8 @@
       "Bash(git gc:*)",
       "Bash(VAULT_TOKEN=$VAULT_TOKEN ./gradlew :chap04:test --tests VaultConfigurationValidationTest.vaultTokenIsValid)",
       "Bash(VAULT_TOKEN=$VAULT_TOKEN ./gradlew :chap04:test --tests VaultConfigurationValidationTest --info)",
-      "Bash(docker run:*)"
+      "Bash(docker run:*)",
+      "Bash(git rm:*)"
     ],
     "deny": []
   }

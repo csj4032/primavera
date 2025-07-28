@@ -2,10 +2,9 @@ spring:
   application:
     name: DataAccessApplication
   config:
-    import: "optional:vault:"
+    activate:
+      on-profile: test
   cloud:
-    bootstrap:
-      enabled: true
     vault:
       host: localhost
       port: 8200
@@ -14,9 +13,11 @@ spring:
       token: ${VAULT_TOKEN}
       connection-timeout: 5000
       read-timeout: 15000
+      fail-fast: true
       kv:
         enabled: true
         backend: secret
+        profile-separator: '/'
         default-context: DataAccessApplication
         application-name: DataAccessApplication
 
@@ -28,3 +29,14 @@ logging:
     org.springframework.cloud.bootstrap: DEBUG
     org.springframework.context.annotation: DEBUG
     com.zaxxer.hikari: DEBUG
+
+primavera:
+  testcontainers:
+    mariadb:
+      enabled: true
+      dockerImageName: mariadb:11.4.7
+      driverClassName: org.mariadb.jdbc.Driver
+      databaseName: primavera
+      username: primavera
+      password: primavera
+      initScript: sql/schema.sql

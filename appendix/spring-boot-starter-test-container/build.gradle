@@ -14,16 +14,19 @@ configurations {
 }
 
 dependencies {
+    implementation "org.springframework.boot:spring-boot-autoconfigure"
     implementation 'org.springframework.boot:spring-boot-starter-test'
     implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+    implementation "org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}"
     implementation "org.testcontainers:testcontainers:${testContainersVersion}"
     implementation "org.testcontainers:junit-jupiter:${testContainersVersion}"
     implementation "org.testcontainers:mariadb:${testContainersVersion}"
-    implementation "org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}"
-    compileOnly "org.projectlombok:lombok:${lombokVersion}"
-    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
-    // annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
-    compileOnly "org.jetbrains:annotations:${jetbrainsAnnotationsVersion}"
+    implementation "org.testcontainers:postgresql:${testContainersVersion}"
+    implementation "org.testcontainers:kafka:${testContainersVersion}"
+    implementation "org.testcontainers:elasticsearch:${testContainersVersion}"
+    implementation "org.testcontainers:mongodb:${testContainersVersion}"
+    implementation "org.testcontainers:vault:${testContainersVersion}"
+    implementation "com.redis.testcontainers:testcontainers-redis:1.6.4"
 }
 
 bootJar {
