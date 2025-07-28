@@ -1,5 +1,6 @@
 package com.genius.primavera.test;
 
+import com.genius.primavera.test.condition.PrimaveraTestContainerCondition;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -7,6 +8,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -21,11 +23,28 @@ import java.util.Map;
 @Slf4j
 @AutoConfiguration
 @ConditionalOnClass(MariaDBContainer.class)
-@ConditionalOnProperty(name = "primavera.testcontainers.enabled", havingValue = "true", matchIfMissing = true)
-@Import({TestContainerAutoConfiguration.DataSourceConfiguration.class, PrimaveraTestContainerBeanPostProcessor.class})
+@ConditionalOnProperty(name = "primavera.testcontainers.enabled", havingValue = "true", matchIfMissing = false)
+@Import({TestContainerAutoConfiguration.DataSourceConfiguration.class})
 public class TestContainerAutoConfiguration {
 
+    // @PrimaveraTestContainer 어노테이션이 있는지 확인하는 메서드
+    private boolean hasPrimaveraTestContainerAnnotation() {
+        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+        for (StackTraceElement element : stackTrace) {
+            try {
+                Class<?> clazz = Class.forName(element.getClassName());
+                if (clazz.isAnnotationPresent(PrimaveraTestContainer.class)) {
+                    return true;
+                }
+            } catch (ClassNotFoundException e) {
+                // 무시
+            }
+        }
+        return false;
+    }
+
     @Bean
+    @Conditional(PrimaveraTestContainerCondition.class)
     @ConditionalOnProperty(name = "primavera.testcontainers.service.enabled", havingValue = "true", matchIfMissing = true)
     public TestContainerService testContainerService(ConfigurableEnvironment environment) {
         // 스택 트레이스에서 테스트 클래스 찾아서 어노테이션 읽기
@@ -46,7 +65,7 @@ public class TestContainerAutoConfiguration {
                     password = annotation.password();
                     mariadbVersion = annotation.mariadbVersion();
                     initScript = annotation.enableInitScript() ? annotation.initScript() : "none";
-                    log.info("어노테이션에서 찾은 databaseName: {}", databaseName);
+                    log.info("어노테이션에서 찾은 설정값 - databaseName: {}, username: {}, password: {}", databaseName, username, password);
                     break;
                 }
             } catch (ClassNotFoundException e) {
@@ -61,7 +80,7 @@ public class TestContainerAutoConfiguration {
         mariadbVersion = environment.getProperty("primavera.testcontainers.mariadb-version", mariadbVersion);
         initScript = environment.getProperty("primavera.testcontainers.init-script", initScript);
         
-        log.info("최종 TestContainerService 생성 - databaseName: {}", databaseName);
+        log.info("최종 TestContainerService 생성 - databaseName: {}, username: {}, password: {}", databaseName, username, password);
         return new TestContainerService(databaseName, username, password, mariadbVersion, initScript);
     }
 
@@ -83,9 +102,26 @@ public class TestContainerAutoConfiguration {
             properties.put("spring.datasource.username", testContainerService.getUsername());
             properties.put("spring.datasource.password", testContainerService.getPassword());
             properties.put("spring.datasource.driver-class-name", "org.mariadb.jdbc.Driver");
-            MapPropertySource propertySource = new MapPropertySource("testcontainer-datasource", properties);
+            
+            // 기존 프로퍼티 소스를 제거하고 새로 추가하여 우선순위 보장
+            String propertySourceName = "testcontainer-datasource";
+            if (environment.getPropertySources().contains(propertySourceName)) {
+                environment.getPropertySources().remove(propertySourceName);
+            }
+            
+            MapPropertySource propertySource = new MapPropertySource(propertySourceName, properties);
             environment.getPropertySources().addFirst(propertySource);
-            log.info("TestContainers DataSource 설정 완료: {}", testContainerService.getJdbcUrl());
+            
+            log.info("TestContainers DataSource 설정 완료 - URL: {}, databaseName from URL: {}", 
+                testContainerService.getJdbcUrl(),
+                testContainerService.getJdbcUrl().substring(testContainerService.getJdbcUrl().lastIndexOf("/") + 1, 
+                    testContainerService.getJdbcUrl().indexOf("?") > 0 ? testContainerService.getJdbcUrl().indexOf("?") : testContainerService.getJdbcUrl().length()));
+            
+            // 프로퍼티 소스 우선순위 확인 로그
+            log.info("현재 프로퍼티 소스 우선순위:");
+            environment.getPropertySources().forEach(ps -> 
+                log.info("  - {}: {}", ps.getName(), ps.getClass().getSimpleName()));
+                
             return propertySource;
         }
 

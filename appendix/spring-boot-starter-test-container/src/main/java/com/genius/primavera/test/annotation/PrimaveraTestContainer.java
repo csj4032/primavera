@@ -14,7 +14,7 @@ import java.lang.annotation.*;
 @Inherited
 @SpringBootTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@Import({TestContainerAutoConfiguration.class, PrimaveraTestContainerConfiguration.class})
+@Import({TestContainerAutoConfiguration.class})
 public @interface PrimaveraTestContainer {
 
     @AliasFor(annotation = SpringBootTest.class)

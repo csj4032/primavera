@@ -5,6 +5,7 @@ dependencies {
     testContainersDependencies.each { dep -> testImplementation dep }
     implementation "org.springframework.cloud:spring-cloud-starter-vault-config:${springCloudVaultVersion}"
     implementation "org.springframework.cloud:spring-cloud-vault-config-databases:${springCloudVaultVersion}"
+    implementation "org.springframework.cloud:spring-cloud-starter-bootstrap:${springCloudVersion}"
     implementation "commons-io:commons-io:${commonsIoVersion}"
     implementation "org.reflections:reflections:${reflectionsVersion}"
     testImplementation project(":appendix:spring-boot-starter-test-container")

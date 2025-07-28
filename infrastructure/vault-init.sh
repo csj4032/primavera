@@ -29,9 +29,9 @@ fi
 echo -e "${GREEN}✓ Vault 서버가 정상적으로 실행 중입니다.${NC}"
 echo ""
 
-# KV v2 시크릿 엔진 활성화
-echo -e "${YELLOW}2. KV v2 시크릿 엔진 활성화...${NC}"
-if vault secrets enable -path=secret kv-2 > /dev/null 2>&1; then
+# KV v2 시크릿 엔진 활성화 (기본값)
+echo -e "${YELLOW}2. KV v2 시크릿 엔진 확인...${NC}"
+if vault secrets enable -path=secret kv-v2 > /dev/null 2>&1; then
     echo -e "${GREEN}✓ KV v2 시크릿 엔진이 활성화되었습니다.${NC}"
 else
     echo -e "${YELLOW}ℹ KV v2 시크릿 엔진이 이미 활성화되어 있습니다.${NC}"

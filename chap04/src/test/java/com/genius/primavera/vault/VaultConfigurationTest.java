@@ -2,8 +2,10 @@ package com.genius.primavera.vault;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.env.Environment;
 import org.springframework.test.context.ActiveProfiles;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -15,7 +17,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 @ActiveProfiles("test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class VaultConfigurationValidationTest {
+public class VaultConfigurationTest {
+
+    @Autowired
+    private Environment environment;
 
     @Value("${spring.cloud.vault.token}")
     private String vaultToken;
@@ -34,24 +39,20 @@ public class VaultConfigurationValidationTest {
 
     @Test
     @Order(1)
-    @DisplayName("Vault Token이 올바르게 설정되었는지 확인")
+    @DisplayName("활성 프로필과 Vault Token 확인")
     public void vaultTokenIsValid() {
-        log.info("VAULT TOKEN: {}", vaultToken);
-        assertThat(vaultToken).isNotBlank();
+        assertThat(vaultToken).withFailMessage("Vault token is not set or is empty").isNotEmpty();
+        log.info("✅ Vault Token이 올바르게 설정되었습니다: {}", vaultToken);
     }
 
     @Test
     @Order(2)
     @DisplayName("Vault에서 설정한 값이 application-test.yml로 올바르게 로드되는지 확인")
     public void vaultConfigurationIsLoaded() {
-        log.info("Driver Class Name: {}", driverClassName);
-        log.info("URL: {}", url);
-        log.info("Username: {}", username);
-        log.info("Password: {}", password);
-        log.info("Vault에서 설정값을 정상적으로 가져옴");
-        Assertions.assertEquals("org.mariadb.jdbc.Driver", driverClassName);
-        Assertions.assertEquals("jdbc:tc:mariadb:11.4.7:///primavera_basic", url);
-        Assertions.assertEquals("test", username);
-        Assertions.assertEquals("test", password);
+        assertThat(driverClassName).withFailMessage("Driver class name mismatch. Expected: org.mariadb.jdbc.Driver, Actual: %s", driverClassName).isEqualTo("org.mariadb.jdbc.Driver");
+        assertThat(url).withFailMessage("URL mismatch. Expected: jdbc:tc:mariadb:11.4.7:///primavera_basic, Actual: %s", url).isEqualTo("jdbc:tc:mariadb:11.4.7:///primavera_basic");
+        assertThat(username).withFailMessage("Username mismatch. Expected: test, Actual: %s", username).isEqualTo("test");
+        assertThat(password).withFailMessage("Password mismatch. Expected: test, Actual: %s", password).isEqualTo("test");
+        log.info("✅ Vault에서 설정값을 정상적으로 가져왔습니다!");
     }
 }

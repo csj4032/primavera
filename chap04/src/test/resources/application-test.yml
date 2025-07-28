@@ -1,8 +1,11 @@
 spring:
+  application:
+    name: DataAccessApplication
   config:
-    activate:
-      on-profile: test
+    import: "optional:vault:"
   cloud:
+    bootstrap:
+      enabled: true
     vault:
       host: localhost
       port: 8200
@@ -11,11 +14,9 @@ spring:
       token: ${VAULT_TOKEN}
       connection-timeout: 5000
       read-timeout: 15000
-      fail-fast: false
       kv:
         enabled: true
         backend: secret
-        profile-separator: '/'
         default-context: DataAccessApplication
         application-name: DataAccessApplication
 
