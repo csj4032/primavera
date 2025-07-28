@@ -1,14 +1,35 @@
 spring:
-  jackson:
-    time-zone: UTC
+  config:
+    activate:
+      on-profile: local
+  cloud:
+    vault:
+      host: ${VAULT_HOST:localhost}
+      port: ${VAULT_PORT:8200}
+      scheme: ${VAULT_SCHEME:http}
+      authentication: TOKEN
+      token: ${VAULT_TOKEN:primavera-dev-token}
+      kv:
+        enabled: true
+        backend: secret
+        profile-separator: '/'
+        default-context: primavera
+        application-name: chap16
+    aws:
+      credentials:
+        access-key: ${aws.credentials.access-key:${AWS_ACCESS_KEY_ID:}}
+        secret-key: ${aws.credentials.secret-key:${AWS_SECRET_ACCESS_KEY:}}
+      region:
+        static: ${aws.region:${AWS_REGION:ap-northeast-2}}
+      s3:
+        bucket-name: ${aws.s3.bucket-name:${AWS_S3_BUCKET_NAME:primavera-bucket}}
+        endpoint: ${aws.s3.endpoint:${AWS_S3_ENDPOINT:}}
+        path-style-access: ${aws.s3.path-style-access:${AWS_S3_PATH_STYLE_ACCESS:false}}
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
     url: jdbc:mariadb://localhost:1109/primavera?useLegacyDatetimeCode=false&serverTimezone=UTC
     username: primavera
     password: primavera
-  banner:
-    charset: UTF-8
-    location: classpath:primavera.txt
   thymeleaf:
     cache: false
     enabled: true
@@ -17,15 +38,14 @@ spring:
   devtools:
     livereload:
       enabled: true
-
-logging:
-  config: classpath:logback.xml
-
-server:
-  port: 8080
+  jmx:
+    enabled: true
 
 sentry:
   dns: https://4084f8500752461897ebbfe3a067d36c@sentry.io/5166811
   environment: local
   servername: chap16
   release: 0.0.1-SNAPSHOT
+  stacktrace:
+    app.packages:
+      - "com.primavera.genius"

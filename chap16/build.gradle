@@ -7,6 +7,7 @@ dependencies {
     developmentDependencies.each { dep -> implementation dep }
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-hateoas'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation "org.modelmapper:modelmapper:3.2.1"
     implementation "org.apache.tika:tika-core:1.18"
     implementation 'org.apache.tika:tika-parsers:1.18'
@@ -18,30 +19,28 @@ dependencies {
     implementation "com.monitorjbl:xlsx-streamer:2.1.0"
     implementation "org.xerial:sqlite-jdbc:3.50.1.0"
     implementation "org.javatuples:javatuples:1.2"
-    // jOOλ (jool) - Functional programming utilities
     implementation 'org.jooq:jool:0.9.15'
-    
-    // DataFrame-like Libraries (Pandas equivalent for Java)
     implementation "tech.tablesaw:tablesaw-core:${tablesawVersion}"
     implementation "tech.tablesaw:tablesaw-excel:${tablesawVersion}"
     implementation "tech.tablesaw:tablesaw-aggregate:${tablesawVersion}"
     implementation "tech.tablesaw:tablesaw-jsplot:${tablesawVersion}"
-    
-    // Functional Data Structures
     implementation "io.vavr:vavr:${vavrVersion}"
     implementation "org.eclipse.collections:eclipse-collections:${eclipseCollectionsVersion}"
     implementation "org.eclipse.collections:eclipse-collections-api:${eclipseCollectionsVersion}"
-    
-    // Data Analysis & Machine Learning
     implementation "nz.ac.waikato.cms.weka:weka-stable:${wekaVersion}"
     implementation "org.apache.commons:commons-math3:${commonsMath3Version}"
-    
-    // CSV and Data Format Processing
     implementation "com.opencsv:opencsv:5.3"
-    
-    // Text Analysis
     implementation "org.openkoreantext:open-korean-text:2.3.1"
-    
-    // Monitoring
     implementation "io.sentry:sentry-logback:1.7.30"
+    
+    // Spring Cloud AWS for S3
+    implementation "io.awspring.cloud:spring-cloud-aws-starter-s3:${springCloudAwsVersion}"
+    implementation "io.awspring.cloud:spring-cloud-aws-starter:${springCloudAwsVersion}"
+    
+    // Spring Cloud Vault for secret management
+    implementation "org.springframework.cloud:spring-cloud-starter-vault-config:${springCloudVaultVersion}"
+    
+    // Testcontainers for LocalStack S3 testing
+    testImplementation "org.testcontainers:localstack:${testContainersVersion}"
+    testImplementation "org.testcontainers:junit-jupiter:${testContainersVersion}"
 }

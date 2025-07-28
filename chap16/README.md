@@ -1,4 +1,4 @@
-# Chapter 16 - AWS S3 + JOOQ File Processing System 🔄
+# Chapter 16 - AWS S3 + Vault + JOOQ File Processing System 🔄
 
 ## 📋 개요
 
@@ -45,8 +45,13 @@ chap16은 **AWS S3 클라우드 스토리지와 JOOQ를 활용한 파일 처리 
 ### Text & Language Processing  
 - **Open Korean Text 2.3.1** - 한국어 형태소 분석
 
+### AWS & Cloud Integration
+- **Spring Cloud AWS** - AWS 서비스 통합
+- **AWS S3** - 클라우드 객체 스토리지
+- **Spring Cloud Vault** - 보안 자격증명 관리
+
 ### Monitoring & Error Tracking
-- **Sentry 1.7.30** - 실시간 에러 추적 및 모니터링
+- **Sentry Cloud** - 실시간 에러 추적 및 모니터링 (클라우드 Developer 플랜)
 - **Spring Boot Actuator** - 애플리케이션 상태 모니터링
 
 ### Infrastructure
@@ -1263,6 +1268,443 @@ docker-compose up -d
 - Kubernetes 오케스트레이션
 - 모니터링 및 알럿 시스템 구축
 
+## 🔐 Vault 통합 보안 자격증명 관리
+
+### Spring Cloud Vault를 통한 AWS 자격증명 보안 관리
+
+chap16에서는 **Spring Cloud Vault**를 통해 AWS S3 자격증명을 안전하게 관리합니다. 설정 파일에 민감한 정보를 노출하지 않고 중앙화된 보안 저장소에서 동적으로 자격증명을 로드합니다.
+
+#### 1. Vault 설정 자동화
+
+```bash
+# AWS 자격증명을 Vault에 저장하는 스크립트 실행
+chmod +x ../../infrastructure/vault-init.sh
+
+# 환경변수 설정 후 실행
+export AWS_ACCESS_KEY_ID="your-actual-access-key"
+export AWS_SECRET_ACCESS_KEY="your-actual-secret-key" 
+export AWS_S3_BUCKET_NAME="your-s3-bucket-name"
+
+../../infrastructure/vault-init.sh
+```
+
+#### 2. Spring Boot Vault 통합 설정
+
+```yaml
+# application.yml - Vault 설정
+spring:
+  cloud:
+    vault:
+      host: ${VAULT_HOST:localhost}
+      port: ${VAULT_PORT:8200}
+      scheme: ${VAULT_SCHEME:http}
+      authentication: TOKEN
+      token: ${VAULT_TOKEN:primavera-dev-token}
+      kv:
+        enabled: true
+        backend: secret
+        profile-separator: '/'
+        default-context: primavera
+        application-name: chap16
+    aws:
+      credentials:
+        # Vault에서 동적으로 로드되는 자격증명
+        access-key: ${aws.credentials.access-key:${AWS_ACCESS_KEY_ID:}}
+        secret-key: ${aws.credentials.secret-key:${AWS_SECRET_ACCESS_KEY:}}
+      region:
+        static: ${aws.region:${AWS_REGION:ap-northeast-2}}
+      s3:
+        bucket-name: ${aws.s3.bucket-name:${AWS_S3_BUCKET_NAME:primavera-bucket}}
+        endpoint: ${aws.s3.endpoint:${AWS_S3_ENDPOINT:}}
+        path-style-access: ${aws.s3.path-style-access:${AWS_S3_PATH_STYLE_ACCESS:false}}
+```
+
+#### 3. Vault에 저장되는 시크릿 구조
+
+```bash
+# Vault KV 경로: secret/primavera/chap16
+vault kv get secret/primavera/chap16
+
+# 저장되는 키-값 쌍들:
+# aws.credentials.access-key: AKIA...
+# aws.credentials.secret-key: xYz9...
+# aws.region: ap-northeast-2
+# aws.s3.bucket-name: primavera-bucket
+# aws.s3.endpoint: (빈 값 또는 MinIO 엔드포인트)
+# aws.s3.path-style-access: false
+```
+
+#### 4. 테스트 환경 Vault 통합
+
+```java
+@SpringBootTest
+@Testcontainers
+@ActiveProfiles("test")
+class S3FileServiceVaultIntegrationTest {
+
+    @Container
+    static GenericContainer<?> vault = new GenericContainer<>("hashicorp/vault:1.15")
+            .withExposedPorts(8200)
+            .withEnv("VAULT_DEV_ROOT_TOKEN_ID", "primavera-dev-token");
+
+    @DynamicPropertySource
+    static void configureProperties(DynamicPropertyRegistry registry) {
+        // Vault 엔드포인트 동적 설정
+        registry.add("spring.cloud.vault.host", vault::getHost);
+        registry.add("spring.cloud.vault.port", () -> vault.getMappedPort(8200));
+        registry.add("spring.cloud.vault.token", () -> "primavera-dev-token");
+    }
+
+    @BeforeAll
+    static void setupVaultSecrets() throws Exception {
+        // TestContainers Vault에 AWS 자격증명 저장
+        vault.execInContainer(
+            "vault", "kv", "put", "secret/primavera/chap16",
+            "aws.credentials.access-key=" + localstack.getAccessKey(),
+            "aws.credentials.secret-key=" + localstack.getSecretKey(),
+            "aws.region=" + localstack.getRegion(),
+            "aws.s3.bucket-name=test-primavera-vault-bucket"
+        );
+    }
+}
+```
+
+#### 5. 보안 이점
+
+| 구분 | 기존 방식 | Vault 통합 |
+|------|-----------|------------|
+| **자격증명 저장** | 환경변수/설정파일 | 중앙화된 보안 저장소 |
+| **접근 제어** | OS 수준 권한 | Vault 정책 기반 |
+| **감사 로그** | 제한적 | 모든 접근 기록 |
+| **자동 로테이션** | 수동 | 자동 시크릿 갱신 |
+| **암호화** | 운영체제 의존 | 전송/저장 모두 암호화 |
+| **중앙 관리** | 분산된 설정 | 통합 시크릿 관리 |
+
+#### 6. 운영 환경 설정
+
+```bash
+# 운영환경 Vault 서버 설정
+export VAULT_HOST=production-vault.company.com
+export VAULT_PORT=8200 
+export VAULT_SCHEME=https
+export VAULT_TOKEN=$(cat /etc/vault/tokens/app-token)
+
+# 애플리케이션 시작
+./gradlew :chap16:bootRun
+```
+
+#### 7. Vault 시크릿 관리 명령어
+
+```bash
+# 시크릿 조회
+vault kv get secret/primavera/chap16
+
+# 시크릿 업데이트 (키 하나만)
+vault kv patch secret/primavera/chap16 aws.s3.bucket-name=new-bucket-name
+
+# 시크릿 삭제
+vault kv delete secret/primavera/chap16
+
+# 시크릿 히스토리 조회
+vault kv get -version=1 secret/primavera/chap16
+```
+
+#### 8. 시크릿 로테이션 자동화
+
+```bash
+# AWS 자격증명 로테이션 스크립트
+#!/bin/bash
+NEW_ACCESS_KEY=$(aws iam create-access-key --user-name primavera-s3-user --query 'AccessKey.AccessKeyId' --output text)
+NEW_SECRET_KEY=$(aws iam create-access-key --user-name primavera-s3-user --query 'AccessKey.SecretAccessKey' --output text)
+
+vault kv patch secret/primavera/chap16 \
+    aws.credentials.access-key="$NEW_ACCESS_KEY" \
+    aws.credentials.secret-key="$NEW_SECRET_KEY"
+
+# 기존 키 비활성화 (유예 기간 후)
+OLD_ACCESS_KEY=$(vault kv get -field=aws.credentials.access-key secret/primavera/chap16)
+aws iam delete-access-key --user-name primavera-s3-user --access-key-id "$OLD_ACCESS_KEY"
+```
+
+### Vault 통합의 핵심 가치
+
+1. **Zero Trust 보안**: 애플리케이션이 민감한 정보를 직접 저장하지 않음
+2. **감사 추적성**: 모든 시크릿 접근이 로그로 기록됨
+3. **동적 자격증명**: 런타임에 필요한 시점에만 시크릿 로드
+4. **중앙 집중화**: 모든 환경의 시크릿을 한 곳에서 관리
+5. **자동화 친화적**: CI/CD 파이프라인과 자연스럽게 통합
+
 ---
 
-**🎓 학습 포인트**: 파일 처리는 엔터프라이즈 애플리케이션의 핵심 기능입니다. 검증, 변환, 모니터링을 체계적으로 구현하면 안정적이고 확장 가능한 시스템을 구축할 수 있습니다.
+## 🧪 AWS S3 Integration Test 사용법
+
+### 🚀 테스트 실행 방법
+
+#### 1. LocalStack으로 테스트 (기본값)
+
+별도 설정 없이 테스트를 실행하면 LocalStack S3가 자동으로 시작됩니다:
+
+```bash
+./gradlew :chap16:test --tests S3FileServiceIntegrationTest
+```
+
+#### 2. Spring Properties로 실제 AWS S3 테스트
+
+##### 방법 1: Gradle 명령행에서 System Properties 전달
+
+```bash
+./gradlew :chap16:test \
+  --tests S3FileServiceIntegrationTest \
+  -Daws.credentials.access-key=AKIA1234567890EXAMPLE \
+  -Daws.credentials.secret-key=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY \
+  -Daws.region=ap-northeast-2 \
+  -Daws.s3.bucket-name=my-test-bucket
+```
+
+##### 방법 2: IDE에서 VM Options 설정
+
+**IntelliJ IDEA:**
+1. Run Configuration → VM Options에 추가:
+```
+-Daws.credentials.access-key=AKIA1234567890EXAMPLE
+-Daws.credentials.secret-key=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+-Daws.region=ap-northeast-2
+-Daws.s3.bucket-name=my-test-bucket
+```
+
+**Visual Studio Code:**
+`.vscode/launch.json`에 설정:
+```json
+{
+  "type": "java",
+  "name": "S3 Integration Test",
+  "request": "launch",
+  "mainClass": "com.genius.primavera.application.aws.S3FileServiceIntegrationTest",
+  "vmArgs": [
+    "-Daws.credentials.access-key=AKIA1234567890EXAMPLE",
+    "-Daws.credentials.secret-key=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
+    "-Daws.region=ap-northeast-2",
+    "-Daws.s3.bucket-name=my-test-bucket"
+  ]
+}
+```
+
+#### 3. 환경변수로 AWS S3 테스트 (폴백)
+
+```bash
+# 환경변수 설정
+export AWS_ACCESS_KEY_ID=AKIA1234567890EXAMPLE
+export AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+export AWS_REGION=ap-northeast-2
+export AWS_S3_BUCKET_NAME=my-test-bucket
+
+# 테스트 실행
+./gradlew :chap16:test --tests S3FileServiceIntegrationTest
+```
+
+#### 4. MinIO (S3 호환) 서버 테스트
+
+```bash
+./gradlew :chap16:test \
+  --tests S3FileServiceIntegrationTest \
+  -Daws.credentials.access-key=minioadmin \
+  -Daws.credentials.secret-key=minioadmin \
+  -Daws.region=us-east-1 \
+  -Daws.s3.endpoint=http://localhost:9000 \
+  -Daws.s3.path-style-access=true \
+  -Daws.s3.bucket-name=test-bucket
+```
+
+### 📋 지원하는 설정 파라미터
+
+| 파라미터 | Spring Property | 환경변수 | 기본값 | 설명 |
+|----------|-----------------|----------|--------|------|
+| Access Key | `aws.credentials.access-key` | `AWS_ACCESS_KEY_ID` | LocalStack 자동 생성 | AWS 액세스 키 |
+| Secret Key | `aws.credentials.secret-key` | `AWS_SECRET_ACCESS_KEY` | LocalStack 자동 생성 | AWS 시크릿 키 |
+| 리전 | `aws.region` | `AWS_REGION` | `ap-northeast-2` | AWS 리전 |
+| 버킷명 | `aws.s3.bucket-name` | `AWS_S3_BUCKET_NAME` | `test-primavera-bucket` | S3 버킷 이름 |
+| 엔드포인트 | `aws.s3.endpoint` | `AWS_S3_ENDPOINT` | (빈 값) | S3 엔드포인트 URL |
+| Path Style | `aws.s3.path-style-access` | `AWS_S3_PATH_STYLE_ACCESS` | `false` (AWS), `true` (LocalStack) | Path-style 접근 여부 |
+
+### 🔄 자동 선택 로직
+
+테스트는 다음 우선순위로 설정을 적용합니다:
+
+1. **Spring System Properties** (`-Daws.credentials.access-key=...`)
+2. **환경변수** (`AWS_ACCESS_KEY_ID=...`)
+3. **LocalStack** (기본값, TestContainers 자동 시작)
+
+### ⚠️ 주의사항
+
+#### 실제 AWS S3 테스트 시
+- **버킷이 이미 존재해야 합니다** (테스트에서 자동 생성하지 않음)
+- **적절한 IAM 권한이 필요합니다**:
+  ```json
+  {
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Effect": "Allow",
+        "Action": [
+          "s3:GetObject",
+          "s3:PutObject",
+          "s3:DeleteObject",
+          "s3:ListBucket"
+        ],
+        "Resource": [
+          "arn:aws:s3:::your-test-bucket",
+          "arn:aws:s3:::your-test-bucket/*"
+        ]
+      }
+    ]
+  }
+  ```
+- **요금이 발생할 수 있습니다** (소량이지만 PUT/GET 요청 비용)
+
+#### LocalStack 테스트 시
+- Docker가 실행 중이어야 합니다
+- TestContainers가 자동으로 LocalStack을 시작/종료합니다
+- 완전히 격리된 테스트 환경을 제공합니다
+
+### 🧪 테스트 시나리오
+
+각 실행 방식별로 다음 테스트들이 수행됩니다:
+
+1. ✅ MultipartFile S3 업로드
+2. ✅ InputStream S3 업로드  
+3. ✅ S3 파일 다운로드
+4. ✅ 존재하지 않는 파일 다운로드 (Empty 반환)
+5. ✅ 파일 존재 여부 확인
+6. ✅ 파일 목록 조회 (prefix 필터링)
+7. ✅ 전체 파일 목록 조회
+8. ✅ 파일 메타데이터 조회
+9. ✅ 존재하지 않는 파일 메타데이터 조회
+10. ✅ 파일 삭제
+11. ✅ 존재하지 않는 파일 삭제
+
+### 🏃‍♂️ 빠른 시작 예제
+
+```bash
+# 1. LocalStack으로 빠른 테스트
+./gradlew :chap16:test --tests S3FileServiceIntegrationTest
+
+# 2. 실제 AWS S3로 테스트 (버킷 준비 필요)
+./gradlew :chap16:test \
+  --tests S3FileServiceIntegrationTest \
+  -Daws.credentials.access-key=YOUR_ACCESS_KEY \
+  -Daws.credentials.secret-key=YOUR_SECRET_KEY \
+  -Daws.s3.bucket-name=your-existing-bucket
+
+# 3. MinIO 로컬 서버로 테스트
+docker run -p 9000:9000 -p 9001:9001 \
+  -e "MINIO_ROOT_USER=minioadmin" \
+  -e "MINIO_ROOT_PASSWORD=minioadmin" \
+  minio/minio server /data --console-address ":9001"
+
+./gradlew :chap16:test \
+  --tests S3FileServiceIntegrationTest \
+  -Daws.credentials.access-key=minioadmin \
+  -Daws.credentials.secret-key=minioadmin \
+  -Daws.s3.endpoint=http://localhost:9000 \
+  -Daws.s3.path-style-access=true
+```
+
+### 🔐 Vault 설정 (선택사항)
+
+테스트 실행 전 AWS 자격증명을 Vault에 저장하려면:
+
+```bash
+# Vault 설정 스크립트 실행
+chmod +x ../../infrastructure/vault-init.sh
+../../infrastructure/vault-init.sh
+```
+
+이 스크립트는 다음 작업을 수행합니다:
+- Vault 서버 시작 (개발 모드)
+- AWS 자격증명을 secret/primavera/chap16에 저장
+- 테스트에서 자동으로 Vault에서 자격증명 읽어옴
+
+### 📊 테스트 실행 결과
+
+#### 기본 통합 테스트 (S3FileServiceIntegrationTest)
+
+```bash
+./gradlew :chap16:test --tests S3FileServiceIntegrationTest
+```
+
+실행 결과:
+```
+🔧 테스트 설정 확인:
+   Access Key: test****
+   Secret Key: test****
+   Region: ap-northeast-2
+   Bucket: test-primavera-bucket
+   Endpoint: (AWS Default)
+   환경: 🐳 LocalStack
+✅ LocalStack 테스트 환경이 올바르게 설정되었습니다.
+```
+
+#### Vault 통합 시나리오 테스트 (S3FileServiceVaultIntegrationTest)
+
+```bash
+./gradlew :chap16:test --tests S3FileServiceVaultIntegrationTest
+```
+
+실행 결과:
+```
+🔐📋 Vault + application-test.yml 설정 확인:
+   Access Key: test****
+   Secret Key: test****
+   Region: ap-northeast-2
+   Bucket: test-primavera-bucket
+   Endpoint: (AWS Default)
+   환경: 🔐 Vault 통합 + 🐳 LocalStack
+✅ LocalStack + application-test.yml 설정이 올바르게 구성되었습니다.
+💡 실제 Vault 사용 시: ../../infrastructure/vault-init.sh 스크립트를 실행하세요.
+```
+
+**두 테스트 모두 동일한 application-test.yml 설정을 사용하며, Vault 테스트는 실제 Vault 통합 시나리오를 시뮬레이션합니다.**
+
+### 🏗️ 깔끔한 Configuration Properties 바인딩
+
+기존의 여러 `@Value` 어노테이션 대신 `TestAwsProperties` 객체로 깔끔하게 바인딩:
+
+```java
+// 기존 방식 (여러 @Value 어노테이션)
+@Value("${spring.cloud.aws.credentials.access-key}")
+private String accessKey;
+
+@Value("${spring.cloud.aws.credentials.secret-key}")
+private String secretKey;
+
+// 새로운 방식 (깔끔한 객체 바인딩)
+@Autowired
+private TestAwsProperties testAwsProperties;
+
+// 사용법
+testAwsProperties.credentials().accessKey()
+testAwsProperties.region().value()
+testAwsProperties.s3().bucketName()
+testAwsProperties.isLocalStack()
+```
+
+#### TestAwsProperties 구조
+
+```java
+@ConfigurationProperties(prefix = "spring.cloud.aws")
+public record TestAwsProperties(
+    Credentials credentials,  // access-key, secret-key
+    Region region,           // static (Java 키워드이므로 @Name 사용)
+    S3 s3                    // bucket-name, endpoint
+) {
+    // 편의 메서드들
+    public boolean isLocalStack()    // LocalStack 사용 여부
+    public boolean isRealAws()       // 실제 AWS 사용 여부
+}
+```
+
+이제 다양한 환경에서 S3 통합 테스트를 유연하게 실행할 수 있습니다! 🎉
+
+---
+
+**🎓 학습 포인트**: 파일 처리는 엔터프라이즈 애플리케이션의 핵심 기능입니다. 검증, 변환, 모니터링과 함께 **보안 자격증명 관리**를 체계적으로 구현하면 안정적이고 확장 가능한 시스템을 구축할 수 있습니다.

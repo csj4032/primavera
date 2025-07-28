@@ -173,7 +173,13 @@ vault kv put secret/FileProcessingMonitoringApplication/local \
     spring.datasource.username=primavera \
     spring.datasource.password=primavera \
     spring.datasource.driver-class-name=org.mariadb.jdbc.Driver \
-    sentry.dsn=https://your-sentry-dsn-local@sentry.io/project-id
+    sentry.dsn=https://your-sentry-dsn-local@sentry.io/project-id \
+    aws.credentials.access-key=your-aws-access-key-id \
+    aws.credentials.secret-key=your-aws-secret-access-key \
+    aws.region=ap-northeast-2 \
+    aws.s3.bucket-name=primavera-local-bucket \
+    aws.s3.endpoint= \
+    aws.s3.path-style-access=false
 
 # chap17: CiCdDeploymentApplication
 vault kv put secret/CiCdDeploymentApplication/local \
@@ -338,7 +344,14 @@ vault kv put secret/FileProcessingMonitoringApplication/test \
     spring.datasource.url=jdbc:tc:mariadb:11.4.7:///primavera_jpa_board \
     spring.datasource.username=test \
     spring.datasource.password=test \
-    spring.datasource.driver-class-name=org.mariadb.jdbc.Driver
+    spring.datasource.driver-class-name=org.mariadb.jdbc.Driver \
+    sentry.dsn=https://your-sentry-dsn-test@sentry.io/project-id \
+    aws.credentials.access-key=your-aws-access-key-id-test \
+    aws.credentials.secret-key=your-aws-secret-access-key-test \
+    aws.region=ap-northeast-2 \
+    aws.s3.bucket-name=primavera-test-bucket \
+    aws.s3.endpoint= \
+    aws.s3.path-style-access=false
 
 # chap17: CiCdDeploymentApplication
 vault kv put secret/CiCdDeploymentApplication/test \
@@ -506,7 +519,13 @@ vault kv put secret/FileProcessingMonitoringApplication/prod \
     spring.datasource.username=prod_user \
     spring.datasource.password=prod_secure_password_change_me \
     spring.datasource.driver-class-name=org.mariadb.jdbc.Driver \
-    sentry.dsn=https://your-sentry-dsn-prod@sentry.io/project-id
+    sentry.dsn=https://your-sentry-dsn-prod@sentry.io/project-id \
+    aws.credentials.access-key=your-aws-access-key-id-production \
+    aws.credentials.secret-key=your-aws-secret-access-key-production \
+    aws.region=ap-northeast-2 \
+    aws.s3.bucket-name=primavera-prod-bucket \
+    aws.s3.endpoint= \
+    aws.s3.path-style-access=false
 
 # chap17: CiCdDeploymentApplication
 vault kv put secret/CiCdDeploymentApplication/prod \

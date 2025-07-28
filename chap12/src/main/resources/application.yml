@@ -19,6 +19,15 @@ mybatis:
   type-aliases-package: com.genius.primavera.domain
   type-handlers-package: com.genius.primavera.domain
 
-logging:
-  level:
-    root: INFO
+primavera:
+  logs:
+    path: ./logs
+
+server:
+  ssl:
+    key-alias: primavera
+    key-store: infrastructure/certs/primavera.p12
+    key-store-type: PKCS12
+    key-store-password: primavera
+    enabled: true
+  port: 8443

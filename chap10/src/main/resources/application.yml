@@ -73,3 +73,7 @@ mybatis:
 logging:
   config: classpath:logback-spring.xml
 
+primavera:
+  logs:
+    path: ./logs
+
