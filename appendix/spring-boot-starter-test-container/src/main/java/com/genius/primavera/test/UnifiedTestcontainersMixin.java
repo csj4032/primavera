@@ -31,28 +31,31 @@ public interface UnifiedTestcontainersMixin {
      * ApplicationContextInitializer에서 시작된 컨테이너를 반환합니다.
      */
     default MariaDBContainer<?> getMariaDBContainer() {
-        return PrimaveraTestcontainersContextInitializer.getMariaDBContainer();
+        GenericContainer<?> container = PrimaveraTestcontainersContextInitializer.getContainer(ContainerType.MARIADB);
+        return container instanceof MariaDBContainer ? (MariaDBContainer<?>) container : null;
     }
     
     /**
      * Redis 컨테이너 접근
      */
     default GenericContainer<?> getRedisContainer() {
-        return PrimaveraTestcontainersContextInitializer.getRedisContainer();
+        return PrimaveraTestcontainersContextInitializer.getContainer(ContainerType.REDIS);
     }
     
     /**
      * Kafka 컨테이너 접근
      */
     default ConfluentKafkaContainer getKafkaContainer() {
-        return PrimaveraTestcontainersContextInitializer.getKafkaContainer();
+        GenericContainer<?> container = PrimaveraTestcontainersContextInitializer.getContainer(ContainerType.KAFKA);
+        return container instanceof ConfluentKafkaContainer ? (ConfluentKafkaContainer) container : null;
     }
     
     /**
      * PostgreSQL 컨테이너 접근
      */
     default PostgreSQLContainer<?> getPostgreSQLContainer() {
-        return PrimaveraTestcontainersContextInitializer.getPostgreSQLContainer();
+        GenericContainer<?> container = PrimaveraTestcontainersContextInitializer.getContainer(ContainerType.POSTGRESQL);
+        return container instanceof PostgreSQLContainer ? (PostgreSQLContainer<?>) container : null;
     }
     
     /**
