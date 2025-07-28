@@ -1,14 +1,14 @@
-package com.genius.primavera.application.aws;
+package com.genius.primavera.infrastructure.aws;
 
 import org.springframework.boot.context.properties.bind.Name;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * 테스트용 AWS 설정 프로퍼티
- * application-test.yml의 spring.cloud.aws 설정을 바인딩합니다.
+ * AWS 설정 프로퍼티
+ * application.yml의 spring.cloud.aws 설정을 바인딩합니다.
  */
 @ConfigurationProperties(prefix = "spring.cloud.aws")
-public record TestAwsProperties(
+public record AwsProperties(
     Credentials credentials,
     Region region,
     S3 s3

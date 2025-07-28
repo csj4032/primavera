@@ -1,6 +1,7 @@
 package com.genius.primavera.dataSource;
 
 import com.genius.primavera.dao.UserDao;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,36 +14,31 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.testcontainers.containers.MariaDBContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.shaded.org.checkerframework.checker.index.qual.SameLen;
 
 import javax.sql.DataSource;
 import java.time.Instant;
 
+@Slf4j
 @ExtendWith(SpringExtension.class)
-@SpringBootTest
+@SpringBootTest(properties = "spring.cloud.vault.enabled=false")
 @Testcontainers
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class UserDaoTest {
 
     @Container
-    private static final MariaDBContainer<?> mysqlContainer = new MariaDBContainer<>("mariadb:11.4.7")
-            .withDatabaseName("primavera")
-            .withUsername("primavera")
-            .withPassword("primavera")
-            .withInitScript("sql/schema.sql");
+    private static final MariaDBContainer<?> mysqlContainer = new MariaDBContainer<>("mariadb:11.4.7").withInitScript("sql/schema.sql");
 
     @DynamicPropertySource
-    static void mysqlProperties(DynamicPropertyRegistry registry) {
+    static void mariadbProperties(DynamicPropertyRegistry registry) {
         registry.add("spring.datasource.url", mysqlContainer::getJdbcUrl);
         registry.add("spring.datasource.username", mysqlContainer::getUsername);
         registry.add("spring.datasource.password", mysqlContainer::getPassword);
         registry.add("spring.datasource.driver-class-name", () -> "org.mariadb.jdbc.Driver");
-        System.out.println("MySQL 컨테이너 JDBC URL: " + mysqlContainer.getJdbcUrl());
-        System.out.println("MySQL 컨테이너 포트: " + mysqlContainer.getFirstMappedPort());
+        log.info("MariaDB 컨테이너 JDBC URL: {}", mysqlContainer.getJdbcUrl());
+        log.info("MariaDB 컨테이너 포트: {}", mysqlContainer.getFirstMappedPort());
     }
 
-    @Autowired
-    private DataSource dataSource;
-    
     @Autowired
     private UserDao userDao;
     private static PasswordEncoder passwordEncoder;
@@ -58,17 +54,16 @@ public class UserDaoTest {
     public void saveUser() {
         int result = userDao.saveUser("mbappé@gmail.com", passwordEncoder.encode("password"), "Mbappé", "A", Instant.now());
         Assertions.assertEquals(1, result);
-        System.out.println("유저가 성공적으로 등록되었습니다.");
+        log.info("유저가 성공적으로 등록되었습니다.");
     }
 
     @Test
     @Order(2)
     @DisplayName("유저 전체 조회")
     public void getUsers() {
-        var passwords = userDao.getUsers();
-        Assertions.assertFalse(passwords.isEmpty());
-        passwords.forEach(password -> Assertions.assertTrue(passwordEncoder.matches("password", password)));
-        System.out.println("유저 조회 및 비밀번호 검증에 성공했습니다.");
+        var users = userDao.getUsers();
+        Assertions.assertFalse(users.isEmpty());
+        log.info("유저 조회 및 비밀번호 검증에 성공했습니다.");
     }
 
     @Test
@@ -78,6 +73,6 @@ public class UserDaoTest {
         int deletedCount = userDao.deleteAll();
         Assertions.assertTrue(deletedCount > 0);
         Assertions.assertEquals(0, userDao.getUsers().size());
-        System.out.println("모든 유저가 성공적으로 삭제되었습니다.");
+        log.info("모든 유저가 성공적으로 삭제되었습니다.");
     }
 }

@@ -1,5 +1,6 @@
 package com.genius.primavera.application.aws;
 
+import com.genius.primavera.infrastructure.aws.AwsProperties;
 import com.genius.primavera.infrastructure.aws.S3Properties;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +34,7 @@ import static org.testcontainers.containers.localstack.LocalStackContainer.Servi
 @Testcontainers
 @ActiveProfiles("test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@EnableConfigurationProperties(TestAwsProperties.class)
+@EnableConfigurationProperties(AwsProperties.class)
 public class S3FileServiceVaultIntegrationTest {
 
     @Container
@@ -49,7 +50,7 @@ public class S3FileServiceVaultIntegrationTest {
     private S3Properties s3Properties;
 
     @Autowired
-    private TestAwsProperties testAwsProperties;
+    private AwsProperties awsProperties;
 
     private static final String TEST_BUCKET = "test-primavera-bucket";
     private static final String TEST_FILE_KEY = "vault-test/sample.txt";
@@ -73,22 +74,22 @@ public class S3FileServiceVaultIntegrationTest {
     @DisplayName("application-test.yml 설정값 확인 (Vault 통합 시나리오)")
     void verifyVaultTestConfiguration() {
         System.out.println("🔐📋 Vault + application-test.yml 설정 확인:");
-        System.out.println("   Access Key: " + maskSecret(testAwsProperties.credentials().accessKey()));
-        System.out.println("   Secret Key: " + maskSecret(testAwsProperties.credentials().secretKey()));
-        System.out.println("   Region: " + testAwsProperties.region().value());
-        System.out.println("   Bucket: " + testAwsProperties.s3().bucketName());
-        System.out.println("   Endpoint: " + (testAwsProperties.s3().hasEndpoint() ? testAwsProperties.s3().endpoint() : "(AWS Default)"));
+        System.out.println("   Access Key: " + maskSecret(awsProperties.credentials().accessKey()));
+        System.out.println("   Secret Key: " + maskSecret(awsProperties.credentials().secretKey()));
+        System.out.println("   Region: " + awsProperties.region().value());
+        System.out.println("   Bucket: " + awsProperties.s3().bucketName());
+        System.out.println("   Endpoint: " + (awsProperties.s3().hasEndpoint() ? awsProperties.s3().endpoint() : "(AWS Default)"));
 
         // LocalStack 사용 여부 확인
-        System.out.println("   환경: 🔐 Vault 통합 + " + (testAwsProperties.isLocalStack() ? "🐳 LocalStack" : "🌟 실제 AWS"));
+        System.out.println("   환경: 🔐 Vault 통합 + " + (awsProperties.isLocalStack() ? "🐳 LocalStack" : "🌟 실제 AWS"));
 
         // 설정값 검증
-        assertThat(testAwsProperties.credentials().accessKey()).isNotEmpty();
-        assertThat(testAwsProperties.credentials().secretKey()).isNotEmpty();
-        assertThat(testAwsProperties.region().value()).isNotEmpty();
-        assertThat(testAwsProperties.s3().bucketName()).isNotEmpty();
+        assertThat(awsProperties.credentials().accessKey()).isNotEmpty();
+        assertThat(awsProperties.credentials().secretKey()).isNotEmpty();
+        assertThat(awsProperties.region().value()).isNotEmpty();
+        assertThat(awsProperties.s3().bucketName()).isNotEmpty();
 
-        if (testAwsProperties.isLocalStack()) {
+        if (awsProperties.isLocalStack()) {
             System.out.println("✅ LocalStack + application-test.yml 설정이 올바르게 구성되었습니다.");
             System.out.println("💡 실제 Vault 사용 시: ../../infrastructure/vault-init.sh 스크립트를 실행하세요.");
         } else {

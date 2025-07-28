@@ -1,43 +1,48 @@
 package com.genius.primavera.test;
 
-import com.genius.primavera.test.annotation.PrimaveraTestContainer;
 import lombok.Getter;
-import org.springframework.stereotype.Component;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.testcontainers.containers.MariaDBContainer;
 
-import java.util.Arrays;
-
-@Component
+@Slf4j
 @Getter
 public class TestContainerService {
 
     private final MariaDBContainer<?> mariaDBContainer;
-    private final PrimaveraTestContainer config;
 
-    public TestContainerService() {
-        Class<?> testClass = MariaDBContainerFactory.findTestClass();
-        this.config = testClass != null ? testClass.getAnnotation(PrimaveraTestContainer.class) : null;
-        this.mariaDBContainer = createMariaDBContainer();
-        if (!this.mariaDBContainer.isRunning()) this.mariaDBContainer.start();
+    // 프로퍼티 기반 생성자
+    public TestContainerService(
+            @Value("${primavera.testcontainers.database-name:primavera}") String databaseName,
+            @Value("${primavera.testcontainers.username:primavera}") String username,
+            @Value("${primavera.testcontainers.password:primavera}") String password,
+            @Value("${primavera.testcontainers.mariadb-version:mariadb:11.4.7}") String mariadbVersion,
+            @Value("${primavera.testcontainers.init-script:sql/schema.sql}") String initScript) {
+        
+        log.info("Creating TestContainerService with properties - databaseName: {}", databaseName);
+        
+        this.mariaDBContainer = new MariaDBContainer<>(mariadbVersion)
+                .withDatabaseName(databaseName)
+                .withUsername(username)
+                .withPassword(password)
+                .withCommand("--default-authentication-plugin=mysql_native_password");
+        
+        if (initScript != null && !initScript.isEmpty() && !"none".equals(initScript)) {
+            this.mariaDBContainer.withInitScript(initScript);
+        }
+        
+        if (!this.mariaDBContainer.isRunning()) {
+            this.mariaDBContainer.start();
+        }
     }
 
-    private MariaDBContainer<?> createMariaDBContainer() {
-        if (config != null) {
-            MariaDBContainer<?> container = new MariaDBContainer<>(config.mariadbVersion())
-                    .withDatabaseName(config.databaseName())
-                    .withUsername(config.username())
-                    .withPassword(config.password())
-                    .withCommand("--default-authentication-plugin=mysql_native_password");
-            if (config.enableInitScript() && !config.initScript().isEmpty() && !"none".equals(config.initScript())) container.withInitScript(config.initScript());
-            return container;
+    // 기본 생성자 (기존 호환성 유지)
+    public TestContainerService() {
+        log.info("Creating TestContainerService with default settings");
+        this.mariaDBContainer = MariaDBContainerFactory.createFromTestClass();
+        if (!this.mariaDBContainer.isRunning()) {
+            this.mariaDBContainer.start();
         }
-
-        return new MariaDBContainer<>("mariadb:11.4.7")
-                .withDatabaseName("primavera")
-                .withUsername("primavera")
-                .withPassword("primavera")
-                .withInitScript("sql/schema.sql")
-                .withCommand("--default-authentication-plugin=mysql_native_password");
     }
 
     public String getJdbcUrl() {

@@ -5,8 +5,6 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.AliasFor;
-import org.springframework.test.context.ActiveProfiles;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.lang.annotation.*;
 
@@ -15,8 +13,6 @@ import java.lang.annotation.*;
 @Documented
 @Inherited
 @SpringBootTest
-@Testcontainers
-@ActiveProfiles("test")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Import(TestContainerAutoConfiguration.class)
 public @interface PrimaveraTestContainer {

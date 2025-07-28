@@ -3,9 +3,6 @@ spring:
     name: DataAccessApplication
   profiles:
     active: local
-  config:
-    activate:
-      on-profile: local
   jackson:
     time-zone: UTC
   datasource:

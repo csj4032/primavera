@@ -49,4 +49,8 @@ public class UserDao {
             return null;
         }, id);
     }
+
+    public int deleteAll() {
+        return jdbcTemplate.update("DELETE FROM USERS");
+    }
 }

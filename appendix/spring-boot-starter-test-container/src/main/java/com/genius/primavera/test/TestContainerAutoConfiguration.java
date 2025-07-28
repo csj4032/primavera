@@ -1,17 +1,16 @@
 package com.genius.primavera.test;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Profile;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MapPropertySource;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.MariaDBContainer;
 
 import java.util.HashMap;
@@ -20,15 +19,19 @@ import java.util.Map;
 @Slf4j
 @AutoConfiguration
 @ConditionalOnClass(MariaDBContainer.class)
-@ConditionalOnProperty(name = "primavera.testcontainers.enabled", havingValue = "true", matchIfMissing = true)
-@Profile("test")
-@org.springframework.context.annotation.Import(TestContainerAutoConfiguration.DataSourceConfiguration.class)
+@ConditionalOnProperty(name = "primavera.testcontainers.enabled", havingValue = "true", matchIfMissing = false)
+@Import(TestContainerAutoConfiguration.DataSourceConfiguration.class)
 public class TestContainerAutoConfiguration {
 
     @Bean
     @ConditionalOnProperty(name = "primavera.testcontainers.service.enabled", havingValue = "true", matchIfMissing = true)
-    public TestContainerService testContainerService() {
-        return new TestContainerService();
+    public TestContainerService testContainerService(
+            @Value("${primavera.testcontainers.database-name:primavera}") String databaseName,
+            @Value("${primavera.testcontainers.username:primavera}") String username,
+            @Value("${primavera.testcontainers.password:primavera}") String password,
+            @Value("${primavera.testcontainers.mariadb-version:mariadb:11.4.7}") String mariadbVersion,
+            @Value("${primavera.testcontainers.init-script:sql/schema.sql}") String initScript) {
+        return new TestContainerService(databaseName, username, password, mariadbVersion, initScript);
     }
 
     @Bean
@@ -37,7 +40,7 @@ public class TestContainerAutoConfiguration {
         return testContainerService.getMariaDBContainer();
     }
 
-    @org.springframework.context.annotation.Configuration
+    @Configuration
     @ConditionalOnBean(TestContainerService.class)
     public static class DataSourceConfiguration {
 

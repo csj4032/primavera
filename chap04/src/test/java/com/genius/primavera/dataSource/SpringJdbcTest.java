@@ -60,7 +60,7 @@ public class SpringJdbcTest {
 
     @Test
     @Order(4)
-    @DisplayName("jdbcTemplate 모킹 테스트")
+    @DisplayName("JdbcTemplate 모킹 테스트")
     public void jdbcTemplateMockTest() {
         JdbcTemplate mockJdbcTemplate = mock(JdbcTemplate.class);
         when(mockJdbcTemplate.queryForObject("SELECT 'GENIUS' AS ID", String.class)).thenReturn("GENIUS");
@@ -71,7 +71,7 @@ public class SpringJdbcTest {
 
     @Test
     @Order(5)
-    @DisplayName("jdbcTemplate RowMapper 모킹 테스트")
+    @DisplayName("JdbcTemplate RowMapper 모킹 테스트")
     public void jdbcTemplateRowMapperMockTest() {
         JdbcTemplate mockJdbcTemplate = mock(JdbcTemplate.class);
         User expectedUser = User.builder().id(1L).email("genius").build();
