@@ -1,0 +1,44 @@
+package com.genius.primavera.event;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Builder;
+import lombok.Data;
+
+import java.time.Instant;
+import java.util.List;
+
+@Data
+@Builder
+public class InventoryInsufficientEvent {
+    
+    @JsonProperty("orderId")
+    private String orderId;
+    
+    @JsonProperty("insufficientItems")
+    private List<InsufficientItemEvent> insufficientItems;
+    
+    @JsonProperty("reason")
+    private String reason;
+    
+    @JsonProperty("timestamp")
+    private Instant timestamp;
+    
+    @JsonProperty("eventType")
+    private String eventType;
+    
+    @JsonProperty("version")
+    private String version;
+    
+    @Data
+    @Builder
+    public static class InsufficientItemEvent {
+        @JsonProperty("productId")
+        private String productId;
+        
+        @JsonProperty("requestedQuantity")
+        private int requestedQuantity;
+        
+        @JsonProperty("availableQuantity")
+        private int availableQuantity;
+    }
+}

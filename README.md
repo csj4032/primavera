@@ -4,7 +4,19 @@
 [![Coverage Status](https://coveralls.io/repos/github/csj4032/primavera/badge.svg)](https://coveralls.io/github/csj4032/primavera)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Spring Boot를 이용한 현대적인 웹 애플리케이션 개발을 체계적으로 학습할 수 있는 종합 프로젝트입니다. 기초부터 고급 기술까지 단계별로 구성된 17개 챕터를 통해 실무에 필요한 모든 기술을 습득할 수 있습니다.
+Spring Boot를 이용한 현대적인 웹 애플리케이션 개발을 체계적으로 학습할 수 있는 종합 프로젝트입니다. 기초부터 고급 기술까지 단계별로 구성된 18개 챕터를 통해 실무에 필요한 모든 기술을 습득할 수 있습니다.
+
+## 🎯 최신 업데이트 (2025년 1월)
+
+### 📊 Chapter 17 - 엔터프라이즈 데이터 파이프라인
+- **Spring Batch + Debezium Embedded**를 활용한 하이브리드 데이터 처리
+- **경량 CDC 아키텍처**: Kafka 인프라 없이 실시간 변경 감지
+- **Elasticsearch 통합**: 검색 최적화된 문서 인덱싱
+
+### 🔄 Chapter 18 - 이벤트 기반 마이크로서비스
+- **WebFlux + R2DBC**로 완전한 리액티브 스택 구현
+- **Kafka 이벤트 시스템**: 주문-재고 처리 실시간 연동
+- **Saga 패턴**: 분산 트랜잭션 및 보상 처리 자동화
 
 ## 🛠️ 기술 스택
 
@@ -155,11 +167,13 @@ git commit -m "deps: update spring boot to 3.5.4"
 
 ### Database & Persistence
 - **MariaDB 11.4.7** (Primary Database & Testing)
-- **Docker TestContainers** (Automated Testing Environment)
+- **MongoDB** (Document Database for Product Service)
+- **Elasticsearch 8.12.0** (Search Engine & Document Store)
 - **Redis** (Caching & Session Storage)
-- **PostgreSQL** (Advanced Features)
+- **Docker TestContainers** (Automated Testing Environment)
 - **MyBatis 3.0.4** with Dynamic SQL
 - **JPA/Hibernate** (ORM)
+- **Spring Data R2DBC** (Reactive Database Access)
 - **Flyway** (Database Migration)
 - **spring-boot-starter-test-container** (Custom TestContainers Starter)
 
@@ -171,12 +185,18 @@ git commit -m "deps: update spring boot to 3.5.4"
 - **SSL/HTTPS** with PKCS12
 - **JWT Token** Support
 
+### Event-Driven & Messaging
+- **Apache Kafka 3.6.1** (Event Streaming Platform)
+- **Debezium 2.7.2** (Change Data Capture)
+- **Spring Kafka** (Kafka Integration)
+- **Kafka Streams** (Stream Processing)
+
 ### Web & Template
+- **Spring WebFlux** (Reactive Web Framework)
 - **Thymeleaf 3.4.0** (Server-side Rendering)
 - **Bootstrap 5.3.3** (UI Framework)
 - **AdminLTE** (Admin Dashboard)
 - **WYSIHTML5** (Rich Text Editor)
-- **WebFlux** (Reactive Programming)
 
 ### Testing & Quality
 - **JUnit 5** (Unit Testing)
@@ -206,7 +226,16 @@ primavera/
 │   ├── chap01-05/          # 🎯 기초: Spring Boot 핵심 개념
 │   ├── chap06-09/          # 🔧 중급: 데이터, 보안, 템플릿
 │   ├── chap10-14/          # 🚀 고급: OAuth2, 마이크로서비스
-│   └── chap15-18/          # 💼 실무: 배포, 모니터링, 최적화
+│   ├── chap15-16/          # 💼 실무: 리액티브, 마이크로서비스
+│   ├── chap17/             # 📊 데이터 파이프라인
+│   │   ├── batch/          # Spring Batch 초기 인덱싱
+│   │   └── streaming/      # Debezium CDC 실시간 업데이트
+│   └── chap18/             # 🔄 이벤트 기반 마이크로서비스
+│       ├── order/          # 주문 서비스 (WebFlux + R2DBC + Kafka)
+│       ├── product/        # 상품 서비스 (WebFlux + MongoDB + Kafka)
+│       ├── account/        # 계정 서비스 (Redis)
+│       ├── front/          # 프론트엔드 서비스
+│       └── configuration/  # 설정 서버
 ├── 🧩 Appendix
 │   ├── appendix/
 │   │   ├── spring-boot-starter-lucy-filter/    # XSS 보안 필터
@@ -215,6 +244,26 @@ primavera/
     ├── config/             # 환경별 설정 파일
     ├── docker/             # Docker 컨테이너 구성
     └── k8s/                # Kubernetes 매니페스트
+```
+
+### 🔄 마이크로서비스 이벤트 아키텍처 (chap18)
+
+```
+┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
+│   Order API     │    │   Apache Kafka   │    │ Product Service │
+│ (WebFlux+R2DBC) │────│   Event Bus      │────│ (WebFlux+Mongo) │
+└─────────────────┘    └──────────────────┘    └─────────────────┘
+         │                       │                       │
+         │                       │                       │
+    ┌────▼────────┐        ┌────▼─────┐         ┌───────▼────────┐
+    │ OrderCreated │        │  Event   │         │ InventoryCheck │
+    │   Event      │        │ Topics   │         │ & Deduction    │
+    └─────────────┘        └──────────┘         └────────────────┘
+                                │
+                         ┌─────▼──────┐
+                         │ Saga Pattern│
+                         │ Orchestrator│
+                         └────────────┘
 ```
 
 ## 📊 데이터베이스 스키마
@@ -423,6 +472,8 @@ Connection Settings:
 4. Test Connection → Success 확인
 
 ### 3. 프로젝트 실행
+
+#### 일반적인 챕터 실행
 ```bash
 # Infrastructure가 정상 실행된 후 메인 디렉토리로 이동
 cd ../
@@ -432,6 +483,56 @@ cd ../
 
 # 전체 빌드 및 테스트
 ./gradlew clean build
+```
+
+#### chap17 - 데이터 파이프라인 실행
+```bash
+# 1. Elasticsearch 시작
+docker run -d --name elasticsearch-primavera \
+  -p 9200:9200 -p 9300:9300 \
+  -e "discovery.type=single-node" \
+  -e "xpack.security.enabled=false" \
+  elasticsearch:8.12.0
+
+# 2. 초기 인덱싱 실행
+./gradlew :chap17:batch:bootRun
+
+# 3. 실시간 CDC 시작
+./gradlew :chap17:streaming:bootRun
+```
+
+#### chap18 - 마이크로서비스 + Kafka 실행
+```bash
+# 1. Kafka 시작
+docker run -d --name kafka-primavera \
+  -p 9092:9092 \
+  apache/kafka:latest
+
+# 2. MongoDB 시작 (Product Service용)
+docker run -d --name mongodb-primavera \
+  -p 27017:27017 \
+  -e MONGO_INITDB_ROOT_USERNAME=root \
+  -e MONGO_INITDB_ROOT_PASSWORD=primavera \
+  mongo:latest
+
+# 3. 서비스 실행 (각각 별도 터미널에서)
+./gradlew :chap18:order:bootRun      # 포트 8082
+./gradlew :chap18:product:bootRun    # 포트 8083
+
+# 4. 주문 생성 테스트
+curl -X POST http://localhost:8082/api/v1/orders \
+  -H "Content-Type: application/json" \
+  -d '{
+    "customerId": "CUST-001",
+    "items": [
+      {
+        "productId": "1",
+        "quantity": 2,
+        "unitPrice": 25000,
+        "productName": "테스트 상품"
+      }
+    ]
+  }'
 ```
 
 #### ⚠️ 중요 주의사항
@@ -812,23 +913,40 @@ spring:
   - **캐싱**: Redis 기반 분산 캐시
 - **아키텍처 패턴**: 마이크로서비스 분해 전략
 
-#### **Chapter 17** - 파일 처리 & 모니터링
-- **학습 목표**: 파일 시스템 통합 및 애플리케이션 모니터링
+#### **Chapter 17** - 엔터프라이즈 데이터 파이프라인 ⭐ *New*
+- **학습 목표**: Spring Batch + Debezium Embedded를 활용한 실시간 데이터 파이프라인 구축
 - **주요 내용**:
-  - Apache POI를 통한 Excel 파일 처리
-  - OpenCSV를 통한 CSV 데이터 처리
-  - Sentry 통합 에러 트래킹
-  - PostgreSQL 고급 기능 활용
+  - **Spring Batch**: 대용량 초기 인덱싱 (Products + Sellers + Categories)
+  - **Debezium Embedded**: Kafka 없이 MariaDB CDC 실시간 처리
+  - **Elasticsearch**: 검색 최적화된 문서 저장소
+  - **경량 아키텍처**: 별도 Kafka 인프라 불필요한 CDC 구현
+- **서브모듈 구조**:
+  - `chap17/batch`: 초기 전체 데이터 인덱싱
+  - `chap17/streaming`: 실시간 CDC 업데이트
+- **혁신 기능**:
+  - Chunk 기반 배치 처리로 메모리 효율성 극대화
+  - binlog 기반 실시간 변경 감지
+  - 배치와 스트리밍 조합으로 최종 일관성 보장
 
-#### **Chapter 18** - CI/CD & 운영
-- **학습 목표**: 완전 자동화된 배포 파이프라인 구축
+#### **Chapter 18** - 마이크로서비스 + Kafka 이벤트 시스템 ⭐ *Enhanced*
+- **학습 목표**: 이벤트 기반 마이크로서비스 아키텍처 및 Saga 패턴 구현
 - **주요 내용**:
-  - **CI/CD 파이프라인**: GitHub Actions, Travis CI
-  - **컨테이너화**: Docker 멀티스테이지 빌드
-  - **오케스트레이션**: Kubernetes (EKS) 배포
-  - **GitOps**: ArgoCD를 통한 자동 배포
-  - **모니터링**: Prometheus, Grafana, Sentry 통합
-  - **보안**: 컨테이너 보안 스캔, 시크릿 관리
+  - **마이크로서비스 분해**: Order, Product, Account, Front, Configuration 서비스
+  - **Kafka 이벤트 기반 통신**: 주문 생성 → 재고 처리 → 주문 취소 시나리오
+  - **WebFlux + R2DBC**: 완전한 리액티브 스택
+  - **Saga 패턴**: 분산 트랜잭션 및 보상 트랜잭션 처리
+- **실시간 이벤트 플로우**:
+  ```
+  주문 생성 API → OrderCreatedEvent → 재고 확인 → InventoryReservedEvent/InsufficientEvent → 주문 확정/취소
+  ```
+- **고급 패턴**:
+  - Event Sourcing을 통한 이벤트 기반 상태 관리
+  - CQRS로 명령과 조회 책임 분리
+  - 실패 시나리오별 보상 트랜잭션 자동 처리
+- **기술 스택**:
+  - **Order Service**: Spring WebFlux + R2DBC MariaDB + Kafka Producer/Consumer
+  - **Product Service**: Spring WebFlux + MongoDB + Kafka Consumer/Producer
+  - **Infrastructure**: Apache Kafka, MariaDB 11.4.7, MongoDB
 
 ## 🔐 보안 기능
 

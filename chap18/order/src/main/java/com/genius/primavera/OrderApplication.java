@@ -1,5 +1,6 @@
 package com.genius.primavera;
 
+import com.genius.primavera.event.OrderEventPublisher;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -20,28 +21,29 @@ import static org.springframework.web.reactive.function.server.ServerResponse.ok
 @EnableAutoConfiguration
 public class OrderApplication {
 
-	private static String USERS_USER_ID_ORDER_URL = "users/{userId}/orders";
+    private static String USERS_USER_ID_ORDER_URL = "users/{userId}/orders";
 
-	public static void main(String[] args) {
-		new SpringApplicationBuilder(OrderApplication.class)
-				.initializers((GenericApplicationContext context) -> {
-					context.registerBean(RouterFunction.class, () -> {
-						var orderRepository = context.getBean(OrderRepository.class);
-						var orderService = new OrderServiceImpl(orderRepository);
-						return route().GET(USERS_USER_ID_ORDER_URL, request -> ok().body(orderService.findByUserId(request.pathVariable("userId")), Order.class)).build();
-					});
-				})
-				.build()
-				.run(args);
-	}
+    public static void main(String[] args) {
+        new SpringApplicationBuilder(OrderApplication.class)
+                .initializers((GenericApplicationContext context) -> {
+                    context.registerBean(RouterFunction.class, () -> {
+                        var orderRepository = context.getBean(OrderRepository.class);
+                        var orderEventPublisher = context.getBean(OrderEventPublisher.class);
+                        var orderService = new OrderServiceImpl(orderRepository, orderEventPublisher);
+                        return route().GET(USERS_USER_ID_ORDER_URL, request -> ok().body(orderService.findByUserId(request.pathVariable("userId")), Order.class)).build();
+                    });
+                })
+                .build()
+                .run(args);
+    }
 
-	@EventListener(ApplicationReadyEvent.class)
-	public void init(ApplicationReadyEvent applicationReadyEvent) {
-		log.debug("OrderApplication Start... {}", applicationReadyEvent);
-		var orderRepository = applicationReadyEvent.getApplicationContext().getBean(OrderRepository.class);
-		orderRepository.deleteAll().subscribe();
-		LongStream.rangeClosed(1, 100).forEach(u -> {
-			orderRepository.saveAll(LongStream.rangeClosed(1, 100).mapToObj(p -> new Order(u, p, 100L)).collect(Collectors.toList())).subscribe();
-		});
-	}
+    @EventListener(ApplicationReadyEvent.class)
+    public void init(ApplicationReadyEvent applicationReadyEvent) {
+        log.debug("OrderApplication Start... {}", applicationReadyEvent);
+        var orderRepository = applicationReadyEvent.getApplicationContext().getBean(OrderRepository.class);
+        orderRepository.deleteAll().subscribe();
+        LongStream.rangeClosed(1, 100).forEach(u -> {
+            orderRepository.saveAll(LongStream.rangeClosed(1, 100).mapToObj(p -> new Order(u, p, 100L)).collect(Collectors.toList())).subscribe();
+        });
+    }
 }
