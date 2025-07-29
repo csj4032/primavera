@@ -64,60 +64,45 @@ subprojects {
         mavenCentral()
     }
 
+    dependencyManagement {
+        imports {
+            mavenBom "org.springframework.cloud:spring-cloud-dependencies:2023.0.4"
+        }
+    }
+
     dependencies {
-        // ==========================================
-        // Core Framework Dependencies (모든 모듈 공통)
-        // ==========================================
         implementation "org.springframework.boot:spring-boot-starter-web"
         implementation "org.slf4j:slf4j-api:${slf4jVersion}"
-
-        // ==========================================
-        // Development Tools (모든 모듈 공통)
-        // ==========================================
         compileOnly "org.projectlombok:lombok:${lombokVersion}"
         annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
         compileOnly "org.jetbrains:annotations:${jetbrainsAnnotationsVersion}"
-
-        // ==========================================
-        // Testing Dependencies (모든 모듈 공통)
-        // ==========================================
         testImplementation "org.springframework.boot:spring-boot-starter-test"
         testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
         testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
-
-        // ==========================================
-        // Validation API (대부분 모듈 공통)
-        // ==========================================
         compileOnly "jakarta.validation:jakarta.validation-api:${javaxValidationVersion}"
     }
 
 }
 
 ext {
-    // Database 관련 공통 dependencies
     databaseDependencies = [
             "org.springframework.boot:spring-boot-starter-jdbc",
             "org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}"
     ]
-
-    // AOP 관련 공통 dependencies  
     aopDependencies = [
             "org.springframework.boot:spring-boot-starter-aop"
     ]
 
-    // MyBatis 관련 공통 dependencies
     mybatisDependencies = [
             "org.mybatis.spring.boot:mybatis-spring-boot-starter:${mybatisSpringBootStarterVersion}",
             "org.mybatis.dynamic-sql:mybatis-dynamic-sql:${mybatisDynamicSqlVersion}"
     ]
 
-    // Thymeleaf 관련 공통 dependencies
     thymeleafDependencies = [
             "org.springframework.boot:spring-boot-starter-thymeleaf",
             "nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:${thymeleafLayoutDialectVersion}"
     ]
 
-    // Security 관련 공통 dependencies
     securityDependencies = [
             "org.springframework.security:spring-security-config:${springSecurityVersion}",
             "org.springframework.security:spring-security-core:${springSecurityVersion}",
@@ -125,7 +110,6 @@ ext {
             "org.springframework.security:spring-security-web:${springSecurityVersion}"
     ]
 
-    // TestContainers 관련 공통 dependencies
     testContainersDependencies = [
             "org.testcontainers:junit-jupiter:${testContainersVersion}",
             "org.testcontainers:mariadb:${testContainersVersion}",
@@ -136,24 +120,20 @@ ext {
             "org.testcontainers:mongodb:${testContainersVersion}",
     ]
 
-    // Validation 관련 공통 dependencies
     validationDependencies = [
             "org.springframework.boot:spring-boot-starter-validation",
             "jakarta.validation:jakarta.validation-api:${javaxValidationVersion}"
     ]
 
-    // Development Tools 공통 dependencies
     developmentDependencies = [
             "org.springframework.boot:spring-boot-devtools"
     ]
 
-    // Logging 관련 공통 dependencies
     loggingDependencies = [
             "com.github.gavlyukovskiy:p6spy-spring-boot-starter:${p6spySpringBootStarterVersion}",
             "org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4.1:${log4jdbcLog4j2Version}"
     ]
 
-    // Web UI 관련 공통 dependencies
     webUiDependencies = [
             "org.webjars:bootstrap:${bootstrapVersion}",
             "org.graalvm.js:js:${graalvmJsVersion}",

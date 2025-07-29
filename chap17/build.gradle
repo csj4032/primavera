@@ -1,31 +1,19 @@
-plugins {
-    id 'java'
-    id 'org.springframework.boot' version "${springBootVersion}" apply false
-    id 'io.spring.dependency-management' version "${springDependencyManagementVersion}"
-    id 'org.graalvm.buildtools.native' version '0.10.2' apply false
+repositories {
+    mavenCentral()
 }
 
-subprojects {
-    apply plugin: 'java'
-    apply plugin: 'org.springframework.boot'
-    apply plugin: 'io.spring.dependency-management'
-
-    group = 'com.genius.primavera'
-    version = '1.0.0-SNAPSHOT'
-
-    java {
-        toolchain {
-            languageVersion = JavaLanguageVersion.of(21)
-        }
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
     }
+}
 
-    repositories {
-        mavenCentral()
-    }
+// Disable Spring Boot tasks for the root module (this is a multi-module project)
+bootJar {
+    enabled = false
+}
 
-    dependencyManagement {
-        imports {
-            mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
-        }
-    }
+jar {
+    enabled = true
+    archiveClassifier = ''
 }

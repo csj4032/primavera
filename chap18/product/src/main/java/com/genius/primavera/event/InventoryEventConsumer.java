@@ -25,7 +25,7 @@ public class InventoryEventConsumer {
     public void handleOrderCreatedEvent(
             @Payload OrderCreatedEvent event,
             @Header(KafkaHeaders.RECEIVED_TOPIC) String topic,
-            @Header(KafkaHeaders.RECEIVED_PARTITION_ID) int partition,
+            @Header(KafkaHeaders.RECEIVED_PARTITION) int partition,
             @Header(KafkaHeaders.OFFSET) long offset,
             Acknowledgment ack) {
         

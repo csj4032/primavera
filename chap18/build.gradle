@@ -7,3 +7,13 @@ dependencyManagement {
         mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
     }
 }
+
+// Disable Spring Boot tasks for the root module (this is a multi-module microservices project)
+bootJar {
+    enabled = false
+}
+
+jar {
+    enabled = true
+    archiveClassifier = ''
+}
