@@ -166,6 +166,59 @@ docker run -d --name mariadb-primavera \
 ./gradlew :chap05:test --tests WinnerServicePropagationTest
 ```
 
+## TestContainers 사용법 개선
+
+### 기존 방식 (복잡한 설정)
+```java
+@SpringBootTest
+@Testcontainers
+@ActiveProfiles("test")
+class MyIntegrationTest {
+    @Container
+    static MariaDBContainer<?> mariadb = new MariaDBContainer<>("mariadb:11.4.7")
+        .withDatabaseName("primavera")
+        .withUsername("primavera")
+        .withPassword("primavera")
+        .withInitScript("sql/init-db.sql");
+    
+    @DynamicPropertySource
+    static void configureProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", mariadb::getJdbcUrl);
+        registry.add("spring.datasource.username", mariadb::getUsername);
+        registry.add("spring.datasource.password", mariadb::getPassword);
+        registry.add("spring.datasource.driver-class-name", () -> "org.mariadb.jdbc.Driver");
+    }
+}
+```
+
+### 새로운 방식 (@EnablePrimaveraTestcontainers)
+```java
+@SpringBootTest
+@EnablePrimaveraTestcontainers
+class MyIntegrationTest {
+    // TestContainers 설정이 자동으로 완료됨
+    // 바로 테스트 코드 작성 가능
+    
+    @Autowired
+    private UserMapper userMapper;
+    
+    @Test
+    void testUserCreation() {
+        User user = new User();
+        user.setEmail("test@example.com");
+        userMapper.insert(user);
+        
+        assertThat(user.getId()).isNotNull();
+    }
+}
+```
+
+### @EnablePrimaveraTestcontainers 장점
+- **간단한 설정**: 한 줄의 어노테이션으로 모든 설정 완료
+- **자동 프로퍼티 설정**: DataSource 관련 프로퍼티 자동 주입
+- **일관된 환경**: 모든 테스트에서 동일한 MariaDB 11.4.7 사용
+- **스키마 자동 초기화**: init-db.sql 파일 자동 실행
+
 ### ETC
 * logback [참고](https://logback.qos.ch/)
 * mybatis [참고](http://www.mybatis.org/mybatis-3/)

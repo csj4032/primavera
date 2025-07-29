@@ -4,6 +4,7 @@ import com.genius.primavera.dao.UserDao;
 import com.genius.primavera.domain.User;
 import com.zaxxer.hikari.HikariDataSource;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,6 +15,7 @@ import java.util.List;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.server.ResponseStatusException;
 
 @Slf4j
 @RestController
@@ -35,6 +37,6 @@ public class PrimaveraController {
 
     @GetMapping(value = "users/{id}")
     public User user(@PathVariable(value = "id") long id) {
-        return userDao.findById(id);
+        return userDao.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found with ID: " + id));
     }
 }

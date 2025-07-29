@@ -12,12 +12,10 @@ public class PrimaveraService {
     private final RestTemplate restTemplate;
 
     public PrimaveraService(RestTemplateBuilder restTemplateBuilder) {
-        this.restTemplate = restTemplateBuilder
-            .messageConverters(new MappingJackson2HttpMessageConverter())
-            .build();
+        this.restTemplate = restTemplateBuilder.messageConverters(new MappingJackson2HttpMessageConverter()).build();
     }
 
     public User getUser(long id) {
-        return this.restTemplate.getForObject("http://localhost/users/" + id, User.class);
+        return this.restTemplate.getForObject("http://localhost:8080/users/" + id, User.class);
     }
 }

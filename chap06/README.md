@@ -176,7 +176,7 @@ public class UserStatusTypeHandler extends BaseTypeHandler<UserStatus> {
 
 ### 3. TestContainers 통합 테스트
 
-#### 컨테이너 기반 테스트 설정
+#### 기존 방식 - 컨테이너 기반 테스트 설정
 ```java
 @Testcontainers
 public abstract class AbstractContainerTest {
@@ -196,6 +196,38 @@ public abstract class AbstractContainerTest {
     }
 }
 ```
+
+#### 새로운 방식 - @EnablePrimaveraTestcontainers 사용
+```java
+@SpringBootTest
+@EnablePrimaveraTestcontainers
+public class UserSaveValidationTest {
+    // TestContainers 설정이 자동으로 완료
+    // MariaDB 11.4.7이 자동으로 시작되고 DataSource가 설정됨
+    
+    @Autowired
+    private TestRestTemplate restTemplate;
+    
+    @Test
+    void testUserValidation() {
+        User invalidUser = User.builder()
+            .email("invalid-email")  // 잘못된 이메일 형식
+            .password("weak")        // 약한 비밀번호
+            .build();
+            
+        ResponseEntity<User> response = restTemplate.postForEntity(
+            "/api/users/save", invalidUser, User.class);
+            
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+}
+```
+
+#### @EnablePrimaveraTestcontainers 장점
+- **코드 간소화**: 복잡한 TestContainers 설정 코드 제거
+- **일관성**: 모든 테스트에서 동일한 MariaDB 11.4.7 환경
+- **자동 설정**: DataSource, 초기화 스크립트 자동 처리
+- **빠른 시작**: 어노테이션 하나로 테스트 환경 구성 완료
 
 #### 포괄적인 검증 테스트
 ```java

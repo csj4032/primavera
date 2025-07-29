@@ -1,7 +1,6 @@
 package com.genius.primavera.testContainer.factory;
 
 import com.genius.primavera.testContainer.ContainerType;
-import com.genius.primavera.testContainer.PrimaveraTestcontainersProperties;
 import com.genius.primavera.testContainer.config.KafkaContainerConfig;
 import com.genius.primavera.testContainer.config.MariaDBContainerConfig;
 import com.genius.primavera.testContainer.config.PostgreSQLContainerConfig;

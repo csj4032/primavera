@@ -10,14 +10,12 @@ import java.util.Optional;
 
 public class MariaDBContainerConfig implements ContainerConfig<MariaDBContainer<?>> {
 
-    // 프로퍼티 키 정의 (application-test.yml에서 사용할 키) - 'primavera' 접두사 적용
     private static final String IMAGE_KEY = "primavera.testcontainers.mariadb.image";
     private static final String DATABASE_NAME_KEY = "primavera.testcontainers.mariadb.database-name";
     private static final String USERNAME_KEY = "primavera.testcontainers.mariadb.username";
     private static final String PASSWORD_KEY = "primavera.testcontainers.mariadb.password";
     private static final String INIT_SCRIPT_KEY = "primavera.testcontainers.mariadb.init-script"; // <--- 추가
 
-    // 기본값 정의
     private static final String DEFAULT_IMAGE = "mariadb:10.6";
     private static final String DEFAULT_DATABASE_NAME = "primavera_basic_test";
     private static final String DEFAULT_USERNAME = "primavera";

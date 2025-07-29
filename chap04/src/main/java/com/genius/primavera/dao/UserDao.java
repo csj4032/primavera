@@ -1,53 +1,59 @@
 package com.genius.primavera.dao;
 
 import com.genius.primavera.domain.User;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
-import java.time.Instant;
-import java.util.ArrayList;
+import javax.sql.DataSource;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class UserDao {
 
     private final JdbcTemplate jdbcTemplate;
+    private final SimpleJdbcInsert simpleJdbcInsert;
 
-    public UserDao(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
+    private final RowMapper<User> userRowMapper = (rs, rowNum) -> User.builder()
+            .id(rs.getLong("ID"))
+            .email(rs.getString("EMAIL"))
+            .nickname(rs.getString("NICKNAME"))
+            .createdAt(rs.getTimestamp("CREATED_AT").toInstant())
+            .updatedAt(rs.getTimestamp("UPDATED_AT").toInstant())
+            .build();
+
+    public UserDao(DataSource dataSource) {
+        this.jdbcTemplate = new JdbcTemplate(dataSource);
+        this.simpleJdbcInsert = new SimpleJdbcInsert(dataSource)
+                .withTableName("USERS")
+                .usingGeneratedKeyColumns("ID");
     }
 
-    public int saveUser(String email, String password, String nickname, String status, Instant createdAt) {
-        return jdbcTemplate.update("INSERT INTO USERS (EMAIL, PASSWORD, NICKNAME, STATUS, CREATED_AT) VALUES (?, ?, ?, ?, ?)",
-                email, password, nickname, status, createdAt);
+    public User save(User newUser) {
+        SqlParameterSource params = new BeanPropertySqlParameterSource(newUser);
+        Number generatedId = simpleJdbcInsert.executeAndReturnKey(params);
+        newUser.setId(generatedId.longValue());
+        return newUser;
     }
 
     public List<User> getUsers() {
-        return jdbcTemplate.query(
-                "SELECT ID, EMAIL, NICKNAME, CREATED_AT, UPDATED_AT FROM USERS",
-                (rs, rowNum) -> User.builder()
-                        .id(rs.getLong("ID"))
-                        .email(rs.getString("EMAIL"))
-                        .nickname(rs.getString("NICKNAME"))
-                        .createdAt(rs.getTimestamp("CREATED_AT").toInstant())
-                        .updatedAt(rs.getTimestamp("UPDATED_AT").toInstant())
-                        .build());
+        String sql = "SELECT ID, EMAIL, NICKNAME, CREATED_AT, UPDATED_AT FROM USERS";
+        return jdbcTemplate.query(sql, userRowMapper);
     }
 
-    public User findById(long id) {
+    public Optional<User> findById(long id) {
         String sql = "SELECT ID, EMAIL, NICKNAME, CREATED_AT, UPDATED_AT FROM USERS WHERE ID = ?";
-        return jdbcTemplate.query(sql, rs -> {
-            if (rs.next()) {
-                return User.builder()
-                        .id(rs.getLong("ID"))
-                        .email(rs.getString("EMAIL"))
-                        .nickname(rs.getString("NICKNAME"))
-                        .createdAt(rs.getTimestamp("CREATED_AT").toInstant())
-                        .updatedAt(rs.getTimestamp("UPDATED_AT").toInstant())
-                        .build();
-            }
-            return null;
-        }, id);
+        try {
+            User user = jdbcTemplate.queryForObject(sql, userRowMapper, id);
+            return Optional.of(user);
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
     }
 
     public int deleteAll() {

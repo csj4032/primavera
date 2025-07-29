@@ -68,7 +68,7 @@ class MyIntegrationTest {
 **1. 간단한 어노테이션 기반 사용**
 ```java
 // 개선된 방식: 단 한 줄의 어노테이션으로 완료!
-@PrimaveraTestContainer
+@EnablePrimaveraTestcontainers
 class MyIntegrationTest {
     // 모든 TestContainers 설정이 자동으로 완료
     // 실제 테스트 코드에만 집중 가능

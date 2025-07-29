@@ -15,7 +15,7 @@ public class User {
     private String email;
     private String password;
     private String nickname;
-    private List<String> roles; // javax.management.relation.Role을 String으로 변경
+    private List<String> roles;
     private Instant createdAt;
     private Instant updatedAt;
 

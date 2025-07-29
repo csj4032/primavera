@@ -2,7 +2,6 @@ package com.genius.primavera.testContainer.strategy;
 
 import com.genius.primavera.testContainer.ContainerType;
 import com.genius.primavera.testContainer.config.RedisContainerConfig;
-import com.redis.testcontainers.RedisContainer;
 import lombok.extern.slf4j.Slf4j;
 import org.testcontainers.containers.GenericContainer;
 

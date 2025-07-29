@@ -10,22 +10,22 @@ import lombok.extern.slf4j.Slf4j;
 @ProxyAnnotation
 public class DoSomethingImpl implements DoSomething {
 
-	@Override
-	@ProxyPointAnnotation
-	public String doSomething(String first) {
-		log.info("{}", this);
-		return doSomething(first, "second");
-	}
+    @Override
+    @ProxyPointAnnotation
+    public String doSomething(String first) {
+        log.info("{}", this);
+        return doSomething(first, "Something");
+    }
 
-	@Override
-	@ProxyPointAnnotation
-	public String doSomething(String first, String second) {
-		log.info("{} ", this);
-		return first + " " + second;
-	}
+    @Override
+    @ProxyPointAnnotation
+    public String doSomething(String first, String second) {
+        log.info("{} ", this);
+        return first + " " + second + " Something";
+    }
 
-	@Override
-	public String doSomething(String first, String second, String third) {
-		return null;
-	}
+    @Override
+    public String doSomething(String first, String second, String third) {
+        return first + " " + second + " " + third + " Something";
+    }
 }

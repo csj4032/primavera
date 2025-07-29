@@ -8,6 +8,7 @@ dependencies {
     implementation "org.springframework.cloud:spring-cloud-starter-bootstrap:${springCloudVersion}"
     implementation "commons-io:commons-io:${commonsIoVersion}"
     implementation "org.reflections:reflections:${reflectionsVersion}"
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
     testImplementation "org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}"
     testImplementation project(":appendix:spring-boot-starter-test-container")
 }

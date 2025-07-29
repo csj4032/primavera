@@ -29,10 +29,13 @@ public class KafkaContainerConfig implements ContainerConfig<KafkaContainer> {
     public KafkaContainer createContainer(Environment environment) {
         String image = environment.getProperty(IMAGE_KEY, DEFAULT_IMAGE);
         String autoCreateTopicsEnable = environment.getProperty(AUTO_CREATE_TOPICS_ENABLE_KEY, DEFAULT_AUTO_CREATE_TOPICS_ENABLE);
-        String zookeeperConnect = environment.getProperty(ZOOKEEPER_CONNECT_KEY); // No default, rely on Testcontainers or app default
-        String advertisedListeners = environment.getProperty(ADVERTISED_LISTENERS_KEY); // No default
-        KafkaContainer container = new KafkaContainer(DockerImageName.parse(image))
+        String zookeeperConnect = environment.getProperty(ZOOKEEPER_CONNECT_KEY);
+        String advertisedListeners = environment.getProperty(ADVERTISED_LISTENERS_KEY);
+        DockerImageName kafkaImage = DockerImageName.parse(image).asCompatibleSubstituteFor("apache/kafka");
+        KafkaContainer container = new KafkaContainer(kafkaImage)
                 .withEnv("KAFKA_AUTO_CREATE_TOPICS_ENABLE", autoCreateTopicsEnable)
+                .withEnv("KAFKA_ZOOKEEPER_CONNECT", zookeeperConnect)
+                .withEnv("KAFKA_ADVERTISED_LISTENERS", advertisedListeners != null ? advertisedListeners : "PLAINTEXT://localhost:9092")
                 .withEnv("KAFKA_LISTENER_SECURITY_PROTOCOL_MAP", "PLAINTEXT:PLAINTEXT")
                 .withReuse(true);
 
