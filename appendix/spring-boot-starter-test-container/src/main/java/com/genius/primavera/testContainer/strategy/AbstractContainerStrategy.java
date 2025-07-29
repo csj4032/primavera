@@ -29,7 +29,7 @@ public class AbstractContainerStrategy<T extends GenericContainer<?>> implements
     @Override
     public void startContainer(ConfigurableApplicationContext applicationContext) {
         if (container == null) {
-            container = config.createContainer();
+            container = config.createContainer(applicationContext.getEnvironment());
             container.start();
             log.info("{} container started at {}:{}", containerType.name(), container.getHost(), container.getFirstMappedPort());
             Map<String, Object> properties = config.getSpringProperties(container, applicationContext.getEnvironment());

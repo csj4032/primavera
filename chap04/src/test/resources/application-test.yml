@@ -35,7 +35,7 @@ primavera:
       enabled: true
       dockerImageName: mariadb:11.4.7
       driverClassName: org.mariadb.jdbc.Driver
-      databaseName: primavera!!!!
+      databaseName: primavera
       username: primavera
       password: primavera
       initScript: sql/init-db.sql

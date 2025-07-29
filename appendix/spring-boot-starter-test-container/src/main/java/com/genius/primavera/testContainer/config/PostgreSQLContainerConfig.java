@@ -1,6 +1,5 @@
 package com.genius.primavera.testContainer.config;
 
-import com.genius.primavera.testContainer.PrimaveraTestcontainersProperties;
 import org.springframework.core.env.Environment;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.utility.DockerImageName;
@@ -10,10 +9,20 @@ import java.util.Optional;
 
 public class PostgreSQLContainerConfig implements ContainerConfig<PostgreSQLContainer<?>> {
 
-    private final PrimaveraTestcontainersProperties.PostgreSQL postgreSQLProperties;
+    // 프로퍼티 키 정의 (application-test.yml에서 사용할 키)
+    private static final String IMAGE_KEY = "primavera.testcontainers.postgresql.image";
+    private static final String DATABASE_NAME_KEY = "primavera.testcontainers.postgresql.database-name";
+    private static final String USERNAME_KEY = "primavera.testcontainers.postgresql.username";
+    private static final String PASSWORD_KEY = "primavera.testcontainers.postgresql.password";
+    private static final String INIT_SCRIPT_KEY = "primavera.testcontainers.postgresql.init-script";
 
-    public PostgreSQLContainerConfig(PrimaveraTestcontainersProperties properties) {
-        this.postgreSQLProperties = properties.getPostgreSQL();
+    // 기본값 정의
+    private static final String DEFAULT_IMAGE = "postgres:14"; // 원하는 PostgreSQL 버전
+    private static final String DEFAULT_DATABASE_NAME = "primavera_pg_test";
+    private static final String DEFAULT_USERNAME = "pguser";
+    private static final String DEFAULT_PASSWORD = "pgpass";
+
+    public PostgreSQLContainerConfig() {
     }
 
     @Override
@@ -22,17 +31,21 @@ public class PostgreSQLContainerConfig implements ContainerConfig<PostgreSQLCont
     }
 
     @Override
-    public PostgreSQLContainer<?> createContainer() {
-        String image = postgreSQLProperties.getImage();
-        String databaseName = postgreSQLProperties.getDatabaseName();
-        String username = postgreSQLProperties.getUsername();
-        String password = postgreSQLProperties.getPassword();
-        Optional<String> initScript = Optional.ofNullable(postgreSQLProperties.getInitScript());
-        return new PostgreSQLContainer<>(image)
+    public PostgreSQLContainer<?> createContainer(Environment environment) {
+        String image = environment.getProperty(IMAGE_KEY, DEFAULT_IMAGE);
+        String databaseName = environment.getProperty(DATABASE_NAME_KEY, DEFAULT_DATABASE_NAME);
+        String username = environment.getProperty(USERNAME_KEY, DEFAULT_USERNAME);
+        String password = environment.getProperty(PASSWORD_KEY, DEFAULT_PASSWORD);
+        Optional<String> initScript = Optional.ofNullable(environment.getProperty(INIT_SCRIPT_KEY));
+        PostgreSQLContainer<?> container = new PostgreSQLContainer<>(DockerImageName.parse(image))
                 .withDatabaseName(databaseName)
                 .withUsername(username)
                 .withPassword(password)
                 .withReuse(true);
+
+        initScript.ifPresent(container::withInitScript); // initScript가 있으면 적용
+
+        return container;
     }
 
     @Override

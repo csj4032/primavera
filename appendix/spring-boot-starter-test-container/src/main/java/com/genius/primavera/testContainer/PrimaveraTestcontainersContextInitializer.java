@@ -1,11 +1,16 @@
 package com.genius.primavera.testContainer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.genius.primavera.testContainer.config.KafkaContainerConfig;
+import com.genius.primavera.testContainer.config.MariaDBContainerConfig;
+import com.genius.primavera.testContainer.config.PostgreSQLContainerConfig;
+import com.genius.primavera.testContainer.config.RedisContainerConfig;
 import com.genius.primavera.testContainer.factory.ContainerStrategyFactory;
 import com.genius.primavera.testContainer.strategy.ContainerStrategy;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.core.env.Environment;
 import org.testcontainers.containers.GenericContainer;
 
 import java.util.Arrays;
@@ -30,8 +35,10 @@ public class PrimaveraTestcontainersContextInitializer implements ApplicationCon
     public void initialize(ConfigurableApplicationContext applicationContext) {
         log.info("Initializing Primavera Testcontainers with Strategy Pattern...");
 
+        // Spring 컨텍스트에서 ContainerStrategyFactory 빈을 가져옴 <--- 변경
+        // 이 시점에는 이미 자동 설정으로 인해 ContainerStrategyFactory 빈이 생성되어 있어야 합니다.
         if (factory == null) {
-            factory = applicationContext.getBean(ContainerStrategyFactory.class);
+            initializeFactory(applicationContext.getEnvironment());
             log.info("ContainerStrategyFactory bean obtained from application context.");
         }
 
@@ -53,6 +60,12 @@ public class PrimaveraTestcontainersContextInitializer implements ApplicationCon
 
         for (ContainerType containerType : containerTypes) {
             startContainer(containerType, applicationContext);
+        }
+    }
+
+    private void initializeFactory(Environment environment) {
+        if (factory == null) {
+            factory = new ContainerStrategyFactory(environment);
         }
     }
 

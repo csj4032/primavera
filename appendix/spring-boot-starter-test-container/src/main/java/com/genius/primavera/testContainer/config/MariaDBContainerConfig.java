@@ -10,10 +10,20 @@ import java.util.Optional;
 
 public class MariaDBContainerConfig implements ContainerConfig<MariaDBContainer<?>> {
 
-    private final PrimaveraTestcontainersProperties.Mariadb mariadbProperties;
+    // 프로퍼티 키 정의 (application-test.yml에서 사용할 키) - 'primavera' 접두사 적용
+    private static final String IMAGE_KEY = "primavera.testcontainers.mariadb.image";
+    private static final String DATABASE_NAME_KEY = "primavera.testcontainers.mariadb.database-name";
+    private static final String USERNAME_KEY = "primavera.testcontainers.mariadb.username";
+    private static final String PASSWORD_KEY = "primavera.testcontainers.mariadb.password";
+    private static final String INIT_SCRIPT_KEY = "primavera.testcontainers.mariadb.init-script"; // <--- 추가
 
-    public MariaDBContainerConfig(PrimaveraTestcontainersProperties properties) {
-        this.mariadbProperties = properties.getMariadb();
+    // 기본값 정의
+    private static final String DEFAULT_IMAGE = "mariadb:10.6";
+    private static final String DEFAULT_DATABASE_NAME = "primavera_basic_test";
+    private static final String DEFAULT_USERNAME = "primavera";
+    private static final String DEFAULT_PASSWORD = "testpass";
+
+    public MariaDBContainerConfig() {
     }
 
     @Override
@@ -22,12 +32,12 @@ public class MariaDBContainerConfig implements ContainerConfig<MariaDBContainer<
     }
 
     @Override
-    public MariaDBContainer<?> createContainer() {
-        String image = mariadbProperties.getImage();
-        String databaseName = mariadbProperties.getDatabaseName();
-        String username = mariadbProperties.getUsername();
-        String password = mariadbProperties.getPassword();
-        Optional<String> initScript = Optional.ofNullable(mariadbProperties.getInitScript());
+    public MariaDBContainer<?> createContainer(Environment environment) {
+        String image = environment.getProperty(IMAGE_KEY, DEFAULT_IMAGE);
+        String databaseName = environment.getProperty(DATABASE_NAME_KEY, DEFAULT_DATABASE_NAME);
+        String username = environment.getProperty(USERNAME_KEY, DEFAULT_USERNAME);
+        String password = environment.getProperty(PASSWORD_KEY, DEFAULT_PASSWORD);
+        Optional<String> initScript = Optional.ofNullable(environment.getProperty(INIT_SCRIPT_KEY));
 
         MariaDBContainer<?> container = new MariaDBContainer<>(DockerImageName.parse(image))
                 .withDatabaseName(databaseName)
