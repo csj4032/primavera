@@ -1,7 +1,7 @@
 spring:
-  application:
-    name: DataAccessApplication
   config:
+    activate:
+      on-profile: local
     import: "optional:vault:"
   cloud:
     vault:

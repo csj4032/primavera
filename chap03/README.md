@@ -416,7 +416,7 @@ chap03 실행 전에 반드시 MariaDB 11.4.7 데이터베이스를 구성해야
 ```
 infrastructure/
 ├── docker-compose.yml    # MariaDB 11.4.7 컨테이너 설정
-└── init.sql             # 초기 데이터베이스 스크립트
+└── init-local.sql             # 초기 데이터베이스 스크립트
 ```
 
 #### Docker Compose 실행 방법
@@ -502,7 +502,7 @@ services:
       - "1109:3306"    # 외부 포트 1109 → 내부 포트 3306
     volumes:
       - mariadb_data:/var/lib/mysql
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - ./init-local.sql:/docker-entrypoint-initdb.d/init-local.sql:ro
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
 ```
 
@@ -511,7 +511,7 @@ services:
 - **포트 1109**: 기본 3306 포트와 충돌 방지
 - **UTF8MB4**: 완전한 유니코드 지원
 - **영구 볼륨**: 컨테이너 재시작 시 데이터 보존
-- **자동 초기화**: init.sql 스크립트 자동 실행
+- **자동 초기화**: init-local.sql 스크립트 자동 실행
 
 ### 4. 환경 관리 명령어
 

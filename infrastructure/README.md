@@ -145,7 +145,7 @@ export VAULT_TOKEN=$(cat infrastructure/vault/app-token.txt)
 infrastructure/
 ├── README.md              # 📖 이 문서
 ├── docker-compose.yml     # 🐳 Docker Compose 설정
-├── init.sql              # 🗃️ 데이터베이스 초기화 스크립트
+├── init-local.sql              # 🗃️ 데이터베이스 초기화 스크립트
 ├── vault-init.sh         # 🔐 Vault 시크릿 초기화 스크립트
 └── certs-init.sh         # 🔒 SSL 인증서 생성 스크립트
 ```
@@ -555,7 +555,7 @@ services:
       - "1109:3306"  # 호스트:컨테이너
     volumes:
       - mariadb_data:/var/lib/mysql
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - ./init-local.sql:/docker-entrypoint-initdb.d/init-local.sql:ro
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     networks:
       - primavera-network
@@ -768,7 +768,7 @@ docker exec -it mariadb-primavera mariadb -u primavera -pprimavera
 docker exec -it mariadb-primavera mariadb -u primavera -pprimavera primavera_basic
 
 # SQL 스크립트 실행
-docker exec -i mariadb-primavera mariadb -u root -proot < init.sql
+docker exec -i mariadb-primavera mariadb -u root -proot < init-local.sql
 
 # 단일 쿼리 실행
 docker exec mariadb-primavera mariadb -u root -proot -e "SHOW DATABASES;"

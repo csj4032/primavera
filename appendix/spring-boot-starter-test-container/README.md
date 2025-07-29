@@ -679,7 +679,7 @@ ORDER BY created_at DESC;
 
 ```java
 @PrimaveraTestContainer(
-    initScript = "sql/multi-database-init.sql"
+    initScript = "sql/multi-database-init-local.sql"
 )
 class MultiDatabaseTest {
     

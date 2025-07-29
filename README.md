@@ -288,7 +288,7 @@ docker-compose --version
 ```
 infrastructure/
 ├── docker-compose.yml    # 통합 인프라 컨테이너 설정
-├── init.sql             # 초기 데이터베이스 스크립트
+├── init-local.sql             # 초기 데이터베이스 스크립트
 ├── vault/               # HashiCorp Vault 설정
 └── vault-init.sh        # Vault 초기화 스크립트
 ```

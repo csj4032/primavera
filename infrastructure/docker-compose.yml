@@ -6,7 +6,7 @@ services:
     restart: unless-stopped
     environment:
       MARIADB_ROOT_PASSWORD: root
-      MARIADB_DATABASE: local_primavera
+      MARIADB_DATABASE: primavera
       MARIADB_USER: primavera
       MARIADB_PASSWORD: primavera
       MARIADB_AUTO_UPGRADE: 1
@@ -15,7 +15,7 @@ services:
       - "3308:3306"
     volumes:
       - mariadb_local_data:/var/lib/mysql
-      - ./init-local.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - ./sql/init-local.sql:/docker-entrypoint-initdb.d/init-local.sql:ro
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --default-time-zone='+00:00'
     networks:
       - primavera-network
@@ -32,7 +32,7 @@ services:
     restart: unless-stopped
     environment:
       MARIADB_ROOT_PASSWORD: root
-      MARIADB_DATABASE: test_primavera
+      MARIADB_DATABASE: primavera
       MARIADB_USER: primavera
       MARIADB_PASSWORD: primavera
       MARIADB_AUTO_UPGRADE: 1
@@ -41,7 +41,7 @@ services:
       - "3309:3306"
     volumes:
       - mariadb_test_data:/var/lib/mysql
-      - ./init-test.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - ./sql/init-test.sql:/docker-entrypoint-initdb.d/init-local.sql:ro
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --default-time-zone='+00:00'
     networks:
       - primavera-network
@@ -58,7 +58,7 @@ services:
     restart: unless-stopped
     environment:
       MARIADB_ROOT_PASSWORD: root
-      MARIADB_DATABASE: prod_primavera
+      MARIADB_DATABASE: primavera
       MARIADB_USER: primavera
       MARIADB_PASSWORD: primavera
       MARIADB_AUTO_UPGRADE: 1
@@ -67,7 +67,7 @@ services:
       - "3310:3306"
     volumes:
       - mariadb_prod_data:/var/lib/mysql
-      - ./init-prod.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - ./sql/init-prod.sql:/docker-entrypoint-initdb.d/init-local.sql:ro
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --default-time-zone='+00:00'
     networks:
       - primavera-network
