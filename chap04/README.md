@@ -284,6 +284,93 @@ vault token capabilities secret/data/primavera/local/basic
 4. **자동 로테이션**: 정기적 시크릿 갱신 자동화
 5. **환경 분리**: 개발/테스트/프로덕션 환경별 시크릿 격리
 
+## Primavera TestContainers 사용법
+
+### @EnablePrimaveraTestcontainers 어노테이션
+
+`@EnablePrimaveraTestcontainers`는 테스트에서 필요한 인프라 컨테이너를 자동으로 시작하고 관리하는 어노테이션입니다.
+
+#### 기본 사용법 (MariaDB만 사용)
+```java
+@SpringBootTest
+@EnablePrimaveraTestcontainers
+class MyTest {
+    @Autowired
+    private DataSource dataSource;
+    
+    @Test
+    void testDatabaseConnection() {
+        // MariaDB 컨테이너가 자동으로 시작되고 설정됨
+    }
+}
+```
+
+#### 특정 컨테이너 지정
+```java
+@SpringBootTest
+@EnablePrimaveraTestcontainers({ContainerType.MARIADB, ContainerType.REDIS})
+class MyIntegrationTest {
+    @Autowired
+    private DataSource dataSource;
+    
+    @Autowired
+    private RedisTemplate redisTemplate;
+    
+    @Test
+    void testWithMultipleContainers() {
+        // MariaDB와 Redis 컨테이너가 모두 시작됨
+    }
+}
+```
+
+#### 전체 스택 사용
+```java
+@SpringBootTest
+@EnablePrimaveraTestcontainers({ContainerType.MARIADB, ContainerType.REDIS, ContainerType.KAFKA})
+class FullStackIntegrationTest {
+    // 모든 인프라 컴포넌트 사용 가능
+}
+```
+
+### 동작 원리
+
+1. **TestExecutionListener 등록**: `PrimaveraTestcontainersListener`가 테스트 클래스 실행 전에 어노테이션을 읽고 시스템 프로퍼티를 설정합니다.
+
+2. **ApplicationContextInitializer 실행**: `PrimaveraTestcontainersContextInitializer`가 Spring 컨텍스트 초기화 시점에 설정된 컨테이너들을 시작합니다.
+
+3. **자동 프로퍼티 설정**: 각 컨테이너의 연결 정보가 Spring 프로퍼티로 자동 설정됩니다.
+
+### PrimaveraTestcontainersListener 클래스
+
+```java
+@Slf4j
+public class PrimaveraTestcontainersListener implements TestExecutionListener {
+
+    public static final String TESTCONTAINERS_CONFIG_PROPERTY = "primavera.testcontainers.config";
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+
+    @SneakyThrows
+    @Override
+    public void beforeTestClass(TestContext testContext) {
+        EnablePrimaveraTestcontainers annotation = testContext.getTestClass().getAnnotation(EnablePrimaveraTestcontainers.class);
+        if (annotation != null) {
+            String containerTypesJson = objectMapper.writeValueAsString(annotation.value());
+            System.setProperty(TESTCONTAINERS_CONFIG_PROPERTY, containerTypesJson);
+            log.info("PrimaveraTestcontainersListener: @EnablePrimaveraTestcontainers 어노테이션 발견. 컨테이너 타입: {}", containerTypesJson);
+        } else {
+            System.clearProperty(TESTCONTAINERS_CONFIG_PROPERTY);
+            log.info("PrimaveraTestcontainersListener: @EnablePrimaveraTestcontainers 어노테이션 미발견.");
+        }
+    }
+
+    @Override
+    public void afterTestClass(TestContext testContext) {
+        System.clearProperty(TESTCONTAINERS_CONFIG_PROPERTY);
+        log.info("PrimaveraTestcontainersListener: 시스템 프로퍼티 '{}' 정리.", TESTCONTAINERS_CONFIG_PROPERTY);
+    }
+}
+```
+
 ## 주의사항
 
 1. 로컬 환경에서는 포트 1109의 MariaDB, 8200의 Vault 사용
@@ -292,3 +379,4 @@ vault token capabilities secret/data/primavera/local/basic
 4. **보안 필수**: 모든 민감정보는 Vault를 통해 관리
 5. **토큰 보안**: Vault 토큰은 환경변수로 관리, 코드에 하드코딩 금지
 6. **정기 로테이션**: 데이터베이스 패스워드 및 API 키 정기 변경
+7. **TestContainers**: 테스트 실행 시 Docker가 실행 중이어야 함

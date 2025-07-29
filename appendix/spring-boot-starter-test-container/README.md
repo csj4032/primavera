@@ -38,7 +38,7 @@ class MyIntegrationTest {
         .withDatabaseName("primavera")
         .withUsername("primavera")
         .withPassword("primavera")
-        .withInitScript("sql/schema.sql")
+        .withInitScript("sql/init-db.sql")
         .withCommand("--default-authentication-plugin=mysql_native_password");
     
     @DynamicPropertySource
@@ -97,7 +97,7 @@ class MyIntegrationTest {
 | **자동 DataSource 설정** | JDBC URL, 사용자명, 비밀번호 자동 구성 | 설정 오류 방지 |
 | **Profile 기반 활성화** | `test` 프로파일에서만 동작 | 환경 격리 |
 | **마리아DB 11.4.7 고정** | 일관된 데이터베이스 버전 사용 | 환경 일관성 |
-| **초기화 스크립트 지원** | `schema.sql` 자동 실행 | 테스트 데이터 준비 |
+| **초기화 스크립트 지원** | `init-db.sql` 자동 실행 | 테스트 데이터 준비 |
 
 ### 🔧 고급 기능
 
@@ -139,7 +139,7 @@ dependencies {
 ### 2. 초기화 스크립트 준비
 
 ```sql
--- src/test/resources/sql/schema.sql
+-- src/test/resources/sql/init-db.sql
 CREATE TABLE IF NOT EXISTS USER (
     ID BIGINT AUTO_INCREMENT PRIMARY KEY,
     EMAIL VARCHAR(100) UNIQUE NOT NULL,
@@ -213,7 +213,7 @@ class ArticleServiceIntegrationTest {
     void shouldCreateArticle() {
         // MariaDB 11.4.7 TestContainer가 자동으로 시작됨
         // DataSource 자동 설정됨
-        // schema.sql 자동 실행됨
+        // init-db.sql 자동 실행됨
         
         Article article = articleService.create("Test Title", "Test Content");
         assertThat(article.getId()).isNotNull();
@@ -228,7 +228,7 @@ class ArticleServiceIntegrationTest {
     databaseName = "test_db",               // 데이터베이스 이름
     username = "test_user",                 // 사용자명
     password = "test_pass",                 // 비밀번호
-    initScript = "sql/custom-schema.sql",   // 커스텀 초기화 스크립트
+    initScript = "sql/custom-init-db.sql",   // 커스텀 초기화 스크립트
     enableInitScript = true,                // 초기화 스크립트 활성화
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
@@ -364,7 +364,7 @@ primavera:
       username: primavera             # 사용자명
       password: primavera             # 비밀번호
       reuse: true                     # 컨테이너 재사용 (성능 향상)
-      init-script: sql/schema.sql     # 초기화 SQL 스크립트
+      init-script: sql/init-db.sql     # 초기화 SQL 스크립트
       
       # JDBC URL 파라미터
       url-params:
@@ -446,7 +446,7 @@ primavera:
   testcontainers:
     mariadb:
       reuse: false                      # 격리된 환경
-      init-script: sql/full-schema.sql  # 완전한 스키마
+      init-script: sql/full-init-db.sql  # 완전한 스키마
       url-params:
         profileSQL: true                # SQL 프로파일링 활성화
 ```
@@ -627,7 +627,7 @@ sequenceDiagram
 
 **복합 스크립트 구성**
 ```sql
--- src/test/resources/sql/advanced-schema.sql
+-- src/test/resources/sql/advanced-init-db.sql
 
 -- 1. 스키마 생성
 CREATE SCHEMA IF NOT EXISTS test_schema;
@@ -1008,7 +1008,7 @@ echo "testcontainers.reuse.enable=true" >> ~/.testcontainers.properties
         "spring.jpa.hibernate.ddl-auto=none",  // DDL 생성 비활성화
         "spring.sql.init.mode=always"          // SQL 스크립트만 사용
     },
-    initScript = "sql/minimal-schema.sql"      // 최소한의 스키마
+    initScript = "sql/minimal-init-db.sql"      // 최소한의 스키마
 )
 class FastStartupTest {
     // 빠른 시작을 위한 최적화된 테스트

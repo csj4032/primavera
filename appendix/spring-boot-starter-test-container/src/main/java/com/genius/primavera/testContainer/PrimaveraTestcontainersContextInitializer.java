@@ -1,5 +1,6 @@
 package com.genius.primavera.testContainer;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.genius.primavera.testContainer.factory.ContainerStrategyFactory;
 import com.genius.primavera.testContainer.strategy.ContainerStrategy;
 import lombok.extern.slf4j.Slf4j;
@@ -7,6 +8,7 @@ import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.testcontainers.containers.GenericContainer;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -22,40 +24,40 @@ public class PrimaveraTestcontainersContextInitializer implements ApplicationCon
 
     private static final Map<String, ContainerStrategy> strategyCache = new ConcurrentHashMap<>();
     private static ContainerStrategyFactory factory;
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     public void initialize(ConfigurableApplicationContext applicationContext) {
         log.info("Initializing Primavera Testcontainers with Strategy Pattern...");
 
-        initializeFactory(applicationContext);
-        EnablePrimaveraTestcontainers annotation = findTestcontainersAnnotation(applicationContext);
+        if (factory == null) {
+            factory = applicationContext.getBean(ContainerStrategyFactory.class);
+            log.info("ContainerStrategyFactory bean obtained from application context.");
+        }
 
-        if (annotation == null) {
-            log.info("EnablePrimaveraTestcontainers annotation not found. Starting default MariaDB container.");
-            startContainer(ContainerType.MARIADB, applicationContext);
+        String containerTypesJson = System.getProperty(PrimaveraTestcontainersListener.TESTCONTAINERS_CONFIG_PROPERTY);
+
+        ContainerType[] containerTypes;
+        if (containerTypesJson != null && !containerTypesJson.isEmpty()) {
+            try {
+                containerTypes = objectMapper.readValue(containerTypesJson, ContainerType[].class);
+                log.info("Loaded container types from system property: {}", Arrays.toString(containerTypes));
+            } catch (Exception e) {
+                log.error("Failed to parse container types from system property, defaulting to MariaDB.", e);
+                containerTypes = new ContainerType[]{ContainerType.MARIADB};
+            }
+        } else {
+            log.info("EnablePrimaveraTestcontainers annotation not signaled. No Testcontainers will be started by this initializer.");
             return;
         }
 
-        ContainerType[] containerTypes = annotation.value();
         for (ContainerType containerType : containerTypes) {
             startContainer(containerType, applicationContext);
         }
     }
 
-    private void initializeFactory(ConfigurableApplicationContext applicationContext) {
-        if (factory == null) {
-            factory = new ContainerStrategyFactory(
-                    new com.genius.primavera.testContainer.config.MariaDBContainerConfig(),
-                    new com.genius.primavera.testContainer.config.RedisContainerConfig(),
-                    new com.genius.primavera.testContainer.config.KafkaContainerConfig(),
-                    new com.genius.primavera.testContainer.config.PostgreSQLContainerConfig()
-            );
-        }
-    }
-
     private void startContainer(ContainerType containerType, ConfigurableApplicationContext applicationContext) {
         ContainerStrategy strategy = strategyCache.computeIfAbsent(containerType.name(), k -> factory.getStrategy(containerType));
-
         if (!strategy.isRunning()) {
             log.info("Starting {} container...", containerType.name());
             strategy.startContainer(applicationContext);
@@ -63,50 +65,21 @@ public class PrimaveraTestcontainersContextInitializer implements ApplicationCon
         }
     }
 
-    private EnablePrimaveraTestcontainers findTestcontainersAnnotation(ConfigurableApplicationContext context) {
-        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-        for (StackTraceElement element : stackTrace) {
-            try {
-                Class<?> clazz = Class.forName(element.getClassName());
-                EnablePrimaveraTestcontainers annotation = clazz.getAnnotation(EnablePrimaveraTestcontainers.class);
-                if (annotation != null) return annotation;
-                try {
-                    var method = clazz.getDeclaredMethod(element.getMethodName());
-                    annotation = method.getAnnotation(EnablePrimaveraTestcontainers.class);
-                    if (annotation != null) {
-                        return annotation;
-                    }
-                } catch (NoSuchMethodException ignored) {
-                    log.error(element.toString());
-                }
-
-            } catch (ClassNotFoundException ignored) {
-                log.error(element.toString());
-            }
-        }
-
-        return null;
-    }
-
-
-    /**
-     * 컨테이너 정보 접근을 위한 헬퍼 메서드들
-     */
     public static GenericContainer<?> getContainer(ContainerType containerType) {
         ContainerStrategy strategy = strategyCache.get(containerType.name());
         return strategy != null ? strategy.getContainer() : null;
     }
 
-    /**
-     * 모든 컨테이너 정지 (테스트 종료 시 호출)
-     */
     public static void stopAllContainers() {
+        log.info("Stopping all test containers...");
         strategyCache.values().forEach(strategy -> {
             GenericContainer<?> container = strategy.getContainer();
             if (container != null && container.isRunning()) {
                 container.stop();
+                log.info("Stopped {} container.", strategy.getContainerType());
             }
         });
         strategyCache.clear();
+        log.info("All test containers stopped and cache cleared.");
     }
 }

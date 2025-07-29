@@ -1,14 +1,1 @@
-# Primavera TestContainers Starter
-# 
-# 1. ApplicationContextInitializer 방식 (권장):
-#    @SpringBootTest
-#    @EnablePrimaveraTestcontainers({ContainerType.MARIADB, ContainerType.REDIS})
-#    class MyTest implements UnifiedTestcontainersMixin { ... }
-#
-# 2. 기존 Mixin 방식 (호환성 유지):
-#    @SpringBootTest  
-#    class MyTest implements MariaDBTestcontainerMixin { ... }
-
-# Auto Configuration (비활성화됨 - 애노테이션 기반 활성화만 지원)
-# org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-# com.genius.primavera.testContainer.TestContainerAutoConfiguration
+org.springframework.test.context.TestExecutionListener=com.genius.primavera.testContainer.PrimaveraTestcontainersListener

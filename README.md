@@ -714,7 +714,7 @@ primavera:
       username: primavera
       password: primavera
       reuse: true  # 컨테이너 재사용으로 테스트 속도 향상
-      init-script: sql/schema.sql
+      init-script: sql/init-db.sql
       url-params:
         allowPublicKeyRetrieval: true
         useSSL: false
@@ -745,7 +745,7 @@ docker start mariadb-primavera-local
 # 1. MariaDB 11.4.7 Docker 이미지 다운로드 (최초 1회)
 # 2. 테스트용 컨테이너 시작
 # 3. 데이터소스 자동 설정 (URL, 사용자명, 비밀번호)
-# 4. 초기화 스크립트 실행 (schema.sql)
+# 4. 초기화 스크립트 실행 (init-db.sql)
 # 5. 테스트 완료 후 컨테이너 자동 정리
 ```
 
@@ -768,7 +768,7 @@ static MariaDBContainer<?> mariadb = new MariaDBContainer<>("mariadb:11.4.7")
     .withDatabaseName("primavera")
     .withUsername("primavera") 
     .withPassword("primavera")
-    .withInitScript("sql/schema.sql")
+    .withInitScript("sql/init-db.sql")
     .withReuse(true);  // 성능 향상을 위한 컨테이너 재사용
 ```
 

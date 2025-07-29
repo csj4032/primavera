@@ -184,7 +184,7 @@ All user-facing messages must support i18n:
 ### TestContainers Integration
 - MariaDB 11.4.7 containers for integration tests
 - Reusable test configurations in `BaseTestConfiguration`
-- Schema initialization via schema.sql
+- Schema initialization via init-db.sql
 - Test data isolation per test method
 
 ### Test Structure
@@ -314,7 +314,7 @@ refactor: extract payment processing logic
 ```
 ❌ ArticleMapper.java.bak
 ❌ application.yml.backup
-❌ schema.sql.old
+❌ init-db.sql.old
 ❌ UserService_backup.java
 ❌ config-backup/
 ❌ test_old/
@@ -502,7 +502,7 @@ Follow these guidelines as a senior Spring Boot developer:
 ##### Schema Consistency
 - **Module Schema Alignment**: Maintain identical database schemas across all modules
 - **Common Entity Models**: Keep consistent domain models (with independent module implementations)
-- **Unified Schema File**: Use single schema.sql shared across the entire project
+- **Unified Schema File**: Use single init-db.sql shared across the entire project
 - **Data Consistency**: Ensure identical table structures and relationships across modules
 - **Boolean to Enum Conversion**: Store boolean attributes as database ENUMs ('ACTIVE'/'INACTIVE', 'ENABLED'/'DISABLED')
 
@@ -555,7 +555,7 @@ Follow these guidelines as a senior Spring Boot developer:
    - Use TestContainers with Docker MariaDB 11.4.7
    - Load full Spring context with @SpringBootTest
    - Verify end-to-end scenarios and complete workflows
-   - Ensure data consistency with schema.sql-based isolated test environments
+   - Ensure data consistency with init-db.sql-based isolated test environments
    - Maintain exact production environment parity with MariaDB 11.4.7
 
 3. **External Tool-Based Operational Tests**
@@ -796,7 +796,7 @@ curl http://localhost:8080/actuator/env | grep profiles
 - **Database**: TestContainers MariaDB 11.4.7 (automatically managed Docker containers)
 - **Configuration**: Use `application-testcontainer.yml` with dynamic TestContainers properties
 - **Data Isolation**: Each test gets a fresh, isolated database instance
-- **Schema Management**: Use `schema.sql` initialization scripts for fast test setup
+- **Schema Management**: Use `init-db.sql` initialization scripts for fast test setup
 - **Execution Command**: `./gradlew :chapXX:test` (TestContainers auto-start/stop)
 - **CI/CD Compatibility**: No external dependencies required, works in any Docker-enabled environment
 
@@ -845,7 +845,7 @@ spring:
   application:
     name: primavera-test
   flyway:
-    enabled: false  # Use schema.sql instead
+    enabled: false  # Use init-db.sql instead
   autoconfigure:
     exclude:
       - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
@@ -861,7 +861,7 @@ static MariaDBContainer<?> mariadb = new MariaDBContainer<>("mariadb:11.4.7")
     .withDatabaseName("primavera")
     .withUsername("primavera")
     .withPassword("primavera")
-    .withInitScript("sql/schema.sql");
+    .withInitScript("sql/init-db.sql");
 ```
 
 **Dynamic Property Configuration:**
@@ -912,7 +912,7 @@ class YourIntegrationTest {
         .withDatabaseName("primavera")
         .withUsername("primavera")
         .withPassword("primavera")
-        .withInitScript("sql/schema.sql");
+        .withInitScript("sql/init-db.sql");
 
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
@@ -955,7 +955,7 @@ class TestApplication {
 
 **Test Environment Validation:**
 - Confirm TestContainers can start MariaDB 11.4.7 successfully
-- Verify schema.sql initialization works correctly
+- Verify init-db.sql initialization works correctly
 - Validate test isolation and data cleanup between tests
 
 This environment separation strategy ensures development efficiency while maintaining test reliability and CI/CD compatibility.
