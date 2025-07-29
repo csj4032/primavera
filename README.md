@@ -6,17 +6,30 @@
 
 Spring Boot를 이용한 현대적인 웹 애플리케이션 개발을 체계적으로 학습할 수 있는 종합 프로젝트입니다. 기초부터 고급 기술까지 단계별로 구성된 18개 챕터를 통해 실무에 필요한 모든 기술을 습득할 수 있습니다.
 
-## 🎯 최신 업데이트 (2025년 1월)
+## 🎯 최신 업데이트 (2025년 7월)
+
+### 🔧 프로젝트 안정성 강화
+- **빌드 시스템 개선**: chap17, chap18 멀티모듈 빌드 문제 해결
+- **Spring Boot 3.x 호환성**: `javax.validation` → `jakarta.validation` 마이그레이션 완료
+- **GraalVM Native Image**: 버전 호환성 문제 해결 및 최적화
+- **Kafka Headers**: Spring Kafka 최신 버전 호환성 개선
 
 ### 📊 Chapter 17 - 엔터프라이즈 데이터 파이프라인
 - **Spring Batch + Debezium Embedded**를 활용한 하이브리드 데이터 처리
 - **경량 CDC 아키텍처**: Kafka 인프라 없이 실시간 변경 감지
 - **Elasticsearch 통합**: 검색 최적화된 문서 인덱싱
+- **멀티모듈 구조**: batch와 streaming 서브모듈 독립 실행 가능
 
 ### 🔄 Chapter 18 - 이벤트 기반 마이크로서비스
 - **WebFlux + R2DBC**로 완전한 리액티브 스택 구현
 - **Kafka 이벤트 시스템**: 주문-재고 처리 실시간 연동
 - **Saga 패턴**: 분산 트랜잭션 및 보상 처리 자동화
+- **마이크로서비스 구조**: order, product, account, front, configuration 서비스 독립 운영
+
+### 📚 개발 가이드라인 개선
+- **CLAUDE.md**: 종합적인 한글 개발 가이드라인 작성
+- **테스트 전략**: TestContainers 기반 3계층 테스트 접근법
+- **프로파일 기반 환경 설정**: local, test 프로파일 자동 데이터베이스 선택
 
 ## 🛠️ 기술 스택
 
@@ -527,41 +540,61 @@ cd ../
 ./gradlew clean build
 ```
 
-#### chap17 - 데이터 파이프라인 실행
+#### chap17 - 데이터 파이프라인 실행 ⚡ *업데이트됨*
 ```bash
-# 1. Elasticsearch 시작
-docker run -d --name elasticsearch-primavera \
-  -p 9200:9200 -p 9300:9300 \
-  -e "discovery.type=single-node" \
-  -e "xpack.security.enabled=false" \
-  elasticsearch:8.12.0
+# 1. Infrastructure Docker 환경이 실행 중인지 확인 (Elasticsearch 포함)
+docker-compose ps | grep elasticsearch
 
-# 2. 초기 인덱싱 실행
+# 2. chap17 전체 빌드 (멀티모듈)
+./gradlew :chap17:build
+
+# 3. 개별 서브모듈 빌드 및 실행
+# 3-1. Batch 모듈 (초기 인덱싱)
 ./gradlew :chap17:batch:bootRun
 
-# 3. 실시간 CDC 시작
+# 3-2. Streaming 모듈 (실시간 CDC) - 별도 터미널에서
 ./gradlew :chap17:streaming:bootRun
+
+# 4. Elasticsearch 데이터 확인
+curl -X GET "localhost:9200/_cat/indices?v"
+curl -X GET "localhost:9200/products/_search?pretty"
 ```
 
-#### chap18 - 마이크로서비스 + Kafka 실행
+**🔧 chap17 빌드 문제 해결됨:**
+- ✅ GraalVM Native Image 플러그인 버전 호환성 문제 해결 (0.10.3)
+- ✅ 멀티모듈 구조에서 루트 모듈 `bootJar` 태스크 비활성화
+- ✅ batch와 streaming 서브모듈 독립 빌드 및 실행 가능
+
+#### chap18 - 마이크로서비스 + Kafka 실행 ⚡ *업데이트됨*
 ```bash
-# 1. Kafka 시작
-docker run -d --name kafka-primavera \
-  -p 9092:9092 \
-  apache/kafka:latest
+# 1. Infrastructure Docker 환경 확인 (Kafka, MongoDB 포함)
+docker-compose ps | grep -E "(kafka|mongodb)"
 
-# 2. MongoDB 시작 (Product Service용)
-docker run -d --name mongodb-primavera \
-  -p 27017:27017 \
-  -e MONGO_INITDB_ROOT_USERNAME=root \
-  -e MONGO_INITDB_ROOT_PASSWORD=primavera \
-  mongo:latest
+# 2. chap18 전체 빌드 (멀티모듈)
+./gradlew :chap18:build
 
-# 3. 서비스 실행 (각각 별도 터미널에서)
-./gradlew :chap18:order:bootRun      # 포트 8082
-./gradlew :chap18:product:bootRun    # 포트 8083
+# 3. 개별 마이크로서비스 빌드 및 실행
+# 3-1. 설정 서버 (Configuration Service)
+./gradlew :chap18:configuration:bootRun &  # 포트 8888
 
-# 4. 주문 생성 테스트
+# 3-2. 계정 서비스 (Account Service) - 별도 터미널에서
+./gradlew :chap18:account:bootRun &        # 포트 8081
+
+# 3-3. 상품 서비스 (Product Service) - 별도 터미널에서
+./gradlew :chap18:product:bootRun &        # 포트 8083
+
+# 3-4. 주문 서비스 (Order Service) - 별도 터미널에서
+./gradlew :chap18:order:bootRun &          # 포트 8082
+
+# 3-5. 프론트엔드 게이트웨이 (Front Service) - 별도 터미널에서
+./gradlew :chap18:front:bootRun &          # 포트 8080
+
+# 4. 마이크로서비스 상태 확인
+curl -X GET http://localhost:8081/actuator/health  # Account Service
+curl -X GET http://localhost:8082/actuator/health  # Order Service
+curl -X GET http://localhost:8083/actuator/health  # Product Service
+
+# 5. 주문 생성 및 이벤트 처리 테스트
 curl -X POST http://localhost:8082/api/v1/orders \
   -H "Content-Type: application/json" \
   -d '{
@@ -575,7 +608,19 @@ curl -X POST http://localhost:8082/api/v1/orders \
       }
     ]
   }'
+
+# 6. Kafka 이벤트 확인 (별도 터미널에서)
+docker exec -it kafka-primavera kafka-console-consumer.sh \
+  --bootstrap-server localhost:9092 \
+  --topic order-events \
+  --from-beginning
 ```
+
+**🔧 chap18 빌드 문제 해결됨:**
+- ✅ Spring Boot 3.x 호환성: `javax.validation` → `jakarta.validation` 마이그레이션
+- ✅ Kafka Headers API 호환성: `RECEIVED_PARTITION_ID` → `RECEIVED_PARTITION` 수정
+- ✅ 멀티모듈 구조에서 루트 모듈 `bootJar` 태스크 비활성화
+- ✅ 5개 마이크로서비스 독립 빌드 및 실행 가능 (account, order, product, front, configuration)
 
 #### ⚠️ 중요 주의사항
 

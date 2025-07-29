@@ -1,39 +1,39 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code when working with code in this repository.
+이 파일은 Claude Code가 이 저장소에서 작업할 때 참고하는 가이드라인입니다.
 
-# Primavera - Spring Boot Educational Project
+# Primavera - Spring Boot 교육용 프로젝트
 
-## Project Overview
+## 프로젝트 개요
 
-Primavera is a comprehensive Spring Boot educational project demonstrating progressive learning from basic concepts to advanced microservices architecture. The project consists of 18+ modules (chap01-chap18 + utilities) designed for step-by-step learning progression.
+Primavera는 기본 개념부터 고급 마이크로서비스 아키텍처까지 점진적 학습을 보여주는 종합적인 Spring Boot 교육용 프로젝트입니다. 단계별 학습 진행을 위해 설계된 18개 이상의 모듈(chap01-chap18 + 유틸리티)로 구성되어 있습니다.
 
-## Quick Development Commands
+## 빠른 개발 명령어
 
-### Build and Test
+### 빌드 및 테스트
 ```bash
-# Build entire project
+# 전체 프로젝트 빌드
 ./gradlew clean build
 
-# Build specific module
+# 특정 모듈 빌드
 ./gradlew :chap04:build
 
-# Run tests for specific module
+# 특정 모듈 테스트 실행
 ./gradlew :chap04:test
 
-# Run specific test class
+# 특정 테스트 클래스 실행
 ./gradlew :chap04:test --tests PrimaveraServiceTest
 
-# Run application (specific chapter)
+# 애플리케이션 실행 (특정 챕터)
 ./gradlew :chap04:bootRun
 
-# Build with parallel execution
+# 병렬 빌드 실행
 ./gradlew build --parallel
 ```
 
-### Database Operations
+### 데이터베이스 작업
 ```bash
-# Start MariaDB 11.4.7 with Docker
+# Docker로 MariaDB 11.4.7 시작
 docker run -d --name mariadb-primavera \
   -e MARIADB_ROOT_PASSWORD=root \
   -e MARIADB_DATABASE=primavera \
@@ -41,72 +41,72 @@ docker run -d --name mariadb-primavera \
   -e MARIADB_PASSWORD=primavera \
   -p 3306:3306 mariadb:11.4.7
 
-# Use docker-compose for complete setup (recommended)
+# 전체 설정을 위한 docker-compose 사용 (권장)
 docker-compose up -d
 
-# TestContainers automatically manages MariaDB 11.4.7 for tests
+# TestContainers가 자동으로 MariaDB 11.4.7 테스트 관리
 ```
 
-## Architecture & Philosophy
+## 아키텍처 및 철학
 
-### Educational Progressive Learning Structure
-- **chap01-04**: Core Spring Boot fundamentals (DI, Configuration, Data Access)
-- **chap05-08**: Web development, templates, security basics
-- **chap09-13**: Advanced features (OAuth2, security, complex data structures)
-- **chap14-17**: Production concerns (reactive, microservices, monitoring)
-- **chap18**: Complete microservices architecture
-- **appendix**: Custom Spring Boot starters and utilities
+### 교육용 점진적 학습 구조
+- **chap01-04**: Spring Boot 핵심 기본 개념 (DI, 설정, 데이터 접근)
+- **chap05-08**: 웹 개발, 템플릿, 보안 기초
+- **chap09-13**: 고급 기능 (OAuth2, 보안, 복잡한 데이터 구조)
+- **chap14-17**: 운영 관련 사항 (리액티브, 마이크로서비스, 모니터링)
+- **chap18**: 완전한 마이크로서비스 아키텍처
+- **appendix**: 커스텀 Spring Boot 스타터 및 유틸리티
 
-### Key Architectural Principles
-- **Educational Duplication Over DRY**: Each module is intentionally self-contained with its own complete implementation to demonstrate concept evolution
-- **Module Independence**: Each chapter can be built and run independently without dependencies on other chapters
-- **Progressive Complexity**: Concepts evolve from simple to complex across modules
-- **Real-world Simulation**: Shows how actual codebases evolve over time
+### 핵심 아키텍처 원칙
+- **DRY보다 교육적 중복**: 각 모듈은 개념 진화를 보여주기 위해 의도적으로 완전한 독립 구현을 가짐
+- **모듈 독립성**: 각 챕터는 다른 챕터에 의존하지 않고 독립적으로 빌드하고 실행 가능
+- **점진적 복잡성**: 개념이 모듈을 거쳐 단순한 것에서 복잡한 것으로 발전
+- **실제 상황 시뮬레이션**: 실제 코드베이스가 시간이 지나면서 어떻게 발전하는지 보여줌
 
-## Technology Stack
+## 기술 스택
 
-### Core Technologies
-- **Spring Boot**: 3.3.6 (Latest stable)
-- **Java**: 21+ (LTS with modern features)
-- **Database**: MariaDB 11.4.7 (Standardized across all modules)
-- **Build Tool**: Gradle with centralized dependency management
-- **Testing**: JUnit 5, Mockito, TestContainers
+### 핵심 기술
+- **Spring Boot**: 3.3.6 (최신 안정 버전)
+- **Java**: 21+ (모던 기능을 가진 LTS)
+- **데이터베이스**: MariaDB 11.4.7 (모든 모듈에서 표준화)
+- **빌드 도구**: 중앙화된 의존성 관리를 가진 Gradle
+- **테스팅**: JUnit 5, Mockito, TestContainers
 
-### Key Dependencies (Centralized in gradle.properties)
-- **Lombok**: 1.18.36 (Code generation)
+### 주요 의존성 (gradle.properties에서 중앙화)
+- **Lombok**: 1.18.36 (코드 생성)
 - **MariaDB Driver**: 3.5.4
-- **MyBatis**: 3.0.4 (SQL mapping framework)
-- **TestContainers**: 1.21.3 (Integration testing)
+- **MyBatis**: 3.0.4 (SQL 매핑 프레임워크)
+- **TestContainers**: 1.21.3 (통합 테스트)
 - **Spring Security**: 6.4.4
-- **Thymeleaf**: 3.4.0 (Template engine)
+- **Thymeleaf**: 3.4.0 (템플릿 엔진)
 
-### Custom Spring Boot Starters
-- **spring-boot-starter-test-container**: Automated TestContainers configuration
-- **spring-boot-starter-lucy-filter**: XSS protection
-- **spring-boot-starter-social-kakao**: Kakao OAuth2 integration
+### 커스텀 Spring Boot 스타터
+- **spring-boot-starter-test-container**: 자동화된 TestContainers 설정
+- **spring-boot-starter-lucy-filter**: XSS 보호
+- **spring-boot-starter-social-kakao**: 카카오 OAuth2 연동
 
-## Development Guidelines
+## 개발 가이드라인
 
-### Code Quality Standards
-- **Modern Java Features**: Use Records, Pattern Matching, Text Blocks, Optional chaining
-- **Functional Programming**: Prefer Stream API, immutable objects, pure functions
-- **Clean Architecture**: Clear separation between Controller-Service-Repository layers
-- **Test-Driven Development**: Write tests before implementation
+### 코드 품질 표준
+- **모던 Java 기능**: Record, 패턴 매칭, 텍스트 블록, Optional 체이닝 사용
+- **함수형 프로그래밍**: Stream API, 불변 객체, 순수 함수 선호
+- **클린 아키텍처**: Controller-Service-Repository 계층 간 명확한 분리
+- **테스트 주도 개발**: 구현 전에 테스트 작성
 
-### Testing Strategy (3-Layer Approach)
-1. **Unit Tests**: Mockito-based isolated testing
-2. **Integration Tests**: TestContainers with full Spring context
-3. **Manual Testing**: Postman/curl scripts for API validation
+### 테스트 전략 (3계층 접근법)
+1. **단위 테스트**: Mockito 기반 격리된 테스트
+2. **통합 테스트**: 전체 Spring 컨텍스트를 가진 TestContainers
+3. **수동 테스트**: API 검증을 위한 Postman/curl 스크립트
 
-### Database Strategy
-- **Production**: MariaDB 11.4.7
-- **Testing**: TestContainers with MariaDB 11.4.7 (environment consistency)
-- **Schema Management**: init-db.sql for tests, Flyway for migrations
-- **Naming Convention**: UPPERCASE table/column names (e.g., USER, ROLE, ARTICLE)
+### 데이터베이스 전략
+- **운영**: MariaDB 11.4.7
+- **테스트**: MariaDB 11.4.7를 가진 TestContainers (환경 일관성)
+- **스키마 관리**: 테스트용 init-db.sql, 마이그레이션용 Flyway
+- **명명 규칙**: 대문자 테이블/컬럼명 (예: USER, ROLE, ARTICLE)
 
-## Testing Configuration
+## 테스트 설정
 
-### TestContainers Integration
+### TestContainers 통합
 ```yaml
 # application-test.yml
 primavera:
@@ -121,115 +121,143 @@ primavera:
       initScript: sql/init-db.sql
 ```
 
-### Test Class Structure
+### 테스트 클래스 구조
 ```java
 @SpringBootTest
 @EnablePrimaveraTestcontainers
 @ActiveProfiles("test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@DisplayName("Integration Test Description")
+@DisplayName("통합 테스트 설명")
 class YourIntegrationTest {
-    // TestContainers automatically configured
-    // MariaDB 11.4.7 container started/stopped automatically
+    // TestContainers 자동 설정
+    // MariaDB 11.4.7 컨테이너 자동 시작/중지
 }
 ```
 
-## Environment Configuration
+## 환경 설정
 
-### Profile-Based Configuration
-- **local**: Development environment (localhost Docker MariaDB)
-- **test**: Testing environment (TestContainers MariaDB)
-- **default**: Production settings
+### 프로파일 기반 설정
+- **local**: 개발 환경 (localhost Docker MariaDB)
+- **test**: 테스트 환경 (TestContainers MariaDB)
+- **default**: 운영 설정
 
-### Running Applications
+### 애플리케이션 실행
 ```bash
-# Local development with profile
+# 프로파일을 사용한 로컬 개발
 ./gradlew :chap04:bootRun -Dspring.profiles.active=local
 
-# Tests with TestContainers (automatic)
+# TestContainers를 사용한 테스트 (자동)
 ./gradlew :chap04:test
 ```
 
-## Module-Specific Guidelines
+## 모듈별 가이드라인
 
-### Version Management
-All dependency versions are centralized in `gradle.properties`:
-- Add new versions alphabetically in appropriate category
-- Reference using `${versionVariableName}` in build.gradle files
-- Never hardcode versions in individual module build.gradle files
+### 버전 관리
+모든 의존성 버전은 `gradle.properties`에서 중앙화:
+- 적절한 카테고리에 새 버전을 알파벳순으로 추가
+- build.gradle 파일에서 `${versionVariableName}` 사용하여 참조
+- 개별 모듈 build.gradle 파일에서 버전 하드코딩 금지
 
-### Build Configuration
-Each module includes:
-- Spring Boot Gradle plugin
-- Jacoco for code coverage
-- Centralized dependency management
-- TestContainers integration
+### 빌드 설정
+각 모듈 포함 사항:
+- Spring Boot Gradle 플러그인
+- 코드 커버리지를 위한 Jacoco
+- 중앙화된 의존성 관리
+- TestContainers 통합
 
-### Security Implementation
-- **Multi-layer security**: Transport (HTTPS), Authentication (OAuth2), XSS protection
-- **Role-based access control**: ADMINISTRATOR � MANAGER � USER
-- **Internationalization**: Korean (default) and English support
+### 보안 구현
+- **다계층 보안**: 전송 계층(HTTPS), 인증(OAuth2), XSS 보호
+- **역할 기반 접근 제어**: ADMINISTRATOR → MANAGER → USER
+- **국제화**: 한국어(기본) 및 영어 지원
 
-## Coding Standards
+## 코딩 표준
 
-### Method and Class Design
-- **Micro-methods**: Break complex logic into small, composable methods
-- **One-line preference**: Use method chaining, lambdas, ternary operators
-- **Immutability**: Prefer final keywords, Records, immutable collections
-- **Null Safety**: Use Optional extensively instead of null checks
+### 메서드 및 클래스 설계
+- **마이크로 메서드**: 복잡한 로직을 작고 조합 가능한 메서드로 분해
+- **한 줄 선호**: 메서드 체이닝, 람다, 삼항 연산자 사용
+- **불변성**: final 키워드, Record, 불변 컬렉션 선호
+- **Null 안전성**: null 검사 대신 Optional 광범위하게 사용
 
-### Comment Policy
-Only add comments for:
-- Complex business rules that aren't self-explanatory
-- Algorithm explanations for non-trivial logic
-- Integration points with external systems
-- **Avoid over-commenting**: Don't comment obvious code
+### 주석 정책
+다음의 경우에만 주석 추가:
+- 자명하지 않은 복잡한 비즈니스 규칙
+- 중요하지 않은 로직에 대한 알고리즘 설명
+- 외부 시스템과의 통합 지점
+- **과도한 주석 피하기**: 명백한 코드에 주석 달지 않기
 
-## Git Workflow
+## Git 워크플로
 
-### Atomic Commits
-- One logical change per commit
-- Small, focused commits for easy review
-- Meaningful commit messages explaining the "why"
+### 원자적 커밋
+- 커밋당 하나의 논리적 변경
+- 쉬운 리뷰를 위한 작고 집중된 커밋
+- "왜"를 설명하는 의미 있는 커밋 메시지
 
-### Commit Message Format
+### 커밋 메시지 형식
 ```
-feat: add OAuth2 social login integration
-fix: resolve MariaDB connection timeout issue
-docs: update API documentation
-test: add integration tests for user service
-refactor: extract payment processing logic
+feat: OAuth2 소셜 로그인 통합 추가
+fix: MariaDB 연결 타임아웃 문제 해결
+docs: API 문서 업데이트
+test: 사용자 서비스 통합 테스트 추가
+refactor: 결제 처리 로직 추출
 ```
 
-### File Management Policy
-- **Git as Primary Version Control**: Never create manual backup files
-- **No Backup Files**: Avoid *.bak, *.backup, *.old, *_backup files
-- **Use Git Features**: Branches for experiments, tags for releases, history for recovery
+### 파일 관리 정책
+- **Git을 주요 버전 관리로**: 수동 백업 파일 생성 금지
+- **백업 파일 없음**: *.bak, *.backup, *.old, *_backup 파일 피하기
+- **Git 기능 사용**: 실험용 브랜치, 릴리스용 태그, 복구용 히스토리
 
-## Performance & Quality
+## 성능 및 품질
 
-### Quality Gates
-- All tests must pass before build succeeds
-- JaCoCo coverage thresholds enforced
-- Static analysis tools integrated
-- Security vulnerability scanning
+### 품질 게이트
+- 빌드 성공 전에 모든 테스트 통과 필수
+- JaCoCo 커버리지 임계값 강제
+- 정적 분석 도구 통합
+- 보안 취약점 스캔
 
-### Database Optimization
-- HikariCP connection pooling
-- Proper indexing strategies
-- Query optimization with MyBatis
-- MariaDB 11.4.7 specific features (JSON, CTEs, Window Functions)
+### 데이터베이스 최적화
+- HikariCP 연결 풀링
+- 적절한 인덱싱 전략
+- MyBatis를 사용한 쿼리 최적화
+- MariaDB 11.4.7 특정 기능 (JSON, CTE, 윈도우 함수)
 
-## Best Practices
+## 모범 사례
 
-### Educational Project Considerations
-- **Learning Over Efficiency**: Prioritize educational value over traditional DRY principles
-- **Concept Demonstration**: Show multiple approaches to the same problem across different modules
-- **Independent Modules**: Each module should be a complete, working example at its complexity level
+### 교육용 프로젝트 고려사항
+- **효율성보다 학습**: 전통적인 DRY 원칙보다 교육적 가치 우선
+- **개념 시연**: 서로 다른 모듈에서 같은 문제에 대한 여러 접근법 보여주기
+- **독립 모듈**: 각 모듈은 해당 복잡성 수준에서 완전하고 작동하는 예제여야 함
 
-### Modern Development Patterns
-- **Railway-Oriented Programming**: Use Result/Either patterns for error handling
-- **Event-Driven Architecture**: Implement loose coupling through Spring Events
-- **Configuration as Code**: Externalize configuration, use type-safe binding
+### 모던 개발 패턴
+- **철도 지향 프로그래밍**: 오류 처리를 위한 Result/Either 패턴 사용
+- **이벤트 주도 아키텍처**: Spring 이벤트를 통한 느슨한 결합 구현
+- **코드로서의 설정**: 설정 외부화, 타입 안전한 바인딩 사용
 
-This project serves as a comprehensive learning resource for Spring Boot development, from basic concepts to production-ready microservices architecture.
+## 환경별 설정 세부사항
+
+### 로컬 개발 환경
+- **목적**: 대화형 개발, 디버깅, 개발자에 의한 수동 테스트
+- **데이터베이스**: localhost MariaDB 11.4.7 (Docker 또는 네이티브 설치)
+- **설정**: 고정된 localhost 연결 설정을 가진 `application-local.yml`
+- **데이터 지속성**: 개발 연속성을 위해 애플리케이션 재시작 간 데이터 유지
+- **프로파일 활성화**: 개발 환경용 `local` 프로파일
+
+### 테스트 환경 (빌드/CI)
+- **목적**: 자동화된 통합 테스트, 지속적 통합, 빌드 검증
+- **데이터베이스**: TestContainers MariaDB 11.4.7 (자동 관리되는 Docker 컨테이너)
+- **설정**: 동적 TestContainers 속성을 가진 `application-test.yml`
+- **데이터 격리**: 각 테스트가 새롭고 격리된 데이터베이스 인스턴스 획득
+- **스키마 관리**: 빠른 테스트 설정을 위한 `init-db.sql` 초기화 스크립트
+
+### 프로파일별 실행 방법
+```bash
+# 로컬 개발 (localhost Docker MariaDB)
+./gradlew :chap04:bootRun -Dspring.profiles.active=local
+
+# 테스트 (TestContainers MariaDB - 자동)
+./gradlew :chap04:test
+
+# IDE 설정에서 프로파일 지정
+-Dspring.profiles.active=local
+```
+
+이 프로젝트는 기본 개념부터 운영 준비된 마이크로서비스 아키텍처까지 Spring Boot 개발을 위한 종합적인 학습 자료로 사용됩니다.
