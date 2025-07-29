@@ -19,7 +19,134 @@ MyBatis를 활용한 데이터 액세스 계층 구현과 Spring Transaction 관
 - TestContainers
 - Lombok
 
-### Logback File Configuration
+### Logback 설정 상세 가이드
+
+#### 1. Logback-Spring.xml 구조
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true">
+    <!-- Spring 프로퍼티를 Logback 변수로 변환 -->
+    <springProperty scope="context" name="LOG_PATH" source="primavera.logs.path"/>
+    <timestamp key="BY_DATE" datePattern="yyyy-MM-dd"/>
+    
+    <!-- Profile별 Appender 포함 -->
+    <include resource="logging/logback/console-appender.xml"/>
+    <include resource="logging/logback/file-debug-appender.xml"/>
+    <include resource="logging/logback/file-error-appender.xml"/>
+    <include resource="logging/logback/file-info-appender.xml"/>
+    <include resource="logging/logback/file-warn-appender.xml"/>
+    
+    <logger name="com.genius.primavera" level="DEBUG"/>
+    
+    <root level="DEBUG">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+</configuration>
+```
+
+#### 2. SpringProperty 태그 활용
+- **목적**: Spring Boot의 application.yml 설정값을 Logback에서 사용
+- **동작 원리**:
+  ```yaml
+  # application.yml
+  primavera:
+    logs:
+      path: ./logs
+  ```
+  ↓
+  ```xml
+  <!-- logback-spring.xml에서 ${LOG_PATH}로 참조 -->
+  <springProperty scope="context" name="LOG_PATH" source="primavera.logs.path"/>
+  <file>${LOG_PATH}/info/info-${BY_DATE}.log</file>
+  ```
+
+#### 3. Spring Profile Group 메커니즘
+```yaml
+spring:
+  profiles:
+    active: local
+    group:
+      local:  # local 프로파일 활성화 시 아래 5개 프로파일 모두 활성화
+        - console-appender
+        - file-debug-appender
+        - file-error-appender
+        - file-info-appender
+        - file-warn-appender
+      test:   # test 프로파일 활성화 시 console만 활성화
+        - console-appender
+      production:  # production 프로파일 활성화 시 선택적 활성화
+        - console-appender
+        - file-error-appender
+        - file-warn-appender
+```
+
+#### 4. Profile별 Appender 구현 예시
+```xml
+<!-- file-info-appender.xml -->
+<included>
+    <springProfile name="file-info-appender">
+        <appender name="FILE-INFO" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>${LOG_PATH}/info/info-${BY_DATE}.log</file>
+            <filter class="ch.qos.logback.classic.filter.LevelFilter">
+                <level>INFO</level>
+                <onMatch>ACCEPT</onMatch>
+                <onMismatch>DENY</onMismatch>
+            </filter>
+            <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+                <fileNamePattern>${LOG_PATH}/backup/info/info-%d{yyyy-MM-dd}.%i.gz</fileNamePattern>
+                <maxFileSize>${LOG_FILE_MAX_SIZE:-100MB}</maxFileSize>
+                <maxHistory>${LOG_FILE_MAX_HISTORY:-7}</maxHistory>
+                <totalSizeCap>${LOG_FILE_TOTAL_SIZE_CAP:-3GB}</totalSizeCap>
+            </rollingPolicy>
+            <encoder>
+                <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            </encoder>
+        </appender>
+        <root level="INFO">
+            <appender-ref ref="FILE-INFO"/>
+        </root>
+    </springProfile>
+</included>
+```
+
+#### 5. 로깅 설정 통합 플로우
+```mermaid
+flowchart TD
+    A[Spring Boot 시작] --> B[application.yml 로드]
+    B --> C[Profile 결정<br/>active: local]
+    C --> D[Profile Group 확장<br/>local → 5개 프로파일]
+    D --> E[logback-spring.xml 처리]
+    E --> F[SpringProperty 해석<br/>LOG_PATH = ./logs]
+    
+    D --> G[console-appender 활성화]
+    D --> H[file-debug-appender 활성화]
+    D --> I[file-error-appender 활성화]
+    D --> J[file-info-appender 활성화]
+    D --> K[file-warn-appender 활성화]
+    
+    G --> L[CONSOLE Appender 생성]
+    H --> M[FILE-DEBUG Appender 생성]
+    I --> N[FILE-ERROR Appender 생성]
+    J --> O[FILE-INFO Appender 생성]
+    K --> P[FILE-WARN Appender 생성]
+```
+
+#### 6. 환경별 로깅 전략
+
+| 환경 | 활성 프로파일 | 로깅 전략 | 사용 목적 |
+|---|---|---|---|
+| 개발(local) | local | 모든 레벨 파일 + 콘솔 | 상세한 디버그 정보 수집 |
+| 테스트(test) | test | 콘솔만 | 빠른 피드백, 파일 I/O 최소화 |
+| 운영(production) | production | ERROR/WARN 파일 + 콘솔 | 중요 이슈만 기록, 성능 최적화 |
+
+#### 7. 로깅 데모 API
+```bash
+# 로깅 데모 실행
+curl http://localhost:8080/api/logging/demo
+
+# 프로파일 정보 확인
+curl http://localhost:8080/api/logging/profile-info
+```
 
 ### Mybatis Auto Configuration
 ```
@@ -122,6 +249,18 @@ CREATE TABLE IF NOT EXISTS WINNER (
 - **콘솔 및 파일 동시 출력**
 - **일별 로그 파일 롤링**
 - **MyBatis SQL 로깅 설정**
+- **SpringProperty를 통한 동적 경로 설정**
+- **Profile Group을 통한 환경별 Appender 관리**
+
+#### Logback 고급 기능
+1. **동적 설정 리로딩**: `scan="true"` 속성으로 runtime 설정 변경
+2. **조건부 Appender 활성화**: `<springProfile>` 태그로 프로파일별 제어
+3. **로그 파일 관리**:
+   - 크기 기반 롤링: maxFileSize
+   - 날짜 기반 롤링: fileNamePattern
+   - 압축 보관: .gz 확장자
+   - 보관 기간 제한: maxHistory
+   - 전체 용량 제한: totalSizeCap
 
 ## 테스트 클래스
 
@@ -219,8 +358,30 @@ class MyIntegrationTest {
 - **일관된 환경**: 모든 테스트에서 동일한 MariaDB 11.4.7 사용
 - **스키마 자동 초기화**: init-db.sql 파일 자동 실행
 
-### ETC
-* logback [참고](https://logback.qos.ch/)
-* mybatis [참고](http://www.mybatis.org/mybatis-3/)
-* mybatis Dynamic SQL [참고](http://www.mybatis.org/mybatis-dynamic-sql/docs/introduction.html)
-* spring-boot-autoconfigure [참고](http://www.mybatis.org/spring-boot-starter/mybatis-spring-boot-autoconfigure/)
+### 실무 활용 팁
+
+#### 1. Profile Group 활용 가이드
+- **개발 환경**: 모든 로그 레벨을 파일로 저장하여 문제 추적 용이
+- **테스트 환경**: 콘솔만 사용하여 CI/CD 파이프라인 성능 향상
+- **운영 환경**: ERROR/WARN만 파일 저장하여 디스크 사용량 최적화
+
+#### 2. 로그 레벨 가이드라인
+```java
+log.trace("매우 상세한 추적 정보");      // 메서드 진입/종료
+log.debug("디버깅 정보");               // 변수값, 상태 정보
+log.info("일반 정보");                  // 비즈니스 이벤트
+log.warn("경고 메시지");                // 잠재적 문제
+log.error("오류 메시지", exception);    // 실제 오류
+```
+
+#### 3. 성능 최적화
+- **조건부 로깅**: 성능이 중요한 경우 isDebugEnabled() 체크
+- **파라미터화된 메시지**: 문자열 연결 대신 {} 플레이스홀더 사용
+- **비동기 로깅**: 대용량 처리 시 AsyncAppender 고려
+
+### 참고 자료
+* Logback 공식 문서: [https://logback.qos.ch/](https://logback.qos.ch/)
+* Spring Boot Logging: [https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.logging](https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.logging)
+* MyBatis 공식 문서: [http://www.mybatis.org/mybatis-3/](http://www.mybatis.org/mybatis-3/)
+* MyBatis Dynamic SQL: [http://www.mybatis.org/mybatis-dynamic-sql/docs/introduction.html](http://www.mybatis.org/mybatis-dynamic-sql/docs/introduction.html)
+* Spring Boot AutoConfigure: [http://www.mybatis.org/spring-boot-starter/mybatis-spring-boot-autoconfigure/](http://www.mybatis.org/spring-boot-starter/mybatis-spring-boot-autoconfigure/)

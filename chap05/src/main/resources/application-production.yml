@@ -1,0 +1,18 @@
+spring:
+  profiles:
+    group:
+      production:
+        - console-appender
+        - file-error-appender
+        - file-warn-appender
+
+primavera:
+  logs:
+    path: /var/log/primavera
+
+logging:
+  level:
+    root: WARN
+    com.genius.primavera: INFO
+    org.springframework.web: WARN
+    org.mybatis: WARN

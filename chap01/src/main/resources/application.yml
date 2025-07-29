@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: primavera-chap01
+
+app:
+  name: Primavera Tutorial
+  version: 1.0.0
+  debug: true
+  max-users: 200
+  features:
+    - user-management
+    - authentication
+    - reporting
+  database:
+    url: jdbc:h2:mem:primavera
+    username: sa
+    password: password
+    max-connections: 20
+  metadata:
+    author: Genius
+    environment: development

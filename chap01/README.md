@@ -8,12 +8,17 @@ Spring Boot의 핵심 개념과 애플리케이션 구동 원리를 이해하는
 - **자동 구성(Auto Configuration)** 동작 원리 파악
 - **SpringApplicationBuilder** 패턴 마스터
 - **Domain-Driven Design** 기초 개념 적용
+- **Bean 생명주기와 Scope** 이해
+- **의존성 주입(DI) 패턴** 마스터
+- **설정 관리** 기초 학습
+- **기본 웹 개념** 이해
 
 ## 🛠️ 핵심 기술 스택
 - **Java 21** - Record, Switch Expression 활용
 - **Spring Boot 3.5.3** - 최신 부트 프레임워크
 - **Spring Context** - IoC 컨테이너 관리
 - **Gradle 8.12.1** - 빌드 자동화
+- **Jakarta Annotations** - 표준 어노테이션 지원
 
 ## 📚 주요 학습 내용
 
@@ -138,6 +143,151 @@ flowchart TD
 3. **자동 구성 적용**: EnableAutoConfiguration 동작
 4. **빈 등록 및 초기화**: IoC 컨테이너 구성
 5. **웹 서버 시작**: 내장 Tomcat/Undertow 구동
+
+### 6. Bean 생명주기와 Scope 이해
+
+Spring Bean의 생명주기와 다양한 Scope를 학습합니다.
+
+**Bean 생명주기 단계:**
+1. **인스턴스 생성** - Constructor 호출
+2. **의존성 주입** - Properties 설정
+3. **초기화 콜백** - @PostConstruct, InitializingBean
+4. **사용 준비 완료** - Bean 사용 가능
+5. **소멸 전 콜백** - @PreDestroy, DisposableBean
+6. **Bean 소멸** - 컨테이너 종료 시
+
+**예제: BeanLifecycleExample.java**
+- Constructor → afterPropertiesSet() → @PostConstruct 순서로 실행
+- @PreDestroy → destroy() 순서로 종료
+- 각 단계별 상태 추적 가능
+
+**Bean Scope 종류:**
+- **singleton** (기본값): 애플리케이션당 하나의 인스턴스
+- **prototype**: 요청할 때마다 새로운 인스턴스 생성
+- **request**: HTTP 요청당 하나 (웹 애플리케이션)
+- **session**: HTTP 세션당 하나 (웹 애플리케이션)
+
+**예제: BeanScopeExample.java**
+- SingletonBean: 항상 같은 인스턴스 반환
+- PrototypeBean: 매번 새로운 인스턴스 생성
+
+### 7. 의존성 주입(DI) 패턴 완벽 가이드
+
+다양한 의존성 주입 방법과 각각의 장단점을 학습합니다.
+
+**예제: DependencyInjectionExample.java**
+
+**1. Constructor Injection (권장) ✅**
+```java
+@Component
+@RequiredArgsConstructor
+public static class ConstructorInjection {
+    private final MessageService messageService;
+}
+```
+- 불변성 보장 (final 키워드 사용 가능)
+- 순환 참조 컴파일 시점 감지
+- 테스트 용이성
+
+**2. Setter Injection**
+```java
+@Autowired
+public void setMessageService(MessageService messageService) {
+    this.messageService = messageService;
+}
+```
+- 선택적 의존성에 유용
+- 런타임에 변경 가능
+
+**3. Field Injection**
+```java
+@Autowired
+private MessageService messageService;
+```
+- 코드 간결성
+- 테스트 어려움 (리플렉션 필요)
+- 불변성 보장 불가
+
+**4. @Qualifier와 @Primary 사용**
+- **@Primary**: 여러 구현체 중 기본값 지정
+- **@Qualifier**: 특정 Bean을 명시적으로 선택
+
+### 8. 설정 관리 기초
+
+애플리케이션 설정을 관리하는 다양한 방법을 학습합니다.
+
+**예제: ConfigurationExample.java**
+
+**1. @Value 어노테이션**
+- 단순한 값 주입
+- 기본값 설정 가능
+- SpEL(Spring Expression Language) 지원
+
+```java
+@Value("${app.name:Primavera}")
+private String appName;
+
+@Value("#{'${app.features:feature1,feature2}'.split(',')}")
+private List<String> features;
+```
+
+**2. @ConfigurationProperties**
+- 타입 안전한 설정 바인딩
+- 계층적 구조 지원
+- IDE 자동완성 지원
+- 유효성 검증 가능
+
+```java
+@ConfigurationProperties(prefix = "app")
+public class AppProperties {
+    private String name;
+    private Database database;
+    // getter/setter
+}
+```
+
+**3. application.yml 설정 예제**
+```yaml
+app:
+  name: Primavera Tutorial
+  version: 1.0.0
+  database:
+    url: jdbc:h2:mem:primavera
+    max-connections: 20
+```
+
+### 9. 기본 웹 개념
+
+Spring Boot의 웹 개발 기초 개념을 학습합니다.
+
+**예제: WebBasicsController.java**
+
+**1. HTTP 메서드 매핑**
+- @GetMapping, @PostMapping, @PutMapping, @DeleteMapping
+- @RequestMapping의 세부 설정
+
+**2. 파라미터 바인딩**
+- **@PathVariable**: URL 경로의 변수 추출
+- **@RequestParam**: 쿼리 파라미터 추출
+- **@RequestBody**: HTTP 본문을 객체로 변환
+- **@RequestHeader**: HTTP 헤더 값 추출
+
+**3. 응답 처리**
+- **ResponseEntity**: 상태 코드와 헤더 제어
+- **@ResponseStatus**: 응답 상태 지정
+- **@RestController**: @Controller + @ResponseBody
+
+**4. 예외 처리**
+- **@ExceptionHandler**: 컨트롤러 레벨 예외 처리
+- **@ControllerAdvice**: 전역 예외 처리
+- **커스텀 예외 응답**: ErrorResponse 객체
+
+```java
+@ExceptionHandler(ResourceNotFoundException.class)
+public ResponseEntity<ErrorResponse> handleNotFound(ResourceNotFoundException e) {
+    return ResponseEntity.notFound().build();
+}
+```
 
 ## 🔧 실습 예제
 

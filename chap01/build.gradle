@@ -1,19 +1,4 @@
-// ==========================================
-// CHAP01 - Basic Spring Boot Application
-// ==========================================
-// Dependencies inherited from root build.gradle:
-// - spring-boot-starter-web ✓
-// - lombok (compileOnly + annotationProcessor) ✓  
-// - spring-boot-starter-test ✓
-// - slf4j-api ✓
-// - jetbrains annotations ✓
-// - jakarta.validation-api (compileOnly) ✓
-// ==========================================
-
 dependencies {
-    // ==========================================
-    // Additional Dependencies  
-    // ==========================================
     implementation "jakarta.annotation:jakarta.annotation-api:${javaxAnnotationVersion}"
 }
 

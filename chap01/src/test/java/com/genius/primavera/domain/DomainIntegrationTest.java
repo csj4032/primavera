@@ -6,6 +6,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.List;
 
@@ -45,7 +47,7 @@ class DomainIntegrationTest {
                 .name("서울 공장")
                 .location("서울시 강남구")
                 .manager(manager)
-                .establishedDate(LocalDateTime.of(2020, 1, 1, 0, 0))
+                .establishedDate(LocalDateTime.of(2020, 1, 1, 0, 0).toInstant(ZoneOffset.UTC))
                 .build();
 
         // when & then
@@ -59,8 +61,7 @@ class DomainIntegrationTest {
         assertThat(managerRoles).contains(adminRole, managerRole);
 
         // 3. 특정 역할 확인
-        boolean hasManagerRole = manager.getRoles().stream()
-                .anyMatch(role -> role.getName().equals("PLANT_MANAGER"));
+        boolean hasManagerRole = manager.getRoles().stream().anyMatch(role -> role.getName().equals("PLANT_MANAGER"));
         assertThat(hasManagerRole).isTrue();
     }
 
@@ -92,7 +93,7 @@ class DomainIntegrationTest {
                 .name("서울 공장")
                 .location("서울시 강남구")
                 .manager(manager)
-                .establishedDate(LocalDateTime.of(2020, 1, 1, 0, 0))
+                .establishedDate(LocalDateTime.of(2020, 1, 1, 0, 0).toInstant(ZoneOffset.UTC))
                 .build();
 
         Plant busanPlant = Plant.builder()
@@ -100,7 +101,7 @@ class DomainIntegrationTest {
                 .name("부산 공장")
                 .location("부산시 해운대구")
                 .manager(manager)
-                .establishedDate(LocalDateTime.of(2021, 5, 15, 0, 0))
+                .establishedDate(LocalDateTime.of(2021, 5, 15, 0, 0).toInstant(ZoneOffset.UTC))
                 .build();
 
         // when & then

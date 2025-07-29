@@ -6,6 +6,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.List;
 
@@ -121,11 +123,11 @@ class UserTest {
         String password = "newPassword123";
         String nickname = "setterTester";
         List<Role> roles = Arrays.asList(
-            new Role(1L, "ADMIN", "Administrator role"),
-            new Role(2L, "USER", "User role")
+                new Role(1L, "ADMIN", "Administrator role"),
+                new Role(2L, "USER", "User role")
         );
-        LocalDateTime createdAt = LocalDateTime.of(2023, 1, 1, 10, 0);
-        LocalDateTime updatedAt = LocalDateTime.of(2023, 12, 31, 15, 30);
+        Instant createdAt = LocalDateTime.of(2023, 1, 1, 10, 0).toInstant(ZoneOffset.UTC);
+        Instant updatedAt = LocalDateTime.of(2023, 12, 31, 15, 30).toInstant(ZoneOffset.UTC);
 
         // when
         user.setId(id);
