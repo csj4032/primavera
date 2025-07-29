@@ -1,8 +1,8 @@
 package com.genius.primavera.dataSource;
 
-import com.genius.primavera.test.ContainerType;
-import com.genius.primavera.test.EnablePrimaveraTestcontainers;
-import com.genius.primavera.test.UnifiedTestcontainersMixin;
+import com.genius.primavera.testContainer.ContainerType;
+import com.genius.primavera.testContainer.EnablePrimaveraTestcontainers;
+import com.genius.primavera.testContainer.UnifiedTestcontainersMixin;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

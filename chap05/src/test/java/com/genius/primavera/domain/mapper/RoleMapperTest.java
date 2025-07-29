@@ -2,7 +2,7 @@ package com.genius.primavera.domain.mapper;
 
 import com.genius.primavera.domain.model.Role;
 import com.genius.primavera.domain.model.RoleType;
-import com.genius.primavera.test.annotation.PrimaveraTestContainer;
+import com.genius.primavera.testContainer.annotation.PrimaveraTestContainer;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;

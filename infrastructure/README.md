@@ -1,17 +1,20 @@
 # 🏗️ Primavera Infrastructure
 
-Primavera 프로젝트의 **인프라스트럭처 설정 및 관리**를 위한 Docker Compose 기반 환경입니다.
+Primavera 프로젝트의 **환경별 분리된 인프라스트럭처 설정 및 관리**를 위한 Docker Compose 기반 환경입니다.
 
 [![MariaDB](https://img.shields.io/badge/MariaDB-11.4.7-brown.svg)](https://mariadb.org/)
 [![Docker](https://img.shields.io/badge/Docker-Compose-blue.svg)](https://docs.docker.com/compose/)
+[![HashiCorp Vault](https://img.shields.io/badge/Vault-1.15-blue.svg)](https://www.vaultproject.io/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
 ## 📋 목차
 
 - [🎯 개요](#-개요)
+- [🌍 환경별 분리 구조](#-환경별-분리-구조)
 - [🛠️ 사전 요구사항](#️-사전-요구사항)
 - [🚀 빠른 시작](#-빠른-시작)
 - [📊 데이터베이스 구조](#-데이터베이스-구조)
+- [🔐 Vault 설정 관리](#-vault-설정-관리)
 - [⚙️ 설정 정보](#️-설정-정보)
 - [🔧 관리 명령어](#-관리-명령어)
 - [🐛 트러블슈팅](#-트러블슈팅)
@@ -22,7 +25,119 @@ Primavera 프로젝트의 **인프라스트럭처 설정 및 관리**를 위한 
 
 ## 🎯 개요
 
-이 인프라스트럭처는 Primavera 프로젝트의 **모든 모듈이 공유하는 데이터베이스 환경**을 제공합니다.
+이 인프라스트럭처는 Primavera 프로젝트의 **환경별로 분리된 데이터베이스 환경**과 **HashiCorp Vault를 통한 설정 관리**를 제공합니다.
+
+---
+
+## 🌍 환경별 분리 구조
+
+### 📊 환경별 MariaDB 인스턴스
+
+Primavera 프로젝트는 개발, 테스트, 프로덕션 환경을 완전히 분리하여 운영합니다.
+
+| 환경 | 포트 | 컨테이너명 | 데이터베이스 구조 |
+|------|------|------------|------------------|
+| **Local** | `3308` | `mariadb-primavera-local` | 로컬 개발 환경 |
+| **Test** | `3309` | `mariadb-primavera-test` | TestContainers & CI/CD |
+| **Production** | `3310` | `mariadb-primavera-prod` | 프로덕션 환경 |
+
+```yaml
+# docker-compose.yml - 환경별 MariaDB 설정
+services:
+  mariadb-local:    # 포트 3308 - 로컬 개발
+    ports: ["3308:3306"]
+    environment:
+      MARIADB_DATABASE: local_primavera
+      
+  mariadb-test:     # 포트 3309 - 테스트 환경
+    ports: ["3309:3306"]
+    environment:
+      MARIADB_DATABASE: test_primavera
+      
+  mariadb-prod:     # 포트 3310 - 프로덕션
+    ports: ["3310:3306"]
+    environment:
+      MARIADB_DATABASE: prod_primavera
+```
+
+### 🗃️ 공통 데이터베이스 구조
+
+각 환경에서 동일한 데이터베이스 구조를 사용합니다:
+
+- **primavera** - 기본 데이터베이스
+- **primavera_basic** - 기본 예제 (chap03-chap05)
+- **primavera_mybatis** - MyBatis 예제 (chap06-chap11)
+- **primavera_mybatis_board** - MyBatis 게시판 (chap12-chap13)
+- **primavera_jpa_advanced** - JPA 고급 (chap14-chap15)
+- **primavera_jpa_board** - JPA 게시판 (chap16-chap17)
+- **primavera_microservices** - 마이크로서비스 (chap18)
+
+### 🔐 Vault 기반 설정 관리
+
+HashiCorp Vault를 통해 환경별 설정을 중앙집중식으로 관리합니다.
+
+#### 환경별 Vault 경로 구조
+```
+secret/
+├── {ApplicationName}/
+│   ├── local/          # 로컬 개발 환경 (port 3308)
+│   ├── test/           # 테스트 환경 (port 3309)
+│   └── prod/           # 프로덕션 환경 (port 3310)
+```
+
+#### 환경별 연결 설정 예시
+
+**Local 환경 (port 3308):**
+```properties
+spring.datasource.url=jdbc:mariadb://localhost:3308/primavera_basic
+spring.datasource.username=primavera
+spring.datasource.password=primavera
+```
+
+**Test 환경 (port 3309):**
+```properties
+spring.datasource.url=jdbc:mariadb://localhost:3309/primavera_basic
+spring.datasource.username=test
+spring.datasource.password=test
+```
+
+**Production 환경 (port 3310):**
+```properties
+spring.datasource.url=jdbc:mariadb://localhost:3310/primavera_basic
+spring.datasource.username=prod_user
+spring.datasource.password=prod_secure_password_change_me
+```
+
+### 🚀 환경별 사용 방법
+
+#### 로컬 개발 환경
+```bash
+# 로컬 환경만 시작
+docker-compose up -d mariadb-local vault
+
+# 애플리케이션 실행
+export VAULT_TOKEN=$(cat infrastructure/vault/app-token.txt)
+./gradlew :chap04:bootRun -Dspring.profiles.active=local
+```
+
+#### 테스트 환경
+```bash
+# 테스트 환경 시작
+docker-compose up -d mariadb-test vault
+
+# 테스트 실행
+./gradlew :chap04:test -Dspring.profiles.active=test
+```
+
+#### 프로덕션 환경
+```bash
+# 프로덕션 환경 시작
+docker-compose up -d mariadb-prod vault
+
+# 프로덕션 설정으로 애플리케이션 실행
+export VAULT_TOKEN=$(cat infrastructure/vault/app-token.txt)
+./gradlew :chap04:bootRun -Dspring.profiles.active=prod
+```
 
 ### 🗂️ 구성 요소
 
@@ -82,24 +197,20 @@ newgrp docker
 |------|---------------|-----------|
 | **메모리** | 2GB RAM | 4GB+ RAM |
 | **디스크** | 2GB 여유 공간 | 5GB+ 여유 공간 |
-| **포트** | 1109, 6379, 8200 포트 사용 가능 | - |
+| **포트** | 3308, 3309, 3310, 6379, 8200 포트 사용 가능 | - |
 
 ### 3. 포트 충돌 확인
 
 ```bash
-# 포트 1109 (MariaDB) 사용 여부 확인
-netstat -an | grep 1109
-# 또는
-lsof -i :1109
+# 환경별 MariaDB 포트 사용 여부 확인
+lsof -i :3308  # Local 환경
+lsof -i :3309  # Test 환경
+lsof -i :3310  # Production 환경
 
-# 포트 6379 (Redis) 사용 여부 확인
-netstat -an | grep 6379
-# 또는
+# Redis 포트 확인
 lsof -i :6379
 
-# 포트 8200 (Vault) 사용 여부 확인
-netstat -an | grep 8200
-# 또는
+# Vault 포트 확인
 lsof -i :8200
 
 # 사용 중이면 해당 프로세스 종료
@@ -302,7 +413,124 @@ spring:
 **예시:**
 - chap03: `jdbc:mariadb://localhost:1109/primavera_basic`
 - chap12: `jdbc:mariadb://localhost:1109/primavera_mybatis_board`
-- chap17: `jdbc:mariadb://localhost:1109/primavera_jpa_board`
+- chap17: `jdbc:mariadb://localhost:3308/primavera_jpa_board` (로컬 환경)
+
+---
+
+## 🔐 Vault 설정 관리
+
+### 🗂️ Vault 초기화
+
+환경별 데이터베이스 설정을 Vault를 통해 중앙집중식으로 관리합니다.
+
+```bash
+# 1. 전체 인프라스트럭처 시작
+docker-compose up -d
+
+# 2. Vault 초기화 스크립트 실행 (자동)
+# vault-init 컨테이너가 자동으로 실행되어 초기화 수행
+
+# 3. 수동 초기화 (필요시)
+./vault-init.sh
+```
+
+### 📋 챕터별 애플리케이션 매핑
+
+| 챕터 | 애플리케이션명 | 데이터베이스 | Vault 경로 |
+|-------|----------------|--------------|-------------|
+| chap01 | SpringBootStarterApplication | primavera | `secret/SpringBootStarterApplication/{env}` |
+| chap02 | ConfigurationDependencyApplication | primavera | `secret/ConfigurationDependencyApplication/{env}` |
+| chap03 | MvcAopApplication | primavera | `secret/MvcAopApplication/{env}` |
+| chap04-05 | DataAccessApplication, MyBatisLoggingApplication | primavera_basic | `secret/DataAccessApplication/{env}` |
+| chap06-11 | ValidationApplication, ThymeleafJpaApplication, BoardSystemApplication | primavera_mybatis | `secret/ValidationApplication/{env}` |
+| chap12-13 | HierarchicalCommentApplication, AdvancedAuthorizationApplication | primavera_mybatis_board | `secret/HierarchicalCommentApplication/{env}` |
+| chap14-15 | JpaAdvancedMappingApplication, ReactiveProgrammingApplication | primavera_jpa_advanced | `secret/JpaAdvancedMappingApplication/{env}` |
+| chap16-17 | FileProcessingMonitoringApplication, CiCdDeploymentApplication | primavera_jpa_board | `secret/FileProcessingMonitoringApplication/{env}` |
+| chap18 | FrontApplication, AccountApplication, ProductApplication, ConfigurationApplication | primavera_microservices | `secret/FrontApplication/{env}` |
+
+### 🔑 Vault 토큰 및 정책
+
+#### 생성된 토큰 파일
+
+Docker Compose 실행 시 자동으로 생성되는 토큰들:
+
+```bash
+infrastructure/vault/
+├── app-token.txt     # 애플리케이션용 읽기 전용 토큰 (TTL: 720h)
+├── dev-token.txt     # 개발자용 전체 권한 토큰 (TTL: 168h)
+└── tokens.json       # 토큰 메타데이터 JSON
+```
+
+#### 토큰 사용 방법
+
+```bash
+# 애플리케이션 토큰 사용
+export VAULT_TOKEN=$(cat infrastructure/vault/app-token.txt)
+
+# 개발자 토큰 사용 (시크릿 수정 시)
+export VAULT_TOKEN=$(cat infrastructure/vault/dev-token.txt)
+```
+
+### 🌍 환경별 시크릿 조회
+
+```bash
+# Vault 환경 설정
+export VAULT_ADDR='http://localhost:8200'
+export VAULT_TOKEN=$(cat infrastructure/vault/app-token.txt)
+
+# 로컬 환경 설정 조회
+vault kv get secret/DataAccessApplication/local
+vault kv get secret/OAuth2SocialLoginApplication/local
+vault kv get secret/HierarchicalCommentApplication/local
+
+# 테스트 환경 설정 조회
+vault kv get secret/DataAccessApplication/test
+vault kv get secret/OAuth2SocialLoginApplication/test
+
+# 프로덕션 환경 설정 조회
+vault kv get secret/DataAccessApplication/prod
+vault kv get secret/OAuth2SocialLoginApplication/prod
+```
+
+### 📝 환경별 시크릿 구조 예시
+
+#### Local 환경 (port 3308)
+```bash
+vault kv get secret/DataAccessApplication/local
+# 출력:
+# spring.datasource.url=jdbc:mariadb://localhost:3308/primavera_basic
+# spring.datasource.username=primavera
+# spring.datasource.password=primavera
+# spring.datasource.driver-class-name=org.mariadb.jdbc.Driver
+```
+
+#### Test 환경 (port 3309)
+```bash
+vault kv get secret/DataAccessApplication/test
+# 출력:
+# spring.datasource.url=jdbc:mariadb://localhost:3309/primavera_basic
+# spring.datasource.username=test
+# spring.datasource.password=test
+# spring.datasource.driver-class-name=org.mariadb.jdbc.Driver
+```
+
+#### Production 환경 (port 3310)
+```bash
+vault kv get secret/DataAccessApplication/prod
+# 출력:
+# spring.datasource.url=jdbc:mariadb://localhost:3310/primavera_basic
+# spring.datasource.username=prod_user
+# spring.datasource.password=prod_secure_password_change_me
+# spring.datasource.driver-class-name=org.mariadb.jdbc.Driver
+```
+
+### 🔧 Vault UI 접속
+
+브라우저에서 `http://localhost:8200`에 접속하여 Vault UI를 사용할 수 있습니다.
+
+1. **로그인**: `infrastructure/vault/app-token.txt` 파일의 토큰 사용
+2. **시크릿 탐색**: `secret/` 경로에서 각 애플리케이션별 설정 확인
+3. **설정 수정**: 개발자 토큰 필요 (`dev-token.txt` 사용)
 
 ---
 

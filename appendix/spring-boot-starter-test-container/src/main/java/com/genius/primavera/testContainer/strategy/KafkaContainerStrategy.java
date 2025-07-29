@@ -1,6 +1,6 @@
-package com.genius.primavera.test.strategy;
+package com.genius.primavera.testContainer.strategy;
 
-import com.genius.primavera.test.config.KafkaContainerConfig;
+import com.genius.primavera.testContainer.config.KafkaContainerConfig;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ConfigurableApplicationContext;

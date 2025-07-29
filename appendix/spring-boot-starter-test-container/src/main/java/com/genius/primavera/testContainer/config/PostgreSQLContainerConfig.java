@@ -1,4 +1,4 @@
-package com.genius.primavera.test.config;
+package com.genius.primavera.testContainer.config;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

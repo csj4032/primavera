@@ -1,6 +1,6 @@
-package com.genius.primavera.test.strategy;
+package com.genius.primavera.testContainer.strategy;
 
-import com.genius.primavera.test.config.MariaDBContainerConfig;
+import com.genius.primavera.testContainer.config.MariaDBContainerConfig;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ConfigurableApplicationContext;

@@ -1,4 +1,4 @@
-package com.genius.primavera.test;
+package com.genius.primavera.testContainer;
 
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.MariaDBContainer;

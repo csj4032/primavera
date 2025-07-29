@@ -1,8 +1,8 @@
-package com.genius.primavera.test.factory;
+package com.genius.primavera.testContainer.factory;
 
-import com.genius.primavera.test.ContainerType;
-import com.genius.primavera.test.config.*;
-import com.genius.primavera.test.strategy.*;
+import com.genius.primavera.testContainer.ContainerType;
+import com.genius.primavera.testContainer.config.*;
+import com.genius.primavera.testContainer.strategy.*;
 
 import java.util.Map;
 

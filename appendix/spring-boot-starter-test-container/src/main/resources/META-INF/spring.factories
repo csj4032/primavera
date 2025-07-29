@@ -11,4 +11,4 @@
 
 # Auto Configuration (비활성화됨 - 애노테이션 기반 활성화만 지원)
 # org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-# com.genius.primavera.test.TestContainerAutoConfiguration
+# com.genius.primavera.testContainer.TestContainerAutoConfiguration

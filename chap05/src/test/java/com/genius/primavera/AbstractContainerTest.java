@@ -1,6 +1,6 @@
 package com.genius.primavera;
 
-import com.genius.primavera.test.AbstractMariaDBContainerTest;
+import com.genius.primavera.testContainer.AbstractMariaDBContainerTest;
 
 /**
  * Chapter 04 - MyBatis 테스트를 위한 TestContainers 추상 클래스

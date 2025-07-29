@@ -158,36 +158,36 @@ INSERT INTO USER (EMAIL, PASSWORD, NICKNAME) VALUES
 ### 3. 첫 번째 테스트 작성
 
 ```java
-import com.genius.primavera.test.annotation.PrimaveraTestContainer;
+import com.genius.primavera.testContainer.annotation.PrimaveraTestContainer;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 @PrimaveraTestContainer
 class UserRepositoryIntegrationTest {
-    
+
     @Autowired
     private UserRepository userRepository;
-    
+
     @Test
     @DisplayName("사용자 저장 및 조회 테스트")
     void shouldSaveAndRetrieveUser() {
         // Given: 새로운 사용자 생성
         User user = User.builder()
-            .email("newuser@example.com")
-            .password("password123")
-            .nickname("NewUser")
-            .build();
-        
+                .email("newuser@example.com")
+                .password("password123")
+                .nickname("NewUser")
+                .build();
+
         // When: 사용자 저장
         User savedUser = userRepository.save(user);
-        
+
         // Then: 저장된 사용자 검증
         assertThat(savedUser.getId()).isNotNull();
         assertThat(savedUser.getEmail()).isEqualTo("newuser@example.com");
-        
+
         // When: 저장된 사용자 조회
         Optional<User> foundUser = userRepository.findByEmail("newuser@example.com");
-        
+
         // Then: 조회 결과 검증
         assertThat(foundUser).isPresent();
         assertThat(foundUser.get().getNickname()).isEqualTo("NewUser");
@@ -244,32 +244,32 @@ class CustomConfigurationTest {
 ### 2. 상속 기반 방법: AbstractMariaDBContainerTest
 
 ```java
-import com.genius.primavera.test.AbstractMariaDBContainerTest;
+import com.genius.primavera.testContainer.AbstractMariaDBContainerTest;
 
 class UserServiceTest extends AbstractMariaDBContainerTest {
-    
+
     @Autowired
     private UserService userService;
-    
+
     @Test
     void testUserCreation() {
         // mariadb 컨테이너에 직접 접근 가능
         assertThat(mariadb.isRunning()).isTrue();
         assertThat(mariadb.getDatabaseName()).isEqualTo("primavera");
-        
+
         // 서비스 테스트 수행
         User user = userService.createUser("test@example.com", "password");
         assertThat(user.getId()).isNotNull();
     }
-    
+
     @Test
     void testDirectDatabaseAccess() {
         // JDBC URL 직접 사용
         String jdbcUrl = mariadb.getJdbcUrl();
-        
-        try (Connection connection = DriverManager.getConnection(jdbcUrl, 
+
+        try (Connection connection = DriverManager.getConnection(jdbcUrl,
                 mariadb.getUsername(), mariadb.getPassword())) {
-            
+
             try (PreparedStatement stmt = connection.prepareStatement("SELECT COUNT(*) FROM USER")) {
                 ResultSet rs = stmt.executeQuery();
                 rs.next();
@@ -400,7 +400,7 @@ logging:
   level:
     org.testcontainers: INFO                    # TestContainers 로그 레벨
     com.github.dockerjava: WARN                 # Docker Java 클라이언트 로그
-    com.genius.primavera.test: DEBUG           # 커스텀 스타터 로그
+    com.genius.primavera.testContainer: DEBUG           # 커스텀 스타터 로그
     org.springframework.test: INFO              # Spring Test 로그
 ```
 
@@ -909,7 +909,7 @@ logging:
     com.github.dockerjava: INFO
     
     # 커스텀 스타터 관련
-    com.genius.primavera.test: DEBUG
+    com.genius.primavera.testContainer: DEBUG
     
     # Spring 관련
     org.springframework.test: INFO

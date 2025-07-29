@@ -1,9 +1,8 @@
-package com.genius.primavera.test;
+package com.genius.primavera.testContainer;
 
-import com.genius.primavera.test.factory.ContainerStrategyFactory;
-import com.genius.primavera.test.strategy.ContainerStrategy;
+import com.genius.primavera.testContainer.factory.ContainerStrategyFactory;
+import com.genius.primavera.testContainer.strategy.ContainerStrategy;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.testcontainers.containers.GenericContainer;
@@ -27,7 +26,7 @@ public class PrimaveraTestcontainersContextInitializer implements ApplicationCon
     @Override
     public void initialize(ConfigurableApplicationContext applicationContext) {
         log.info("Initializing Primavera Testcontainers with Strategy Pattern...");
-        
+
         initializeFactory(applicationContext);
         EnablePrimaveraTestcontainers annotation = findTestcontainersAnnotation(applicationContext);
 
@@ -42,24 +41,21 @@ public class PrimaveraTestcontainersContextInitializer implements ApplicationCon
             startContainer(containerType, applicationContext);
         }
     }
-    
+
     private void initializeFactory(ConfigurableApplicationContext applicationContext) {
         if (factory == null) {
             factory = new ContainerStrategyFactory(
-                new com.genius.primavera.test.config.MariaDBContainerConfig(),
-                new com.genius.primavera.test.config.RedisContainerConfig(),
-                new com.genius.primavera.test.config.KafkaContainerConfig(),
-                new com.genius.primavera.test.config.PostgreSQLContainerConfig()
+                    new com.genius.primavera.testContainer.config.MariaDBContainerConfig(),
+                    new com.genius.primavera.testContainer.config.RedisContainerConfig(),
+                    new com.genius.primavera.testContainer.config.KafkaContainerConfig(),
+                    new com.genius.primavera.testContainer.config.PostgreSQLContainerConfig()
             );
         }
     }
-    
+
     private void startContainer(ContainerType containerType, ConfigurableApplicationContext applicationContext) {
-        ContainerStrategy strategy = strategyCache.computeIfAbsent(
-            containerType.name(), 
-            k -> factory.getStrategy(containerType)
-        );
-        
+        ContainerStrategy strategy = strategyCache.computeIfAbsent(containerType.name(), k -> factory.getStrategy(containerType));
+
         if (!strategy.isRunning()) {
             log.info("Starting {} container...", containerType.name());
             strategy.startContainer(applicationContext);
@@ -81,11 +77,11 @@ public class PrimaveraTestcontainersContextInitializer implements ApplicationCon
                         return annotation;
                     }
                 } catch (NoSuchMethodException ignored) {
-                    // 메서드가 없으면 무시
+                    log.error(element.toString());
                 }
 
             } catch (ClassNotFoundException ignored) {
-                // 클래스를 찾을 수 없으면 무시
+                log.error(element.toString());
             }
         }
 

@@ -1,8 +1,8 @@
-package com.genius.primavera.test.strategy;
+package com.genius.primavera.testContainer.strategy;
 
-import com.genius.primavera.test.ContainerType;
-import com.genius.primavera.test.config.*;
-import com.genius.primavera.test.factory.ContainerStrategyFactory;
+import com.genius.primavera.testContainer.ContainerType;
+import com.genius.primavera.testContainer.config.*;
+import com.genius.primavera.testContainer.factory.ContainerStrategyFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.GenericApplicationContext;

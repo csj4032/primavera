@@ -1,4 +1,4 @@
-package com.genius.primavera.test.strategy;
+package com.genius.primavera.testContainer.strategy;
 
 import org.springframework.context.ConfigurableApplicationContext;
 import org.testcontainers.containers.GenericContainer;
