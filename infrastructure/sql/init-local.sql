@@ -60,7 +60,7 @@ CREATE TABLE IF NOT EXISTS USERS
     EMAIL      VARCHAR(100) UNIQUE NOT NULL,
     PASSWORD   VARCHAR(255)        NOT NULL,
     NICKNAME   VARCHAR(50)         NOT NULL,
-    STATUS     VARCHAR(20) DEFAULT 'ACTIVE',
+    STATUS     INT(1)      NOT NULL DEFAULT 1,
     CREATED_AT DATETIME    DEFAULT CURRENT_TIMESTAMP,
     UPDATED_AT DATETIME    DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX IDX_EMAIL (EMAIL),
@@ -114,12 +114,12 @@ VALUES (1, 'ROLE_ADMIN', 1),
 ON DUPLICATE KEY UPDATE NAME = VALUES(NAME);
 
 INSERT INTO USERS (ID, EMAIL, PASSWORD, NICKNAME, STATUS)
-VALUES (1, 'genius@primavera.com', '{bcrypt}$2a$10$N8kKAJz4rT8d.JLZ8QqC6O8.YhJQrGeFGRqF2QhPZKJf3ZcJwQq7e', 'Genius', 'ACTIVE'),
-       (2, 'admin@primavera.com', '{bcrypt}$2a$10$N8kKAJz4rT8d.JLZ8QqC6O8.YhJQrGeFGRqF2QhPZKJf3ZcJwQq7e', 'Admin', 'ACTIVE'),
-       (3, 'user@primavera.com', '{bcrypt}$2a$10$N8kKAJz4rT8d.JLZ8QqC6O8.YhJQrGeFGRqF2QhPZKJf3ZcJwQq7e', 'User', 'ACTIVE'),
-       (4, 'son@primavera.com', '{bcrypt}$2a$10$N8kKAJz4rT8d.JLZ8QqC6O8.YhJQrGeFGRqF2QhPZKJf3ZcJwQq7e', 'Son', 'ACTIVE'),
-       (5, 'messi@primavera.com', '{bcrypt}$2a$10$N8kKAJz4rT8d.JLZ8QqC6O8.YhJQrGeFGRqF2QhPZKJf3ZcJwQq7e', 'Messi', 'ACTIVE'),
-       (6, 'ronaldo@primavera.com', '{bcrypt}$2a$10$N8kKAJz4rT8d.JLZ8QqC6O8.YhJQrGeFGRqF2QhPZKJf3ZcJwQq7e', 'Ronaldo', 'ACTIVE')
+VALUES (1, 'genius@primavera.com', '{bcrypt}$2a$10$N8kKAJz4rT8d.JLZ8QqC6O8.YhJQrGeFGRqF2QhPZKJf3ZcJwQq7e', 'Genius', 1),
+       (2, 'admin@primavera.com', '{bcrypt}$2a$10$N8kKAJz4rT8d.JLZ8QqC6O8.YhJQrGeFGRqF2QhPZKJf3ZcJwQq7e', 'Admin', 1),
+       (3, 'user@primavera.com', '{bcrypt}$2a$10$N8kKAJz4rT8d.JLZ8QqC6O8.YhJQrGeFGRqF2QhPZKJf3ZcJwQq7e', 'User', 1),
+       (4, 'son@primavera.com', '{bcrypt}$2a$10$N8kKAJz4rT8d.JLZ8QqC6O8.YhJQrGeFGRqF2QhPZKJf3ZcJwQq7e', 'Son', 1),
+       (5, 'messi@primavera.com', '{bcrypt}$2a$10$N8kKAJz4rT8d.JLZ8QqC6O8.YhJQrGeFGRqF2QhPZKJf3ZcJwQq7e', 'Messi', 1),
+       (6, 'ronaldo@primavera.com', '{bcrypt}$2a$10$N8kKAJz4rT8d.JLZ8QqC6O8.YhJQrGeFGRqF2QhPZKJf3ZcJwQq7e', 'Ronaldo', 1)
 ON DUPLICATE KEY UPDATE EMAIL = VALUES(EMAIL);
 
 INSERT INTO USER_ROLES (USER_ID, ROLE_ID)

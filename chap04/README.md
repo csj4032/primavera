@@ -87,18 +87,26 @@ chap04/
 
 ## 데이터베이스 스키마
 
-### USER 테이블
+#### USERS 테이블 (메인 사용자 정보)
 ```sql
-CREATE TABLE `USER` (
-  `ID` int(11) NOT NULL AUTO_INCREMENT,
-  `EMAIL` varchar(45) COLLATE utf8mb4_bin DEFAULT NULL,
-  `PASSWORD` varchar(200) COLLATE utf8mb4_bin DEFAULT NULL,
-  `NICK_NAME` varchar(20) COLLATE utf8mb4_bin DEFAULT NULL,
-  `STATUS` varchar(10) COLLATE utf8mb4_bin DEFAULT NULL,
-  `REG_DT` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+CREATE TABLE `USERS` (
+  `ID` BIGINT NOT NULL AUTO_INCREMENT,
+  `EMAIL` VARCHAR(100) NOT NULL UNIQUE,
+  `NICKNAME` VARCHAR(50) NOT NULL,
+  `CREATED_AT` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `UPDATED_AT` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`ID`),
+  INDEX `idx_email` (`EMAIL`),
+  INDEX `idx_created_at` (`CREATED_AT`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 ```
+
+#### 테이블 설계 특징
+- **ID**: BIGINT 타입으로 대용량 지원
+- **EMAIL**: UNIQUE 제약을 통한 중복 방지
+- **인덱스**: 조회 성능 최적화를 위한 인덱스 설정
+- **타임스탬프**: 자동 생성/업데이트 시간 관리
+- **UTF8MB4**: 이모지 등 다국어 문자 지원
 
 ## 설정
 

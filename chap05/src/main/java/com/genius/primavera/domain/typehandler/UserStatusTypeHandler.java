@@ -35,8 +35,8 @@ public class UserStatusTypeHandler<E extends Enum<E>> extends BaseTypeHandler<Us
 
 	private UserStatus getUserStatus(int type) {
 		return switch (type) {
-			case 1 -> UserStatus.ON;
-			case 2 -> UserStatus.BLOCK;
+			case 1 -> UserStatus.ACTIVE;
+			case 2 -> UserStatus.INACTIVE;
 			case 3 -> UserStatus.DORMANT;
 			case 4 -> UserStatus.LEAVE;
 			default -> throw new TypeHandlerException();

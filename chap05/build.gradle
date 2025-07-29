@@ -3,6 +3,9 @@ dependencies {
     databaseDependencies.each { dep -> implementation dep }
     mybatisDependencies.each { dep -> implementation dep }
     testContainersDependencies.each { dep -> testImplementation dep }
+    implementation "org.springframework.cloud:spring-cloud-starter-config"
+    implementation "org.springframework.cloud:spring-cloud-starter-vault-config:${springCloudVaultVersion}"
+    implementation "org.springframework.cloud:spring-cloud-vault-config-databases:${springCloudVaultVersion}"
     compileOnly "org.hibernate:hibernate-validator:${hibernateValidatorVersion}"
     compileOnly "com.zaxxer:HikariCP:${hikariCPVersion}"
     testImplementation "org.springframework.security:spring-security-crypto:${springSecurityVersion}"

@@ -2,24 +2,21 @@ package com.genius.primavera.domain.mapper;
 
 import com.genius.primavera.domain.model.Role;
 import com.genius.primavera.domain.model.RoleType;
-import com.genius.primavera.testContainer.annotation.PrimaveraTestContainer;
+import com.genius.primavera.testContainer.EnablePrimaveraTestcontainers;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
 @SpringBootTest
-@ActiveProfiles(value = "test")
-@ExtendWith(SpringExtension.class)
+@ActiveProfiles("test")
+@EnablePrimaveraTestcontainers
 @DisplayName(value = "권한 관련 테스트")
-@PrimaveraTestContainer
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class RoleMapperTest {
 

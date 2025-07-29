@@ -27,7 +27,7 @@ public final class UserTableSupport {
 		public final SqlColumn<Instant> updatedAt = column("UPDATED_AT", JDBCType.DATE);
 
 		public UserTable() {
-			super("USER");
+			super("USERS");
 		}
 	}
 }

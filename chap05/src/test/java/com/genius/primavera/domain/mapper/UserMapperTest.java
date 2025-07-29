@@ -2,14 +2,15 @@ package com.genius.primavera.domain.mapper;
 
 import com.genius.primavera.domain.mapper.support.UserTableSupport;
 import com.genius.primavera.domain.model.*;
+import com.genius.primavera.testContainer.EnablePrimaveraTestcontainers;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.mybatis.dynamic.sql.render.RenderingStrategies;
 import org.mybatis.dynamic.sql.select.render.SelectStatementProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -20,10 +21,12 @@ import static org.mybatis.dynamic.sql.SqlBuilder.isIn;
 import static org.mybatis.dynamic.sql.SqlBuilder.select;
 
 @Slf4j
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
+@ActiveProfiles("test")
+@EnablePrimaveraTestcontainers
 @DisplayName(value = "유저 관련 테스트")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@Disabled("Database integration test with SQL scripts - requires full Spring context and database")
+//@Disabled("Database integration test with SQL scripts - requires full Spring context and database")
 public class UserMapperTest {
 
     @Autowired
@@ -39,7 +42,7 @@ public class UserMapperTest {
         users = new ArrayList<>();
         List<Role> roles = List.of(Role.builder().id(1).type(RoleType.USER).build());
         String password = new BCryptPasswordEncoder().encode("secret");
-        UserStatus status = UserStatus.ON;
+        UserStatus status = UserStatus.ACTIVE;
         for (int i = 0; i < 10; i++) {
             users.add(User.builder()
                     .email("genius_" + i + "@gmail.com")
@@ -47,7 +50,7 @@ public class UserMapperTest {
                     .password(password)
                     .status(status)
                     .roles(roles)
-                    .regDate(Instant.now()).modDate(Instant.now()).build());
+                    .createdAt(Instant.now()).updatedAt(Instant.now()).build());
         }
 
         bulkUsers = new ArrayList<>();
@@ -58,10 +61,10 @@ public class UserMapperTest {
                     .password(password)
                     .status(status)
                     .roles(roles)
-                    .regDate(Instant.now()).modDate(Instant.now()).build());
+                    .createdAt(Instant.now()).updatedAt(Instant.now()).build());
         }
 
-        source = User.builder().email("primavera@gmail.com").nickname("primavera").password(password).status(UserStatus.ON).roles(roles).regDate(Instant.now()).modDate(Instant.now()).build();
+        source = User.builder().email("primavera@gmail.com").nickname("primavera").password(password).status(UserStatus.ACTIVE).roles(roles).createdAt(Instant.now()).updatedAt(Instant.now()).build();
     }
 
     @Test
@@ -93,7 +96,7 @@ public class UserMapperTest {
     @DisplayName(value = "특정 아이디 유저 수정")
     public void update() {
         source.setNickname("spring");
-        source.setModDate(Instant.now());
+        source.setUpdatedAt(Instant.now());
         userMapper.update(source);
         User destination = userMapper.findById(source.getId());
         Assertions.assertEquals(destination.getNickname(), source.getNickname());
@@ -113,7 +116,7 @@ public class UserMapperTest {
     @DisplayName(value = "특정 유저 권한 저장")
     public void saveRoles() {
         for (User user : users)
-            userRoleMapper.save(new UserRole(user.getId(), 1));
+            userRoleMapper.save(new UserRole(user.getId(), 1L));
     }
 
     @Test
@@ -129,7 +132,7 @@ public class UserMapperTest {
     @DisplayName(value = "검색 조건에 따른 결과 반환")
     public void findUserByRequestUser() {
         SelectStatementProvider selectStatement =
-                select(UserTableSupport.id, UserTableSupport.email, UserTableSupport.password, UserTableSupport.nickname, UserTableSupport.status, UserTableSupport.regDate, UserTableSupport.modDate)
+                select(UserTableSupport.id, UserTableSupport.email, UserTableSupport.password, UserTableSupport.nickname, UserTableSupport.status, UserTableSupport.createdAt, UserTableSupport.updatedAt)
                         .from(UserTableSupport.userTable)
                         .where(UserTableSupport.id, isIn(users.stream().map(User::getId).collect(toList())))
                         .build()

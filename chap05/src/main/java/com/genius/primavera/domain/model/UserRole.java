@@ -9,5 +9,5 @@ import lombok.*;
 @NoArgsConstructor
 public class UserRole {
 	private long userId;
-	private int roleId;
+	private long roleId;
 }

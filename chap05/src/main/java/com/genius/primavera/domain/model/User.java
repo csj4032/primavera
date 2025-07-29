@@ -13,12 +13,12 @@ import java.util.List;
 @NoArgsConstructor
 @EqualsAndHashCode(of = {"id", "email"})
 public class User {
-	private long id;
-	private String email;
-	private String password;
-	private String nickname;
-	private UserStatus status;
-	private List<Role> roles;
-	private Instant regDate;
-	private Instant modDate;
+    private long id;
+    private String email;
+    private String password;
+    private String nickname;
+    private UserStatus status;
+    private List<Role> roles;
+    private Instant createdAt;
+    private Instant updatedAt;
 }
