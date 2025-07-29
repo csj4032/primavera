@@ -1,7 +1,7 @@
 spring:
   config:
     activate:
-      on-profile: local
+      on-profile: test
     import: "optional:vault:"
   cloud:
     vault:

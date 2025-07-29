@@ -17,8 +17,8 @@ import java.sql.SQLException;
  */
 @Slf4j
 @SpringBootTest
-@ActiveProfiles("local")
-@EnablePrimaveraTestcontainers(ContainerType.MARIADB)
+@ActiveProfiles("test")
+@EnablePrimaveraTestcontainers({ContainerType.MARIADB})
 public class HikariDataSourceTest {
 
     @Autowired
