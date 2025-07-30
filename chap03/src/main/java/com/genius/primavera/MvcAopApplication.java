@@ -14,7 +14,6 @@ public class MvcAopApplication {
 
 	public static void main(String[] args) {
 		new SpringApplicationBuilder(MvcAopApplication.class)
-			//	.initializers((GenericApplicationContext applicationContext) -> applicationContext.registerBean("webMvcConfig", WebMvcConfigurer.class, () -> getWebMvcConfigurer()))
 				.lazyInitialization(true)
 				.build()
 				.run();

@@ -28,9 +28,6 @@ public class PrimaveraInterceptor implements HandlerInterceptor {
 	@Override
 	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception exception) throws Exception {
 		if (response instanceof ResettableStreamHttpServletResponse) {
-			//((ResettableStreamHttpServletResponse) response).payloadFilePrefix = ((ResettableStreamHttpServletRequest) request).payloadFilePrefix;
-			//((ResettableStreamHttpServletResponse) response).payloadTarget = ((ResettableStreamHttpServletRequest) request).payloadTarget;
-			//writeResponsePayloadAudit((ResettableStreamHttpServletResponse) response);
 		}
 		log.info("afterCompletion");
 	}

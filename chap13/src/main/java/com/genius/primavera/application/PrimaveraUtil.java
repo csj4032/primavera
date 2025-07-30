@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import lombok.experimental.UtilityClass;
 
@@ -20,27 +22,12 @@ public class PrimaveraUtil {
     }
 
     public static <T> List<T> toList( final Iterable<T> iterable) {
-        if (iterable instanceof List) {
-            return (List<T>) iterable;
-        } else {
-            List<T> list = new ArrayList<>();
-            for (T item : iterable) {
-                list.add(item);
-            }
-            return list;
-        }
+        return iterable instanceof List ? (List<T>) iterable 
+            : StreamSupport.stream(iterable.spliterator(), false).collect(Collectors.toList());
     }
 
     public static <T> Set<T> toSet( Iterable<T> source) {
-        if (source instanceof Set) {
-            return (Set<T>) source;
-        } else {
-            Set<T> set = new HashSet<>();
-
-            for (T item : source) {
-                set.add(item);
-            }
-            return set;
-        }
+        return source instanceof Set ? (Set<T>) source 
+            : StreamSupport.stream(source.spliterator(), false).collect(Collectors.toSet());
     }
 }

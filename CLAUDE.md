@@ -93,6 +93,20 @@ docker-compose up -d
 - **클린 아키텍처**: Controller-Service-Repository 계층 간 명확한 분리
 - **테스트 주도 개발**: 구현 전에 테스트 작성
 
+### 소프트웨어 개발 원칙
+- **DRY (Don't Repeat Yourself)**: 코드 중복을 피하고 재사용 가능한 컴포넌트 작성
+- **KISS (Keep It Simple, Stupid)**: 단순하고 이해하기 쉬운 솔루션 우선
+- **YAGNI (You Aren't Gonna Need It)**: 현재 필요하지 않은 기능은 구현하지 않음
+- **DIY (Do It Yourself)**: 외부 의존성보다는 자체 구현을 통한 제어권 확보
+- **테스트 우선 개발**: Red-Green-Refactor 사이클로 품질 높은 코드 작성
+
+### SOLID 원칙 준수
+- **SRP (Single Responsibility Principle)**: 클래스는 단 하나의 책임만 가져야 함
+- **OCP (Open/Closed Principle)**: 확장에는 열려있고 수정에는 닫혀있어야 함
+- **LSP (Liskov Substitution Principle)**: 하위 타입은 상위 타입을 완전히 대체 가능해야 함
+- **ISP (Interface Segregation Principle)**: 클라이언트는 사용하지 않는 인터페이스에 의존하면 안됨
+- **DIP (Dependency Inversion Principle)**: 고수준 모듈은 저수준 모듈에 의존하면 안됨
+
 ### 테스트 전략 (3계층 접근법)
 1. **단위 테스트**: Mockito 기반 격리된 테스트
 2. **통합 테스트**: 전체 Spring 컨텍스트를 가진 TestContainers
@@ -173,10 +187,44 @@ class YourIntegrationTest {
 ## 코딩 표준
 
 ### 메서드 및 클래스 설계
+- **간결성 우선**: 읽기 쉽기보다는 간결함을 우선하여 코드 작성
+- **최신 Java 기술 활용**: 최신 Java 기능을 적극적으로 사용하여 코드 간소화
 - **마이크로 메서드**: 복잡한 로직을 작고 조합 가능한 메서드로 분해
-- **한 줄 선호**: 메서드 체이닝, 람다, 삼항 연산자 사용
+- **한 줄 선호**: 메서드 체이닝, 람다, 삼항 연산자, 스트림 API 적극 사용
 - **불변성**: final 키워드, Record, 불변 컬렉션 선호
 - **Null 안전성**: null 검사 대신 Optional 광범위하게 사용
+- **표현식 우선**: if문보다 삼항연산자, for문보다 스트림 API 선호
+
+### 네이밍 및 컨벤션 규칙
+**최대한 네이밍과 컨벤션으로 코드를 이해할 수 있도록 작성합니다:**
+
+#### 클래스 네이밍
+- **의도를 명확히 표현**: `UserAuthenticationService` (O) vs `UserService` (△)
+- **역할 기반 명명**: `EmailValidator`, `PasswordEncoder`, `TokenGenerator`
+- **계층별 접미사**: `Controller`, `Service`, `Repository`, `Dto`, `Entity`
+- **패턴 기반 명명**: `UserFactory`, `PaymentBuilder`, `OrderObserver`
+
+#### 메서드 네이밍
+- **동작을 명확히 표현**: `calculateTotalPrice()` (O) vs `calculate()` (X)
+- **부울 반환 메서드**: `isValid()`, `hasPermission()`, `canAccess()`
+- **컬렉션 처리**: `findActiveUsers()`, `filterByStatus()`, `mapToDto()`
+- **상태 변경**: `activateUser()`, `deactivateAccount()`, `markAsCompleted()`
+
+#### 변수 네이밍
+- **구체적이고 명확한 이름**: `activeUserCount` (O) vs `count` (X)
+- **단위 포함**: `timeoutInMillis`, `maxRetryAttempts`, `cacheSizeInMB`
+- **컨텍스트 명시**: `userEmail` (O) vs `email` (△), `orderCreatedAt` (O) vs `createdAt` (△)
+- **컬렉션 복수형**: `users`, `orders`, `validationResults`
+
+#### 상수 및 Enum 네이밍
+- **대문자 스네이크 케이스**: `MAX_RETRY_ATTEMPTS`, `DEFAULT_TIMEOUT_MILLIS`
+- **Enum 값은 의미 명확히**: `OrderStatus.PENDING`, `UserRole.ADMINISTRATOR`
+- **접두사로 그룹화**: `ERROR_USER_NOT_FOUND`, `ERROR_INVALID_PASSWORD`
+
+#### 패키지 및 파일 구조
+- **도메인 중심 구조**: `com.genius.primavera.user.domain`, `com.genius.primavera.order.application`
+- **계층별 분리**: `interfaces/`, `application/`, `domain/`, `infrastructure/`
+- **기능별 하위 패키지**: `user/authentication/`, `order/payment/`, `notification/email/`
 
 ### 주석 정책
 프로젝트 주석은 정말 중요한 부분에만 적용한다. 클래스, 메서드명으로 코드의 흐름을 파악하도록 네이밍을 하고 주의가 필요한 부분에만 주석을 넣어주세요.

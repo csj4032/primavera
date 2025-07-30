@@ -24,7 +24,6 @@ public class PostingServiceImpl implements PostingService {
     @Override
     @Transactional
     public Post save(PostDto.RequestForSave requestForSave) {
-        // ToDo ModelMapper 설정 확인
         var post = modelMapper.map(requestForSave, Post.class);
         return postRepository.save(post);
     }

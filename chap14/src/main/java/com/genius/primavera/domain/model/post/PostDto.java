@@ -5,43 +5,27 @@ import java.time.Instant;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
-
 public class PostDto {
 
-    @Getter
-    @Setter
-    @Builder
-    @ToString(callSuper = true)
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class RequestForSave {
-        private Long id;
-        @NotEmpty
-        private String subject;
-        @NotEmpty
-        private String contents;
-        @NotNull
-        private Long writerId;
-        @Builder.Default
-        private PostStatus status = PostStatus.PUBLIC;
+    public record RequestForSave(
+        Long id,
+        @NotEmpty String subject,
+        @NotEmpty String contents,
+        @NotNull Long writerId,
+        PostStatus status
+    ) {
+        public RequestForSave {
+            if (status == null) {
+                status = PostStatus.PUBLIC;
+            }
+        }
     }
 
-    @Getter
-    @Setter
-    @Builder
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class ResponseForList {
-        private long id;
-        private String subject;
-        private String writerNickName;
-        private Instant createdAt;
-        private Instant updatedAt;
-    }
+    public record ResponseForList(
+        long id,
+        String subject,
+        String writerNickName,
+        Instant createdAt,
+        Instant updatedAt
+    ) {}
 }

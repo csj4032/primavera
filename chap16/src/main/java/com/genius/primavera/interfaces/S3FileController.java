@@ -35,7 +35,6 @@ public class S3FileController {
             @RequestParam(value = "folder", defaultValue = "uploads") String folder) {
         
         try {
-            // 파일명에 타임스탬프 추가하여 중복 방지
             String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
             String keyName = String.format("%s/%s_%s", folder, timestamp, file.getOriginalFilename());
             
@@ -83,7 +82,6 @@ public class S3FileController {
                 }
             }
             
-            // 파일명 추출 (경로에서 마지막 부분)
             String fileName = keyName.substring(keyName.lastIndexOf('/') + 1);
             headers.setContentDispositionFormData("attachment", fileName);
             
@@ -178,7 +176,6 @@ public class S3FileController {
         }
     }
 
-    // Response DTOs
     public record FileUploadResponse(
         String key,
         String url,
