@@ -72,7 +72,7 @@ public interface UserMapper {
     @SelectKey(statement = "SELECT LAST_INSERT_ID()", keyProperty = "user.id", before = false, resultType = long.class)
     int save(@Param("user") User user);
 
-    @Update(value = "UPDATE USER SET NICKNAME = #{user.nickname}, MOD_DATE = #{user.updatedAt} WHERE ID = #{user.id}")
+    @Update(value = "UPDATE USER SET NICKNAME = #{user.nickname}, UPDATED_AT = #{user.updatedAt} WHERE ID = #{user.id}")
     int update(@Param("user") User user);
 
     @Delete(value = "DELETE FROM USER")

@@ -14,7 +14,7 @@ public class CommentDto {
         private String authorImage;
         private String authorName;
         private String comment;
-        private Instant createAt;
+        private Instant createdAt;
         private Instant updatedAt;
     }
 }

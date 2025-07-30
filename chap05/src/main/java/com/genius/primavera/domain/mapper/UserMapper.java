@@ -11,7 +11,7 @@ import java.util.List;
 @Mapper
 public interface UserMapper {
 
-    String SELECT_ID_NAME_REG_DATE_MOD_DATE_FROM_USER = """
+    String SELECT_ID_NAME_CREATED_AT_UPDATED_AT_FROM_USER = """
             SELECT 
             	ID, EMAIL, NICKNAME, PASSWORD, STATUS, CREATED_AT, UPDATED_AT 
             FROM 
@@ -30,10 +30,10 @@ public interface UserMapper {
             @Result(property = "createdAt", column = "CREATED_AT"),
             @Result(property = "updatedAt", column = "UPDATED_AT")
     })
-    @Select(value = SELECT_ID_NAME_REG_DATE_MOD_DATE_FROM_USER + "WHERE ID = #{id}")
+    @Select(value = SELECT_ID_NAME_CREATED_AT_UPDATED_AT_FROM_USER + "WHERE ID = #{id}")
     User findById(@Param(value = "id") long id);
 
-    @Select(value = SELECT_ID_NAME_REG_DATE_MOD_DATE_FROM_USER + "WHERE ID = #{id}")
+    @Select(value = SELECT_ID_NAME_CREATED_AT_UPDATED_AT_FROM_USER + "WHERE ID = #{id}")
     @Results(id = "USER_WITH_ROLES", value = {
             @Result(property = "id", column = "ID"),
             @Result(property = "email", column = "EMAIL"),
@@ -49,7 +49,7 @@ public interface UserMapper {
     List<User> findByRequestUser(SelectStatementProvider selectStatement);
 
     @ResultMap("USER")
-    @Select(value = SELECT_ID_NAME_REG_DATE_MOD_DATE_FROM_USER)
+    @Select(value = SELECT_ID_NAME_CREATED_AT_UPDATED_AT_FROM_USER)
     List<User> findAll();
 
     @Insert(value = INSERT_SQL)
