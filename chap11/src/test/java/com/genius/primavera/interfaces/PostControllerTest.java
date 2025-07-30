@@ -40,7 +40,7 @@ public class PostControllerTest {
             .withDatabaseName("primavera")
             .withUsername("primavera")
             .withPassword("primavera")
-            .withInitScript("sql/schema.sql");
+            .withInitScript("sql/init-db.sql");
 
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {

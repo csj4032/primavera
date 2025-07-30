@@ -8,7 +8,7 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 /**
- * Chapter 14 - Spring Data JPA 테스트를 위한 TestContainers 추상 클래스
+ * Chapter 13 - JPA 관계 매핑 테스트를 위한 TestContainers 추상 클래스
  * MySQL 컨테이너를 사용하여 데이터베이스 테스트 환경을 제공합니다.
  */
 @Testcontainers
@@ -20,7 +20,7 @@ public abstract class AbstractJpaContainerTest {
             .withDatabaseName("primavera")
             .withUsername("primavera")
             .withPassword("primavera")
-            .withInitScript("sql/schema.sql");
+            .withInitScript("sql/init-db.sql");
 
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
@@ -34,8 +34,5 @@ public abstract class AbstractJpaContainerTest {
         registry.add("spring.jpa.show-sql", () -> "true");
         registry.add("spring.jpa.properties.hibernate.format_sql", () -> "true");
         registry.add("spring.jpa.properties.hibernate.use_sql_comments", () -> "true");
-        registry.add("spring.jpa.properties.hibernate.jdbc.batch_size", () -> "20");
-        registry.add("spring.jpa.properties.hibernate.order_inserts", () -> "true");
-        registry.add("spring.jpa.properties.hibernate.order_updates", () -> "true");
     }
 }
