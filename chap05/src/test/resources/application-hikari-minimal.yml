@@ -1,0 +1,28 @@
+# 최소 연결 풀 설정 - 기본 성능 측정용
+spring:
+  application:
+    name: HikariMinimalTest
+  cloud:
+    config:
+      enabled: false
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://localhost:1109/primavera?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
+    username: primavera
+    password: primavera
+    hikari:
+      # === 최소 설정 (기준선) ===
+      minimum-idle: 1                    # 최소 유휴 연결: 1개 (메모리 절약)
+      maximum-pool-size: 3               # 최대 연결: 3개 (제한적)
+      idle-timeout: 30000                # 유휴 타임아웃: 30초 (빠른 해제)
+      max-lifetime: 300000               # 연결 수명: 5분 (짧은 수명)
+      connection-timeout: 5000           # 연결 타임아웃: 5초 (빠른 실패)
+      pool-name: "MinimalHikariPool"
+      leak-detection-threshold: 0        # 누수 감지: 비활성화 (성능 우선)
+      
+      # 기대 효과: 메모리 사용량 최소, 동시성 제한, 연결 생성 오버헤드 높음
+
+logging:
+  level:
+    com.zaxxer.hikari: DEBUG
+    com.genius.primavera.hikari: DEBUG

@@ -12,6 +12,14 @@ spring:
         - file-warn-appender
       test:
         - console-appender
+      hikari-balanced:
+        - console-appender
+      hikari-minimal:
+        - console-appender
+      hikari-performance-focused:
+        - console-appender
+      hikari-resource-constrained:
+        - console-appender
   jackson:
     time-zone: UTC
   datasource:
