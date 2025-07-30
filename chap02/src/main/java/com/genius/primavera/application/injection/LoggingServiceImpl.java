@@ -6,14 +6,10 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class BooServiceImpl implements BooService {
-
-    // 생성자 순환참조 경고
-    // private final FooService fooService;
+public class LoggingServiceImpl implements LoggingService {
 
     @Override
-    public String boo() {
-        // fooService.foo();
-        return "boo";
+    public String logMessage() {
+        return "Log message recorded";
     }
 }
