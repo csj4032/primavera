@@ -15,19 +15,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Chapter 13 - OneToOne 관계 매핑 테스트를 위한 TestContainers 기반 클래스
- * MySQL 컨테이너를 사용하여 oneToOne 패키지 엔티티만 로드합니다.
+ * Chapter 13 - ManyToMany 관계 매핑 테스트를 위한 TestContainers 기반 클래스
+ * MySQL 컨테이너를 사용하여 manyToMany 패키지 엔티티만 로드합니다.
  */
 @Slf4j
 @Testcontainers
-public abstract class BaseOneToOneJpaTest {
+public abstract class BaseManyToManyJpaTest {
 
     @Container
     protected static final MariaDBContainer<?> mysqlContainer = new MariaDBContainer<>("mariadb:11.4.7")
             .withDatabaseName("primavera")
             .withUsername("primavera")
             .withPassword("primavera")
-            .withInitScript("sql/schema.sql");
+            .withInitScript("sql/init-db.sql");
 
     protected static EntityManagerFactory entityManagerFactory;
     protected static EntityManager entityManager;
@@ -51,7 +51,7 @@ public abstract class BaseOneToOneJpaTest {
 
         log.info("Creating EntityManagerFactory with TestContainers MySQL: {}", mysqlContainer.getJdbcUrl());
         
-        entityManagerFactory = Persistence.createEntityManagerFactory("oneToOne", properties);
+        entityManagerFactory = Persistence.createEntityManagerFactory("manyToMany", properties);
         entityManager = entityManagerFactory.createEntityManager();
         entityTransaction = entityManager.getTransaction();
     }

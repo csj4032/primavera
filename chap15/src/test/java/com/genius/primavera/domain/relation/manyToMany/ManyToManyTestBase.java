@@ -1,4 +1,4 @@
-package com.genius.primavera;
+package com.genius.primavera.domain.relation.manyToMany;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterAll;
@@ -15,27 +15,26 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Chapter 13 - Hierarchy 매핑 테스트를 위한 TestContainers 기반 클래스
- * MySQL 컨테이너를 사용하여 hierarchy 패키지 엔티티만 로드합니다.
+ * ManyToMany 관계 매핑 테스트를 위한 TestContainers 기반 클래스
+ * MySQL 컨테이너를 사용하여 manyToMany 패키지 엔티티만 로드합니다.
  */
 @Slf4j
 @Testcontainers
-public abstract class BaseHierarchyJpaTest {
+public abstract class ManyToManyTestBase {
 
     @Container
     protected static final MariaDBContainer<?> mysqlContainer = new MariaDBContainer<>("mariadb:11.4.7")
             .withDatabaseName("primavera")
             .withUsername("primavera")
             .withPassword("primavera")
-            .withInitScript("sql/schema.sql");
+            .withInitScript("sql/init-db.sql");
 
     protected static EntityManagerFactory entityManagerFactory;
     protected static EntityManager entityManager;
     protected static EntityTransaction entityTransaction;
 
     @BeforeAll
-    public static void setUpEntityManager() {
-        // TestContainers에서 동적으로 얻은 DB 연결 정보로 EntityManagerFactory 생성
+    public static void setUp() {
         Map<String, String> properties = new HashMap<>();
         properties.put("jakarta.persistence.jdbc.driver", "org.mariadb.jdbc.Driver");
         properties.put("jakarta.persistence.jdbc.url", mysqlContainer.getJdbcUrl());
@@ -52,13 +51,13 @@ public abstract class BaseHierarchyJpaTest {
 
         log.info("Creating EntityManagerFactory with TestContainers MySQL: {}", mysqlContainer.getJdbcUrl());
         
-        entityManagerFactory = Persistence.createEntityManagerFactory("hierarchy", properties);
+        entityManagerFactory = Persistence.createEntityManagerFactory("manyToMany", properties);
         entityManager = entityManagerFactory.createEntityManager();
         entityTransaction = entityManager.getTransaction();
     }
 
     @AfterAll
-    public static void tearDownEntityManager() {
+    public static void tearDown() {
         if (entityTransaction != null && entityTransaction.isActive()) {
             entityTransaction.rollback();
         }

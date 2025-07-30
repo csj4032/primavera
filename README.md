@@ -977,23 +977,23 @@ spring:
   - 파일 업로드/다운로드 구현
   - 이미지 리사이징 및 최적화
 
-#### **Chapter 14** - JPA 고급 & 외부 API
-- **학습 목표**: 고급 ORM 기능 및 외부 서비스 통합
+#### **Chapter 14** - MyBatis to JPA Migration & Reactive Integration  
+- **학습 목표**: MyBatis에서 JPA로의 전환과 리액티브 통합
 - **주요 내용**:
-  - JPA/Hibernate 고급 매핑
-  - JPQL 및 Criteria API
-  - ModelMapper를 통한 DTO 변환
-  - 카카오 API 클라이언트 구현
+  - MyBatis 기반 게시판을 JPA로 마이그레이션
+  - 하이브리드 아키텍처 (전통적 MVC + 일부 리액티브 컴포넌트)
+  - 멀티 데이터소스 (MariaDB, MongoDB, Redis) 통합 운영
+  - 고급 캐싱 (Redis + Caffeine) 다층 캐싱 전략
 
 ### 💼 Phase 4: 실무 및 배포 (chap15-18)
 
-#### **Chapter 15** - 리액티브 프로그래밍
-- **학습 목표**: 비동기 및 리액티브 시스템 구현
+#### **Chapter 15** - JPA 고급 매핑 (JPA Advanced Mapping)
+- **학습 목표**: JPA의 고급 매핑 전략 심화 학습  
 - **주요 내용**:
-  - Spring WebFlux 기반 리액티브 API
-  - Mono와 Flux를 통한 비동기 스트림 처리
-  - 백프레셔 및 에러 처리
-  - 리액티브 데이터베이스 접근
+  - 상속 관계 매핑 (단일 테이블, 조인, 구현 클래스별 테이블 전략)
+  - 연관 관계 매핑 (1:1, 1:N, N:1, N:N 관계의 세밀한 매핑)
+  - 복합 키 매핑 및 복합 외래키 처리  
+  - 고급 JPA 패턴과 실무 도메인 모델링 기법
 
 #### **Chapter 16** - 마이크로서비스 아키텍처
 - **학습 목표**: 분산 시스템 설계 및 구현
