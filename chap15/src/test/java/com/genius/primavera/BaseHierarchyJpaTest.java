@@ -15,19 +15,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Chapter 13 - OneToMany 관계 매핑 테스트를 위한 TestContainers 기반 클래스
- * MySQL 컨테이너를 사용하여 oneToMany 패키지 엔티티만 로드합니다.
+ * Chapter 13 - Hierarchy 매핑 테스트를 위한 TestContainers 기반 클래스
+ * MySQL 컨테이너를 사용하여 hierarchy 패키지 엔티티만 로드합니다.
  */
 @Slf4j
 @Testcontainers
-public abstract class BaseOneToManyJpaTest {
+public abstract class BaseHierarchyJpaTest {
 
     @Container
     protected static final MariaDBContainer<?> mysqlContainer = new MariaDBContainer<>("mariadb:11.4.7")
             .withDatabaseName("primavera")
             .withUsername("primavera")
             .withPassword("primavera")
-            .withInitScript("sql/schema.sql");
+            .withInitScript("sql/init-db.sql");
 
     protected static EntityManagerFactory entityManagerFactory;
     protected static EntityManager entityManager;
@@ -35,6 +35,7 @@ public abstract class BaseOneToManyJpaTest {
 
     @BeforeAll
     public static void setUpEntityManager() {
+        // TestContainers에서 동적으로 얻은 DB 연결 정보로 EntityManagerFactory 생성
         Map<String, String> properties = new HashMap<>();
         properties.put("jakarta.persistence.jdbc.driver", "org.mariadb.jdbc.Driver");
         properties.put("jakarta.persistence.jdbc.url", mysqlContainer.getJdbcUrl());
@@ -51,7 +52,7 @@ public abstract class BaseOneToManyJpaTest {
 
         log.info("Creating EntityManagerFactory with TestContainers MySQL: {}", mysqlContainer.getJdbcUrl());
         
-        entityManagerFactory = Persistence.createEntityManagerFactory("oneToMany", properties);
+        entityManagerFactory = Persistence.createEntityManagerFactory("hierarchy", properties);
         entityManager = entityManagerFactory.createEntityManager();
         entityTransaction = entityManager.getTransaction();
     }
