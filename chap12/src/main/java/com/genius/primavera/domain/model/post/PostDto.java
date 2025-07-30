@@ -28,7 +28,7 @@ public class PostDto {
         @Builder.Default
         private PostStatus status = PostStatus.PUBLIC;
         @Builder.Default
-        private Instant createAt = Instant.now();
+        private Instant createdAt = Instant.now();
     }
 
     @Getter
@@ -40,7 +40,7 @@ public class PostDto {
         private long id;
         private String subject;
         private String writerNickName;
-        private Instant createAt;
+        private Instant createdAt;
         private Instant updatedAt;
     }
 }

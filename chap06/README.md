@@ -93,7 +93,7 @@ chap05/
 ```java
 @Getter @Setter @Builder
 @ScriptAssert(lang = "graal.js", 
-    script = "_this.isComplex(_this.regDate, _this.modDate)", 
+    script = "_this.isComplex(_this.createdAt, _this.updatedAt)", 
     message = "등록일자와 수정일자는 필수 입니다.")
 public class User {
     @Min(value = 1, groups = UpdateGroup.class)

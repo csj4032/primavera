@@ -32,7 +32,7 @@ public class Article {
 	private int disapprove;
 	private Content content;
 	private Comment[] comments;
-	private Instant createAt;
+	private Instant createdAt;
 	private Instant updatedAt;
 
 	public long getAuthorId() {
@@ -74,6 +74,6 @@ public class Article {
 	}
 
 	public String toHierarchy() {
-		return IntStream.range(0, this.level).mapToObj(e -> "--").collect(Collectors.joining()) + getId() + " " + getSubject() + " " + getAuthorName() + " " + getCreateAt();
+		return IntStream.range(0, this.level).mapToObj(e -> "--").collect(Collectors.joining()) + getId() + " " + getSubject() + " " + getAuthorName() + " " + getCreatedAt();
 	}
 }

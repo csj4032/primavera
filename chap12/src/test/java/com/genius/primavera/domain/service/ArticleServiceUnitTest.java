@@ -54,7 +54,7 @@ class ArticleServiceUnitTest {
                 .author(testUser)
                 .subject("테스트 게시글")
                 .status(ArticleStatus.PUBLIC)
-                .createAt(Instant.now())
+                .createdAt(Instant.now())
                 .build();
     }
 
@@ -69,7 +69,7 @@ class ArticleServiceUnitTest {
                 .author(testUser)
                 .subject("새로운 게시글")
                 .status(ArticleStatus.PUBLIC)
-                .createAt(Instant.now())
+                .createdAt(Instant.now())
                 .build();
 
         int result = articleMapper.save(newArticle);
@@ -90,7 +90,7 @@ class ArticleServiceUnitTest {
                         .author(testUser)
                         .subject("두 번째 게시글")
                         .status(ArticleStatus.PUBLIC)
-                        .createAt(Instant.now())
+                        .createdAt(Instant.now())
                         .build()
         );
         
@@ -117,7 +117,7 @@ class ArticleServiceUnitTest {
                 .level(0)
                 .step(0)
                 .status(ArticleStatus.PUBLIC)
-                .createAt(Instant.now())
+                .createdAt(Instant.now())
                 .build();
 
         Article replyArticle = Article.builder()
@@ -130,7 +130,7 @@ class ArticleServiceUnitTest {
                 .level(1)
                 .step(1)
                 .status(ArticleStatus.PUBLIC)
-                .createAt(Instant.now())
+                .createdAt(Instant.now())
                 .build();
 
         // When & Then - 비즈니스 로직 검증

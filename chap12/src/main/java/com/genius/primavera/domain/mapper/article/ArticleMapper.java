@@ -46,7 +46,7 @@ public interface ArticleMapper {
                     @Result(property = "author.nickname", column = "NICKNAME"),
                     @Result(property = "subject", column = "SUBJECT"),
                     @Result(property = "status", typeHandler = ArticleStatusTypeHandler.class, column = "STATUS"),
-                    @Result(property = "createAt", column = "CREATED_AT"),
+                    @Result(property = "createdAt", column = "CREATED_AT"),
                     @Result(property = "updatedAt", column = "UPDATED_AT")
 
             })
@@ -65,7 +65,7 @@ public interface ArticleMapper {
                     @Result(property = "author.nickname", column = "NICKNAME"),
                     @Result(property = "subject", column = "SUBJECT"),
                     @Result(property = "status", typeHandler = ArticleStatusTypeHandler.class, column = "STATUS"),
-                    @Result(property = "createAt", column = "CREATED_AT"),
+                    @Result(property = "createdAt", column = "CREATED_AT"),
                     @Result(property = "updatedAt", column = "UPDATED_AT")
             })
     @Select(value = SELECT_WITH_USER_SQL + " WHERE A.ID = #{id}")
@@ -83,7 +83,7 @@ public interface ArticleMapper {
             @Result(property = "author.nickname", column = "NICKNAME"),
             @Result(property = "subject", column = "SUBJECT"),
             @Result(property = "status", typeHandler = ArticleStatusTypeHandler.class, column = "STATUS"),
-            @Result(property = "createAt", column = "CREATED_AT"),
+            @Result(property = "createdAt", column = "CREATED_AT"),
             @Result(property = "updatedAt", column = "UPDATED_AT")
     })
     @Select(SELECT_WITH_USER_SQL + " WHERE A.P_ID = #{id}")
@@ -110,7 +110,7 @@ public interface ArticleMapper {
             @Result(property = "recommend", column = "RECOMMEND"),
             @Result(property = "disapprove", column = "DISAPPROVE"),
             @Result(property = "hit", column = "HIT"),
-            @Result(property = "createAt", column = "CREATED_AT"),
+            @Result(property = "createdAt", column = "CREATED_AT"),
             @Result(property = "updatedAt", column = "UPDATED_AT")
     })
     @Select(value = SELECT_WITH_USER_SQL + "WHERE A.STATUS = 1 ORDER BY A.REFERENCE DESC, A.STEP ASC LIMIT #{pageRequest.rowNumber} OFFSET #{pageRequest.offset}")
@@ -133,7 +133,7 @@ public interface ArticleMapper {
                     @Result(property = "disapprove", column = "DISAPPROVE"),
                     @Result(property = "content.id", column = "CONTENTS_ID"),
                     @Result(property = "content.contents", column = "CONTENTS"),
-                    @Result(property = "createAt", column = "CREATED_AT"),
+                    @Result(property = "createdAt", column = "CREATED_AT"),
                     @Result(property = "updatedAt", column = "UPDATED_AT")
             })
     @Select(value = SELECT_WITH_USER_CONTENTS_SQL + " WHERE A.ID = #{id}")
@@ -157,7 +157,7 @@ public interface ArticleMapper {
                     @Result(property = "content.id", column = "CONTENTS_ID"),
                     @Result(property = "content.contents", column = "CONTENTS"),
                     @Result(property = "comments", javaType = Comment[].class, column = "ID", many = @Many(select = "com.genius.primavera.domain.mapper.article.ArticleCommentMapper.findByArticleId", fetchType = FetchType.DEFAULT)),
-                    @Result(property = "createAt", column = "CREATED_AT"),
+                    @Result(property = "createdAt", column = "CREATED_AT"),
                     @Result(property = "updatedAt", column = "UPDATED_AT")
             })
     @Select(value = SELECT_WITH_USER_CONTENTS_SQL + " WHERE A.ID = #{id}")
@@ -177,7 +177,7 @@ public interface ArticleMapper {
             } else {
                 sql += "#{reference}";
             }
-            sql += ", #{step}, #{level}, #{subject}, #{author.id}, #{status, typeHandler=ArticleStatusTypeHandler}, #{createAt})";
+            sql += ", #{step}, #{level}, #{subject}, #{author.id}, #{status, typeHandler=ArticleStatusTypeHandler}, #{createdAt})";
             return sql;
         }
     }

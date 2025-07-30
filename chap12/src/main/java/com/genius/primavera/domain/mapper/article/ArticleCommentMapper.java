@@ -15,7 +15,7 @@ import java.util.List;
 @Repository
 public interface ArticleCommentMapper {
 
-    @Insert("INSERT INTO ARTICLE_COMMENT (ARTICLE_ID, LEVEL, STEP, COMMENT, AUTHOR, STATUS, CREATED_AT) VALUES (#{article.id}, #{level}, #{step}, #{comment}, #{author.id}, #{status, typeHandler=ArticleStatusTypeHandler}, #{createAt})")
+    @Insert("INSERT INTO ARTICLE_COMMENT (ARTICLE_ID, LEVEL, STEP, COMMENT, AUTHOR, STATUS, CREATED_AT) VALUES (#{article.id}, #{level}, #{step}, #{comment}, #{author.id}, #{status, typeHandler=ArticleStatusTypeHandler}, #{createdAt})")
     int save(Comment comment);
 
     @Results(id = "ARTICLE_COMMENT",
@@ -26,7 +26,7 @@ public interface ArticleCommentMapper {
                     @Result(property = "author.nickname", column = "NICKNAME"),
                     @Result(property = "author.connection.imageUrl", column = "IMAGE_URL"),
                     @Result(property = "comment", column = "COMMENT"),
-                    @Result(property = "createAt", column = "CREATED_AT")
+                    @Result(property = "createdAt", column = "CREATED_AT")
             })
     @Select("SELECT A.ID, A.LEVEL, A.STEP, A.COMMENT, B.NICKNAME, C.IMAGE_URL, A.CREATED_AT FROM ARTICLE_COMMENT AS A INNER JOIN USER B ON A.AUTHOR = B.ID INNER JOIN USER_CONNECTION C ON B.EMAIL = C.EMAIL WHERE ARTICLE_ID = #{articleId}")
     List<Comment> findByArticleId(long articleId);

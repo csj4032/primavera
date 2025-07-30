@@ -20,7 +20,7 @@ import java.util.List;
 @Mapper
 public interface PostMapper {
 
-    String INSERT_SQL = "INSERT INTO POST (WRITER_ID, SUBJECT, CONTENTS, STATUS, CREATED_AT) " + "VALUES (#{writer.id}, #{subject}, #{contents}, #{status, typeHandler=PostStatusTypeHandler}, #{createAt})";
+    String INSERT_SQL = "INSERT INTO POST (WRITER_ID, SUBJECT, CONTENTS, STATUS, CREATED_AT) " + "VALUES (#{writer.id}, #{subject}, #{contents}, #{status, typeHandler=PostStatusTypeHandler}, #{createdAt})";
     String SELECT_SQL = "SELECT A.ID, A.SUBJECT, A.CONTENTS, A.CREATED_AT, A.UPDATED_AT, A.WRITER_ID, B.EMAIL, B.NICKNAME FROM POST AS A INNER JOIN USER B ON A.WRITER_ID = B.ID";
     String SELECT_COUNT_SQL = "SELECT COUNT(*) AS CNT FROM POST AS A INNER JOIN USER B ON A.WRITER_ID = B.ID";
 
@@ -42,7 +42,7 @@ public interface PostMapper {
             @Result(property = "writer.id", column = "WRITER_ID"),
             @Result(property = "writer.email", column = "EMAIL"),
             @Result(property = "writer.nickname", column = "NICKNAME"),
-            @Result(property = "createAt", javaType = Instant.class, typeHandler = InstantTypeHandler.class, column = "CREATED_AT", jdbcType = JdbcType.TIMESTAMP_WITH_TIMEZONE),
+            @Result(property = "createdAt", javaType = Instant.class, typeHandler = InstantTypeHandler.class, column = "CREATED_AT", jdbcType = JdbcType.TIMESTAMP_WITH_TIMEZONE),
             @Result(property = "updatedAt", javaType = Instant.class, typeHandler = InstantTypeHandler.class, column = "UPDATED_AT", jdbcType = JdbcType.TIMESTAMP_WITH_TIMEZONE),
     })
     @Select(value = SELECT_SQL + " ORDER BY A.ID DESC LIMIT #{pageRequest.rowNumber} OFFSET #{pageRequest.offset}")

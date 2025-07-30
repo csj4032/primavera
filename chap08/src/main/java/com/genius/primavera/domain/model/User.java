@@ -50,6 +50,6 @@ public class User {
 	@NotNull
 	@Size(min = 1)
 	private List<Role> roles;
-	private Instant regDate;
-	private Instant modDate;
+	private Instant createdAt;
+	private Instant updatedAt;
 }

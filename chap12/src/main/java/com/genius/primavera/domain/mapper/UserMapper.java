@@ -27,14 +27,14 @@ public interface UserMapper extends EnversListener {
 
     String SELECT_FROM_USER_JOIN_CONNECTION = "SELECT A.ID, A.EMAIL, NICKNAME, PASSWORD, STATUS, B.PROVIDER, B.PROVIDER_ID, B.PROFILE_URL, B.IMAGE_URL, A.CREATED_AT, A.UPDATED_AT FROM USER A INNER JOIN USER_CONNECTION B ON A.EMAIL = B.EMAIL ";
     String SELECT_FROM_USER = "SELECT ID, EMAIL, NICKNAME, PASSWORD, STATUS, CREATED_AT, UPDATED_AT FROM USER ";
-    String INSERT_SQL = "INSERT INTO USER (EMAIL, PASSWORD, NICKNAME, STATUS, CREATED_AT, UPDATED_AT) VALUES (#{user.email}, #{user.password}, #{user.nickname}, #{user.status, typeHandler=UserStatusTypeHandler}, #{user.createAt}, #{user.updatedAt})";
+    String INSERT_SQL = "INSERT INTO USER (EMAIL, PASSWORD, NICKNAME, STATUS, CREATED_AT, UPDATED_AT) VALUES (#{user.email}, #{user.password}, #{user.nickname}, #{user.status, typeHandler=UserStatusTypeHandler}, #{user.createdAt}, #{user.updatedAt})";
 
     @Results(id = "USER", value = {
             @Result(property = "id", column = "ID"),
             @Result(property = "email", column = "EMAIL"),
             @Result(property = "nickname", column = "NICKNAME"),
             @Result(property = "status", column = "STATUS"),
-            @Result(property = "createAt", column = "CREATED_AT"),
+            @Result(property = "createdAt", column = "CREATED_AT"),
             @Result(property = "updatedAt", column = "UPDATED_AT")
     })
     @Select(value = SELECT_FROM_USER + "WHERE ID = #{id}")
@@ -54,7 +54,7 @@ public interface UserMapper extends EnversListener {
             @Result(property = "connection.providerId", column = "PROVIDER_ID"),
             @Result(property = "connection.profileUrl", column = "PROFILE_URL"),
             @Result(property = "connection.imageUrl", column = "IMAGE_URL"),
-            @Result(property = "createAt", column = "CREATED_AT"),
+            @Result(property = "createdAt", column = "CREATED_AT"),
             @Result(property = "updatedAt", column = "UPDATED_AT"),
             @Result(property = "roles", javaType = List.class, column = "ID", many = @Many(select = "com.genius.primavera.domain.mapper.UserRoleMapper.findByUserId"))
     })
@@ -73,7 +73,7 @@ public interface UserMapper extends EnversListener {
     @SelectKey(statement = "SELECT LAST_INSERT_ID()", keyProperty = "user.id", before = false, resultType = long.class)
     int save(@Param("user") User user);
 
-    @Update(value = "UPDATE USER SET NICKNAME = #{user.nickname}, MOD_DATE = #{user.modDate} WHERE ID = #{user.id}")
+    @Update(value = "UPDATE USER SET NICKNAME = #{user.nickname}, UPDATED_AT = #{user.updatedAt} WHERE ID = #{user.id}")
     int update(@Param("user") User user);
 
     @Delete(value = "DELETE FROM USER")

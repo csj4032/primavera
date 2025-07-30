@@ -18,6 +18,6 @@ public class Post {
 	private String subject;
 	private String contents;
 	private PostStatus status;
-	private Instant createAt;
+	private Instant createdAt;
 	private Instant updatedAt;
 }
