@@ -11,28 +11,7 @@
 // ==========================================
 
 dependencies {
-    // ==========================================
-    // AOP Dependencies
-    // ==========================================
     aopDependencies.each { dep -> implementation dep }
-    
-    // ==========================================
-    // Database Dependencies
-    // ==========================================
-    databaseDependencies.each { dep -> implementation dep }
-    
-    // ==========================================
-    // TestContainers Dependencies
-    // ==========================================
     testContainersDependencies.each { dep -> testImplementation dep }
-    
-    // ==========================================
-    // Utility Dependencies
-    // ==========================================
     implementation "commons-io:commons-io:${commonsIoVersion}"
-    
-    // ==========================================
-    // Module Dependencies
-    // ==========================================
-    testImplementation project(":appendix:spring-boot-starter-test-container")
 }

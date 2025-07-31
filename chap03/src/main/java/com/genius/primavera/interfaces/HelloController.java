@@ -5,6 +5,7 @@ import com.genius.primavera.applicaiton.OopsException;
 import com.genius.primavera.infrastructure.aspect.PrimaveraLogging;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -21,7 +22,7 @@ public class HelloController {
     @GetMapping("/hello")
     @PrimaveraLogging(type = "Controller")
     public String helloWorld(Model model) {
-        model.addAttribute("hello", helloService.getUsers());
+        model.addAttribute("users", helloService.getUsers());
         return "world";
     }
 
