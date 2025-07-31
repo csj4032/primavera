@@ -1,145 +1,242 @@
-## hello
+# 🌸 Primavera Preface
 
-### Hystrix
-Hystrix는 Netflix에서 개발한 장애 내성 및 지연 내성을 제공하는 라이브러리입니다. 주요 특징은 다음과 같습니다:
+## 📚 목차
 
-1. **서킷 브레이커 패턴**: 서비스 호출이 실패할 경우 서킷을 열어 추가 호출을 차단하고 빠른 실패 처리를 제공합니다.
-2. **폴백 메커니즘**: 서비스 호출 실패 시 대체 로직을 실행할 수 있게 합니다.
-3. **격리**: 서비스 간 호출을 격리하여 한 서비스의 장애가 전체 시스템에 영향을 주지 않도록 합니다.
-4. **모니터링**: 실시간으로 서비스 호출 상태를 모니터링할 수 있는 대시보드를 제공합니다.
+1. [Primavera 경량 프레임워크](#-primavera-경량-프레임워크)
+2. [다음 단계](#-다음-단계)
 
-Spring Cloud에서는 `@HystrixCommand` 어노테이션을 통해 간편하게 Hystrix 기능을 사용할 수 있습니다.
+---
 
-```java
-@HystrixCommand(fallbackMethod = "fallbackMethod")
-public String serviceMethod() {
-    // 원래 서비스 로직
-}
+## 🌸 Primavera 경량 프레임워크
 
-public String fallbackMethod() {
-    return "서비스 호출 실패 시 대체 응답";
-}
+### 개요
+
+Spring Boot의 동작 원리를 이해하기 위해 만든 경량 프레임워크입니다. 
+Spring Boot의 핵심 기능들을 간단하게 구현하여 다음과 같은 학습 목표를 달성할 수 있습니다:
+
+- IoC(Inversion of Control) 컨테이너의 동작 원리 이해
+- 의존성 주입(Dependency Injection) 메커니즘 학습
+- 어노테이션 기반 설정의 작동 방식 파악
+- 컴포넌트 스캔과 Bean 라이프사이클 이해
+
+### 🚀 빠른 시작
+
+#### 1. 데모 애플리케이션 실행
+
+```bash
+# 프로젝트 루트에서 실행
+./gradlew :preface:run
+
+# 또는 직접 클래스 실행
+./gradlew :preface:classes
+java -cp preface/build/classes/java/main:preface/build/resources/main \
+     com.genius.primavera.lightweight.example.PrimaveraLightweightDemo
 ```
 
-### Openfeign
-OpenFeign은 Netflix에서 개발하고 Spring Cloud에서 채택한 선언적 HTTP 클라이언트입니다. 주요 특징은 다음과 같습니다:
+#### 2. 실행 결과 확인
 
-1. **인터페이스 기반 클라이언트**: 인터페이스 선언만으로 HTTP 클라이언트 구현체를 자동 생성합니다.
-2. **RESTful API 통합**: REST API 호출을 위한 코드를 간소화합니다.
-3. **Hystrix 통합**: 기본적으로 Hystrix와 통합되어 장애 허용 시스템을 구축할 수 있습니다.
-4. **리본 통합**: 클라이언트 측 로드 밸런싱을 위한 Ribbon과 함께 작동합니다.
+성공적으로 실행되면 다음과 같은 출력을 볼 수 있습니다:
 
-Spring Cloud에서는 `@FeignClient` 어노테이션을 사용하여 선언합니다.
+```
+██████╗ ██████╗ ██╗███╗   ███╗ █████╗ ██╗   ██╗███████╗██████╗  █████╗ 
+██╔══██╗██╔══██╗██║████╗ ████║██╔══██╗██║   ██║██╔════╝██╔══██╗██╔══██╗
+██████╔╝██████╔╝██║██╔████╔██║███████║██║   ██║█████╗  ██████╔╝███████║
+██╔═══╝ ██╔══██╗██║██║╚██╔╝██║██╔══██║╚██╗ ██╔╝██╔══╝  ██╔══██╗██╔══██║
+██║     ██║  ██║██║██║ ╚═╝ ██║██║  ██║ ╚████╔╝ ███████╗██║  ██║██║  ██║
+╚═╝     ╚═╝  ╚═╝╚═╝╚═╝     ╚═╝╚═╝  ╚═╝  ╚═══╝  ╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝
 
-```java
-@FeignClient(name = "service-name", fallback = FallbackClass.class)
-public interface ServiceClient {
-    @GetMapping("/api/resource/{id}")
-    ResponseEntity<Resource> getResource(@PathVariable("id") Long id);
-}
+:: Primavera Lightweight Framework ::                          (v1.0.0)
+
+🌸 Primavera 애플리케이션 시작 중...
+🌸 Primavera ApplicationContext 초기화 시작...
+🌸 Primavera ApplicationContext 초기화 완료! 등록된 Bean 수: 7
 ```
 
-### Turbine
-Turbine은 여러 Hystrix 인스턴스의 스트림을 집계하는 도구입니다. 주요 특징은 다음과 같습니다:
+### 🏗️ 아키텍처
 
-1. **스트림 집계**: 여러 서비스 인스턴스에서 생성된 Hystrix 스트림을 하나로 집계합니다.
-2. **클러스터링**: 서비스를 클러스터로 그룹화하여 모니터링할 수 있습니다.
-3. **Hystrix Dashboard 통합**: 집계된 데이터를 Hystrix Dashboard에서 시각화할 수 있습니다.
-4. **분산 시스템 모니터링**: 마이크로서비스 환경에서 전체 시스템의 상태를 모니터링하는 데 유용합니다.
+#### 핵심 컴포넌트
 
-Spring Cloud에서는 `@EnableTurbine` 어노테이션으로 Turbine을 활성화합니다.
+```
+src/main/java/com/genius/primavera/lightweight/
+├── annotations/           # 커스텀 어노테이션들
+│   ├── PrimaveraComponent.java        # @Component 역할
+│   ├── PrimaveraAutowired.java        # @Autowired 역할  
+│   ├── PrimaveraConfiguration.java    # @Configuration 역할
+│   └── PrimaveraBean.java            # @Bean 역할
+├── framework/            # 프레임워크 핵심 로직
+│   ├── PrimaveraApplicationContext.java   # IoC 컨테이너
+│   ├── PrimaveraApplication.java          # 애플리케이션 실행기
+│   └── events/                            # 이벤트 시스템
+├── interfaces/           # 인터페이스 정의
+│   └── PrimaveraApplicationRunner.java    # 시작 후 실행 인터페이스
+└── example/             # 데모 애플리케이션
+    ├── services/        # 비즈니스 로직
+    ├── config/          # 설정 클래스  
+    ├── runners/         # 실행 후 로직
+    └── PrimaveraLightweightDemo.java  # 메인 클래스
+```
+
+### 📝 사용법
+
+#### 1. 컴포넌트 등록
 
 ```java
-@SpringBootApplication
-@EnableTurbine
-public class TurbineApplication {
-    public static void main(String[] args) {
-        SpringApplication.run(TurbineApplication.class, args);
+@PrimaveraComponent
+public class GreetingService {
+    public String sayHello(String name) {
+        return "🌸 안녕하세요, " + name + "님!";
     }
 }
 ```
 
-### Spring Cloud Gateway
-Spring Cloud Gateway는 API 게이트웨이 기능을 제공하는 Spring Cloud 컴포넌트입니다. 주요 특징은 다음과 같습니다:
-
-1. **라우팅**: 클라이언트 요청을 적절한 마이크로서비스로 라우팅합니다.
-2. **필터링**: 요청과 응답을 수정할 수 있는 필터 체인을 제공합니다.
-3. **서킷 브레이커 통합**: Hystrix와 같은 서킷 브레이커와 통합됩니다.
-4. **로드 밸런싱**: 클라이언트 측 로드 밸런싱을 지원합니다.
-5. **보안**: 인증 및 권한 부여 필터를 적용할 수 있습니다.
+#### 2. 의존성 주입
 
 ```java
-@Configuration
-public class GatewayConfig {
-    @Bean
-    public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
-        return builder.routes()
-            .route("service_route", r -> r.path("/service/**")
-                .filters(f -> f.rewritePath("/service/(?<segment>.*)", "/${segment}")
-                             .addResponseHeader("X-Response-Time", LocalDateTime.now().toString()))
-                .uri("lb://SERVICE"))
-            .build();
-    }
-}
-```
-
-### Eureka
-Eureka는 Netflix에서 개발한 서비스 디스커버리 서버입니다. 주요 특징은 다음과 같습니다:
-
-1. **서비스 등록**: 마이크로서비스가 시작될 때 자동으로 Eureka 서버에 등록됩니다.
-2. **서비스 탐색**: 클라이언트가 서비스 이름으로 실제 서비스 인스턴스를 찾을 수 있습니다.
-3. **상태 모니터링**: 등록된 서비스의 상태를 주기적으로 확인합니다.
-4. **자가 보존 모드**: 네트워크 문제 발생 시 등록 정보를 보존하는 기능을 제공합니다.
-
-```java
-// Eureka 서버 설정
-@SpringBootApplication
-@EnableEurekaServer
-public class EurekaServerApplication {
-    public static void main(String[] args) {
-        SpringApplication.run(EurekaServerApplication.class, args);
-    }
-}
-
-// Eureka 클라이언트 설정
-@SpringBootApplication
-@EnableDiscoveryClient
-public class ServiceApplication {
-    public static void main(String[] args) {
-        SpringApplication.run(ServiceApplication.class, args);
-    }
-}
-```
-
-### Ribbon
-Ribbon은 Netflix에서 개발한 클라이언트 측 로드 밸런서입니다. 주요 특징은 다음과 같습니다:
-
-1. **클라이언트 로드 밸런싱**: 서버 측이 아닌 클라이언트 측에서 로드 밸런싱을 수행합니다.
-2. **다양한 로드 밸런싱 알고리즘**: 라운드 로빈, 가중치 기반, 응답 시간 기반 등 여러 알고리즘을 지원합니다.
-3. **Eureka 통합**: Eureka와 통합하여 동적으로 서비스 인스턴스를 발견합니다.
-4. **실패 감지**: 서비스 호출 실패를 감지하고 자동으로 다른 인스턴스로 재시도합니다.
-
-Spring Cloud에서는 `@LoadBalanced` 어노테이션을 사용하여 RestTemplate에 Ribbon 기능을 적용할 수 있습니다.
-
-```java
-@Configuration
-public class RestTemplateConfig {
-    @Bean
-    @LoadBalanced
-    public RestTemplate restTemplate() {
-        return new RestTemplate();
-    }
-}
-
-// 사용 예
-@Service
-public class ServiceClient {
-    @Autowired
-    private RestTemplate restTemplate;
+@PrimaveraComponent  
+public class MessageService {
     
-    public Resource getResource(Long id) {
-        // 서비스 이름으로 직접 호출 (실제 주소는 Ribbon이 해결)
-        return restTemplate.getForObject("http://service-name/api/resource/" + id, Resource.class);
+    @PrimaveraAutowired
+    private GreetingService greetingService;
+    
+    public void processMessage(String name) {
+        String greeting = greetingService.sayHello(name);
+        System.out.println(greeting);
     }
 }
 ```
+
+#### 3. 설정 클래스
+
+```java
+@PrimaveraConfiguration
+public class AppConfiguration {
+    
+    @PrimaveraBean
+    public String applicationName() {
+        return "Primavera Demo App";
+    }
+    
+    @PrimaveraBean("maxUsers")
+    public Integer maxUserCount() {
+        return 100;
+    }
+}
+```
+
+#### 4. 애플리케이션 시작 후 실행
+
+```java
+@PrimaveraComponent
+public class StartupRunner implements PrimaveraApplicationRunner {
+    
+    @PrimaveraAutowired
+    private MessageService messageService;
+    
+    @Override
+    public void run() throws Exception {
+        messageService.processMessage("개발자");
+    }
+}
+```
+
+#### 5. 메인 애플리케이션
+
+```java
+public class MyApplication {
+    public static void main(String[] args) {
+        PrimaveraApplication.run(MyApplication.class, args);
+    }
+}
+```
+
+### ⚡ 주요 기능
+
+| 기능 | 설명 | 구현 상태 |
+|------|------|-----------|
+| **컴포넌트 스캔** | `@PrimaveraComponent` 자동 감지 | ✅ |
+| **의존성 주입** | `@PrimaveraAutowired` 필드 주입 | ✅ |
+| **설정 기반 Bean** | `@PrimaveraConfiguration` + `@PrimaveraBean` | ✅ |
+| **ApplicationRunner** | 시작 후 로직 실행 | ✅ |
+| **환경 설정** | `application.properties` 로드 | ✅ |
+| **이벤트 시스템** | 애플리케이션 이벤트 처리 | ✅ |
+| **생성자 주입** | 생성자 기반 의존성 주입 | 🚧 |
+| **프로파일** | 환경별 설정 분리 | 🚧 |
+
+### 🧪 테스트
+
+#### 테스트 실행
+
+```bash
+# 모든 테스트 실행
+./gradlew :preface:test
+
+# 특정 테스트 클래스 실행
+./gradlew :preface:test --tests "*PrimaveraApplicationContextTest"
+
+# 특정 테스트 메서드 실행  
+./gradlew :preface:test --tests "*GreetingServiceTest.shouldSayHello"
+```
+
+#### 테스트 커버리지
+
+- **PrimaveraApplicationContext**: Bean 등록, 의존성 주입 테스트
+- **GreetingService**: 비즈니스 로직 단위 테스트
+- **통합 테스트**: 전체 애플리케이션 라이프사이클 테스트
+
+### 🎯 학습 포인트
+
+#### 1. IoC 컨테이너 이해
+
+`PrimaveraApplicationContext`를 통해 다음을 학습할 수 있습니다:
+
+- Bean 정의 등록과 인스턴스 생성
+- 의존성 그래프 해결
+- Bean 라이프사이클 관리
+- 리플렉션을 활용한 동적 객체 생성
+
+#### 2. 어노테이션 처리
+
+커스텀 어노테이션 구현을 통해 다음을 이해할 수 있습니다:
+
+- `@Retention`, `@Target` 메타 어노테이션
+- 런타임 어노테이션 스캔
+- 리플렉션을 통한 어노테이션 정보 추출
+
+#### 3. 컴포넌트 스캔
+
+패키지 스캔 로직을 통해 다음을 학습할 수 있습니다:
+
+- 클래스패스 탐색
+- 디렉토리 구조 순회
+- 동적 클래스 로딩
+
+#### 4. 설정 외부화
+
+`application.properties` 처리를 통해 다음을 이해할 수 있습니다:
+
+- 프로퍼티 파일 파싱
+- 환경 변수 통합
+- 설정 값 타입 변환
+
+### 🚧 확장 가능한 기능들
+
+현재 구현되지 않았지만, 추가로 구현해볼 만한 기능들:
+
+1. **생성자 주입**: 필드 주입 외에 생성자 주입 지원
+2. **프로파일**: `@Profile` 어노테이션으로 환경별 Bean 관리
+3. **조건부 Bean**: `@ConditionalOnProperty` 같은 조건부 등록
+4. **AOP**: 횡단 관심사 처리를 위한 프록시 생성
+5. **웹 MVC**: 간단한 HTTP 요청 처리
+6. **타입 세이프 설정**: `@ConfigurationProperties` 스타일
+7. **Bean Validation**: JSR-303 검증 통합
+8. **스케줄링**: `@Scheduled` 작업 스케줄링
+
+---
+
+## 🚀 다음 단계
+
+### 추가 학습 자료
+
+1. **Spring Boot 공식 문서**: [spring.io](https://spring.io/projects/spring-boot)
+2. **Primavera 프로젝트**: 다른 챕터들을 통해 점진적으로 Spring Boot 학습 
+3. **디자인 패턴**: GoF 디자인 패턴과 Spring에서의 활용

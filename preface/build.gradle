@@ -3,39 +3,32 @@ plugins {
     id 'io.spring.dependency-management' version "${springDependencyManagementVersion}"
 }
 
-dependencyManagement {
-    imports {
-        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
-    }
-}
-
 dependencies {
-    // Netflix Hystrix는 Spring Boot 3.x에서 deprecated되었으므로 제거하고 대안 사용
-    // implementation('org.springframework.cloud:spring-cloud-starter-netflix-hystrix')
-    // implementation('org.springframework.cloud:spring-cloud-starter-netflix-hystrix-dashboard')
-    implementation('org.springframework.cloud:spring-cloud-starter-openfeign')
-    // Ribbon도 deprecated되었으므로 Spring Cloud LoadBalancer 사용
-    // implementation('org.springframework.cloud:spring-cloud-starter-netflix-ribbon')
-    implementation('org.springframework.cloud:spring-cloud-starter-loadbalancer')
-    // Turbine도 deprecated
-    // implementation('org.springframework.cloud:spring-cloud-starter-turbine:1.4.7.RELEASE')
-    implementation('org.springframework.boot:spring-boot-starter-web') {
-        exclude module: "spring-boot-starter-tomcat"
-    }
-    implementation('org.springframework.boot:spring-boot-starter-aop')
-    implementation('org.springframework.boot:spring-boot-starter-cache')
+    // Primavera 경량 프레임워크를 위한 최소한의 의존성
+    implementation('org.springframework.boot:spring-boot-starter')
     implementation('org.springframework.boot:spring-boot-devtools')
-    implementation('org.springframework.boot:spring-boot-starter-undertow')
-    implementation("org.modelmapper:modelmapper:${modelMapperVersion}")
     implementation('org.projectlombok:lombok')
-    implementation("com.squareup.okhttp3:okhttp:${okhttpVersion}")
-    implementation("io.github.openfeign:feign-jackson:${feignVersion}")
-    implementation("io.github.openfeign:feign-gson:${feignVersion}")
-    implementation("io.github.openfeign:feign-okhttp:${feignVersion}")
-    implementation("org.ehcache:ehcache:${ehcacheVersion}")
-    implementation('org.jooq:jool:0.9.15')
     annotationProcessor('org.projectlombok:lombok')
+    
+    // 테스트 의존성
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude module: 'junit'
     }
+}
+
+// Primavera 경량 프레임워크 데모 실행을 위한 task
+task runLightweightDemo(type: JavaExec) {
+    group = 'application'
+    description = 'Primavera 경량 프레임워크 데모 애플리케이션을 실행합니다'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'com.genius.primavera.lightweight.example.PrimaveraLightweightDemo'
+    
+    // JVM 옵션
+    jvmArgs = [
+        '-Dspring.profiles.active=local',
+        '-Dlogging.level.com.genius.primavera.lightweight=DEBUG'
+    ]
+    
+    // 콘솔 입력 허용
+    standardInput = System.in
 }

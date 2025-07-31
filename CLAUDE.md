@@ -195,6 +195,34 @@ class YourIntegrationTest {
 - **Null 안전성**: null 검사 대신 Optional 광범위하게 사용
 - **표현식 우선**: if문보다 삼항연산자, for문보다 스트림 API 선호
 
+### 메서드 순서 규칙
+**클래스 내 메서드는 접근 제한자 순서로 정렬합니다:**
+1. **public 메서드**: 외부에서 사용하는 공개 인터페이스
+2. **protected 메서드**: 상속 관계에서 사용하는 메서드
+3. **private 메서드**: 내부 구현을 위한 헬퍼 메서드
+
+```java
+public class UserService {
+    // public 메서드들
+    public User createUser(UserDto userDto) { ... }
+    public List<User> findAllUsers() { ... }
+    public Optional<User> findUserById(Long id) { ... }
+    
+    // protected 메서드들
+    protected void validateUser(User user) { ... }
+    protected User buildUserFromDto(UserDto dto) { ... }
+    
+    // private 메서드들
+    private void logUserCreation(User user) { ... }
+    private boolean isValidEmail(String email) { ... }
+}
+```
+
+**특별한 경우:**
+- **생성자**: 클래스 최상단 (필드 선언 다음)
+- **정적 메서드**: 해당 접근 제한자 그룹 내에서 인스턴스 메서드보다 앞에 배치
+- **라이프사이클 메서드** (@PostConstruct, @PreDestroy): 해당 접근 제한자 그룹 내에서 명시적으로 표시
+
 ### 네이밍 및 컨벤션 규칙
 **최대한 네이밍과 컨벤션으로 코드를 이해할 수 있도록 작성합니다:**
 

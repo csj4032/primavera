@@ -1,2 +1,0 @@
--- Test schema for chap03
--- Empty schema file for TestContainers initialization

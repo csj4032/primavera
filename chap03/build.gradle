@@ -35,5 +35,4 @@ dependencies {
     // Module Dependencies
     // ==========================================
     testImplementation project(":appendix:spring-boot-starter-test-container")
-    compileOnly project(":chap01")
 }
