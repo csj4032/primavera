@@ -30,6 +30,12 @@ mybatis:
   type-aliases-package: com.genius.primavera.domain
   type-handlers-package: com.genius.primavera.domain
 
+lucy-filter:
+  enabled: true
+  name: xssEscapeServletFilter
+  order: 1
+  addUrlPatterns: /*
+
 logging:
   level:
     com.genius.primavera: DEBUG

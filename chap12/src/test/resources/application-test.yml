@@ -14,6 +14,12 @@ spring:
   flyway:
     enabled: false
 
+lucy-filter:
+  enabled: true
+  name: xssEscapeServletFilter
+  order: 1
+  addUrlPatterns: /*
+
 logging:
   level:
     com.genius.primavera: DEBUG

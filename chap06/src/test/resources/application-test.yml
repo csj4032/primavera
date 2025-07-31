@@ -12,6 +12,12 @@ spring:
   aop:
     proxy-target-class: true
 
+lucy-filter:
+  enabled: true
+  name: xssEscapeServletFilter
+  order: 1
+  addUrlPatterns: /*
+
 logging:
   config: classpath:logback-spring.xml
 

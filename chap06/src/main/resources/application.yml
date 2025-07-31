@@ -19,6 +19,12 @@ server:
   tomcat:
     use-apr: never
 
+lucy-filter:
+  enabled: true
+  name: xssEscapeServletFilter
+  order: 1
+  addUrlPatterns: /*
+
 primavera:
   logs:
     path: ./logs

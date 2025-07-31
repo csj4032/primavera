@@ -18,6 +18,12 @@ spring:
     prefix: classpath:/templates/
     suffix: .html
 
+lucy-filter:
+  enabled: true
+  name: xssEscapeServletFilter
+  order: 1
+  addUrlPatterns: /*
+
 mybatis:
   configuration:
     map-underscore-to-camel-case: true
