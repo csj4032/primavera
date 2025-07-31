@@ -22,7 +22,7 @@ class PrimaveraTestcontainersPropertiesTest {
         PrimaveraTestcontainersProperties properties = new PrimaveraTestcontainersProperties();
         
         assertNotNull(properties.getMariadb());
-        assertEquals("mariadb:10.6", properties.getMariadb().getImage());
+        assertEquals("mariadb:11.4.7", properties.getMariadb().getImage());
         assertEquals("primavera", properties.getMariadb().getDatabaseName());
         assertEquals("primavera", properties.getMariadb().getUsername());
         assertEquals("primavera", properties.getMariadb().getPassword());

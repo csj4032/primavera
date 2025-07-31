@@ -8,6 +8,6 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
-@Import(LucyFilterConfiguration.class)
+@Import(LucyFilterAutoConfiguration.class)
 public @interface EnableLucyFilter {
 }

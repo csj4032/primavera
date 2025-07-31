@@ -9,7 +9,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "spring.lucy-filter")
 public class LucyFilterDelegatingProperties {
     private boolean enabled = true;
-    private String name;
-    private int order;
-    private String[] addUrlPatterns;
+    private String name = "xssEscapeServletFilter";
+    private int order = 1;
+    private String[] addUrlPatterns = {"/*"};
 }

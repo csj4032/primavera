@@ -19,4 +19,5 @@ dependencies {
     implementation "jakarta.servlet:jakarta.servlet-api"
     implementation project(":appendix:spring-boot-starter-lucy-filter")
     testImplementation project(":appendix:spring-boot-starter-lucy-filter")
+    testImplementation project(":appendix:spring-boot-starter-test-container")
 }

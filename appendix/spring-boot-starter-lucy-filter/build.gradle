@@ -25,5 +25,6 @@ dependencies {
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
     testImplementation "org.projectlombok:lombok:${lombokVersion}"
     testImplementation "org.springframework.boot:spring-boot-starter-test"
+    testImplementation "org.springframework.boot:spring-boot-starter-web"
     testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 }
