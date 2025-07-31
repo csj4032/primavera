@@ -117,10 +117,12 @@ public class UserSaveValidationTest {
     @Order(10)
     @DisplayName("정상 사용자 등록 요청 - 모든 값이 유효할 때 200 OK 반환")
     public void saveAndReturnUserValid() {
+        String password = "ValidPass1!";
         User source = User.builder()
                 .id(2L)
                 .email("validuser" + System.currentTimeMillis() + "@gmail.com")
-                .password("ValidPass1!")
+                .password(password)
+                .passwordConfirm(password)
                 .nickname("validnick")
                 .roles(List.of(new Role(1, RoleType.USER)))
                 .createdAt(Instant.now())
@@ -363,10 +365,12 @@ public class UserSaveValidationTest {
     @Order(28)
     @DisplayName("한글 닉네임 정상 처리")
     public void saveAndReturnUserKoreanNickname() {
+        String password = "Secret0!";
         User source = User.builder()
                 .id(20L)
                 .email("korean" + System.currentTimeMillis() + "@gmail.com")
-                .password("Secret0!")
+                .password(password)
+                .passwordConfirm(password)
                 .nickname("한글닉네임")
                 .roles(List.of(new Role(1, RoleType.USER)))
                 .build();

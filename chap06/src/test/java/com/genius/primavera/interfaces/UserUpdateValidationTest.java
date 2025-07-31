@@ -138,10 +138,12 @@ public class UserUpdateValidationTest {
     @Order(15)
     @DisplayName("닉네임이 한글만 포함된 경우 정상 처리")
     public void updateAndUserKoreanOnlyNickname() {
+        String password = "Secret0!";
         User source = User.builder()
                 .id(2L)
                 .email("korean" + System.currentTimeMillis() + "@gmail.com")
-                .password("Secret0!")
+                .password(password)
+                .passwordConfirm(password)
                 .nickname("한글닉네임")
                 .status(UserStatus.ACTIVE)
                 .roles(List.of(new Role(1, RoleType.USER)))
@@ -158,10 +160,12 @@ public class UserUpdateValidationTest {
     @Order(16)
     @DisplayName("닉네임이 숫자만 포함된 경우 정상 처리")
     public void updateAndUserNumberOnlyNickname() {
+        String password = "Secret0!";
         User source = User.builder()
                 .id(3L)
                 .email("numbers" + System.currentTimeMillis() + "@gmail.com")
-                .password("Secret0!")
+                .password(password)
+                .passwordConfirm(password)
                 .nickname("12345")
                 .status(UserStatus.ACTIVE)
                 .roles(List.of(new Role(1, RoleType.USER)))
@@ -178,10 +182,12 @@ public class UserUpdateValidationTest {
     @Order(17)
     @DisplayName("닉네임이 영어만 포함된 경우 정상 처리")
     public void updateAndUserEnglishOnlyNickname() {
+        String password = "Secret0!";
         User source = User.builder()
                 .id(4L)
                 .email("english" + System.currentTimeMillis() + "@gmail.com")
-                .password("Secret0!")
+                .password(password)
+                .passwordConfirm(password)
                 .nickname("englishonly")
                 .status(UserStatus.ACTIVE)
                 .roles(List.of(new Role(1, RoleType.USER)))
@@ -198,10 +204,12 @@ public class UserUpdateValidationTest {
     @Order(18)
     @DisplayName("사용자 상태를 DORMANT로 변경 시 정상 처리")
     public void updateAndUserStatusDormant() {
+        String password = "Secret0!";
         User source = User.builder()
                 .id(5L)
                 .email("dormant" + System.currentTimeMillis() + "@gmail.com")
-                .password("Secret0!")
+                .password(password)
+                .passwordConfirm(password)
                 .nickname("dormant")
                 .status(UserStatus.DORMANT)
                 .roles(List.of(new Role(1, RoleType.USER)))
@@ -218,10 +226,12 @@ public class UserUpdateValidationTest {
     @Order(19)
     @DisplayName("사용자 상태를 INACTIVE로 변경 시 정상 처리")
     public void updateAndUserStatusInactive() {
+        String password = "Secret0!";
         User source = User.builder()
                 .id(6L)
                 .email("inactive" + System.currentTimeMillis() + "@gmail.com")
-                .password("Secret0!")
+                .password(password)
+                .passwordConfirm(password)
                 .nickname("inactive")
                 .status(UserStatus.INACTIVE)
                 .roles(List.of(new Role(1, RoleType.USER)))
@@ -238,10 +248,12 @@ public class UserUpdateValidationTest {
     @Order(20)
     @DisplayName("다중 권한을 가진 사용자 수정 시 정상 처리")
     public void updateAndUserMultipleRoles() {
+        String password = "Secret0!";
         User source = User.builder()
                 .id(7L)
                 .email("multipleroles" + System.currentTimeMillis() + "@gmail.com")
-                .password("Secret0!")
+                .password(password)
+                .passwordConfirm(password)
                 .nickname("multipleroles")
                 .status(UserStatus.ACTIVE)
                 .roles(List.of(

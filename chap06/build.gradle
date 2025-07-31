@@ -11,6 +11,7 @@ dependencies {
     implementation "org.springframework.cloud:spring-cloud-vault-config-databases:${springCloudVaultVersion}"
     compileOnly "org.hibernate:hibernate-validator:${hibernateValidatorVersion}"
     compileOnly "com.zaxxer:HikariCP:${hikariCPVersion}"
+    implementation "org.hibernate.validator:hibernate-validator-cdi:${hibernateValidatorVersion}"
     testImplementation "org.springframework.security:spring-security-crypto:${springSecurityVersion}"
     testImplementation "org.springframework.security:spring-security-test"
     testImplementation "org.mybatis.spring.boot:mybatis-spring-boot-starter-test:${mybatisSpringBootStarterVersion}"
