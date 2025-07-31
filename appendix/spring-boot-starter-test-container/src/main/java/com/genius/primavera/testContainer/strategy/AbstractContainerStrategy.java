@@ -1,7 +1,6 @@
 package com.genius.primavera.testContainer.strategy;
 
 import com.genius.primavera.testContainer.ContainerType;
-import com.genius.primavera.testContainer.config.ContainerConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.Environment;

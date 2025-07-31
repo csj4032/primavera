@@ -24,9 +24,9 @@ public class PrimaveraTestcontainersProperties {
     @Setter
     public static class Mariadb {
         private String image = "mariadb:10.6";
-        private String databaseName = "primavera_basic_test";
+        private String databaseName = "primavera";
         private String username = "primavera";
-        private String password = "testpass";
+        private String password = "primavera";
         private String initScript;
     }
 

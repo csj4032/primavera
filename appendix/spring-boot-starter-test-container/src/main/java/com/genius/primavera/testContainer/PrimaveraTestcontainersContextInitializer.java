@@ -1,10 +1,6 @@
 package com.genius.primavera.testContainer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.genius.primavera.testContainer.config.KafkaContainerConfig;
-import com.genius.primavera.testContainer.config.MariaDBContainerConfig;
-import com.genius.primavera.testContainer.config.PostgreSQLContainerConfig;
-import com.genius.primavera.testContainer.config.RedisContainerConfig;
 import com.genius.primavera.testContainer.factory.ContainerStrategyFactory;
 import com.genius.primavera.testContainer.strategy.ContainerStrategy;
 import lombok.extern.slf4j.Slf4j;

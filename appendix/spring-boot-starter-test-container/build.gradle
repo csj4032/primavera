@@ -27,6 +27,9 @@ dependencies {
     implementation "org.testcontainers:mongodb:${testContainersVersion}"
     implementation "org.testcontainers:vault:${testContainersVersion}"
     implementation "com.redis.testcontainers:testcontainers-redis:1.6.4"
+    
+    // Redis 테스트를 위한 의존성
+    testImplementation 'org.springframework.boot:spring-boot-starter-data-redis'
     testImplementation "org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}"
     testImplementation project(":appendix:spring-boot-starter-test-container")
 }
