@@ -14,7 +14,7 @@ public interface RoleMapper {
     @Insert(value = INSERT_SQL)
     @Options(useGeneratedKeys = true, keyProperty = "role.id")
     @SelectKey(statement = "SELECT LAST_INSERT_ID()", keyProperty = "role.id", before = false, resultType = long.class)
-    int save(@Param("role") Role role);
+    Long save(@Param("role") Role role);
 
     List<Role> selectAll();
 
