@@ -5,12 +5,12 @@ import com.genius.primavera.domain.mapper.WinnerMapper;
 import com.genius.primavera.domain.model.User;
 import com.genius.primavera.domain.model.UserStatus;
 import com.genius.primavera.domain.model.Winner;
-import com.genius.primavera.domain.model.WinnerType;
+
+import java.math.BigDecimal;
+
+import com.genius.primavera.testContainer.EnablePrimaveraTestcontainers;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataAccessException;
@@ -18,6 +18,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import java.time.Instant;
 import java.util.concurrent.CompletableFuture;
@@ -31,8 +33,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @Slf4j
 @SpringBootTest
 @ActiveProfiles("test")
+@EnablePrimaveraTestcontainers
 @DisplayName("ACID 속성 테스트")
-class ACIDPropertiesTest {
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+public class ACIDPropertiesTest {
 
     @Autowired
     private UserMapper userMapper;
@@ -40,58 +44,67 @@ class ACIDPropertiesTest {
     @Autowired
     private WinnerMapper winnerMapper;
 
+    @Autowired
+    private PlatformTransactionManager transactionManager;
+    
+    private TransactionTemplate transactionTemplate;
     private User testUser;
 
     @BeforeEach
     void setUp() {
-        testUser = User.builder().email("acid-test@example.com").nickname("ACID_TESTER").status(UserStatus.ACTIVE).createdAt(Instant.now()).build();
+        testUser = User.builder()
+                .email("test" + System.currentTimeMillis() + "@primavera.com")
+                .password("{bcrypt}$2a$10$N8kKAJz4rT8d.JLZ8QqC6O8.YhJQrGeFGRqF2QhPZKJf3ZcJwQq7e")
+                .nickname("TestUser")
+                .status(UserStatus.ACTIVE)
+                .createdAt(Instant.now())
+                .updatedAt(Instant.now())
+                .build();
+                
+        // TransactionTemplate 초기화
+        transactionTemplate = new TransactionTemplate(transactionManager);
     }
 
     @Test
     @Order(1)
     @DisplayName("원자성(Atomicity) 테스트 - 트랜잭션 롤백 시 모든 변경사항이 취소됨")
     void testAtomicity() {
-        // Given
         Long userId = userMapper.save(testUser);
         long initialUserCount = userMapper.count();
         long initialWinnerCount = winnerMapper.count();
-
         log.info("초기 상태 - User 수: {}, Winner 수: {}", initialUserCount, initialWinnerCount);
-
-        // When & Then
         assertThatThrownBy(() -> {
-            atomicTransactionWithException(userId);
-        }).isInstanceOf(RuntimeException.class).hasMessage("의도적인 예외 발생 - 원자성 테스트");
+            // 프로그래밍 방식으로 트랜잭션 실행
+            transactionTemplate.execute(status -> {
+                User user = userMapper.findById(userId);
+                user.setStatus(UserStatus.INACTIVE);
+                userMapper.update(user);
 
-        // 트랜잭션 롤백 후 상태 확인
+                log.info("User 상태를 INACTIVE로 변경: {}", user.getId());
+
+                // Winner 데이터 삽입
+                Winner winner = Winner.builder()
+                        .name("Test Winner")
+                        .year(2023)
+                        .sport("Test Sport")
+                        .prize("Test Prize")
+                        .amount(new BigDecimal("1000.00"))
+                        .build();
+                winnerMapper.save(winner);
+
+                log.info("Winner 데이터 삽입: ID={}, Name={}", winner.getId(), winner.getName());
+
+                // 의도적 예외 발생 - 원자성 테스트를 위해
+                throw new RuntimeException("의도적인 예외 발생 - 원자성 테스트");
+            });
+        }).isInstanceOf(RuntimeException.class).hasMessage("의도적인 예외 발생 - 원자성 테스트");
         long finalUserCount = userMapper.count();
         long finalWinnerCount = winnerMapper.count();
-
         log.info("롤백 후 상태 - User 수: {}, Winner 수: {}", finalUserCount, finalWinnerCount);
-
-        // 모든 변경사항이 롤백되어야 함
         assertThat(finalUserCount).isEqualTo(initialUserCount);
         assertThat(finalWinnerCount).isEqualTo(initialWinnerCount);
     }
 
-    @Transactional
-    void atomicTransactionWithException(Long userId) {
-        // 1. User 상태 변경
-        User user = userMapper.findById(userId);
-        user.setStatus(UserStatus.INACTIVE);
-        userMapper.update(user);
-
-        log.info("User 상태를 INACTIVE로 변경: {}", user.getId());
-
-        // 2. Winner 데이터 삽입
-        Winner winner = Winner.builder().userId(userId).winner(WinnerType.WINNER).createdAt(Instant.now()).build();
-        winnerMapper.save(winner);
-
-        log.info("Winner 데이터 삽입: {}", winner.getId());
-
-        // 3. 의도적 예외 발생 - 원자성 테스트를 위해
-        throw new RuntimeException("의도적인 예외 발생 - 원자성 테스트");
-    }
 
     @Test
     @Order(2)
@@ -101,11 +114,22 @@ class ACIDPropertiesTest {
         Long userId = userMapper.save(testUser);
 
         // When & Then - 이메일 중복 삽입 시도 (UNIQUE 제약 위반)
-        // 동일한 이메일
-        User duplicateUser = User.builder().email(testUser.getEmail()).nickname("DUPLICATE_USER").status(UserStatus.ACTIVE).createdAt(Instant.now()).build();
+        // 동일한 이메일로 중복 사용자 생성 시도
+        User duplicateUser = User.builder()
+                .email(testUser.getEmail())
+                .password("{bcrypt}$2a$10$N8kKAJz4rT8d.JLZ8QqC6O8.YhJQrGeFGRqF2QhPZKJf3ZcJwQq7e")
+                .nickname("DUPLICATE_USER")
+                .status(UserStatus.ACTIVE)
+                .createdAt(Instant.now())
+                .updatedAt(Instant.now())
+                .build();
 
         assertThatThrownBy(() -> {
-            consistencyViolationTransaction(duplicateUser);
+            // 프로그래밍 방식으로 트랜잭션 실행
+            transactionTemplate.execute(status -> {
+                userMapper.save(duplicateUser); // UNIQUE 제약 위반으로 예외 발생 예상
+                return null;
+            });
         }).isInstanceOf(DataAccessException.class);
 
         // 데이터 일관성 확인
@@ -113,11 +137,6 @@ class ACIDPropertiesTest {
         assertThat(userCount).isEqualTo(1); // 중복 삽입이 방지되어야 함
 
         log.info("일관성 테스트 통과 - 중복 이메일 삽입 방지됨");
-    }
-
-    @Transactional
-    void consistencyViolationTransaction(User user) {
-        userMapper.save(user); // UNIQUE 제약 위반으로 예외 발생 예상
     }
 
     @Test
@@ -203,37 +222,35 @@ class ACIDPropertiesTest {
         Long userId = userMapper.save(testUser);
         long initialCount = userMapper.count();
 
-        // When - 트랜잭션 커밋
-        durableTransaction(userId);
+        // When - 트랜잭션 커밋 (프로그래밍 방식)
+        transactionTemplate.execute(status -> {
+            User user = userMapper.findById(userId);
+            log.info("지속성 테스트 - 업데이트 전 User 상태: nickname={}, status={}", user.getNickname(), user.getStatus());
+            user.setNickname("DURABLE_USER");
+            user.setStatus(UserStatus.INACTIVE);
+            userMapper.update(user);
+            log.info("지속성 테스트 - User 업데이트 완료: nickname={}, status={}", user.getNickname(), user.getStatus());
+            return null;
+        });
 
         // Then - 커밋된 변경사항이 지속되는지 확인
         User updatedUser = userMapper.findById(userId);
+        log.info("지속성 테스트 - 커밋 후 User 상태: nickname={}, status={}", updatedUser.getNickname(), updatedUser.getStatus());
         assertThat(updatedUser.getNickname()).isEqualTo("DURABLE_USER");
         assertThat(updatedUser.getStatus()).isEqualTo(UserStatus.INACTIVE);
 
-        // 새로운 트랜잭션에서도 변경사항이 보이는지 확인
-        checkDurabilityInNewTransaction(userId);
-
+        // 새로운 트랜잭션에서도 변경사항이 보이는지 확인 (프로그래밍 방식)
+        TransactionTemplate newTransactionTemplate = new TransactionTemplate(transactionManager);
+        newTransactionTemplate.setPropagationBehavior(Propagation.REQUIRES_NEW.value());
+        
+        newTransactionTemplate.execute(status -> {
+            User user = userMapper.findById(userId);
+            assertThat(user.getNickname()).isEqualTo("DURABLE_USER");
+            assertThat(user.getStatus()).isEqualTo(UserStatus.INACTIVE);
+            log.info("새로운 트랜잭션에서 확인 - 변경사항 지속됨: {}", user.getNickname());
+            return null;
+        });
         log.info("지속성 테스트 통과 - 변경사항이 지속됨");
     }
 
-    @Transactional
-    void durableTransaction(Long userId) {
-        User user = userMapper.findById(userId);
-        user.setNickname("DURABLE_USER");
-        user.setStatus(UserStatus.INACTIVE);
-        userMapper.update(user);
-
-        log.info("지속성 테스트 - User 업데이트 완료: {}", user.getId());
-        // 트랜잭션이 정상 커밋됨
-    }
-
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    void checkDurabilityInNewTransaction(Long userId) {
-        User user = userMapper.findById(userId);
-        assertThat(user.getNickname()).isEqualTo("DURABLE_USER");
-        assertThat(user.getStatus()).isEqualTo(UserStatus.INACTIVE);
-
-        log.info("새로운 트랜잭션에서 확인 - 변경사항 지속됨: {}", user.getNickname());
-    }
 }

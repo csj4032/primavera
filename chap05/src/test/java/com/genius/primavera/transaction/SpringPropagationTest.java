@@ -5,18 +5,18 @@ import com.genius.primavera.domain.mapper.WinnerMapper;
 import com.genius.primavera.domain.model.User;
 import com.genius.primavera.domain.model.UserStatus;
 import com.genius.primavera.domain.model.Winner;
-import com.genius.primavera.domain.model.WinnerType;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.IllegalTransactionStateException;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.transaction.PlatformTransactionManager;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -26,6 +26,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @SpringBootTest
 @ActiveProfiles("test")
 @DisplayName("Spring Transaction Propagation 테스트")
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class SpringPropagationTest {
 
     @Autowired
@@ -34,19 +35,33 @@ public class SpringPropagationTest {
     @Autowired
     private WinnerMapper winnerMapper;
 
+    @Autowired
+    private PlatformTransactionManager transactionManager;
+
+    private TransactionTemplate transactionTemplate;
+
     private User testUser;
 
     @BeforeEach
     void setUp() {
         testUser = User.builder()
-                .email("propagation-test@example.com")
+                .email("propagation-test-" + System.currentTimeMillis() + "@example.com")
+                .password("{bcrypt}$2a$10$N8kKAJz4rT8d.JLZ8QqC6O8.YhJQrGeFGRqF2QhPZKJf3ZcJwQq7e")
                 .nickname("PROPAGATION_TESTER")
                 .status(UserStatus.ACTIVE)
                 .createdAt(Instant.now())
+                .updatedAt(Instant.now())
                 .build();
+                
+        // TransactionTemplate 초기화
+        transactionTemplate = new TransactionTemplate(transactionManager);
+        
+        // 테스트 전에 Winner 테이블 정리
+        winnerMapper.truncate();
     }
 
     @Test
+    @Order(1)
     @DisplayName("REQUIRED - 진행 중인 트랜잭션이 있으면 참여, 없으면 새로 시작")
     void testRequired() {
         // Case 1: 트랜잭션 없이 호출
@@ -87,9 +102,35 @@ public class SpringPropagationTest {
         log.info("=== REQUIRES_NEW 테스트 시작 ===");
         Long userId = userMapper.save(testUser);
 
-        // 기존 트랜잭션 내에서 REQUIRES_NEW 호출
+        // 기존 트랜잭션 내에서 REQUIRES_NEW 호출 (프로그래밍 방식)
         assertThatThrownBy(() -> {
-            transactionalMethodWithRequiresNew(userId);
+            transactionTemplate.execute(status -> {
+                // 외부 트랜잭션에서 Winner 생성
+                Winner winner = Winner.builder()
+                        .name("REQUIRES_NEW Winner")
+                        .year(2023)
+                        .sport("Test Sport")
+                        .prize("Test Prize")
+                        .amount(new BigDecimal("100000.00"))
+                        .build();
+                winnerMapper.save(winner);
+                log.info("외부 트랜잭션 - Winner 생성: {}", winner.getId());
+
+                // REQUIRES_NEW로 새 트랜잭션 시작
+                TransactionTemplate requiresNewTemplate = new TransactionTemplate(transactionManager);
+                requiresNewTemplate.setPropagationBehavior(Propagation.REQUIRES_NEW.value());
+                
+                requiresNewTemplate.execute(innerStatus -> {
+                    User user = userMapper.findById(userId);
+                    user.setNickname("REQUIRES_NEW_COMMITTED");
+                    userMapper.update(user);
+                    log.info("REQUIRES_NEW 메서드 실행 - 새 트랜잭션에서 {}", "REQUIRES_NEW_COMMITTED");
+                    return null;
+                });
+
+                // 외부 트랜잭션에서 예외 발생
+                throw new RuntimeException("외부 트랜잭션에서 예외 발생");
+            });
         }).isInstanceOf(RuntimeException.class)
                 .hasMessage("외부 트랜잭션에서 예외 발생");
 
@@ -98,7 +139,7 @@ public class SpringPropagationTest {
         assertThat(user.getNickname()).isEqualTo("REQUIRES_NEW_COMMITTED");
 
         // 외부 트랜잭션에서 생성된 Winner는 롤백되어야 함
-        long winnerCount = winnerMapper.countByUserId(userId);
+        long winnerCount = winnerMapper.countByName("REQUIRES_NEW Winner");
         assertThat(winnerCount).isEqualTo(0);
 
         log.info("REQUIRES_NEW 테스트 통과 - 내부 트랜잭션은 커밋, 외부 트랜잭션은 롤백");
@@ -108,9 +149,11 @@ public class SpringPropagationTest {
     void transactionalMethodWithRequiresNew(Long userId) {
         // 외부 트랜잭션에서 Winner 생성
         Winner winner = Winner.builder()
-                .userId(userId)
-                .winner(WinnerType.WINNER)
-                .createdAt(Instant.now())
+                .name("REQUIRES_NEW Winner")
+                .year(2023)
+                .sport("Test Sport")
+                .prize("Test Prize")
+                .amount(new BigDecimal("100000.00"))
                 .build();
         winnerMapper.save(winner);
         log.info("외부 트랜잭션 - Winner 생성: {}", winner.getId());
@@ -171,9 +214,35 @@ public class SpringPropagationTest {
         log.info("=== NOT_SUPPORTED 테스트 시작 ===");
         Long userId = userMapper.save(testUser);
 
-        // 트랜잭션 내에서 NOT_SUPPORTED 호출
+        // 트랜잭션 내에서 NOT_SUPPORTED 호출 (프로그래밍 방식)
         assertThatThrownBy(() -> {
-            transactionalMethodWithNotSupported(userId);
+            transactionTemplate.execute(status -> {
+                // 외부 트랜잭션에서 Winner 생성
+                Winner winner = Winner.builder()
+                        .name("NOT_SUPPORTED Winner")
+                        .year(2023)
+                        .sport("Test Sport 2")
+                        .prize("Test Prize 2")
+                        .amount(new BigDecimal("200000.00"))
+                        .build();
+                winnerMapper.save(winner);
+                log.info("외부 트랜잭션 - Winner 생성: {}", winner.getId());
+
+                // NOT_SUPPORTED로 트랜잭션 없이 실행
+                TransactionTemplate notSupportedTemplate = new TransactionTemplate(transactionManager);
+                notSupportedTemplate.setPropagationBehavior(Propagation.NOT_SUPPORTED.value());
+                
+                notSupportedTemplate.execute(innerStatus -> {
+                    User user = userMapper.findById(userId);
+                    user.setNickname("NOT_SUPPORTED_COMMITTED");
+                    userMapper.update(user);
+                    log.info("NOT_SUPPORTED 메서드 실행 - 트랜잭션 없이 {}", "NOT_SUPPORTED_COMMITTED");
+                    return null;
+                });
+
+                // 외부 트랜잭션에서 예외 발생
+                throw new RuntimeException("외부 트랜잭션에서 예외 발생");
+            });
         }).isInstanceOf(RuntimeException.class)
                 .hasMessage("외부 트랜잭션에서 예외 발생");
 
@@ -182,7 +251,7 @@ public class SpringPropagationTest {
         assertThat(user.getNickname()).isEqualTo("NOT_SUPPORTED_COMMITTED");
 
         // 외부 트랜잭션의 Winner는 롤백되어야 함
-        long winnerCount = winnerMapper.countByUserId(userId);
+        long winnerCount = winnerMapper.countByName("NOT_SUPPORTED Winner");
         assertThat(winnerCount).isEqualTo(0);
 
         log.info("NOT_SUPPORTED 테스트 통과 - 트랜잭션 없이 실행된 변경사항은 커밋");
@@ -192,9 +261,11 @@ public class SpringPropagationTest {
     void transactionalMethodWithNotSupported(Long userId) {
         // 외부 트랜잭션에서 Winner 생성
         Winner winner = Winner.builder()
-                .userId(userId)
-                .winner(WinnerType.LOSER)
-                .createdAt(Instant.now())
+                .name("NOT_SUPPORTED Winner")
+                .year(2023)
+                .sport("Test Sport 2")
+                .prize("Test Prize 2")
+                .amount(new BigDecimal("200000.00"))
                 .build();
         winnerMapper.save(winner);
         log.info("외부 트랜잭션 - Winner 생성: {}", winner.getId());
@@ -220,14 +291,35 @@ public class SpringPropagationTest {
         log.info("=== MANDATORY 테스트 시작 ===");
         Long userId = userMapper.save(testUser);
 
-        // Case 1: 트랜잭션 없이 호출 시 예외 발생
+        // Case 1: 트랜잭션 없이 호출 시 예외 발생 (프로그래밍 방식)
         assertThatThrownBy(() -> {
-            mandatoryMethod(userId, "MANDATORY_FAIL");
+            TransactionTemplate mandatoryTemplate = new TransactionTemplate(transactionManager);
+            mandatoryTemplate.setPropagationBehavior(Propagation.MANDATORY.value());
+            
+            mandatoryTemplate.execute(status -> {
+                User user = userMapper.findById(userId);
+                user.setNickname("MANDATORY_FAIL");
+                userMapper.update(user);
+                log.info("MANDATORY 메서드 실행 - {}", "MANDATORY_FAIL");
+                return null;
+            });
         }).isInstanceOf(IllegalTransactionStateException.class);
         log.info("Case 1 통과 - 트랜잭션 없이 호출 시 예외 발생");
 
-        // Case 2: 트랜잭션 내에서 호출 시 정상 실행
-        transactionalMethodWithMandatory(userId);
+        // Case 2: 트랜잭션 내에서 호출 시 정상 실행 (프로그래밍 방식)
+        transactionTemplate.execute(status -> {
+            TransactionTemplate mandatoryTemplate = new TransactionTemplate(transactionManager);
+            mandatoryTemplate.setPropagationBehavior(Propagation.MANDATORY.value());
+            
+            return mandatoryTemplate.execute(innerStatus -> {
+                User user = userMapper.findById(userId);
+                user.setNickname("MANDATORY_SUCCESS");
+                userMapper.update(user);
+                log.info("MANDATORY 메서드 실행 - {}", "MANDATORY_SUCCESS");
+                log.info("트랜잭션 내에서 MANDATORY 메서드 호출");
+                return null;
+            });
+        });
 
         User user = userMapper.findById(userId);
         assertThat(user.getNickname()).isEqualTo("MANDATORY_SUCCESS");
@@ -261,10 +353,27 @@ public class SpringPropagationTest {
         assertThat(user.getNickname()).isEqualTo("NEVER_SUCCESS");
         log.info("Case 1 통과 - 트랜잭션 없이 정상 실행");
 
-        // Case 2: 트랜잭션 내에서 호출 시 예외 발생
-        assertThatThrownBy(() -> {transactionalMethodWithNever(userId);
+        // Case 2: 트랜잭션 내에서 NEVER 호출 시 예외 발생 (프로그래밍 방식)
+        assertThatThrownBy(() -> {
+            // 기존 트랜잭션을 시작하고 그 안에서 NEVER 호출
+            transactionTemplate.execute(status -> {
+                log.info("외부 트랜잭션 시작됨");
+                
+                // NEVER 전파 설정으로 TransactionTemplate 생성
+                TransactionTemplate neverTransactionTemplate = new TransactionTemplate(transactionManager);
+                neverTransactionTemplate.setPropagationBehavior(Propagation.NEVER.value());
+                
+                // NEVER 전파로 실행 시도 - 예외 발생해야 함
+                return neverTransactionTemplate.execute(neverStatus -> {
+                    User neverUser = userMapper.findById(userId);
+                    neverUser.setNickname("NEVER_FAIL");
+                    userMapper.update(neverUser);
+                    log.info("이 로그는 출력되지 않아야 함");
+                    return null;
+                });
+            });
         }).isInstanceOf(IllegalTransactionStateException.class);
-        log.info("Case 2 통과 - 트랜잭션 내에서 호출 시 예외 발생");
+        log.info("Case 2 통과 - 트랜잭션 내에서 NEVER 호출 시 예외 발생");
     }
 
     @Transactional(propagation = Propagation.NEVER)
@@ -275,11 +384,6 @@ public class SpringPropagationTest {
         log.info("NEVER 메서드 실행 - {}", nickname);
     }
 
-    @Transactional
-    void transactionalMethodWithNever(Long userId) {
-        neverMethod(userId, "NEVER_FAIL");
-        log.info("이 로그는 출력되지 않아야 함");
-    }
 
     @Test
     @DisplayName("NESTED - 중첩 트랜잭션, 내부 트랜잭션 롤백이 외부에 영향 없음")
@@ -287,15 +391,48 @@ public class SpringPropagationTest {
         log.info("=== NESTED 테스트 시작 ===");
         Long userId = userMapper.save(testUser);
 
-        // 외부 트랜잭션은 성공, 내부 중첩 트랜잭션은 실패
-        transactionalMethodWithNested(userId);
+        // 외부 트랜잭션은 성공, 내부 중첩 트랜잭션은 실패 (프로그래밍 방식)
+        transactionTemplate.execute(status -> {
+            // 외부 트랜잭션에서 User 업데이트
+            User user = userMapper.findById(userId);
+            user.setNickname("OUTER_TRANSACTION");
+            userMapper.update(user);
+            log.info("외부 트랜잭션 - User 업데이트: {}", user.getNickname());
+
+            // 중첩 트랜잭션 실행 (예외 발생하지만 외부 트랜잭션에 영향 없음)
+            try {
+                TransactionTemplate nestedTemplate = new TransactionTemplate(transactionManager);
+                nestedTemplate.setPropagationBehavior(Propagation.NESTED.value());
+                
+                nestedTemplate.execute(nestedStatus -> {
+                    // 중첩 트랜잭션에서 Winner 생성
+                    Winner winner = Winner.builder()
+                            .name("NESTED Winner")
+                            .year(2023)
+                            .sport("Test Sport 3")
+                            .prize("Test Prize 3")
+                            .amount(new BigDecimal("300000.00"))
+                            .build();
+                    winnerMapper.save(winner);
+                    log.info("중첩 트랜잭션 - Winner 생성: {}", winner.getId());
+
+                    // 중첩 트랜잭션에서 예외 발생
+                    throw new RuntimeException("중첩 트랜잭션에서 예외 발생");
+                });
+            } catch (RuntimeException e) {
+                log.info("중첩 트랜잭션 예외 처리: {}", e.getMessage());
+            }
+
+            log.info("외부 트랜잭션 계속 진행");
+            return null;
+        });
 
         // 외부 트랜잭션의 변경사항은 커밋되어야 함
         User user = userMapper.findById(userId);
         assertThat(user.getNickname()).isEqualTo("OUTER_TRANSACTION");
 
         // 내부 중첩 트랜잭션의 Winner는 롤백되어야 함
-        long winnerCount = winnerMapper.countByUserId(userId);
+        long winnerCount = winnerMapper.countByName("NESTED Winner");
         assertThat(winnerCount).isEqualTo(0);
 
         log.info("NESTED 테스트 통과 - 외부 트랜잭션 커밋, 내부 중첩 트랜잭션 롤백");
@@ -323,9 +460,11 @@ public class SpringPropagationTest {
     void nestedMethod(Long userId) {
         // 중첩 트랜잭션에서 Winner 생성
         Winner winner = Winner.builder()
-                .userId(userId)
-                .winner(WinnerType.WINNER)
-                .createdAt(Instant.now())
+                .name("NESTED Winner")
+                .year(2023)
+                .sport("Test Sport 3")
+                .prize("Test Prize 3")
+                .amount(new BigDecimal("300000.00"))
                 .build();
         winnerMapper.save(winner);
         log.info("중첩 트랜잭션 - Winner 생성: {}", winner.getId());

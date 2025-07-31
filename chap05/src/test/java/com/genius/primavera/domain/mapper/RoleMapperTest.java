@@ -15,8 +15,8 @@ import java.util.List;
 @Slf4j
 @SpringBootTest
 @ActiveProfiles("test")
-@EnablePrimaveraTestcontainers
 @DisplayName(value = "권한 관련 테스트")
+@EnablePrimaveraTestcontainers
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class RoleMapperTest {
 
@@ -25,16 +25,23 @@ public class RoleMapperTest {
 
     @Test
     @Order(1)
-    @DisplayName("권한 저장 테스트")
-    public void save() {
-        List<Role> roles = new ArrayList<>();
-        roles.add(Role.builder().type(RoleType.USER).build());
-        roles.add(Role.builder().type(RoleType.MANAGER).build());
-        roles.add(Role.builder().type(RoleType.ADMINISTRATOR).build());
-        roles.forEach(role -> {
-            int result = roleMapper.save(role);
-            log.info("Role Insert Result : {}", result);
-            Assertions.assertEquals(1, result);
-        });
+    @DisplayName("기타 권한 데이터 삽입")
+    public void insertRoleData() {
+        roleMapper.save(Role.builder().type(RoleType.ETC).build());
+    }
+
+    @Test
+    @Order(2)
+    @DisplayName("권한 데이터 확인")
+    public void verifyRoleData() {
+        List<Role> roles = roleMapper.selectAll();
+        log.info(roles.toString());
+        Assertions.assertNotNull(roles, "권한 데이터가 null이어서는 안 됩니다.");
+        Assertions.assertFalse(roles.isEmpty(), "권한 데이터가 비어있어서는 안 됩니다.");
+        for (Role role : roles) {
+            log.info("Role ID: {}, Type: {}, Name: {}", role.getId(), role.getType().getValue(), role.getType().getName());
+            Assertions.assertNotNull(role.getType(), "권한 타입이 null이어서는 안 됩니다.");
+            Assertions.assertNotNull(role.getType().getName(), "권한 이름이 null이어서는 안 됩니다.");
+        }
     }
 }

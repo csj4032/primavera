@@ -10,7 +10,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
 
-@ExtendWith(MockitoExtension.class)
 public class AccountAnalyzerTest {
 
 	@Test

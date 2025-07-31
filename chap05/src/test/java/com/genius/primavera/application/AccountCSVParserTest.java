@@ -18,7 +18,6 @@ import java.time.Month;
 import java.util.List;
 
 @Slf4j
-@ExtendWith(MockitoExtension.class)
 public class AccountCSVParserTest {
 
 	private static String resource = "src/main/resources/";

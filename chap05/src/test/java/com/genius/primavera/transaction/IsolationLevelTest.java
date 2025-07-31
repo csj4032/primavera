@@ -5,11 +5,8 @@ import com.genius.primavera.domain.mapper.WinnerMapper;
 import com.genius.primavera.domain.model.User;
 import com.genius.primavera.domain.model.UserStatus;
 import com.genius.primavera.domain.model.Winner;
-import com.genius.primavera.domain.model.WinnerType;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -17,7 +14,6 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -29,8 +25,8 @@ import static org.assertj.core.api.Assertions.*;
 @SpringBootTest
 @ActiveProfiles("test")
 @DisplayName("Spring Transaction Isolation Level 테스트")
-class
-IsolationLevelTest {
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+public class IsolationLevelTest {
 
     @Autowired
     private UserMapper userMapper;
@@ -43,10 +39,12 @@ IsolationLevelTest {
     @BeforeEach
     void setUp() {
         testUser = User.builder()
-                .email("isolation-test@example.com")
+                .email("isolation-test-" + System.currentTimeMillis() + "@example.com")
+                .password("{bcrypt}$2a$10$N8kKAJz4rT8d.JLZ8QqC6O8.YhJQrGeFGRqF2QhPZKJf3ZcJwQq7e")
                 .nickname("ISOLATION_TESTER")
                 .status(UserStatus.ACTIVE)
                 .createdAt(Instant.now())
+                .updatedAt(Instant.now())
                 .build();
     }
 
@@ -55,10 +53,8 @@ IsolationLevelTest {
     void testDefaultIsolation() throws InterruptedException {
         log.info("=== DEFAULT Isolation 테스트 시작 ===");
         Long userId = userMapper.save(testUser);
-
         CountDownLatch latch = new CountDownLatch(2);
         ExecutorService executor = Executors.newFixedThreadPool(2);
-
         CompletableFuture<String> future1 = CompletableFuture.supplyAsync(() -> {
             try {
                 return defaultIsolationTransaction1(userId, latch);
@@ -76,32 +72,23 @@ IsolationLevelTest {
                 return "Thread2 interrupted";
             }
         }, executor);
-
         String result1 = future1.join();
         String result2 = future2.join();
-
         log.info("DEFAULT 격리 수준 테스트 결과 - T1: {}, T2: {}", result1, result2);
-
-        // 각 트랜잭션이 독립적으로 실행되었는지 확인
         assertThat(result1).contains("DEFAULT_T1");
         assertThat(result2).contains("DEFAULT_T2");
-
         executor.shutdown();
     }
 
     @Transactional(isolation = Isolation.DEFAULT)
     String defaultIsolationTransaction1(Long userId, CountDownLatch latch) throws InterruptedException {
         log.info("DEFAULT T1 시작 - User ID: {}", userId);
-
         User user = userMapper.findById(userId);
         user.setNickname("DEFAULT_T1_USER");
         userMapper.update(user);
-
         latch.countDown();
         latch.await();
-
         Thread.sleep(50);
-
         log.info("DEFAULT T1 완료");
         return "DEFAULT_T1 completed";
     }
@@ -109,16 +96,12 @@ IsolationLevelTest {
     @Transactional(isolation = Isolation.DEFAULT)
     String defaultIsolationTransaction2(Long userId, CountDownLatch latch) throws InterruptedException {
         log.info("DEFAULT T2 시작 - User ID: {}", userId);
-
         User user = userMapper.findById(userId);
         user.setStatus(UserStatus.INACTIVE);
         userMapper.update(user);
-
         latch.countDown();
         latch.await();
-
         Thread.sleep(50);
-
         log.info("DEFAULT T2 완료");
         return "DEFAULT_T2 completed";
     }

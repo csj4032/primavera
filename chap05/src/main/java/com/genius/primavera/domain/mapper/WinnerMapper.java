@@ -8,40 +8,51 @@ import java.util.List;
 @Mapper
 public interface WinnerMapper {
 
-    String INSERT_SQL = "INSERT INTO WINNER (USER_ID, WINNER, CREATED_AT) VALUES (#{userId}, #{winner}, #{createdAt})";
+    String INSERT_SQL = "INSERT INTO WINNERS (NAME, YEAR, SPORT, PRIZE, AMOUNT) VALUES (#{name}, #{year}, #{sport}, #{prize}, #{amount})";
 
     @Insert(value = INSERT_SQL)
     @Options(useGeneratedKeys = true, keyProperty = "id")
     @SelectKey(statement = "SELECT LAST_INSERT_ID()", keyProperty = "id", before = false, resultType = long.class)
     int save(Winner winner);
 
-    @Select(value = "SELECT ID, USER_ID, WINNER, CREATED_AT FROM WINNER")
+    @Select(value = "SELECT ID, NAME, YEAR, SPORT, PRIZE, AMOUNT FROM WINNERS")
     List<Winner> findAll();
 
-    @Update(value = "UPDATE WINNER SET WINNER = #{winner} WHERE ID = #{id}")
+    @Update(value = "UPDATE WINNERS SET NAME = #{name}, YEAR = #{year}, SPORT = #{sport}, PRIZE = #{prize}, AMOUNT = #{amount} WHERE ID = #{id}")
     int update(Winner winner);
 
-    @Select(value = "SELECT ID, USER_ID, WINNER, CREATED_AT FROM WINNER WHERE ID = #{id}")
-    Winner findById(int id);
+    @Select(value = "SELECT ID, NAME, YEAR, SPORT, PRIZE, AMOUNT FROM WINNERS WHERE ID = #{id}")
+    Winner findById(Long id);
 
-    @Select(value = "SELECT ID, USER_ID, WINNER, CREATED_AT FROM WINNER WHERE ID > #{id}")
-    List<Winner> findByIdGt(int id);
+    @Select(value = "SELECT ID, NAME, YEAR, SPORT, PRIZE, AMOUNT FROM WINNERS WHERE ID > #{id}")
+    List<Winner> findByIdGt(Long id);
 
-    @Select(value = "TRUNCATE TABLE WINNER")
+    @Select(value = "TRUNCATE TABLE WINNERS")
     void truncate();
 
-    @Select(value = "SELECT COUNT(*) FROM WINNER WHERE ID > #{id}")
-    int findByIdGtCount(int id);
+    @Select(value = "SELECT COUNT(*) FROM WINNERS WHERE ID > #{id}")
+    int findByIdGtCount(Long id);
 
-    @Select(value = "SELECT COUNT(*) FROM WINNER WHERE ID > #{id} FOR UPDATE")
-    int findByIdGtCountForUpdate(int id);
+    @Select(value = "SELECT COUNT(*) FROM WINNERS WHERE ID > #{id} FOR UPDATE")
+    int findByIdGtCountForUpdate(Long id);
 
-    @Delete(value = "DELETE FROM WINNER WHERE ID > #{id}")
-    void delete(int id);
+    @Delete(value = "DELETE FROM WINNERS WHERE ID > #{id}")
+    void delete(Long id);
 
-    @Select(value = "SELECT COUNT(*) FROM WINNER")
+    @Select(value = "SELECT COUNT(*) FROM WINNERS")
     long count();
 
-    @Select(value = "SELECT COUNT(*) FROM WINNER WHERE USER_ID = #{id}")
-    long countByUserId(long id);
+    @Select(value = "SELECT COUNT(*) FROM WINNERS WHERE NAME = #{name}")
+    long countByName(String name);
+
+    @Insert({
+            "<script>",
+            "INSERT INTO WINNERS (NAME, YEAR, SPORT, PRIZE, AMOUNT) VALUES ",
+            "<foreach collection='winners' item='winner' separator=','>",
+            "(#{winner.name}, #{winner.year}, #{winner.sport}, #{winner.prize}, #{winner.amount})",
+            "</foreach>",
+            "</script>"
+    })
+    int bulkInsert(List<Winner> winners);
+
 }

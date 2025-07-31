@@ -9,10 +9,10 @@ import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
-//@Getter
-//@Setter
-//@Component
-//@ConfigurationProperties(prefix = "primavera.testcontainers")
+@Getter
+@Setter
+@Component
+@ConfigurationProperties(prefix = "primavera.testcontainers")
 public class PrimaveraTestcontainersProperties {
 
     private Mariadb mariadb = new Mariadb();

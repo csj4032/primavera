@@ -70,7 +70,7 @@ public interface UserMapper {
     @Options(useGeneratedKeys = true, keyProperty = "id")
     int saveAll(@Param("users") List<User> users);
 
-    @Update(value = "UPDATE USERS SET NICKNAME = #{user.nickname}, UPDATED_AT = #{user.updatedAt} WHERE ID = #{user.id}")
+    @Update(value = "UPDATE USERS SET NICKNAME = #{user.nickname}, STATUS = #{user.status, typeHandler=UserStatusTypeHandler}, UPDATED_AT = #{user.updatedAt} WHERE ID = #{user.id}")
     int update(@Param("user") User user);
 
     @Delete(value = "DELETE FROM USERS")

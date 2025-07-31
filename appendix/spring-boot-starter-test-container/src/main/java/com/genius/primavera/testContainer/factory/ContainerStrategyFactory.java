@@ -1,35 +1,40 @@
 package com.genius.primavera.testContainer.factory;
 
 import com.genius.primavera.testContainer.ContainerType;
-import com.genius.primavera.testContainer.config.KafkaContainerConfig;
-import com.genius.primavera.testContainer.config.MariaDBContainerConfig;
-import com.genius.primavera.testContainer.config.PostgreSQLContainerConfig;
-import com.genius.primavera.testContainer.config.RedisContainerConfig;
+import com.genius.primavera.testContainer.PrimaveraTestcontainersProperties;
 import com.genius.primavera.testContainer.strategy.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.core.env.Environment;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Supplier;
 
 @Slf4j
 public class ContainerStrategyFactory {
 
-    private final Map<ContainerType, Supplier<ContainerStrategy>> strategySuppliers = new HashMap<>();
+    private final Environment environment;
+    private PrimaveraTestcontainersProperties properties;
 
     public ContainerStrategyFactory(Environment environment) {
-        strategySuppliers.put(ContainerType.MARIADB, () -> new MariaDBContainerStrategy(new MariaDBContainerConfig()));
-        strategySuppliers.put(ContainerType.REDIS, () -> new RedisContainerStrategy(new RedisContainerConfig()));
-        strategySuppliers.put(ContainerType.KAFKA, () -> new KafkaContainerStrategy(new KafkaContainerConfig()));
-        strategySuppliers.put(ContainerType.POSTGRESQL, () -> new PostgreSQLContainerStrategy(new PostgreSQLContainerConfig()));
+        this.environment = environment;
+    }
+
+    private PrimaveraTestcontainersProperties getProperties() {
+        if (this.properties == null) {
+            this.properties = Binder.get(environment)
+                .bind("primavera.testcontainers", PrimaveraTestcontainersProperties.class)
+                .orElseGet(PrimaveraTestcontainersProperties::new);
+            log.debug("Loaded PrimaveraTestcontainersProperties: {}", properties);
+        }
+        return this.properties;
     }
 
     public ContainerStrategy getStrategy(ContainerType type) {
-        Supplier<ContainerStrategy> supplier = strategySuppliers.get(type);
-        if (supplier == null) {
-            throw new IllegalArgumentException("No strategy found for container type: " + type);
-        }
-        return supplier.get();
+        PrimaveraTestcontainersProperties props = getProperties();
+        
+        return switch (type) {
+            case MARIADB -> new MariaDBContainerStrategy(environment, props.getMariadb());
+            case REDIS -> new RedisContainerStrategy(environment, props.getRedis());
+            case KAFKA -> new KafkaContainerStrategy(environment, props.getKafka());
+            case POSTGRESQL -> new PostgreSQLContainerStrategy(environment, props.getPostgreSQL());
+        };
     }
 }

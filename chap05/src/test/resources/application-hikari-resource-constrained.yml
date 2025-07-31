@@ -1,17 +1,30 @@
 # 리소스 제약 환경용 연결 풀 설정 - 메모리/연결 제한 환경
 spring:
-  application:
-    name: HikariResourceConstrainedTest
+  config:
+    activate:
+      on-profile: hikari-resource-constrained
+    import:
+      - "optional:vault:"
+      - "optional:configserver:"
   cloud:
-    config:
-      enabled: false
+    vault:
+      host: localhost
+      port: 8200
+      scheme: http
+      authentication: TOKEN
+      token: ${VAULT_TOKEN}
+      connection-timeout: 5000
+      read-timeout: 15000
+      fail-fast: true
+      kv:
+        enabled: true
+        backend: secret
+        profile-separator: '/'
+        default-context: DataAccessApplication
+        application-name: DataAccessApplication
+        profiles: test
   datasource:
-    driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://localhost:1109/primavera?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
-    username: primavera
-    password: primavera
     hikari:
-      # === 리소스 절약 설정 ===
       minimum-idle: 2                    # 최소 유휴 연결: 2개 (최소한 확보)
       maximum-pool-size: 5               # 최대 연결: 5개 (엄격한 제한)
       idle-timeout: 60000                # 유휴 타임아웃: 1분 (적극적 해제)
@@ -19,16 +32,28 @@ spring:
       connection-timeout: 10000          # 연결 타임아웃: 10초 (보통 대기)
       pool-name: "ResourceConstrainedPool"
       leak-detection-threshold: 30000    # 누수 감지: 30초 (엄격한 감지)
-      
-      # 리소스 절약 최적화
       connection-test-query: "SELECT 1"
       validation-timeout: 2000           # 검증 타임아웃: 2초 (빠른 검증)
       initialization-fail-timeout: 1     # 초기화 실패시 즉시 실패
       register-mbeans: true              # JMX 모니터링 활성화
-      
-      # 기대 효과: 최소 메모리 사용, 연결 수 절약, 제한된 동시성, 적극적 리소스 관리
 
-logging:
-  level:
-    com.zaxxer.hikari: DEBUG
-    com.genius.primavera.hikari: DEBUG
+primavera:
+  testcontainers:
+    mariadb:
+      enabled: true
+      dockerImageName: mariadb:11.4.7
+      driverClassName: org.mariadb.jdbc.Driver
+      databaseName: primavera
+      username: primavera
+      password: primavera
+      initScript: sql/init-db.sql
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+    default-fetch-size: 1000
+    default-statement-timeout: 30
+    cache-enabled: false
+    local-cache-scope: statement
+  type-aliases-package: com.genius.primavera.domain
+  type-handlers-package: com.genius.primavera.domain

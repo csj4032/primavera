@@ -1,6 +1,6 @@
 package com.genius.primavera.domain.model;
 
-import java.time.Instant;
+import java.math.BigDecimal;
 
 import lombok.*;
 
@@ -11,8 +11,10 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Winner {
-	private long id;
-	private long userId;
-	private WinnerType winner;
-	private Instant createdAt;
+	private Long id;
+	private String name;
+	private Integer year;
+	private String sport;
+	private String prize;
+	private BigDecimal amount;
 }

@@ -138,13 +138,13 @@ public class WinnerServiceImpl implements WinnerService {
 
     @Override
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public Winner findAllByIdReadCommitted(int id) {
+    public Winner findAllByIdReadCommitted(Long id) {
         return winnerMapper.findById(id);
     }
 
     @Override
     @Transactional(propagation = Propagation.NESTED, isolation = Isolation.REPEATABLE_READ)
-    public Winner findAllByIdRepeatableRead(int id) {
+    public Winner findAllByIdRepeatableRead(Long id) {
         return winnerMapper.findById(id);
     }
 }

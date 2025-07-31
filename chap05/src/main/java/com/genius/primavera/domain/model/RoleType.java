@@ -4,15 +4,16 @@ import lombok.Getter;
 
 @Getter
 public enum RoleType {
-	ADMINISTRATOR(1, "최고관리자"),
-	MANAGER(2, "관리자"),
-	USER(3, "사용자");
+    ADMINISTRATOR(1, "최고관리자"),
+    MANAGER(2, "관리자"),
+    USER(3, "사용자"),
+    ETC(4, "기타");
 
-	private int value;
-	private String name;
+    private int value;
+    private String name;
 
-	RoleType(int value, String name) {
-		this.value = value;
-		this.name = name;
-	}
+    RoleType(int value, String name) {
+        this.value = value;
+        this.name = name;
+    }
 }

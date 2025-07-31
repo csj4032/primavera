@@ -34,7 +34,7 @@ public interface WinnerService {
 
 	List<Winner> findAllCommitted();
 
-	Winner findAllByIdReadCommitted(int id);
+	Winner findAllByIdReadCommitted(Long id);
 
-	Winner findAllByIdRepeatableRead(int id);
+	Winner findAllByIdRepeatableRead(Long id);
 }

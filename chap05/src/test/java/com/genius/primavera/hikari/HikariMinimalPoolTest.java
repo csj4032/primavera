@@ -2,6 +2,7 @@ package com.genius.primavera.hikari;
 
 import com.genius.primavera.domain.mapper.UserMapper;
 import com.genius.primavera.domain.model.User;
+import com.genius.primavera.testContainer.EnablePrimaveraTestcontainers;
 import com.zaxxer.hikari.HikariDataSource;
 import com.zaxxer.hikari.HikariPoolMXBean;
 import lombok.extern.slf4j.Slf4j;
@@ -22,32 +23,20 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.IntStream;
 
-/**
- * HikariCP 최소 설정 성능 테스트
- * 
- * 설정 특징:
- * - minimum-idle: 1 (최소 유휴 연결)
- * - maximum-pool-size: 3 (제한적 최대 연결)
- * - 짧은 타임아웃 설정
- * 
- * 기대 결과:
- * - 메모리 사용량 최소
- * - 동시성 제한으로 인한 대기 시간 발생
- * - 연결 생성/해제 오버헤드 증가
- */
 @Slf4j
 @SpringBootTest
+@EnablePrimaveraTestcontainers
 @ActiveProfiles("hikari-minimal")
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @DisplayName("HikariCP 최소 설정 성능 테스트")
-class HikariMinimalPoolTest {
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+public class HikariMinimalPoolTest {
 
     @Autowired
     private DataSource dataSource;
-    
+
     @Autowired
     private UserMapper userMapper;
-    
+
     private HikariDataSource hikariDataSource;
     private HikariPoolMXBean poolMXBean;
 
@@ -69,7 +58,7 @@ class HikariMinimalPoolTest {
         log.info("연결 타임아웃: {}ms", hikariDataSource.getConnectionTimeout());
         log.info("유휴 타임아웃: {}ms", hikariDataSource.getIdleTimeout());
         log.info("최대 생존 시간: {}ms", hikariDataSource.getMaxLifetime());
-        
+
         Assertions.assertEquals(3, hikariDataSource.getMaximumPoolSize());
         Assertions.assertEquals(1, hikariDataSource.getMinimumIdle());
         Assertions.assertEquals(5000, hikariDataSource.getConnectionTimeout());
@@ -80,17 +69,17 @@ class HikariMinimalPoolTest {
     @DisplayName("단일 연결 성능 측정")
     void measureSingleConnectionPerformance() {
         Instant start = Instant.now();
-        
+
         // 단순 쿼리 100회 실행
         IntStream.rangeClosed(1, 100)
             .forEach(i -> {
                 User user = userMapper.findById(1L);
                 Assertions.assertNotNull(user);
             });
-        
+
         Duration elapsed = Duration.between(start, Instant.now());
         log.info("단일 연결 100회 쿼리 실행 시간: {}ms", elapsed.toMillis());
-        
+
         logPoolStatistics("단일 연결 테스트 후");
     }
 
@@ -100,7 +89,7 @@ class HikariMinimalPoolTest {
     void measureConcurrentConnectionContentionTest() {
         ExecutorService executor = Executors.newFixedThreadPool(10);
         Instant start = Instant.now();
-        
+
         // 10개 쓰레드가 동시에 5개씩 쿼리 실행 (총 50개 쿼리)
         CompletableFuture<Void>[] futures = IntStream.range(0, 10)
             .mapToObj(threadId -> CompletableFuture.runAsync(() -> {
@@ -111,14 +100,14 @@ class HikariMinimalPoolTest {
                 }
             }, executor))
             .toArray(CompletableFuture[]::new);
-        
+
         CompletableFuture.allOf(futures).join();
         Duration elapsed = Duration.between(start, Instant.now());
-        
+
         log.info("=== 동시 연결 경합 테스트 결과 ===");
         log.info("10개 쓰레드 × 5개 쿼리 (총 50개) 실행 시간: {}ms", elapsed.toMillis());
         log.info("평균 쿼리당 시간: {}ms", elapsed.toMillis() / 50.0);
-        
+
         logPoolStatistics("동시 연결 경합 테스트 후");
         executor.shutdown();
     }
@@ -129,17 +118,17 @@ class HikariMinimalPoolTest {
     void measurePoolSaturationBehavior() {
         ExecutorService executor = Executors.newFixedThreadPool(20);
         Instant start = Instant.now();
-        
+
         log.info("=== 연결 풀 포화 테스트 시작 (20개 쓰레드 vs 3개 최대 연결) ===");
-        
+
         CompletableFuture<Void>[] futures = IntStream.range(0, 20)
             .mapToObj(threadId -> CompletableFuture.runAsync(() -> {
                 try {
                     Instant threadStart = Instant.now();
                     User user = userMapper.findById(1L);
                     Duration threadElapsed = Duration.between(threadStart, Instant.now());
-                    
-                    log.info("Thread-{}: 연결 획득 및 쿼리 완료 시간: {}ms", 
+
+                    log.info("Thread-{}: 연결 획득 및 쿼리 완료 시간: {}ms",
                         threadId, threadElapsed.toMillis());
                     Assertions.assertNotNull(user);
                 } catch (Exception e) {
@@ -147,14 +136,14 @@ class HikariMinimalPoolTest {
                 }
             }, executor))
             .toArray(CompletableFuture[]::new);
-        
+
         CompletableFuture.allOf(futures).join();
         Duration totalElapsed = Duration.between(start, Instant.now());
-        
+
         log.info("=== 연결 풀 포화 테스트 완료 ===");
         log.info("총 실행 시간: {}ms", totalElapsed.toMillis());
         log.info("최대 연결 수 제한으로 인한 대기 현상 관찰");
-        
+
         logPoolStatistics("풀 포화 테스트 후");
         executor.shutdown();
     }

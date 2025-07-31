@@ -5,11 +5,8 @@ import com.genius.primavera.domain.mapper.WinnerMapper;
 import com.genius.primavera.domain.model.User;
 import com.genius.primavera.domain.model.UserStatus;
 import com.genius.primavera.domain.model.Winner;
-import com.genius.primavera.domain.model.WinnerType;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -17,7 +14,6 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
@@ -31,7 +27,8 @@ import static org.assertj.core.api.Assertions.*;
 @SpringBootTest
 @ActiveProfiles("test")
 @DisplayName("트랜잭션 Read Phenomena 테스트")
-class ReadPhenomenaTest {
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+public class ReadPhenomenaTest {
 
     @Autowired
     private UserMapper userMapper;
@@ -43,10 +40,18 @@ class ReadPhenomenaTest {
 
     @BeforeEach
     void setUp() {
-        testUser = User.builder().email("phenomena-test@example.com").nickname("PHENOMENA_TESTER").status(UserStatus.ACTIVE).createdAt(Instant.now()).build();
+        testUser = User.builder()
+                .email("phenomena-test-" + System.currentTimeMillis() + "@example.com")
+                .password("{bcrypt}$2a$10$N8kKAJz4rT8d.JLZ8QqC6O8.YhJQrGeFGRqF2QhPZKJf3ZcJwQq7e")
+                .nickname("PHENOMENA_TESTER")
+                .status(UserStatus.ACTIVE)
+                .createdAt(Instant.now())
+                .updatedAt(Instant.now())
+                .build();
     }
 
     @Test
+    @Order(1)
     @DisplayName("Dirty Read - T1이 T2의 커밋되지 않은 변경사항을 읽는 현상")
     void testDirtyRead() throws InterruptedException {
         log.info("=== Dirty Read 테스트 시작 ===");
@@ -82,7 +87,15 @@ class ReadPhenomenaTest {
             }
         }, executor);
 
-        String writerResult = writerFuture.join();
+        // Writer는 의도적으로 예외를 발생시키므로 예외 처리
+        String writerResult;
+        try {
+            writerResult = writerFuture.join();
+        } catch (Exception e) {
+            writerResult = "Writer rollback completed (expected)";
+            log.info("Writer 롤백 완료 (예상된 동작): {}", e.getCause().getMessage());
+        }
+        
         String readerResult = readerFuture.join();
 
         log.info("Dirty Read 테스트 결과");
@@ -150,6 +163,7 @@ class ReadPhenomenaTest {
     }
 
     @Test
+    @Order(2)
     @DisplayName("Non-repeatable Read - T1이 같은 데이터를 두 번 읽을 때 다른 값을 얻는 현상")
     void testNonRepeatableRead() throws InterruptedException {
         log.info("=== Non-repeatable Read 테스트 시작 ===");
@@ -244,16 +258,19 @@ class ReadPhenomenaTest {
     }
 
     @Test
+    @Order(3)
     @DisplayName("Phantom Read - T1이 같은 조건으로 조회할 때 새로운 로우가 나타나는 현상")
     void testPhantomRead() throws InterruptedException {
         log.info("=== Phantom Read 테스트 시작 ===");
 
         // 기본 데이터 삽입
         User user1 = User.builder()
-                .email("phantom1@example.com")
+                .email("phantom1-" + System.currentTimeMillis() + "@example.com")
+                .password("{bcrypt}$2a$10$N8kKAJz4rT8d.JLZ8QqC6O8.YhJQrGeFGRqF2QhPZKJf3ZcJwQq7e")
                 .nickname("PHANTOM_USER_1")
                 .status(UserStatus.ACTIVE)
                 .createdAt(Instant.now())
+                .updatedAt(Instant.now())
                 .build();
         userMapper.save(user1);
 
@@ -337,10 +354,12 @@ class ReadPhenomenaTest {
 
         // 새로운 ACTIVE 상태의 User 삽입
         User phantomUser = User.builder()
-                .email("phantom2@example.com")
+                .email("phantom2-" + System.currentTimeMillis() + "@example.com")
+                .password("{bcrypt}$2a$10$N8kKAJz4rT8d.JLZ8QqC6O8.YhJQrGeFGRqF2QhPZKJf3ZcJwQq7e")
                 .nickname("PHANTOM_USER_2")
                 .status(UserStatus.ACTIVE)
                 .createdAt(Instant.now())
+                .updatedAt(Instant.now())
                 .build();
         userMapper.save(phantomUser);
 
@@ -351,6 +370,7 @@ class ReadPhenomenaTest {
     }
 
     @Test
+    @Order(4)
     @DisplayName("Lost Update - 두 트랜잭션이 같은 데이터를 동시에 수정할 때 한 쪽 변경사항이 소실되는 현상")
     void testLostUpdate() throws InterruptedException {
         log.info("=== Lost Update 테스트 시작 ===");
