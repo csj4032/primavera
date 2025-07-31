@@ -19,7 +19,7 @@ public class UserServiceImpl implements UserService {
 	public User save(User user) {
 		user.setPassword(PasswordEncoderFactories.createDelegatingPasswordEncoder().encode(user.getPassword()));
 		user.setStatus(UserStatus.ON);
-		user.setRegDate(Instant.now());
+		user.setCreatedAt(Instant.now());
 		userMapper.save(user);
 		return user;
 	}

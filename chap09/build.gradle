@@ -18,4 +18,6 @@ dependencies {
     testImplementation "org.springframework.security:spring-security-test:${springSecurityVersion}"
     implementation "commons-codec:commons-codec:${commonsCodecVersion}"
     implementation project(":appendix:spring-boot-starter-lucy-filter")
+    testImplementation project(":appendix:spring-boot-starter-lucy-filter")
+    testImplementation project(":appendix:spring-boot-starter-test-container")
 }

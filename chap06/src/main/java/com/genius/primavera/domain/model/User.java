@@ -1,9 +1,8 @@
 package com.genius.primavera.domain.model;
 
 import com.genius.primavera.application.validator.Nickname;
+import com.genius.primavera.application.validator.PasswordMatch;
 import lombok.*;
-import org.graalvm.polyglot.HostAccess;
-import org.hibernate.validator.constraints.ScriptAssert;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
@@ -20,7 +19,7 @@ import java.util.Objects;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(of = {"id", "email"})
-@ScriptAssert(lang = "graal.js", script = "_this.isComplex(_this.createdAt, _this.updatedAt)", message = "등록일자와 수정일자는 필수 입니다.")
+@PasswordMatch
 public class User {
 
     public interface SaveGroup extends Default {
@@ -31,24 +30,28 @@ public class User {
 
     @Min(value = 1, groups = UpdateGroup.class)
     private long id;
-    @Email
+    @NotBlank(groups = {SaveGroup.class, UpdateGroup.class})
+    @Email(groups = {SaveGroup.class, UpdateGroup.class})
     private String email;
-    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&+=])(?=\\S+$).{8,20}$")
+    @NotBlank(groups = {SaveGroup.class, UpdateGroup.class})
+    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&+=])(?=\\S+$).{8,20}$", groups = {SaveGroup.class, UpdateGroup.class})
     private String password;
-    @Nickname
+    @NotBlank(groups = {SaveGroup.class, UpdateGroup.class})
+    private String passwordConfirm;
+    @NotBlank(groups = {SaveGroup.class, UpdateGroup.class})
+    @Nickname(groups = {SaveGroup.class, UpdateGroup.class})
     private String nickname;
     @NotNull(groups = UpdateGroup.class)
     private UserStatus status;
     @Valid
-    @NotNull
-    @Size(min = 1)
+    @NotNull(groups = {SaveGroup.class, UpdateGroup.class})
+    @Size(min = 1, groups = {SaveGroup.class, UpdateGroup.class})
     private List<Role> roles;
     private Instant createdAt;
     private Instant updatedAt;
 
     private Boolean isComplex;
 
-    @HostAccess.Export
     public Boolean isComplex(Instant createdAt, Instant updatedAt) {
         if (!Objects.isNull(createdAt) && !Objects.isNull(updatedAt)) return createdAt.isBefore(updatedAt);
         return true;

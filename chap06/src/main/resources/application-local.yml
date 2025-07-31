@@ -2,21 +2,49 @@ spring:
   config:
     activate:
       on-profile: local
-  datasource:
-    driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://localhost:1109/primavera?serverTimezone=UTC
-    username: primavera
-    password: primavera
-    hikari:
-      auto-commit: false
-      data-source-properties:
-        cachePrepStmts: false
-        useServerPrepStmts: false
-        useLocalSessionState: false
-        cacheResultSetMetadata: fales
-        preparedStatementCacheQueries: 0
+    import:
+      - "optional:vault:"
+      - "optional:configserver:"
   aop:
     proxy-target-class: true
+  cloud:
+    vault:
+      host: localhost
+      port: 8200
+      scheme: http
+      authentication: TOKEN
+      token: ${VAULT_TOKEN}
+      connection-timeout: 5000
+      read-timeout: 15000
+      fail-fast: true
+      kv:
+        enabled: true
+        backend: secret
+        profile-separator: '/'
+        default-context: ValidationApplication
+        application-name: ValidationApplication
+  datasource:
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 10
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      connection-timeout: 30000
+      pool-name: "BalancedHikariPool"
+      leak-detection-threshold: 60000
+      connection-test-query: "SELECT 1"
+      validation-timeout: 5000
+
+primavera:
+  testcontainers:
+    mariadb:
+      enabled: true
+      dockerImageName: mariadb:11.4.7
+      driverClassName: org.mariadb.jdbc.Driver
+      databaseName: primavera
+      username: primavera
+      password: primavera
+      initScript: sql/init-db.sql
 
 mybatis:
   configuration:

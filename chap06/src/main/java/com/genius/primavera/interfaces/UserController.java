@@ -25,11 +25,14 @@ public class UserController {
 
     @PostMapping(value = "/save")
     public ResponseEntity<User> save(@RequestBody @Validated(User.SaveGroup.class) User user, BindingResult bindingResult) {
-        log.info("User Save : {}", bindingResult);
+        log.info("User Save - hasErrors: {}", bindingResult.hasErrors());
+        log.info("User Save - errors: {}", bindingResult.getAllErrors());
+        log.info("User Save - user: {}", user);
         if (!bindingResult.hasErrors()) {
             userService.save(user);
             return new ResponseEntity<>(user, HttpStatus.CREATED);
         }
+        log.info("Returning BAD_REQUEST due to validation errors");
         return new ResponseEntity<>(user, HttpStatus.BAD_REQUEST);
     }
 

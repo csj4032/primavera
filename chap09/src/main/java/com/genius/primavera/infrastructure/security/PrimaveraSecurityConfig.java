@@ -55,6 +55,7 @@ public class PrimaveraSecurityConfig {
                         auth
                                 .requestMatchers(HttpMethod.GET, "/resources/**", "/bower_components/**", "/dist/**", "/plugins/**", "/favicon.ico").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/login", "/login/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/filter", "/filter/**").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .addFilterAfter(new PrimaveraFilter(), UsernamePasswordAuthenticationFilter.class)

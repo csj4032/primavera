@@ -33,6 +33,16 @@ spring:
       leak-detection-threshold: 60000
       connection-test-query: "SELECT 1"
       validation-timeout: 5000
+  thymeleaf:
+    cache: false
+    enabled: true
+    prefix: classpath:/templates/
+    suffix: .html
+lucy-filter:
+  enabled: true
+  name: lucyXssFilter
+  order: 1
+  addUrlPatterns: /*
 
 primavera:
   testcontainers:
@@ -50,7 +60,5 @@ mybatis:
     map-underscore-to-camel-case: true
     default-fetch-size: 1000
     default-statement-timeout: 30
-    cache-enabled: false
-    local-cache-scope: statement
-  type-aliases-package: com.genius.primavera.domain
-  type-handlers-package: com.genius.primavera.domain
+  type-aliases-package: com.genius.primavera.domain.model
+  type-handlers-package: com.genius.primavera.domain.model

@@ -3,15 +3,18 @@ dependencies {
     databaseDependencies.each { dep -> implementation dep }
     mybatisDependencies.each { dep -> implementation dep }
     thymeleafDependencies.each { dep -> implementation dep }
-    validationDependencies.each { dep -> implementation dep }
-    developmentDependencies.each { dep -> implementation dep }
-    loggingDependencies.each { dep -> implementation dep }
     webUiDependencies.each { dep -> implementation dep }
+    validationDependencies.each { dep -> implementation dep }
     testContainersDependencies.each { dep -> testImplementation dep }
-    implementation "org.springframework.boot:spring-boot-starter-data-jpa"
-    implementation "org.hibernate:hibernate-core:${hibernateVersion}"
-    implementation "org.springframework.security:spring-security-crypto:${springSecurityVersion}"
-    implementation project(":appendix:spring-boot-starter-lucy-filter")
+    implementation "org.springframework.cloud:spring-cloud-starter-config"
+    implementation "org.springframework.cloud:spring-cloud-starter-vault-config:${springCloudVaultVersion}"
+    implementation "org.springframework.cloud:spring-cloud-vault-config-databases:${springCloudVaultVersion}"
+    compileOnly "org.hibernate:hibernate-validator:${hibernateValidatorVersion}"
+    compileOnly "com.zaxxer:HikariCP:${hikariCPVersion}"
+    testImplementation "org.springframework.security:spring-security-crypto:${springSecurityVersion}"
+    testImplementation "org.springframework.security:spring-security-test"
+    testImplementation "org.mybatis.spring.boot:mybatis-spring-boot-starter-test:${mybatisSpringBootStarterVersion}"
+    testImplementation "org.mockito:mockito-core:4.+"
     testImplementation project(":appendix:spring-boot-starter-lucy-filter")
     testImplementation project(":appendix:spring-boot-starter-test-container")
 }

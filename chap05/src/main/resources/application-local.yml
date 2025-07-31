@@ -2,17 +2,11 @@ spring:
   config:
     activate:
       on-profile: local
-    import: "optional:vault:"
+    import:
+      - "optional:vault:"
+      - "optional:configserver:"
   aop:
     proxy-target-class: true
-  hikari:
-    auto-commit: false
-    data-source-properties:
-      cachePrepStmts: false
-      useServerPrepStmts: false
-      useLocalSessionState: false
-      cacheResultSetMetadata: false
-      preparedStatementCacheQueries: 0
   cloud:
     vault:
       host: localhost
@@ -29,6 +23,17 @@ spring:
         profile-separator: '/'
         default-context: DataAccessApplication
         application-name: DataAccessApplication
+  datasource:
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 10
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      connection-timeout: 30000
+      pool-name: "BalancedHikariPool"
+      leak-detection-threshold: 60000
+      connection-test-query: "SELECT 1"
+      validation-timeout: 5000
 
 mybatis:
   configuration:

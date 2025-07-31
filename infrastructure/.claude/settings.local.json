@@ -9,7 +9,13 @@
       "Bash(echo:*)",
       "Bash(grep:*)",
       "Bash(done)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(mkdir:*)",
+      "Bash(ls:*)",
+      "Bash(for:*)",
+      "Bash(if [ -f \"$chap/build.gradle\" ])",
+      "Bash(then)",
+      "Bash(fi)"
     ],
     "deny": []
   }

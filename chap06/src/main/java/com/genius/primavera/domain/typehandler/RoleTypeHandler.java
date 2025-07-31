@@ -1,4 +1,4 @@
-package com.genius.primavera.domain.model.typehandler;
+package com.genius.primavera.domain.typehandler;
 
 import com.genius.primavera.domain.model.RoleType;
 import org.apache.ibatis.type.BaseTypeHandler;
