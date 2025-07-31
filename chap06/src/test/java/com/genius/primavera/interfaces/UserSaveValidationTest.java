@@ -94,7 +94,16 @@ public class UserSaveValidationTest extends AbstractContainerTest {
     @Order(9)
     @DisplayName("등록일자와 수정일자 순서 검증")
     public void saveAndRegDateModDate() {
-        User source = User.builder().id(1L).email("genius@gmail.com").password("Secret0!").createdAt(Instant.now().plusDays(1)).updatedAt(Instant.now()).nickname("genius").roles(List.of(new Role(1, null))).build();
+        // createdAt이 updatedAt보다 미래일 때 유효성 검증
+        User source = User.builder()
+                .id(1L)
+                .email("genius@gmail.com")
+                .password("Secret0!")
+                .createdAt(Instant.now().plusSeconds(60 * 60 * 24)) // 1일 후
+                .updatedAt(Instant.now())
+                .nickname("genius")
+                .roles(List.of(new Role(1, null)))
+                .build();
         saveUser(source);
     }
 

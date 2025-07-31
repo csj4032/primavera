@@ -2,7 +2,9 @@ spring:
   config:
     activate:
       on-profile: local
-    import: "optional:vault:"
+    import:
+      - "optional:vault:"
+      - "optional:configserver:"
   cloud:
     vault:
       host: localhost

@@ -1,3 +1,7 @@
+spring:
+  application:
+    name: chap02-app
+
 plantPlaces:
   api:
     url: https://api.plantplaces.com
@@ -39,24 +43,3 @@ com:
         time-to-live: 5m
         type: local
         max-entries: 1000
-
----
-spring:
-  profiles:
-    active: local
-  config:
-    activate:
-      on-profile: local
-  jackson:
-    time-zone: UTC
-  banner:
-    charset: UTF-8
-    location: classpath:primavera.txt
-
-com:
-  genius:
-    primavera:
-      cache:
-        enabled: false
-        time-to-live: 10m
-        max-entries: 2000

@@ -43,6 +43,7 @@ import java.util.Map;
  * @author Genius
  */
 @Data
+@Component
 @Validated
 @ConfigurationProperties(prefix = "com.genius.primavera")
 public class PrimaveraProperties {

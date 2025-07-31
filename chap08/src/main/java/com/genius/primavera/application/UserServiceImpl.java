@@ -4,6 +4,7 @@ import com.genius.primavera.domain.mapper.UserMapper;
 import com.genius.primavera.domain.model.User;
 import com.genius.primavera.domain.model.UserStatus;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.stereotype.Service;
@@ -11,27 +12,27 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-	@Autowired
-	private UserMapper userMapper;
+    private final UserMapper userMapper;
 
-	@Override
-	public User save(User user) {
-		user.setPassword(PasswordEncoderFactories.createDelegatingPasswordEncoder().encode(user.getPassword()));
-		user.setStatus(UserStatus.ON);
-		user.setRegDate(Instant.now());
-		userMapper.save(user);
-		return user;
-	}
+    @Override
+    public User save(User user) {
+        user.setPassword(PasswordEncoderFactories.createDelegatingPasswordEncoder().encode(user.getPassword()));
+        user.setStatus(UserStatus.ON);
+        user.setCreatedAt(Instant.now());
+        userMapper.save(user);
+        return user;
+    }
 
-	@Override
-	public User update(User user) {
-		return user;
-	}
+    @Override
+    public User update(User user) {
+        return user;
+    }
 
-	@Override
-	public User signIn(String userId, String password) {
-		return null;
-	}
+    @Override
+    public User signIn(String userId, String password) {
+        return null;
+    }
 }

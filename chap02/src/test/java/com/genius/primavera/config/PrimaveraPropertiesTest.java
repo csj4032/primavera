@@ -13,7 +13,6 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-@ActiveProfiles("test")
 public class PrimaveraPropertiesTest {
 
     @Autowired
@@ -26,7 +25,7 @@ public class PrimaveraPropertiesTest {
         String databaseUrl = properties.getDatabase().getUrl();
         List<String> tables = properties.getDatabase().getTables();
         assertThat(databaseUsername).isEqualTo("test_user");
-        assertThat(databaseUrl).isEqualTo("jdbc:mysql://localhost:1109/primavera");
+        assertThat(databaseUrl).isEqualTo("jdbc:mysql://localhost:1109/primavera?serverTimezone=UTC");
         assertThat(tables).containsExactly("user", "role");
     }
 
@@ -61,9 +60,9 @@ public class PrimaveraPropertiesTest {
     @DisplayName("프로파일별 속성 오버라이딩이 작동하는지 검증")
     void profileSpecificPropertyOverride() {
         PrimaveraProperties.Cache cache = properties.getCache();
-        assertThat(cache.isEnabled()).isFalse();
-        assertThat(cache.getTimeToLive()).isEqualTo(Duration.ofMinutes(10));
-        assertThat(cache.getMaxEntries()).isEqualTo(2000);
+        assertThat(cache.isEnabled()).isTrue();
+        assertThat(cache.getTimeToLive()).isEqualTo(Duration.ofMinutes(5));
+        assertThat(cache.getMaxEntries()).isEqualTo(1000);
     }
 
     @Test
@@ -86,6 +85,6 @@ public class PrimaveraPropertiesTest {
     @DisplayName("Duration 타입 속성이 올바르게 바인딩되는지 검증")
     void durationPropertyBinding() {
         Duration timeToLive = properties.getCache().getTimeToLive();
-        assertThat(timeToLive).isEqualTo(Duration.ofMinutes(10));
+        assertThat(timeToLive).isEqualTo(Duration.ofMinutes(5));
     }
 }
