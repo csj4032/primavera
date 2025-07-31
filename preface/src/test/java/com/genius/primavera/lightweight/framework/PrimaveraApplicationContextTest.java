@@ -1,7 +1,7 @@
 package com.genius.primavera.lightweight.framework;
 
-import com.genius.primavera.lightweight.annotations.PrimaveraAutowired;
-import com.genius.primavera.lightweight.annotations.PrimaveraComponent;
+import com.genius.primavera.lightweight.framework.testcomponents.TestController;
+import com.genius.primavera.lightweight.framework.testcomponents.TestService;
 import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -15,7 +15,8 @@ public class PrimaveraApplicationContextTest {
 
     @BeforeEach
     void setUp() {
-        context = new PrimaveraApplicationContext("com.genius.primavera.lightweight.framework");
+        // Scan dedicated test components package to avoid other test classes
+        context = new PrimaveraApplicationContext("com.genius.primavera.lightweight.framework.testcomponents");
     }
 
     @Test
@@ -29,10 +30,7 @@ public class PrimaveraApplicationContextTest {
     @Order(2)
     @DisplayName("@PrimaveraComponent가 붙은 클래스가 Bean으로 등록되는지 테스트")
     void shouldRegisterComponentAsBean() {
-        // TestService Bean이 등록되었는지 확인
         assertTrue(context.containsBean("testService"));
-
-        // Bean을 조회할 수 있는지 확인
         TestService testService = context.getBean("testService");
         assertNotNull(testService);
         assertInstanceOf(TestService.class, testService);
@@ -45,8 +43,6 @@ public class PrimaveraApplicationContextTest {
     void shouldInjectDependencies() {
         TestController controller = context.getBean("testController");
         assertNotNull(controller);
-
-        // 의존성이 주입되었는지 확인
         assertNotNull(controller.getTestService());
         assertInstanceOf(TestService.class, controller.getTestService());
     }
@@ -69,26 +65,4 @@ public class PrimaveraApplicationContextTest {
         });
     }
 
-    // 테스트용 컴포넌트들
-    @PrimaveraComponent
-    public static class TestService {
-        public String getMessage() {
-            return "Test Message";
-        }
-    }
-
-    @PrimaveraComponent
-    public static class TestController {
-
-        @PrimaveraAutowired
-        private TestService testService;
-
-        public TestService getTestService() {
-            return testService;
-        }
-
-        public String processRequest() {
-            return testService.getMessage();
-        }
-    }
 }

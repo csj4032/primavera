@@ -22,14 +22,14 @@ public class BeanLifecycleExample implements InitializingBean, DisposableBean {
     
     @PostConstruct
     public void postConstruct() {
-        log.info("3. @PostConstruct 호출 - 의존성 주입 완료 후");
+        log.info("2. @PostConstruct 호출 - 의존성 주입 완료 후");
         this.status = "POST_CONSTRUCT";
     }
     
     @Override
     public void afterPropertiesSet() throws Exception {
-        log.info("2. InitializingBean.afterPropertiesSet() 호출");
-        this.status = "PROPERTIES_SET";
+        log.info("3. InitializingBean.afterPropertiesSet() 호출");
+        // POST_CONSTRUCT 상태를 유지하기 위해 status 변경하지 않음
     }
     
     @PreDestroy

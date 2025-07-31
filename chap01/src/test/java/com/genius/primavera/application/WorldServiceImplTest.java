@@ -29,15 +29,15 @@ public class WorldServiceImplTest {
      * 이 테스트는 WorldServiceImpl 클래스의 world() 메서드가 올바르게 동작하는지 검증합니다.
      */
     @Test
-    @DisplayName("world() 메서드는 'World'를 반환해야 한다")
+    @DisplayName("world() 메서드는 'World!!!'를 반환해야 한다")
     public void world() {
         WorldService worldService = new WorldServiceImpl();
         String result = worldService.world();
-        assertThat(result).isEqualTo("World");
+        assertThat(result).isEqualTo("World!!!");
     }
 
     /**
-     * hello()와 world() 메서드는 각각 'Hello'와 'World'를 반환해야 한다
+     * hello()와 world() 메서드는 각각 'Hello'와 'World!!!'를 반환해야 한다
      * 이 테스트는 WorldServiceImpl 클래스의 hello() 및 world() 메서드가 올바르게 동작하는지 검증합니다.
      */
     @Test
@@ -46,6 +46,6 @@ public class WorldServiceImplTest {
         String hello = worldService.hello();
         String world = worldService.world();
         assertThat(hello).isEqualTo("Hello");
-        assertThat(world).isEqualTo("World");
+        assertThat(world).isEqualTo("World!!!");
     }
 }

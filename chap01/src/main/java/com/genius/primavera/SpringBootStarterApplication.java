@@ -15,6 +15,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.context.event.ApplicationContextInitializedEvent;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
@@ -31,6 +32,7 @@ import org.springframework.context.event.EventListener;
 @SpringBootConfiguration
 @EnableAutoConfiguration
 @ComponentScan
+@EnableConfigurationProperties
 public class SpringBootStarterApplication {
     @Generated
     private static final Logger log = LoggerFactory.getLogger(SpringBootStarterApplication.class);

@@ -23,7 +23,7 @@ public class SpringBootStarterApplicationTest {
 
 
     @Test
-    @DisplayName("WorldService 빈이 정상적으로 등록되고 hello()가 'World!!!'를 반환한다.")
+    @DisplayName("WorldService 빈이 정상적으로 등록되고 hello()가 'Hello'를 반환한다.")
     void worldServiceBeanIsRegistered() {
         // given
         WorldService worldService = context.getBean(WorldService.class);
@@ -31,7 +31,7 @@ public class SpringBootStarterApplicationTest {
         String helloResult = worldService.hello();
         // then
         assertThat(worldService).isNotNull();
-        assertThat(helloResult).isEqualTo("World!!!");
+        assertThat(helloResult).isEqualTo("Hello");
     }
 
     @Test

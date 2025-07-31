@@ -9,7 +9,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @DisplayName("설정 관리 테스트")
-class ConfigurationExampleTest {
+public class ConfigurationExampleTest {
     
     @Autowired
     private ConfigurationExample.ValueAnnotationExample valueExample;

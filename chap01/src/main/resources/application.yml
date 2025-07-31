@@ -11,6 +11,7 @@ app:
     - user-management
     - authentication
     - reporting
+  features-string: user-management,authentication,reporting
   database:
     url: jdbc:h2:mem:primavera
     username: sa
