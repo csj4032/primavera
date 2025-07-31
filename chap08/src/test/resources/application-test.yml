@@ -1,12 +1,57 @@
 spring:
+  config:
+    activate:
+      on-profile: test
+    import:
+      - "optional:vault:"
+      - "optional:configserver:"
   banner:
     charset: UTF-8
     location: classpath:primavera.txt
+  cloud:
+    vault:
+      host: localhost
+      port: 8200
+      scheme: http
+      authentication: TOKEN
+      token: ${VAULT_TOKEN}
+      connection-timeout: 5000
+      read-timeout: 15000
+      fail-fast: true
+      kv:
+        enabled: true
+        backend: secret
+        profile-separator: '/'
+        default-context: DataAccessApplication
+        application-name: DataAccessApplication
+        profiles: test
+  datasource:
+    hikari:
+      minimum-idle: 5                    # 최소 유휴 연결: 5개 (적절한 준비)
+      maximum-pool-size: 10              # 최대 연결: 10개 (일반적 동시성)
+      idle-timeout: 600000               # 유휴 타임아웃: 10분 (안정적)
+      max-lifetime: 1800000              # 연결 수명: 30분 (표준)
+      connection-timeout: 30000          # 연결 타임아웃: 30초 (여유있는 대기)
+      pool-name: "BalancedHikariPool"
+      leak-detection-threshold: 60000    # 누수 감지: 1분 (개발환경 감지)
+      connection-test-query: "SELECT 1"
+      validation-timeout: 5000           # 검증 타임아웃: 5초
   thymeleaf:
     cache: false
     enabled: true
     prefix: classpath:/templates/
     suffix: .html
+
+primavera:
+  testcontainers:
+    mariadb:
+      enabled: true
+      dockerImageName: mariadb:11.4.7
+      driverClassName: org.mariadb.jdbc.Driver
+      databaseName: primavera
+      username: primavera
+      password: primavera
+      initScript: sql/init-db.sql
 
 mybatis:
   configuration:

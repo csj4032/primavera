@@ -12,16 +12,38 @@ spring:
         - file-warn-appender
       test:
         - console-appender
+  hikari:
+    auto-commit: false
+    data-source-properties:
+      cachePrepStmts: false
+      useServerPrepStmts: false
+      useLocalSessionState: false
+      cacheResultSetMetadata: false
+      preparedStatementCacheQueries: 0
+  cloud:
+    vault:
+      host: localhost
+      port: 8200
+      scheme: http
+      authentication: TOKEN
+      token: ${VAULT_TOKEN}
+      connection-timeout: 5000
+      read-timeout: 15000
+      fail-fast: true
+      kv:
+        enabled: true
+        backend: secret
+        profile-separator: '/'
+        default-context: DataAccessApplication
+        application-name: DataAccessApplication
   jackson:
     time-zone: UTC
-  main:
-    allow-bean-definition-overriding: true
 
-  lucy-filter:
-    enabled: true
-    name: lucyXssFilter
-    order: 1
-    addUrlPatterns: /*
+lucy-filter:
+  enabled: true
+  name: lucyXssFilter
+  order: 1
+  addUrlPatterns: /*
 
 logging:
   config: classpath:logback-spring.xml

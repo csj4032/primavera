@@ -1,0 +1,38 @@
+2025-07-31 18:52:05.461 [Test worker] INFO  c.g.p.d.SpringDataSourceTest - Starting SpringDataSourceTest using Java 21.0.6 with PID 24466 (started by genius in /Users/genius/Workspace/primavera/chap08)
+2025-07-31 18:52:05.461 [Test worker] INFO  c.g.p.d.SpringDataSourceTest - The following 6 profiles are active: "local", "console-appender", "file-debug-appender", "file-error-appender", "file-info-appender", "file-warn-appender"
+2025-07-31 18:52:06.075 [Test worker] INFO  c.g.p.a.LucyFilterConfiguration - LucyFilterConfiguration
+2025-07-31 18:52:06.109 [Test worker] INFO  c.g.p.a.LucyFilterAutoConfiguration - LucyFilterApplicationConfigurationAdapter
+2025-07-31 18:52:06.109 [Test worker] INFO  c.g.p.a.LucyFilterAutoConfiguration - FilterRegistrationBean : com.genius.primavera.autoconfigure.LucyFilterAutoConfiguration$LucyFilterApplicationConfigurationAdapter$$SpringCGLIB$$0@ea92986
+2025-07-31 18:52:06.111 [Test worker] INFO  c.g.p.a.LucyFilterAutoConfiguration - LucyFilterApplicationConfiguration
+2025-07-31 18:52:06.188 [Test worker] INFO  o.s.b.a.w.s.WelcomePageHandlerMapping - Adding welcome page template: index
+2025-07-31 18:52:06.356 [Test worker] INFO  c.g.p.d.SpringDataSourceTest - Started SpringDataSourceTest in 1.089 seconds (process running for 10.718)
+2025-07-31 18:52:06.368 [Test worker] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Starting...
+2025-07-31 18:52:06.373 [Test worker] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-2 - Added connection org.mariadb.jdbc.Connection@1edef11
+2025-07-31 18:52:06.373 [Test worker] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Start completed.
+2025-07-31 18:52:06.546 [Test worker] INFO  o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.genius.primavera.interfaces.LucyFilterTest]: LucyFilterTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2025-07-31 18:52:06.553 [Test worker] INFO  o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.genius.primavera.SecurityFilterApplication for test class com.genius.primavera.interfaces.LucyFilterTest
+2025-07-31 18:52:06.555 [Test worker] INFO  o.s.b.d.r.RestartApplicationListener - Restart disabled due to context in which it is running
+2025-07-31 18:52:06.572 [Test worker] INFO  c.g.p.interfaces.LucyFilterTest - Starting LucyFilterTest using Java 21.0.6 with PID 24466 (started by genius in /Users/genius/Workspace/primavera/chap08)
+2025-07-31 18:52:06.573 [Test worker] INFO  c.g.p.interfaces.LucyFilterTest - The following 2 profiles are active: "test", "console-appender"
+2025-07-31 18:52:06.695 [Test worker] INFO  o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.genius.primavera.interfaces.PrimaveraFilterTest]: PrimaveraFilterTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2025-07-31 18:52:06.696 [Test worker] INFO  o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.genius.primavera.SecurityFilterApplication for test class com.genius.primavera.interfaces.PrimaveraFilterTest
+2025-07-31 18:52:06.697 [Test worker] INFO  tc.mariadb:11.4.7 - Creating container for image: mariadb:11.4.7
+2025-07-31 18:52:06.762 [Test worker] INFO  tc.mariadb:11.4.7 - Container mariadb:11.4.7 is starting: ee1f99e6c94a5e6ecf5f46898515d857a4caf7ec28fd39253198508e79470da1
+2025-07-31 18:52:06.912 [Test worker] INFO  tc.mariadb:11.4.7 - Waiting for database connection to become available at jdbc:mariadb://localhost:50099/primavera using query 'SELECT 1'
+2025-07-31 18:52:10.222 [Test worker] INFO  tc.mariadb:11.4.7 - Container mariadb:11.4.7 started in PT3.525091S
+2025-07-31 18:52:10.222 [Test worker] INFO  tc.mariadb:11.4.7 - Container is started (JDBC URL: jdbc:mariadb://localhost:50099/primavera)
+2025-07-31 18:52:10.225 [Test worker] INFO  o.s.b.d.r.RestartApplicationListener - Restart disabled due to context in which it is running
+2025-07-31 18:52:10.260 [Test worker] INFO  c.g.p.interfaces.PrimaveraFilterTest - Starting PrimaveraFilterTest using Java 21.0.6 with PID 24466 (started by genius in /Users/genius/Workspace/primavera/chap08)
+2025-07-31 18:52:10.260 [Test worker] INFO  c.g.p.interfaces.PrimaveraFilterTest - The following 6 profiles are active: "local", "console-appender", "file-debug-appender", "file-error-appender", "file-info-appender", "file-warn-appender"
+2025-07-31 18:52:10.333 [Test worker] INFO  c.g.g.b.j.d.p6spy.P6SpyConfiguration - P6Spy modulelist is overridden, some p6spy configuration features will not be applied
+2025-07-31 18:52:10.343 [Test worker] INFO  c.g.p.a.LucyFilterConfiguration - LucyFilterConfiguration
+2025-07-31 18:52:10.344 [Test worker] INFO  c.g.p.a.LucyFilterAutoConfiguration - LucyFilterApplicationConfigurationAdapter
+2025-07-31 18:52:10.344 [Test worker] INFO  c.g.p.a.LucyFilterAutoConfiguration - FilterRegistrationBean : com.genius.primavera.autoconfigure.LucyFilterAutoConfiguration$LucyFilterApplicationConfigurationAdapter$$SpringCGLIB$$0@4d1ec2bf
+2025-07-31 18:52:10.345 [Test worker] INFO  c.g.p.a.LucyFilterAutoConfiguration - LucyFilterApplicationConfiguration
+2025-07-31 18:52:10.361 [Test worker] INFO  o.s.b.a.w.s.WelcomePageHandlerMapping - Adding welcome page template: index
+2025-07-31 18:52:10.405 [Test worker] INFO  o.s.b.t.m.w.SpringBootMockServletContext - Initializing Spring TestDispatcherServlet ''
+2025-07-31 18:52:10.405 [Test worker] INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2025-07-31 18:52:10.406 [Test worker] INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 1 ms
+2025-07-31 18:52:10.411 [Test worker] INFO  c.g.p.interfaces.PrimaveraFilterTest - Started PrimaveraFilterTest in 0.187 seconds (process running for 14.773)
+2025-07-31 18:52:10.721 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Shutdown initiated...
+2025-07-31 18:52:12.623 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Shutdown completed.
