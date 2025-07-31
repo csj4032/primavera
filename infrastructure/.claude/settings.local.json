@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(../gradlew :chap08:test:*)",
+      "Bash(./gradlew:*)",
+      "Bash(cp:*)",
+      "Bash(for chap in chap06 chap07 chap08 chap09 chap10 chap11 chap12 chap13)",
+      "Bash(do)",
+      "Bash(echo:*)",
+      "Bash(grep:*)",
+      "Bash(done)"
+    ],
+    "deny": []
+  }
+}

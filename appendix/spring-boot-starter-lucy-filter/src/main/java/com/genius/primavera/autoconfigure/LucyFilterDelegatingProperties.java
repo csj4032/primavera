@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @Getter
 @Setter
-@ConfigurationProperties(prefix = "spring.lucy-filter")
+@ConfigurationProperties(prefix = "lucy-filter")
 public class LucyFilterDelegatingProperties {
     private boolean enabled = true;
     private String name = "xssEscapeServletFilter";

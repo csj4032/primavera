@@ -10,4 +10,7 @@ dependencies {
     testContainersDependencies.each { dep -> testImplementation dep }
     implementation "org.springframework.security:spring-security-crypto:${springSecurityVersion}"
     implementation "org.hibernate:hibernate-core:${hibernateVersion}"
+    implementation project(":appendix:spring-boot-starter-lucy-filter")
+    testImplementation project(":appendix:spring-boot-starter-lucy-filter")
+    testImplementation project(":appendix:spring-boot-starter-test-container")
 }

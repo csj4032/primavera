@@ -27,20 +27,25 @@ spring:
         profiles: test
   datasource:
     hikari:
-      minimum-idle: 5                    # 최소 유휴 연결: 5개 (적절한 준비)
-      maximum-pool-size: 10              # 최대 연결: 10개 (일반적 동시성)
-      idle-timeout: 600000               # 유휴 타임아웃: 10분 (안정적)
-      max-lifetime: 1800000              # 연결 수명: 30분 (표준)
-      connection-timeout: 30000          # 연결 타임아웃: 30초 (여유있는 대기)
+      minimum-idle: 5
+      maximum-pool-size: 10
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      connection-timeout: 30000
       pool-name: "BalancedHikariPool"
-      leak-detection-threshold: 60000    # 누수 감지: 1분 (개발환경 감지)
+      leak-detection-threshold: 60000
       connection-test-query: "SELECT 1"
-      validation-timeout: 5000           # 검증 타임아웃: 5초
+      validation-timeout: 5000
   thymeleaf:
     cache: false
     enabled: true
     prefix: classpath:/templates/
     suffix: .html
+lucy-filter:
+  enabled: true
+  name: lucyXssFilter
+  order: 1
+  addUrlPatterns: /*
 
 primavera:
   testcontainers:

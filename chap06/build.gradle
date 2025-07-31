@@ -11,4 +11,7 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-data-jpa"
     implementation "org.hibernate:hibernate-core:${hibernateVersion}"
     implementation "org.springframework.security:spring-security-crypto:${springSecurityVersion}"
+    implementation project(":appendix:spring-boot-starter-lucy-filter")
+    testImplementation project(":appendix:spring-boot-starter-lucy-filter")
+    testImplementation project(":appendix:spring-boot-starter-test-container")
 }

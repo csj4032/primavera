@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Configuration;
 @ConditionalOnClass(XssEscapeServletFilter.class)
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 @EnableConfigurationProperties(LucyFilterDelegatingProperties.class)
-@ConditionalOnProperty(prefix = "spring.lucy-filter", name = "enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "lucy-filter", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class LucyFilterAutoConfiguration {
 
 	@Bean
