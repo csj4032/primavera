@@ -11,6 +11,15 @@ spring:
     encoding: UTF-8
     fail-on-missing-locations: false
 
+server:
+  ssl:
+    key-alias: primavera
+    key-store: infrastructure/certs/primavera.p12
+    key-store-type: PKCS12
+    key-store-password: primavera
+    enabled: true
+  port: 8443
+
 mybatis:
   configuration:
     map-underscore-to-camel-case: true
@@ -28,12 +37,3 @@ lucy-filter:
 primavera:
   logs:
     path: ./logs
-
-server:
-  ssl:
-    key-alias: primavera
-    key-store: infrastructure/certs/primavera.p12
-    key-store-type: PKCS12
-    key-store-password: primavera
-    enabled: true
-  port: 8443

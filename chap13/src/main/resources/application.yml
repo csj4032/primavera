@@ -1,6 +1,9 @@
 spring:
   application:
     name: AdvancedAuthorizationApplication
+  banner:
+    charset: UTF-8
+    location: classpath:primavera.txt
   jackson:
     time-zone: UTC
   mvc:
@@ -11,22 +14,6 @@ spring:
     url: jdbc:mariadb://localhost:3306/primavera?useLegacyDatetimeCode=false&serverTimezone=UTC
     username: primavera
     password: primavera
-  banner:
-    charset: UTF-8
-    location: classpath:primavera.txt
-  thymeleaf:
-    template-resolver-order: 1
-    cache: false
-    enabled: true
-    prefix: classpath:/templates/
-    suffix: .html
-    reactive:
-      chunked-mode-view-names: chart
-      max-chunk-size: 8192
-    check-template: false
-  devtools:
-    livereload:
-      enabled: true
   flyway:
     enabled: false
     encoding: UTF-8
@@ -45,6 +32,30 @@ spring:
       database: primavera
       username: primavera
       password: primavera
+  thymeleaf:
+    template-resolver-order: 1
+    cache: false
+    enabled: true
+    prefix: classpath:/templates/
+    suffix: .html
+    reactive:
+      chunked-mode-view-names: chart
+      max-chunk-size: 8192
+    check-template: false
+  devtools:
+    livereload:
+      enabled: true
+
+server:
+  ssl:
+    key-alias: primavera
+    key-store: infrastructure/certs/primavera.p12
+    key-store-type: PKCS12
+    key-store-password: primavera
+    enabled: true
+  port: 8443
+  http2:
+    enabled: true
 
 mybatis:
   configuration:
@@ -62,17 +73,6 @@ lucy-filter:
 
 logging:
   config: classpath:logback.xml
-
-server:
-  ssl:
-    key-alias: primavera
-    key-store: infrastructure/certs/primavera.p12
-    key-store-type: PKCS12
-    key-store-password: primavera
-    enabled: true
-  port: 8443
-  http2:
-    enabled: true
 
 storage:
   location: upload

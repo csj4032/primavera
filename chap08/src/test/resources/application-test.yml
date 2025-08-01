@@ -38,6 +38,15 @@ spring:
     enabled: true
     prefix: classpath:/templates/
     suffix: .html
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+    default-fetch-size: 1000
+    default-statement-timeout: 30
+  type-aliases-package: com.genius.primavera.domain
+  type-handlers-package: com.genius.primavera.domain
+
 lucy-filter:
   enabled: true
   name: lucyXssFilter
@@ -54,11 +63,3 @@ primavera:
       username: primavera
       password: primavera
       initScript: sql/init-db.sql
-
-mybatis:
-  configuration:
-    map-underscore-to-camel-case: true
-    default-fetch-size: 1000
-    default-statement-timeout: 30
-  type-aliases-package: com.genius.primavera.domain
-  type-handlers-package: com.genius.primavera.domain
