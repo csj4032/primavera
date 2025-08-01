@@ -5,9 +5,6 @@ spring:
     import:
       - "optional:vault:"
       - "optional:configserver:"
-  banner:
-    charset: UTF-8
-    location: classpath:primavera.txt
   cloud:
     vault:
       host: localhost

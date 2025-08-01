@@ -1,6 +1,6 @@
 spring:
   application:
-    name: primavera-chap01
+    name: SpringBootStarterApplication
 
 app:
   name: Primavera Tutorial

@@ -78,7 +78,7 @@ GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, ALTER ON advance.* TO 'relat
 ## 핵심 구현 요소
 
 ### 1. Thymeleaf Layout 구성
-- **LayoutDialect Bean 등록**: ThymeleafJpaApplication에서 설정
+- **LayoutDialect Bean 등록**: ThymeleafWebApplication에서 설정
 - **레이아웃 구조**:
   - `layouts/layout.html`: 기본 레이아웃 템플릿
   - `fragments/`: header, aside, footer 조각

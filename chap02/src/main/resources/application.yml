@@ -1,6 +1,6 @@
 spring:
   application:
-    name: chap02-app
+    name: ConfigurationDependencyApplication
 
 plantPlaces:
   api:
