@@ -12,3 +12,7 @@ logging:
   level:
     org.springframework: debug
     com.genius.primavera: debug
+
+primavera:
+  logs:
+    path: ./logs

@@ -1,7 +1,18 @@
 spring:
   application:
     name: SpringBootStarterApplication
+  jackson:
+    time-zone: UTC
 
+server:
+  tomcat:
+    use-apr: never
+
+primavera:
+  logs:
+    path: ./logs
+
+# 챕터별 고유 설정
 app:
   name: Primavera Tutorial
   version: 1.0.0
