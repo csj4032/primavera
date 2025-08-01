@@ -88,8 +88,8 @@ vault kv put secret/ValidationApplication/local \
     lucy.xss.enabled=true \
     lucy.xss.rule-config-path=lucy-xss-servlet-filter-rule.xml
 
-# chap07: ThymeleafJpaApplication
-vault kv put secret/ThymeleafJpaApplication/local \
+# chap07: ThymeleafWebApplication
+vault kv put secret/ThymeleafWebApplication/local \
     spring.datasource.url=jdbc:mariadb://localhost:3308/primavera_mybatis \
     spring.datasource.username=primavera \
     spring.datasource.password=primavera \
@@ -260,8 +260,8 @@ vault kv put secret/ValidationApplication/test \
     lucy.xss.enabled=true \
     lucy.xss.rule-config-path=lucy-xss-servlet-filter-rule.xml
 
-# chap07: ThymeleafJpaApplication
-vault kv put secret/ThymeleafJpaApplication/test \
+# chap07: ThymeleafWebApplication
+vault kv put secret/ThymeleafWebApplication/test \
     spring.datasource.url=jdbc:mariadb://localhost:3309/primavera_mybatis \
     spring.datasource.username=primavera \
     spring.datasource.password=primavera \
@@ -433,8 +433,8 @@ vault kv put secret/ValidationApplication/prod \
     lucy.xss.enabled=true \
     lucy.xss.rule-config-path=lucy-xss-servlet-filter-rule.xml
 
-# chap07: ThymeleafJpaApplication
-vault kv put secret/ThymeleafJpaApplication/prod \
+# chap07: ThymeleafWebApplication
+vault kv put secret/ThymeleafWebApplication/prod \
     spring.datasource.url=jdbc:mariadb://localhost:3310/primavera_mybatis \
     spring.datasource.username=primavera \
     spring.datasource.password=primavera \
@@ -585,7 +585,7 @@ path "secret/data/MyBatisLoggingApplication/*" {
 path "secret/data/ValidationApplication/*" {
   capabilities = ["read", "list"]
 }
-path "secret/data/ThymeleafJpaApplication/*" {
+path "secret/data/ThymeleafWebApplication/*" {
   capabilities = ["read", "list"]
 }
 path "secret/data/SecurityFilterApplication/*" {

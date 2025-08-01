@@ -442,7 +442,7 @@ docker-compose up -d
 | chap02 | ConfigurationDependencyApplication | primavera | `secret/ConfigurationDependencyApplication/{env}` |
 | chap03 | MvcAopApplication | primavera | `secret/MvcAopApplication/{env}` |
 | chap04-05 | DataAccessApplication, MyBatisLoggingApplication | primavera_basic | `secret/DataAccessApplication/{env}` |
-| chap06-11 | ValidationApplication, ThymeleafJpaApplication, BoardSystemApplication | primavera_mybatis | `secret/ValidationApplication/{env}` |
+| chap06-11 | ValidationApplication, ThymeleafWebApplication, BoardSystemApplication | primavera_mybatis | `secret/ValidationApplication/{env}` |
 | chap12-13 | HierarchicalCommentApplication, AdvancedAuthorizationApplication | primavera_mybatis_board | `secret/HierarchicalCommentApplication/{env}` |
 | chap14-15 | JpaAdvancedMappingApplication, ReactiveProgrammingApplication | primavera_jpa_advanced | `secret/JpaAdvancedMappingApplication/{env}` |
 | chap16-17 | FileProcessingMonitoringApplication, CiCdDeploymentApplication | primavera_jpa_board | `secret/FileProcessingMonitoringApplication/{env}` |
