@@ -1,8 +1,7 @@
 package com.genius.primavera.testContainer;
 
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.env.Environment;
@@ -20,11 +19,13 @@ import java.sql.SQLException;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
-@SpringBootTest(classes = TestConfiguration.class)
+@Order(3)
 @ActiveProfiles("test")
-@EnablePrimaveraTestcontainers({ContainerType.MARIADB, ContainerType.REDIS})
 @DisplayName("다중 컨테이너 통합 테스트")
-class MultiContainerIntegrationTest {
+@SpringBootTest(classes = TestConfiguration.class)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@EnablePrimaveraTestcontainers({ContainerType.MARIADB, ContainerType.REDIS})
+public class MultiContainerIntegrationTest {
 
     @Autowired
     private Environment environment;
@@ -39,6 +40,7 @@ class MultiContainerIntegrationTest {
     private RedisTemplate<String, Object> redisTemplate;
 
     @Test
+    @Order(1)
     @DisplayName("MariaDB와 Redis 컨테이너가 모두 시작되는지 확인")
     void shouldStartBothMariaDBAndRedisContainers() {
         // MariaDB 컨테이너 확인
@@ -57,6 +59,7 @@ class MultiContainerIntegrationTest {
     }
 
     @Test
+    @Order(2)
     @DisplayName("MariaDB와 Redis 모두에 연결 가능한지 확인")
     void shouldConnectToBothDatabases() {
         // MariaDB 연결 테스트
@@ -76,26 +79,25 @@ class MultiContainerIntegrationTest {
             try (RedisConnection connection = redisConnectionFactory.getConnection()) {
                 assertNotNull(connection, "Redis connection should not be null");
                 assertNotNull(connection.ping(), "Should be able to ping Redis");
-
                 log.info("Connected to Redis successfully");
+            } catch (Exception e) {
+                log.error("Failed to connect to Redis: ", e);
+                fail("Should be able to connect to Redis", e);
             }
+        } else {
+            log.warn("RedisConnectionFactory is not available - skipping Redis connection test");
         }
 
         log.info("Successfully connected to both MariaDB and Redis");
     }
 
     @Test
+    @Order(3)
     @DisplayName("양쪽 데이터베이스에서 동시 작업 수행")
     void shouldPerformOperationsOnBothDatabases() throws SQLException {
         if (dataSource != null) {
             try (Connection connection = dataSource.getConnection()) {
-                connection.createStatement().execute(
-                        "CREATE TABLE IF NOT EXISTS multi_test (" +
-                                "id INT AUTO_INCREMENT PRIMARY KEY, " +
-                                "name VARCHAR(50) NOT NULL, " +
-                                "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP" +
-                                ")"
-                );
+                connection.createStatement().execute("CREATE TABLE IF NOT EXISTS multi_test (" + "id INT AUTO_INCREMENT PRIMARY KEY, " + "name VARCHAR(50) NOT NULL, " + "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP" + ")");
 
                 connection.createStatement().execute("INSERT INTO multi_test (name) VALUES ('Multi Container Test')");
                 var resultSet = connection.createStatement().executeQuery("SELECT COUNT(*) as count FROM multi_test");
@@ -124,6 +126,7 @@ class MultiContainerIntegrationTest {
     }
 
     @Test
+    @Order(4)
     @DisplayName("캐시-데이터베이스 패턴 시뮬레이션")
     void shouldSimulateCacheDatabasePattern() throws SQLException {
         if (dataSource == null || redisTemplate == null) {
@@ -135,18 +138,8 @@ class MultiContainerIntegrationTest {
         String userCacheKey = "cache:" + userId;
 
         try (Connection connection = dataSource.getConnection()) {
-            connection.createStatement().execute(
-                    "CREATE TABLE IF NOT EXISTS users (" +
-                            "id INT PRIMARY KEY, " +
-                            "username VARCHAR(50), " +
-                            "email VARCHAR(100)" +
-                            ")"
-            );
-            connection.createStatement().execute(
-                    "INSERT INTO users (id, username, email) VALUES " +
-                            "(1001, 'testuser', 'test@example.com') " +
-                            "ON DUPLICATE KEY UPDATE username=VALUES(username)"
-            );
+            connection.createStatement().execute("CREATE TABLE IF NOT EXISTS users (" + "id INT PRIMARY KEY, " + "username VARCHAR(50), " + "email VARCHAR(100)" + ")");
+            connection.createStatement().execute("INSERT INTO users (id, username, email) VALUES " + "(1001, 'testuser', 'test@example.com') " + "ON DUPLICATE KEY UPDATE username=VALUES(username)");
             log.info("User data stored in MariaDB");
         }
 
@@ -155,14 +148,10 @@ class MultiContainerIntegrationTest {
 
         String userData = null;
         try (Connection connection = dataSource.getConnection()) {
-            var resultSet = connection.createStatement().executeQuery(
-                    "SELECT username, email FROM users WHERE id = 1001"
-            );
+            var resultSet = connection.createStatement().executeQuery("SELECT username, email FROM users WHERE id = 1001");
 
             if (resultSet.next()) {
-                userData = String.format("{\"username\":\"%s\",\"email\":\"%s\"}",
-                        resultSet.getString("username"),
-                        resultSet.getString("email"));
+                userData = String.format("{\"username\":\"%s\",\"email\":\"%s\"}", resultSet.getString("username"), resultSet.getString("email"));
             }
         }
 
@@ -183,6 +172,7 @@ class MultiContainerIntegrationTest {
     }
 
     @Test
+    @Order(5)
     @DisplayName("환경 프로퍼티에 양쪽 데이터베이스 설정이 모두 존재하는지 확인")
     void shouldHaveBothDatabasePropertiesInEnvironment() {
         String jdbcUrl = environment.getProperty("spring.datasource.url");

@@ -3,9 +3,7 @@ package com.genius.primavera.testContainer.strategy;
 import com.genius.primavera.testContainer.ContainerType;
 import com.genius.primavera.testContainer.PrimaveraTestcontainersProperties;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.mock.env.MockEnvironment;
 import org.testcontainers.containers.MariaDBContainer;
 
@@ -14,7 +12,9 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
+@Order(2)
 @DisplayName("MariaDB 컨테이너 전략 테스트")
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class MariaDBContainerStrategyTest {
 
     private MariaDBContainerStrategy strategy;
@@ -29,18 +29,20 @@ class MariaDBContainerStrategyTest {
         config.setDatabaseName("test_db");
         config.setUsername("test_user");
         config.setPassword("test_pass");
-        config.setInitScript("sql/test-init.sql");
+        config.setInitScript("sql/test-init.sql"); // Remove for testing to avoid script loading issues
         
         strategy = new MariaDBContainerStrategy(environment, config);
     }
 
     @Test
+    @Order(1)
     @DisplayName("컨테이너 타입이 MARIADB인지 확인")
     void shouldReturnCorrectContainerType() {
         assertEquals(ContainerType.MARIADB, strategy.getContainerType());
     }
 
     @Test
+    @Order(2)
     @DisplayName("컨테이너가 올바르게 생성되는지 확인")
     void shouldCreateContainerWithCorrectConfiguration() {
         MariaDBContainer<?> container = (MariaDBContainer<?>) strategy.getContainer();
@@ -54,6 +56,7 @@ class MariaDBContainerStrategyTest {
     }
 
     @Test
+    @Order(3)
     @DisplayName("Spring 프로퍼티가 올바르게 생성되는지 확인")
     void shouldGenerateCorrectSpringProperties() {
         MariaDBContainer<?> container = (MariaDBContainer<?>) strategy.getContainer();
@@ -82,12 +85,14 @@ class MariaDBContainerStrategyTest {
     }
 
     @Test
+    @Order(4)
     @DisplayName("초기 상태에서 컨테이너가 실행 중이지 않은지 확인")
     void shouldNotBeRunningInitially() {
         assertFalse(strategy.isRunning());
     }
 
     @Test
+    @Order(5)
     @DisplayName("컨테이너 시작 후 실행 중인지 확인")
     void shouldBeRunningAfterStart() {
         MariaDBContainer<?> container = (MariaDBContainer<?>) strategy.getContainer();

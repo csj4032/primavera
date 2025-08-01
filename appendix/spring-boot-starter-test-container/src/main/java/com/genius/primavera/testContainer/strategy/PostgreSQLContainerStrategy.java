@@ -38,7 +38,10 @@ public class PostgreSQLContainerStrategy extends AbstractContainerStrategy<Postg
     }
 
     @Override
-    protected Map<String, Object> getSpringProperties(PostgreSQLContainer<?> container) {
+    public Map<String, Object> getSpringProperties(PostgreSQLContainer<?> container) {
+        if (!container.isRunning()) {
+            throw new IllegalStateException("Container must be started before accessing properties");
+        }
         return Map.of(
             "spring.datasource.url", container.getJdbcUrl(),
             "spring.datasource.username", container.getUsername(),

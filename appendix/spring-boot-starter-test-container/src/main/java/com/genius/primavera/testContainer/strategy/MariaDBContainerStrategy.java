@@ -26,7 +26,7 @@ public class MariaDBContainerStrategy extends AbstractContainerStrategy<MariaDBC
             .withUsername(config.getUsername())
             .withPassword(config.getPassword());
         
-        if (config.getInitScript() != null) {
+        if (config.getInitScript() != null && !config.getInitScript().trim().isEmpty()) {
             container.withInitScript(config.getInitScript());
         }
         
@@ -34,7 +34,10 @@ public class MariaDBContainerStrategy extends AbstractContainerStrategy<MariaDBC
     }
 
     @Override
-    protected Map<String, Object> getSpringProperties(MariaDBContainer<?> container) {
+    public Map<String, Object> getSpringProperties(MariaDBContainer<?> container) {
+        if (!container.isRunning()) {
+            throw new IllegalStateException("Container must be started before accessing properties");
+        }
         return Map.of(
             "spring.datasource.url", container.getJdbcUrl(),
             "spring.datasource.username", container.getUsername(),

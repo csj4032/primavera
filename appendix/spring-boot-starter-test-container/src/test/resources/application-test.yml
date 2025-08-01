@@ -6,6 +6,9 @@ primavera:
       databaseName: test_primavera
       username: test_user
       password: test_password
+    redis:
+      image: redis:7-alpine
+      port: 6379
 
 # Spring Boot 설정
 spring:

@@ -32,7 +32,10 @@ public class KafkaContainerStrategy extends AbstractContainerStrategy<KafkaConta
     }
 
     @Override
-    protected Map<String, Object> getSpringProperties(KafkaContainer container) {
+    public Map<String, Object> getSpringProperties(KafkaContainer container) {
+        if (!container.isRunning()) {
+            throw new IllegalStateException("Container must be started before accessing properties");
+        }
         var properties = new HashMap<String, Object>();
         properties.put("spring.kafka.bootstrap-servers", container.getBootstrapServers());
         if (config.getAdditionalProperties() != null) {

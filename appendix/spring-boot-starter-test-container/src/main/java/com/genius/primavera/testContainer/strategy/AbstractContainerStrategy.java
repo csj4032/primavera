@@ -27,22 +27,44 @@ public abstract class AbstractContainerStrategy<T extends GenericContainer<?>> i
     }
 
     protected abstract T createContainer();
-    protected abstract Map<String, Object> getSpringProperties(T container);
+    public abstract Map<String, Object> getSpringProperties(T container);
 
     @Override
     public void startContainer(ConfigurableApplicationContext applicationContext) {
         if (container == null) {
             container = createContainer();
+            log.info("Starting {} container with image: {}", containerType.name(), container.getDockerImageName());
             container.start();
-            log.info("{} container started at {}:{}", containerType.name(), container.getHost(), container.getFirstMappedPort());
+            
+            // Wait for container to be fully ready
+            if (!container.isRunning()) {
+                throw new RuntimeException(containerType.name() + " container failed to start properly");
+            }
+            
+            log.info("{} container started successfully at {}:{}", 
+                    containerType.name(), container.getHost(), container.getFirstMappedPort());
+            
             Map<String, Object> properties = getSpringProperties(container);
-            applicationContext.getEnvironment().getPropertySources().addFirst(new MapPropertySource(containerType.name() + "TestcontainersProperties", properties));
-            log.info("Added {} properties to Spring Environment: {}", containerType.name(), properties.keySet());
+            String propertySourceName = containerType.name() + "TestcontainersProperties";
+            MapPropertySource propertySource = new MapPropertySource(propertySourceName, properties);
+            applicationContext.getEnvironment().getPropertySources().addFirst(propertySource);
+            
+            log.info("Added {} properties to Spring Environment with source name '{}': {}", 
+                    containerType.name(), propertySourceName, properties);
+            
+            // 프로퍼티가 실제로 설정되었는지 확인
+            properties.forEach((key, value) -> {
+                String actualValue = applicationContext.getEnvironment().getProperty(key);
+                log.info("Property verification: {} = {} (expected: {})", key, actualValue, value);
+            });
         }
     }
 
     @Override
     public GenericContainer<?> getContainer() {
+        if (container == null) {
+            container = createContainer();
+        }
         return container;
     }
 

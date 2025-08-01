@@ -7,15 +7,15 @@ import com.genius.primavera.testContainer.strategy.MariaDBContainerStrategy;
 import com.genius.primavera.testContainer.strategy.PostgreSQLContainerStrategy;
 import com.genius.primavera.testContainer.strategy.RedisContainerStrategy;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.mock.env.MockEnvironment;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
+@Order(1)
 @DisplayName("컨테이너 전략 팩토리 테스트")
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class ContainerStrategyFactoryTest {
 
     private ContainerStrategyFactory factory;
@@ -28,6 +28,7 @@ class ContainerStrategyFactoryTest {
     }
 
     @Test
+    @Order(1)
     @DisplayName("MariaDB 전략을 올바르게 생성하는지 확인")
     void shouldCreateMariaDBStrategy() {
         ContainerStrategy strategy = factory.getStrategy(ContainerType.MARIADB);
@@ -40,6 +41,7 @@ class ContainerStrategyFactoryTest {
     }
 
     @Test
+    @Order(2)
     @DisplayName("Redis 전략을 올바르게 생성하는지 확인")
     void shouldCreateRedisStrategy() {
         ContainerStrategy strategy = factory.getStrategy(ContainerType.REDIS);
@@ -52,6 +54,7 @@ class ContainerStrategyFactoryTest {
     }
 
     @Test
+    @Order(3)
     @DisplayName("Kafka 전략을 올바르게 생성하는지 확인")
     void shouldCreateKafkaStrategy() {
         ContainerStrategy strategy = factory.getStrategy(ContainerType.KAFKA);
@@ -64,6 +67,7 @@ class ContainerStrategyFactoryTest {
     }
 
     @Test
+    @Order(4)
     @DisplayName("PostgreSQL 전략을 올바르게 생성하는지 확인")
     void shouldCreatePostgreSQLStrategy() {
         ContainerStrategy strategy = factory.getStrategy(ContainerType.POSTGRESQL);
@@ -76,6 +80,7 @@ class ContainerStrategyFactoryTest {
     }
 
     @Test
+    @Order(5)
     @DisplayName("모든 컨테이너 타입에 대해 전략을 생성할 수 있는지 확인")
     void shouldCreateStrategyForAllContainerTypes() {
         for (ContainerType containerType : ContainerType.values()) {
@@ -91,6 +96,7 @@ class ContainerStrategyFactoryTest {
     }
 
     @Test
+    @Order(6)
     @DisplayName("커스텀 프로퍼티가 있는 환경에서 전략 생성 테스트")
     void shouldCreateStrategyWithCustomProperties() {
         // 커스텀 프로퍼티 설정
@@ -115,6 +121,7 @@ class ContainerStrategyFactoryTest {
     }
 
     @Test
+    @Order(7)
     @DisplayName("동일한 컨테이너 타입에 대해 동일한 설정의 전략이 생성되는지 확인")
     void shouldCreateConsistentStrategies() {
         ContainerStrategy strategy1 = factory.getStrategy(ContainerType.MARIADB);

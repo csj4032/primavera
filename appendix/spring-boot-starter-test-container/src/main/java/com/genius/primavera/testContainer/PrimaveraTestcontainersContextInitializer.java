@@ -66,17 +66,41 @@ public class PrimaveraTestcontainersContextInitializer implements ApplicationCon
     }
 
     private void startContainer(ContainerType containerType, ConfigurableApplicationContext applicationContext) {
-        ContainerStrategy strategy = strategyCache.computeIfAbsent(containerType.name(), k -> factory.getStrategy(containerType));
-        if (!strategy.isRunning()) {
-            log.info("Starting {} container...", containerType.name());
-            strategy.startContainer(applicationContext);
-            log.info("{} container started successfully", containerType.name());
+        log.info("Attempting to start {} container", containerType.name());
+        try {
+            ContainerStrategy strategy = strategyCache.computeIfAbsent(containerType.name(), k -> {
+                log.info("Creating strategy for {} container", containerType.name());
+                return factory.getStrategy(containerType);
+            });
+            
+            if (!strategy.isRunning()) {
+                log.info("Starting {} container...", containerType.name());
+                strategy.startContainer(applicationContext);
+                log.info("{} container started successfully", containerType.name());
+            } else {
+                log.info("{} container is already running", containerType.name());
+            }
+        } catch (Exception e) {
+            log.error("Failed to start {} container: {}", containerType.name(), e.getMessage(), e);
+            // Remove failed strategy from cache to avoid confusion
+            strategyCache.remove(containerType.name());
+            throw new RuntimeException("Failed to start " + containerType.name() + " container", e);
         }
     }
 
     public static GenericContainer<?> getContainer(ContainerType containerType) {
+        log.debug("Getting container for type: {}", containerType.name());
         ContainerStrategy strategy = strategyCache.get(containerType.name());
-        return strategy != null ? strategy.getContainer() : null;
+        if (strategy == null) {
+            log.warn("No strategy found for container type: {}. Available strategies: {}", 
+                    containerType.name(), strategyCache.keySet());
+            return null;
+        }
+        GenericContainer<?> container = strategy.getContainer();
+        if (container == null) {
+            log.warn("Strategy returned null container for type: {}", containerType.name());
+        }
+        return container;
     }
 
     public static void stopAllContainers() {
