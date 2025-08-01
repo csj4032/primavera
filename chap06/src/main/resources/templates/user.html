@@ -3,10 +3,229 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="x-ua-compatible" content="ie=edge">
-	<title>Index</title>
+	<title th:text="#{label.user.management}">사용자 관리</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<style>
+		body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 40px; background-color: #f5f5f5; }
+		.container { max-width: 1200px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+		.header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #007bff; padding-bottom: 20px; }
+		.language-selector { text-align: right; margin-bottom: 20px; }
+		.language-selector a { margin: 0 5px; padding: 5px 15px; background: #007bff; color: white; text-decoration: none; border-radius: 4px; font-size: 14px; }
+		.language-selector a:hover { background: #0056b3; }
+		.current-locale { background: #28a745 !important; }
+		.section { margin-bottom: 30px; padding: 20px; border: 1px solid #ddd; border-radius: 6px; }
+		.section h3 { color: #007bff; margin-top: 0; }
+		.form-group { margin-bottom: 15px; }
+		.form-group label { display: block; margin-bottom: 5px; font-weight: bold; color: #333; }
+		.form-group input, .form-group select { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; }
+		.btn { padding: 10px 20px; margin: 5px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; }
+		.btn-primary { background: #007bff; color: white; }
+		.btn-success { background: #28a745; color: white; }
+		.btn-danger { background: #dc3545; color: white; }
+		.btn:hover { opacity: 0.9; }
+		.message-demo { background: #f8f9fa; padding: 15px; border-radius: 4px; margin: 10px 0; }
+		.error { color: #dc3545; font-size: 12px; margin-top: 5px; }
+		.success { color: #28a745; font-size: 14px; margin: 10px 0; }
+		.current-locale-info { background: #e7f3ff; padding: 15px; border-radius: 4px; margin-bottom: 20px; }
+		.api-demo { background: #fff3cd; padding: 15px; border-radius: 4px; margin: 10px 0; }
+		.form-row { display: flex; gap: 15px; }
+		.form-row .form-group { flex: 1; }
+		table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+		table th, table td { padding: 10px; border: 1px solid #ddd; text-align: left; }
+		table th { background-color: #f8f9fa; font-weight: bold; }
+	</style>
 </head>
 <body>
-hello world
+	<div class="container">
+		<!-- 헤더 및 언어 선택 -->
+		<div class="language-selector">
+			<a th:href="@{/users(lang=ko)}" th:class="${#locale.language == 'ko'} ? 'current-locale' : ''">한국어</a>
+			<a th:href="@{/users(lang=en)}" th:class="${#locale.language == 'en'} ? 'current-locale' : ''">English</a>
+			<a th:href="@{/users(lang=ja)}" th:class="${#locale.language == 'ja'} ? 'current-locale' : ''">日本語</a>
+		</div>
+
+		<div class="header">
+			<h1 th:text="#{label.user.management}">사용자 관리</h1>
+			<p th:text="#{label.i18n.demo}">국제화 기능 데모</p>
+		</div>
+
+		<!-- 현재 로케일 정보 -->
+		<div class="current-locale-info">
+			<h3 th:text="#{label.current.locale}">현재 로케일</h3>
+			<p><strong th:text="#{label.language}">언어</strong>: <span th:text="${#locale.language}">ko</span></p>
+			<p><strong th:text="#{label.country}">국가</strong>: <span th:text="${#locale.country}">KR</span></p>
+			<p><strong th:text="#{label.display.name}">표시명</strong>: <span th:text="${#locale.displayName}">한국어</span></p>
+		</div>
+
+		<!-- 사용자 등록 폼 -->
+		<div class="section">
+			<h3 th:text="#{label.user.registration}">사용자 등록</h3>
+			<form id="userForm">
+				<div class="form-row">
+					<div class="form-group">
+						<label th:text="#{label.email}">이메일</label>
+						<input type="email" name="email" th:placeholder="#{placeholder.email}" placeholder="이메일을 입력하세요">
+						<div class="error" id="email-error"></div>
+					</div>
+					<div class="form-group">
+						<label th:text="#{label.nickname}">별명</label>
+						<input type="text" name="nickname" th:placeholder="#{placeholder.nickname}" placeholder="별명을 입력하세요">
+						<div class="error" id="nickname-error"></div>
+					</div>
+				</div>
+				
+				<div class="form-row">
+					<div class="form-group">
+						<label th:text="#{label.password}">비밀번호</label>
+						<input type="password" name="password" th:placeholder="#{placeholder.password}" placeholder="비밀번호를 입력하세요">
+						<div class="error" id="password-error"></div>
+					</div>
+					<div class="form-group">
+						<label th:text="#{label.password.confirm}">비밀번호 확인</label>
+						<input type="password" name="passwordConfirm" th:placeholder="#{placeholder.password.confirm}" placeholder="비밀번호를 다시 입력하세요">
+						<div class="error" id="passwordConfirm-error"></div>
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label th:text="#{label.status}">상태</label>
+					<select name="status">
+						<option value="ACTIVE" th:text="#{user.status.active}">활성</option>
+						<option value="INACTIVE" th:text="#{user.status.inactive}">비활성</option>
+						<option value="SUSPENDED" th:text="#{user.status.suspended}">정지</option>
+						<option value="PENDING" th:text="#{user.status.pending}">승인 대기</option>
+					</select>
+				</div>
+
+				<div>
+					<button type="button" class="btn btn-primary" onclick="submitForm()" th:text="#{button.save}">저장</button>
+					<button type="reset" class="btn btn-danger" th:text="#{button.reset}">초기화</button>
+				</div>
+			</form>
+		</div>
+
+		<!-- 국제화 메시지 데모 -->
+		<div class="section">
+			<h3 th:text="#{label.message.demo}">메시지 데모</h3>
+			
+			<div class="message-demo">
+				<h4 th:text="#{label.validation.messages}">검증 메시지</h4>
+				<table>
+					<thead>
+						<tr>
+							<th th:text="#{table.header.message.type}">메시지 유형</th>
+							<th th:text="#{table.header.message.content}">메시지 내용</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td th:text="#{label.nickname.validation}">닉네임 검증</td>
+							<td th:text="#{com.genius.primavera.validate.nickname.message}">올바르지 않은 별명입니다</td>
+						</tr>
+						<tr>
+							<td th:text="#{label.password.match}">비밀번호 일치</td>
+							<td th:text="#{com.genius.primavera.validate.password.match.message}">비밀번호가 일치하지 않습니다</td>
+						</tr>
+						<tr>
+							<td th:text="#{label.email.validation}">이메일 검증</td>
+							<td th:text="#{jakarta.validation.constraints.Email.message}">올바른 이메일 형식이 아닙니다</td>
+						</tr>
+						<tr>
+							<td th:text="#{label.required.field}">필수 필드</td>
+							<td th:text="#{jakarta.validation.constraints.NotBlank.message}">필수 입력 항목입니다</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+
+			<div class="message-demo">
+				<h4 th:text="#{label.success.messages}">성공 메시지</h4>
+				<p><strong th:text="#{label.registration}">등록</strong>: <span th:text="#{user.registration.success}" class="success">회원가입이 성공적으로 완료되었습니다</span></p>
+				<p><strong th:text="#{label.update}">수정</strong>: <span th:text="#{user.update.success}" class="success">회원정보가 성공적으로 수정되었습니다</span></p>
+				<p><strong th:text="#{label.delete}">삭제</strong>: <span th:text="#{user.delete.success}" class="success">회원 탈퇴가 완료되었습니다</span></p>
+			</div>
+		</div>
+
+		<!-- API 테스트 섹션 -->
+		<div class="section">
+			<h3 th:text="#{label.api.demo}">API 데모</h3>
+			<div class="api-demo">
+				<p th:text="#{label.api.description}">국제화 API를 테스트해보세요</p>
+				<div class="form-group">
+					<label th:text="#{label.message.key}">메시지 키</label>
+					<input type="text" id="messageKey" value="user.registration.success" placeholder="user.registration.success">
+				</div>
+				<button type="button" class="btn btn-success" onclick="testMessageAPI()" th:text="#{button.test.api}">API 테스트</button>
+				<div id="apiResult" style="margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 4px; display: none;"></div>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		function submitForm() {
+			const form = document.getElementById('userForm');
+			const formData = new FormData(form);
+			
+			// 간단한 클라이언트 사이드 검증 데모
+			clearErrors();
+			
+			const email = formData.get('email');
+			const nickname = formData.get('nickname');
+			const password = formData.get('password');
+			const passwordConfirm = formData.get('passwordConfirm');
+			
+			let hasError = false;
+			
+			if (!email || !email.includes('@')) {
+				showError('email-error', '[[#{jakarta.validation.constraints.Email.message}]]');
+				hasError = true;
+			}
+			
+			if (!nickname || nickname.length < 2) {
+				showError('nickname-error', '[[#{com.genius.primavera.validate.nickname.message}]]');
+				hasError = true;
+			}
+			
+			if (password !== passwordConfirm) {
+				showError('passwordConfirm-error', '[[#{com.genius.primavera.validate.password.match.message}]]');
+				hasError = true;
+			}
+			
+			if (!hasError) {
+				alert('[[#{user.registration.success}]]');
+			}
+		}
+		
+		function clearErrors() {
+			document.querySelectorAll('.error').forEach(el => el.textContent = '');
+		}
+		
+		function showError(elementId, message) {
+			document.getElementById(elementId).textContent = message;
+		}
+		
+		function testMessageAPI() {
+			const messageKey = document.getElementById('messageKey').value;
+			
+			fetch(`/api/messages/get?key=${encodeURIComponent(messageKey)}`)
+				.then(response => response.json())
+				.then(data => {
+					const resultDiv = document.getElementById('apiResult');
+					resultDiv.innerHTML = `
+						<h4>[[#{label.api.result}]]</h4>
+						<p><strong>[[#{label.message.key}]]:</strong> ${data.key}</p>
+						<p><strong>[[#{label.message.content}]]:</strong> ${data.message}</p>
+						<p><strong>[[#{label.current.locale}]]:</strong> ${data.locale}</p>
+						<p><strong>[[#{label.status}]]:</strong> ${data.status}</p>
+					`;
+					resultDiv.style.display = 'block';
+				})
+				.catch(error => {
+					const resultDiv = document.getElementById('apiResult');
+					resultDiv.innerHTML = `<p style="color: red;">[[#{ajax.error}]]: ${error.message}</p>`;
+					resultDiv.style.display = 'block';
+				});
+		}
+	</script>
 </body>
 </html>

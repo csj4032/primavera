@@ -912,19 +912,20 @@ spring:
 
 ### 🔧 Phase 2: 중급 웹 개발 (chap06-09)
 
-#### **Chapter 06** - 고급 유효성 검증 ⭐ *Enhanced*
-- **학습 목표**: 엔터프라이즈급 데이터 검증 시스템 구축
+#### **Chapter 06** - 고급 유효성 검증 ⭐ *Enhanced & Updated*
+- **학습 목표**: 엔터프라이즈급 데이터 검증 시스템 구축 및 현대적 테스트 환경 구현
 - **주요 내용**:
-  - Jakarta Bean Validation (JSR-380)
-  - 커스텀 검증 어노테이션 개발
-  - 검증 그룹을 통한 상황별 검증
-  - GraalVM JavaScript 통합 검증
-  - TestContainers 기반 통합 테스트
-- **혁신 기능**:
-  - `@ScriptAssert`를 통한 복잡한 비즈니스 규칙 검증
-  - Docker 기반 MySQL 테스트 환경
-  - 실시간 유효성 검증 피드백
-- **핵심 클래스**: `NicknameValidator`, `AbstractContainerTest`
+  - **Jakarta Bean Validation (JSR-380)**: Spring Boot 3.x 완전 마이그레이션
+  - **커스텀 검증 어노테이션**: `@Nickname`, `@PasswordMatch` 비즈니스 규칙 검증
+  - **검증 그룹 시스템**: SaveGroup, UpdateGroup을 통한 상황별 검증 규칙
+  - **GraalVM JavaScript**: `@ScriptAssert`를 활용한 복잡한 날짜 로직 검증
+  - **TestContainers 혁신**: `@EnablePrimaveraTestcontainers` 자동 설정
+- **2025년 최신 기능**:
+  - **비밀번호 확인 검증**: `@PasswordMatch` 커스텀 애노테이션으로 비밀번호-확인 일치 검증
+  - **자동화된 테스트 환경**: spring-boot-starter-test-container 통합으로 설정 코드 99% 감소
+  - **MariaDB 11.4.7 표준화**: 개발/테스트 환경 데이터베이스 버전 통일
+  - **MyBatis 고급 매핑**: 어노테이션 기반 중첩 결과 매핑 및 커스텀 타입 핸들러
+- **핵심 클래스**: `NicknameValidator`, `PasswordMatchValidator`, `@EnablePrimaveraTestcontainers`
 
 #### **Chapter 07** - Thymeleaf와 JPA
 - **학습 목표**: 서버사이드 렌더링과 ORM 구현
@@ -1025,40 +1026,83 @@ spring:
   - **캐싱**: Redis 기반 분산 캐시
 - **아키텍처 패턴**: 마이크로서비스 분해 전략
 
-#### **Chapter 17** - 엔터프라이즈 데이터 파이프라인 ⭐ *New*
-- **학습 목표**: Spring Batch + Debezium Embedded를 활용한 실시간 데이터 파이프라인 구축
+#### **Chapter 17** - 엔터프라이즈 데이터 파이프라인 ⭐ *Revolutionary*
+- **학습 목표**: Spring Batch + Debezium Embedded를 활용한 하이브리드 실시간 데이터 파이프라인 구축
+- **핵심 아키텍처**:
+  ```
+  MariaDB (Source) → Debezium Embedded CDC → Elasticsearch (Search Index)
+           ↓
+  Spring Batch (초기 인덱싱) → Bulk API → 고성능 검색 준비
+  ```
 - **주요 내용**:
-  - **Spring Batch**: 대용량 초기 인덱싱 (Products + Sellers + Categories)
-  - **Debezium Embedded**: Kafka 없이 MariaDB CDC 실시간 처리
-  - **Elasticsearch**: 검색 최적화된 문서 저장소
-  - **경량 아키텍처**: 별도 Kafka 인프라 불필요한 CDC 구현
-- **서브모듈 구조**:
-  - `chap17/batch`: 초기 전체 데이터 인덱싱
-  - `chap17/streaming`: 실시간 CDC 업데이트
+  - **Phase 1 - Spring Batch**: 대용량 초기 전체 인덱싱 (Products + Sellers + Categories 조합)
+  - **Phase 2 - Debezium Embedded**: Kafka 클러스터 없이 MariaDB binlog CDC 실시간 처리
+  - **Elasticsearch 통합**: 검색 최적화된 문서 저장소 및 Bulk API 활용
+  - **경량 CDC 아키텍처**: 별도 Kafka 인프라 불필요한 혁신적 구현
+- **멀티모듈 구조**:
+  - `chap17/batch`: Spring Batch 기반 초기 전체 데이터 인덱싱
+  - `chap17/streaming`: Debezium Embedded 기반 실시간 Delta 업데이트
 - **혁신 기능**:
-  - Chunk 기반 배치 처리로 메모리 효율성 극대화
-  - binlog 기반 실시간 변경 감지
-  - 배치와 스트리밍 조합으로 최종 일관성 보장
+  - **하이브리드 처리**: 초기 배치 인덱싱 + 실시간 CDC 업데이트 조합
+  - **메모리 효율성**: Chunk 기반 배치 처리로 대용량 데이터 안전 처리
+  - **실시간 감지**: MariaDB binlog 모니터링을 통한 즉시 변경 감지
+  - **최종 일관성**: 배치와 스트리밍 조합으로 데이터 일관성 보장
+  - **운영 간소화**: Kafka Connect, Zookeeper 등 추가 인프라 불필요
 
-#### **Chapter 18** - 마이크로서비스 + Kafka 이벤트 시스템 ⭐ *Enhanced*
-- **학습 목표**: 이벤트 기반 마이크로서비스 아키텍처 및 Saga 패턴 구현
-- **주요 내용**:
-  - **마이크로서비스 분해**: Order, Product, Account, Front, Configuration 서비스
-  - **Kafka 이벤트 기반 통신**: 주문 생성 → 재고 처리 → 주문 취소 시나리오
-  - **WebFlux + R2DBC**: 완전한 리액티브 스택
-  - **Saga 패턴**: 분산 트랜잭션 및 보상 트랜잭션 처리
-- **실시간 이벤트 플로우**:
+#### **Chapter 18** - 완전한 마이크로서비스 아키텍처 ⭐ *Complete System*
+- **학습 목표**: 5개 마이크로서비스가 협력하는 실제 운영 환경 수준의 분산 시스템 구축
+- **마이크로서비스 구성**:
   ```
-  주문 생성 API → OrderCreatedEvent → 재고 확인 → InventoryReservedEvent/InsufficientEvent → 주문 확정/취소
+  ┌─────────────────────────────────────────────────────────────────┐
+  │                    Primavera Microservices                     │
+  ├─────────────────────────────────────────────────────────────────┤
+  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐              │
+  │  │   Front     │  │   Account   │  │    Order    │              │
+  │  │  Gateway    │  │   Service   │  │   Service   │              │
+  │  │   :8080     │  │    :8081    │  │    :8082    │              │
+  │  └─────────────┘  └─────────────┘  └─────────────┘              │
+  │         │                │                │                     │
+  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐              │
+  │  │   Product   │  │    Config   │  │   External  │              │
+  │  │   Service   │  │   Server    │  │  Services   │              │
+  │  │    :8083    │  │    :8888    │  │             │              │
+  │  └─────────────┘  └─────────────┘  └─────────────┘              │
+  └─────────────────────────────────────────────────────────────────┘
   ```
-- **고급 패턴**:
-  - Event Sourcing을 통한 이벤트 기반 상태 관리
-  - CQRS로 명령과 조회 책임 분리
-  - 실패 시나리오별 보상 트랜잭션 자동 처리
-- **기술 스택**:
-  - **Order Service**: Spring WebFlux + R2DBC MariaDB + Kafka Producer/Consumer
-  - **Product Service**: Spring WebFlux + MongoDB + Kafka Consumer/Producer
-  - **Infrastructure**: Apache Kafka, MariaDB 11.4.7, MongoDB
+- **핵심 서비스별 특징**:
+  - **Configuration Service (8888)**: 중앙집중식 설정 관리, Git 기반 설정 버전 관리
+  - **Account Service (8081)**: 반응형 사용자 관리, Redis 세션 저장소
+  - **Order Service (8082)**: 완전한 반응형 주문 처리, R2DBC + 함수형 라우팅
+  - **Product Service (8083)**: AOP 기반 고급 캐싱 시스템, 커스텀 애노테이션
+  - **Front Service (8080)**: API Gateway, 서비스 오케스트레이션 및 응답 집계
+- **기술 스택 매트릭스**:
+  | 서비스 | 웹 프레임워크 | 데이터 저장소 | 주요 패턴 | 특화 기술 |
+  |--------|-------------|-------------|----------|----------|
+  | **Configuration** | Spring Boot | Git Repository | Config as Code | Spring Cloud Config |
+  | **Account** | Spring WebFlux | Redis | Reactive Programming | Redis Hash, Session Management |
+  | **Order** | Spring WebFlux | MariaDB (R2DBC) | Functional Reactive | RouterFunction, Strategy Pattern |
+  | **Product** | Spring Boot | In-Memory/Cache | AOP & Caching | Custom Annotations, AspectJ |
+  | **Front** | Spring WebFlux | - | Service Orchestration | RestTemplate, Response Aggregation |
+- **실시간 서비스 통신 플로우**:
+  ```
+  Client Request → Front Service (8080)
+                        ↓
+      ┌─────────────────┼─────────────────┐
+      ↓                 ↓                 ↓
+  Account Service   Order Service    Product Service
+     (8081)           (8082)            (8083)
+      ↓                 ↓                 ↓
+     Redis           MariaDB            Cache
+      ↓                 ↓                 ↓
+      └─────────────────┼─────────────────┘
+                        ↓
+                 Aggregated Response
+  ```
+- **현대적 아키텍처 패턴**:
+  - **반응형 프로그래밍**: WebFlux + R2DBC를 통한 완전한 비동기 처리
+  - **함수형 라우팅**: RouterFunction 기반 요청 처리
+  - **전략 패턴**: 유연한 할인 정책 엔진
+  - **AOP 캐싱**: 횡단 관심사 처리 및 성능 최적화
 
 ## 🔐 보안 기능
 
@@ -1118,27 +1162,152 @@ USER:
 
 ## 🛠️ 커스텀 Spring Boot Starters
 
-### spring-boot-starter-lucy-filter
-XSS 공격 방어를 위한 자동 구성 스타터:
+Primavera 프로젝트는 실무에서 자주 사용되는 기능들을 모듈화하여 **3개의 커스텀 Spring Boot Starter**를 제공합니다.
+
+### 1. spring-boot-starter-lucy-filter 🛡️
+**Jakarta EE 호환 XSS 보호 필터 자동 구성 스타터**
+
+#### 주요 특징
+- **Jakarta EE 9+ 완전 호환**: Spring Boot 3.x 환경에서 Lucy XSS Filter 사용 가능
+- **자동 설정**: `@EnableLucyFilter` 어노테이션 하나로 XSS 보호 활성화
+- **유연한 설정**: XML 기반 세밀한 필터링 규칙 또는 간단한 YAML 설정 선택 가능
+
+#### 핵심 기능
 ```java
-@ConfigurationProperties(prefix = "lucy.xss")
-public class LucyXssFilterProperties {
-    private boolean enabled = true;
-    private String[] excludeUrls = {};
-    private String ruleConfigPath = "lucy-xss-servlet-filter-rule.xml";
+// 자동 설정 활성화
+@SpringBootApplication
+@EnableLucyFilter
+public class PrimaveraApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(PrimaveraApplication.class, args);
+    }
+}
+
+// YAML 기반 간편 설정
+spring:
+  lucy-filter:
+    enabled: true
+    name: "lucyXssEscapeServletFilter"
+    order: 1
+    add-url-patterns: ["/*", "/api/*", "/admin/*"]
+```
+
+#### 보안 효과
+| 입력 | 필터링 후 출력 |
+|------|---------------|
+| `<script>alert('xss')</script>` | `&lt;script&gt;alert('xss')&lt;/script&gt;` |
+| `<img src="x" onerror="alert(1)">` | `<img src="x">` |
+| `javascript:alert(1)` | `alert(1)` |
+
+### 2. spring-boot-starter-test-container 🧪
+**TestContainers 자동 설정 스타터 - 99% 코드 감소**
+
+#### 혁신적 특징
+- **단일 어노테이션**: `@PrimaveraTestContainer`로 모든 TestContainers 설정 완료
+- **99% 코드 감소**: 복잡한 TestContainers 보일러플레이트 코드 제거
+- **MariaDB 11.4.7 표준화**: 개발/테스트 환경 데이터베이스 버전 통일
+- **자동 DataSource 설정**: JDBC URL, 사용자명, 비밀번호 자동 구성
+
+#### 사용법 비교
+**기존 방식 (50+ 줄)**:
+```java
+@SpringBootTest
+@Testcontainers
+@ActiveProfiles("test")
+class MyIntegrationTest {
+    @Container
+    static MariaDBContainer<?> mariadb = new MariaDBContainer<>("mariadb:11.4.7")
+        .withDatabaseName("primavera")
+        .withUsername("primavera")
+        .withPassword("primavera")
+        .withInitScript("sql/init-db.sql")
+        .withCommand("--default-authentication-plugin=mysql_native_password");
+    
+    @DynamicPropertySource
+    static void configureProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", () -> mariadb.getJdbcUrl() + "?allowPublicKeyRetrieval=true&useSSL=false");
+        registry.add("spring.datasource.username", mariadb::getUsername);
+        registry.add("spring.datasource.password", mariadb::getPassword);
+        registry.add("spring.datasource.driver-class-name", () -> "org.mariadb.jdbc.Driver");
+    }
+    // 실제 테스트 코드...
 }
 ```
 
-### spring-boot-starter-social-kakao
-카카오 소셜 로그인 통합 스타터:
+**Primavera 방식 (1줄)**:
+```java
+@PrimaveraTestContainer  // 모든 설정 자동 완료!
+class MyIntegrationTest {
+    @Test
+    void testWithMariaDB() {
+        // 실제 테스트 코드에만 집중
+    }
+}
+```
+
+#### 고급 기능
+```yaml
+# application-test.yml - 커스터마이징 가능
+primavera:
+  testcontainers:
+    mariadb:
+      image-name: mariadb:11.4.7
+      database-name: primavera
+      username: primavera
+      password: primavera
+      reuse: true  # 컨테이너 재사용으로 테스트 속도 향상
+      init-script: sql/init-db.sql
+```
+
+### 3. spring-boot-starter-social-kakao 📱
+**카카오 소셜 로그인 통합 스타터**
+
+#### 주요 기능
+- **간편한 카카오 로그인**: OAuth2 Client 자동 구성
+- **사용자 정보 매핑**: 카카오 사용자 정보를 내부 사용자 시스템과 연동
+- **프로필 정보 자동 추출**: 닉네임, 이메일, 프로필 이미지 자동 매핑
+
+#### 설정 예시
 ```java
 @ConfigurationProperties(prefix = "spring.security.oauth2.client.registration.kakao")
 public class KakaoOAuth2Properties {
     private String clientId;
     private String clientSecret;
     private String scope = "profile_nickname,account_email";
+    private String authorizationUri = "https://kauth.kakao.com/oauth/authorize";
+    private String tokenUri = "https://kauth.kakao.com/oauth/token";
+    private String userInfoUri = "https://kapi.kakao.com/v2/user/me";
 }
 ```
+
+### 📦 Starter 활용 예시
+
+#### chap10에서의 실제 활용
+```gradle
+dependencies {
+    // XSS 보호
+    implementation project(':appendix:spring-boot-starter-lucy-filter')
+    
+    // 카카오 소셜 로그인
+    implementation project(':appendix:spring-boot-starter-social-kakao')
+}
+```
+
+#### chap06에서의 테스트 환경 구성
+```gradle
+dependencies {
+    // 자동화된 TestContainers 환경
+    testImplementation project(':appendix:spring-boot-starter-test-container')
+}
+```
+
+### 🎯 커스텀 스타터의 장점
+
+1. **개발 생산성 향상**: 복잡한 설정을 단순화하여 비즈니스 로직에 집중
+2. **일관성 보장**: 프로젝트 전체에서 통일된 설정 및 동작 방식
+3. **재사용성**: 다른 프로젝트에서도 즉시 활용 가능한 모듈화
+4. **유지보수성**: 설정 변경 시 스타터만 업데이트하면 전체 적용
+5. **Spring Boot 철학**: 자동 구성 및 관례 우선 설정 원칙 준수
 
 ## 📈 성능 최적화
 

@@ -10,7 +10,7 @@ import java.lang.annotation.*;
 @Constraint(validatedBy = PasswordMatchValidator.class)
 @Documented
 public @interface PasswordMatch {
-    String message() default "Passwords do not match";
+    String message() default "{com.genius.primavera.validate.password.match.message}";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

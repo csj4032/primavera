@@ -34,7 +34,9 @@ public class User {
     @Email(groups = {SaveGroup.class, UpdateGroup.class})
     private String email;
     @NotBlank(groups = {SaveGroup.class, UpdateGroup.class})
-    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&+=])(?=\\S+$).{8,20}$", groups = {SaveGroup.class, UpdateGroup.class})
+    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&+=])(?=\\S+$).{8,20}$", 
+             message = "{user.validation.password.pattern}",
+             groups = {SaveGroup.class, UpdateGroup.class})
     private String password;
     @NotBlank(groups = {SaveGroup.class, UpdateGroup.class})
     private String passwordConfirm;
