@@ -1,15 +1,25 @@
 spring:
   application:
     name: order
+  banner:
+    charset: UTF-8
+    location: classpath:primavera.txt
   profiles:
-    active: default
+    active: local
+    group:
+      local:
+        - console-appender
+        - file-debug-appender
+        - file-error-appender
+        - file-info-appender
+        - file-warn-appender
+      test:
+        - console-appender
+  jackson:
+    time-zone: UTC
   cloud:
     config:
       uri: http://localhost:8888
-  r2dbc:
-    url: r2dbc:pool:mariadb://localhost:3306/primavera?useLegacyDatetimeCode=false&serverTimezone=Asia/Seoul
-    username: primavera
-    password: primavera
     pool:
       initial-size: 10
       max-size: 20
@@ -44,7 +54,15 @@ server:
     threads:
       max: 1
 
+lucy-filter:
+  enabled: true
+  name: lucyXssFilter
+  order: 1
+  addUrlPatterns: /*
+
 logging:
-  level:
-    org.springframework: debug
-    com.genius.primavera: info
+  config: classpath:logback-spring.xml
+
+primavera:
+  logs:
+    path: ./logs

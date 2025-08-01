@@ -1,6 +1,9 @@
 spring:
   application:
     name: JpaAdvancedMappingApplication
+  banner:
+    charset: UTF-8
+    location: classpath:primavera.txt
   profiles:
     active: local
     group:
@@ -15,9 +18,14 @@ spring:
   jackson:
     time-zone: UTC
 
-server:
-  tomcat:
-    use-apr: never
+lucy-filter:
+  enabled: true
+  name: lucyXssFilter
+  order: 1
+  addUrlPatterns: /*
+
+logging:
+  config: classpath:logback-spring.xml
 
 primavera:
   logs:

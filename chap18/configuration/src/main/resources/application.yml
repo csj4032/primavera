@@ -1,7 +1,22 @@
-server:
-  port: 8888
-
 spring:
+  application:
+    name: ConfigurationApplication
+  banner:
+    charset: UTF-8
+    location: classpath:primavera.txt
+  profiles:
+    active: local
+    group:
+      local:
+        - console-appender
+        - file-debug-appender
+        - file-error-appender
+        - file-info-appender
+        - file-warn-appender
+      test:
+        - console-appender
+  jackson:
+    time-zone: UTC
   cloud:
     config:
       server:
@@ -10,3 +25,19 @@ spring:
         git:
             uri: git@github.com:csj4032/config-repo.git
             search-paths: account, front, order, product
+
+server:
+  port: 8888
+
+lucy-filter:
+  enabled: true
+  name: lucyXssFilter
+  order: 1
+  addUrlPatterns: /*
+
+logging:
+  config: classpath:logback-spring.xml
+
+primavera:
+  logs:
+    path: ./logs

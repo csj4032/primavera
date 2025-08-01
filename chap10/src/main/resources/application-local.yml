@@ -2,17 +2,112 @@ spring:
   config:
     activate:
       on-profile: local
+    import:
+      - "optional:vault:"
+      - "optional:configserver:"
+  aop:
+    proxy-target-class: true
+  cloud:
+    vault:
+      host: localhost
+      port: 8200
+      scheme: http
+      authentication: TOKEN
+      token: ${VAULT_TOKEN:primavera-dev-token}
+      connection-timeout: 5000
+      read-timeout: 15000
+      fail-fast: true
+      kv:
+        enabled: true
+        backend: secret
+        profile-separator: '/'
+        default-context: OAuth2SocialLoginApplication
+        application-name: OAuth2SocialLoginApplication
   datasource:
-    driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://localhost:1109/primavera?serverTimezone=UTC
-    username: primavera
-    password: primavera
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 10
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      connection-timeout: 30000
+      pool-name: "BalancedHikariPool"
+      leak-detection-threshold: 60000
+      connection-test-query: "SELECT 1"
+      validation-timeout: 5000
 
-server:
-  ssl:
-    key-alias: primavera
-    key-store: infrastructure/certs/primavera.p12
-    key-store-type: PKCS12
-    key-store-password: primavera
+  thymeleaf:
+    cache: false
     enabled: true
-  port: 8443
+    prefix: classpath:/templates/
+    suffix: .html
+  devtools:
+    livereload:
+      enabled: true
+  # 캐싱 전략 설정
+  cache:
+    type: redis
+    redis:
+      time-to-live: 1800000  # 30분 (밀리초)
+      cache-null-values: false
+    cache-names:
+      - oauth2Tokens
+      - userProfiles
+      - socialProviders
+      - userSessions
+  data:
+    redis:
+      host: localhost
+      port: 6380
+      timeout: 2000ms
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${OAUTH2_GOOGLE_CLIENTID}
+            client-secret: ${OAUTH2_GOOGLE_CLIENTSECRET}
+            scope:
+              - email
+              - profile
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+          facebook:
+            client-id: ${OAUTH2_FACEBOOK_CLIENTID}
+            client-secret: ${OAUTH2_FACEBOOK_CLIENTSECRET}
+            scope:
+              - email
+              - public_profile
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+          github:
+            client-id: ${OAUTH2_GITHUB_CLIENTID}
+            client-secret: ${OAUTH2_GITHUB_CLIENTSECRET}
+            scope:
+              - user:email
+              - read:user
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+          kakao:
+            client-id: ${OAUTH2_KAKAO_CLIENTID}
+            client-secret: ${OAUTH2_KAKAO_CLIENTSECRET:}
+            authorization-grant-type: authorization_code
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            scope:
+              - profile_nickname
+              - account_email
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+    default-fetch-size: 1000
+    default-statement-timeout: 30
+  type-aliases-package: com.genius.primavera.domain
+  type-handlers-package: com.genius.primavera.domain

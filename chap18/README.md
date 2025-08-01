@@ -419,6 +419,49 @@ Chapter 18에서 학습한 패턴과 기술들은 다음과 같은 실제 프로
 - **실시간 추천 시스템**
 - **마이크로서비스 기반 SaaS 플랫폼**
 
+## 🐳 인프라 설정
+
+### Docker Compose 환경 설정
+
+이 챕터는 **완전한 마이크로서비스 인프라**를 사용합니다:
+
+```bash
+# infrastructure 디렉터리로 이동
+cd infrastructure
+
+# 완전한 마이크로서비스 스택 Docker Compose 실행 (시간 소요됨)
+docker-compose -f docker-compose.microservices.yml up -d
+
+# 전체 서비스 상태 확인
+docker-compose -f docker-compose.microservices.yml ps
+
+# 개별 서비스 로그 확인 (예: Kafka)
+docker logs kafka-primavera-microservices
+
+# 정리 (컨테이너 및 볼륨 삭제)
+docker-compose -f docker-compose.microservices.yml down -v
+```
+
+**포함된 서비스:**
+- **MariaDB 11.4.7** (포트: 3308) - 주 데이터베이스
+- **Redis 7** (포트: 6380) - 캐싱 및 세션
+- **MongoDB 7** (포트: 27017) - 문서 데이터베이스
+- **Apache Kafka 7.6.0 + Zookeeper** (포트: 9092, 2181) - 이벤트 스트리밍
+- **Elasticsearch 8.12.0** (포트: 9200, 9300) - 검색 및 로그
+- **HashiCorp Vault 1.15** (포트: 8200) - 설정 관리
+- 마이크로서비스 전용 데이터베이스 스키마 자동 생성
+
+**애플리케이션 실행:**
+```bash
+# 인프라 시작 후 마이크로서비스 실행
+./gradlew :chap18:bootRun -Dspring.profiles.active=local
+```
+
+**성능 팁:**
+- 전체 스택 실행에는 4GB+ 메모리가 권장됩니다
+- 병렬 시작: `docker-compose -f docker-compose.microservices.yml up -d --parallel`
+- 필요한 서비스만 시작: `docker-compose -f docker-compose.microservices.yml up -d mariadb redis`
+
 ## 📖 추가 학습 자료
 
 ### 권장 도서

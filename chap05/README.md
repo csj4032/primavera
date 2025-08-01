@@ -379,6 +379,36 @@ log.error("오류 메시지", exception);    // 실제 오류
 - **파라미터화된 메시지**: 문자열 연결 대신 {} 플레이스홀더 사용
 - **비동기 로깅**: 대용량 처리 시 AsyncAppender 고려
 
+## 🐳 인프라 설정
+
+### Docker Compose 환경 설정
+
+이 챕터는 **기초 학습용 인프라**를 사용합니다:
+
+```bash
+# infrastructure 디렉터리로 이동
+cd infrastructure
+
+# 기초 학습용 Docker Compose 실행 (MariaDB)
+docker-compose -f docker-compose.basic.yml up -d
+
+# 서비스 상태 확인
+docker-compose -f docker-compose.basic.yml ps
+
+# 정리 (컨테이너 및 볼륨 삭제)
+docker-compose -f docker-compose.basic.yml down -v
+```
+
+**포함된 서비스:**
+- **MariaDB 11.4.7** (포트: 3308)
+- 기본 데이터베이스 스키마 자동 생성
+
+**애플리케이션 실행:**
+```bash
+# 인프라 시작 후 애플리케이션 실행
+./gradlew :chap05:bootRun -Dspring.profiles.active=local
+```
+
 ### 참고 자료
 * Logback 공식 문서: [https://logback.qos.ch/](https://logback.qos.ch/)
 * Spring Boot Logging: [https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.logging](https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.logging)

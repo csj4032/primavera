@@ -21,8 +21,8 @@ spring:
         enabled: true
         backend: secret
         profile-separator: '/'
-        default-context: ValidationApplication
-        application-name: ValidationApplication
+        default-context: ThymeleafWebApplication
+        application-name: ThymeleafWebApplication
   datasource:
     hikari:
       minimum-idle: 5

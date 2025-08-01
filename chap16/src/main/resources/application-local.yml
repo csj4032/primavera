@@ -13,8 +13,8 @@ spring:
         enabled: true
         backend: secret
         profile-separator: '/'
-        default-context: primavera
-        application-name: chap16
+        default-context: FileProcessingMonitoringApplication
+        application-name: FileProcessingMonitoringApplication
     aws:
       credentials:
         access-key: ${aws.credentials.access-key:${AWS_ACCESS_KEY_ID:}}
@@ -26,10 +26,16 @@ spring:
         endpoint: ${aws.s3.endpoint:${AWS_S3_ENDPOINT:}}
         path-style-access: ${aws.s3.path-style-access:${AWS_S3_PATH_STYLE_ACCESS:false}}
   datasource:
-    driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://localhost:1109/primavera?useLegacyDatetimeCode=false&serverTimezone=UTC
-    username: primavera
-    password: primavera
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 10
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      connection-timeout: 30000
+      pool-name: "BalancedHikariPool"
+      leak-detection-threshold: 60000
+      connection-test-query: "SELECT 1"
+      validation-timeout: 5000
   thymeleaf:
     cache: false
     enabled: true
@@ -38,8 +44,41 @@ spring:
   devtools:
     livereload:
       enabled: true
+  jpa:
+    show-sql: true
+    generate-ddl: false
+    hibernate:
+      ddl-auto: none
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+        implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
+    properties:
+      globally_quoted_identifiers: true
+      jdbc:
+        fetch_size: 30
+        batch_size: 30
+    open-in-view: false
+  aop:
+    proxy-target-class: false
+    auto: false
+  servlet:
+    multipart:
+      max-file-size: 128KB
+      max-request-size: 128KB
   jmx:
     enabled: true
+
+server:
+  tomcat:
+    arp:
+      enabled: false
+  ssl:
+    key-alias: primavera
+    key-store: infrastructure/certs/primavera.p12
+    key-store-type: PKCS12
+    key-store-password: primavera
+    enabled: true
+  port: 8443
 
 sentry:
   dns: https://4084f8500752461897ebbfe3a067d36c@sentry.io/5166811

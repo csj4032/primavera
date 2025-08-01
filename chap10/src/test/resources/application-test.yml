@@ -7,9 +7,6 @@ spring:
     password: primavera
     hikari:
       connection-test-query: SELECT 1 FROM DUAL
-  banner:
-    charset: UTF-8
-    location: classpath:primavera.txt
   thymeleaf:
     cache: false
     enabled: true
@@ -38,14 +35,3 @@ mybatis:
     default-statement-timeout: 30
   type-aliases-package: com.genius.primavera.domain
   type-handlers-package: com.genius.primavera.domain
-
-lucy-filter:
-  enabled: true
-  name: xssEscapeServletFilter
-  order: 1
-  addUrlPatterns: /*
-
-logging:
-  level:
-    com.genius.primavera: DEBUG
-    org.springframework.security: DEBUG

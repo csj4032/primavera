@@ -19,8 +19,8 @@ spring:
         enabled: true
         backend: secret
         profile-separator: '/'
-        default-context: DataAccessApplication
-        application-name: DataAccessApplication
+        default-context: SecurityFilterApplication
+        application-name: SecurityFilterApplication
         profiles: test
   datasource:
     hikari:

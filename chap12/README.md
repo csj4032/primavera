@@ -126,5 +126,39 @@ public class PrimaveraApplication {
 }
 ```
 
+## 🐳 인프라 설정
+
+### Docker Compose 환경 설정
+
+이 챕터는 **게시판 + Vault 인프라**를 사용합니다:
+
+```bash
+# infrastructure 디렉터리로 이동
+cd infrastructure
+
+# 게시판 + 중앙 설정 관리용 Docker Compose 실행 (MariaDB + Vault)
+docker-compose -f docker-compose.board.yml up -d
+
+# 서비스 상태 확인
+docker-compose -f docker-compose.board.yml ps
+
+# Vault 초기화 확인
+docker logs vault-init-primavera-board
+
+# 정리 (컨테이너 및 볼륨 삭제)
+docker-compose -f docker-compose.board.yml down -v
+```
+
+**포함된 서비스:**
+- **MariaDB 11.4.7** (포트: 3308)
+- **HashiCorp Vault 1.15** (포트: 8200) - 중앙집중식 설정 관리
+- 게시판 전용 데이터베이스 스키마 자동 생성
+
+**애플리케이션 실행:**
+```bash
+# 인프라 시작 후 애플리케이션 실행
+./gradlew :chap12:bootRun -Dspring.profiles.active=local
+```
+
 ### MockitoExtension
 * https://mincong.io/2020/04/19/mockito-junit5/

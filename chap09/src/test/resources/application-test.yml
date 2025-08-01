@@ -19,8 +19,8 @@ spring:
         enabled: true
         backend: secret
         profile-separator: '/'
-        default-context: DataAccessApplication
-        application-name: DataAccessApplication
+        default-context: SpringSecurityBasicApplication
+        application-name: SpringSecurityBasicApplication
         profiles: test
   datasource:
     hikari:
@@ -60,5 +60,5 @@ mybatis:
     map-underscore-to-camel-case: true
     default-fetch-size: 1000
     default-statement-timeout: 30
-  type-aliases-package: com.genius.primavera.domain.model
-  type-handlers-package: com.genius.primavera.domain.model
+  type-aliases-package: com.genius.primavera.domain
+  type-handlers-package: com.genius.primavera.domain

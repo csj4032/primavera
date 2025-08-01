@@ -20,8 +20,8 @@ spring:
         enabled: true
         backend: secret
         profile-separator: '/'
-        default-context: DataAccessApplication
-        application-name: DataAccessApplication
+        default-context: MyBatisLoggingApplication
+        application-name: MyBatisLoggingApplication
         profiles: test
   datasource:
     hikari:

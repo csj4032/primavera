@@ -21,8 +21,8 @@ spring:
         enabled: true
         backend: secret
         profile-separator: '/'
-        default-context: DataAccessApplication
-        application-name: DataAccessApplication
+        default-context: MyBatisLoggingApplication
+        application-name: MyBatisLoggingApplication
   datasource:
     hikari:
       minimum-idle: 5

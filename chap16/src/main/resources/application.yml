@@ -1,6 +1,9 @@
 spring:
   application:
     name: FileProcessingMonitoringApplication
+  banner:
+    charset: UTF-8
+    location: classpath:primavera.txt
   profiles:
     active: local
     group:
@@ -15,27 +18,12 @@ spring:
         - console-appender
   jackson:
     time-zone: UTC
-  jpa:
-    show-sql: true
-    generate-ddl: false
-    hibernate:
-      ddl-auto: none
-      naming:
-        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
-        implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
-    properties:
-      globally_quoted_identifiers: true
-      jdbc:
-        fetch_size: 30
-        batch_size: 30
-    open-in-view: false
-  aop:
-    proxy-target-class: false
-    auto: false
-  servlet:
-    multipart:
-      max-file-size: 128KB
-      max-request-size: 128KB
+
+lucy-filter:
+  enabled: true
+  name: lucyXssFilter
+  order: 1
+  addUrlPatterns: /*
 
 logging:
   config: classpath:logback-spring.xml

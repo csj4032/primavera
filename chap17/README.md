@@ -281,4 +281,36 @@ curl http://localhost:8080/actuator/cdc/status
 - **배치와 스트리밍 조합**: 초기 로드와 실시간 업데이트
 - **모니터링과 알림**: 실시간 파이프라인 관리
 
+## 🐳 인프라 설정
+
+### Docker Compose 환경 설정
+
+이 챕터는 **JPA + 캐싱 + 검색 인프라**를 사용합니다:
+
+```bash
+# infrastructure 디렉터리로 이동
+cd infrastructure
+
+# JPA + 캐싱 + 검색용 Docker Compose 실행 (MariaDB + Redis + Elasticsearch)
+docker-compose -f docker-compose.jpa.yml up -d
+
+# 서비스 상태 확인
+docker-compose -f docker-compose.jpa.yml ps
+
+# 정리 (컨테이너 및 볼륨 삭제)
+docker-compose -f docker-compose.jpa.yml down -v
+```
+
+**포함된 서비스:**
+- **MariaDB 11.4.7** (포트: 3308) - 주 데이터베이스
+- **Redis 7** (포트: 6380) - 캐싱 및 세션 저장소  
+- **Elasticsearch 8.12.0** (포트: 9200, 9300) - 검색 엔진
+- JPA 전용 데이터베이스 스키마 자동 생성
+
+**애플리케이션 실행:**
+```bash
+# 인프라 시작 후 애플리케이션 실행
+./gradlew :chap17:bootRun -Dspring.profiles.active=local
+```
+
 이 프로젝트는 **경량화된 엔터프라이즈급 데이터 파이프라인**의 구현으로, Spring Batch의 배치 처리와 Debezium Embedded의 실시간 CDC를 조합한 효율적인 아키텍처를 학습할 수 있습니다.

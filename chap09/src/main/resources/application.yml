@@ -1,6 +1,9 @@
 spring:
   application:
     name: SpringSecurityBasicApplication
+  banner:
+    charset: UTF-8
+    location: classpath:primavera.txt
   profiles:
     active: local
     group:
@@ -17,8 +20,8 @@ spring:
 
 lucy-filter:
   enabled: true
-  name: lucy-filter
-  order: 0
+  name: lucyXssFilter
+  order: 1
   addUrlPatterns: /*
 
 logging:

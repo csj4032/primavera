@@ -186,6 +186,36 @@ spring:
 4. **테스트 용이성**: TestContainers를 통한 일관된 테스트 환경
 5. **확장 가능성**: 프록시 패턴을 통한 횡단 관심사 처리
 
+## 🐳 인프라 설정
+
+### Docker Compose 환경 설정
+
+이 챕터는 **기초 학습용 인프라**를 사용합니다:
+
+```bash
+# infrastructure 디렉터리로 이동
+cd infrastructure
+
+# 기초 학습용 Docker Compose 실행 (MariaDB)
+docker-compose -f docker-compose.basic.yml up -d
+
+# 서비스 상태 확인
+docker-compose -f docker-compose.basic.yml ps
+
+# 정리 (컨테이너 및 볼륨 삭제)
+docker-compose -f docker-compose.basic.yml down -v
+```
+
+**포함된 서비스:**
+- **MariaDB 11.4.7** (포트: 3308)
+- 기본 데이터베이스 스키마 자동 생성
+
+**애플리케이션 실행:**
+```bash
+# 인프라 시작 후 애플리케이션 실행
+./gradlew :chap04:bootRun -Dspring.profiles.active=local
+```
+
 ## 참고 자료
 - [Spring Boot Application Properties](https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html)
 - [HikariCP](https://github.com/brettwooldridge/HikariCP)

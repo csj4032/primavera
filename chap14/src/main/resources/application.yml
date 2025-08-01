@@ -1,8 +1,20 @@
 spring:
   application:
     name: advanced-jpa
+  banner:
+    charset: UTF-8
+    location: classpath:primavera.txt
   profiles:
-    active: default
+    active: local
+    group:
+      local:
+        - console-appender
+        - file-debug-appender
+        - file-error-appender
+        - file-info-appender
+        - file-warn-appender
+      test:
+        - console-appender
     
   # Jackson 설정
   jackson:
@@ -15,7 +27,7 @@ spring:
   # 관계형 데이터베이스 (MariaDB)
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://localhost:3306/primavera_jpa_advanced?useLegacyDatetimeCode=false&serverTimezone=UTC
+    url: jdbc:mariadb://localhost:1109/primavera?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
     username: primavera
     password: primavera
     hikari:
@@ -66,10 +78,6 @@ spring:
           max-idle: 8
           min-idle: 0
           
-  # 배너 설정
-  banner:
-    charset: UTF-8
-    location: classpath:primavera.txt
     
   # Thymeleaf 리액티브 설정
   thymeleaf:
@@ -126,22 +134,14 @@ spring:
             client-id: ${KAKAO_CLIENT_ID:your-kakao-client-id}
             client-secret: ${KAKAO_CLIENT_SECRET:your-kakao-client-secret}
 
-# 로깅 설정
+lucy-filter:
+  enabled: true
+  name: lucyXssFilter
+  order: 1
+  addUrlPatterns: /*
+
 logging:
-  level:
-    root: INFO
-    com.genius.primavera: DEBUG
-    org.springframework.web: DEBUG
-    org.springframework.data: DEBUG
-    reactor.netty: INFO
-    io.netty: INFO
-  pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
-    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
-  file:
-    name: logs/advanced-jpa.log
-    max-size: 10MB
-    max-history: 30
+  config: classpath:logback-spring.xml
 
 # 서버 설정
 server:
@@ -184,18 +184,6 @@ cache:
   redis:
     ttl: 600
     
-# 액추에이터 설정
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info,metrics,loggers,beans
-      base-path: /actuator
-  endpoint:
-    health:
-      show-details: when-authorized
-  health:
-    redis:
-      enabled: true
-    mongo:
-      enabled: true
+primavera:
+  logs:
+    path: ./logs

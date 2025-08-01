@@ -393,6 +393,38 @@ docker run -d --name mariadb-primavera \
 - **배치 페치**: N+1 문제 해결
 - **쿼리 최적화**: 페치 조인 활용
 
+## 🐳 인프라 설정
+
+### Docker Compose 환경 설정
+
+이 챕터는 **JPA + 캐싱 + 검색 인프라**를 사용합니다:
+
+```bash
+# infrastructure 디렉터리로 이동
+cd infrastructure
+
+# JPA + 캐싱 + 검색용 Docker Compose 실행 (MariaDB + Redis + Elasticsearch)
+docker-compose -f docker-compose.jpa.yml up -d
+
+# 서비스 상태 확인
+docker-compose -f docker-compose.jpa.yml ps
+
+# 정리 (컨테이너 및 볼륨 삭제)
+docker-compose -f docker-compose.jpa.yml down -v
+```
+
+**포함된 서비스:**
+- **MariaDB 11.4.7** (포트: 3308) - 주 데이터베이스
+- **Redis 7** (포트: 6380) - 캐싱 및 세션 저장소  
+- **Elasticsearch 8.12.0** (포트: 9200, 9300) - 검색 엔진
+- JPA 전용 데이터베이스 스키마 자동 생성
+
+**애플리케이션 실행:**
+```bash
+# 인프라 시작 후 애플리케이션 실행
+./gradlew :chap15:bootRun -Dspring.profiles.active=local
+```
+
 ## 🔍 추가 학습 자료
 
 - [JPA 공식 문서](https://jakarta.ee/specifications/persistence/)

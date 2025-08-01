@@ -1,8 +1,22 @@
 spring:
   application:
     name: account
+  banner:
+    charset: UTF-8
+    location: classpath:primavera.txt
   profiles:
-    active: default
+    active: local
+    group:
+      local:
+        - console-appender
+        - file-debug-appender
+        - file-error-appender
+        - file-info-appender
+        - file-warn-appender
+      test:
+        - console-appender
+  jackson:
+    time-zone: UTC
   cloud:
     config:
       uri: http://localhost:8888
@@ -13,6 +27,15 @@ server:
     threads:
       max: 1
 
+lucy-filter:
+  enabled: true
+  name: lucyXssFilter
+  order: 1
+  addUrlPatterns: /*
+
 logging:
-  level:
-    org.springframework: DEBUG
+  config: classpath:logback-spring.xml
+
+primavera:
+  logs:
+    path: ./logs
