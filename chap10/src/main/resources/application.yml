@@ -22,6 +22,27 @@ spring:
   devtools:
     livereload:
       enabled: true
+  # 캐싱 전략 설정
+  cache:
+    type: redis
+    redis:
+      time-to-live: 1800000  # 30분 (밀리초)
+      cache-null-values: false
+    cache-names:
+      - oauth2Tokens
+      - userProfiles
+      - socialProviders
+      - userSessions
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 2000ms
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
   security:
     oauth2:
       client:

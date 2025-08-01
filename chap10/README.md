@@ -24,10 +24,22 @@ Spring Boot 3.x와 Spring Security 6.x를 활용한 소셜 로그인(OAuth2) 통
 - **XSS 방어**: Lucy Filter를 통한 악성 스크립트 차단
 - **접근 제어**: URL 패턴 기반 권한 관리
 
-#### 3. 모듈 구조
+#### 3. 캐싱 전략 아키텍처 🚀 **NEW**
+- **다중 캐시 백엔드**: Redis(분산) + Caffeine(로컬) 하이브리드 구조
+- **OAuth2 토큰 캐싱**: 액세스 토큰 및 리프레시 토큰 관리
+- **사용자 프로필 캐싱**: 소셜 프로필 정보 고속 조회
+- **스마트 무효화**: 토큰 만료 기반 자동 정리
+- **실시간 모니터링**: 캐시 상태 및 성능 대시보드
+
+#### 4. 모듈 구조
 ```
 chap10/
 ├── infrastructure/
+│   ├── cache/                                     # 🆕 캐싱 전략
+│   │   ├── CacheConfiguration.java                # Redis + Caffeine 설정
+│   │   ├── OAuth2TokenCacheService.java           # 토큰 캐싱 서비스
+│   │   ├── UserProfileCacheService.java           # 프로필 캐싱 서비스
+│   │   └── CacheEvictionStrategy.java             # 캐시 무효화 전략
 │   ├── security/
 │   │   ├── PrimaveraSecurityConfiguration.java    # Spring Security 설정
 │   │   ├── PrimaveraUserDetailsService.java       # 일반 로그인 처리
@@ -40,7 +52,8 @@ chap10/
 │   └── model/
 │       └── UserConnection.java                    # 소셜 연동 정보
 └── interfaces/
-    └── LoginController.java                       # 로그인 화면 제어
+    ├── LoginController.java                       # 로그인 화면 제어
+    └── CacheManagementController.java             # 🆕 캐시 관리 API
 ```
 
 ### build.gradle 의존성 추가
@@ -51,6 +64,12 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-oauth2-client"
     implementation "org.springframework.security:spring-security-oauth2-client"
     implementation "org.springframework.security:spring-security-oauth2-jose"
+    
+    // 🆕 캐싱 전략 의존성
+    implementation "org.springframework.boot:spring-boot-starter-cache"
+    implementation "org.springframework.boot:spring-boot-starter-data-redis"
+    implementation "org.redisson:redisson-spring-boot-starter:${redissonVersion}"
+    implementation "com.github.ben-manes.caffeine:caffeine:${caffeineVersion}"
     
     // Thymeleaf Security 통합
     implementation "org.thymeleaf.extras:thymeleaf-extras-springsecurity6"
@@ -208,8 +227,234 @@ CREATE TABLE USER_CONNECTION (
 - **토큰 관리**: Access Token은 암호화하여 저장 권장
 - **세션 보안**: 소셜 로그인 후 새로운 세션 ID 생성 필요
 
+## 🚀 고성능 캐싱 전략 가이드
+
+### 캐싱 아키텍처 개요
+
+Chapter 10에서는 OAuth2 소셜 로그인 환경에 특화된 **다계층 캐싱 전략**을 구현합니다:
+
+```mermaid
+graph TB
+    subgraph "L1 Cache - Caffeine (로컬)"
+        A[빠른 응답]
+        B[메모리 기반]
+        C[단일 인스턴스]
+    end
+    
+    subgraph "L2 Cache - Redis (분산)"
+        D[세션 공유]
+        E[토큰 저장]
+        F[확장성]
+    end
+    
+    subgraph "Cache Types"
+        G[OAuth2 Token Cache]
+        H[User Profile Cache]
+        I[Social Provider Cache]
+        J[Session Cache]
+    end
+    
+    A --> G
+    D --> G
+    B --> H
+    E --> H
+    C --> I
+    F --> J
+```
+
+### 1. OAuth2 토큰 캐싱 전략
+
+#### 주요 특징
+- **토큰 생명주기 관리**: 액세스 토큰 만료 시간 기반 TTL 설정
+- **자동 갱신**: 리프레시 토큰을 통한 자동 토큰 갱신
+- **프로바이더별 분리**: Google, Facebook, GitHub, Kakao 별도 관리
+- **보안 강화**: 토큰 암호화 저장 및 접근 제어
+
+#### 구현 예시
+```java
+@Service
+public class OAuth2TokenCacheService {
+    
+    @Cacheable(value = "oauth2Tokens", key = "#userId + ':' + #provider")
+    public Optional<String> getValidAccessToken(String userId, String provider) {
+        // 캐시에서 토큰 조회 + 만료 시간 검증
+        return getToken(userId, provider)
+                .filter(entry -> !isTokenExpired(entry))
+                .map(TokenCacheEntry::getAccessToken);
+    }
+    
+    @CachePut(value = "oauth2Tokens", key = "#userId + ':' + #provider") 
+    public TokenCacheEntry refreshToken(String userId, String provider,
+                                      OAuth2AccessToken newAccessToken) {
+        // 새로운 토큰으로 캐시 갱신
+    }
+}
+```
+
+### 2. 사용자 프로필 캐싱
+
+#### 캐싱 대상
+- **소셜 프로필 정보**: 이름, 이메일, 프로필 이미지
+- **로그인 통계**: 로그인 횟수, 마지막 접속 시간
+- **프로바이더 연동 정보**: 다중 소셜 계정 연결 상태
+
+#### 캐시 무효화 전략
+```java
+// 사용자 정보 변경 시 자동 갱신
+@CachePut(value = "userProfiles", key = "#userId")
+public UserProfile updateUserProfile(Long userId, User updatedUser) {
+    // 프로필 업데이트 후 캐시 갱신
+}
+
+// 로그인 시마다 접속 정보 업데이트
+@CachePut(value = "userProfiles", key = "#userId")
+public UserProfile updateLastLogin(Long userId, String provider) {
+    // 로그인 시간 및 프로바이더 정보 갱신
+}
+```
+
+### 3. 스마트 캐시 정리 전략
+
+#### 자동 정리 스케줄
+```java
+@Component
+public class CacheEvictionStrategy {
+    
+    @Scheduled(cron = "0 0 * * * *")  // 매시간
+    public void cleanupExpiredTokens() {
+        // 만료된 토큰 자동 정리
+    }
+    
+    @Scheduled(cron = "0 0 0 * * *")  // 매일 자정
+    public void dailyCacheOptimization() {
+        // LRU 기반 오래된 캐시 정리
+        // 캐시 압축 및 최적화
+        // 자주 사용되는 데이터 워밍업
+    }
+    
+    @Scheduled(fixedRate = 300000)    // 5분마다
+    public void monitorMemoryUsage() {
+        // 메모리 사용률 80% 이상 시 긴급 정리
+    }
+}
+```
+
+### 4. 캐시 모니터링 대시보드
+
+#### 실시간 모니터링 API
+```bash
+# 캐시 전체 상태 조회
+GET /admin/cache/dashboard
+
+# 특정 캐시 상세 정보
+GET /admin/cache/oauth2Tokens/details
+
+# 사용자별 캐시 무효화
+DELETE /admin/cache/users/{userId}
+
+# 캐시 통계 CSV 다운로드
+GET /admin/cache/statistics/export
+```
+
+#### 캐시 통계 예시
+```json
+{
+  "tokenCache": {
+    "totalEntries": 1250,
+    "validEntries": 1180,
+    "expiredEntries": 70,
+    "hitRatio": "87.50%"
+  },
+  "profileCache": {
+    "totalProfiles": 850,
+    "providerDistribution": {
+      "google": 340,
+      "kakao": 280,
+      "github": 150,
+      "facebook": 80
+    },
+    "averageLoginCount": 8.5
+  },
+  "memory": {
+    "used": "245.8 MB",
+    "total": "512.0 MB", 
+    "usagePercentage": "48.01%"
+  }
+}
+```
+
+### 5. 환경별 캐시 설정
+
+#### 개발 환경 (Caffeine)
+```yaml
+spring:
+  cache:
+    type: caffeine
+    caffeine:
+      spec: maximumSize=1000,expireAfterWrite=30m,recordStats
+```
+
+#### 운영 환경 (Redis)
+```yaml
+spring:
+  cache:
+    type: redis
+    redis:
+      time-to-live: 1800000  # 30분
+      cache-null-values: false
+  data:
+    redis:
+      host: redis-cluster.primavera.com
+      port: 6379
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+```
+
+### 6. 성능 최적화 팁
+
+#### 캐시 키 설계
+```java
+// ✅ 효율적인 키 네이밍
+"oauth2:token:userId:providerId"     // 계층적 구조
+"profile:user:12345"                 // 간결하고 명확
+
+// ❌ 비효율적인 키 네이밍  
+"user_oauth_token_google_user123"    // 너무 장황
+"cache_key_1234"                     // 의미 불명확
+```
+
+#### 캐시 TTL 전략
+- **OAuth2 토큰**: 1시간 (토큰 만료 시간과 동기화)
+- **사용자 프로필**: 2시간 (자주 변경되지 않음)
+- **세션 정보**: 30분 (보안상 짧은 주기)
+- **소셜 프로바이더 메타데이터**: 6시간 (거의 변경되지 않음)
+
+### 7. 트러블슈팅
+
+#### 캐시 미스 문제
+```bash
+# Redis 연결 상태 확인
+docker exec redis-primavera redis-cli ping
+
+# 캐시 키 존재 여부 확인
+docker exec redis-primavera redis-cli EXISTS "oauth2Tokens::userId:google"
+
+# 캐시 통계 조회
+curl -X GET "https://localhost:8443/admin/cache/dashboard"
+```
+
+#### 메모리 누수 방지
+- 정기적 만료된 캐시 정리
+- 메모리 사용률 모니터링
+- 캐시 크기 제한 설정
+
 ### 참고 자료
 - [Spring Security OAuth2 공식 문서](https://spring.io/guides/tutorials/spring-boot-oauth2/)
+- [Spring Cache 추상화 가이드](https://spring.io/guides/gs/caching/)
+- [Redis 캐싱 전략 가이드](https://redis.io/docs/manual/patterns/)
+- [Caffeine 캐시 라이브러리](https://github.com/ben-manes/caffeine)
 - [Google OAuth2 개발자 가이드](https://developers.google.com/identity/protocols/oauth2)
 - [Facebook 로그인 구현 가이드](https://developers.facebook.com/docs/facebook-login/manually-build-a-login-flow/)
 - [GitHub OAuth Apps 가이드](https://docs.github.com/en/developers/apps/building-oauth-apps/authorizing-oauth-apps)

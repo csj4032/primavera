@@ -25,5 +25,12 @@ dependencies {
     testImplementation "org.springframework.security:spring-security-test:${springSecurityVersion}"
     testImplementation "io.rest-assured:rest-assured:${restAssuredVersion}"
     implementation "commons-codec:commons-codec:${commonsCodecVersion}"
+    
+    // 캐싱 전략 의존성
+    implementation "org.springframework.boot:spring-boot-starter-cache"
+    implementation "org.springframework.boot:spring-boot-starter-data-redis"
+    implementation "org.redisson:redisson-spring-boot-starter:${redissonVersion}"
+    implementation "com.github.ben-manes.caffeine:caffeine:${caffeineVersion}"
+    
     implementation project(":appendix:spring-boot-starter-lucy-filter")
 }
