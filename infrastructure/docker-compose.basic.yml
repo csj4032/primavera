@@ -1,0 +1,40 @@
+# ==============================================================================
+# Primavera 기본 인프라 - Chapter 01-05
+# Spring Boot 기초, 설정, MVC, AOP, 데이터베이스 기본
+# ==============================================================================
+
+services:
+  # MariaDB - 기본 데이터베이스
+  mariadb:
+    image: mariadb:11.4.7
+    container_name: mariadb-primavera-basic
+    restart: unless-stopped
+    environment:
+      MARIADB_ROOT_PASSWORD: root
+      MARIADB_DATABASE: primavera
+      MARIADB_USER: primavera
+      MARIADB_PASSWORD: primavera
+      MARIADB_AUTO_UPGRADE: 1
+      TZ: UTC
+    ports:
+      - "3308:3306"
+    volumes:
+      - mariadb_basic_data:/var/lib/mysql
+      - ./sql/init-unified-local.sql:/docker-entrypoint-initdb.d/init-local.sql:ro
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --default-time-zone='+00:00'
+    networks:
+      - primavera-basic
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  mariadb_basic_data:
+    driver: local
+
+networks:
+  primavera-basic:
+    driver: bridge
+    name: primavera-basic

@@ -1,165 +1,155 @@
-# 🏗️ Primavera Infrastructure
+# Primavera 인프라 가이드
 
-Primavera 프로젝트의 **환경별 분리된 인프라스트럭처 설정 및 관리**를 위한 Docker Compose 기반 환경입니다.
+이 디렉터리는 Primavera 프로젝트의 인프라 설정을 관리합니다. 각 학습 단계에 맞는 챕터별 docker-compose 파일을 제공합니다.
 
 [![MariaDB](https://img.shields.io/badge/MariaDB-11.4.7-brown.svg)](https://mariadb.org/)
 [![Docker](https://img.shields.io/badge/Docker-Compose-blue.svg)](https://docs.docker.com/compose/)
+[![Redis](https://img.shields.io/badge/Redis-7-red.svg)](https://redis.io/)
+[![Elasticsearch](https://img.shields.io/badge/Elasticsearch-8.12.0-yellow.svg)](https://www.elastic.co/)
 [![HashiCorp Vault](https://img.shields.io/badge/Vault-1.15-blue.svg)](https://www.vaultproject.io/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
-## 📋 목차
+## 챕터별 Docker Compose 파일
 
-- [🎯 개요](#-개요)
-- [🌍 환경별 분리 구조](#-환경별-분리-구조)
-- [🛠️ 사전 요구사항](#️-사전-요구사항)
-- [🚀 빠른 시작](#-빠른-시작)
-- [📊 데이터베이스 구조](#-데이터베이스-구조)
-- [🔐 Vault 설정 관리](#-vault-설정-관리)
-- [⚙️ 설정 정보](#️-설정-정보)
-- [🔧 관리 명령어](#-관리-명령어)
-- [🐛 트러블슈팅](#-트러블슈팅)
-- [📈 모니터링](#-모니터링)
-- [🔐 보안 설정](#-보안-설정)
+### 🏗️ docker-compose.basic.yml (Chapter 01-05)
+**Spring Boot 기초 단계**
+- MariaDB 11.4.7
 
----
-
-## 🎯 개요
-
-이 인프라스트럭처는 Primavera 프로젝트의 **환경별로 분리된 데이터베이스 환경**과 **HashiCorp Vault를 통한 설정 관리**를 제공합니다.
-
----
-
-## 🌍 환경별 분리 구조
-
-### 📊 환경별 MariaDB 인스턴스
-
-Primavera 프로젝트는 개발, 테스트, 프로덕션 환경을 완전히 분리하여 운영합니다.
-
-| 환경 | 포트 | 컨테이너명 | 데이터베이스 구조 |
-|------|------|------------|------------------|
-| **Local** | `3308` | `mariadb-primavera-local` | 로컬 개발 환경 |
-| **Test** | `3309` | `mariadb-primavera-test` | TestContainers & CI/CD |
-| **Production** | `3310` | `mariadb-primavera-prod` | 프로덕션 환경 |
-
-```yaml
-# docker-compose.yml - 환경별 MariaDB 설정
-services:
-  mariadb-local:    # 포트 3308 - 로컬 개발
-    ports: ["3308:3306"]
-    environment:
-      MARIADB_DATABASE: local_primavera
-      
-  mariadb-test:     # 포트 3309 - 테스트 환경
-    ports: ["3309:3306"]
-    environment:
-      MARIADB_DATABASE: test_primavera
-      
-  mariadb-prod:     # 포트 3310 - 프로덕션
-    ports: ["3310:3306"]
-    environment:
-      MARIADB_DATABASE: prod_primavera
-```
-
-### 🗃️ 공통 데이터베이스 구조
-
-각 환경에서 동일한 데이터베이스 구조를 사용합니다:
-
-- **primavera** - 기본 데이터베이스
-- **primavera_basic** - 기본 예제 (chap03-chap05)
-- **primavera_mybatis** - MyBatis 예제 (chap06-chap11)
-- **primavera_mybatis_board** - MyBatis 게시판 (chap12-chap13)
-- **primavera_jpa_advanced** - JPA 고급 (chap14-chap15)
-- **primavera_jpa_board** - JPA 게시판 (chap16-chap17)
-- **primavera_microservices** - 마이크로서비스 (chap18)
-
-### 🔐 Vault 기반 설정 관리
-
-HashiCorp Vault를 통해 환경별 설정을 중앙집중식으로 관리합니다.
-
-#### 환경별 Vault 경로 구조
-```
-secret/
-├── {ApplicationName}/
-│   ├── local/          # 로컬 개발 환경 (port 3308)
-│   ├── test/           # 테스트 환경 (port 3309)
-│   └── prod/           # 프로덕션 환경 (port 3310)
-```
-
-#### 환경별 연결 설정 예시
-
-**Local 환경 (port 3308):**
-```properties
-spring.datasource.url=jdbc:mariadb://localhost:3308/primavera_basic
-spring.datasource.username=primavera
-spring.datasource.password=primavera
-```
-
-**Test 환경 (port 3309):**
-```properties
-spring.datasource.url=jdbc:mariadb://localhost:3309/primavera_basic
-spring.datasource.username=test
-spring.datasource.password=test
-```
-
-**Production 환경 (port 3310):**
-```properties
-spring.datasource.url=jdbc:mariadb://localhost:3310/primavera_basic
-spring.datasource.username=prod_user
-spring.datasource.password=prod_secure_password_change_me
-```
-
-### 🚀 환경별 사용 방법
-
-#### 로컬 개발 환경
 ```bash
-# 로컬 환경만 시작
-docker-compose up -d mariadb-local vault
+# 실행
+docker-compose -f docker-compose.basic.yml up -d
 
-# 애플리케이션 실행
-export VAULT_TOKEN=$(cat infrastructure/vault/app-token.txt)
-./gradlew :chap04:bootRun -Dspring.profiles.active=local
+# 정리
+docker-compose -f docker-compose.basic.yml down -v
 ```
 
-#### 테스트 환경
+**적용 챕터:**
+- chap01: Spring Boot 기본 개념
+- chap02: 설정과 프로파일
+- chap03: MVC 패턴 구현
+- chap04: AOP 개념
+- chap05: 데이터베이스 접근
+
+### 🛡️ docker-compose.mybatis.yml (Chapter 06-11)
+**MyBatis + 보안 단계**
+- MariaDB 11.4.7
+
 ```bash
-# 테스트 환경 시작
-docker-compose up -d mariadb-test vault
+# 실행
+docker-compose -f docker-compose.mybatis.yml up -d
 
-# 테스트 실행
-./gradlew :chap04:test -Dspring.profiles.active=test
+# 정리
+docker-compose -f docker-compose.mybatis.yml down -v
 ```
 
-#### 프로덕션 환경
+**적용 챕터:**
+- chap06: MyBatis 통합
+- chap07: Thymeleaf 템플릿
+- chap08: Spring Security 기초
+- chap09: 고급 보안 기능
+- chap10: OAuth2 소셜 로그인 (캐싱 전략 포함)
+- chap11: XSS 보호 및 보안 강화
+
+### 📋 docker-compose.board.yml (Chapter 12-13)
+**게시판 + 중앙 설정 관리**
+- MariaDB 11.4.7
+- HashiCorp Vault 1.15 (중앙집중식 설정 관리)
+
 ```bash
-# 프로덕션 환경 시작
-docker-compose up -d mariadb-prod vault
+# 실행
+docker-compose -f docker-compose.board.yml up -d
 
-# 프로덕션 설정으로 애플리케이션 실행
-export VAULT_TOKEN=$(cat infrastructure/vault/app-token.txt)
-./gradlew :chap04:bootRun -Dspring.profiles.active=prod
+# Vault 초기화 확인
+docker logs vault-init-primavera-board
+
+# 정리
+docker-compose -f docker-compose.board.yml down -v
 ```
 
-### 🗂️ 구성 요소
+**적용 챕터:**
+- chap12: MyBatis 게시판 구현
+- chap13: 애플리케이션 모니터링
 
+### 🏛️ docker-compose.jpa.yml (Chapter 14-17)
+**JPA + 캐싱 + 검색**
+- MariaDB 11.4.7
+- Redis 7 (캐싱 및 세션 저장소)
+- Elasticsearch 8.12.0 (검색 엔진)
+
+```bash
+# 실행
+docker-compose -f docker-compose.jpa.yml up -d
+
+# 서비스 상태 확인
+docker-compose -f docker-compose.jpa.yml ps
+
+# 정리
+docker-compose -f docker-compose.jpa.yml down -v
 ```
-infrastructure/
-├── README.md              # 📖 이 문서
-├── docker-compose.yml     # 🐳 Docker Compose 설정
-├── init-local.sql              # 🗃️ 데이터베이스 초기화 스크립트
-├── vault-init.sh         # 🔐 Vault 시크릿 초기화 스크립트
-└── certs-init.sh         # 🔒 SSL 인증서 생성 스크립트
+
+**적용 챕터:**
+- chap14: JPA 기초
+- chap15: 고급 JPA 매핑
+- chap16: 파일 업로드/다운로드
+- chap17: 데이터 파이프라인
+
+### 🌐 docker-compose.microservices.yml (Chapter 18)
+**완전한 마이크로서비스 아키텍처**
+- MariaDB 11.4.7 (주 데이터베이스)
+- Redis 7 (캐싱 및 세션)
+- MongoDB 7 (문서 데이터베이스)
+- Apache Kafka 7.6.0 + Zookeeper (이벤트 스트리밍)
+- Elasticsearch 8.12.0 (검색 및 로그)
+- HashiCorp Vault 1.15 (설정 관리)
+
+```bash
+# 실행 (시간 소요됨)
+docker-compose -f docker-compose.microservices.yml up -d
+
+# 전체 서비스 상태 확인
+docker-compose -f docker-compose.microservices.yml ps
+
+# 개별 서비스 로그 확인
+docker logs kafka-primavera-microservices
+
+# 정리
+docker-compose -f docker-compose.microservices.yml down -v
 ```
 
-### 🎯 주요 특징
+**적용 챕터:**
+- chap18: 마이크로서비스 아키텍처
 
-- **MariaDB 11.4.7**: 최신 안정 버전 사용
-- **Redis 7**: 세션 저장소 및 캐싱 지원
-- **6개 분리 데이터베이스**: 모듈별 목적에 따른 데이터베이스 분리
-- **자동 초기화**: 컨테이너 시작 시 스키마 및 테스트 데이터 자동 생성
-- **영구 저장**: Docker 볼륨을 통한 데이터 영속성 보장
-- **UTF8MB4 지원**: 완전한 유니코드 문자 지원
-- **HashiCorp Vault**: 민감정보 중앙집중식 보안 관리
-- **SSL 인증서**: 개발용 HTTPS 지원을 위한 자체 서명 인증서
+## 포트 매핑
+
+| 서비스 | 포트 | 설명 |
+|---------|------|------|
+| MariaDB | 3308 | 모든 환경에서 통일 |
+| Redis | 6380 | JPA, 마이크로서비스 환경 |
+| MongoDB | 27017 | 마이크로서비스 환경만 |
+| Kafka | 9092 | 마이크로서비스 환경만 |
+| Zookeeper | 2181 | 마이크로서비스 환경만 |
+| Elasticsearch | 9200, 9300 | JPA, 마이크로서비스 환경 |
+| Vault | 8200 | Board, 마이크로서비스 환경 |
+
+## 네트워크 분리
+
+각 환경은 독립적인 Docker 네트워크를 사용하여 격리됩니다:
+- `primavera-basic`
+- `primavera-mybatis`
+- `primavera-board`
+- `primavera-jpa`
+- `primavera-microservices`
+
+## 볼륨 관리
+
+각 환경별로 독립적인 볼륨을 사용하여 데이터 충돌을 방지합니다:
+```bash
+# 특정 환경의 볼륨 확인
+docker volume ls | grep primavera
+
+# 모든 Primavera 볼륨 정리 (주의!)
+docker volume prune --filter label=com.docker.compose.project=primavera
+```
 
 ---
 
@@ -197,7 +187,7 @@ newgrp docker
 |------|---------------|-----------|
 | **메모리** | 2GB RAM | 4GB+ RAM |
 | **디스크** | 2GB 여유 공간 | 5GB+ 여유 공간 |
-| **포트** | 3308, 3309, 3310, 6379, 8200 포트 사용 가능 | - |
+| **포트** | 3308, 3309, 3310, 6380, 8200 포트 사용 가능 | - |
 
 ### 3. 포트 충돌 확인
 
@@ -208,7 +198,7 @@ lsof -i :3309  # Test 환경
 lsof -i :3310  # Production 환경
 
 # Redis 포트 확인
-lsof -i :6379
+lsof -i :6380
 
 # Vault 포트 확인
 lsof -i :8200
@@ -256,7 +246,7 @@ docker network inspect infrastructure_primavera-network
 ```
 NAME                IMAGE               COMMAND                  SERVICE   CREATED         STATUS         PORTS
 mariadb-primavera   mariadb:11.4.7      "docker-entrypoint.s…"   mariadb   2 minutes ago   Up 2 minutes   0.0.0.0:1109->3306/tcp
-redis-primavera     redis:7-alpine      "docker-entrypoint.s…"   redis     2 minutes ago   Up 2 minutes   0.0.0.0:6379->6379/tcp
+redis-primavera     redis:7-alpine      "docker-entrypoint.s…"   redis     2 minutes ago   Up 2 minutes   0.0.0.0:6380->6379/tcp
 vault-primavera     hashicorp/vault:1.15 "docker-entrypoint.s…"   vault     2 minutes ago   Up 2 minutes   0.0.0.0:8200->8200/tcp
 ```
 
@@ -565,7 +555,7 @@ services:
     container_name: redis-primavera
     restart: unless-stopped
     ports:
-      - "6379:6379"
+      - "6380:6379"
     volumes:
       - redis_data:/data
     networks:
@@ -632,7 +622,7 @@ networks:
        url: jdbc:mariadb://localhost:1109/primavera  # 포워딩된 포트 사용
      redis:
        host: localhost  # 'localhost' 사용
-       port: 6379
+       port: 6380
    ```
 
 #### 네트워크 관리 명령어
@@ -666,7 +656,7 @@ docker network rm infrastructure_primavera-network
 #### Redis
 | 항목 | 값 | 용도 |
 |------|----|----- |
-| **포트** | `6379` | Redis 접근 |
+| **포트** | `6380` | Redis 접근 |
 | **메모리 제한** | `256MB` | 메모리 사용량 제한 |
 | **데이터 지속성** | `appendonly yes` | AOF 로그 활성화 |
 | **삭제 정책** | `allkeys-lru` | 메모리 부족 시 LRU 삭제 |

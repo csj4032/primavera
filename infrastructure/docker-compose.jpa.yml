@@ -1,0 +1,90 @@
+# ==============================================================================
+# Primavera JPA + 캐싱 인프라 - Chapter 14-17
+# JPA, 고급 매핑, 파일 처리, 데이터 파이프라인, Redis 캐싱
+# ==============================================================================
+
+services:
+  # MariaDB - JPA용 데이터베이스
+  mariadb:
+    image: mariadb:11.4.7
+    container_name: mariadb-primavera-jpa
+    restart: unless-stopped
+    environment:
+      MARIADB_ROOT_PASSWORD: root
+      MARIADB_DATABASE: primavera
+      MARIADB_USER: primavera
+      MARIADB_PASSWORD: primavera
+      MARIADB_AUTO_UPGRADE: 1
+      TZ: UTC
+    ports:
+      - "3308:3306"
+    volumes:
+      - mariadb_jpa_data:/var/lib/mysql
+      - ./sql/init-unified-local.sql:/docker-entrypoint-initdb.d/init-local.sql:ro
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --default-time-zone='+00:00'
+    networks:
+      - primavera-jpa
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis - 캐싱 및 세션 저장소
+  redis:
+    image: redis:7-alpine
+    container_name: redis-primavera-jpa
+    restart: unless-stopped
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis_jpa_data:/data
+    networks:
+      - primavera-jpa
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Elasticsearch - 검색 엔진 및 데이터 파이프라인 (chap17)
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0
+    container_name: elasticsearch-primavera-jpa
+    restart: unless-stopped
+    environment:
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"  # JPA 환경에서는 메모리 사용량 감소
+      - xpack.security.enabled=false
+      - xpack.security.enrollment.enabled=false
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - elasticsearch_jpa_data:/usr/share/elasticsearch/data
+    networks:
+      - primavera-jpa
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9200/_cluster/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  mariadb_jpa_data:
+    driver: local
+  redis_jpa_data:
+    driver: local
+  elasticsearch_jpa_data:
+    driver: local
+
+networks:
+  primavera-jpa:
+    driver: bridge
+    name: primavera-jpa

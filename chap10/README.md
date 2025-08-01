@@ -405,7 +405,7 @@ spring:
   data:
     redis:
       host: redis-cluster.primavera.com
-      port: 6379
+      port: 6380
       lettuce:
         pool:
           max-active: 8

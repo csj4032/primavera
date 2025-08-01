@@ -34,7 +34,7 @@ public class PrimaveraTestcontainersProperties {
     @Setter
     public static class Redis {
         private String image = "redis:6-alpine";
-        private int port = 6379;
+        private int port = 6380;
     }
 
     @Getter

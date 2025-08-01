@@ -165,7 +165,7 @@ vault kv put secret/ReactiveProgrammingApplication/local \
     spring.r2dbc.username=primavera \
     spring.r2dbc.password=primavera \
     spring.redis.host=localhost \
-    spring.redis.port=6379
+    spring.redis.port=6380
 
 # chap16: FileProcessingMonitoringApplication
 vault kv put secret/FileProcessingMonitoringApplication/local \
@@ -337,7 +337,7 @@ vault kv put secret/ReactiveProgrammingApplication/test \
     spring.r2dbc.username=primavera \
     spring.r2dbc.password=primavera \
     spring.redis.host=localhost \
-    spring.redis.port=6379
+    spring.redis.port=6380
 
 # chap16: FileProcessingMonitoringApplication
 vault kv put secret/FileProcessingMonitoringApplication/test \
@@ -509,7 +509,7 @@ vault kv put secret/ReactiveProgrammingApplication/prod \
     spring.r2dbc.username=primavera \
     spring.r2dbc.password=primavera \
     spring.redis.host=prod-redis-server \
-    spring.redis.port=6379 \
+    spring.redis.port=6380 \
     spring.redis.password=prod-redis-password-change-me
 
 # chap16: FileProcessingMonitoringApplication

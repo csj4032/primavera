@@ -21,11 +21,11 @@ import lombok.Setter;
 public abstract class BaseEntity implements Serializable {
 
 	@CreatedDate
-	@Column(name = "REG_DT", updatable = false)
+	@Column(name = "CREATED_AT", updatable = false)
 	private Instant createdAt;
 
 	@LastModifiedDate
-	@Column(name = "MOD_DT")
+	@Column(name = "UPDATED_AT")
 	private Instant updatedAt;
 
 }

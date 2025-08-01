@@ -20,62 +20,10 @@ services:
     networks:
       - primavera-network
     healthcheck:
-      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      test: [ "CMD", "healthcheck.sh", "--connect", "--innodb_initialized" ]
       interval: 10s
       timeout: 5s
       retries: 5
-
-#  # Test Environment MariaDB
-#  mariadb-test:
-#    image: mariadb:11.4.7
-#    container_name: mariadb-primavera-test
-#    restart: unless-stopped
-#    environment:
-#      MARIADB_ROOT_PASSWORD: root
-#      MARIADB_DATABASE: primavera
-#      MARIADB_USER: primavera
-#      MARIADB_PASSWORD: primavera
-#      MARIADB_AUTO_UPGRADE: 1
-#      TZ: UTC
-#    ports:
-#      - "3309:3306"
-#    volumes:
-#      - mariadb_test_data:/var/lib/mysql
-#      - ./sql/init-unified-test.sql:/docker-entrypoint-initdb.d/init-local.sql:ro
-#    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --default-time-zone='+00:00'
-#    networks:
-#      - primavera-network
-#    healthcheck:
-#      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
-#      interval: 10s
-#      timeout: 5s
-#      retries: 5
-#
-#  # Production Environment MariaDB
-#  mariadb-prod:
-#    image: mariadb:11.4.7
-#    container_name: mariadb-primavera-prod
-#    restart: unless-stopped
-#    environment:
-#      MARIADB_ROOT_PASSWORD: root
-#      MARIADB_DATABASE: primavera
-#      MARIADB_USER: primavera
-#      MARIADB_PASSWORD: primavera
-#      MARIADB_AUTO_UPGRADE: 1
-#      TZ: UTC
-#    ports:
-#      - "3310:3306"
-#    volumes:
-#      - mariadb_prod_data:/var/lib/mysql
-#      - ./sql/init-unified-prod.sql:/docker-entrypoint-initdb.d/init-local.sql:ro
-#    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --default-time-zone='+00:00'
-#    networks:
-#      - primavera-network
-#    healthcheck:
-#      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
-#      interval: 10s
-#      timeout: 5s
-#      retries: 5
 
   vault:
     image: hashicorp/vault:1.15
@@ -97,7 +45,7 @@ services:
     networks:
       - primavera-network
     healthcheck:
-      test: ["CMD", "sh", "-c", "VAULT_ADDR=http://127.0.0.1:8200 vault status"]
+      test: [ "CMD", "sh", "-c", "VAULT_ADDR=http://127.0.0.1:8200 vault status" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -132,14 +80,14 @@ services:
     container_name: redis-primavera
     restart: unless-stopped
     ports:
-      - "6379:6379"
+      - "6380:6379"
     volumes:
       - redis_data:/data
     networks:
       - primavera-network
     command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: [ "CMD", "redis-cli", "ping" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -161,7 +109,7 @@ services:
     networks:
       - primavera-network
     healthcheck:
-      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      test: [ "CMD", "mongosh", "--eval", "db.adminCommand('ping')" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -183,7 +131,7 @@ services:
     networks:
       - primavera-network
     healthcheck:
-      test: ["CMD", "bash", "-c", "echo 'ruok' | nc localhost 2181"]
+      test: [ "CMD", "bash", "-c", "echo 'ruok' | nc localhost 2181" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -215,7 +163,7 @@ services:
     networks:
       - primavera-network
     healthcheck:
-      test: ["CMD", "kafka-broker-api-versions", "--bootstrap-server", "localhost:9092"]
+      test: [ "CMD", "kafka-broker-api-versions", "--bootstrap-server", "localhost:9092" ]
       interval: 10s
       timeout: 10s
       retries: 5
@@ -244,7 +192,7 @@ services:
     networks:
       - primavera-network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9200/_cluster/health"]
+      test: [ "CMD", "curl", "-f", "http://localhost:9200/_cluster/health" ]
       interval: 10s
       timeout: 5s
       retries: 5

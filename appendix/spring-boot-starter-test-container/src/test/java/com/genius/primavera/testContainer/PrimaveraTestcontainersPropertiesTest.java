@@ -41,7 +41,7 @@ class PrimaveraTestcontainersPropertiesTest {
         
         assertNotNull(properties.getRedis());
         assertEquals("redis:6-alpine", properties.getRedis().getImage());
-        assertEquals(6379, properties.getRedis().getPort());
+        assertEquals(6380, properties.getRedis().getPort());
         
         log.info("Default Redis config: image={}, port={}", 
                 properties.getRedis().getImage(),

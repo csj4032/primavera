@@ -3,7 +3,7 @@ package com.genius.primavera.testContainer;
 public enum ContainerType {
 
     MARIADB("mariadb:11.4.7", 3306),
-    REDIS("redis:7-alpine", 6379),
+    REDIS("redis:7-alpine", 6380),
     KAFKA("confluentinc/cp-kafka:latest", 9092),
     POSTGRESQL("postgres:15-alpine", 5432);
 

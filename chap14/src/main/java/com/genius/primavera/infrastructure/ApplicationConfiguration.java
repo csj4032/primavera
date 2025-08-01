@@ -106,7 +106,7 @@ public class ApplicationConfiguration implements WebMvcConfigurer {
 	private RedisStandaloneConfiguration getRedisStandaloneConfiguration() {
 		RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration();
 		configuration.setHostName("localhost");
-		configuration.setPort(6379);
+		configuration.setPort(6380);
 		return configuration;
 	}
 

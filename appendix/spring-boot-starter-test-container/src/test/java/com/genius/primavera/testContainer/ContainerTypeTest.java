@@ -25,7 +25,7 @@ class ContainerTypeTest {
     @DisplayName("모든 컨테이너 타입이 올바른 기본 포트를 가지는지 확인")
     void shouldHaveCorrectDefaultPorts() {
         assertEquals(3306, ContainerType.MARIADB.getDefaultPort());
-        assertEquals(6379, ContainerType.REDIS.getDefaultPort());
+        assertEquals(6380, ContainerType.REDIS.getDefaultPort());
         assertEquals(9092, ContainerType.KAFKA.getDefaultPort());
         assertEquals(5432, ContainerType.POSTGRESQL.getDefaultPort());
         
