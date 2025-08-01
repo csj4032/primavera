@@ -15,7 +15,7 @@ services:
       - "3308:3306"
     volumes:
       - mariadb_local_data:/var/lib/mysql
-      - ./sql/init-local.sql:/docker-entrypoint-initdb.d/init-local.sql:ro
+      - ./sql/init-unified-local.sql:/docker-entrypoint-initdb.d/init-local.sql:ro
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --default-time-zone='+00:00'
     networks:
       - primavera-network
@@ -25,57 +25,57 @@ services:
       timeout: 5s
       retries: 5
 
-  # Test Environment MariaDB
-  mariadb-test:
-    image: mariadb:11.4.7
-    container_name: mariadb-primavera-test
-    restart: unless-stopped
-    environment:
-      MARIADB_ROOT_PASSWORD: root
-      MARIADB_DATABASE: primavera
-      MARIADB_USER: primavera
-      MARIADB_PASSWORD: primavera
-      MARIADB_AUTO_UPGRADE: 1
-      TZ: UTC
-    ports:
-      - "3309:3306"
-    volumes:
-      - mariadb_test_data:/var/lib/mysql
-      - ./sql/init-test.sql:/docker-entrypoint-initdb.d/init-local.sql:ro
-    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --default-time-zone='+00:00'
-    networks:
-      - primavera-network
-    healthcheck:
-      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  # Production Environment MariaDB
-  mariadb-prod:
-    image: mariadb:11.4.7
-    container_name: mariadb-primavera-prod
-    restart: unless-stopped
-    environment:
-      MARIADB_ROOT_PASSWORD: root
-      MARIADB_DATABASE: primavera
-      MARIADB_USER: primavera
-      MARIADB_PASSWORD: primavera
-      MARIADB_AUTO_UPGRADE: 1
-      TZ: UTC
-    ports:
-      - "3310:3306"
-    volumes:
-      - mariadb_prod_data:/var/lib/mysql
-      - ./sql/init-prod.sql:/docker-entrypoint-initdb.d/init-local.sql:ro
-    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --default-time-zone='+00:00'
-    networks:
-      - primavera-network
-    healthcheck:
-      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+#  # Test Environment MariaDB
+#  mariadb-test:
+#    image: mariadb:11.4.7
+#    container_name: mariadb-primavera-test
+#    restart: unless-stopped
+#    environment:
+#      MARIADB_ROOT_PASSWORD: root
+#      MARIADB_DATABASE: primavera
+#      MARIADB_USER: primavera
+#      MARIADB_PASSWORD: primavera
+#      MARIADB_AUTO_UPGRADE: 1
+#      TZ: UTC
+#    ports:
+#      - "3309:3306"
+#    volumes:
+#      - mariadb_test_data:/var/lib/mysql
+#      - ./sql/init-unified-test.sql:/docker-entrypoint-initdb.d/init-local.sql:ro
+#    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --default-time-zone='+00:00'
+#    networks:
+#      - primavera-network
+#    healthcheck:
+#      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+#      interval: 10s
+#      timeout: 5s
+#      retries: 5
+#
+#  # Production Environment MariaDB
+#  mariadb-prod:
+#    image: mariadb:11.4.7
+#    container_name: mariadb-primavera-prod
+#    restart: unless-stopped
+#    environment:
+#      MARIADB_ROOT_PASSWORD: root
+#      MARIADB_DATABASE: primavera
+#      MARIADB_USER: primavera
+#      MARIADB_PASSWORD: primavera
+#      MARIADB_AUTO_UPGRADE: 1
+#      TZ: UTC
+#    ports:
+#      - "3310:3306"
+#    volumes:
+#      - mariadb_prod_data:/var/lib/mysql
+#      - ./sql/init-unified-prod.sql:/docker-entrypoint-initdb.d/init-local.sql:ro
+#    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --default-time-zone='+00:00'
+#    networks:
+#      - primavera-network
+#    healthcheck:
+#      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+#      interval: 10s
+#      timeout: 5s
+#      retries: 5
 
   vault:
     image: hashicorp/vault:1.15
