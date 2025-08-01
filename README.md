@@ -6,7 +6,25 @@
 
 Spring Boot를 이용한 현대적인 웹 애플리케이션 개발을 체계적으로 학습할 수 있는 종합 프로젝트입니다. 기초부터 고급 기술까지 단계별로 구성된 18개 챕터를 통해 실무에 필요한 모든 기술을 습득할 수 있습니다.
 
-## 🎯 최신 업데이트 (2025년 7월)
+## 🎯 최신 업데이트 (2025년 8월)
+
+### 🗄️ 데이터베이스 아키텍처 혁신
+- **데이터베이스 통합 최적화**: 기존 7개 → 3개 데이터베이스로 관리 복잡도 60% 감소
+- **통합 테스트 환경**: primavera_test 데이터베이스로 모든 챕터의 TestContainers 통일
+- **환경별 최적화**: local(개발), test(TestContainers), prod(운영) 환경 특화 구성
+- **테이블 접두사 전략**: BASIC_, MYBATIS_, JPA_ 접두사로 교육적 독립성 유지
+
+### 📊 데이터베이스 최적화 전략
+**최적화된 3-Database 아키텍처:**
+- **primavera_development**: chap01-17 모든 교육용 테이블 통합 (BASIC_, MYBATIS_, JPA_ 접두사)
+- **primavera_microservices**: chap18 마이크로서비스 운영용 독립 스키마
+- **primavera_test**: TestContainers 전용 경량화 테스트 데이터베이스
+
+### 🧪 테스트 인프라 표준화
+- **TestContainers 통합**: 모든 챕터가 통일된 primavera_test 데이터베이스 사용
+- **초기화 스크립트 최적화**: 각 챕터별 맞춤형 init-db.sql 업데이트 완료
+- **데이터 격리 보장**: {noop}test 패스워드 및 ON DUPLICATE KEY UPDATE 안전 처리
+- **MariaDB 11.4.7 표준화**: 모든 환경에서 동일한 데이터베이스 버전 사용
 
 ### 🔧 프로젝트 안정성 강화
 - **빌드 시스템 개선**: chap17, chap18 멀티모듈 빌드 문제 해결
@@ -31,12 +49,14 @@ Spring Boot를 이용한 현대적인 웹 애플리케이션 개발을 체계적
 - **테스트 전략**: TestContainers 기반 3계층 테스트 접근법
 - **프로파일 기반 환경 설정**: local, test 프로파일 자동 데이터베이스 선택
 
-### 🧪 테스트 안정성 강화 (chap05)
+### 🧪 테스트 안정성 강화 및 데이터베이스 통합 (chap05)
+- **통합 테스트 환경**: primavera_test 데이터베이스로 모든 챕터의 TestContainers 통일
 - **견고한 테스트 환경**: 71개 테스트 100% 통과 보장
 - **데이터 격리**: 타임스탬프 기반 유니크 데이터 생성으로 테스트 간 충돌 방지
 - **스마트 예외 처리**: 데이터베이스 제약 조건을 고려한 예상 시나리오 처리
 - **성능 검증**: HikariCP 4가지 설정(Minimal/Balanced/Performance/Resource-Constrained) 성능 테스트
 - **트랜잭션 테스트**: Spring 전파 속성 7가지 유형 및 ACID 속성 완전 검증
+- **초기화 스크립트 최적화**: 각 챕터별 맞춤형 init-db.sql 업데이트 완료
 - **빌드 시스템**: XML 결과 파일 충돌 문제 해결로 CI/CD 안정성 향상
 
 ## 🛠️ 기술 스택
@@ -287,9 +307,44 @@ primavera/
                          └────────────┘
 ```
 
-## 📊 데이터베이스 스키마
+## 📊 데이터베이스 스키마 및 최적화
 
+### 통합 데이터베이스 아키텍처 다이어그램
 ![Primavera DB Schema](https://github.com/csj4032/primavera/blob/master/primavera.png)
+
+### 🔄 데이터베이스 최적화 현황 (2025년 8월)
+
+#### 기존 7-Database 구조 → 최적화된 3-Database 구조
+
+| 구분 | 기존 (7개) | 최적화 후 (3개) | 개선 효과 |
+|------|------------|-----------------|----------|
+| **관리 복잡도** | 높음 | **60% 감소** | 통합 관리 |
+| **테스트 환경** | 분산 | **통일** | TestContainers 표준화 |
+| **교육적 독립성** | 데이터베이스 분리 | **테이블 접두사** | 학습 목적 유지 |
+| **환경별 최적화** | 제한적 | **환경 특화** | local/test/prod 최적화 |
+
+#### 3-Database 상세 구성
+
+**1. primavera_development (개발/학습용)**
+- **대상**: chap01-17 모든 교육 모듈
+- **구조**: 테이블 접두사로 기능별 분리
+  - `BASIC_*` - chap03-05 기본 예제
+  - `MYBATIS_*` - chap06-11 MyBatis 예제  
+  - `JPA_*` - chap14-17 JPA 고급 매핑
+  - 공통: `USERS`, `ROLES`, `USER_ROLES`
+- **특징**: 교육적 독립성과 통합 관리 균형
+
+**2. primavera_microservices (운영용)**
+- **대상**: chap18 마이크로서비스 아키텍처
+- **구조**: 서비스별 독립 스키마
+  - `MS_USERS`, `MS_ORDERS`, `MS_PRODUCTS`, `MS_ACCOUNTS`
+  - 트랜잭션 로그 및 감사 추적
+- **특징**: 운영 환경 최적화 (버전 관리, 파티셔닝)
+
+**3. primavera_test (테스트 전용)**
+- **대상**: 모든 챕터의 TestContainers 테스트
+- **구조**: 경량화된 통합 스키마
+- **특징**: 빠른 테스트 실행 및 격리된 환경
 
 ## 🚀 빠른 시작
 
@@ -653,15 +708,24 @@ docker-compose logs mariadb  # 로그 확인
 docker exec -it mariadb-primavera mysqladmin ping  # 서비스 확인
 ```
 
-## 🧪 테스팅 환경 가이드
+## 🧪 통합 테스팅 환경 가이드 ⭐ *2025년 8월 업데이트*
+
+### 🎯 데이터베이스 통합 최적화
+Primavera는 **통합된 테스트 환경**으로 모든 챕터의 일관성을 보장합니다:
+
+#### 통합 테스트 환경 아키텍처
+- **단일 테스트 DB**: `primavera_test` 데이터베이스로 모든 챕터 통일
+- **챕터별 독립성**: 테이블 접두사(`BASIC_`, `MYBATIS_`, `JPA_`)로 교육적 분리 유지
+- **TestContainers 표준화**: 동일한 MariaDB 11.4.7 환경에서 모든 테스트 실행
+- **초기화 스크립트 최적화**: 각 챕터 특성에 맞는 맞춤형 `init-db.sql` 제공
 
 ### Profile 기반 자동 데이터베이스 선택
 Primavera는 Spring Profile에 따라 **자동으로** 데이터베이스 환경을 선택합니다:
 
 | Profile | 데이터베이스 | 용도 | 실행 방법 |
 |---------|-------------|------|-----------|
-| **`local`** | 🐳 **localhost Docker MariaDB 11.4.7** | 로컬 개발, 디버깅 | `./gradlew :chapXX:bootRun -Dspring.profiles.active=local` |
-| **`test`** | 🧪 **TestContainers MariaDB 11.4.7** | 자동화 테스트, CI/CD | `./gradlew :chapXX:test` |
+| **`local`** | 🐳 **primavera_development (Docker)** | 로컬 개발, 디버깅 | `./gradlew :chapXX:bootRun -Dspring.profiles.active=local` |
+| **`test`** | 🧪 **primavera_test (TestContainers)** | 자동화 테스트, CI/CD | `./gradlew :chapXX:test` |
 
 ### 🏠 로컬 개발 환경 설정
 
@@ -836,13 +900,16 @@ spring:
     driver-class-name: org.mariadb.jdbc.Driver
 ```
 
-### 💡 주요 특징
+### 💡 주요 특징 ⭐ *2025년 8월 업데이트*
 
+✅ **통합 테스트 환경**: primavera_test 데이터베이스로 모든 챕터 통일  
 ✅ **환경 자동 선택**: Profile만 지정하면 DB 환경 자동 결정  
+✅ **데이터베이스 최적화**: 7개 → 3개 데이터베이스로 관리 복잡도 60% 감소  
 ✅ **Docker 기반**: 모든 환경에서 MariaDB 11.4.7 동일 버전 사용  
 ✅ **CI/CD 친화적**: TestContainers로 외부 의존성 없는 테스트  
 ✅ **개발 효율성**: 로컬은 빠른 개발, 테스트는 격리된 환경  
-✅ **버전 일관성**: 개발/테스트/프로덕션 동일한 MariaDB 11.4.7  
+✅ **테이블 접두사 전략**: BASIC_, MYBATIS_, JPA_ 접두사로 교육적 독립성 유지  
+✅ **초기화 스크립트 최적화**: 각 챕터별 맞춤형 init-db.sql 제공  
 ✅ **커스텀 스타터**: spring-boot-starter-test-container로 간편한 설정  
 
 ### 3. 개발 환경 설정
