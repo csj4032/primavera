@@ -15,7 +15,7 @@ Spring Boot의 핵심 개념과 애플리케이션 구동 원리를 이해하는
 
 ## 🛠️ 핵심 기술 스택
 - **Java 21** - Record, Switch Expression 활용
-- **Spring Boot 3.5.3** - 최신 부트 프레임워크
+- **Spring Boot 3.3.6** - 최신 부트 프레임워크
 - **Spring Context** - IoC 컨테이너 관리
 - **Gradle 8.12.1** - 빌드 자동화
 - **Jakarta Annotations** - 표준 어노테이션 지원

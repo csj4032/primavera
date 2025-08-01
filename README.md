@@ -203,7 +203,7 @@ vi gradle.properties
 
 # 4. 변경사항 커밋
 git add gradle.properties
-git commit -m "deps: update spring boot to 3.5.4"
+git commit -m "deps: update spring boot to 3.3.6"
 ```
 
 ### Database & Persistence

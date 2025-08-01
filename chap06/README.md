@@ -26,7 +26,7 @@
 ## 🛠️ 기술 스택
 
 ### 핵심 기술
-- **Spring Boot 3.5.3**: 메인 프레임워크
+- **Spring Boot 3.3.6**: 메인 프레임워크
 - **MyBatis 3.x**: SQL 매핑 및 동적 쿼리
 - **Jakarta Bean Validation**: 선언적 유효성 검증
 - **GraalVM JavaScript**: 복잡한 검증 로직 스크립팅

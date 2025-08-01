@@ -3,7 +3,7 @@
 Spring Boot 프로젝트에서 **TestContainers**를 손쉽게 사용할 수 있도록 **자동 설정**을 제공하는 커스텀 스타터입니다.
 
 [![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/csj4032/primavera)
-[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.3-brightgreen.svg)](https://spring.io/projects/spring-boot)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.3.6-brightgreen.svg)](https://spring.io/projects/spring-boot)
 [![TestContainers](https://img.shields.io/badge/TestContainers-1.20.4-orange.svg)](https://www.testcontainers.org/)
 [![MariaDB](https://img.shields.io/badge/MariaDB-11.4.7-brown.svg)](https://mariadb.org/)
 

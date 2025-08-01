@@ -1226,7 +1226,7 @@ docker-compose up -d
 ### 구조화된 로깅
 
 ```xml
-<!-- logback.xml 설정 -->
+<!-- logback-spring.xml 설정 -->
 <configuration>
     <appender name="SENTRY" class="io.sentry.logback.SentryAppender">
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">

@@ -11,7 +11,7 @@ Spring Boot의 설정 시스템과 의존성 주입(Dependency Injection) 메커
 - **YAML vs Properties** 차이점과 활용법
 
 ## 🛠️ 핵심 기술 스택
-- **Spring Boot 3.5.3** - Configuration Management
+- **Spring Boot 3.3.6** - Configuration Management
 - **Spring Context** - IoC Container & DI
 - **YAML Configuration** - 계층적 설정 관리
 - **Lombok** - 코드 간소화 도구
@@ -45,7 +45,7 @@ spring init --build=gradle --java-version=21 \
 ```gradle
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.5.3'
+    id 'org.springframework.boot' version '3.3.6'
     id 'io.spring.dependency-management' version '1.1.6'
 }
 
