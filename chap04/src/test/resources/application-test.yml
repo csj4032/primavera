@@ -10,11 +10,11 @@ spring:
 
 primavera:
   testcontainers:
-    enabled: true
-#    mariadb:
-#      dockerImageName: mariadb:11.4.7
-#      driverClassName: org.mariadb.jdbc.Driver
-#      databaseName: primavera
-#      username: primavera
-#      password: primavera
-#      initScript: sql/init.sql
+    mariadb:
+      enabled: true
+      dockerImageName: mariadb:11.4.7
+      driverClassName: org.mariadb.jdbc.Driver
+      databaseName: primavera
+      username: primavera
+      password: primavera
+      initScript: sql/init.sql

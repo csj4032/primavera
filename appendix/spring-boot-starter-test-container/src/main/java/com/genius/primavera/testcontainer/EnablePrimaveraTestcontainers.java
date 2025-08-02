@@ -6,12 +6,14 @@ import org.springframework.test.context.ContextConfiguration;
 
 import java.lang.annotation.*;
 
+@Documented
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@Documented
+@ExtendWith(TestContainerLifecycleExtension.class)
 @Import(PrimaveraTestcontainersConfiguration.class)
 @ContextConfiguration(initializers = PrimaveraTestcontainersInitializer.class)
-@ExtendWith(TestContainerLifecycleExtension.class)
 public @interface EnablePrimaveraTestcontainers {
+
     ContainerLifecycleMode lifecycleMode() default ContainerLifecycleMode.PER_CLASS;
+
 }

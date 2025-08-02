@@ -4,45 +4,41 @@ plugins {
     id 'io.spring.dependency-management' version "${springDependencyManagementVersion}"
 }
 
-group = 'com.genius.primavera'
-version = '1.0.0'
-
-configurations {
-    compileOnly {
-        extendsFrom annotationProcessor
-    }
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
 
 dependencies {
+    implementation "org.springframework.boot:spring-boot-starter"
     implementation "org.springframework.boot:spring-boot-autoconfigure"
-    implementation 'org.springframework.boot:spring-boot-starter-test'
-    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
-    implementation "org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}"
-    implementation "org.testcontainers:testcontainers:${testContainersVersion}"
-    implementation "org.testcontainers:junit-jupiter:${testContainersVersion}"
     implementation "org.testcontainers:mariadb:${testContainersVersion}"
+    implementation "org.testcontainers:mysql:${testContainersVersion}"
     implementation "org.testcontainers:postgresql:${testContainersVersion}"
     implementation "org.testcontainers:kafka:${testContainersVersion}"
+    implementation "org.testcontainers:testcontainers:${testContainersVersion}"
     implementation "org.testcontainers:elasticsearch:${testContainersVersion}"
-    implementation "org.testcontainers:mongodb:${testContainersVersion}"
-    implementation "org.testcontainers:vault:${testContainersVersion}"
     implementation "com.redis.testcontainers:testcontainers-redis:1.6.4"
-    
-    // Redis 테스트를 위한 의존성
-    testImplementation 'org.springframework.boot:spring-boot-starter-data-redis'
-    testImplementation "org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}"
-    testImplementation project(":appendix:spring-boot-starter-test-container")
-}
+    implementation "org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}"
+    implementation "com.mysql:mysql-connector-j:8.3.0"
+    implementation "org.postgresql:postgresql:42.7.2"
+    implementation "org.testcontainers:junit-jupiter:${testContainersVersion}"
+    implementation "org.springframework:spring-test"
+    implementation "org.springframework.boot:spring-boot-test"
+    implementation "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
 
-bootJar {
-    enabled = false
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+
+    testImplementation "org.springframework.boot:spring-boot-starter-test"
+    testImplementation "org.testcontainers:junit-jupiter:${testContainersVersion}"
+    testImplementation "org.testcontainers:mariadb:${testContainersVersion}"
 }
 
 jar {
     enabled = true
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    archiveClassifier = ''
 }
 
-test {
-    useJUnitPlatform()
+bootJar {
+    enabled = false
 }

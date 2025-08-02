@@ -12,5 +12,5 @@ dependencies {
     testImplementation "org.springframework.security:spring-security-test"
     testImplementation "org.mybatis.spring.boot:mybatis-spring-boot-starter-test:${mybatisSpringBootStarterVersion}"
     testImplementation "org.mockito:mockito-core:4.+"
-    testImplementation project(':appendix:spring-boot-starter-test-container-v2')
+    testImplementation project(':appendix:spring-boot-starter-test-container')
 }

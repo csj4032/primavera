@@ -1,1 +1,2 @@
-org.springframework.test.context.TestExecutionListener=com.genius.primavera.testContainer.PrimaveraTestcontainersListener
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.genius.primavera.testcontainer.PrimaveraTestcontainersConfiguration

@@ -33,7 +33,7 @@ public class PrimaveraTestcontainersProperties {
 
     @Data
     public static abstract class ContainerConfig {
-        private boolean enabled = true;
+        private boolean enabled = false;
         private String dockerImageName;
         private Map<String, String> environment = new HashMap<>();
     }
