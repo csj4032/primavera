@@ -5,14 +5,19 @@ import com.genius.primavera.domain.mapper.WinnerMapper;
 import com.genius.primavera.domain.model.User;
 import com.genius.primavera.domain.model.UserStatus;
 import com.genius.primavera.domain.model.Winner;
-import com.genius.primavera.testContainer.EnablePrimaveraTestcontainers;
+import com.genius.primavera.testcontainer.EnablePrimaveraTestcontainers;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import org.testcontainers.containers.MariaDBContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.Instant;
 import java.util.concurrent.CompletableFuture;
@@ -24,7 +29,7 @@ import static org.assertj.core.api.Assertions.*;
 
 @Slf4j
 @SpringBootTest
-@ActiveProfiles("test")
+@ActiveProfiles({"test"})
 @EnablePrimaveraTestcontainers
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @DisplayName("Spring Transaction Isolation Level 테스트")

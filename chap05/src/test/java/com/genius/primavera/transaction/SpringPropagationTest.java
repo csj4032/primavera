@@ -5,17 +5,17 @@ import com.genius.primavera.domain.mapper.WinnerMapper;
 import com.genius.primavera.domain.model.User;
 import com.genius.primavera.domain.model.UserStatus;
 import com.genius.primavera.domain.model.Winner;
-import com.genius.primavera.testContainer.EnablePrimaveraTestcontainers;
+import com.genius.primavera.testcontainer.EnablePrimaveraTestcontainers;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.IllegalTransactionStateException;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.transaction.PlatformTransactionManager;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -25,7 +25,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @Slf4j
 @SpringBootTest
-@ActiveProfiles("test")
+@ActiveProfiles({"test"})
 @EnablePrimaveraTestcontainers
 @DisplayName("Spring Transaction Propagation 테스트")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -54,10 +54,10 @@ public class SpringPropagationTest {
                 .createdAt(Instant.now())
                 .updatedAt(Instant.now())
                 .build();
-                
+
         // TransactionTemplate 초기화
         transactionTemplate = new TransactionTemplate(transactionManager);
-        
+
         // 테스트 전에 Winner 테이블 정리
         winnerMapper.truncate();
     }
@@ -121,7 +121,7 @@ public class SpringPropagationTest {
                 // REQUIRES_NEW로 새 트랜잭션 시작
                 TransactionTemplate requiresNewTemplate = new TransactionTemplate(transactionManager);
                 requiresNewTemplate.setPropagationBehavior(Propagation.REQUIRES_NEW.value());
-                
+
                 requiresNewTemplate.execute(innerStatus -> {
                     User user = userMapper.findById(userId);
                     user.setNickname("REQUIRES_NEW_COMMITTED");
@@ -233,7 +233,7 @@ public class SpringPropagationTest {
                 // NOT_SUPPORTED로 트랜잭션 없이 실행
                 TransactionTemplate notSupportedTemplate = new TransactionTemplate(transactionManager);
                 notSupportedTemplate.setPropagationBehavior(Propagation.NOT_SUPPORTED.value());
-                
+
                 notSupportedTemplate.execute(innerStatus -> {
                     User user = userMapper.findById(userId);
                     user.setNickname("NOT_SUPPORTED_COMMITTED");
@@ -297,7 +297,7 @@ public class SpringPropagationTest {
         assertThatThrownBy(() -> {
             TransactionTemplate mandatoryTemplate = new TransactionTemplate(transactionManager);
             mandatoryTemplate.setPropagationBehavior(Propagation.MANDATORY.value());
-            
+
             mandatoryTemplate.execute(status -> {
                 User user = userMapper.findById(userId);
                 user.setNickname("MANDATORY_FAIL");
@@ -312,7 +312,7 @@ public class SpringPropagationTest {
         transactionTemplate.execute(status -> {
             TransactionTemplate mandatoryTemplate = new TransactionTemplate(transactionManager);
             mandatoryTemplate.setPropagationBehavior(Propagation.MANDATORY.value());
-            
+
             return mandatoryTemplate.execute(innerStatus -> {
                 User user = userMapper.findById(userId);
                 user.setNickname("MANDATORY_SUCCESS");
@@ -360,11 +360,11 @@ public class SpringPropagationTest {
             // 기존 트랜잭션을 시작하고 그 안에서 NEVER 호출
             transactionTemplate.execute(status -> {
                 log.info("외부 트랜잭션 시작됨");
-                
+
                 // NEVER 전파 설정으로 TransactionTemplate 생성
                 TransactionTemplate neverTransactionTemplate = new TransactionTemplate(transactionManager);
                 neverTransactionTemplate.setPropagationBehavior(Propagation.NEVER.value());
-                
+
                 // NEVER 전파로 실행 시도 - 예외 발생해야 함
                 return neverTransactionTemplate.execute(neverStatus -> {
                     User neverUser = userMapper.findById(userId);
@@ -405,7 +405,7 @@ public class SpringPropagationTest {
             try {
                 TransactionTemplate nestedTemplate = new TransactionTemplate(transactionManager);
                 nestedTemplate.setPropagationBehavior(Propagation.NESTED.value());
-                
+
                 nestedTemplate.execute(nestedStatus -> {
                     // 중첩 트랜잭션에서 Winner 생성
                     Winner winner = Winner.builder()

@@ -22,7 +22,7 @@ Spring Boot를 이용한 현대적인 웹 애플리케이션 개발을 체계적
 
 ### 🧪 테스트 인프라 표준화
 - **TestContainers 통합**: 모든 챕터가 통일된 primavera_test 데이터베이스 사용
-- **초기화 스크립트 최적화**: 각 챕터별 맞춤형 init-db.sql 업데이트 완료
+- **초기화 스크립트 최적화**: 각 챕터별 맞춤형 init.sql 업데이트 완료
 - **데이터 격리 보장**: {noop}test 패스워드 및 ON DUPLICATE KEY UPDATE 안전 처리
 - **MariaDB 11.4.7 표준화**: 모든 환경에서 동일한 데이터베이스 버전 사용
 
@@ -56,7 +56,7 @@ Spring Boot를 이용한 현대적인 웹 애플리케이션 개발을 체계적
 - **스마트 예외 처리**: 데이터베이스 제약 조건을 고려한 예상 시나리오 처리
 - **성능 검증**: HikariCP 4가지 설정(Minimal/Balanced/Performance/Resource-Constrained) 성능 테스트
 - **트랜잭션 테스트**: Spring 전파 속성 7가지 유형 및 ACID 속성 완전 검증
-- **초기화 스크립트 최적화**: 각 챕터별 맞춤형 init-db.sql 업데이트 완료
+- **초기화 스크립트 최적화**: 각 챕터별 맞춤형 init.sql 업데이트 완료
 - **빌드 시스템**: XML 결과 파일 충돌 문제 해결로 CI/CD 안정성 향상
 
 ## 🛠️ 기술 스택
@@ -1127,7 +1127,7 @@ Primavera는 **통합된 테스트 환경**으로 모든 챕터의 일관성을 
 - **단일 테스트 DB**: `primavera_test` 데이터베이스로 모든 챕터 통일
 - **챕터별 독립성**: 테이블 접두사(`BASIC_`, `MYBATIS_`, `JPA_`)로 교육적 분리 유지
 - **TestContainers 표준화**: 동일한 MariaDB 11.4.7 환경에서 모든 테스트 실행
-- **초기화 스크립트 최적화**: 각 챕터 특성에 맞는 맞춤형 `init-db.sql` 제공
+- **초기화 스크립트 최적화**: 각 챕터 특성에 맞는 맞춤형 `init.sql` 제공
 
 ### Profile 기반 자동 데이터베이스 선택
 Primavera는 Spring Profile에 따라 **자동으로** 데이터베이스 환경을 선택합니다:
@@ -1241,7 +1241,7 @@ primavera:
       username: primavera
       password: primavera
       reuse: true  # 컨테이너 재사용으로 테스트 속도 향상
-      init-script: sql/init-db.sql
+      init-script: sql/init.sql
       url-params:
         allowPublicKeyRetrieval: true
         useSSL: false
@@ -1272,7 +1272,7 @@ docker start mariadb-primavera-local
 # 1. MariaDB 11.4.7 Docker 이미지 다운로드 (최초 1회)
 # 2. 테스트용 컨테이너 시작
 # 3. 데이터소스 자동 설정 (URL, 사용자명, 비밀번호)
-# 4. 초기화 스크립트 실행 (init-db.sql)
+# 4. 초기화 스크립트 실행 (init.sql)
 # 5. 테스트 완료 후 컨테이너 자동 정리
 ```
 
@@ -1295,7 +1295,7 @@ static MariaDBContainer<?> mariadb = new MariaDBContainer<>("mariadb:11.4.7")
     .withDatabaseName("primavera")
     .withUsername("primavera") 
     .withPassword("primavera")
-    .withInitScript("sql/init-db.sql")
+    .withInitScript("sql/init.sql")
     .withReuse(true);  // 성능 향상을 위한 컨테이너 재사용
 ```
 
@@ -1319,7 +1319,7 @@ spring:
 ✅ **CI/CD 친화적**: TestContainers로 외부 의존성 없는 테스트  
 ✅ **개발 효율성**: 로컬은 빠른 개발, 테스트는 격리된 환경  
 ✅ **테이블 접두사 전략**: BASIC_, MYBATIS_, JPA_ 접두사로 교육적 독립성 유지  
-✅ **초기화 스크립트 최적화**: 각 챕터별 맞춤형 init-db.sql 제공  
+✅ **초기화 스크립트 최적화**: 각 챕터별 맞춤형 init.sql 제공  
 ✅ **커스텀 스타터**: spring-boot-starter-test-container로 간편한 설정  
 
 ### 3. 개발 환경 설정
@@ -1697,7 +1697,7 @@ class MyIntegrationTest {
         .withDatabaseName("primavera")
         .withUsername("primavera")
         .withPassword("primavera")
-        .withInitScript("sql/init-db.sql")
+        .withInitScript("sql/init.sql")
         .withCommand("--default-authentication-plugin=mysql_native_password");
     
     @DynamicPropertySource
@@ -1733,7 +1733,7 @@ primavera:
       username: primavera
       password: primavera
       reuse: true  # 컨테이너 재사용으로 테스트 속도 향상
-      init-script: sql/init-db.sql
+      init-script: sql/init.sql
 ```
 
 ### 3. spring-boot-starter-social-kakao 📱

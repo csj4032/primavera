@@ -4,8 +4,7 @@ import com.genius.primavera.domain.mapper.UserMapper;
 import com.genius.primavera.domain.mapper.WinnerMapper;
 import com.genius.primavera.domain.model.User;
 import com.genius.primavera.domain.model.UserStatus;
-import com.genius.primavera.domain.model.Winner;
-import com.genius.primavera.testContainer.EnablePrimaveraTestcontainers;
+import com.genius.primavera.testcontainer.EnablePrimaveraTestcontainers;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,11 +21,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static org.assertj.core.api.Assertions.*;
-
 @Slf4j
 @SpringBootTest
-@ActiveProfiles("test")
+@ActiveProfiles({"test"})
 @EnablePrimaveraTestcontainers
 @DisplayName("트랜잭션 Read Phenomena 테스트")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)

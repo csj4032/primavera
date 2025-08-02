@@ -318,7 +318,7 @@ class MyIntegrationTest {
         .withDatabaseName("primavera")
         .withUsername("primavera")
         .withPassword("primavera")
-        .withInitScript("sql/init-db.sql");
+        .withInitScript("sql/init.sql");
     
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
@@ -356,7 +356,7 @@ class MyIntegrationTest {
 - **간단한 설정**: 한 줄의 어노테이션으로 모든 설정 완료
 - **자동 프로퍼티 설정**: DataSource 관련 프로퍼티 자동 주입
 - **일관된 환경**: 모든 테스트에서 동일한 MariaDB 11.4.7 사용
-- **스키마 자동 초기화**: init-db.sql 파일 자동 실행
+- **스키마 자동 초기화**: init.sql 파일 자동 실행
 
 ### 실무 활용 팁
 

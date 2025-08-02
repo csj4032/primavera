@@ -115,7 +115,7 @@ docker-compose up -d
 ### 데이터베이스 전략
 - **운영**: MariaDB 11.4.7
 - **테스트**: MariaDB 11.4.7를 가진 TestContainers (환경 일관성)
-- **스키마 관리**: 테스트용 init-db.sql, 마이그레이션용 Flyway
+- **스키마 관리**: 테스트용 init.sql, 마이그레이션용 Flyway
 - **명명 규칙**: 대문자 테이블/컬럼명 (예: USER, ROLE, ARTICLE)
 
 ## 테스트 설정
@@ -132,7 +132,7 @@ primavera:
       databaseName: primavera
       username: primavera
       password: primavera
-      initScript: sql/init-db.sql
+      initScript: sql/init.sql
 ```
 
 ### 테스트 클래스 구조
@@ -326,7 +326,7 @@ refactor: 결제 처리 로직 추출
 - **데이터베이스**: TestContainers MariaDB 11.4.7 (자동 관리되는 Docker 컨테이너)
 - **설정**: 동적 TestContainers 속성을 가진 `application-test.yml`
 - **데이터 격리**: 각 테스트가 새롭고 격리된 데이터베이스 인스턴스 획득
-- **스키마 관리**: 빠른 테스트 설정을 위한 `init-db.sql` 초기화 스크립트
+- **스키마 관리**: 빠른 테스트 설정을 위한 `init.sql` 초기화 스크립트
 
 ### 프로파일별 실행 방법
 ```bash

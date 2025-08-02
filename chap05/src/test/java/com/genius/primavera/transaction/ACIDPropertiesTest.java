@@ -5,22 +5,20 @@ import com.genius.primavera.domain.mapper.WinnerMapper;
 import com.genius.primavera.domain.model.User;
 import com.genius.primavera.domain.model.UserStatus;
 import com.genius.primavera.domain.model.Winner;
-
-import java.math.BigDecimal;
-
-import com.genius.primavera.testContainer.EnablePrimaveraTestcontainers;
+import com.genius.primavera.testcontainer.EnablePrimaveraTestcontainers;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataAccessException;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.transaction.PlatformTransactionManager;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
@@ -32,7 +30,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @Slf4j
 @SpringBootTest
-@ActiveProfiles("test")
+@ActiveProfiles({"test"})
 @DisplayName("ACID 속성 테스트")
 @EnablePrimaveraTestcontainers
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -46,7 +44,7 @@ public class ACIDPropertiesTest {
 
     @Autowired
     private PlatformTransactionManager transactionManager;
-    
+
     private TransactionTemplate transactionTemplate;
     private User testUser;
 
@@ -60,7 +58,7 @@ public class ACIDPropertiesTest {
                 .createdAt(Instant.now())
                 .updatedAt(Instant.now())
                 .build();
-                
+
         // TransactionTemplate 초기화
         transactionTemplate = new TransactionTemplate(transactionManager);
     }
@@ -242,7 +240,7 @@ public class ACIDPropertiesTest {
         // 새로운 트랜잭션에서도 변경사항이 보이는지 확인 (프로그래밍 방식)
         TransactionTemplate newTransactionTemplate = new TransactionTemplate(transactionManager);
         newTransactionTemplate.setPropagationBehavior(Propagation.REQUIRES_NEW.value());
-        
+
         newTransactionTemplate.execute(status -> {
             User user = userMapper.findById(userId);
             assertThat(user.getNickname()).isEqualTo("DURABLE_USER");

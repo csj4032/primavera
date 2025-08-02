@@ -82,7 +82,7 @@ chap05/
 │       └── UserUpdateValidationTest.java          # 사용자 수정 검증 테스트
 └── src/test/resources/
     └── sql/
-        └── init-db.sql                              # 테스트 DB 스키마
+        └── init.sql                              # 테스트 DB 스키마
 ```
 
 ## 🔍 주요 기능
@@ -185,7 +185,7 @@ public abstract class AbstractContainerTest {
             .withDatabaseName("primavera")
             .withUsername("primavera")
             .withPassword("primavera")
-            .withInitScript("sql/init-db.sql")
+            .withInitScript("sql/init.sql")
             .withCommand("--character-set-server=utf8mb4", "--collation-server=utf8mb4_unicode_ci");
 
     @DynamicPropertySource

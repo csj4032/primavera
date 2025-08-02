@@ -2,7 +2,7 @@ package com.genius.primavera.domain.mapper;
 
 import com.genius.primavera.domain.mapper.support.UserTableSupport;
 import com.genius.primavera.domain.model.*;
-import com.genius.primavera.testContainer.EnablePrimaveraTestcontainers;
+import com.genius.primavera.testcontainer.EnablePrimaveraTestcontainers;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.mybatis.dynamic.sql.render.RenderingStrategies;
@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
+import org.testcontainers.junit.jupiter.EnabledIfDockerAvailable;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -22,7 +24,7 @@ import static org.mybatis.dynamic.sql.SqlBuilder.select;
 
 @Slf4j
 @SpringBootTest
-@ActiveProfiles("test")
+@ActiveProfiles({"test"})
 @EnablePrimaveraTestcontainers
 @DisplayName(value = "유저 관련 테스트")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -43,7 +45,7 @@ public class UserMapperTest {
         String password = new BCryptPasswordEncoder().encode("secret");
         UserStatus status = UserStatus.ACTIVE;
         long timestamp = System.currentTimeMillis();
-        
+
         for (int i = 0; i < 10; i++) {
             users.add(User.builder()
                     .email("test_user_" + timestamp + "_" + i + "@example.com")
@@ -127,15 +129,15 @@ public class UserMapperTest {
         List<User> destination = userMapper.findAll();
         // 데이터베이스에 다른 테스트에서 생성된 추가 유저가 있을 수 있으므로
         // 정확한 매치 대신 우리가 생성한 유저들이 포함되어 있는지 확인
-        Assertions.assertTrue(destination.size() >= users.size(), 
-            "검색된 유저 수가 예상보다 적습니다. 예상: " + users.size() + ", 실제: " + destination.size());
-        
+        Assertions.assertTrue(destination.size() >= users.size(),
+                "검색된 유저 수가 예상보다 적습니다. 예상: " + users.size() + ", 실제: " + destination.size());
+
         // 우리가 생성한 각 유저가 결과에 포함되어 있는지 확인 (이메일로 비교)
         for (User expectedUser : users) {
             boolean found = destination.stream()
-                .anyMatch(user -> user.getEmail().equals(expectedUser.getEmail()));
-            Assertions.assertTrue(found, 
-                "생성한 유저를 찾을 수 없습니다: " + expectedUser.getEmail());
+                    .anyMatch(user -> user.getEmail().equals(expectedUser.getEmail()));
+            Assertions.assertTrue(found,
+                    "생성한 유저를 찾을 수 없습니다: " + expectedUser.getEmail());
         }
     }
 
@@ -148,12 +150,12 @@ public class UserMapperTest {
                 .filter(user -> user.getId() > 0)
                 .map(User::getId)
                 .collect(toList());
-        
+
         if (validUserIds.isEmpty()) {
             log.warn("유효한 사용자 ID가 없습니다. 테스트를 건너뜁니다.");
             return;
         }
-        
+
         SelectStatementProvider selectStatement =
                 select(UserTableSupport.id, UserTableSupport.email, UserTableSupport.password, UserTableSupport.nickname, UserTableSupport.status, UserTableSupport.createdAt, UserTableSupport.updatedAt)
                         .from(UserTableSupport.userTable)
@@ -161,18 +163,18 @@ public class UserMapperTest {
                         .build()
                         .render(RenderingStrategies.MYBATIS3);
         List<User> destination = userMapper.findByRequestUser(selectStatement);
-        
+
         // 요청한 ID들에 해당하는 유저들이 모두 반환되었는지 확인
-        Assertions.assertEquals(validUserIds.size(), destination.size(), 
-            "요청한 유저 수와 반환된 유저 수가 다릅니다. 요청: " + validUserIds.size() + ", 반환: " + destination.size());
-        
+        Assertions.assertEquals(validUserIds.size(), destination.size(),
+                "요청한 유저 수와 반환된 유저 수가 다릅니다. 요청: " + validUserIds.size() + ", 반환: " + destination.size());
+
         // 반환된 모든 유저가 우리가 요청한 유저들 중 하나인지 확인
         for (User returnedUser : destination) {
             boolean found = validUserIds.contains(returnedUser.getId());
-            Assertions.assertTrue(found, 
-                "예상하지 않은 유저가 반환되었습니다: " + returnedUser.getEmail() + " (ID: " + returnedUser.getId() + ")");
+            Assertions.assertTrue(found,
+                    "예상하지 않은 유저가 반환되었습니다: " + returnedUser.getEmail() + " (ID: " + returnedUser.getId() + ")");
         }
-        
+
         log.info("조건 검색 결과: {}", destination);
     }
 

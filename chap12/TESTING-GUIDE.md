@@ -71,7 +71,7 @@ spring:
 - **자동 시작**: 테스트 실행 시 MySQL 8.4.0 컨테이너 자동 시작
 - **자동 종료**: 테스트 완료 후 컨테이너 자동 정리
 - **독립성**: 각 테스트 클래스마다 독립적인 컨테이너 사용
-- **스키마**: `init-db.sql` 자동 실행으로 테이블 및 테스트 데이터 생성
+- **스키마**: `init.sql` 자동 실행으로 테이블 및 테스트 데이터 생성
 
 ### 3. Test 환경 설정 파일
 **`application-testcontainer.yml`**
@@ -79,7 +79,7 @@ spring:
 spring:
   # TestContainers가 동적으로 DataSource 설정
   flyway:
-    enabled: false  # init-db.sql 사용
+    enabled: false  # init.sql 사용
   autoconfigure:
     exclude:
       - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
@@ -123,7 +123,7 @@ class YourIntegrationTest {
         .withDatabaseName("primavera")
         .withUsername("primavera")
         .withPassword("primavera")
-        .withInitScript("sql/init-db.sql");
+        .withInitScript("sql/init.sql");
 
     @DynamicPropertySource
     static void configureTestProperties(DynamicPropertyRegistry registry) {

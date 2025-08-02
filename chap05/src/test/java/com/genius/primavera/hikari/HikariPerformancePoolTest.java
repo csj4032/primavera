@@ -2,6 +2,7 @@ package com.genius.primavera.hikari;
 
 import com.genius.primavera.domain.mapper.UserMapper;
 import com.genius.primavera.domain.model.User;
+import com.genius.primavera.testcontainer.EnablePrimaveraTestcontainers;
 import com.zaxxer.hikari.HikariDataSource;
 import com.zaxxer.hikari.HikariPoolMXBean;
 import lombok.extern.slf4j.Slf4j;
@@ -9,6 +10,11 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.containers.MariaDBContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import javax.management.JMX;
 import javax.management.MBeanServer;
@@ -22,22 +28,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.IntStream;
 
-/**
- * HikariCP 성능 최우선 설정 테스트
- * <p>
- * 설정 특징:
- * - minimum-idle: 10 (즉시 사용 가능한 연결)
- * - maximum-pool-size: 20 (높은 동시성)
- * - 누수 감지 비활성화 (성능 우선)
- * <p>
- * 기대 결과:
- * - 최고 처리량
- * - 최소 지연시간
- * - 높은 메모리 사용량
- * - 최대 동시성 지원
- */
 @Slf4j
 @SpringBootTest
+@EnablePrimaveraTestcontainers
 @DisplayName("HikariCP 성능 최우선 설정 테스트")
 @ActiveProfiles("hikari-performance-focused")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)

@@ -2,7 +2,7 @@ package com.genius.primavera.hikari;
 
 import com.genius.primavera.domain.mapper.UserMapper;
 import com.genius.primavera.domain.model.User;
-import com.genius.primavera.testContainer.EnablePrimaveraTestcontainers;
+import com.genius.primavera.testcontainer.EnablePrimaveraTestcontainers;
 import com.zaxxer.hikari.HikariDataSource;
 import com.zaxxer.hikari.HikariPoolMXBean;
 import lombok.extern.slf4j.Slf4j;
@@ -23,25 +23,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.IntStream;
 
-/**
- * HikariCP 리소스 제약 환경 설정 테스트
- * <p>
- * 설정 특징:
- * - minimum-idle: 2 (최소한의 유휴 연결)
- * - maximum-pool-size: 5 (엄격한 연결 제한)
- * - 짧은 유휴 타임아웃 적극적 해제
- * - 엄격한 누수 감지 (30초)
- * <p>
- * 기대 결과:
- * - 최소 메모리 사용량
- * - 연결 수 절약
- * - 제한된 동시성
- * - 적극적 리소스 관리
- */
 @Slf4j
 @SpringBootTest
 @EnablePrimaveraTestcontainers
-@ActiveProfiles("hikari-resource-constrained")
+@ActiveProfiles({"hikari-resource-constrained"})
 @DisplayName("HikariCP 리소스 제약 환경 설정 테스트")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class HikariResourceConstrainedPoolTest {

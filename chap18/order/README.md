@@ -411,7 +411,7 @@ docker run -d --name mariadb-order \
   -p 3306:3306 mariadb:11.4.7
 
 # 주문 테이블 생성
-mysql -h localhost -u primavera -p primavera < init-db.sql
+mysql -h localhost -u primavera -p primavera < init.sql
 ```
 
 ### 2. Config Server 시작

@@ -243,7 +243,7 @@ public abstract class BaseJpaTest {
         .withDatabaseName("primavera")
         .withUsername("primavera")
         .withPassword("primavera")
-        .withInitScript("sql/init-db.sql");
+        .withInitScript("sql/init.sql");
 }
 
 // 상속 관계 테스트

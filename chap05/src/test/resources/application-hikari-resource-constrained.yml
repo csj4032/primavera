@@ -1,7 +1,7 @@
 spring:
   config:
     activate:
-      on-profile: resource-constrained
+      on-profile: hikari-resource-constrained
   cloud:
     config:
       enabled: false

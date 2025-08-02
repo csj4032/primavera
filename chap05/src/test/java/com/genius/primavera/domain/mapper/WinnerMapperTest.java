@@ -1,13 +1,19 @@
 package com.genius.primavera.domain.mapper;
 
 import com.genius.primavera.domain.model.Winner;
+import com.genius.primavera.testcontainer.EnablePrimaveraTestcontainers;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.testcontainers.containers.MariaDBContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -17,7 +23,8 @@ import java.util.stream.IntStream;
 @Slf4j
 
 @SpringBootTest
-@ActiveProfiles("test")
+@ActiveProfiles({"test"})
+@EnablePrimaveraTestcontainers
 @DisplayName(value = "벌크 인서트 테스트")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class WinnerMapperTest {
