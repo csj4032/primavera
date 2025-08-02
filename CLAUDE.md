@@ -39,7 +39,7 @@ docker run -d --name mariadb-primavera \
   -e MARIADB_DATABASE=primavera \
   -e MARIADB_USER=primavera \
   -e MARIADB_PASSWORD=primavera \
-  -p 3306:3306 mariadb:11.4.7
+  -p 3308:3306 mariadb:11.4.7
 
 # 전체 설정을 위한 docker-compose 사용 (권장)
 docker-compose up -d

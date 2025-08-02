@@ -14,7 +14,7 @@ class GreetingServiceImplTest {
     @Test
     @DisplayName("hello() 메서드는 'Hello'를 반환해야 한다")
     void helloTest() {
-        GreetingService greetingService = new GreetingServiceImpl();
+        HelloService greetingService = new HelloServiceImpl();
         String result = greetingService.hello();
         assertThat(result).isEqualTo("Hello");
     }

@@ -1,8 +1,7 @@
 package com.genius.primavera.interfaces;
 
-import com.genius.primavera.application.GreetingService;
+import com.genius.primavera.application.HelloService;
 import com.genius.primavera.application.WorldService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,7 +16,7 @@ import static org.mockito.Mockito.when;
 class HelloControllerTest {
 
     @Mock
-    private GreetingService greetingService;
+    private HelloService greetingService;
 
     @Mock
     private WorldService worldService;
@@ -30,7 +29,7 @@ class HelloControllerTest {
     void greetingTest() {
         when(greetingService.hello()).thenReturn("Hello");
         when(worldService.world()).thenReturn("World");
-        String result = helloController.greeting();
+        String result = helloController.hello();
         assertThat(result).isEqualTo("Hello World");
     }
 

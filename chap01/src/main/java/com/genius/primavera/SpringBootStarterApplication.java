@@ -1,10 +1,10 @@
 package com.genius.primavera;
 
-import com.genius.primavera.application.GreetingService;
-import com.genius.primavera.application.GreetingServiceImpl;
+import com.genius.primavera.application.HelloService;
+import com.genius.primavera.application.HelloServiceImpl;
 import com.genius.primavera.application.WorldService;
 import com.genius.primavera.application.WorldServiceImpl;
-import com.genius.primavera.interfaces.HelloController;
+import com.genius.primavera.interfaces.WorldController;
 import jakarta.annotation.PostConstruct;
 import lombok.Generated;
 import org.slf4j.Logger;
@@ -29,29 +29,24 @@ import org.springframework.context.event.EventListener;
  * Spring Boot 애플리케이션의 시작점입니다.
  * 이 클래스는 Spring Boot의 자동 설정, 컴포넌트 스캔 및 애플리케이션 초기화를 담당합니다.
  */
+@ComponentScan
 @SpringBootConfiguration
 @EnableAutoConfiguration
-@ComponentScan
 @EnableConfigurationProperties
 public class SpringBootStarterApplication {
     @Generated
     private static final Logger log = LoggerFactory.getLogger(SpringBootStarterApplication.class);
 
     public static void main(String[] args) {
-        SpringApplication springApplication = (new SpringApplicationBuilder(new Class[]{SpringBootStarterApplication.class})).initializers((applicationContext) -> {
-            log.info("[SpringBoot] PrimaveraApplication initializers");
-            // 프로그래매틱 Bean 등록 예제 (학습용)
-            // HelloController는 @RestController로도 등록되므로 Bean 중복 충돌이 발생할 수 있습니다.
-            // 실제 개발 시에는 @Component 어노테이션 방식 또는 프로그래매틱 방식 중 하나만 사용하세요.
-            // 충돌 발생 시 아래 HelloController 등록 부분을 주석 처리하거나
-            // HelloController에서 @RestController 어노테이션을 제거하세요.
+        SpringApplication springApplication = (new SpringApplicationBuilder(SpringBootStarterApplication.class)).initializers((applicationContext) -> {
+            log.info("[SpringBoot] SpringBootStarterApplication initializers");
             if (applicationContext instanceof org.springframework.context.support.GenericApplicationContext genericContext) {
                 genericContext.registerBean(WorldService.class, WorldServiceImpl.class);
-                genericContext.registerBean(GreetingService.class, GreetingServiceImpl.class);
-                genericContext.registerBean(HelloController.class, () -> {
+                genericContext.registerBean(HelloService.class, HelloServiceImpl.class);
+                genericContext.registerBean(WorldController.class, () -> {
                     WorldService worldService = genericContext.getBean(WorldService.class);
-                    GreetingService greetingService = genericContext.getBean(GreetingService.class);
-                    return new HelloController(greetingService, worldService);
+                    HelloService greetingService = genericContext.getBean(HelloService.class);
+                    return new WorldController(greetingService, worldService);
                 });
             }
         }).logStartupInfo(true).build();

@@ -102,12 +102,12 @@ mysql -u primavera -p < infrastructure/sql/init-unified-prod.sql
 # Before
 spring:
   datasource:
-    url: jdbc:mariadb://localhost:3306/primavera_basic
+    url: jdbc:mariadb://localhost:3308/primavera_basic
 
 # After  
 spring:
   datasource:
-    url: jdbc:mariadb://localhost:3306/primavera_development
+    url: jdbc:mariadb://localhost:3308/primavera_development
 ```
 
 ### 3단계: 기존 데이터 마이그레이션 (필요시)

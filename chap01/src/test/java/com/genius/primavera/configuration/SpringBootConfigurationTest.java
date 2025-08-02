@@ -1,15 +1,12 @@
 package com.genius.primavera.configuration;
 
 import com.genius.primavera.SpringBootStarterApplication;
-import com.genius.primavera.application.GreetingService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringBootConfiguration;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
-import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ActiveProfiles;
@@ -134,7 +131,7 @@ public class SpringBootConfigurationTest {
         // when
         // 컴포넌트 스캔으로 등록된 서비스 빈 확인
         boolean hasWorldServiceImpl = applicationContext.containsBean("worldServiceImpl");
-        boolean hasGreetingServiceImpl = applicationContext.containsBean("greetingServiceImpl");
+        boolean hasGreetingServiceImpl = applicationContext.containsBean("helloServiceImpl");
 
         // then
         // @Service 등으로 표시된 클래스들이 컴포넌트 스캔으로 발견되어야 함

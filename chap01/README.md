@@ -299,13 +299,13 @@ Spring에서 Bean을 등록하는 다양한 방법을 학습할 수 있는 예�
 ```java
 @RestController
 @RequiredArgsConstructor
-public class HelloController {
-    private final GreetingService greetingService;
+public class WorldController {
+    private final HelloService helloService;
     private final WorldService worldService;
     
     @GetMapping("/greeting")
     public String greeting() {
-        return greetingService.hello() + " " + worldService.world();
+        return helloService.hello() + " " + worldService.world();
     }
 }
 ```
@@ -317,24 +317,23 @@ SpringApplication springApplication = new SpringApplicationBuilder(SpringBootSta
         if (applicationContext instanceof GenericApplicationContext genericContext) {
             // 서비스 Bean 등록
             genericContext.registerBean(WorldService.class, WorldServiceImpl.class);
-            genericContext.registerBean(GreetingService.class, GreetingServiceImpl.class);
+            genericContext.registerBean(HelloService.class, HelloServiceImpl.class);
             
             // 컨트롤러 Bean 등록 (의존성 주입 포함)
-            genericContext.registerBean(HelloController.class, () -> {
+            genericContext.registerBean(WorldController.class, () -> {
                 WorldService worldService = genericContext.getBean(WorldService.class);
-                GreetingService greetingService = genericContext.getBean(GreetingService.class);
-                return new HelloController(greetingService, worldService);
+                HelloService helloService = genericContext.getBean(HelloService.class);
+                return new WorldController(helloService, worldService);
             });
         }
     })
     .build();
 ```
 
-**⚠️ 주의사항: Bean 중복 등록**
-- 위 두 방식을 동시에 사용하면 Bean 중복 등록으로 인한 충돌이 발생할 수 있습니다.
-- 충돌 발생 시 해결 방법:
-  1. `SpringBootStarterApplication`의 HelloController 등록 부분 주석 처리
-  2. `HelloController`의 `@RestController` 어노테이션 제거
+**⚠️ 주요 변경사항: Bean 중복 충돌 해결**
+- 기존 `HelloController`에서 `WorldController`로 변경하여 Bean 중복 충돌 문제를 해결했습니다.
+- `GreetingService`도 `HelloService`로 이름을 변경하여 명확성을 높였습니다.
+- 이제 어노테이션 기반과 프로그래매틱 등록 방식이 서로 다른 컨트롤러를 등록하므로 충돌이 발생하지 않습니다.
 - 실제 개발에서는 일관된 방식 하나만 선택하여 사용하세요.
 
 ### Spring Boot 이벤트 처리 학습

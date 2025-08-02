@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
  * 이 클래스는 GreetingService 인터페이스를 구현하여 인사 메시지를 반환합니다.
  */
 @Service
-public class GreetingServiceImpl implements GreetingService {
+public class HelloServiceImpl implements HelloService {
 
     @Override
     public String hello() {
