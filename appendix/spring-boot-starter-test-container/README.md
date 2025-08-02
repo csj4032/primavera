@@ -1908,6 +1908,193 @@ class EventDrivenArchitectureTest {
 }
 ```
 
+### ⚡ 테스트 실행 순서 제어
+
+TestContainer 테스트의 안정성과 격리를 위해 **JUnit 5의 테스트 실행 순서 제어** 기능을 활용합니다.
+
+#### **1. 테스트 클래스 실행 순서 설정**
+
+**junit-platform.properties 파일 설정**
+```properties
+# src/test/resources/junit-platform.properties
+
+# 테스트 클래스 실행 순서 설정
+junit.jupiter.testclass.order.default=org.junit.jupiter.api.ClassOrderer$OrderAnnotation
+
+# 테스트 메서드 실행 순서 설정 (기본값)
+junit.jupiter.testmethod.order.default=org.junit.jupiter.api.MethodOrderer$OrderAnnotation
+
+# 병렬 실행 비활성화 (TestContainer 안정성 확보)
+junit.jupiter.execution.parallel.enabled=false
+junit.jupiter.execution.parallel.mode.default=same_thread
+```
+
+#### **2. 테스트 클래스별 순서 지정**
+
+```java
+// 1. 단위 테스트 - 가장 먼저 실행
+@Order(1)
+@DisplayName("컨테이너 타입 테스트")
+class ContainerTypeTest {
+    // 빠른 단위 테스트
+}
+
+// 2. 전략 패턴 테스트
+@Order(2)
+@DisplayName("MariaDB 컨테이너 전략 테스트")
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+class MariaDBContainerStrategyTest {
+    // MariaDB 전략 단위 테스트
+}
+
+// 3. 팩토리 패턴 테스트
+@Order(3)
+@DisplayName("컨테이너 전략 팩토리 테스트")
+class ContainerStrategyFactoryTest {
+    // 팩토리 로직 테스트
+}
+
+// 10. Redis 통합 테스트 - 중간 단계
+@Order(10)
+@SpringBootTest
+@ActiveProfiles("test")
+@DisplayName("Redis 컨테이너 통합 테스트")
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@EnablePrimaveraTestcontainers({ContainerType.REDIS})
+class RedisContainerIntegrationTest {
+    
+    @Test
+    @Order(1)
+    @DisplayName("Redis 컨테이너가 시작되고 연결이 가능한지 확인")
+    void shouldStartRedisContainerAndConnect() {
+        // Redis 컨테이너 연결 테스트
+    }
+    
+    @Test
+    @Order(2)
+    @DisplayName("RedisConnectionFactory가 주입되는지 확인")
+    void shouldInjectRedisConnectionFactory() {
+        // Redis 연결 팩토리 테스트
+    }
+}
+
+// 50. MariaDB 통합 테스트
+@Order(50)
+@SpringBootTest(classes = TestConfiguration.class)
+@ActiveProfiles("test")
+@EnablePrimaveraTestcontainers
+@DisplayName("@EnablePrimaveraTestcontainers 통합 테스트")
+class EnablePrimaveraTestcontainersIntegrationTest {
+    // MariaDB 통합 테스트
+}
+
+// 100. 다중 컨테이너 테스트 - 가장 마지막 실행
+@Order(100)
+@ActiveProfiles("test")
+@DisplayName("다중 컨테이너 통합 테스트")
+@SpringBootTest(classes = TestConfiguration.class)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@EnablePrimaveraTestcontainers({ContainerType.MARIADB, ContainerType.REDIS})
+class MultiContainerIntegrationTest {
+    
+    @Test  
+    @Order(1)
+    @DisplayName("MariaDB와 Redis 컨테이너가 모두 시작되는지 확인")
+    void shouldStartBothMariaDBAndRedisContainers() {
+        // 다중 컨테이너 시작 검증
+    }
+    
+    @Test
+    @Order(2)
+    @DisplayName("MariaDB와 Redis 모두에 연결 가능한지 확인")
+    void shouldConnectToBothDatabases() {
+        // 다중 컨테이너 연결 테스트
+    }
+    
+    @Test
+    @Order(3)
+    @DisplayName("캐시-데이터베이스 패턴 시뮬레이션")
+    void shouldSimulateCacheDatabasePattern() {
+        // 실제 사용 패턴 시뮬레이션
+    }
+}
+```
+
+#### **3. 실행 순서 설계 원칙**
+
+| 순서 범위 | 테스트 타입 | 목적 | 예시 |
+|-----------|-------------|------|------|
+| **1-9** | 단위 테스트 | 빠른 검증, 기본 로직 테스트 | ContainerTypeTest, PropertiesTest |
+| **10-49** | 단일 컨테이너 통합 테스트 | 개별 컨테이너 기능 검증 | RedisContainerIntegrationTest |
+| **50-99** | 복합 통합 테스트 | Spring 컨텍스트와 통합 검증 | EnablePrimaveraTestcontainersIntegrationTest |
+| **100+** | 다중 컨테이너 테스트 | 복잡한 시나리오, 전체 통합 | MultiContainerIntegrationTest |
+
+#### **4. 순서 제어의 장점**
+
+✅ **테스트 안정성 향상**
+- 컨테이너 초기화 순서 보장
+- Spring 컨텍스트 캐싱 충돌 방지
+- 리소스 경합 최소화
+
+✅ **디버깅 효율성**
+- 실패 지점 예측 가능
+- 단계별 오류 격리
+- 로그 추적 용이
+
+✅ **CI/CD 최적화**
+- 빠른 피드백 (단위 테스트 우선)
+- 리소스 효율적 사용
+- 병렬 실행 시 안전성 보장
+
+#### **5. 테스트 실행 명령어**
+
+```bash
+# 순서대로 모든 테스트 실행
+./gradlew :appendix:spring-boot-starter-test-container:test
+
+# 특정 순서 범위의 테스트만 실행
+./gradlew :appendix:spring-boot-starter-test-container:test --tests "*Test" --console=plain
+
+# 단위 테스트만 실행 (빠른 검증)
+./gradlew :appendix:spring-boot-starter-test-container:test \
+  --tests "ContainerTypeTest" \
+  --tests "PrimaveraTestcontainersPropertiesTest" \
+  --tests "ContainerStrategyFactoryTest"
+
+# 통합 테스트만 실행 (Docker 환경 필요)
+./gradlew :appendix:spring-boot-starter-test-container:test \
+  --tests "*IntegrationTest*"
+```
+
+#### **6. 주의사항**
+
+⚠️ **단독 실행 제한**
+- `MultiContainerIntegrationTest`는 전체 테스트 스위트에서만 안정적으로 동작
+- 단독 실행 시 TestContainer 초기화 문제 발생 가능
+- Spring 컨텍스트 캐싱에 의존하는 테스트 특성
+
+⚠️ **Docker 환경 요구사항**
+- 통합 테스트 실행 시 Docker 환경 필수
+- CI/CD 환경에서 Docker-in-Docker 설정 필요
+- 로컬 개발 환경에서 Docker Desktop 실행 상태 확인
+
+#### **7. 모니터링 및 성능**
+
+```bash
+# 테스트 실행 시간 모니터링
+./gradlew :appendix:spring-boot-starter-test-container:test --profile
+
+# 테스트 상세 로그 출력
+./gradlew :appendix:spring-boot-starter-test-container:test \
+  --info --console=plain
+
+# 테스트 결과 리포트 생성
+./gradlew :appendix:spring-boot-starter-test-container:test \
+  jacocoTestReport
+```
+
+이러한 체계적인 테스트 순서 제어를 통해 **안정적이고 예측 가능한 테스트 환경**을 구축하여 개발자 경험을 향상시키고 CI/CD 파이프라인의 신뢰성을 보장합니다.
+
 ---
 
 ## 🎓 결론
@@ -1932,21 +2119,3 @@ class YourFirstTest {
     }
 }
 ```
-
----
-
-## 📞 지원 및 기여
-
-- **이슈 리포트**: [GitHub Issues](https://github.com/csj4032/primavera/issues)
-- **기능 제안**: [GitHub Discussions](https://github.com/csj4032/primavera/discussions)
-- **기여 가이드**: [CONTRIBUTING.md](https://github.com/csj4032/primavera/blob/master/CONTRIBUTING.md)
-
----
-
-<div align="center">
-
-**🌸 Primavera 프로젝트의 일부입니다 🌸**
-
-[⭐ GitHub에서 스타 주기](https://github.com/csj4032/primavera) | [📖 전체 문서 보기](https://github.com/csj4032/primavera/wiki)
-
-</div>

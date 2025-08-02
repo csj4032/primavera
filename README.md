@@ -1555,44 +1555,6 @@ git push origin feature/social-login
 - "Spring Security in Action" - Laurentiu Spilca
 - "Microservices Patterns" - Chris Richardson
 
-## 🤝 기여 가이드
-
-### 기여 방법
-1. 프로젝트 포크
-2. 기능 브랜치 생성 (`git checkout -b feature/amazing-feature`)
-3. 변경사항 커밋 (`git commit -m 'feat: add amazing feature'`)
-4. 브랜치 푸시 (`git push origin feature/amazing-feature`)
-5. Pull Request 생성
-
-### 커밋 메시지 규칙
-```
-feat: 새로운 기능 추가
-fix: 버그 수정
-docs: 문서 수정
-style: 코드 스타일 변경
-refactor: 코드 리팩토링
-test: 테스트 코드 추가/수정
-chore: 빌드 설정 등 기타 변경
-```
-
 ## 📄 라이선스
 
 이 프로젝트는 [MIT 라이선스](LICENSE) 하에 배포됩니다.
-
-## 👥 기여자
-
-- [csj4032](https://github.com/csj4032) - 프로젝트 창시자 및 메인 개발자
-
-## 🙏 감사의 말
-
-이 프로젝트는 Spring Boot 커뮤니티와 오픈소스 생태계의 지원으로 만들어졌습니다. 모든 기여자와 사용자에게 감사드립니다.
-
----
-
-<div align="center">
-
-**⭐ 이 프로젝트가 도움이 되셨다면 스타를 눌러주세요! ⭐**
-
-[🐛 이슈 신고](https://github.com/csj4032/primavera/issues) · [💡 기능 제안](https://github.com/csj4032/primavera/discussions) · [📖 위키](https://github.com/csj4032/primavera/wiki)
-
-</div>
