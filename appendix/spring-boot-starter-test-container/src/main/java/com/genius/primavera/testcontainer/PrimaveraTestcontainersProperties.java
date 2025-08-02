@@ -33,7 +33,6 @@ public class PrimaveraTestcontainersProperties {
 
     @Data
     public static abstract class ContainerConfig {
-        private boolean enabled = false;
         private String dockerImageName;
         private Map<String, String> environment = new HashMap<>();
     }
@@ -105,7 +104,6 @@ public class PrimaveraTestcontainersProperties {
             setDockerImageName("confluentinc/cp-kafka:latest");
         }
     }
-
 
     @Data
     @EqualsAndHashCode(callSuper = true)

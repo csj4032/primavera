@@ -20,7 +20,7 @@ public abstract class AbstractJpaContainerTest {
             .withDatabaseName("primavera")
             .withUsername("primavera")
             .withPassword("primavera")
-            .withInitScript("sql/init-db.sql");
+            .withInitScript("sql/init.sql");
 
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {

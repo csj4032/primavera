@@ -24,7 +24,7 @@ public class MyBatisTestConfiguration {
             .withDatabaseName("primavera")
             .withUsername("primavera")
             .withPassword("primavera")
-            .withInitScript("sql/init-db.sql")
+            .withInitScript("sql/init.sql")
             .withReuse(true);
 
     static {

@@ -27,9 +27,14 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-test"
     implementation "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
 
+    // Lombok
+    compileOnly "org.projectlombok:lombok:${lombokVersion}"
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+    
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 
     testImplementation "org.springframework.boot:spring-boot-starter-test"
+    testImplementation "org.springframework.boot:spring-boot-starter-jdbc"
     testImplementation "org.testcontainers:junit-jupiter:${testContainersVersion}"
     testImplementation "org.testcontainers:mariadb:${testContainersVersion}"
 }

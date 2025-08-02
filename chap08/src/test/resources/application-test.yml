@@ -41,4 +41,4 @@ primavera:
       databaseName: primavera
       username: primavera
       password: primavera
-      initScript: sql/init-db.sql
+      initScript: sql/init.sql

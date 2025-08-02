@@ -11,10 +11,7 @@ import org.springframework.test.context.ActiveProfiles;
 import javax.sql.DataSource;
 import java.sql.SQLException;
 
-/**
- * @ActiveProfiles("test")만 존재할 경우 Vault 연결 정보을 이용
- * @EnablePrimaveraTestcontainers 사용할 경우 testcontainers를 이용하여 MariaDB 컨테이너를 실행
- */
+
 @Slf4j
 @SpringBootTest
 @ActiveProfiles("test")
@@ -45,5 +42,19 @@ public class HikariDataSourceTest {
         log.info("Database Product Version: {}", jdbcTemplate.getDataSource().getConnection().getMetaData().getDatabaseProductVersion());
         log.info("Database Driver Name: {}", jdbcTemplate.getDataSource().getConnection().getMetaData().getDriverName());
         log.info("Database Driver Version: {}", jdbcTemplate.getDataSource().getConnection());
+    }
+
+    @Test
+    @Order(3)
+    @DisplayName("HikariDataSource 커넥션 테스트")
+    public void testConnection() throws SQLException {
+        try (var connection = dataSource.getConnection()) {
+            log.info("커넥션이 성공적으로 생성되었습니다.");
+            log.info("커넥션 URL: {}", connection.getMetaData().getURL());
+            log.info("커넥션 사용자 이름: {}", connection.getMetaData().getUserName());
+        } catch (SQLException e) {
+            log.error("커넥션 생성 중 오류 발생: {}", e.getMessage());
+            throw e;
+        }
     }
 }

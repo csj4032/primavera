@@ -2,49 +2,47 @@ package com.genius.primavera.testcontainer.strategy;
 
 import com.genius.primavera.testcontainer.PrimaveraTestcontainersProperties;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.test.context.support.TestPropertySourceUtils;
+import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.MapPropertySource;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.MySQLContainer;
-import org.testcontainers.utility.DockerImageName;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class MySQLContainerStrategy implements ContainerStrategy {
-    
+
     @Override
     public GenericContainer<?> createContainer(PrimaveraTestcontainersProperties.ContainerConfig config) {
-        if (!(config instanceof PrimaveraTestcontainersProperties.DatabaseConfig)) {
-            throw new IllegalArgumentException("MySQL requires DatabaseConfig");
-        }
+        PrimaveraTestcontainersProperties.DatabaseConfig dbConfig = (PrimaveraTestcontainersProperties.DatabaseConfig) config;
         
-        PrimaveraTestcontainersProperties.DatabaseConfig dbConfig = 
-            (PrimaveraTestcontainersProperties.DatabaseConfig) config;
-            
-        String imageName = dbConfig.getDockerImageName() != null ? dbConfig.getDockerImageName() : "mysql:8.0";
-        
-        MySQLContainer<?> container = new MySQLContainer<>(DockerImageName.parse(imageName))
-                .withDatabaseName(dbConfig.getDatabaseName() != null ? dbConfig.getDatabaseName() : "primavera")
-                .withUsername(dbConfig.getUsername() != null ? dbConfig.getUsername() : "primavera")
-                .withPassword(dbConfig.getPassword() != null ? dbConfig.getPassword() : "primavera");
-        
+        MySQLContainer<?> container = new MySQLContainer<>(config.getDockerImageName())
+                .withDatabaseName(dbConfig.getDatabaseName())
+                .withUsername(dbConfig.getUsername())
+                .withPassword(dbConfig.getPassword());
+
+        // 초기화 스크립트가 있으면 설정
         if (dbConfig.getInitScript() != null && !dbConfig.getInitScript().isEmpty()) {
             container.withInitScript(dbConfig.getInitScript());
         }
-        
+
+        // 환경 변수 설정
+        config.getEnvironment().forEach(container::withEnv);
+
         return container;
     }
-    
+
     @Override
     public void configureApplicationContext(ConfigurableApplicationContext applicationContext, GenericContainer<?> container) {
         MySQLContainer<?> mysqlContainer = (MySQLContainer<?>) container;
-        TestPropertySourceUtils.addInlinedPropertiesToEnvironment(applicationContext,
-                "spring.datasource.url=" + mysqlContainer.getJdbcUrl(),
-                "spring.datasource.username=" + mysqlContainer.getUsername(),
-                "spring.datasource.password=" + mysqlContainer.getPassword(),
-                "spring.datasource.driver-class-name=" + mysqlContainer.getDriverClassName()
-        );
-    }
-    
-    @Override
-    public String getSupportedType() {
-        return "mysql";
+        
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("spring.datasource.url", mysqlContainer.getJdbcUrl());
+        properties.put("spring.datasource.username", mysqlContainer.getUsername());
+        properties.put("spring.datasource.password", mysqlContainer.getPassword());
+        properties.put("spring.datasource.driver-class-name", mysqlContainer.getDriverClassName());
+
+        ConfigurableEnvironment environment = applicationContext.getEnvironment();
+        environment.getPropertySources().addFirst(new MapPropertySource("testcontainers-mysql", properties));
     }
 }

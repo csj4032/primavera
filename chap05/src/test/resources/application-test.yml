@@ -21,25 +21,13 @@ spring:
 
 primavera:
   testcontainers:
-    lifecycleMode: PER_CLASS
     mariadb:
-      enabled: true
       dockerImageName: mariadb:11.4.7
       driverClassName: org.mariadb.jdbc.Driver
       databaseName: primavera
       username: primavera
       password: primavera
       initScript: sql/init.sql
-    mysql:
-      enabled: false
-    postgresql:
-      enabled: false
-    redis:
-      enabled: false
-    kafka:
-      enabled: false
-    elasticsearch:
-      enabled: false
 
 mybatis:
   configuration:

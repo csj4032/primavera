@@ -27,7 +27,7 @@ public abstract class BaseOneToManyJpaTest {
             .withDatabaseName("primavera")
             .withUsername("primavera")
             .withPassword("primavera")
-            .withInitScript("sql/init-db.sql");
+            .withInitScript("sql/init.sql");
 
     protected static EntityManagerFactory entityManagerFactory;
     protected static EntityManager entityManager;

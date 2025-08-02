@@ -1,25 +1,13 @@
 package com.genius.primavera.testcontainer;
 
-import org.junit.jupiter.api.extension.*;
+import org.junit.jupiter.api.extension.AfterAllCallback;
+import org.junit.jupiter.api.extension.ExtensionContext;
 
-public class TestContainerLifecycleExtension implements BeforeEachCallback, AfterEachCallback, BeforeAllCallback, AfterAllCallback {
-
-    @Override
-    public void beforeAll(ExtensionContext context) throws Exception {
-    }
+public class TestContainerLifecycleExtension implements AfterAllCallback {
 
     @Override
     public void afterAll(ExtensionContext context) throws Exception {
-        String testClassName = context.getRequiredTestClass().getName();
-        ContainerManager.stopContainersForClass(testClassName);
-    }
-
-    @Override
-    public void beforeEach(ExtensionContext context) throws Exception {
-    }
-
-    @Override
-    public void afterEach(ExtensionContext context) throws Exception {
-        ContainerManager.cleanupTestContainers();
+        // 테스트 완료 후 PER_TEST 모드의 컨테이너들을 정리
+        ContainerManager.stopContainers(ContainerLifecycleMode.PER_TEST);
     }
 }

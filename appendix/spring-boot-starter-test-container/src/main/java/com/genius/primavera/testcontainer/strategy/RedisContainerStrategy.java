@@ -2,49 +2,40 @@ package com.genius.primavera.testcontainer.strategy;
 
 import com.genius.primavera.testcontainer.PrimaveraTestcontainersProperties;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.test.context.support.TestPropertySourceUtils;
+import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.MapPropertySource;
 import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.utility.DockerImageName;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class RedisContainerStrategy implements ContainerStrategy {
-    
+
     @Override
     public GenericContainer<?> createContainer(PrimaveraTestcontainersProperties.ContainerConfig config) {
-        if (!(config instanceof PrimaveraTestcontainersProperties.RedisConfig)) {
-            throw new IllegalArgumentException("Redis requires RedisConfig");
-        }
+        PrimaveraTestcontainersProperties.RedisConfig redisConfig = (PrimaveraTestcontainersProperties.RedisConfig) config;
         
-        PrimaveraTestcontainersProperties.RedisConfig redisConfig = 
-            (PrimaveraTestcontainersProperties.RedisConfig) config;
-            
-        String imageName = redisConfig.getDockerImageName() != null ? redisConfig.getDockerImageName() : "redis:7-alpine";
-        
-        GenericContainer<?> container = new GenericContainer<>(DockerImageName.parse(imageName))
-                .withExposedPorts(6379);
-        
-        // Redis 비밀번호 설정
+        GenericContainer<?> container = new GenericContainer<>(config.getDockerImageName())
+                .withExposedPorts(redisConfig.getPort());
+
+        // 패스워드가 설정되어 있으면 Redis 설정에 추가
         if (redisConfig.getPassword() != null && !redisConfig.getPassword().isEmpty()) {
             container.withCommand("redis-server", "--requirepass", redisConfig.getPassword());
         }
-        
+
         // 환경 변수 설정
-        redisConfig.getEnvironment().forEach(container::withEnv);
-        
+        config.getEnvironment().forEach(container::withEnv);
+
         return container;
     }
-    
+
     @Override
     public void configureApplicationContext(ConfigurableApplicationContext applicationContext, GenericContainer<?> container) {
-        String host = container.getHost();
-        Integer port = container.getMappedPort(6379);
-        TestPropertySourceUtils.addInlinedPropertiesToEnvironment(applicationContext,
-                "spring.data.redis.host=" + host,
-                "spring.data.redis.port=" + port
-        );
-    }
-    
-    @Override
-    public String getSupportedType() {
-        return "redis";
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("spring.data.redis.host", container.getHost());
+        properties.put("spring.data.redis.port", container.getMappedPort(6379));
+
+        ConfigurableEnvironment environment = applicationContext.getEnvironment();
+        environment.getPropertySources().addFirst(new MapPropertySource("testcontainers-redis", properties));
     }
 }

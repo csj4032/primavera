@@ -41,14 +41,14 @@ public class UserDaoTest {
     public void getAllUser() {
         List<User> users = userDao.getUsers();
         log.info("조회된 사용자 수: {}", users.size());
-        assertEquals(users.size(), 5);
+        assertEquals(5, users.size());
     }
 
     @Test
     @Order(3)
     @DisplayName("사용자 조회 테스트")
     public void findById() {
-        Long userId = 1L; // 예시로 사용할 사용자 ID
+        Long userId = 1L;
         Optional<User> optionalUser = userDao.findById(userId);
         assertNotNull(optionalUser.get(), "사용자를 찾을 수 없습니다.");
         assertEquals(userId, optionalUser.get().getId(), "사용자 ID가 일치하지 않습니다.");

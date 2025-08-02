@@ -57,7 +57,7 @@ class WriteArticleServiceTest {
 		.withDatabaseName("primavera")
 		.withUsername("primavera")
 		.withPassword("primavera")
-		.withInitScript("sql/init-db.sql");
+		.withInitScript("sql/init.sql");
 
 	@DynamicPropertySource
 	static void configureTestProperties(DynamicPropertyRegistry registry) {

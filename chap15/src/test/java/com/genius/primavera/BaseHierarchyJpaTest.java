@@ -27,7 +27,7 @@ public abstract class BaseHierarchyJpaTest {
             .withDatabaseName("primavera")
             .withUsername("primavera")
             .withPassword("primavera")
-            .withInitScript("sql/init-db.sql");
+            .withInitScript("sql/init.sql");
 
     protected static EntityManagerFactory entityManagerFactory;
     protected static EntityManager entityManager;
