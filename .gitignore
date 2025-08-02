@@ -31,7 +31,6 @@ Thumbs.db
 /chap06/out
 /chap07/build
 /chap07/out
-/chap07/application.log
 /chap08/build
 /chap08/out
 /chap09/build
@@ -46,7 +45,6 @@ Thumbs.db
 /chap13/out
 /chap14/build
 /chap14/out
-/chap14/src/main/generated
 /chap15/build
 /chap15/out
 /chap16/build

@@ -1,0 +1,396 @@
+-- ==============================================
+-- Primavera Chapter 06-11 - MyBatis Environment Database
+-- 유효성 검증, Thymeleaf, 보안, OAuth2, 게시판 시스템
+-- MariaDB 11.4.7 - MyBatis 학습용 구조
+-- ==============================================
+
+-- 기본 데이터베이스 설정
+ALTER DATABASE primavera CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- ==============================================
+-- MyBatis 학습용 데이터베이스 생성
+-- ==============================================
+
+-- 1. MyBatis 학습용 데이터베이스
+CREATE DATABASE IF NOT EXISTS primavera_mybatis CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE IF NOT EXISTS primavera_mybatis_board CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- ==============================================
+-- 권한 설정
+-- ==============================================
+
+GRANT ALL PRIVILEGES ON primavera.* TO 'primavera'@'%' IDENTIFIED BY 'primavera';
+GRANT ALL PRIVILEGES ON primavera_mybatis.* TO 'primavera'@'%' IDENTIFIED BY 'primavera';
+GRANT ALL PRIVILEGES ON primavera_mybatis_board.* TO 'primavera'@'%' IDENTIFIED BY 'primavera';
+
+FLUSH PRIVILEGES;
+
+-- ==============================================
+-- MyBatis 기본 데이터베이스 (primavera_mybatis)
+-- Chapter 06-10용 웹 애플리케이션 테이블
+-- ==============================================
+
+USE primavera_mybatis;
+
+-- 사용자 테이블 (OAuth2 지원)
+CREATE TABLE IF NOT EXISTS USERS
+(
+    ID               BIGINT AUTO_INCREMENT PRIMARY KEY,
+    EMAIL            VARCHAR(100) UNIQUE NOT NULL,
+    PASSWORD         VARCHAR(255),
+    NICKNAME         VARCHAR(50)         NOT NULL,
+    FIRST_NAME       VARCHAR(50),
+    LAST_NAME        VARCHAR(50),
+    PHONE            VARCHAR(20),
+    PROFILE_IMAGE    VARCHAR(500),
+    PROVIDER         VARCHAR(20) DEFAULT 'LOCAL',  -- LOCAL, GOOGLE, FACEBOOK, GITHUB, KAKAO
+    PROVIDER_ID      VARCHAR(100),
+    EMAIL_VERIFIED   BOOLEAN     DEFAULT FALSE,
+    STATUS           VARCHAR(20) DEFAULT 'ACTIVE',
+    LAST_LOGIN_AT    DATETIME,
+    CREATED_AT       DATETIME    DEFAULT CURRENT_TIMESTAMP,
+    UPDATED_AT       DATETIME    DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CREATED_BY       BIGINT,
+    UPDATED_BY       BIGINT,
+    
+    INDEX IDX_USERS_EMAIL (EMAIL),
+    INDEX IDX_USERS_PROVIDER (PROVIDER, PROVIDER_ID),
+    INDEX IDX_USERS_STATUS (STATUS),
+    INDEX IDX_USERS_CREATED_AT (CREATED_AT)
+);
+
+-- 역할 테이블
+CREATE TABLE IF NOT EXISTS ROLES
+(
+    ID          BIGINT AUTO_INCREMENT PRIMARY KEY,
+    ROLE_NAME   VARCHAR(50) UNIQUE NOT NULL,
+    DESCRIPTION VARCHAR(200),
+    LEVEL       INT DEFAULT 0,  -- 권한 레벨 (높을수록 상위 권한)
+    CREATED_AT  DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UPDATED_AT  DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- 사용자 역할 매핑 테이블
+CREATE TABLE IF NOT EXISTS USER_ROLES
+(
+    ID         BIGINT AUTO_INCREMENT PRIMARY KEY,
+    USER_ID    BIGINT NOT NULL,
+    ROLE_ID    BIGINT NOT NULL,
+    GRANTED_AT DATETIME DEFAULT CURRENT_TIMESTAMP,
+    GRANTED_BY BIGINT,
+    
+    FOREIGN KEY (USER_ID) REFERENCES USERS (ID) ON DELETE CASCADE,
+    FOREIGN KEY (ROLE_ID) REFERENCES ROLES (ID) ON DELETE CASCADE,
+    UNIQUE KEY UK_USER_ROLE (USER_ID, ROLE_ID)
+);
+
+-- 권한 테이블
+CREATE TABLE IF NOT EXISTS PERMISSIONS
+(
+    ID          BIGINT AUTO_INCREMENT PRIMARY KEY,
+    PERMISSION_NAME VARCHAR(100) UNIQUE NOT NULL,
+    RESOURCE    VARCHAR(100) NOT NULL,
+    ACTION      VARCHAR(50)  NOT NULL,
+    DESCRIPTION VARCHAR(200),
+    CREATED_AT  DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 역할 권한 매핑 테이블
+CREATE TABLE IF NOT EXISTS ROLE_PERMISSIONS
+(
+    ID            BIGINT AUTO_INCREMENT PRIMARY KEY,
+    ROLE_ID       BIGINT NOT NULL,
+    PERMISSION_ID BIGINT NOT NULL,
+    
+    FOREIGN KEY (ROLE_ID) REFERENCES ROLES (ID) ON DELETE CASCADE,
+    FOREIGN KEY (PERMISSION_ID) REFERENCES PERMISSIONS (ID) ON DELETE CASCADE,
+    UNIQUE KEY UK_ROLE_PERMISSION (ROLE_ID, PERMISSION_ID)
+);
+
+-- 카테고리 테이블
+CREATE TABLE IF NOT EXISTS CATEGORIES
+(
+    ID          BIGINT AUTO_INCREMENT PRIMARY KEY,
+    NAME        VARCHAR(100) NOT NULL,
+    DESCRIPTION TEXT,
+    PARENT_ID   BIGINT,
+    SORT_ORDER  INT DEFAULT 0,
+    STATUS      VARCHAR(20) DEFAULT 'ACTIVE',
+    CREATED_AT  DATETIME    DEFAULT CURRENT_TIMESTAMP,
+    UPDATED_AT  DATETIME    DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (PARENT_ID) REFERENCES CATEGORIES (ID),
+    INDEX IDX_CATEGORIES_PARENT_ID (PARENT_ID),
+    INDEX IDX_CATEGORIES_STATUS (STATUS)
+);
+
+-- 상품 테이블 (확장 버전)
+CREATE TABLE IF NOT EXISTS PRODUCTS
+(
+    ID          BIGINT AUTO_INCREMENT PRIMARY KEY,
+    NAME        VARCHAR(100) NOT NULL,
+    DESCRIPTION TEXT,
+    PRICE       DECIMAL(10, 2) NOT NULL,
+    CATEGORY_ID BIGINT,
+    IMAGE_URL   VARCHAR(500),
+    STATUS      VARCHAR(20) DEFAULT 'ACTIVE',
+    STOCK_COUNT INT         DEFAULT 0,
+    VIEW_COUNT  INT         DEFAULT 0,
+    CREATED_AT  DATETIME    DEFAULT CURRENT_TIMESTAMP,
+    UPDATED_AT  DATETIME    DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CREATED_BY  BIGINT,
+    UPDATED_BY  BIGINT,
+    
+    FOREIGN KEY (CATEGORY_ID) REFERENCES CATEGORIES (ID),
+    INDEX IDX_PRODUCTS_CATEGORY_ID (CATEGORY_ID),
+    INDEX IDX_PRODUCTS_STATUS (STATUS),
+    INDEX IDX_PRODUCTS_PRICE (PRICE),
+    INDEX IDX_PRODUCTS_CREATED_AT (CREATED_AT)
+);
+
+-- ==============================================
+-- 게시판 데이터베이스 (primavera_mybatis_board)
+-- Chapter 11용 게시판 시스템 테이블
+-- ==============================================
+
+USE primavera_mybatis_board;
+
+-- 사용자 테이블 (게시판용)
+CREATE TABLE IF NOT EXISTS USERS
+(
+    ID               BIGINT AUTO_INCREMENT PRIMARY KEY,
+    EMAIL            VARCHAR(100) UNIQUE NOT NULL,
+    PASSWORD         VARCHAR(255),
+    NICKNAME         VARCHAR(50)         NOT NULL,
+    FIRST_NAME       VARCHAR(50),
+    LAST_NAME        VARCHAR(50),
+    PHONE            VARCHAR(20),
+    PROFILE_IMAGE    VARCHAR(500),
+    PROVIDER         VARCHAR(20) DEFAULT 'LOCAL',
+    PROVIDER_ID      VARCHAR(100),
+    EMAIL_VERIFIED   BOOLEAN     DEFAULT FALSE,
+    STATUS           VARCHAR(20) DEFAULT 'ACTIVE',
+    LAST_LOGIN_AT    DATETIME,
+    CREATED_AT       DATETIME    DEFAULT CURRENT_TIMESTAMP,
+    UPDATED_AT       DATETIME    DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    INDEX IDX_USERS_EMAIL (EMAIL),
+    INDEX IDX_USERS_NICKNAME (NICKNAME),
+    INDEX IDX_USERS_STATUS (STATUS)
+);
+
+-- 게시판 카테고리 테이블
+CREATE TABLE IF NOT EXISTS BOARD_CATEGORIES
+(
+    ID          BIGINT AUTO_INCREMENT PRIMARY KEY,
+    NAME        VARCHAR(100) NOT NULL,
+    DESCRIPTION TEXT,
+    SORT_ORDER  INT DEFAULT 0,
+    STATUS      VARCHAR(20) DEFAULT 'ACTIVE',
+    CREATED_AT  DATETIME    DEFAULT CURRENT_TIMESTAMP,
+    UPDATED_AT  DATETIME    DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- 게시글 테이블
+CREATE TABLE IF NOT EXISTS ARTICLES
+(
+    ID          BIGINT AUTO_INCREMENT PRIMARY KEY,
+    CATEGORY_ID BIGINT,
+    TITLE       VARCHAR(200) NOT NULL,
+    CONTENT     LONGTEXT     NOT NULL,
+    AUTHOR_ID   BIGINT       NOT NULL,
+    VIEW_COUNT  INT DEFAULT 0,
+    LIKE_COUNT  INT DEFAULT 0,
+    STATUS      VARCHAR(20) DEFAULT 'PUBLISHED',  -- DRAFT, PUBLISHED, DELETED
+    IS_NOTICE   BOOLEAN     DEFAULT FALSE,
+    IS_PINNED   BOOLEAN     DEFAULT FALSE,
+    PUBLISHED_AT DATETIME,
+    CREATED_AT  DATETIME    DEFAULT CURRENT_TIMESTAMP,
+    UPDATED_AT  DATETIME    DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (CATEGORY_ID) REFERENCES BOARD_CATEGORIES (ID),
+    FOREIGN KEY (AUTHOR_ID) REFERENCES USERS (ID),
+    INDEX IDX_ARTICLES_CATEGORY_ID (CATEGORY_ID),
+    INDEX IDX_ARTICLES_AUTHOR_ID (AUTHOR_ID),
+    INDEX IDX_ARTICLES_STATUS (STATUS),
+    INDEX IDX_ARTICLES_CREATED_AT (CREATED_AT),
+    INDEX IDX_ARTICLES_IS_NOTICE (IS_NOTICE),
+    FULLTEXT INDEX FT_ARTICLES_TITLE_CONTENT (TITLE, CONTENT)
+);
+
+-- 댓글 테이블
+CREATE TABLE IF NOT EXISTS COMMENTS
+(
+    ID         BIGINT AUTO_INCREMENT PRIMARY KEY,
+    ARTICLE_ID BIGINT   NOT NULL,
+    PARENT_ID  BIGINT,  -- 대댓글용
+    AUTHOR_ID  BIGINT   NOT NULL,
+    CONTENT    TEXT     NOT NULL,
+    STATUS     VARCHAR(20) DEFAULT 'ACTIVE',  -- ACTIVE, DELETED, BLOCKED
+    DEPTH      INT      DEFAULT 0,
+    SORT_ORDER INT      DEFAULT 0,
+    CREATED_AT DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UPDATED_AT DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (ARTICLE_ID) REFERENCES ARTICLES (ID) ON DELETE CASCADE,
+    FOREIGN KEY (PARENT_ID) REFERENCES COMMENTS (ID) ON DELETE CASCADE,
+    FOREIGN KEY (AUTHOR_ID) REFERENCES USERS (ID),
+    INDEX IDX_COMMENTS_ARTICLE_ID (ARTICLE_ID),
+    INDEX IDX_COMMENTS_PARENT_ID (PARENT_ID),
+    INDEX IDX_COMMENTS_AUTHOR_ID (AUTHOR_ID),
+    INDEX IDX_COMMENTS_STATUS (STATUS)
+);
+
+-- 첨부파일 테이블
+CREATE TABLE IF NOT EXISTS ATTACHMENTS
+(
+    ID            BIGINT AUTO_INCREMENT PRIMARY KEY,
+    ARTICLE_ID    BIGINT       NOT NULL,
+    ORIGINAL_NAME VARCHAR(255) NOT NULL,
+    STORED_NAME   VARCHAR(255) NOT NULL,
+    FILE_PATH     VARCHAR(500) NOT NULL,
+    FILE_SIZE     BIGINT       NOT NULL,
+    CONTENT_TYPE  VARCHAR(100),
+    DOWNLOAD_COUNT INT DEFAULT 0,
+    CREATED_AT    DATETIME     DEFAULT CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (ARTICLE_ID) REFERENCES ARTICLES (ID) ON DELETE CASCADE,
+    INDEX IDX_ATTACHMENTS_ARTICLE_ID (ARTICLE_ID)
+);
+
+-- 태그 테이블
+CREATE TABLE IF NOT EXISTS TAGS
+(
+    ID         BIGINT AUTO_INCREMENT PRIMARY KEY,
+    NAME       VARCHAR(50) UNIQUE NOT NULL,
+    COLOR      VARCHAR(7) DEFAULT '#007bff',  -- HEX 색상
+    USE_COUNT  INT        DEFAULT 0,
+    CREATED_AT DATETIME   DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 게시글 태그 매핑 테이블
+CREATE TABLE IF NOT EXISTS ARTICLE_TAGS
+(
+    ID         BIGINT AUTO_INCREMENT PRIMARY KEY,
+    ARTICLE_ID BIGINT NOT NULL,
+    TAG_ID     BIGINT NOT NULL,
+    
+    FOREIGN KEY (ARTICLE_ID) REFERENCES ARTICLES (ID) ON DELETE CASCADE,
+    FOREIGN KEY (TAG_ID) REFERENCES TAGS (ID) ON DELETE CASCADE,
+    UNIQUE KEY UK_ARTICLE_TAG (ARTICLE_ID, TAG_ID)
+);
+
+-- ==============================================
+-- 초기 데이터 삽입
+-- ==============================================
+
+-- MyBatis 데이터베이스 초기 데이터
+USE primavera_mybatis;
+
+-- 역할 데이터
+INSERT IGNORE INTO ROLES (ROLE_NAME, DESCRIPTION, LEVEL) VALUES 
+('ROLE_USER', '일반 사용자', 1),
+('ROLE_MANAGER', '매니저', 5),
+('ROLE_ADMINISTRATOR', '관리자', 10);
+
+-- 사용자 데이터 (OAuth2 포함)
+INSERT IGNORE INTO USERS (EMAIL, PASSWORD, NICKNAME, FIRST_NAME, LAST_NAME, PROVIDER) VALUES 
+('admin@primavera.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.', 'Admin', '관리자', '시스템', 'LOCAL'),
+('manager@primavera.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.', 'Manager', '매니저', '사용자', 'LOCAL'),
+('user@primavera.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.', 'User', '일반', '사용자', 'LOCAL'),
+('john.google@gmail.com', NULL, 'john_google', 'John', 'Google', 'GOOGLE'),
+('jane.kakao@kakao.com', NULL, 'jane_kakao', 'Jane', 'Kakao', 'KAKAO');
+
+-- 사용자 역할 매핑
+INSERT IGNORE INTO USER_ROLES (USER_ID, ROLE_ID) VALUES 
+(1, 3), -- Admin
+(2, 2), -- Manager
+(3, 1), -- User
+(4, 1), -- Google User
+(5, 1); -- Kakao User
+
+-- 권한 데이터
+INSERT IGNORE INTO PERMISSIONS (PERMISSION_NAME, RESOURCE, ACTION, DESCRIPTION) VALUES 
+('READ_USER', 'USER', 'READ', '사용자 정보 조회'),
+('WRITE_USER', 'USER', 'WRITE', '사용자 정보 수정'),
+('DELETE_USER', 'USER', 'DELETE', '사용자 삭제'),
+('READ_PRODUCT', 'PRODUCT', 'READ', '상품 조회'),
+('WRITE_PRODUCT', 'PRODUCT', 'WRITE', '상품 등록/수정'),
+('DELETE_PRODUCT', 'PRODUCT', 'DELETE', '상품 삭제'),
+('ADMIN_SYSTEM', 'SYSTEM', 'ADMIN', '시스템 관리');
+
+-- 역할별 권한 매핑
+INSERT IGNORE INTO ROLE_PERMISSIONS (ROLE_ID, PERMISSION_ID) VALUES 
+-- USER 권한
+(1, 1), (1, 4), -- 사용자 정보 조회, 상품 조회
+-- MANAGER 권한
+(2, 1), (2, 2), (2, 4), (2, 5), (2, 6), -- 사용자 관리, 상품 관리
+-- ADMINISTRATOR 권한
+(3, 1), (3, 2), (3, 3), (3, 4), (3, 5), (3, 6), (3, 7); -- 모든 권한
+
+-- 카테고리 데이터
+INSERT IGNORE INTO CATEGORIES (NAME, DESCRIPTION, SORT_ORDER) VALUES 
+('도서', '각종 도서 카테고리', 1),
+('전자기기', '전자제품 카테고리', 2),
+('의류', '의류 카테고리', 3),
+('가구', '가구 카테고리', 4);
+
+-- 상품 데이터
+INSERT IGNORE INTO PRODUCTS (NAME, DESCRIPTION, PRICE, CATEGORY_ID, STOCK_COUNT) VALUES 
+('Spring Boot 실전 가이드', 'Spring Boot 개발을 위한 실전 가이드북', 35000.00, 1, 100),
+('Java 완벽 가이드', 'Java 언어의 모든 것', 42000.00, 1, 80),
+('웹 개발 마스터', '현대적인 웹 개발 기법', 38000.00, 1, 60),
+('노트북 컴퓨터', '고성능 개발용 노트북', 1500000.00, 2, 20),
+('무선 키보드', '개발자용 무선 키보드', 150000.00, 2, 50);
+
+-- 게시판 데이터베이스 초기 데이터
+USE primavera_mybatis_board;
+
+-- 사용자 데이터 (게시판용)
+INSERT IGNORE INTO USERS (EMAIL, PASSWORD, NICKNAME, FIRST_NAME, LAST_NAME) VALUES 
+('admin@primavera.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.', 'Admin', '관리자', '시스템'),
+('author@primavera.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.', 'Author', '작성자', '사용자'),
+('reader@primavera.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.', 'Reader', '독자', '사용자');
+
+-- 게시판 카테고리 데이터
+INSERT IGNORE INTO BOARD_CATEGORIES (NAME, DESCRIPTION, SORT_ORDER) VALUES 
+('공지사항', '중요한 공지사항', 1),
+('자유게시판', '자유로운 의견 교환', 2),
+('기술토론', '기술 관련 토론', 3),
+('Q&A', '질문과 답변', 4);
+
+-- 게시글 데이터
+INSERT IGNORE INTO ARTICLES (CATEGORY_ID, TITLE, CONTENT, AUTHOR_ID, STATUS, IS_NOTICE, PUBLISHED_AT) VALUES 
+(1, '게시판 오픈 안내', '새로운 게시판이 오픈되었습니다. 많은 이용 부탁드립니다.', 1, 'PUBLISHED', TRUE, NOW()),
+(2, '안녕하세요!', '처음 가입했습니다. 잘 부탁드려요~', 2, 'PUBLISHED', FALSE, NOW()),
+(3, 'Spring Boot 질문', 'Spring Boot에서 JPA 설정 관련 질문이 있습니다.', 3, 'PUBLISHED', FALSE, NOW()),
+(4, 'MyBatis vs JPA', 'MyBatis와 JPA 중 어떤 것을 선택해야 할까요?', 2, 'PUBLISHED', FALSE, NOW());
+
+-- 댓글 데이터
+INSERT IGNORE INTO COMMENTS (ARTICLE_ID, AUTHOR_ID, CONTENT) VALUES 
+(2, 1, '환영합니다! 좋은 글 많이 올려주세요.'),
+(3, 2, 'application.yml 파일에서 jpa 설정을 확인해보세요.'),
+(4, 1, '프로젝트 규모와 팀 상황에 따라 다르지만, 각각의 장단점이 있습니다.');
+
+-- 태그 데이터
+INSERT IGNORE INTO TAGS (NAME, COLOR) VALUES 
+('Spring Boot', '#6f42c1'),
+('Java', '#fd7e14'),
+('MyBatis', '#28a745'),
+('JPA', '#17a2b8'),
+('질문', '#ffc107'),
+('해결됨', '#28a745');
+
+-- 게시글 태그 매핑
+INSERT IGNORE INTO ARTICLE_TAGS (ARTICLE_ID, TAG_ID) VALUES 
+(3, 1), -- Spring Boot 태그
+(3, 5), -- 질문 태그
+(4, 1), -- Spring Boot 태그
+(4, 3), -- MyBatis 태그
+(4, 4); -- JPA 태그
+
+-- ==============================================
+-- 종료 메시지
+-- ==============================================
+
+SELECT 'Primavera MyBatis Environment Database Initialization Completed!' as STATUS;

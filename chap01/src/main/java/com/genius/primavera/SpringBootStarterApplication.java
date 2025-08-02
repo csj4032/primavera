@@ -28,6 +28,27 @@ import org.springframework.context.event.EventListener;
 /**
  * Spring Boot 애플리케이션의 시작점입니다.
  * 이 클래스는 Spring Boot의 자동 설정, 컴포넌트 스캔 및 애플리케이션 초기화를 담당합니다.
+ * 
+ * =============================================================================
+ * 🐳 Docker Compose 실행 가이드 (Chapter 01-05: Spring Boot 기초)
+ * =============================================================================
+ * 
+ * 1️⃣ 인프라 시작:
+ *    cd infrastructure
+ *    docker-compose -f docker-compose.basic.yml up -d
+ * 
+ * 2️⃣ 상태 확인:
+ *    docker-compose -f docker-compose.basic.yml ps
+ * 
+ * 3️⃣ 애플리케이션 실행:
+ *    ./gradlew :chap01:bootRun -Dspring.profiles.active=local
+ * 
+ * 📊 사용 가능한 서비스:
+ *    - MariaDB: localhost:3308
+ *    - 데이터베이스: primavera, primavera_basic
+ *    - 접속 정보: primavera/primavera
+ * 
+ * =============================================================================
  */
 @ComponentScan
 @SpringBootConfiguration

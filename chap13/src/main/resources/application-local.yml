@@ -34,9 +34,6 @@ spring:
       leak-detection-threshold: 60000
       connection-test-query: "SELECT 1"
       validation-timeout: 5000
-  mvc:
-    favicon:
-      enabled: false
   flyway:
     enabled: false
     encoding: UTF-8

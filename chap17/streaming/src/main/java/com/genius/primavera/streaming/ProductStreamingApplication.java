@@ -3,6 +3,34 @@ package com.genius.primavera.streaming;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
+
+/**
+ * =============================================================================
+ * 🐳 Docker Compose 실행 가이드 (Chapter 14-17: JPA 고급 & 파일처리)
+ * =============================================================================
+ * 
+ * 1️⃣ JPA + Redis 환경 확인:
+ *    cd infrastructure
+ *    docker-compose -f docker-compose.jpa.yml ps
+ * 
+ * 2️⃣ 애플리케이션 실행:
+ *    ./gradlew :chap17:streaming:bootRun -Dspring.profiles.active=local
+ * 
+ * 3️⃣ 스트리밍 API 테스트:
+ *    http://localhost:8080/stream/products
+ *    http://localhost:8080/stream/events
+ * 
+ * 📊 기능:
+ *    - 실시간 데이터 스트리밍
+ *    - Server-Sent Events (SSE)
+ *    - WebSocket 지원
+ * 
+ * 📈 Elasticsearch 연동:
+ *    curl http://localhost:9200/_cluster/health
+ *    curl http://localhost:8080/search/products?q=keyword
+ * 
+ * =============================================================================
+ */
 @SpringBootApplication
 @ConfigurationPropertiesScan
 public class ProductStreamingApplication {

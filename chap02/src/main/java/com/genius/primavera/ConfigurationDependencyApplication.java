@@ -26,6 +26,22 @@ import org.springframework.context.annotation.ImportResource;
  * - Prototype Bean: 매번 새로운 인스턴스 생성
  * - Bean 초기화 순서와 생명주기 로그
  * 
+ * =============================================================================
+ * 🐳 Docker Compose 실행 가이드 (Chapter 01-05: Spring Boot 기초)
+ * =============================================================================
+ * 
+ * 1️⃣ 인프라 시작:
+ *    cd infrastructure
+ *    docker-compose -f docker-compose.basic.yml up -d
+ * 
+ * 2️⃣ 애플리케이션 실행:
+ *    ./gradlew :chap02:bootRun -Dspring.profiles.active=local
+ * 
+ * 📊 사용 가능한 서비스:
+ *    - MariaDB: localhost:3308 (primavera/primavera)
+ * 
+ * =============================================================================
+ * 
  * @author Genius
  */
 @Slf4j

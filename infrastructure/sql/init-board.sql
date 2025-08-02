@@ -1,0 +1,499 @@
+-- ==============================================
+-- Primavera Chapter 12-13 - Board & Security Environment Database
+-- 계층형 댓글, 고급 인증/인가, Vault 보안 설정
+-- MariaDB 11.4.7 - 게시판 및 보안 시스템
+-- ==============================================
+
+-- 기본 데이터베이스 설정
+ALTER DATABASE primavera CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- ==============================================
+-- 게시판 및 보안 데이터베이스 생성
+-- ==============================================
+
+-- 1. 게시판 시스템 데이터베이스
+CREATE DATABASE IF NOT EXISTS primavera_mybatis_board CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- ==============================================
+-- 권한 설정
+-- ==============================================
+
+GRANT ALL PRIVILEGES ON primavera.* TO 'primavera'@'%' IDENTIFIED BY 'primavera';
+GRANT ALL PRIVILEGES ON primavera_mybatis_board.* TO 'primavera'@'%' IDENTIFIED BY 'primavera';
+
+FLUSH PRIVILEGES;
+
+-- ==============================================
+-- 게시판 시스템 데이터베이스 (primavera_mybatis_board)
+-- Chapter 12-13용 고급 게시판 및 보안 테이블
+-- ==============================================
+
+USE primavera_mybatis_board;
+
+-- 사용자 테이블 (고급 보안 기능 포함)
+CREATE TABLE IF NOT EXISTS USERS
+(
+    ID                    BIGINT AUTO_INCREMENT PRIMARY KEY,
+    EMAIL                 VARCHAR(100) UNIQUE NOT NULL,
+    PASSWORD              VARCHAR(255),
+    NICKNAME              VARCHAR(50)         NOT NULL,
+    FIRST_NAME            VARCHAR(50),
+    LAST_NAME             VARCHAR(50),
+    PHONE                 VARCHAR(20),
+    PROFILE_IMAGE         VARCHAR(500),
+    PROVIDER              VARCHAR(20) DEFAULT 'LOCAL', -- LOCAL, GOOGLE, FACEBOOK, GITHUB, KAKAO
+    PROVIDER_ID           VARCHAR(100),
+    EMAIL_VERIFIED        BOOLEAN     DEFAULT FALSE,
+    PHONE_VERIFIED        BOOLEAN     DEFAULT FALSE,
+    TWO_FACTOR_ENABLED    BOOLEAN     DEFAULT FALSE,
+    TWO_FACTOR_SECRET     VARCHAR(100),
+    FAILED_LOGIN_ATTEMPTS INT         DEFAULT 0,
+    ACCOUNT_LOCKED_UNTIL  DATETIME,
+    PASSWORD_CHANGED_AT   DATETIME    DEFAULT CURRENT_TIMESTAMP,
+    STATUS                VARCHAR(20) DEFAULT 'ACTIVE', -- ACTIVE, INACTIVE, LOCKED, BANNED
+    LAST_LOGIN_AT         DATETIME,
+    LAST_LOGIN_IP         VARCHAR(45),
+    CREATED_AT            DATETIME    DEFAULT CURRENT_TIMESTAMP,
+    UPDATED_AT            DATETIME    DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CREATED_BY            BIGINT,
+    UPDATED_BY            BIGINT,
+    
+    INDEX IDX_USERS_EMAIL (EMAIL),
+    INDEX IDX_USERS_NICKNAME (NICKNAME),
+    INDEX IDX_USERS_PROVIDER (PROVIDER, PROVIDER_ID),
+    INDEX IDX_USERS_STATUS (STATUS),
+    INDEX IDX_USERS_CREATED_AT (CREATED_AT)
+);
+
+-- 역할 테이블 (계층형 권한)
+CREATE TABLE IF NOT EXISTS ROLES
+(
+    ID          BIGINT AUTO_INCREMENT PRIMARY KEY,
+    ROLE_NAME   VARCHAR(50) UNIQUE NOT NULL,
+    DESCRIPTION VARCHAR(200),
+    LEVEL       INT DEFAULT 0,         -- 권한 레벨 (높을수록 상위 권한)
+    IS_SYSTEM   BOOLEAN DEFAULT FALSE, -- 시스템 역할 여부
+    PARENT_ID   BIGINT,                -- 상위 역할 (계층형 구조)
+    CREATED_AT  DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UPDATED_AT  DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (PARENT_ID) REFERENCES ROLES (ID)
+);
+
+-- 사용자 역할 매핑 테이블
+CREATE TABLE IF NOT EXISTS USER_ROLES
+(
+    ID         BIGINT AUTO_INCREMENT PRIMARY KEY,
+    USER_ID    BIGINT   NOT NULL,
+    ROLE_ID    BIGINT   NOT NULL,
+    GRANTED_AT DATETIME DEFAULT CURRENT_TIMESTAMP,
+    GRANTED_BY BIGINT,
+    EXPIRES_AT DATETIME,              -- 역할 만료 시간 (임시 권한용)
+    IS_ACTIVE  BOOLEAN  DEFAULT TRUE,
+    
+    FOREIGN KEY (USER_ID) REFERENCES USERS (ID) ON DELETE CASCADE,
+    FOREIGN KEY (ROLE_ID) REFERENCES ROLES (ID) ON DELETE CASCADE,
+    FOREIGN KEY (GRANTED_BY) REFERENCES USERS (ID),
+    UNIQUE KEY UK_USER_ROLE (USER_ID, ROLE_ID)
+);
+
+-- 권한 테이블
+CREATE TABLE IF NOT EXISTS PERMISSIONS
+(
+    ID              BIGINT AUTO_INCREMENT PRIMARY KEY,
+    PERMISSION_NAME VARCHAR(100) UNIQUE NOT NULL,
+    RESOURCE        VARCHAR(100)        NOT NULL,
+    ACTION          VARCHAR(50)         NOT NULL,
+    DESCRIPTION     VARCHAR(200),
+    IS_SYSTEM       BOOLEAN DEFAULT FALSE,
+    CREATED_AT      DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 역할 권한 매핑 테이블
+CREATE TABLE IF NOT EXISTS ROLE_PERMISSIONS
+(
+    ID            BIGINT AUTO_INCREMENT PRIMARY KEY,
+    ROLE_ID       BIGINT NOT NULL,
+    PERMISSION_ID BIGINT NOT NULL,
+    
+    FOREIGN KEY (ROLE_ID) REFERENCES ROLES (ID) ON DELETE CASCADE,
+    FOREIGN KEY (PERMISSION_ID) REFERENCES PERMISSIONS (ID) ON DELETE CASCADE,
+    UNIQUE KEY UK_ROLE_PERMISSION (ROLE_ID, PERMISSION_ID)
+);
+
+-- 게시판 카테고리 테이블
+CREATE TABLE IF NOT EXISTS BOARD_CATEGORIES
+(
+    ID               BIGINT AUTO_INCREMENT PRIMARY KEY,
+    NAME             VARCHAR(100) NOT NULL,
+    DESCRIPTION      TEXT,
+    SORT_ORDER       INT     DEFAULT 0,
+    READ_PERMISSION  VARCHAR(50) DEFAULT 'ROLE_USER',   -- 읽기 권한
+    WRITE_PERMISSION VARCHAR(50) DEFAULT 'ROLE_USER',   -- 쓰기 권한
+    ADMIN_PERMISSION VARCHAR(50) DEFAULT 'ROLE_MANAGER', -- 관리 권한
+    STATUS           VARCHAR(20) DEFAULT 'ACTIVE',
+    CREATED_AT       DATETIME    DEFAULT CURRENT_TIMESTAMP,
+    UPDATED_AT       DATETIME    DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    INDEX IDX_BOARD_CATEGORIES_STATUS (STATUS),
+    INDEX IDX_BOARD_CATEGORIES_SORT_ORDER (SORT_ORDER)
+);
+
+-- 게시글 테이블 (고급 기능 포함)
+CREATE TABLE IF NOT EXISTS ARTICLES
+(
+    ID               BIGINT AUTO_INCREMENT PRIMARY KEY,
+    CATEGORY_ID      BIGINT,
+    TITLE            VARCHAR(200) NOT NULL,
+    CONTENT          LONGTEXT     NOT NULL,
+    CONTENT_TYPE     VARCHAR(20) DEFAULT 'HTML', -- HTML, MARKDOWN, PLAIN
+    AUTHOR_ID        BIGINT       NOT NULL,
+    VIEW_COUNT       INT         DEFAULT 0,
+    LIKE_COUNT       INT         DEFAULT 0,
+    DISLIKE_COUNT    INT         DEFAULT 0,
+    COMMENT_COUNT    INT         DEFAULT 0,
+    STATUS           VARCHAR(20) DEFAULT 'PUBLISHED', -- DRAFT, PUBLISHED, DELETED, BLOCKED
+    IS_NOTICE        BOOLEAN     DEFAULT FALSE,
+    IS_PINNED        BOOLEAN     DEFAULT FALSE,
+    IS_FEATURED      BOOLEAN     DEFAULT FALSE,
+    ALLOW_COMMENTS   BOOLEAN     DEFAULT TRUE,
+    ALLOW_ANONYMOUS  BOOLEAN     DEFAULT FALSE,
+    PASSWORD         VARCHAR(255), -- 익명 게시글 비밀번호
+    IP_ADDRESS       VARCHAR(45),
+    USER_AGENT       VARCHAR(500),
+    PUBLISHED_AT     DATETIME,
+    CREATED_AT       DATETIME    DEFAULT CURRENT_TIMESTAMP,
+    UPDATED_AT       DATETIME    DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    DELETED_AT       DATETIME,
+    
+    FOREIGN KEY (CATEGORY_ID) REFERENCES BOARD_CATEGORIES (ID),
+    FOREIGN KEY (AUTHOR_ID) REFERENCES USERS (ID),
+    INDEX IDX_ARTICLES_CATEGORY_ID (CATEGORY_ID),
+    INDEX IDX_ARTICLES_AUTHOR_ID (AUTHOR_ID),
+    INDEX IDX_ARTICLES_STATUS (STATUS),
+    INDEX IDX_ARTICLES_CREATED_AT (CREATED_AT),
+    INDEX IDX_ARTICLES_IS_NOTICE (IS_NOTICE),
+    INDEX IDX_ARTICLES_IS_PINNED (IS_PINNED),
+    INDEX IDX_ARTICLES_PUBLISHED_AT (PUBLISHED_AT),
+    FULLTEXT INDEX FT_ARTICLES_TITLE_CONTENT (TITLE, CONTENT)
+);
+
+-- 계층형 댓글 테이블 (Nested Set Model)
+CREATE TABLE IF NOT EXISTS COMMENTS
+(
+    ID             BIGINT AUTO_INCREMENT PRIMARY KEY,
+    ARTICLE_ID     BIGINT      NOT NULL,
+    PARENT_ID      BIGINT,                              -- 직접 부모 댓글 ID
+    ROOT_ID        BIGINT,                              -- 최상위 댓글 ID
+    AUTHOR_ID      BIGINT      NOT NULL,
+    CONTENT        TEXT        NOT NULL,
+    CONTENT_TYPE   VARCHAR(20) DEFAULT 'HTML',
+    STATUS         VARCHAR(20) DEFAULT 'ACTIVE',        -- ACTIVE, DELETED, BLOCKED, HIDDEN
+    DEPTH          INT         DEFAULT 0,               -- 댓글 깊이 (0: 최상위)
+    SORT_ORDER     INT         DEFAULT 0,               -- 정렬 순서
+    LEFT_NODE      INT         NOT NULL,                -- Nested Set 왼쪽 값
+    RIGHT_NODE     INT         NOT NULL,                -- Nested Set 오른쪽 값
+    LIKE_COUNT     INT         DEFAULT 0,
+    DISLIKE_COUNT  INT         DEFAULT 0,
+    IS_ANONYMOUS   BOOLEAN     DEFAULT FALSE,
+    PASSWORD       VARCHAR(255),                        -- 익명 댓글 비밀번호
+    IP_ADDRESS     VARCHAR(45),
+    USER_AGENT     VARCHAR(500),
+    CREATED_AT     DATETIME    DEFAULT CURRENT_TIMESTAMP,
+    UPDATED_AT     DATETIME    DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    DELETED_AT     DATETIME,
+    
+    FOREIGN KEY (ARTICLE_ID) REFERENCES ARTICLES (ID) ON DELETE CASCADE,
+    FOREIGN KEY (PARENT_ID) REFERENCES COMMENTS (ID) ON DELETE CASCADE,
+    FOREIGN KEY (ROOT_ID) REFERENCES COMMENTS (ID) ON DELETE CASCADE,
+    FOREIGN KEY (AUTHOR_ID) REFERENCES USERS (ID),
+    INDEX IDX_COMMENTS_ARTICLE_ID (ARTICLE_ID),
+    INDEX IDX_COMMENTS_PARENT_ID (PARENT_ID),
+    INDEX IDX_COMMENTS_ROOT_ID (ROOT_ID),
+    INDEX IDX_COMMENTS_AUTHOR_ID (AUTHOR_ID),
+    INDEX IDX_COMMENTS_STATUS (STATUS),
+    INDEX IDX_COMMENTS_NESTED_SET (LEFT_NODE, RIGHT_NODE),
+    INDEX IDX_COMMENTS_CREATED_AT (CREATED_AT)
+);
+
+-- 첨부파일 테이블 (고급 기능)
+CREATE TABLE IF NOT EXISTS ATTACHMENTS
+(
+    ID             BIGINT AUTO_INCREMENT PRIMARY KEY,
+    ARTICLE_ID     BIGINT       NOT NULL,
+    ORIGINAL_NAME  VARCHAR(255) NOT NULL,
+    STORED_NAME    VARCHAR(255) NOT NULL,
+    FILE_PATH      VARCHAR(500) NOT NULL,
+    FILE_SIZE      BIGINT       NOT NULL,
+    CONTENT_TYPE   VARCHAR(100),
+    FILE_HASH      VARCHAR(64),  -- SHA-256 해시
+    THUMBNAIL_PATH VARCHAR(500); -- 썸네일 경로 (이미지용)
+    DOWNLOAD_COUNT INT DEFAULT 0,
+    IS_IMAGE       BOOLEAN   DEFAULT FALSE,
+    IMAGE_WIDTH    INT,
+    IMAGE_HEIGHT   INT,
+    CREATED_AT     DATETIME  DEFAULT CURRENT_TIMESTAMP,
+    CREATED_BY     BIGINT,
+    
+    FOREIGN KEY (ARTICLE_ID) REFERENCES ARTICLES (ID) ON DELETE CASCADE,
+    FOREIGN KEY (CREATED_BY) REFERENCES USERS (ID),
+    INDEX IDX_ATTACHMENTS_ARTICLE_ID (ARTICLE_ID),
+    INDEX IDX_ATTACHMENTS_FILE_HASH (FILE_HASH),
+    INDEX IDX_ATTACHMENTS_IS_IMAGE (IS_IMAGE)
+);
+
+-- 태그 테이블
+CREATE TABLE IF NOT EXISTS TAGS
+(
+    ID          BIGINT AUTO_INCREMENT PRIMARY KEY,
+    NAME        VARCHAR(50) UNIQUE NOT NULL,
+    DESCRIPTION VARCHAR(200),
+    COLOR       VARCHAR(7) DEFAULT '#007bff', -- HEX 색상
+    USE_COUNT   INT        DEFAULT 0,
+    STATUS      VARCHAR(20) DEFAULT 'ACTIVE',
+    CREATED_AT  DATETIME   DEFAULT CURRENT_TIMESTAMP,
+    CREATED_BY  BIGINT,
+    
+    INDEX IDX_TAGS_STATUS (STATUS),
+    INDEX IDX_TAGS_USE_COUNT (USE_COUNT DESC)
+);
+
+-- 게시글 태그 매핑 테이블
+CREATE TABLE IF NOT EXISTS ARTICLE_TAGS
+(
+    ID         BIGINT AUTO_INCREMENT PRIMARY KEY,
+    ARTICLE_ID BIGINT NOT NULL,
+    TAG_ID     BIGINT NOT NULL,
+    CREATED_AT DATETIME DEFAULT CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (ARTICLE_ID) REFERENCES ARTICLES (ID) ON DELETE CASCADE,
+    FOREIGN KEY (TAG_ID) REFERENCES TAGS (ID) ON DELETE CASCADE,
+    UNIQUE KEY UK_ARTICLE_TAG (ARTICLE_ID, TAG_ID)
+);
+
+-- 좋아요/싫어요 테이블
+CREATE TABLE IF NOT EXISTS REACTIONS
+(
+    ID           BIGINT AUTO_INCREMENT PRIMARY KEY,
+    TARGET_TYPE  VARCHAR(20) NOT NULL, -- ARTICLE, COMMENT
+    TARGET_ID    BIGINT      NOT NULL,
+    USER_ID      BIGINT      NOT NULL,
+    REACTION_TYPE VARCHAR(10) NOT NULL, -- LIKE, DISLIKE
+    IP_ADDRESS   VARCHAR(45),
+    CREATED_AT   DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UPDATED_AT   DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (USER_ID) REFERENCES USERS (ID) ON DELETE CASCADE,
+    UNIQUE KEY UK_USER_TARGET_REACTION (USER_ID, TARGET_TYPE, TARGET_ID),
+    INDEX IDX_REACTIONS_TARGET (TARGET_TYPE, TARGET_ID),
+    INDEX IDX_REACTIONS_USER_ID (USER_ID)
+);
+
+-- 신고 테이블
+CREATE TABLE IF NOT EXISTS REPORTS
+(
+    ID          BIGINT AUTO_INCREMENT PRIMARY KEY,
+    TARGET_TYPE VARCHAR(20)  NOT NULL, -- ARTICLE, COMMENT, USER
+    TARGET_ID   BIGINT       NOT NULL,
+    REPORTER_ID BIGINT       NOT NULL,
+    REASON      VARCHAR(50)  NOT NULL, -- SPAM, ABUSE, COPYRIGHT, ETC
+    DESCRIPTION TEXT,
+    STATUS      VARCHAR(20) DEFAULT 'PENDING', -- PENDING, REVIEWING, RESOLVED, REJECTED
+    RESOLVED_BY BIGINT,
+    RESOLVED_AT DATETIME,
+    IP_ADDRESS  VARCHAR(45),
+    CREATED_AT  DATETIME    DEFAULT CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (REPORTER_ID) REFERENCES USERS (ID),
+    FOREIGN KEY (RESOLVED_BY) REFERENCES USERS (ID),
+    INDEX IDX_REPORTS_TARGET (TARGET_TYPE, TARGET_ID),
+    INDEX IDX_REPORTS_STATUS (STATUS),
+    INDEX IDX_REPORTS_CREATED_AT (CREATED_AT)
+);
+
+-- 방문 통계 테이블
+CREATE TABLE IF NOT EXISTS VISIT_STATS
+(
+    ID         BIGINT AUTO_INCREMENT PRIMARY KEY,
+    DATE       DATE   NOT NULL,
+    USER_ID    BIGINT,
+    IP_ADDRESS VARCHAR(45),
+    USER_AGENT VARCHAR(500),
+    REFERER    VARCHAR(500),
+    PAGE_URL   VARCHAR(500),
+    CREATED_AT DATETIME DEFAULT CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (USER_ID) REFERENCES USERS (ID),
+    INDEX IDX_VISIT_STATS_DATE (DATE),
+    INDEX IDX_VISIT_STATS_USER_ID (USER_ID),
+    INDEX IDX_VISIT_STATS_IP (IP_ADDRESS)
+);
+
+-- ==============================================
+-- 초기 데이터 삽입
+-- ==============================================
+
+-- 역할 데이터 (계층형)
+INSERT IGNORE INTO ROLES (ROLE_NAME, DESCRIPTION, LEVEL, IS_SYSTEM, PARENT_ID) VALUES 
+('ROLE_USER', '일반 사용자', 1, TRUE, NULL),
+('ROLE_MANAGER', '매니저', 5, TRUE, 1),
+('ROLE_ADMINISTRATOR', '관리자', 10, TRUE, 2),
+('ROLE_MODERATOR', '게시판 모더레이터', 3, FALSE, 1),
+('ROLE_VIP', 'VIP 사용자', 2, FALSE, 1);
+
+-- 권한 데이터
+INSERT IGNORE INTO PERMISSIONS (PERMISSION_NAME, RESOURCE, ACTION, DESCRIPTION, IS_SYSTEM) VALUES 
+-- 사용자 관련 권한
+('READ_USER', 'USER', 'READ', '사용자 정보 조회', TRUE),
+('WRITE_USER', 'USER', 'WRITE', '사용자 정보 수정', TRUE),
+('DELETE_USER', 'USER', 'DELETE', '사용자 삭제', TRUE),
+('ADMIN_USER', 'USER', 'ADMIN', '사용자 관리', TRUE),
+-- 게시글 관련 권한
+('READ_ARTICLE', 'ARTICLE', 'READ', '게시글 조회', TRUE),
+('WRITE_ARTICLE', 'ARTICLE', 'WRITE', '게시글 작성/수정', TRUE),
+('DELETE_ARTICLE', 'ARTICLE', 'DELETE', '게시글 삭제', TRUE),
+('ADMIN_ARTICLE', 'ARTICLE', 'ADMIN', '게시글 관리', TRUE),
+-- 댓글 관련 권한
+('READ_COMMENT', 'COMMENT', 'READ', '댓글 조회', TRUE),
+('WRITE_COMMENT', 'COMMENT', 'WRITE', '댓글 작성/수정', TRUE),
+('DELETE_COMMENT', 'COMMENT', 'DELETE', '댓글 삭제', TRUE),
+('ADMIN_COMMENT', 'COMMENT', 'ADMIN', '댓글 관리', TRUE),
+-- 시스템 관련 권한
+('ADMIN_SYSTEM', 'SYSTEM', 'ADMIN', '시스템 관리', TRUE),
+('ADMIN_BOARD', 'BOARD', 'ADMIN', '게시판 관리', TRUE);
+
+-- 역할별 권한 매핑
+INSERT IGNORE INTO ROLE_PERMISSIONS (ROLE_ID, PERMISSION_ID) VALUES 
+-- USER 권한 (1)
+(1, 1), (1, 5), (1, 9), -- 기본 읽기 권한
+(1, 6), (1, 10), -- 작성 권한
+-- MODERATOR 권한 (4)
+(4, 1), (4, 5), (4, 6), (4, 7), (4, 9), (4, 10), (4, 11), (4, 12), (4, 14), -- 게시판 모더레이션
+-- MANAGER 권한 (2)
+(2, 1), (2, 2), (2, 4), (2, 5), (2, 6), (2, 7), (2, 8), (2, 9), (2, 10), (2, 11), (2, 12), (2, 14), -- 매니저 권한
+-- ADMINISTRATOR 권한 (3) - 모든 권한
+(3, 1), (3, 2), (3, 3), (3, 4), (3, 5), (3, 6), (3, 7), (3, 8), (3, 9), (3, 10), (3, 11), (3, 12), (3, 13), (3, 14);
+
+-- 사용자 데이터
+INSERT IGNORE INTO USERS (EMAIL, PASSWORD, NICKNAME, FIRST_NAME, LAST_NAME, EMAIL_VERIFIED, STATUS) VALUES 
+('admin@primavera.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.', 'SuperAdmin', '슈퍼', '관리자', TRUE, 'ACTIVE'),
+('manager@primavera.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.', 'BoardManager', '게시판', '매니저', TRUE, 'ACTIVE'),
+('moderator@primavera.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.', 'Moderator', '모더', '레이터', TRUE, 'ACTIVE'),
+('user1@primavera.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.', 'ActiveUser', '활동적인', '사용자', TRUE, 'ACTIVE'),
+('user2@primavera.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.', 'NewUser', '새로운', '사용자', FALSE, 'ACTIVE');
+
+-- 사용자 역할 매핑
+INSERT IGNORE INTO USER_ROLES (USER_ID, ROLE_ID, GRANTED_BY) VALUES 
+(1, 3, NULL), -- Admin
+(2, 2, 1),    -- Manager
+(3, 4, 1),    -- Moderator
+(4, 1, NULL), -- User
+(5, 1, NULL); -- User
+
+-- 게시판 카테고리 데이터
+INSERT IGNORE INTO BOARD_CATEGORIES (NAME, DESCRIPTION, SORT_ORDER, READ_PERMISSION, WRITE_PERMISSION, ADMIN_PERMISSION) VALUES 
+('공지사항', '중요한 공지사항을 게시하는 공간입니다.', 1, 'ROLE_USER', 'ROLE_MANAGER', 'ROLE_ADMINISTRATOR'),
+('자유게시판', '자유로운 의견을 나누는 공간입니다.', 2, 'ROLE_USER', 'ROLE_USER', 'ROLE_MODERATOR'),
+('기술토론', '기술 관련 토론을 하는 공간입니다.', 3, 'ROLE_USER', 'ROLE_USER', 'ROLE_MODERATOR'),
+('Q&A', '질문과 답변을 나누는 공간입니다.', 4, 'ROLE_USER', 'ROLE_USER', 'ROLE_MODERATOR'),
+('VIP 전용', 'VIP 회원 전용 게시판입니다.', 5, 'ROLE_VIP', 'ROLE_VIP', 'ROLE_MANAGER');
+
+-- 게시글 데이터
+INSERT IGNORE INTO ARTICLES (CATEGORY_ID, TITLE, CONTENT, AUTHOR_ID, STATUS, IS_NOTICE, IS_PINNED, ALLOW_COMMENTS, PUBLISHED_AT) VALUES 
+(1, '게시판 시스템 오픈 안내', '<h1>새로운 게시판 시스템이 오픈되었습니다!</h1><p>계층형 댓글과 고급 보안 기능이 추가되었습니다. 많은 이용 부탁드립니다.</p>', 1, 'PUBLISHED', TRUE, TRUE, TRUE, NOW()),
+(2, '안녕하세요! 처음 가입했습니다.', '<p>새로 가입한 사용자입니다. 잘 부탁드려요!</p>', 4, 'PUBLISHED', FALSE, FALSE, TRUE, NOW()),
+(3, 'Spring Boot에서 계층형 댓글 구현하기', '<h2>계층형 댓글 구현 방법</h2><p>Nested Set Model을 사용한 효율적인 계층형 댓글 구조에 대해 설명합니다...</p>', 2, 'PUBLISHED', FALSE, FALSE, TRUE, NOW()),
+(4, 'Spring Security 고급 설정', '<h2>고급 보안 설정</h2><p>다단계 인증, 계층형 권한 관리 등에 대해 알아봅시다.</p>', 3, 'PUBLISHED', FALSE, FALSE, TRUE, NOW());
+
+-- 계층형 댓글 데이터 (Nested Set Model)
+INSERT IGNORE INTO COMMENTS (ARTICLE_ID, PARENT_ID, ROOT_ID, AUTHOR_ID, CONTENT, DEPTH, LEFT_NODE, RIGHT_NODE) VALUES 
+-- 게시글 2의 댓글들
+(2, NULL, NULL, 1, '환영합니다! 좋은 글 많이 올려주세요.', 0, 1, 6),
+(2, 1, 1, 4, '감사합니다! 열심히 활동하겠습니다.', 1, 2, 5),
+(2, 2, 1, 2, '함께 좋은 커뮤니티 만들어가요!', 2, 3, 4),
+-- 게시글 3의 댓글들
+(3, NULL, NULL, 4, '정말 유용한 정보네요! 감사합니다.', 0, 1, 4),
+(3, 4, 4, 2, '더 궁금한 점이 있으시면 언제든 물어보세요.', 1, 2, 3),
+-- 게시글 4의 댓글들
+(4, NULL, NULL, 1, 'Spring Security는 정말 강력한 도구입니다.', 0, 1, 8),
+(4, 6, 6, 3, '맞습니다. 특히 최신 버전에서는 더욱 개선되었죠.', 1, 2, 7),
+(4, 7, 6, 4, '최신 트렌드는 어떤 것들이 있나요?', 2, 3, 4),
+(4, 8, 6, 2, 'OAuth2.1, WebAuthn 등이 주목받고 있습니다.', 2, 5, 6);
+
+-- 태그 데이터
+INSERT IGNORE INTO TAGS (NAME, DESCRIPTION, COLOR, CREATED_BY) VALUES 
+('Spring Boot', 'Spring Boot 관련 태그', '#6f42c1', 1),
+('Spring Security', 'Spring Security 관련 태그', '#dc3545', 1),
+('MyBatis', 'MyBatis 관련 태그', '#28a745', 1),
+('계층형댓글', '계층형 댓글 구조 관련', '#17a2b8', 1),
+('질문', '질문 관련 태그', '#ffc107', 1),
+('해결됨', '해결된 질문 태그', '#28a745', 1),
+('공지', '공지사항 태그', '#fd7e14', 1);
+
+-- 게시글 태그 매핑
+INSERT IGNORE INTO ARTICLE_TAGS (ARTICLE_ID, TAG_ID) VALUES 
+(1, 7), -- 공지사항 - 공지 태그
+(3, 1), -- Spring Boot 태그
+(3, 4), -- 계층형댓글 태그
+(4, 1), -- Spring Boot 태그
+(4, 2); -- Spring Security 태그
+
+-- 좋아요 데이터
+INSERT IGNORE INTO REACTIONS (TARGET_TYPE, TARGET_ID, USER_ID, REACTION_TYPE) VALUES 
+('ARTICLE', 3, 4, 'LIKE'),
+('ARTICLE', 4, 4, 'LIKE'),
+('COMMENT', 1, 4, 'LIKE'),
+('COMMENT', 6, 3, 'LIKE');
+
+-- ==============================================
+-- 댓글 카운트 업데이트 트리거
+-- ==============================================
+
+DELIMITER $$
+
+CREATE TRIGGER update_article_comment_count_insert
+    AFTER INSERT ON COMMENTS
+    FOR EACH ROW
+BEGIN
+    UPDATE ARTICLES 
+    SET COMMENT_COUNT = (
+        SELECT COUNT(*) 
+        FROM COMMENTS 
+        WHERE ARTICLE_ID = NEW.ARTICLE_ID AND STATUS = 'ACTIVE'
+    )
+    WHERE ID = NEW.ARTICLE_ID;
+END$$
+
+CREATE TRIGGER update_article_comment_count_update
+    AFTER UPDATE ON COMMENTS
+    FOR EACH ROW
+BEGIN
+    UPDATE ARTICLES 
+    SET COMMENT_COUNT = (
+        SELECT COUNT(*) 
+        FROM COMMENTS 
+        WHERE ARTICLE_ID = NEW.ARTICLE_ID AND STATUS = 'ACTIVE'
+    )
+    WHERE ID = NEW.ARTICLE_ID;
+END$$
+
+CREATE TRIGGER update_article_comment_count_delete
+    AFTER DELETE ON COMMENTS
+    FOR EACH ROW
+BEGIN
+    UPDATE ARTICLES 
+    SET COMMENT_COUNT = (
+        SELECT COUNT(*) 
+        FROM COMMENTS 
+        WHERE ARTICLE_ID = OLD.ARTICLE_ID AND STATUS = 'ACTIVE'
+    )
+    WHERE ID = OLD.ARTICLE_ID;
+END$$
+
+DELIMITER ;
+
+-- ==============================================
+-- 종료 메시지
+-- ==============================================
+
+SELECT 'Primavera Board & Security Environment Database Initialization Completed!' as STATUS;

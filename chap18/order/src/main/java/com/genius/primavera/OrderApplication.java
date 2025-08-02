@@ -16,6 +16,34 @@ import java.util.stream.LongStream;
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 import static org.springframework.web.reactive.function.server.ServerResponse.ok;
 
+/**
+ * =============================================================================
+ * 🐳 Docker Compose 실행 가이드 (Chapter 18: 마이크로서비스)
+ * =============================================================================
+ * 
+ * 1️⃣ 마이크로서비스 환경 확인:
+ *    cd infrastructure
+ *    docker-compose -f docker-compose.microservices.yml ps
+ * 
+ * 2️⃣ Order Service 실행:
+ *    ./gradlew :chap18:order:bootRun -Dspring.profiles.active=local -Dserver.port=8083
+ * 
+ * 3️⃣ API 테스트:
+ *    curl http://localhost:8083/users/1/orders
+ *    curl http://localhost:8083/users/2/orders
+ * 
+ * 📊 기능:
+ *    - 리액티브 주문 처리
+ *    - Kafka 이벤트 발행
+ *    - 함수형 엔드포인트
+ * 
+ * 🔗 연동 서비스:
+ *    - MariaDB: localhost:3308
+ *    - Kafka: localhost:9092 (주문 이벤트)
+ *    - Redis: localhost:6380 (캐싱)
+ * 
+ * =============================================================================
+ */
 @Slf4j
 @SpringBootConfiguration
 @EnableAutoConfiguration
