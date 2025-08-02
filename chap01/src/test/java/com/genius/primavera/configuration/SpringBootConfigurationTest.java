@@ -131,12 +131,12 @@ public class SpringBootConfigurationTest {
         // when
         // 컴포넌트 스캔으로 등록된 서비스 빈 확인
         boolean hasWorldServiceImpl = applicationContext.containsBean("worldServiceImpl");
-        boolean hasGreetingServiceImpl = applicationContext.containsBean("helloServiceImpl");
+        boolean hasHelloServiceImpl = applicationContext.containsBean("helloServiceImpl");
 
         // then
         // @Service 등으로 표시된 클래스들이 컴포넌트 스캔으로 발견되어야 함
         assertThat(hasWorldServiceImpl).isTrue();
-        assertThat(hasGreetingServiceImpl).isTrue();
+        assertThat(hasHelloServiceImpl).isTrue();
     }
 
     /**

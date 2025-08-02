@@ -41,12 +41,13 @@ public class SpringBootStarterApplication {
         SpringApplication springApplication = (new SpringApplicationBuilder(SpringBootStarterApplication.class)).initializers((applicationContext) -> {
             log.info("[SpringBoot] SpringBootStarterApplication initializers");
             if (applicationContext instanceof org.springframework.context.support.GenericApplicationContext genericContext) {
-                genericContext.registerBean(WorldService.class, WorldServiceImpl.class);
-                genericContext.registerBean(HelloService.class, HelloServiceImpl.class);
-                genericContext.registerBean(WorldController.class, () -> {
-                    WorldService worldService = genericContext.getBean(WorldService.class);
-                    HelloService greetingService = genericContext.getBean(HelloService.class);
-                    return new WorldController(greetingService, worldService);
+                // 컴포넌트 스캔으로 이미 등록된 구현체들을 사용하여 WorldController를 등록
+                genericContext.registerBean("worldController", WorldController.class, () -> {
+                    // 컴포넌트 스캔으로 등록된 구현체들을 가져와서 사용
+                    WorldService worldService = genericContext.getBean("worldServiceImpl", WorldService.class);
+                    HelloService helloService = genericContext.getBean("helloServiceImpl", HelloService.class);
+                    log.info("[SpringBoot] WorldController 동적 등록 - WorldService: {}, HelloService: {}", worldService.getClass().getSimpleName(), helloService.getClass().getSimpleName());
+                    return new WorldController(helloService, worldService);
                 });
             }
         }).logStartupInfo(true).build();

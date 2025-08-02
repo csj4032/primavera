@@ -1,22 +1,37 @@
 package com.genius.primavera;
 
+import com.genius.primavera.application.HelloService;
 import com.genius.primavera.application.WorldService;
 import com.genius.primavera.interfaces.HelloController;
+import com.genius.primavera.interfaces.WorldController;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.event.RecordApplicationEvents;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(classes = SpringBootStarterApplication.class)
+@SpringBootTest(classes = {SpringBootStarterApplication.class, SpringBootStarterApplicationTest.TestConfig.class})
 @RecordApplicationEvents
 public class SpringBootStarterApplicationTest {
 
     @Autowired
     private ApplicationContext context;
+
+    @TestConfiguration
+    static class TestConfig {
+        @Bean
+        public WorldController worldController(@Autowired ApplicationContext context) {
+            // 컴포넌트 스캔으로 등록된 구현체들을 사용
+            HelloService helloService = context.getBean("helloServiceImpl", HelloService.class);
+            WorldService worldService = context.getBean("worldServiceImpl", WorldService.class);
+            return new WorldController(helloService, worldService);
+        }
+    }
 
 
     @Test
@@ -29,22 +44,27 @@ public class SpringBootStarterApplicationTest {
     }
 
     @Test
-    @DisplayName("HelloController 빈이 정상적으로 등록되고 hello(), world()가 각각 'Hello', 'World!!!'를 반환한다.")
+    @DisplayName("HelloController 빈이 정상적으로 등록되고 hello(), world()가 각각 'Hello World!!!', 'World!!!'를 반환한다.")
     void helloControllerBeanIsRegistered() {
         HelloController helloController = context.getBean(HelloController.class);
         String helloResult = helloController.hello();
         String worldResult = helloController.world();
         assertThat(helloController).isNotNull();
-        assertThat(helloResult).isEqualTo("Hello");
+        assertThat(helloResult).isEqualTo("Hello World!!!");  // helloService.hello() + " " + worldService.world()
         assertThat(worldResult).isEqualTo("World!!!");
     }
 
     @Test
-    @DisplayName("ApplicationContext가 정상적으로 생성되고 WorldService, HelloController 빈이 등록되어 있다.")
+    @DisplayName("ApplicationContext가 정상적으로 생성되고 모든 필요한 빈이 등록되어 있다.")
     void applicationContextEventsArePublished() {
         assertThat(context).isNotNull();
+        // 컴포넌트 스캔으로 등록된 빈들
         assertThat(context.getBean(WorldService.class)).isNotNull();
         assertThat(context.getBean(HelloController.class)).isNotNull();
+        assertThat(context.getBean("helloServiceImpl")).isNotNull();
+        // 프로그래매틱으로 등록된 빈들
+        assertThat(context.getBean(WorldController.class)).isNotNull();
+        assertThat(context.getBean(HelloService.class)).isNotNull();
     }
 
     @Test
@@ -56,16 +76,28 @@ public class SpringBootStarterApplicationTest {
     }
 
     @Test
-    @DisplayName("HelloController가 생성자 주입으로 WorldService와 GreetingService를 정상적으로 받는다.")
+    @DisplayName("HelloController가 어노테이션 기반으로 정상적으로 등록된다.")
     void helloControllerConstructorInjection() {
         HelloController helloController = context.getBean(HelloController.class);
         assertThat(helloController).isNotNull();
     }
 
     @Test
-    @DisplayName("ApplicationContext에 GreetingService 빈이 정상적으로 등록되어 있다.")
-    void greetingServiceBeanIsRegistered() {
-        Object greetingService = context.getBean("helloServiceImpl");
-        assertThat(greetingService).isNotNull();
+    @DisplayName("WorldController가 프로그래매틱 방식으로 정상적으로 등록되고 의존성 주입이 동작한다.")
+    void worldControllerConstructorInjection() {
+        WorldController worldController = context.getBean(WorldController.class);
+        assertThat(worldController).isNotNull();
+        
+        // WorldController의 world() 메서드가 정상 동작하는지 확인
+        String worldResult = worldController.world();
+        assertThat(worldResult).isEqualTo("World!!! Hello");
+    }
+
+    @Test
+    @DisplayName("ApplicationContext에 HelloService 빈이 정상적으로 등록되어 있다.")
+    void helloServiceBeanIsRegistered() {
+        HelloService helloService = context.getBean(HelloService.class);
+        assertThat(helloService).isNotNull();
+        assertThat(helloService.hello()).isEqualTo("Hello");
     }
 }

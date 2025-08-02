@@ -336,51 +336,249 @@ SpringApplication springApplication = new SpringApplicationBuilder(SpringBootSta
 - 이제 어노테이션 기반과 프로그래매틱 등록 방식이 서로 다른 컨트롤러를 등록하므로 충돌이 발생하지 않습니다.
 - 실제 개발에서는 일관된 방식 하나만 선택하여 사용하세요.
 
-### Spring Boot 이벤트 처리 학습
+### Spring Boot 애플리케이션 생명주기 이벤트 학습
 
-애플리케이션 생명주기의 다양한 이벤트를 처리하는 방법을 학습할 수 있습니다.
+Spring Boot 애플리케이션의 생명주기 동안 발생하는 다양한 이벤트를 처리하여 애플리케이션 초기화 과정을 이해할 수 있습니다.
+
+#### 🔄 Spring Boot 애플리케이션 생명주기 전체 플로우
+
+```mermaid
+flowchart TD
+    start([SpringApplication.run 시작]) --> starting[ApplicationStartingEvent]
+    starting --> prepare[Environment 준비]
+    prepare --> contextInit[ApplicationContextInitializedEvent]
+    contextInit --> refresh[컨텍스트 Refresh]
+    refresh --> postConstruct[@PostConstruct 호출]
+    postConstruct --> webServer[ServletWebServerInitializedEvent]
+    webServer --> started[ApplicationStartedEvent]
+    started --> runners[ApplicationRunner/CommandLineRunner]
+    runners --> ready[ApplicationReadyEvent]
+    ready --> complete([애플리케이션 준비 완료])
+```
+
+#### 📋 각 이벤트별 상세 설명
+
+**1. ApplicationStartingEvent**
+```java
+@EventListener({ApplicationStartingEvent.class})
+public void applicationStartingEvent(ApplicationStartingEvent event) {
+    log.info("[SpringBoot] ApplicationStartingEvent: {}", event);
+}
+```
+- **발생 시점**: SpringApplication.run() 메서드가 호출된 직후, 가장 초기 단계
+- **특징**: 
+  - Environment나 ApplicationContext가 생성되기 전에 발생
+  - 로깅 시스템도 아직 완전히 초기화되지 않은 상태
+  - 애플리케이션의 가장 초기 설정이나 전역 초기화 작업에 사용
+- **활용 예시**: 시스템 속성 설정, 환경 변수 검증, 초기 로깅 설정
+
+**2. ApplicationContextInitializedEvent**
+```java
+@EventListener({ApplicationContextInitializedEvent.class})
+public void applicationContextInitializedEvent(ApplicationContextInitializedEvent event) {
+    log.info("[SpringBoot] ApplicationContextInitializedEvent: {}", event);
+}
+```
+- **발생 시점**: ApplicationContext가 생성되고 ApplicationContextInitializer가 호출된 후
+- **특징**:
+  - Environment는 준비되었지만 Bean 정의는 아직 로드되지 않은 상태
+  - ApplicationContext는 생성되었지만 refresh되지 않은 상태
+  - ApplicationContextInitializer가 실행된 직후
+- **활용 예시**: ApplicationContext 설정 검증, Bean 정의 전 설정 작업
+
+**3. @PostConstruct**
+```java
+@PostConstruct
+private void postConstruct() {
+    log.info("[SpringBoot] @PostConstruct 호출");
+}
+```
+- **발생 시점**: 현재 Bean(SpringBootStarterApplication)이 생성되고 의존성 주입이 완료된 후
+- **특징**:
+  - JSR-250 표준 어노테이션
+  - Bean의 생성자 호출 → 의존성 주입 → @PostConstruct 순서로 실행
+  - Bean별로 개별적으로 호출 (전체 애플리케이션 이벤트가 아님)
+- **활용 예시**: Bean별 초기화 작업, 캐시 초기화, 연결 설정
+
+**4. ServletWebServerInitializedEvent**
+```java
+@EventListener({ServletWebServerInitializedEvent.class})
+public void servletWebServerInitializedEvent(ServletWebServerInitializedEvent event) {
+    log.info("[SpringBoot] ServletWebServerInitializedEvent: {}", event);
+}
+```
+- **발생 시점**: 내장 웹 서버(Tomcat, Jetty 등)가 초기화되고 포트 바인딩이 완료된 후
+- **특징**:
+  - 웹 애플리케이션에서만 발생 (WebApplicationType.SERVLET인 경우)
+  - 서버는 시작되었지만 아직 외부 요청을 받을 준비는 완료되지 않은 상태
+  - 포트 정보, 서버 정보 등을 포함
+- **활용 예시**: 서버 시작 확인, 포트 정보 로깅, 헬스체크 설정
+
+**5. ApplicationStartedEvent**
+```java
+@EventListener({ApplicationStartedEvent.class})
+public void applicationStartedEvent(ApplicationStartedEvent event) {
+    log.info("[SpringBoot] ApplicationStartedEvent: {}", event);
+}
+```
+- **발생 시점**: ApplicationContext가 refresh되고 ApplicationRunner/CommandLineRunner가 호출되기 전
+- **특징**:
+  - 모든 Bean이 생성되고 초기화 완료
+  - 웹 서버는 시작되었지만 아직 요청을 받을 준비는 안 된 상태
+  - ApplicationRunner/CommandLineRunner는 아직 실행되지 않음
+- **활용 예시**: 비즈니스 로직 초기화, 외부 시스템 연결 확인
+
+**6. ApplicationRunner & CommandLineRunner**
+```java
+@Bean
+protected ApplicationRunner applicationRunner() {
+    return (args) -> log.info("[SpringBoot] ApplicationRunner Args: {}", (Object) args);
+}
+
+@Bean
+protected CommandLineRunner commandLineRunner() {
+    return (args) -> log.info("[SpringBoot] CommandLineRunner Args: {}", (Object) args);
+}
+```
+- **발생 시점**: ApplicationStartedEvent 직후, ApplicationReadyEvent 직전
+- **특징**:
+  - **ApplicationRunner**: ApplicationArguments 객체를 받음 (옵션 파싱 지원)
+  - **CommandLineRunner**: String[] 배열을 받음 (원시 명령행 인수)
+  - @Order 어노테이션으로 실행 순서 제어 가능
+  - 여러 개 등록 가능
+- **활용 예시**: 데이터베이스 초기 데이터 로드, 배치 작업 실행, 상태 체크
+
+**7. ApplicationReadyEvent**
+```java
+@EventListener({ApplicationReadyEvent.class})
+public void applicationReadyEvent(ApplicationReadyEvent event) {
+    log.info("[SpringBoot] ApplicationReadyEvent: {}", event);
+}
+```
+- **발생 시점**: 모든 초기화가 완료되고 애플리케이션이 요청을 받을 준비가 된 후
+- **특징**:
+  - 애플리케이션 생명주기의 마지막 이벤트
+  - 웹 서버가 완전히 준비되어 외부 요청을 받을 수 있는 상태
+  - 모든 Runner들의 실행이 완료된 상태
+- **활용 예시**: 애플리케이션 시작 완료 알림, 모니터링 시스템 등록, 스케줄러 시작
+
+#### ⏱️ 실제 이벤트 실행 순서와 시간대
+
+```
+🌱 애플리케이션 시작 단계:
+├── 1. ApplicationStartingEvent          ← 가장 초기 (로깅 시스템 미완성)
+├── 2. Environment 준비 및 설정
+├── 3. ApplicationContextInitializedEvent ← ApplicationContext 생성 완료
+├── 4. Bean 생성 및 의존성 주입
+├── 5. @PostConstruct                    ← 각 Bean별 초기화
+├── 6. ServletWebServerInitializedEvent  ← 웹 서버 포트 바인딩 완료
+├── 7. ApplicationStartedEvent           ← Bean 초기화 완료
+├── 8. ApplicationRunner 실행
+├── 9. CommandLineRunner 실행
+└── 10. ApplicationReadyEvent            ← 외부 요청 수용 준비 완료
+```
+
+#### 🎯 실무 활용 패턴
+
+**초기화 단계별 활용 방안:**
 
 ```java
-@SpringBootApplication
+@Component
+public class ApplicationLifecycleManager {
+    
+    // 1. 시스템 레벨 초기화
+    @EventListener
+    public void handleApplicationStarting(ApplicationStartingEvent event) {
+        // 시스템 속성 설정, 보안 정책 설정
+        System.setProperty("app.started.time", String.valueOf(System.currentTimeMillis()));
+    }
+    
+    // 2. 컨텍스트 레벨 검증
+    @EventListener
+    public void handleContextInitialized(ApplicationContextInitializedEvent event) {
+        // 환경 설정 검증, 필수 프로파일 확인
+        String[] profiles = event.getApplicationContext().getEnvironment().getActiveProfiles();
+        if (profiles.length == 0) {
+            log.warn("No active profiles set, using default");
+        }
+    }
+    
+    // 3. Bean 레벨 초기화
+    @PostConstruct
+    public void initialize() {
+        // 캐시 초기화, 커넥션 풀 준비
+        log.info("Initializing application components...");
+    }
+    
+    // 4. 서버 시작 확인
+    @EventListener
+    public void handleWebServerInitialized(ServletWebServerInitializedEvent event) {
+        // 포트 정보 확인, 헬스체크 엔드포인트 등록
+        int port = event.getWebServer().getPort();
+        log.info("Web server started on port: {}", port);
+    }
+    
+    // 5. 비즈니스 로직 준비
+    @EventListener
+    public void handleApplicationStarted(ApplicationStartedEvent event) {
+        // 외부 서비스 연결, 스케줄러 준비
+        log.info("Application core services are ready");
+    }
+    
+    // 6. 최종 준비 완료
+    @EventListener
+    public void handleApplicationReady(ApplicationReadyEvent event) {
+        // 모니터링 등록, 알림 발송
+        log.info("🚀 Application is fully ready to serve requests!");
+    }
+}
+```
+
+#### 💡 모범 사례와 주의사항
+
+**모범 사례:**
+- 각 이벤트의 특성에 맞는 초기화 작업 배치
+- 오류 발생 시 적절한 예외 처리로 애플리케이션 시작 중단 방지
+- 이벤트 리스너에서는 빠른 처리로 시작 시간 단축
+
+**주의사항:**
+- ApplicationStartingEvent에서는 Bean 의존성 주입 불가
+- @PostConstruct는 애플리케이션 이벤트가 아닌 Bean 생명주기 콜백
+- 이벤트 리스너에서 예외 발생 시 애플리케이션 시작이 중단될 수 있음
+
+### 핵심 애플리케이션 클래스
+
+```java
+@ComponentScan
+@SpringBootConfiguration
+@EnableAutoConfiguration
+@EnableConfigurationProperties
 public class SpringBootStarterApplication {
     
-    // 1. 애플리케이션 시작 이벤트
-    @EventListener({ApplicationStartingEvent.class})
-    public void applicationStartingEvent(ApplicationStartingEvent event) {
-        log.info("[SpringBoot] ApplicationStartingEvent: {}", event);
+    private static final Logger log = LoggerFactory.getLogger(SpringBootStarterApplication.class);
+    
+    public static void main(String[] args) {
+        SpringApplication springApplication = new SpringApplicationBuilder(SpringBootStarterApplication.class)
+            .initializers((applicationContext) -> {
+                log.info("[SpringBoot] SpringBootStarterApplication initializers");
+                if (applicationContext instanceof GenericApplicationContext genericContext) {
+                    // 컴포넌트 스캔으로 이미 등록된 구현체들을 사용하여 WorldController를 등록
+                    genericContext.registerBean("worldController", WorldController.class, () -> {
+                        WorldService worldService = genericContext.getBean("worldServiceImpl", WorldService.class);
+                        HelloService helloService = genericContext.getBean("helloServiceImpl", HelloService.class);
+                        log.info("[SpringBoot] WorldController 동적 등록 - WorldService: {}, HelloService: {}", 
+                                worldService.getClass().getSimpleName(), helloService.getClass().getSimpleName());
+                        return new WorldController(helloService, worldService);
+                    });
+                }
+            })
+            .logStartupInfo(true)
+            .build();
+        springApplication.setLazyInitialization(true);
+        springApplication.run(args);
     }
     
-    // 2. 웹 서버 초기화 이벤트
-    @EventListener({ServletWebServerInitializedEvent.class})
-    public void servletWebServerInitializedEvent(ServletWebServerInitializedEvent event) {
-        log.info("[SpringBoot] ServletWebServerInitializedEvent: {}", event);
-    }
-    
-    // 3. 애플리케이션 컨텍스트 초기화 이벤트
-    @EventListener({ApplicationContextInitializedEvent.class})
-    public void applicationContextInitializedEvent(ApplicationContextInitializedEvent event) {
-        log.info("[SpringBoot] ApplicationContextInitializedEvent: {}", event);
-    }
-    
-    // 4. Bean 초기화 후 처리
-    @PostConstruct
-    private void postConstruct() {
-        log.info("[SpringBoot] @PostConstruct 호출");
-    }
-    
-    // 5. 애플리케이션 시작 완료 이벤트
-    @EventListener({ApplicationStartedEvent.class})
-    public void applicationStartedEvent(ApplicationStartedEvent event) {
-        log.info("[SpringBoot] ApplicationStartedEvent: {}", event);
-    }
-    
-    // 6. 애플리케이션 준비 완료 이벤트
-    @EventListener({ApplicationReadyEvent.class})
-    public void applicationReadyEvent(ApplicationReadyEvent event) {
-        log.info("[SpringBoot] ApplicationReadyEvent: {}", event);
-    }
-    
-    // 7. 애플리케이션 시작 후 실행되는 Runner들
+    // ApplicationRunner와 CommandLineRunner Bean 등록
     @Bean
     protected ApplicationRunner applicationRunner() {
         return (args) -> log.info("[SpringBoot] ApplicationRunner Args: {}", (Object) args);
@@ -393,65 +591,61 @@ public class SpringBootStarterApplication {
 }
 ```
 
-**이벤트 실행 순서:**
-1. ApplicationStartingEvent → 애플리케이션 시작
-2. ApplicationContextInitializedEvent → 컨텍스트 초기화
-3. ServletWebServerInitializedEvent → 웹 서버 초기화
-4. @PostConstruct → Bean 후처리
-5. ApplicationStartedEvent → 시작 완료
-6. ApplicationReadyEvent → 준비 완료
-7. ApplicationRunner/CommandLineRunner → 사용자 정의 실행
-
-### 핵심 애플리케이션 클래스
+### 동적 Bean 등록 테스트
 
 ```java
-@SpringBootApplication
-public class PrimaveraApplication {
-    
-    // SpringApplicationBuilder를 통한 유연한 구성
-    private static final String APPLICATION_CONFIG = 
-        "spring.config.location=classpath:/application-${spring.profiles.active:default}.yml";
-    
-    public static void main(String[] args) {
-        new SpringApplicationBuilder(PrimaveraApplication.class)
-                .bannerMode(Banner.Mode.OFF)
-                .properties(APPLICATION_CONFIG)
-                .web(WebApplicationType.SERVLET)
-                .run(args);
-    }
-    
-    // 커스텀 초기화 빈
-    @Bean
-    public ApplicationRunner applicationRunner() {
-        return args -> {
-            log.info("🌸 Primavera Application이 성공적으로 시작되었습니다!");
-            log.info("📊 활성 프로파일: {}", 
-                Arrays.toString(environment.getActiveProfiles()));
-        };
-    }
-}
-```
-
-### 자동 구성 테스트
-
-```java
-@SpringBootTest
-class AutoConfigurationTest {
+@SpringBootTest(classes = {SpringBootStarterApplication.class, SpringBootStarterApplicationTest.TestConfig.class})
+@RecordApplicationEvents
+public class SpringBootStarterApplicationTest {
     
     @Autowired
     private ApplicationContext context;
     
+    // 테스트 환경에서 WorldController Bean 등록을 위한 설정
+    @TestConfiguration
+    static class TestConfig {
+        @Bean
+        public WorldController worldController(@Autowired ApplicationContext context) {
+            // 컴포넌트 스캔으로 등록된 구현체들을 사용
+            HelloService helloService = context.getBean("helloServiceImpl", HelloService.class);
+            WorldService worldService = context.getBean("worldServiceImpl", WorldService.class);
+            return new WorldController(helloService, worldService);
+        }
+    }
+    
     @Test
-    @DisplayName("Spring Boot 자동 구성이 정상적으로 동작하는지 확인")
-    void testAutoConfiguration() {
-        // DataSource 자동 구성 확인
-        assertThat(context.getBean(DataSource.class)).isNotNull();
+    @DisplayName("ApplicationContext가 정상적으로 생성되고 모든 필요한 빈이 등록되어 있다.")
+    void applicationContextEventsArePublished() {
+        assertThat(context).isNotNull();
+        // 컴포넌트 스캔으로 등록된 빈들
+        assertThat(context.getBean(WorldService.class)).isNotNull();
+        assertThat(context.getBean(HelloController.class)).isNotNull();
+        assertThat(context.getBean("helloServiceImpl")).isNotNull();
+        // 프로그래매틱으로 등록된 빈들
+        assertThat(context.getBean(WorldController.class)).isNotNull();
+        assertThat(context.getBean(HelloService.class)).isNotNull();
+    }
+    
+    @Test
+    @DisplayName("HelloController 빈이 정상적으로 등록되고 hello(), world()가 각각 'Hello World!!!', 'World!!!'를 반환한다.")
+    void helloControllerBeanIsRegistered() {
+        HelloController helloController = context.getBean(HelloController.class);
+        String helloResult = helloController.hello();
+        String worldResult = helloController.world();
+        assertThat(helloController).isNotNull();
+        assertThat(helloResult).isEqualTo("Hello World!!!");  // helloService.hello() + " " + worldService.world()
+        assertThat(worldResult).isEqualTo("World!!!");
+    }
+    
+    @Test
+    @DisplayName("WorldController가 프로그래매틱 방식으로 정상적으로 등록되고 의존성 주입이 동작한다.")
+    void worldControllerConstructorInjection() {
+        WorldController worldController = context.getBean(WorldController.class);
+        assertThat(worldController).isNotNull();
         
-        // WebMvcConfigurer 자동 구성 확인
-        assertThat(context.getBean(WebMvcConfigurer.class)).isNotNull();
-        
-        // 사용자 정의 빈 등록 확인
-        assertThat(context.getBean(PrimaveraApplication.class)).isNotNull();
+        // WorldController의 world() 메서드가 정상 동작하는지 확인
+        String worldResult = worldController.world();
+        assertThat(worldResult).isEqualTo("World!!! Hello");
     }
 }
 ```
@@ -460,13 +654,19 @@ class AutoConfigurationTest {
 
 ### 단위 테스트
 - **@SpringBootTest**: 전체 애플리케이션 컨텍스트 로드
-- **@TestConfiguration**: 테스트 전용 구성
+- **@TestConfiguration**: 테스트 전용 구성 (WorldController Bean 등록용)
 - **@MockBean**: 특정 빈 모킹
+- **Record 타입 테스트**: WorldController는 record이므로 직접 생성하여 테스트
 
 ### 통합 테스트
 - **ApplicationContext 검증**: 빈 등록 상태 확인
-- **자동 구성 검증**: 조건부 빈 생성 테스트
+- **동적 Bean 등록 검증**: 프로그래매틱 방식으로 등록된 Bean 테스트
+- **의존성 주입 검증**: 컴포넌트 스캔된 구현체들과의 연동 확인
 - **프로파일별 테스트**: 환경별 구성 검증
+
+### 테스트 환경 특이사항
+- **테스트 환경에서의 동적 Bean 등록**: `ApplicationContextInitializer`가 테스트에서 다르게 동작하므로 `@TestConfiguration`으로 별도 설정
+- **Bean 이름 기반 참조**: 인터페이스 타입이 아닌 구현체 Bean 이름으로 직접 참조
 
 ## 🐳 인프라 설정
 
@@ -495,7 +695,11 @@ docker-compose -f docker-compose.basic.yml down -v
 **애플리케이션 실행:**
 ```bash
 # 인프라 시작 후 애플리케이션 실행
-./gradlew :chap01:bootRun -Dspring.profiles.active=local
+./gradlew :chap01:bootRun --args='--spring.profiles.active=local --server.port=8081'
+
+# 실행 후 엔드포인트 테스트
+curl http://localhost:8081/hello
+# 응답: Hello World!!!
 ```
 
 ## 📖 참고 자료
@@ -519,4 +723,8 @@ docker-compose -f docker-compose.basic.yml down -v
 
 ---
 
-**🎓 학습 포인트**: Spring Boot의 자동 구성 메커니즘을 이해하면 프레임워크의 "마법" 같은 동작을 명확히 파악할 수 있습니다. 이는 문제 해결과 커스터마이징에 필수적인 지식입니다.
+**🎓 학습 포인트**: 
+- Spring Boot의 자동 구성 메커니즘을 이해하면 프레임워크의 "마법" 같은 동작을 명확히 파악할 수 있습니다. 
+- 프로그래매틱 Bean 등록과 컴포넌트 스캔의 조합을 통해 유연한 애플리케이션 구성이 가능합니다.
+- Bean 중복 충돌 해결과 테스트 환경에서의 동적 Bean 등록은 실제 프로젝트에서 자주 마주치는 문제입니다.
+- 이는 문제 해결과 커스터마이징에 필수적인 지식입니다.

@@ -18,7 +18,8 @@
       "Bash(then)",
       "Bash(fi)",
       "Bash(docker-compose:*)",
-      "Bash(../gradlew bootRun:*)"
+      "Bash(../gradlew bootRun:*)",
+      "Bash(curl:*)"
     ],
     "deny": []
   }
