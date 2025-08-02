@@ -21,7 +21,6 @@ spring:
 
 primavera:
   testcontainers:
-    lifecycleMode: REUSE
     containers:
       mariadb:
         enabled: true

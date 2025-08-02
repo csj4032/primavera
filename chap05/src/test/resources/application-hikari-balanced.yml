@@ -21,6 +21,7 @@ spring:
 
 primavera:
   testcontainers:
+    lifecycleMode: PER_CLASS
     containers:
       mariadb:
         enabled: true

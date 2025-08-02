@@ -9,7 +9,7 @@ import java.util.Map;
 public class PrimaveraTestcontainersProperties {
 
     private Map<String, ContainerConfig> containers = new HashMap<>();
-    private ContainerLifecycleMode lifecycleMode = ContainerLifecycleMode.REUSE;
+    private ContainerLifecycleMode lifecycleMode = ContainerLifecycleMode.PER_TEST;
 
     public Map<String, ContainerConfig> getContainers() {
         return containers;

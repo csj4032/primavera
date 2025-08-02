@@ -13,5 +13,5 @@ import java.lang.annotation.*;
 @ContextConfiguration(initializers = PrimaveraTestcontainersInitializer.class)
 @ExtendWith(TestContainerLifecycleExtension.class)
 public @interface EnablePrimaveraTestcontainers {
-    ContainerLifecycleMode lifecycleMode() default ContainerLifecycleMode.REUSE;
+    ContainerLifecycleMode lifecycleMode() default ContainerLifecycleMode.PER_TEST;
 }

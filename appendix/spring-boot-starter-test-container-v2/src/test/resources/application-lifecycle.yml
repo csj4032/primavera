@@ -1,0 +1,15 @@
+primavera:
+  testcontainers:
+    lifecycleMode: PER_CLASS
+    containers:
+      mariadb:
+        enabled: true
+        dockerImageName: mariadb:11.4.7
+        databaseName: primavera
+        username: primavera
+        password: primavera
+
+logging:
+  level:
+    com.genius.primavera: DEBUG
+    org.testcontainers: INFO

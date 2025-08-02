@@ -2,26 +2,35 @@ package com.genius.primavera.testcontainer;
 
 import com.genius.primavera.testcontainer.strategy.ContainerStrategy;
 import com.genius.primavera.testcontainer.strategy.ContainerStrategyFactory;
-import org.springframework.boot.context.properties.bind.Binder;
-import org.springframework.context.ApplicationContextInitializer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.event.ApplicationContextInitializedEvent;
+import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.stereotype.Component;
 import org.testcontainers.containers.GenericContainer;
 
-public class PrimaveraTestcontainersInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
-    
+@Component
+public class PrimaveraTestcontainersEventListener implements ApplicationListener<ApplicationContextInitializedEvent> {
+
+    @Autowired(required = false)
+    private PrimaveraTestcontainersProperties properties;
+
     @Override
-    public void initialize(ConfigurableApplicationContext applicationContext) {
-        System.out.println("🚀 PrimaveraTestcontainersInitializer.initialize() 호출됨!");
+    public void onApplicationEvent(ApplicationContextInitializedEvent event) {
+        System.out.println("🚀 PrimaveraTestcontainersEventListener.onApplicationEvent() 호출됨!");
         
-        ConfigurableEnvironment environment = applicationContext.getEnvironment();
-        PrimaveraTestcontainersProperties properties = Binder.get(environment).bind("primavera.testcontainers", PrimaveraTestcontainersProperties.class).orElse(new PrimaveraTestcontainersProperties());
+        if (properties == null) {
+            System.out.println("⚠️ PrimaveraTestcontainersProperties가 null입니다.");
+            return;
+        }
+        
+        ConfigurableApplicationContext applicationContext = event.getApplicationContext();
+        String testClassName = getCurrentTestClassName();
         
         System.out.println("📋 컨테이너 설정 개수: " + properties.getContainers().size());
         System.out.println("🔄 라이프사이클 모드: " + properties.getLifecycleMode());
-        
-        // 테스트 클래스 이름 추출 (스택 트레이스에서)
-        String testClassName = getTestClassName();
+        System.out.println("📝 테스트 클래스: " + testClassName);
         
         properties.getContainers().forEach((containerType, config) -> {
             System.out.println("🔍 컨테이너 처리 중: " + containerType + ", 활성화: " + config.isEnabled());
@@ -30,22 +39,7 @@ public class PrimaveraTestcontainersInitializer implements ApplicationContextIni
             }
         });
         
-        System.out.println("✅ PrimaveraTestcontainersInitializer.initialize() 완료!");
-    }
-    
-    private String getTestClassName() {
-        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-        System.out.println("🔍 스택 트레이스 분석:");
-        for (StackTraceElement element : stackTrace) {
-            String className = element.getClassName();
-            System.out.println("  - " + className);
-            if (className.contains("Test") && !className.contains("Spring") && !className.contains("junit")) {
-                System.out.println("✅ 테스트 클래스 발견: " + className);
-                return className;
-            }
-        }
-        System.out.println("⚠️ 테스트 클래스를 찾지 못함, 기본값 사용");
-        return "UnknownTestClass";
+        System.out.println("✅ PrimaveraTestcontainersEventListener.onApplicationEvent() 완료!");
     }
     
     private void initializeContainer(ConfigurableApplicationContext applicationContext, 
@@ -79,38 +73,14 @@ public class PrimaveraTestcontainersInitializer implements ApplicationContextIni
         }
     }
     
-    
-    public static void stopContainers(ContainerLifecycleMode mode) {
-        ContainerManager.stopContainers(mode);
-    }
-    
-    public static GenericContainer<?> getContainer(String containerType, ContainerLifecycleMode mode) {
-        String testClassName = getCurrentTestClassName();
-        return ContainerManager.getContainer(containerType, mode, testClassName);
-    }
-    
-    // 하위 호환성을 위한 메서드 (기본값: REUSE)
-    public static GenericContainer<?> getContainer(String containerType) {
-        String testClassName = getCurrentTestClassName();
-        return ContainerManager.getContainer(containerType, ContainerLifecycleMode.REUSE, testClassName);
-    }
-    
-    private static String getCurrentTestClassName() {
+    private String getCurrentTestClassName() {
         StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-        System.out.println("🔍 getCurrentTestClassName 스택 트레이스:");
         for (StackTraceElement element : stackTrace) {
             String className = element.getClassName();
-            System.out.println("  - " + className);
-            if (className.contains("Test") && !className.contains("Spring") && !className.contains("junit") && !className.contains("PrimaveraTestcontainersInitializer")) {
-                System.out.println("✅ 현재 테스트 클래스: " + className);
+            if (className.contains("Test") && !className.contains("Spring") && !className.contains("junit") && !className.contains("PrimaveraTestcontainers")) {
                 return className;
             }
         }
-        System.out.println("⚠️ 현재 테스트 클래스를 찾지 못함");
         return "UnknownTestClass";
-    }
-    
-    public static void stopContainers() {
-        ContainerManager.stopAllContainers();
     }
 }
