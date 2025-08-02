@@ -1,28 +1,12 @@
 spring:
   config:
     activate:
-      on-profile: local
-    import:
-      - "optional:vault:"
-      - "optional:configserver:"
-  aop:
-    proxy-target-class: true
+      on-profile: test
   cloud:
+    config:
+      enabled: false
     vault:
-      host: localhost
-      port: 8200
-      scheme: http
-      authentication: TOKEN
-      token: ${VAULT_TOKEN:primavera-dev-token}
-      connection-timeout: 5000
-      read-timeout: 15000
-      fail-fast: true
-      kv:
-        enabled: true
-        backend: secret
-        profile-separator: '/'
-        default-context: ThymeleafWebApplication
-        application-name: ThymeleafWebApplication
+      enabled: false
   datasource:
     hikari:
       minimum-idle: 5
@@ -39,12 +23,6 @@ spring:
     enabled: true
     prefix: classpath:/templates/
     suffix: .html
-
-lucy-filter:
-  enabled: true
-  name: xssEscapeServletFilter
-  order: 1
-  addUrlPatterns: /*
 
 mybatis:
   configuration:

@@ -1,22 +1,17 @@
 spring:
+  config:
+    activate:
+      on-profile: test
+  cloud:
+    config:
+      enabled: false
+    vault:
+      enabled: false
   autoconfigure:
     exclude:
       - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
       - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
       - org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration
-  cloud:
-    vault:
-      host: ${VAULT_HOST:localhost}
-      port: ${VAULT_PORT:8200}
-      scheme: ${VAULT_SCHEME:http}
-      authentication: TOKEN
-      token: ${VAULT_TOKEN:primavera-dev-token}
-      kv:
-        enabled: true
-        backend: secret
-        profile-separator: '/'
-        default-context: primavera
-        application-name: chap16
     aws:
       credentials:
         # 1순위: Vault에서 로드, 2순위: 환경변수, 3순위: 기본값
@@ -28,9 +23,3 @@ spring:
         bucket-name: ${aws.s3.bucket-name:${AWS_S3_BUCKET_NAME:test-primavera-bucket}}
         endpoint: ${aws.s3.endpoint:${AWS_S3_ENDPOINT:${aws.s3.localstack-endpoint:}}}
         path-style-access: ${aws.s3.path-style-access:${AWS_S3_PATH_STYLE_ACCESS:true}}
-
-logging:
-  level:
-    com.genius.primavera: DEBUG
-    io.awspring.cloud: DEBUG
-    software.amazon.awssdk: DEBUG

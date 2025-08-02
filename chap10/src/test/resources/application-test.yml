@@ -2,11 +2,11 @@ spring:
   config:
     activate:
       on-profile: test
-  # Vault 비활성화 - TestContainers가 동적 포트를 사용하므로 정적 Vault 설정과 충돌
   cloud:
+    config:
+      enabled: false
     vault:
       enabled: false
-  # TestContainers에서 동적으로 설정되는 OAuth2 클라이언트 정보
   security:
     oauth2:
       client:
@@ -42,12 +42,10 @@ spring:
             token-uri: https://kauth.kakao.com/oauth/token
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user-name-attribute: id
-  # Redis 캐시 설정 (TestContainers에서 동적으로 포트 설정됨)
   cache:
-    type: simple  # 테스트에서는 단순 캐시 사용
+    type: simple
   data:
     redis:
-      # TestContainers가 동적으로 포트를 설정하므로 여기서는 기본값 사용
       timeout: 2000ms
   datasource:
     hikari:

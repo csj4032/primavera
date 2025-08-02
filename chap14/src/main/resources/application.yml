@@ -59,7 +59,6 @@ lucy-filter:
 logging:
   config: classpath:logback-spring.xml
 
-# 서버 설정
 server:
   port: 8443
   http2:
@@ -79,13 +78,11 @@ server:
     connection-timeout: 30s
     idle-timeout: 60s
 
-# 파일 스토리지 설정
 storage:
   location: upload-files
   max-file-size: 10MB
   max-request-size: 10MB
 
-# 외부 API 설정
 kakao:
   api:
     url: https://kapi.kakao.com
@@ -93,7 +90,6 @@ kakao:
       friend-list: v1/api/talk/friends
     timeout: 5000
 
-# 캐시 설정
 cache:
   caffeine:
     spec: "maximumSize=1000,expireAfterWrite=10m"

@@ -2,23 +2,8 @@ spring:
   config:
     activate:
       on-profile: test
-  thymeleaf:
-    cache: false
-    enabled: true
-    prefix: classpath:/templates/
-    suffix: .html
-  flyway:
-    enabled: false
-
-lucy-filter:
-  enabled: true
-  name: xssEscapeServletFilter
-  order: 1
-  addUrlPatterns: /*
-
-management:
-  endpoints:
-    enabled-by-default: false
-  endpoint:
-    health:
-      enabled: true
+  cloud:
+    config:
+      enabled: false
+    vault:
+      enabled: false

@@ -2,26 +2,11 @@ spring:
   config:
     activate:
       on-profile: test
-    import:
-      - "optional:vault:"
-      - "optional:configserver:"
   cloud:
+    config:
+      enabled: false
     vault:
-      host: localhost
-      port: 8200
-      scheme: http
-      authentication: TOKEN
-      token: ${VAULT_TOKEN:primavera-dev-token}
-      connection-timeout: 5000
-      read-timeout: 15000
-      fail-fast: true
-      kv:
-        enabled: true
-        backend: secret
-        profile-separator: '/'
-        default-context: SecurityFilterApplication
-        application-name: SecurityFilterApplication
-        profiles: test
+      enabled: false
   datasource:
     hikari:
       minimum-idle: 5
@@ -46,12 +31,6 @@ mybatis:
     default-statement-timeout: 30
   type-aliases-package: com.genius.primavera.domain
   type-handlers-package: com.genius.primavera.domain
-
-lucy-filter:
-  enabled: true
-  name: lucyXssFilter
-  order: 1
-  addUrlPatterns: /*
 
 primavera:
   testcontainers:
