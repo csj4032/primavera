@@ -13,8 +13,8 @@ import java.util.List;
 
 @Slf4j
 @SpringBootTest
+@ActiveProfiles("test")
 @EnablePrimaveraTestcontainers
-@ActiveProfiles({"test"})
 @DisplayName(value = "권한 관련 테스트")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class RoleMapperTest {

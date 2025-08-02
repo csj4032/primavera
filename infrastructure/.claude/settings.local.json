@@ -21,7 +21,8 @@
       "Bash(../gradlew bootRun:*)",
       "Bash(curl:*)",
       "Bash(/Users/genius/Workspace/primavera/gradlew -p /Users/genius/Workspace/primavera :chap06:test)",
-      "Bash(/Users/genius/Workspace/primavera/gradlew -p /Users/genius/Workspace/primavera :chap06:clean :chap06:test)"
+      "Bash(/Users/genius/Workspace/primavera/gradlew -p /Users/genius/Workspace/primavera :chap06:clean :chap06:test)",
+      "Bash(rm:*)"
     ],
     "deny": []
   }

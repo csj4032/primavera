@@ -11,8 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
-import org.testcontainers.junit.jupiter.EnabledIfDockerAvailable;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -24,7 +22,7 @@ import static org.mybatis.dynamic.sql.SqlBuilder.select;
 
 @Slf4j
 @SpringBootTest
-@ActiveProfiles({"test"})
+@ActiveProfiles("test")
 @EnablePrimaveraTestcontainers
 @DisplayName(value = "유저 관련 테스트")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)

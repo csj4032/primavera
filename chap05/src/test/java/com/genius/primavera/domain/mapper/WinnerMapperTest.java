@@ -23,7 +23,7 @@ import java.util.stream.IntStream;
 @Slf4j
 
 @SpringBootTest
-@ActiveProfiles({"test"})
+@ActiveProfiles("test")
 @EnablePrimaveraTestcontainers
 @DisplayName(value = "벌크 인서트 테스트")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
