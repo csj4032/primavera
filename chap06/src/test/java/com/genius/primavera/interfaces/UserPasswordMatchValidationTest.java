@@ -16,6 +16,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 
+@Order(3)
 @ActiveProfiles("test")
 @EnablePrimaveraTestcontainers
 @DisplayName("비밀번호 매치 검증 테스트")

@@ -12,7 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
 
-@MappedJdbcTypes(JdbcType.CHAR)
+@MappedJdbcTypes(JdbcType.INTEGER)
 @MappedTypes(UserStatus.class)
 public class UserStatusTypeHandler<E extends Enum<E>> extends BaseTypeHandler<UserStatus> {
 

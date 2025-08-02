@@ -19,6 +19,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.time.Instant;
 import java.util.List;
 
+@Order(4)
 @ActiveProfiles("test")
 @DisplayName("사용자 등록 유효성 검증 테스트")
 @EnablePrimaveraTestcontainers

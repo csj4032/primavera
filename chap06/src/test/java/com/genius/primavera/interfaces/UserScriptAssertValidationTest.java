@@ -11,12 +11,12 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Set;
 
+@Order(5)
 @SpringBootTest
 @ActiveProfiles("test")
 @EnablePrimaveraTestcontainers
 @DisplayName("@ScriptAssert Groovy 스크립트 검증 테스트")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@Disabled("Groovy ScriptEvaluator 설정 문제로 비활성화")
 public class UserScriptAssertValidationTest {
 
     @Autowired

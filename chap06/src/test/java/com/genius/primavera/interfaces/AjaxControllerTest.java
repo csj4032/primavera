@@ -12,6 +12,7 @@ import org.springframework.test.context.ActiveProfiles;
 import java.util.HashMap;
 import java.util.Map;
 
+@Order(1)
 @ActiveProfiles("test")
 @EnablePrimaveraTestcontainers
 @DisplayName("Ajax 컨트롤러 테스트 - REST API 응답 검증")

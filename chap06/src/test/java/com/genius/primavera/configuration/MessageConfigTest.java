@@ -41,9 +41,6 @@ class MessageConfigTest {
         assertThat(messageSource).isNotNull();
     }
 
-    /**
-     * 다국어 메시지 테스트 데이터를 제공합니다.
-     */
     static Stream<Arguments> provideMultiLanguageMessages() {
         return Stream.of(
                 // 한국어
@@ -76,9 +73,6 @@ class MessageConfigTest {
         assertThat(actualMessage).isEqualTo(expectedMessage);
     }
 
-    /**
-     * Bean Validation 표준 메시지 테스트 데이터를 제공합니다.
-     */
     static Stream<Arguments> provideBeanValidationMessages() {
         return Stream.of(
                 // 한국어
@@ -106,9 +100,6 @@ class MessageConfigTest {
         assertThat(actualMessage).isEqualTo(expectedMessage);
     }
 
-    /**
-     * 사용자 상태 메시지 테스트 데이터를 제공합니다.
-     */
     static Stream<Arguments> provideUserStatusMessages() {
         return Stream.of(
                 // 한국어
@@ -143,8 +134,6 @@ class MessageConfigTest {
     @DisplayName("존재하지 않는 메시지 키에 대해 예외가 발생하지 않는지 확인")
     void shouldHandleNonExistentMessageKey() {
         String nonExistentKey = "non.existent.message.key";
-
-        // useCodeAsDefaultMessage가 true로 설정되어 있어서 키를 그대로 반환해야 함
         assertDoesNotThrow(() -> {
             String message = messageSource.getMessage(nonExistentKey, null, Locale.KOREAN);
             assertThat(message).isEqualTo(nonExistentKey);
@@ -154,7 +143,6 @@ class MessageConfigTest {
     @Test
     @DisplayName("파라미터가 있는 메시지가 정확히 처리되는지 확인")
     void shouldHandleParameterizedMessages() {
-        // Min validation 메시지 테스트 (파라미터 포함)
         Object[] args = {5};
 
         String koreanMessage = messageSource.getMessage("jakarta.validation.constraints.Min.message", args, Locale.KOREAN);

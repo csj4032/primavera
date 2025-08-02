@@ -19,6 +19,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
 
+@Order(6)
 @ActiveProfiles("test")
 @EnablePrimaveraTestcontainers
 @DisplayName("사용자 수정 유효성 검증 테스트")
