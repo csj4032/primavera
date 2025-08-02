@@ -12,8 +12,7 @@ import java.util.Map;
 public class PrimaveraTestcontainersProperties {
 
     private ContainerLifecycleMode lifecycleMode = ContainerLifecycleMode.PER_CLASS;
-    
-    // 각 컨테이너별 설정
+
     private MariaDBConfig mariadb = new MariaDBConfig();
     private MySQLConfig mysql = new MySQLConfig();
     private PostgreSQLConfig postgresql = new PostgreSQLConfig();
@@ -21,7 +20,6 @@ public class PrimaveraTestcontainersProperties {
     private KafkaConfig kafka = new KafkaConfig();
     private ElasticsearchConfig elasticsearch = new ElasticsearchConfig();
 
-    // 하위 호환성을 위한 메서드
     public Map<String, ContainerConfig> getContainers() {
         Map<String, ContainerConfig> containers = new HashMap<>();
         containers.put("mariadb", mariadb);
@@ -33,7 +31,6 @@ public class PrimaveraTestcontainersProperties {
         return containers;
     }
 
-    // 기본 컨테이너 설정 추상 클래스
     @Data
     public static abstract class ContainerConfig {
         private boolean enabled = true;
@@ -41,7 +38,6 @@ public class PrimaveraTestcontainersProperties {
         private Map<String, String> environment = new HashMap<>();
     }
 
-    // 데이터베이스 컨테이너 공통 설정
     @Data
     @EqualsAndHashCode(callSuper = true)
     public static abstract class DatabaseConfig extends ContainerConfig {
@@ -52,7 +48,6 @@ public class PrimaveraTestcontainersProperties {
         private String initScript;
     }
 
-    // MariaDB 설정
     @Data
     @EqualsAndHashCode(callSuper = true)
     public static class MariaDBConfig extends DatabaseConfig {
@@ -65,7 +60,6 @@ public class PrimaveraTestcontainersProperties {
         }
     }
 
-    // MySQL 설정
     @Data
     @EqualsAndHashCode(callSuper = true)
     public static class MySQLConfig extends DatabaseConfig {
@@ -78,7 +72,6 @@ public class PrimaveraTestcontainersProperties {
         }
     }
 
-    // PostgreSQL 설정
     @Data
     @EqualsAndHashCode(callSuper = true)
     public static class PostgreSQLConfig extends DatabaseConfig {
@@ -91,7 +84,6 @@ public class PrimaveraTestcontainersProperties {
         }
     }
 
-    // Redis 설정
     @Data
     @EqualsAndHashCode(callSuper = true)
     public static class RedisConfig extends ContainerConfig {
@@ -103,7 +95,6 @@ public class PrimaveraTestcontainersProperties {
         }
     }
 
-    // Kafka 설정
     @Data
     @EqualsAndHashCode(callSuper = true)
     public static class KafkaConfig extends ContainerConfig {
@@ -115,7 +106,7 @@ public class PrimaveraTestcontainersProperties {
         }
     }
 
-    // Elasticsearch 설정
+
     @Data
     @EqualsAndHashCode(callSuper = true)
     public static class ElasticsearchConfig extends ContainerConfig {
