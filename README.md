@@ -309,8 +309,418 @@ primavera/
 
 ## 📊 데이터베이스 스키마 및 최적화
 
+### 🗄️ Primavera 통합 데이터베이스 ERD
+
+```mermaid
+erDiagram
+    %% 핵심 사용자 및 권한 관리
+    USERS {
+        bigint ID PK
+        varchar EMAIL UK
+        varchar PASSWORD
+        varchar NICKNAME
+        varchar STATUS
+        datetime CREATED_AT
+        datetime UPDATED_AT
+        bigint CREATED_BY FK
+        bigint UPDATED_BY FK
+    }
+    
+    ROLES {
+        bigint ID PK
+        varchar NAME UK
+        varchar DESCRIPTION
+        int TYPE
+        datetime CREATED_AT
+        datetime UPDATED_AT
+    }
+    
+    USER_ROLES {
+        bigint ID PK
+        bigint USER_ID FK
+        bigint ROLE_ID FK
+        datetime GRANTED_AT
+        bigint GRANTED_BY FK
+    }
+    
+    USER_CONNECTIONS {
+        bigint ID PK
+        bigint USER_ID FK
+        varchar PROVIDER_ID
+        varchar PROVIDER_USER_ID
+        varchar DISPLAY_NAME
+        varchar PROFILE_URL
+        varchar IMAGE_URL
+        text ACCESS_TOKEN
+        text REFRESH_TOKEN
+        bigint EXPIRE_TIME
+        datetime CREATED_AT
+        datetime UPDATED_AT
+    }
+
+    %% 기본 예제 테이블 (chap03-05)
+    BASIC_WINNERS {
+        bigint ID PK
+        varchar NAME
+        int YEAR
+        varchar SPORT
+        varchar PRIZE
+        decimal AMOUNT
+        datetime CREATED_AT
+    }
+
+    %% MyBatis 예제 테이블들 (chap06-11)
+    MYBATIS_POSTS {
+        bigint ID PK
+        varchar SUBJECT
+        text CONTENTS
+        bigint WRITER_ID FK
+        timestamp CREATED_AT
+        timestamp UPDATED_AT
+    }
+    
+    MYBATIS_ITEMS {
+        bigint ID PK
+        varchar TYPE
+        varchar NAME
+        int PRICE
+        varchar ARTIST
+        varchar AUTHOR
+        varchar ISBN
+    }
+    
+    MYBATIS_FAMILY {
+        bigint ID PK
+        varchar NAME
+        varchar SCIENTIFIC_NAME
+        varchar HABITAT
+        timestamp CREATED_AT
+    }
+    
+    MYBATIS_CANIDAE {
+        bigint ID PK
+        varchar SPECIES
+        varchar HABITAT
+        timestamp CREATED_AT
+        timestamp UPDATED_AT
+    }
+    
+    MYBATIS_FELIDAE {
+        bigint ID PK
+        varchar BREED
+        varchar TERRITORY
+        timestamp CREATED_AT
+        timestamp UPDATED_AT
+    }
+
+    %% 게시판 시스템 (chap12-13)
+    BOARD_ARTICLES {
+        bigint ID PK
+        bigint P_ID
+        bigint REFERENCE
+        int STEP
+        int LEVEL
+        bigint AUTHOR FK
+        varchar SUBJECT
+        tinyint STATUS
+        int HIT
+        int RECOMMEND
+        int DISAPPROVE
+        timestamp CREATED_AT
+        timestamp UPDATED_AT
+    }
+    
+    BOARD_ARTICLE_CONTENTS {
+        int ID PK
+        bigint ARTICLE_ID FK
+        text CONTENTS
+    }
+    
+    BOARD_COMMENTS {
+        bigint ID PK
+        bigint ARTICLE_ID FK
+        int LEVEL
+        int STEP
+        text COMMENT
+        varchar AUTHOR
+        tinyint STATUS
+        timestamp CREATED_AT
+        timestamp UPDATED_AT
+    }
+    
+    BOARD_ATTACHMENTS {
+        bigint ID PK
+        bigint ARTICLE_ID FK
+        varchar NAME
+        varchar PATH
+        int SIZE
+        timestamp CREATED_AT
+        timestamp UPDATED_AT
+    }
+
+    %% JPA 고급 매핑 (chap14-15)
+    JPA_MEMBERS {
+        bigint ID PK
+        varchar NAME
+        varchar EMAIL UK
+        datetime CREATED_AT
+        datetime UPDATED_AT
+    }
+    
+    JPA_ADDRESSES {
+        bigint ID PK
+        bigint MEMBER_ID FK
+        varchar STREET
+        varchar CITY
+        varchar POSTAL_CODE
+        varchar COUNTRY
+        datetime CREATED_AT
+    }
+    
+    JPA_PRODUCTS {
+        bigint ID PK
+        varchar NAME
+        text DESCRIPTION
+        decimal PRICE
+        datetime CREATED_AT
+    }
+    
+    JPA_SERIALS {
+        bigint ID PK
+        bigint PRODUCT_ID FK
+        varchar SERIAL_NUMBER UK
+        date MANUFACTURE_DATE
+        int WARRANTY_PERIOD_MONTHS
+        datetime CREATED_AT
+    }
+
+    %% JPA 게시판 및 댓글 (chap16-17)
+    JPA_POSTS {
+        bigint ID PK
+        bigint AUTHOR_ID FK
+        varchar TITLE
+        longtext CONTENT
+        text SUMMARY
+        bigint VIEW_COUNT
+        bigint LIKE_COUNT
+        bigint COMMENT_COUNT
+        varchar STATUS
+        datetime PUBLISHED_AT
+        datetime CREATED_AT
+        datetime UPDATED_AT
+    }
+    
+    JPA_COMMENTS {
+        bigint ID PK
+        bigint POST_ID FK
+        bigint PARENT_ID FK
+        bigint AUTHOR_ID FK
+        longtext CONTENT
+        varchar STATUS
+        bigint LIKE_COUNT
+        datetime CREATED_AT
+        datetime UPDATED_AT
+    }
+
+    %% 파일 처리 시스템 (chap17)
+    FILE_UPLOADS {
+        bigint ID PK
+        bigint POST_ID FK
+        varchar ORIGINAL_FILENAME
+        varchar STORED_FILENAME
+        varchar FILE_PATH
+        bigint FILE_SIZE
+        varchar CONTENT_TYPE
+        varchar FILE_TYPE
+        varchar UPLOAD_STATUS
+        datetime PROCESSED_AT
+        datetime CREATED_AT
+        datetime UPDATED_AT
+    }
+    
+    FILE_PROCESSING_RESULTS {
+        bigint ID PK
+        bigint FILE_UPLOAD_ID FK
+        varchar PROCESSING_TYPE
+        varchar RESULT_STATUS
+        text RESULT_MESSAGE
+        json RESULT_DATA
+        int PROCESSED_ROWS
+        int ERROR_ROWS
+        bigint PROCESSING_TIME_MS
+        datetime CREATED_AT
+    }
+    
+    FINANCIAL_DATA {
+        bigint ID PK
+        bigint FILE_UPLOAD_ID FK
+        varchar COMPANY_CODE
+        varchar COMPANY_NAME
+        int FISCAL_YEAR
+        int QUARTER
+        decimal REVENUE
+        decimal PROFIT
+        decimal ASSETS
+        decimal LIABILITIES
+        decimal EQUITY
+        datetime CREATED_AT
+    }
+    
+    KAKAOTALK_MESSAGES {
+        bigint ID PK
+        bigint FILE_UPLOAD_ID FK
+        date CHAT_DATE
+        time CHAT_TIME
+        varchar SENDER_NAME
+        longtext MESSAGE_TEXT
+        int MESSAGE_LENGTH
+        int WORD_COUNT
+        decimal SENTIMENT_SCORE
+        boolean CONTAINS_EMOJI
+        boolean CONTAINS_URL
+        varchar LANGUAGE
+        datetime CREATED_AT
+    }
+
+    %% 시스템 로그
+    SYSTEM_LOGS {
+        bigint ID PK
+        varchar LOG_LEVEL
+        varchar LOGGER_NAME
+        longtext MESSAGE
+        varchar EXCEPTION_CLASS
+        text EXCEPTION_MESSAGE
+        longtext STACK_TRACE
+        bigint USER_ID FK
+        varchar SESSION_ID
+        varchar REQUEST_URI
+        varchar REQUEST_METHOD
+        text USER_AGENT
+        varchar CLIENT_IP
+        varchar SERVER_NAME
+        varchar THREAD_NAME
+        varchar SENTRY_EVENT_ID
+        datetime CREATED_AT
+    }
+
+    %% 마이크로서비스 데이터베이스 테이블들 (chap18)
+    MS_USERS {
+        bigint ID PK
+        varchar EMAIL UK
+        varchar PASSWORD
+        varchar NICKNAME
+        varchar STATUS
+        datetime CREATED_AT
+        datetime UPDATED_AT
+        varchar SERVICE_ID
+    }
+    
+    MS_ORDERS {
+        bigint ID PK
+        varchar ORDER_NUMBER UK
+        bigint USER_ID FK
+        decimal TOTAL_AMOUNT
+        varchar ORDER_STATUS
+        varchar PAYMENT_STATUS
+        datetime CREATED_AT
+        datetime UPDATED_AT
+    }
+    
+    MS_PRODUCTS {
+        bigint ID PK
+        varchar PRODUCT_CODE UK
+        varchar NAME
+        text DESCRIPTION
+        decimal PRICE
+        int STOCK
+        varchar STATUS
+        datetime CREATED_AT
+        datetime UPDATED_AT
+    }
+    
+    MS_ACCOUNTS {
+        bigint ID PK
+        bigint USER_ID FK
+        varchar ACCOUNT_TYPE
+        decimal BALANCE
+        varchar CURRENCY
+        varchar STATUS
+        datetime CREATED_AT
+        datetime UPDATED_AT
+    }
+
+    %% 시퀀스 관리
+    SEQUENCE_MANAGEMENT {
+        varchar SEQUENCE_NAME PK
+        bigint NEXT_VAL
+        varchar CHAPTER
+        varchar DESCRIPTION
+    }
+
+    %% 관계 정의
+    USERS ||--o{ USER_ROLES : "has"
+    ROLES ||--o{ USER_ROLES : "assigned to"
+    USERS ||--o{ USER_CONNECTIONS : "social login"
+    USERS ||--o{ MYBATIS_POSTS : "writes"
+    USERS ||--o{ BOARD_ARTICLES : "authors"
+    USERS ||--o{ JPA_POSTS : "creates"
+    USERS ||--o{ JPA_COMMENTS : "comments"
+    USERS ||--o{ SYSTEM_LOGS : "generates"
+    
+    MYBATIS_FAMILY ||--o{ MYBATIS_CANIDAE : "inheritance"
+    MYBATIS_FAMILY ||--o{ MYBATIS_FELIDAE : "inheritance"
+    
+    BOARD_ARTICLES ||--|| BOARD_ARTICLE_CONTENTS : "has content"
+    BOARD_ARTICLES ||--o{ BOARD_COMMENTS : "receives"
+    BOARD_ARTICLES ||--o{ BOARD_ATTACHMENTS : "includes"
+    
+    JPA_MEMBERS ||--o{ JPA_ADDRESSES : "lives at"
+    JPA_PRODUCTS ||--o{ JPA_SERIALS : "serialized"
+    
+    JPA_POSTS ||--o{ JPA_COMMENTS : "receives"
+    JPA_COMMENTS ||--o{ JPA_COMMENTS : "replies to"
+    JPA_POSTS ||--o{ FILE_UPLOADS : "includes"
+    
+    FILE_UPLOADS ||--o{ FILE_PROCESSING_RESULTS : "processed"
+    FILE_UPLOADS ||--o{ FINANCIAL_DATA : "contains"
+    FILE_UPLOADS ||--o{ KAKAOTALK_MESSAGES : "parsed from"
+    
+    MS_USERS ||--o{ MS_ORDERS : "places"
+    MS_USERS ||--o{ MS_ACCOUNTS : "owns"
+```
+
+### 🔗 주요 도메인 영역
+
+**🔐 사용자 관리 도메인**
+- `USERS` ↔ `ROLES` ↔ `USER_ROLES` (권한 기반 접근 제어)
+- `USER_CONNECTIONS` (소셜 로그인 연동)
+
+**📝 컨텐츠 관리 도메인**
+- **MyBatis 예제**: `MYBATIS_POSTS`, `MYBATIS_ITEMS`, 상속 구조(`MYBATIS_FAMILY` → `MYBATIS_CANIDAE/FELIDAE`)
+- **게시판 시스템**: `BOARD_ARTICLES` → `BOARD_ARTICLE_CONTENTS` + `BOARD_COMMENTS` + `BOARD_ATTACHMENTS`
+- **JPA 게시판**: `JPA_POSTS` → `JPA_COMMENTS` (계층형 댓글 구조)
+
+**🏗️ JPA 고급 매핑**
+- `JPA_MEMBERS` ↔ `JPA_ADDRESSES` (1:N 관계)
+- `JPA_PRODUCTS` ↔ `JPA_SERIALS` (1:N 관계)
+
+**📄 파일 처리 시스템**
+- `FILE_UPLOADS` → `FILE_PROCESSING_RESULTS`
+- 특화 데이터: `FINANCIAL_DATA`, `KAKAOTALK_MESSAGES`
+
+**🔧 마이크로서비스 아키텍처**
+- `MS_USERS` → `MS_ORDERS`, `MS_ACCOUNTS`
+- `MS_PRODUCTS` (독립적인 상품 관리)
+
+### 🎯 ERD 설계 특징
+
+- **학습 단계별 복잡도**: 기본 테이블 → MyBatis → JPA → 마이크로서비스
+- **실무 패턴 반영**: 소프트 삭제, 감사 추적, 계층형 구조
+- **성능 최적화**: 적절한 인덱싱, Full-text 검색 지원
+- **확장성**: 마이크로서비스 분리, 서비스별 데이터베이스
+
 ### 통합 데이터베이스 아키텍처 다이어그램
-![Primavera DB Schema](https://github.com/csj4032/primavera/blob/master/primavera.png)
+![Primavera DB Schema](https://github.com/csj4032/primavera/blob/master/assets/primavera.png)
 
 ### 🔄 데이터베이스 최적화 현황 (2025년 8월)
 
