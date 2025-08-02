@@ -1,28 +1,12 @@
-# 리소스 제약 환경용 연결 풀 설정 - 메모리/연결 제한 환경
 spring:
   config:
     activate:
-      on-profile: hikari-resource-constrained
-    import:
-      - "optional:vault:"
-      - "optional:configserver:"
+      on-profile: resource-constrained
   cloud:
+    config:
+      enabled: false
     vault:
-      host: localhost
-      port: 8200
-      scheme: http
-      authentication: TOKEN
-      token: ${VAULT_TOKEN:primavera-dev-token}
-      connection-timeout: 5000
-      read-timeout: 15000
-      fail-fast: true
-      kv:
-        enabled: true
-        backend: secret
-        profile-separator: '/'
-        default-context: MyBatisLoggingApplication
-        application-name: MyBatisLoggingApplication
-        profiles: test
+      enabled: false
   datasource:
     hikari:
       minimum-idle: 2                    # 최소 유휴 연결: 2개 (최소한 확보)

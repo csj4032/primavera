@@ -15,18 +15,8 @@ public class User {
     private String email;
     private String password;
     private String nickname;
+    private UserStatus status;
     private List<String> roles;
     private Instant createdAt;
     private Instant updatedAt;
-
-    public User(long id, String email, String password, String nickname, List<String> roles, Instant createdAt, Instant updatedAt) {
-        this.id = id;
-        this.email = email;
-        this.password = password;
-        this.nickname = nickname;
-        this.roles = roles;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-    }
-
 }

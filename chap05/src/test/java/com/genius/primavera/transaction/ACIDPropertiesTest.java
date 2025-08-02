@@ -33,8 +33,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @Slf4j
 @SpringBootTest
 @ActiveProfiles("test")
-@EnablePrimaveraTestcontainers
 @DisplayName("ACID 속성 테스트")
+@EnablePrimaveraTestcontainers
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ACIDPropertiesTest {
 

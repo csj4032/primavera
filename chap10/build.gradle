@@ -16,6 +16,8 @@ dependencies {
     loggingDependencies.each { dep -> implementation dep }
     webUiDependencies.each { dep -> implementation dep }
     testContainersDependencies.each { dep -> testImplementation dep }
+    implementation "org.springframework.cloud:spring-cloud-starter-config"
+    implementation "org.springframework.cloud:spring-cloud-starter-vault-config:${springCloudVaultVersion}"
     implementation "org.springframework.boot:spring-boot-starter-security"
     implementation "org.springframework.boot:spring-boot-starter-oauth2-client"
     implementation "org.springframework.security:spring-security-oauth2-client:${springSecurityVersion}"
@@ -25,12 +27,10 @@ dependencies {
     testImplementation "org.springframework.security:spring-security-test:${springSecurityVersion}"
     testImplementation "io.rest-assured:rest-assured:${restAssuredVersion}"
     implementation "commons-codec:commons-codec:${commonsCodecVersion}"
-    
-    // 캐싱 전략 의존성
     implementation "org.springframework.boot:spring-boot-starter-cache"
     implementation "org.springframework.boot:spring-boot-starter-data-redis"
     implementation "org.redisson:redisson-spring-boot-starter:${redissonVersion}"
     implementation "com.github.ben-manes.caffeine:caffeine:${caffeineVersion}"
-    
+    implementation project(":appendix:spring-boot-starter-test-container")
     implementation project(":appendix:spring-boot-starter-lucy-filter")
 }

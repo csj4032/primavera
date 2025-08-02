@@ -1,28 +1,12 @@
-# 성능 중심 연결 풀 설정 - 고성능 요구사항용
 spring:
   config:
     activate:
       on-profile: hikari-performance-focused
-    import:
-      - "optional:vault:"
-      - "optional:configserver:"
   cloud:
+    config:
+      enabled: false
     vault:
-      host: localhost
-      port: 8200
-      scheme: http
-      authentication: TOKEN
-      token: ${VAULT_TOKEN:primavera-dev-token}
-      connection-timeout: 5000
-      read-timeout: 15000
-      fail-fast: true
-      kv:
-        enabled: true
-        backend: secret
-        profile-separator: '/'
-        default-context: MyBatisLoggingApplication
-        application-name: MyBatisLoggingApplication
-        profiles: test
+      enabled: false
   datasource:
     hikari:
       minimum-idle: 10                   # 최소 유휴 연결: 10개 (즉시 사용 가능)

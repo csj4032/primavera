@@ -1,6 +1,7 @@
 # ==============================================================================
-# Primavera JPA + 캐싱 인프라 - Chapter 14-17
-# JPA, 고급 매핑, 파일 처리, 데이터 파이프라인, Redis 캐싱
+# Primavera JPA + 고급 기능 인프라 - Chapter 14-16
+# JPA 고급 매핑, MongoDB, Redis 캐싱, 파일 처리, 모니터링
+# ⚠️ chap17은 별도 환경 필요 (Elasticsearch 추가)
 # ==============================================================================
 
 services:
@@ -48,7 +49,80 @@ services:
       timeout: 5s
       retries: 5
 
-  # Elasticsearch - 검색 엔진 및 데이터 파이프라인 (chap17)
+  # MongoDB - 문서 지향 데이터베이스 (chap14)
+  mongodb:
+    image: mongo:7
+    container_name: mongodb-primavera-jpa
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: primavera
+      MONGO_INITDB_DATABASE: primavera_jpa_advanced
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_jpa_data:/data/db
+      - mongodb_jpa_config:/data/configdb
+    networks:
+      - primavera-jpa
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # HashiCorp Vault - 설정 관리 (chap15-16)
+  vault:
+    image: hashicorp/vault:1.15
+    container_name: vault-primavera-jpa
+    restart: unless-stopped
+    cap_add:
+      - IPC_LOCK
+    environment:
+      VAULT_DEV_ROOT_TOKEN_ID: primavera-dev-token
+      VAULT_DEV_LISTEN_ADDRESS: 0.0.0.0:8200
+      VAULT_LOG_LEVEL: info
+      VAULT_ADDR: http://127.0.0.1:8200
+    ports:
+      - "8200:8200"
+    volumes:
+      - vault_jpa_data:/vault/data
+      - vault_jpa_tokens:/vault/tokens
+      - ./vault:/vault/config
+    networks:
+      - primavera-jpa
+    healthcheck:
+      test: ["CMD", "sh", "-c", "VAULT_ADDR=http://127.0.0.1:8200 vault status"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Vault 초기화 서비스
+  vault-init:
+    image: hashicorp/vault:1.15
+    container_name: vault-init-primavera-jpa
+    depends_on:
+      vault:
+        condition: service_healthy
+    environment:
+      VAULT_ADDR: http://vault:8200
+      VAULT_TOKEN: primavera-dev-token
+    volumes:
+      - vault_jpa_tokens:/vault/tokens
+      - ./vault:/vault/config
+      - ./vault-init.sh:/vault-init.sh
+    networks:
+      - primavera-jpa
+    command: |
+      sh -c "
+        echo 'Waiting for Vault to be ready...'
+        sleep 10
+        apk add --no-cache curl jq
+        sh /vault-init.sh
+      "
+    restart: "no"
+
+  # Elasticsearch - 데이터 파이프라인 (chap17 전용)
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0
     container_name: elasticsearch-primavera-jpa
@@ -80,6 +154,14 @@ volumes:
   mariadb_jpa_data:
     driver: local
   redis_jpa_data:
+    driver: local
+  mongodb_jpa_data:
+    driver: local
+  mongodb_jpa_config:
+    driver: local
+  vault_jpa_data:
+    driver: local
+  vault_jpa_tokens:
     driver: local
   elasticsearch_jpa_data:
     driver: local

@@ -1,0 +1,70 @@
+# ==============================================================================
+# Primavera 데이터 파이프라인 인프라 - Chapter 17
+# MariaDB + Elasticsearch 데이터 파이프라인 (배치 + 스트리밍)
+# ==============================================================================
+
+services:
+  # MariaDB - 데이터 소스
+  mariadb:
+    image: mariadb:11.4.7
+    container_name: mariadb-primavera-pipeline
+    restart: unless-stopped
+    environment:
+      MARIADB_ROOT_PASSWORD: root
+      MARIADB_DATABASE: primavera
+      MARIADB_USER: primavera
+      MARIADB_PASSWORD: primavera
+      MARIADB_AUTO_UPGRADE: 1
+      TZ: UTC
+    ports:
+      - "3308:3306"
+    volumes:
+      - mariadb_pipeline_data:/var/lib/mysql
+      - ./sql/init-jpa.sql:/docker-entrypoint-initdb.d/init-jpa.sql:ro
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --default-time-zone='+00:00'
+    networks:
+      - primavera-pipeline
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Elasticsearch - 검색 엔진 및 분석
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0
+    container_name: elasticsearch-primavera-pipeline
+    restart: unless-stopped
+    environment:
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
+      - xpack.security.enabled=false
+      - xpack.security.enrollment.enabled=false
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - elasticsearch_pipeline_data:/usr/share/elasticsearch/data
+    networks:
+      - primavera-pipeline
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9200/_cluster/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  mariadb_pipeline_data:
+    driver: local
+  elasticsearch_pipeline_data:
+    driver: local
+
+networks:
+  primavera-pipeline:
+    driver: bridge
+    name: primavera-pipeline

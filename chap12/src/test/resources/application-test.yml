@@ -2,39 +2,3 @@ spring:
   config:
     activate:
       on-profile: test
-  datasource:
-    url: jdbc:mariadb://localhost:1109/primavera_test?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-    username: primavera
-    password: primavera
-  thymeleaf:
-    cache: false
-    enabled: true
-    prefix: classpath:/templates/
-    suffix: .html
-  flyway:
-    enabled: false
-
-lucy-filter:
-  enabled: true
-  name: xssEscapeServletFilter
-  order: 1
-  addUrlPatterns: /*
-
-logging:
-  level:
-    com.genius.primavera: DEBUG
-    org.springframework: WARN
-    org.testcontainers: INFO
-    root: WARN
-
-server:
-  ssl:
-    enabled: false
-  port: 8080
-
-management:
-  endpoints:
-    enabled-by-default: false
-  endpoint:
-    health:
-      enabled: true

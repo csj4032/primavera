@@ -2,34 +2,11 @@ spring:
   config:
     activate:
       on-profile: test
-    import:
-      - "optional:vault:"
-      - "optional:configserver:"
   cloud:
+    config:
+      enabled: false
     vault:
-      host: localhost
-      port: 8200
-      scheme: http
-      authentication: TOKEN
-      token: ${VAULT_TOKEN:primavera-dev-token}
-      connection-timeout: 5000
-      read-timeout: 15000
-      fail-fast: true
-      kv:
-        enabled: true
-        backend: secret
-        profile-separator: '/'
-        default-context: DataAccessApplication
-        application-name: DataAccessApplication
-
-logging:
-  level:
-    com.genius.primavera: DEBUG
-    org.springframework.cloud.vault: TRACE
-    org.springframework.vault: TRACE
-    org.springframework.cloud.bootstrap: DEBUG
-    org.springframework.context.annotation: DEBUG
-    com.zaxxer.hikari: DEBUG
+      enabled: false
 
 primavera:
   testcontainers:

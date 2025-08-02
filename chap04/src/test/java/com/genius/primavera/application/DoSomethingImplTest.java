@@ -1,5 +1,6 @@
 package com.genius.primavera.application;
 
+import com.genius.primavera.testContainer.EnablePrimaveraTestcontainers;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -11,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @Slf4j
 @SpringBootTest
 @ActiveProfiles("test")
+@EnablePrimaveraTestcontainers
 public class DoSomethingImplTest {
 
     @Test

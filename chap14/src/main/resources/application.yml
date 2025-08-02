@@ -1,9 +1,9 @@
 spring:
   application:
-    name: advanced-jpa
+    name: AdvancedJpaApplication
   banner:
     charset: UTF-8
-    location: classpath:primavera.txt
+    location: classpath:banner.txt
   profiles:
     active: local
     group:
@@ -15,95 +15,19 @@ spring:
         - file-warn-appender
       test:
         - console-appender
-    
-  # Jackson 설정
+  aop:
+    proxy-target-class: true
   jackson:
     time-zone: UTC
     serialization:
       write-dates-as-timestamps: false
     deserialization:
       fail-on-unknown-properties: false
-      
-  # 관계형 데이터베이스 (MariaDB)
-  datasource:
-    driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://localhost:1109/primavera?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
-    username: primavera
-    password: primavera
-    hikari:
-      maximum-pool-size: 20
-      minimum-idle: 5
-      connection-timeout: 30000
-      idle-timeout: 600000
-      max-lifetime: 1800000
-      
-  # JPA/Hibernate 설정
-  jpa:
-    show-sql: false
-    generate-ddl: false
-    hibernate:
-      ddl-auto: validate
-      naming:
-        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
-        implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.MariaDBDialect
-        globally_quoted_identifiers: true
-        jdbc:
-          fetch_size: 30
-          batch_size: 30
-        format_sql: false
-        use_sql_comments: false
-    open-in-view: false
-    
-  # MongoDB 리액티브 설정
-  data:
-    mongodb:
-      host: localhost
-      port: 27017
-      authentication-database: admin
-      database: primavera_jpa_advanced
-      username: primavera
-      password: primavera
-      
-    # Redis 설정
-    redis:
-      host: localhost
-      port: 6379
-      timeout: 2000ms
-      lettuce:
-        pool:
-          max-active: 8
-          max-idle: 8
-          min-idle: 0
-          
-    
-  # Thymeleaf 리액티브 설정
-  thymeleaf:
-    template-resolver-order: 1
-    cache: true
-    enabled: true
-    prefix: classpath:/templates/
-    suffix: .html
-    encoding: UTF-8
-    mode: HTML
-    reactive:
-      chunked-mode-view-names: chart,stream
-      max-chunk-size: 8192
-      media-types: 
-        - text/html
-        - application/json
-    check-template: false
-    
-  # 개발 도구
   devtools:
     livereload:
       enabled: false
     restart:
       enabled: false
-      
-  # Flyway 설정
   flyway:
     enabled: false
     encoding: UTF-8
@@ -112,17 +36,9 @@ spring:
     table: SCHEMA_HISTORY
     baseline-on-migrate: false
     baseline-description: schema history
-    
-  # AOP 설정
-  aop:
-    proxy-target-class: true
-    
-  # 웹플럭스 설정
   webflux:
     base-path: /
     static-path-pattern: /static/**
-    
-  # 보안 설정
   security:
     oauth2:
       client:
@@ -176,14 +92,14 @@ kakao:
     talk-social:
       friend-list: v1/api/talk/friends
     timeout: 5000
-    
+
 # 캐시 설정
 cache:
   caffeine:
     spec: "maximumSize=1000,expireAfterWrite=10m"
   redis:
     ttl: 600
-    
+
 primavera:
   logs:
     path: ./logs

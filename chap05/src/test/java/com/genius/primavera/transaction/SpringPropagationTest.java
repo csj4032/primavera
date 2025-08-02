@@ -5,6 +5,7 @@ import com.genius.primavera.domain.mapper.WinnerMapper;
 import com.genius.primavera.domain.model.User;
 import com.genius.primavera.domain.model.UserStatus;
 import com.genius.primavera.domain.model.Winner;
+import com.genius.primavera.testContainer.EnablePrimaveraTestcontainers;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @Slf4j
 @SpringBootTest
 @ActiveProfiles("test")
+@EnablePrimaveraTestcontainers
 @DisplayName("Spring Transaction Propagation 테스트")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class SpringPropagationTest {

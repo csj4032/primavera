@@ -6,15 +6,15 @@ import org.springframework.context.annotation.ComponentScan;
 
 /**
  * =============================================================================
- * 🐳 Docker Compose 실행 가이드 (Chapter 06-11: 웹 개발 & MyBatis)
+ * 🐳 Docker Compose 실행 가이드 (Chapter 04-09: 기본 환경)
  * =============================================================================
  * 
- * 1️⃣ 기존 환경 종료:
+ * 1️⃣ 인프라 시작:
  *    cd infrastructure
- *    docker-compose -f docker-compose.basic.yml down
+ *    docker-compose -f docker-compose.basic.yml up -d
  * 
- * 2️⃣ MyBatis 환경 시작:
- *    docker-compose -f docker-compose.mybatis.yml up -d
+ * 2️⃣ Vault 토큰 설정:
+ *    export VAULT_TOKEN=primavera-dev-token
  * 
  * 3️⃣ 애플리케이션 실행:
  *    ./gradlew :chap06:bootRun -Dspring.profiles.active=local
@@ -23,8 +23,12 @@ import org.springframework.context.annotation.ComponentScan;
  *    curl http://localhost:8080/validation/test
  * 
  * 📊 사용 가능한 서비스:
- *    - MariaDB: localhost:3308 (primavera/primavera) 
- *    - 데이터베이스: primavera_mybatis, primavera_mybatis_board
+ *    - MariaDB: localhost:3308 (primavera/primavera)
+ *    - HashiCorp Vault: localhost:8200
+ * 
+ * 📊 기능:
+ *    - Bean Validation 학습
+ *    - 입력 값 검증
  * 
  * =============================================================================
  */

@@ -61,6 +61,7 @@ spring:
     enabled: true
     encoding: UTF-8
     fail-on-missing-locations: false
+
 server:
   tomcat:
     use-apr: never

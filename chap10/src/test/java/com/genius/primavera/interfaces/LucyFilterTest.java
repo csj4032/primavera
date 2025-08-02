@@ -1,6 +1,5 @@
 package com.genius.primavera.interfaces;
 
-import com.genius.primavera.testContainer.EnablePrimaveraTestcontainers;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -14,10 +13,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@EnablePrimaveraTestcontainers
 @ActiveProfiles("test")
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @DisplayName("Lucy XSS 필터 테스트")
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class LucyFilterTest {
 
     @Autowired

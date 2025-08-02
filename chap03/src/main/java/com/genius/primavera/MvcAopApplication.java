@@ -10,21 +10,22 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  * =============================================================================
- * 🐳 Docker Compose 실행 가이드 (Chapter 01-05: Spring Boot 기초)
+ * 🚀 실행 가이드 (Chapter 03: MVC & AOP)
  * =============================================================================
  * 
- * 1️⃣ 인프라 시작:
- *    cd infrastructure
- *    docker-compose -f docker-compose.basic.yml up -d
+ * ✅ Docker 환경 불필요 - MVC/AOP 학습용
  * 
- * 2️⃣ 애플리케이션 실행:
- *    ./gradlew :chap03:bootRun -Dspring.profiles.active=local
+ * 📋 애플리케이션 실행:
+ *    ./gradlew :chap03:bootRun
  * 
- * 3️⃣ 접속:
+ * 🔗 접속:
  *    http://localhost:8080
  * 
- * 📊 사용 가능한 서비스:
- *    - MariaDB: localhost:3308 (primavera/primavera)
+ * 📊 기능:
+ *    - Spring MVC 기본 구조
+ *    - AOP (Aspect Oriented Programming)
+ *    - 인터셉터 패턴
+ *    - 웹 요청 처리
  * 
  * =============================================================================
  */

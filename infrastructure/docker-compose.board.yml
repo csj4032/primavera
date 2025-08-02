@@ -1,6 +1,6 @@
 # ==============================================================================
-# Primavera 게시판 + Vault 인프라 - Chapter 12-13
-# MyBatis 게시판, 모니터링, Vault 보안 설정 관리
+# Primavera 고급 게시판 + 보안 인프라 - Chapter 13
+# 고급 인증/인가, MongoDB, Vault 보안 설정 관리
 # ==============================================================================
 
 services:
@@ -56,6 +56,28 @@ services:
       timeout: 5s
       retries: 5
 
+  # MongoDB - 문서 지향 데이터베이스 (chap13)
+  mongodb:
+    image: mongo:7
+    container_name: mongodb-primavera-board
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: primavera
+      MONGO_INITDB_DATABASE: primavera
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_board_data:/data/db
+      - mongodb_board_config:/data/configdb
+    networks:
+      - primavera-board
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   # Vault 초기화 서비스
   vault-init:
     image: hashicorp/vault:1.15
@@ -87,6 +109,10 @@ volumes:
   vault_board_data:
     driver: local
   vault_board_tokens:
+    driver: local
+  mongodb_board_data:
+    driver: local
+  mongodb_board_config:
     driver: local
 
 networks:

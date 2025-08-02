@@ -5,6 +5,7 @@ import com.genius.primavera.domain.mapper.WinnerMapper;
 import com.genius.primavera.domain.model.User;
 import com.genius.primavera.domain.model.UserStatus;
 import com.genius.primavera.domain.model.Winner;
+import com.genius.primavera.testContainer.EnablePrimaveraTestcontainers;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +25,9 @@ import static org.assertj.core.api.Assertions.*;
 @Slf4j
 @SpringBootTest
 @ActiveProfiles("test")
-@DisplayName("Spring Transaction Isolation Level 테스트")
+@EnablePrimaveraTestcontainers
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@DisplayName("Spring Transaction Isolation Level 테스트")
 public class IsolationLevelTest {
 
     @Autowired

@@ -34,7 +34,6 @@ spring:
       leak-detection-threshold: 60000
       connection-test-query: "SELECT 1"
       validation-timeout: 5000
-
   thymeleaf:
     cache: false
     enabled: true
@@ -43,7 +42,6 @@ spring:
   devtools:
     livereload:
       enabled: true
-  # 캐싱 전략 설정
   cache:
     type: redis
     redis:

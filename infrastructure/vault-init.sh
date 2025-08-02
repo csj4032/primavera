@@ -386,177 +386,6 @@ vault kv put secret/ConfigurationApplication/test \
     spring.datasource.driver-class-name=org.mariadb.jdbc.Driver
 
 
-# Prod 환경 설정 (챕터별 메인 클래스 이름 기반)
-echo -e "${BLUE}   - Prod 환경 시크릿 저장 중...${NC}"
-
-# chap01: SpringBootStarterApplication
-vault kv put secret/SpringBootStarterApplication/prod \
-    spring.datasource.url=jdbc:mariadb://localhost:3310/primavera \
-    spring.datasource.username=primavera \
-    spring.datasource.password=primavera \
-    spring.datasource.driver-class-name=org.mariadb.jdbc.Driver
-
-# chap02: ConfigurationDependencyApplication
-vault kv put secret/ConfigurationDependencyApplication/prod \
-    spring.datasource.url=jdbc:mariadb://localhost:3310/primavera \
-    spring.datasource.username=primavera \
-    spring.datasource.password=primavera \
-    spring.datasource.driver-class-name=org.mariadb.jdbc.Driver
-
-# chap03: MvcAopApplication
-vault kv put secret/MvcAopApplication/prod \
-    spring.datasource.url=jdbc:mariadb://localhost:3310/primavera_basic \
-    spring.datasource.username=primavera \
-    spring.datasource.password=primavera \
-    spring.datasource.driver-class-name=org.mariadb.jdbc.Driver
-
-# chap04: DataAccessApplication
-vault kv put secret/DataAccessApplication/prod \
-    spring.datasource.url=jdbc:mariadb://localhost:3310/primavera_basic \
-    spring.datasource.username=primavera \
-    spring.datasource.password=primavera \
-    spring.datasource.driver-class-name=org.mariadb.jdbc.Driver
-
-# chap05: MyBatisLoggingApplication
-vault kv put secret/MyBatisLoggingApplication/prod \
-    spring.datasource.url=jdbc:mariadb://localhost:3310/primavera_basic \
-    spring.datasource.username=primavera \
-    spring.datasource.password=primavera \
-    spring.datasource.driver-class-name=org.mariadb.jdbc.Driver
-
-# chap06: ValidationApplication
-vault kv put secret/ValidationApplication/prod \
-    spring.datasource.url=jdbc:mariadb://localhost:3310/primavera_mybatis \
-    spring.datasource.username=primavera \
-    spring.datasource.password=primavera \
-    spring.datasource.driver-class-name=org.mariadb.jdbc.Driver \
-    lucy.xss.enabled=true \
-    lucy.xss.rule-config-path=lucy-xss-servlet-filter-rule.xml
-
-# chap07: ThymeleafWebApplication
-vault kv put secret/ThymeleafWebApplication/prod \
-    spring.datasource.url=jdbc:mariadb://localhost:3310/primavera_mybatis \
-    spring.datasource.username=primavera \
-    spring.datasource.password=primavera \
-    spring.datasource.driver-class-name=org.mariadb.jdbc.Driver
-
-# chap08: SecurityFilterApplication
-vault kv put secret/SecurityFilterApplication/prod \
-    spring.datasource.url=jdbc:mariadb://localhost:3310/primavera \
-    spring.datasource.username=primavera \
-    spring.datasource.password=primavera \
-    spring.datasource.driver-class-name=org.mariadb.jdbc.Driver \
-    lucy.xss.enabled=true \
-    lucy.xss.rule-config-path=lucy-xss-servlet-filter-rule.xml
-
-# chap09: SpringSecurityBasicApplication
-vault kv put secret/SpringSecurityBasicApplication/prod \
-    spring.datasource.url=jdbc:mariadb://localhost:3310/primavera \
-    spring.datasource.username=primavera \
-    spring.datasource.password=primavera \
-    spring.datasource.driver-class-name=org.mariadb.jdbc.Driver \
-    security.jwt.secret=primavera-prod-jwt-secret-2024-change-me
-
-# chap10: OAuth2SocialLoginApplication
-vault kv put secret/OAuth2SocialLoginApplication/prod \
-    spring.datasource.url=jdbc:mariadb://localhost:3310/primavera \
-    spring.datasource.username=primavera \
-    spring.datasource.password=primavera \
-    spring.datasource.driver-class-name=org.mariadb.jdbc.Driver \
-    security.jwt.secret=primavera-prod-jwt-secret-2024-change-me \
-    spring.security.oauth2.client.registration.google.client-id=google-client-id-production \
-    spring.security.oauth2.client.registration.google.client-secret=google-client-secret-production \
-    spring.security.oauth2.client.registration.facebook.client-id=facebook-client-id-production \
-    spring.security.oauth2.client.registration.facebook.client-secret=facebook-client-secret-production \
-    spring.security.oauth2.client.registration.github.client-id=github-client-id-production \
-    spring.security.oauth2.client.registration.github.client-secret=github-client-secret-production \
-    spring.security.oauth2.client.registration.kakao.client-id=kakao-client-id-production \
-    spring.security.oauth2.client.registration.kakao.client-secret=kakao-client-secret-production
-
-# chap11: BoardSystemApplication
-vault kv put secret/BoardSystemApplication/prod \
-    spring.datasource.url=jdbc:mariadb://localhost:3310/primavera_mybatis \
-    spring.datasource.username=primavera \
-    spring.datasource.password=primavera \
-    spring.datasource.driver-class-name=org.mariadb.jdbc.Driver
-
-# chap12: HierarchicalCommentApplication
-vault kv put secret/HierarchicalCommentApplication/prod \
-    spring.datasource.url=jdbc:mariadb://localhost:3310/primavera_mybatis_board \
-    spring.datasource.username=primavera \
-    spring.datasource.password=primavera \
-    spring.datasource.driver-class-name=org.mariadb.jdbc.Driver \
-    spring.flyway.enabled=true \
-    spring.flyway.locations=classpath:db/migration
-
-# chap13: AdvancedAuthorizationApplication
-vault kv put secret/AdvancedAuthorizationApplication/prod \
-    spring.datasource.url=jdbc:mariadb://localhost:3310/primavera_mybatis_board \
-    spring.datasource.username=primavera \
-    spring.datasource.password=primavera \
-    spring.datasource.driver-class-name=org.mariadb.jdbc.Driver \
-    spring.data.mongodb.uri=mongodb://prod-mongo-server:27017/primavera_auth
-# chap14: JpaAdvancedMappingApplication
-vault kv put secret/JpaAdvancedMappingApplication/prod \
-    spring.datasource.url=jdbc:mariadb://localhost:3310/primavera_jpa_advanced \
-    spring.datasource.username=primavera \
-    spring.datasource.password=primavera \
-    spring.datasource.driver-class-name=org.mariadb.jdbc.Driver
-
-# chap15: ReactiveProgrammingApplication
-vault kv put secret/ReactiveProgrammingApplication/prod \
-    spring.r2dbc.url=r2dbc:mariadb://localhost:3310/primavera_jpa_advanced \
-    spring.r2dbc.username=primavera \
-    spring.r2dbc.password=primavera \
-    spring.redis.host=prod-redis-server \
-    spring.redis.port=6380 \
-    spring.redis.password=prod-redis-password-change-me
-
-# chap16: FileProcessingMonitoringApplication
-vault kv put secret/FileProcessingMonitoringApplication/prod \
-    spring.datasource.url=jdbc:mariadb://localhost:3310/primavera_jpa_board \
-    spring.datasource.username=primavera \
-    spring.datasource.password=primavera \
-    spring.datasource.driver-class-name=org.mariadb.jdbc.Driver \
-    sentry.dsn=https://your-sentry-dsn-prod@sentry.io/project-id \
-    aws.credentials.access-key=your-aws-access-key-id-production \
-    aws.credentials.secret-key=your-aws-secret-access-key-production \
-    aws.region=ap-northeast-2 \
-    aws.s3.bucket-name=primavera-prod-bucket \
-    aws.s3.endpoint= \
-    aws.s3.path-style-access=false
-
-# chap17: CiCdDeploymentApplication
-vault kv put secret/CiCdDeploymentApplication/prod \
-    spring.datasource.url=jdbc:mariadb://localhost:3310/primavera_jpa_board \
-    spring.datasource.username=primavera \
-    spring.datasource.password=primavera \
-    spring.datasource.driver-class-name=org.mariadb.jdbc.Driver
-
-# chap18: 마이크로서비스 (각 서비스별)
-vault kv put secret/FrontApplication/prod \
-    spring.datasource.url=jdbc:mariadb://localhost:3310/primavera_microservices \
-    spring.datasource.username=primavera \
-    spring.datasource.password=primavera \
-    spring.datasource.driver-class-name=org.mariadb.jdbc.Driver
-
-vault kv put secret/AccountApplication/prod \
-    spring.datasource.url=jdbc:mariadb://localhost:3310/primavera_microservices \
-    spring.datasource.username=primavera \
-    spring.datasource.password=primavera \
-    spring.datasource.driver-class-name=org.mariadb.jdbc.Driver
-
-vault kv put secret/ProductApplication/prod \
-    spring.datasource.url=jdbc:mariadb://localhost:3310/primavera_microservices \
-    spring.datasource.username=primavera \
-    spring.datasource.password=primavera \
-    spring.datasource.driver-class-name=org.mariadb.jdbc.Driver
-
-vault kv put secret/ConfigurationApplication/prod \
-    spring.datasource.url=jdbc:mariadb://localhost:3310/primavera_microservices \
-    spring.datasource.username=primavera \
-    spring.datasource.password=primavera \
-    spring.datasource.driver-class-name=org.mariadb.jdbc.Driver
 
 echo -e "${GREEN}✓ 프로젝트 시크릿이 저장되었습니다.${NC}"
 echo ""
@@ -720,7 +549,6 @@ echo -e "  ${BLUE}secret/{ApplicationName}/{environment}${NC}"
 echo -e "  예시:"
 echo -e "  - secret/DataAccessApplication/local"
 echo -e "  - secret/DataAccessApplication/test"
-echo -e "  - secret/DataAccessApplication/prod"
 echo ""
 echo -e "${YELLOW}사용 방법:${NC}"
 echo -e "  1. 애플리케이션 설정에 토큰 추가:"
@@ -747,11 +575,10 @@ echo ""
 echo -e "${YELLOW}장점:${NC}"
 echo -e "  - 각 챕터가 고유한 네임스페이스를 가짐"
 echo -e "  - 메인 클래스 이름으로 명확한 식별"
-echo -e "  - 환경별 설정 분리 (local/test/prod)"
+echo -e "  - 환경별 설정 분리 (local/test)"
 echo -e "  - Vault 정책으로 세밀한 접근 제어"
 echo ""
 echo -e "${YELLOW}주의사항:${NC}"
-echo -e "  - 개발 환경 전용 설정입니다."
-echo -e "  - 프로덕션에서는 반드시 TLS를 활성화하고"
-echo -e "  - 보안이 강화된 인증 방법을 사용하세요."
+echo -e "  - 개발/테스트 환경 전용 설정입니다."
+echo -e "  - 프로덕션 환경은 별도로 구축해야 합니다."
 echo ""

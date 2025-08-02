@@ -1,32 +1,65 @@
 spring:
-  datasource:
-    type: com.zaxxer.hikari.HikariDataSource
-    driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://localhost:1109/primavera?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&allowPublicKeyRetrieval=true
-    username: primavera
-    password: primavera
-    hikari:
-      connection-test-query: SELECT 1 FROM DUAL
-  thymeleaf:
-    cache: false
-    enabled: true
-    prefix: classpath:/templates/
-    suffix: .html
+  config:
+    activate:
+      on-profile: test
+  # Vault 비활성화 - TestContainers가 동적 포트를 사용하므로 정적 Vault 설정과 충돌
+  cloud:
+    vault:
+      enabled: false
+  # TestContainers에서 동적으로 설정되는 OAuth2 클라이언트 정보
   security:
     oauth2:
       client:
         registration:
           google:
-            client-id: test-client-id
-            client-secret: test-client-secret
+            client-id: test-google-client-id
+            client-secret: test-google-client-secret
             scope:
               - email
               - profile
-
-server:
-  ssl:
-    enabled: false
-  port: 8080
+          facebook:
+            client-id: test-facebook-client-id
+            client-secret: test-facebook-client-secret
+            scope:
+              - email
+              - public_profile
+          github:
+            client-id: test-github-client-id
+            client-secret: test-github-client-secret
+            scope:
+              - user:email
+              - read:user
+          kakao:
+            client-id: test-kakao-client-id
+            client-secret: test-kakao-client-secret
+            authorization-grant-type: authorization_code
+            scope:
+              - profile_nickname
+              - account_email
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id
+  # Redis 캐시 설정 (TestContainers에서 동적으로 포트 설정됨)
+  cache:
+    type: simple  # 테스트에서는 단순 캐시 사용
+  data:
+    redis:
+      # TestContainers가 동적으로 포트를 설정하므로 여기서는 기본값 사용
+      timeout: 2000ms
+  datasource:
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 10
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      connection-timeout: 30000
+      pool-name: "BalancedHikariPool"
+      leak-detection-threshold: 60000
+      connection-test-query: "SELECT 1"
+      validation-timeout: 5000
 
 mybatis:
   configuration:
@@ -35,3 +68,14 @@ mybatis:
     default-statement-timeout: 30
   type-aliases-package: com.genius.primavera.domain
   type-handlers-package: com.genius.primavera.domain
+
+primavera:
+  testcontainers:
+    mariadb:
+      enabled: true
+      dockerImageName: mariadb:11.4.7
+      driverClassName: org.mariadb.jdbc.Driver
+      databaseName: primavera
+      username: primavera
+      password: primavera
+      initScript: sql/init-db.sql

@@ -1,16 +1,10 @@
--- ==============================================
--- Chapter 05 - HikariCP Connection Pool Test Data
--- Uses primavera_test database (TestContainers)
--- ==============================================
-
--- 공통 테스트 사용자 테이블
 CREATE TABLE IF NOT EXISTS USERS
 (
     ID         BIGINT AUTO_INCREMENT PRIMARY KEY,
     EMAIL      VARCHAR(100) UNIQUE NOT NULL,
     PASSWORD   VARCHAR(255)        NOT NULL,
     NICKNAME   VARCHAR(50)         NOT NULL,
-    STATUS     VARCHAR(20) DEFAULT 'ACTIVE',
+    STATUS     INT DEFAULT 1,
     CREATED_AT DATETIME    DEFAULT CURRENT_TIMESTAMP,
     UPDATED_AT DATETIME    DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX IDX_EMAIL (EMAIL),
@@ -19,7 +13,7 @@ CREATE TABLE IF NOT EXISTS USERS
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
 
--- 권한 테이블
+
 CREATE TABLE IF NOT EXISTS ROLES
 (
     ID          BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -31,7 +25,7 @@ CREATE TABLE IF NOT EXISTS ROLES
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
 
--- 사용자-권한 연결 테이블
+
 CREATE TABLE IF NOT EXISTS USER_ROLES
 (
     ID      BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -44,8 +38,8 @@ CREATE TABLE IF NOT EXISTS USER_ROLES
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
 
--- Chapter 05 특화 테이블 - BASIC 접두사 사용
-CREATE TABLE IF NOT EXISTS BASIC_WINNERS
+
+CREATE TABLE IF NOT EXISTS WINNERS
 (
     ID     BIGINT AUTO_INCREMENT PRIMARY KEY,
     NAME   VARCHAR(50) NOT NULL,
@@ -67,12 +61,12 @@ VALUES (1, 'ROLE_ADMIN', '테스트 관리자', 1),
 ON DUPLICATE KEY UPDATE NAME = VALUES(NAME);
 
 INSERT INTO USERS (ID, EMAIL, PASSWORD, NICKNAME, STATUS)
-VALUES (1, 'genius@primavera.com', '{noop}test', 'Genius', 'ACTIVE'),
-       (2, 'admin@primavera.com', '{noop}test', 'Admin', 'ACTIVE'),
-       (3, 'user@primavera.com', '{noop}test', 'User', 'ACTIVE'),
-       (4, 'son@primavera.com', '{noop}test', 'Son', 'ACTIVE'),
-       (5, 'messi@primavera.com', '{noop}test', 'Messi', 'ACTIVE'),
-       (6, 'ronaldo@primavera.com', '{noop}test', 'Ronaldo', 'ACTIVE')
+VALUES (1, 'genius@primavera.com', '{noop}test', 'Genius', 1),
+       (2, 'admin@primavera.com', '{noop}test', 'Admin', 1),
+       (3, 'user@primavera.com', '{noop}test', 'User', 1),
+       (4, 'son@primavera.com', '{noop}test', 'Son', 1),
+       (5, 'messi@primavera.com', '{noop}test', 'Messi', 1),
+       (6, 'ronaldo@primavera.com', '{noop}test', 'Ronaldo', 1)
 ON DUPLICATE KEY UPDATE EMAIL = VALUES(EMAIL);
 
 INSERT INTO USER_ROLES (USER_ID, ROLE_ID)
@@ -82,7 +76,7 @@ VALUES (1, 1), (1, 2), (1, 3), -- genius -> all roles
        (4, 3), (5, 3), (6, 3)  -- sports players -> user
 ON DUPLICATE KEY UPDATE USER_ID = VALUES(USER_ID);
 
-INSERT INTO BASIC_WINNERS (ID, NAME, YEAR, SPORT, PRIZE, AMOUNT)
+INSERT INTO WINNERS (ID, NAME, YEAR, SPORT, PRIZE, AMOUNT)
 VALUES (1, 'Lionel Messi', 2023, 'Football', 'Ballon d''Or', 1000000.00),
        (2, 'Erling Haaland', 2023, 'Football', 'Golden Boot', 500000.00),
        (3, 'Lewis Hamilton', 2023, 'Formula 1', 'World Championship', 2000000.00),

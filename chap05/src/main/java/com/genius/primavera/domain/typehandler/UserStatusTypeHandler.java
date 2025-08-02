@@ -9,7 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-@MappedJdbcTypes(JdbcType.CHAR)
+@MappedJdbcTypes(JdbcType.INTEGER)
 @MappedTypes(UserStatus.class)
 public class UserStatusTypeHandler<E extends Enum<E>> extends BaseTypeHandler<UserStatus> {
 

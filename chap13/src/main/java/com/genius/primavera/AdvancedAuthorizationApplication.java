@@ -14,22 +14,30 @@ import org.springframework.data.mongodb.repository.config.EnableReactiveMongoRep
 
 /**
  * =============================================================================
- * 🐳 Docker Compose 실행 가이드 (Chapter 12-13: 고급 게시판 & 보안)
+ * 🐳 Docker Compose 실행 가이드 (Chapter 13: 고급 인증/인가)
  * =============================================================================
  * 
- * 1️⃣ Board + Vault 환경 확인:
+ * 1️⃣ 기존 환경 종료:
  *    cd infrastructure
- *    docker-compose -f docker-compose.board.yml ps
+ *    docker-compose -f docker-compose.mybatis.yml down
  * 
- * 2️⃣ Vault 토큰 설정 (필수):
+ * 2️⃣ 고급 보안 환경 시작:
+ *    docker-compose -f docker-compose.board.yml up -d
+ * 
+ * 3️⃣ Vault 토큰 설정 (필수):
  *    export VAULT_TOKEN=primavera-dev-token
  *    export VAULT_ADDR=http://localhost:8200
  * 
- * 3️⃣ 애플리케이션 실행:
+ * 4️⃣ 애플리케이션 실행:
  *    ./gradlew :chap13:bootRun --args='--server.ssl.enabled=false --server.port=8013 --spring.profiles.active=local'
  * 
- * 4️⃣ 웹 접속:
+ * 5️⃣ 웹 접속:
  *    http://localhost:8013/login
+ * 
+ * 📊 사용 가능한 서비스:
+ *    - MariaDB: localhost:3308
+ *    - MongoDB: localhost:27017
+ *    - HashiCorp Vault: localhost:8200
  * 
  * 📊 기능:
  *    - 고급 인증/인가 시스템

@@ -21,9 +21,3 @@ spring:
         profile-separator: '/'
         default-context: DataAccessApplication
         application-name: DataAccessApplication
-
-logging:
-  level:
-    org.springframework.cloud.vault: DEBUG
-    org.springframework.vault: DEBUG
-    com.zaxxer.hikari: DEBUG
