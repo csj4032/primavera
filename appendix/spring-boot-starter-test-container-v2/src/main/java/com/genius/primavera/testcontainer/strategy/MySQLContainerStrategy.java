@@ -11,15 +11,22 @@ public class MySQLContainerStrategy implements ContainerStrategy {
     
     @Override
     public GenericContainer<?> createContainer(PrimaveraTestcontainersProperties.ContainerConfig config) {
-        String imageName = config.getDockerImageName() != null ? config.getDockerImageName() : "mysql:8.0";
+        if (!(config instanceof PrimaveraTestcontainersProperties.DatabaseConfig)) {
+            throw new IllegalArgumentException("MySQL requires DatabaseConfig");
+        }
+        
+        PrimaveraTestcontainersProperties.DatabaseConfig dbConfig = 
+            (PrimaveraTestcontainersProperties.DatabaseConfig) config;
+            
+        String imageName = dbConfig.getDockerImageName() != null ? dbConfig.getDockerImageName() : "mysql:8.0";
         
         MySQLContainer<?> container = new MySQLContainer<>(DockerImageName.parse(imageName))
-                .withDatabaseName(config.getDatabaseName() != null ? config.getDatabaseName() : "primavera")
-                .withUsername(config.getUsername() != null ? config.getUsername() : "primavera")
-                .withPassword(config.getPassword() != null ? config.getPassword() : "primavera");
+                .withDatabaseName(dbConfig.getDatabaseName() != null ? dbConfig.getDatabaseName() : "primavera")
+                .withUsername(dbConfig.getUsername() != null ? dbConfig.getUsername() : "primavera")
+                .withPassword(dbConfig.getPassword() != null ? dbConfig.getPassword() : "primavera");
         
-        if (config.getInitScript() != null && !config.getInitScript().isEmpty()) {
-            container.withInitScript(config.getInitScript());
+        if (dbConfig.getInitScript() != null && !dbConfig.getInitScript().isEmpty()) {
+            container.withInitScript(dbConfig.getInitScript());
         }
         
         return container;

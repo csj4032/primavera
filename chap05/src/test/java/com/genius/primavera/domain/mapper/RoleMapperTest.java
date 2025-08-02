@@ -11,10 +11,12 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 
+import static com.genius.primavera.testcontainer.ContainerLifecycleMode.PER_TEST;
+
 @Slf4j
 @SpringBootTest
 @ActiveProfiles("test")
-@EnablePrimaveraTestcontainers
+@EnablePrimaveraTestcontainers(lifecycleMode= PER_TEST)
 @DisplayName(value = "권한 관련 테스트")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class RoleMapperTest {

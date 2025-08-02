@@ -11,15 +11,23 @@ public class MariaDBContainerStrategy implements ContainerStrategy {
     
     @Override
     public GenericContainer<?> createContainer(PrimaveraTestcontainersProperties.ContainerConfig config) {
-        String imageName = config.getDockerImageName() != null ? config.getDockerImageName() : "mariadb:11.4.7";
+        // ContainerConfig를 DatabaseConfig로 캐스팅
+        if (!(config instanceof PrimaveraTestcontainersProperties.DatabaseConfig)) {
+            throw new IllegalArgumentException("MariaDB requires DatabaseConfig");
+        }
+        
+        PrimaveraTestcontainersProperties.DatabaseConfig dbConfig = 
+            (PrimaveraTestcontainersProperties.DatabaseConfig) config;
+            
+        String imageName = dbConfig.getDockerImageName() != null ? dbConfig.getDockerImageName() : "mariadb:11.4.7";
         
         MariaDBContainer<?> container = new MariaDBContainer<>(DockerImageName.parse(imageName))
-                .withDatabaseName(config.getDatabaseName() != null ? config.getDatabaseName() : "primavera")
-                .withUsername(config.getUsername() != null ? config.getUsername() : "primavera")
-                .withPassword(config.getPassword() != null ? config.getPassword() : "primavera");
+                .withDatabaseName(dbConfig.getDatabaseName() != null ? dbConfig.getDatabaseName() : "primavera")
+                .withUsername(dbConfig.getUsername() != null ? dbConfig.getUsername() : "primavera")
+                .withPassword(dbConfig.getPassword() != null ? dbConfig.getPassword() : "primavera");
         
-        if (config.getInitScript() != null && !config.getInitScript().isEmpty()) {
-            container.withInitScript(config.getInitScript());
+        if (dbConfig.getInitScript() != null && !dbConfig.getInitScript().isEmpty()) {
+            container.withInitScript(dbConfig.getInitScript());
         }
         
         return container;

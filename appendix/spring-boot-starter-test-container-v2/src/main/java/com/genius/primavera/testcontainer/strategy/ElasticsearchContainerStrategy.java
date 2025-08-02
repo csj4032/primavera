@@ -10,20 +10,23 @@ public class ElasticsearchContainerStrategy implements ContainerStrategy {
     
     @Override
     public GenericContainer<?> createContainer(PrimaveraTestcontainersProperties.ContainerConfig config) {
-        String imageName = config.getDockerImageName() != null ? config.getDockerImageName() : "docker.elastic.co/elasticsearch/elasticsearch:8.8.0";
-        
-        GenericContainer<?> container = new GenericContainer<>(DockerImageName.parse(imageName))
-                .withExposedPorts(9200, 9300)
-                .withEnv("discovery.type", "single-node")
-                .withEnv("xpack.security.enabled", "false");
-        
-        if (config.getPassword() != null && !config.getPassword().isEmpty()) {
-            container.withEnv("ELASTIC_PASSWORD", config.getPassword());
-            container.withEnv("xpack.security.enabled", "true");
+        if (!(config instanceof PrimaveraTestcontainersProperties.ElasticsearchConfig)) {
+            throw new IllegalArgumentException("Elasticsearch requires ElasticsearchConfig");
         }
         
+        PrimaveraTestcontainersProperties.ElasticsearchConfig esConfig = 
+            (PrimaveraTestcontainersProperties.ElasticsearchConfig) config;
+            
+        String imageName = esConfig.getDockerImageName() != null ? esConfig.getDockerImageName() : "docker.elastic.co/elasticsearch/elasticsearch:8.8.0";
+        
+        GenericContainer<?> container = new GenericContainer<>(DockerImageName.parse(imageName))
+                .withExposedPorts(esConfig.getHttpPort(), esConfig.getTransportPort())
+                .withEnv("discovery.type", "single-node")
+                .withEnv("xpack.security.enabled", "false")
+                .withEnv("cluster.name", esConfig.getClusterName());
+        
         // 환경 변수 설정
-        config.getEnvironment().forEach(container::withEnv);
+        esConfig.getEnvironment().forEach(container::withEnv);
         
         return container;
     }

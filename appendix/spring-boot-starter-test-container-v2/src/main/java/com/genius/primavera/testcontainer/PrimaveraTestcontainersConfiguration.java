@@ -2,15 +2,13 @@ package com.genius.primavera.testcontainer;
 
 import com.genius.primavera.testcontainer.strategy.ContainerStrategy;
 import com.genius.primavera.testcontainer.strategy.ContainerStrategyFactory;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Configuration;
 import org.testcontainers.containers.GenericContainer;
-
-import jakarta.annotation.PostConstruct;
 
 @Configuration
 @EnableConfigurationProperties(PrimaveraTestcontainersProperties.class)

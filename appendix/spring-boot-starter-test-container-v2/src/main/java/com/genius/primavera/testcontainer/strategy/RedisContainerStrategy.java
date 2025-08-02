@@ -10,18 +10,25 @@ public class RedisContainerStrategy implements ContainerStrategy {
     
     @Override
     public GenericContainer<?> createContainer(PrimaveraTestcontainersProperties.ContainerConfig config) {
-        String imageName = config.getDockerImageName() != null ? config.getDockerImageName() : "redis:7-alpine";
+        if (!(config instanceof PrimaveraTestcontainersProperties.RedisConfig)) {
+            throw new IllegalArgumentException("Redis requires RedisConfig");
+        }
+        
+        PrimaveraTestcontainersProperties.RedisConfig redisConfig = 
+            (PrimaveraTestcontainersProperties.RedisConfig) config;
+            
+        String imageName = redisConfig.getDockerImageName() != null ? redisConfig.getDockerImageName() : "redis:7-alpine";
         
         GenericContainer<?> container = new GenericContainer<>(DockerImageName.parse(imageName))
                 .withExposedPorts(6379);
         
         // Redis 비밀번호 설정
-        if (config.getPassword() != null && !config.getPassword().isEmpty()) {
-            container.withCommand("redis-server", "--requirepass", config.getPassword());
+        if (redisConfig.getPassword() != null && !redisConfig.getPassword().isEmpty()) {
+            container.withCommand("redis-server", "--requirepass", redisConfig.getPassword());
         }
         
         // 환경 변수 설정
-        config.getEnvironment().forEach(container::withEnv);
+        redisConfig.getEnvironment().forEach(container::withEnv);
         
         return container;
     }

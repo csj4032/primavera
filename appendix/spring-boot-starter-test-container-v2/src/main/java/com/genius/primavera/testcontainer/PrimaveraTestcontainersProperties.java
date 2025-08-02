@@ -1,113 +1,130 @@
 package com.genius.primavera.testcontainer;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@Data
 @ConfigurationProperties(prefix = "primavera.testcontainers")
 public class PrimaveraTestcontainersProperties {
 
-    private Map<String, ContainerConfig> containers = new HashMap<>();
-    private ContainerLifecycleMode lifecycleMode = ContainerLifecycleMode.PER_TEST;
+    private ContainerLifecycleMode lifecycleMode = ContainerLifecycleMode.PER_CLASS;
+    
+    // 각 컨테이너별 설정
+    private MariaDBConfig mariadb = new MariaDBConfig();
+    private MySQLConfig mysql = new MySQLConfig();
+    private PostgreSQLConfig postgresql = new PostgreSQLConfig();
+    private RedisConfig redis = new RedisConfig();
+    private KafkaConfig kafka = new KafkaConfig();
+    private ElasticsearchConfig elasticsearch = new ElasticsearchConfig();
 
+    // 하위 호환성을 위한 메서드
     public Map<String, ContainerConfig> getContainers() {
+        Map<String, ContainerConfig> containers = new HashMap<>();
+        containers.put("mariadb", mariadb);
+        containers.put("mysql", mysql);
+        containers.put("postgresql", postgresql);
+        containers.put("redis", redis);
+        containers.put("kafka", kafka);
+        containers.put("elasticsearch", elasticsearch);
         return containers;
     }
 
-    public void setContainers(Map<String, ContainerConfig> containers) {
-        this.containers = containers;
-    }
-
-    public ContainerLifecycleMode getLifecycleMode() {
-        return lifecycleMode;
-    }
-
-    public void setLifecycleMode(ContainerLifecycleMode lifecycleMode) {
-        this.lifecycleMode = lifecycleMode;
-    }
-
-    public static class ContainerConfig {
+    // 기본 컨테이너 설정 추상 클래스
+    @Data
+    public static abstract class ContainerConfig {
         private boolean enabled = true;
         private String dockerImageName;
+        private Map<String, String> environment = new HashMap<>();
+    }
+
+    // 데이터베이스 컨테이너 공통 설정
+    @Data
+    @EqualsAndHashCode(callSuper = true)
+    public static abstract class DatabaseConfig extends ContainerConfig {
         private String driverClassName;
         private String databaseName;
         private String username;
         private String password;
         private String initScript;
-        private int port;
-        private Map<String, String> environment = new HashMap<>();
+    }
 
-        public boolean isEnabled() {
-            return enabled;
+    // MariaDB 설정
+    @Data
+    @EqualsAndHashCode(callSuper = true)
+    public static class MariaDBConfig extends DatabaseConfig {
+        public MariaDBConfig() {
+            setDockerImageName("mariadb:11.4.7");
+            setDriverClassName("org.mariadb.jdbc.Driver");
+            setDatabaseName("primavera");
+            setUsername("primavera");
+            setPassword("primavera");
         }
+    }
 
-        public void setEnabled(boolean enabled) {
-            this.enabled = enabled;
+    // MySQL 설정
+    @Data
+    @EqualsAndHashCode(callSuper = true)
+    public static class MySQLConfig extends DatabaseConfig {
+        public MySQLConfig() {
+            setDockerImageName("mysql:8.0");
+            setDriverClassName("com.mysql.cj.jdbc.Driver");
+            setDatabaseName("primavera");
+            setUsername("primavera");
+            setPassword("primavera");
         }
+    }
 
-        public String getDockerImageName() {
-            return dockerImageName;
+    // PostgreSQL 설정
+    @Data
+    @EqualsAndHashCode(callSuper = true)
+    public static class PostgreSQLConfig extends DatabaseConfig {
+        public PostgreSQLConfig() {
+            setDockerImageName("postgres:15");
+            setDriverClassName("org.postgresql.Driver");
+            setDatabaseName("primavera");
+            setUsername("primavera");
+            setPassword("primavera");
         }
+    }
 
-        public void setDockerImageName(String dockerImageName) {
-            this.dockerImageName = dockerImageName;
+    // Redis 설정
+    @Data
+    @EqualsAndHashCode(callSuper = true)
+    public static class RedisConfig extends ContainerConfig {
+        private String password;
+        private int port = 6379;
+
+        public RedisConfig() {
+            setDockerImageName("redis:7.0");
         }
+    }
 
-        public String getDriverClassName() {
-            return driverClassName;
+    // Kafka 설정
+    @Data
+    @EqualsAndHashCode(callSuper = true)
+    public static class KafkaConfig extends ContainerConfig {
+        private String bootstrapServers;
+        private int port = 9092;
+
+        public KafkaConfig() {
+            setDockerImageName("confluentinc/cp-kafka:latest");
         }
+    }
 
-        public void setDriverClassName(String driverClassName) {
-            this.driverClassName = driverClassName;
-        }
+    // Elasticsearch 설정
+    @Data
+    @EqualsAndHashCode(callSuper = true)
+    public static class ElasticsearchConfig extends ContainerConfig {
+        private String clusterName = "elasticsearch";
+        private int httpPort = 9200;
+        private int transportPort = 9300;
 
-        public String getDatabaseName() {
-            return databaseName;
-        }
-
-        public void setDatabaseName(String databaseName) {
-            this.databaseName = databaseName;
-        }
-
-        public String getUsername() {
-            return username;
-        }
-
-        public void setUsername(String username) {
-            this.username = username;
-        }
-
-        public String getPassword() {
-            return password;
-        }
-
-        public void setPassword(String password) {
-            this.password = password;
-        }
-
-        public String getInitScript() {
-            return initScript;
-        }
-
-        public void setInitScript(String initScript) {
-            this.initScript = initScript;
-        }
-
-        public int getPort() {
-            return port;
-        }
-
-        public void setPort(int port) {
-            this.port = port;
-        }
-
-        public Map<String, String> getEnvironment() {
-            return environment;
-        }
-
-        public void setEnvironment(Map<String, String> environment) {
-            this.environment = environment;
+        public ElasticsearchConfig() {
+            setDockerImageName("elasticsearch:8.5.0");
         }
     }
 }
