@@ -5,6 +5,7 @@ import com.genius.primavera.domain.model.Role;
 import com.genius.primavera.domain.model.RoleType;
 import com.genius.primavera.domain.model.User;
 import com.genius.primavera.domain.model.UserStatus;
+import com.genius.primavera.testContainer.EnablePrimaveraTestcontainers;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,6 +17,7 @@ import org.springframework.test.context.ActiveProfiles;
 import java.util.List;
 
 @ActiveProfiles("test")
+@EnablePrimaveraTestcontainers
 @DisplayName("비밀번호 매치 검증 테스트")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)

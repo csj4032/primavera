@@ -5,6 +5,7 @@ import com.genius.primavera.domain.model.Role;
 import com.genius.primavera.domain.model.RoleType;
 import com.genius.primavera.domain.model.User;
 import com.genius.primavera.domain.model.UserStatus;
+import com.genius.primavera.testContainer.EnablePrimaveraTestcontainers;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import java.util.List;
 
 @ActiveProfiles("test")
 @DisplayName("사용자 등록 유효성 검증 테스트")
+@EnablePrimaveraTestcontainers
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class UserSaveValidationTest {

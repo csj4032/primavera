@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @ActiveProfiles("test")
+@EnablePrimaveraTestcontainers
 @DisplayName("Ajax 컨트롤러 테스트 - REST API 응답 검증")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)

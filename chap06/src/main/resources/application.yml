@@ -1,8 +1,9 @@
 spring:
   application:
     name: VaadinApplication
+  banner:
+    location: banner.txt
   profiles:
-    active: local
     group:
       local:
         - console-appender
