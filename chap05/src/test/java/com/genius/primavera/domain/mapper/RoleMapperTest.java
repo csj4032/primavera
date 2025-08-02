@@ -2,7 +2,7 @@ package com.genius.primavera.domain.mapper;
 
 import com.genius.primavera.domain.model.Role;
 import com.genius.primavera.domain.model.RoleType;
-import com.genius.primavera.testcontainer.EnablePrimaveraTestcontainers;
+import com.genius.primavera.testContainer.EnablePrimaveraTestcontainers;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -56,10 +56,10 @@ public class LifecycleService {
         log.info("🌱 LifecycleService 초기화 완료! 시작 시간: {}", startTime.format(formatter));
         
         // 초기화 완료 메시지 출력
-        System.out.println("=== LifecycleService 초기화 완료 ===");
-        System.out.println("시작 시간: " + startTime.format(formatter));
-        System.out.println("초기 메시지 수: " + processedMessages.size());
-        System.out.println("================================");
+        log.info("=== LifecycleService 초기화 완료 ===");
+        log.info("시작 시간: {}", startTime.format(formatter));
+        log.info("초기 메시지 수: {}", processedMessages.size());
+        log.info("================================");
     }
     
     /**
@@ -92,12 +92,12 @@ public class LifecycleService {
         processedMessages.add("종료: " + farewellMessage);
         
         // 정리 완료 메시지 출력
-        System.out.println("=== LifecycleService 정리 완료 ===");
-        System.out.println("종료 시간: " + endTime.format(formatter));
-        System.out.println("총 실행 시간: " + uptime + "초");
-        System.out.println("처리된 메시지 수: " + processedMessages.size());
-        System.out.println("마지막 메시지: " + getLastMessage());
-        System.out.println("===============================");
+        log.info("=== LifecycleService 정리 완료 ===");
+        log.info("종료 시간: {}", endTime.format(formatter));
+        log.info("총 실행 시간: {}초", uptime);
+        log.info("처리된 메시지 수: {}", processedMessages.size());
+        log.info("마지막 메시지: {}", getLastMessage());
+        log.info("===============================");
         
         log.info("🧹 LifecycleService 정리 완료! 총 실행 시간: {}초, 처리된 메시지: {}개", 
                 uptime, processedMessages.size());
@@ -154,7 +154,7 @@ public class LifecycleService {
         processedMessages.add(processedMessage);
         log.info("📝 메시지 처리: {}", processedMessage);
         
-        System.out.println("💬 " + processedMessage);
+        log.debug("💬 {}", processedMessage);
     }
     
     /**

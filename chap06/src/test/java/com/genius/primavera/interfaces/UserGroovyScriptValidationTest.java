@@ -41,9 +41,8 @@ public class UserGroovyScriptValidationTest {
                 .build();
 
         Set<ConstraintViolation<User>> violations = validator.validate(user, Default.class);
-        
         Assertions.assertFalse(violations.isEmpty(), "비밀번호 불일치 시 검증 오류가 발생해야 함");
-        boolean hasPasswordMatchError = violations.stream().anyMatch(v -> v.getMessage().contains("Passwords do not match"));
+        boolean hasPasswordMatchError = violations.stream().anyMatch(v -> v.getMessage().contains("비밀번호와 비밀번호 확인이 일치하지 않습니다."));
         Assertions.assertTrue(hasPasswordMatchError, "비밀번호 불일치 메시지가 포함되어야 함");
     }
 
@@ -101,7 +100,7 @@ public class UserGroovyScriptValidationTest {
                 .build();
 
         Set<ConstraintViolation<User>> violations = validator.validate(user, Default.class);
-        boolean hasPasswordMatchError = violations.stream().anyMatch(v -> v.getMessage().contains("Passwords do not match"));
+        boolean hasPasswordMatchError = violations.stream().anyMatch(v -> v.getMessage().contains("비밀번호와 비밀번호 확인이 일치하지 않습니다."));
         Assertions.assertTrue(hasPasswordMatchError, "password가 null이고 passwordConfirm이 있으면 검증 실패해야 함");
     }
 
@@ -120,7 +119,7 @@ public class UserGroovyScriptValidationTest {
                 .build();
 
         Set<ConstraintViolation<User>> violations = validator.validate(user, Default.class);
-        boolean hasPasswordMatchError = violations.stream().anyMatch(v -> v.getMessage().contains("Passwords do not match"));
+        boolean hasPasswordMatchError = violations.stream().anyMatch(v -> v.getMessage().contains("비밀번호와 비밀번호 확인이 일치하지 않습니다."));
         Assertions.assertTrue(hasPasswordMatchError, "대소문자 다른 비밀번호는 불일치로 검증되어야 함");
     }
 
@@ -139,7 +138,7 @@ public class UserGroovyScriptValidationTest {
                 .build();
 
         Set<ConstraintViolation<User>> violations = validator.validate(user, Default.class);
-        boolean hasPasswordMatchError = violations.stream().anyMatch(v -> v.getMessage().contains("Passwords do not match"));
+        boolean hasPasswordMatchError = violations.stream().anyMatch(v -> v.getMessage().contains("비밀번호와 비밀번호 확인이 일치하지 않습니다."));
         Assertions.assertTrue(hasPasswordMatchError, "공백 차이가 있는 비밀번호는 불일치로 검증되어야 함");
     }
 
@@ -158,7 +157,7 @@ public class UserGroovyScriptValidationTest {
                 .build();
 
         Set<ConstraintViolation<User>> violations = validator.validate(user, User.UpdateGroup.class);
-        boolean hasPasswordMatchError = violations.stream().anyMatch(v -> v.getMessage().contains("Passwords do not match"));
+        boolean hasPasswordMatchError = violations.stream().anyMatch(v -> v.getMessage().contains("비밀번호와 비밀번호 확인이 일치하지 않습니다."));
         Assertions.assertTrue(hasPasswordMatchError, "UpdateGroup에서도 비밀번호 불일치 검증이 작동해야 함");
     }
 
@@ -177,7 +176,7 @@ public class UserGroovyScriptValidationTest {
                 .build();
 
         Set<ConstraintViolation<User>> violations = validator.validate(user, User.SaveGroup.class);
-        boolean hasPasswordMatchError = violations.stream().anyMatch(v -> v.getMessage().contains("Passwords do not match"));
+        boolean hasPasswordMatchError = violations.stream().anyMatch(v -> v.getMessage().contains("비밀번호와 비밀번호 확인이 일치하지 않습니다."));
         Assertions.assertTrue(hasPasswordMatchError, "SaveGroup에서도 비밀번호 불일치 검증이 작동해야 함");
     }
 }

@@ -1,4 +1,4 @@
-package com.genius.primavera.testcontainer;
+package com.genius.primavera.testContainer;
 
 import jakarta.annotation.PostConstruct;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

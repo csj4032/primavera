@@ -4,7 +4,7 @@ import com.genius.primavera.domain.mapper.UserMapper;
 import com.genius.primavera.domain.mapper.WinnerMapper;
 import com.genius.primavera.domain.model.User;
 import com.genius.primavera.domain.model.UserStatus;
-import com.genius.primavera.testcontainer.EnablePrimaveraTestcontainers;
+import com.genius.primavera.testContainer.EnablePrimaveraTestcontainers;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -49,58 +49,58 @@ public class ApplicationStartupRunner implements PrimaveraApplicationRunner {
     private void printApplicationInfo() {
         var context = PrimaveraApplication.getApplicationContext();
         
-        System.out.println("\n=== 🌸 Primavera 애플리케이션 정보 ===");
+        log.info("\n=== 🌸 Primavera 애플리케이션 정보 ===");
         
         // Configuration에서 생성된 Bean 정보
         if (context.containsBean("applicationName")) {
             String appName = context.getBean("applicationName");
-            System.out.println("애플리케이션명: " + appName);
+            log.info("애플리케이션명: {}", appName);
         }
         
         if (context.containsBean("applicationVersion")) {
             String appVersion = context.getBean("applicationVersion");
-            System.out.println("버전: " + appVersion);
+            log.info("버전: {}", appVersion);
         }
         
         if (context.containsBean("maxUsers")) {
             Integer maxUsers = context.getBean("maxUsers");
-            System.out.println("최대 사용자 수: " + maxUsers);
+            log.info("최대 사용자 수: {}", maxUsers);
         }
         
-        System.out.println("등록된 Bean 수: " + context.getBeanNames().size());
-        System.out.println("=====================================\n");
+        log.info("등록된 Bean 수: {}", context.getBeanNames().size());
+        log.info("=====================================\n");
     }
     
     /**
      * 환경 변수 정보를 출력합니다.
      */
     private void printEnvironmentInfo() {
-        System.out.println("\n=== 🌸 환경 정보 ===");
+        log.info("\n=== 🌸 환경 정보 ===");
         
         String javaVersion = PrimaveraApplication.getProperty("java.version", "Unknown");
         String osName = PrimaveraApplication.getProperty("os.name", "Unknown");
         String userName = PrimaveraApplication.getProperty("user.name", "Unknown");
         
-        System.out.println("Java 버전: " + javaVersion);
-        System.out.println("운영체제: " + osName);
-        System.out.println("사용자: " + userName);
+        log.info("Java 버전: {}", javaVersion);
+        log.info("운영체제: {}", osName);
+        log.info("사용자: {}", userName);
         
         // application.properties에서 커스텀 속성 읽기
         String customMessage = PrimaveraApplication.getProperty("app.welcome.message", "기본 환영 메시지");
-        System.out.println("환영 메시지: " + customMessage);
+        log.info("환영 메시지: {}", customMessage);
         
-        System.out.println("====================\n");
+        log.info("====================\n");
     }
     
     /**
      * 라이프사이클 서비스를 테스트합니다.
      */
     private void testLifecycleService() {
-        System.out.println("\n=== 🌸 라이프사이클 서비스 테스트 ===");
+        log.info("\n=== 🌸 라이프사이클 서비스 테스트 ===");
         
         // 서비스 상태 확인
         String status = lifecycleService.getServiceStatus();
-        System.out.println("현재 상태: " + status);
+        log.info("현재 상태: {}", status);
         
         // 메시지 처리 테스트
         lifecycleService.processMessage("ApplicationRunner에서 보낸 테스트 메시지");
@@ -108,14 +108,14 @@ public class ApplicationStartupRunner implements PrimaveraApplicationRunner {
         lifecycleService.processMessage("Bean 라이프사이클 후킹이 정상 작동합니다!");
         
         // 처리된 메시지 확인
-        System.out.println("마지막 처리된 메시지: " + lifecycleService.getLastMessage());
-        System.out.println("총 처리된 메시지 수: " + lifecycleService.getProcessedMessages().size());
-        System.out.println("서비스 실행 시간: " + lifecycleService.getUptimeSeconds() + "초");
+        log.info("마지막 처리된 메시지: {}", lifecycleService.getLastMessage());
+        log.info("총 처리된 메시지 수: {}", lifecycleService.getProcessedMessages().size());
+        log.info("서비스 실행 시간: {}초", lifecycleService.getUptimeSeconds());
         
-        System.out.println("=====================================\n");
+        log.info("=====================================\n");
         
-        System.out.println("💡 LifecycleService는 @PostConstruct로 초기화되었고,");
-        System.out.println("   애플리케이션 종료 시 @PreDestroy로 정리됩니다.");
-        System.out.println("   Ctrl+C로 종료하여 @PreDestroy 메서드 동작을 확인해보세요!\n");
+        log.info("💡 LifecycleService는 @PostConstruct로 초기화되었고,");
+        log.info("   애플리케이션 종료 시 @PreDestroy로 정리됩니다.");
+        log.info("   Ctrl+C로 종료하여 @PreDestroy 메서드 동작을 확인해보세요!\n");
     }
 }

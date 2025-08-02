@@ -1,4 +1,4 @@
-package com.genius.primavera.testcontainer;
+package com.genius.primavera.testContainer;
 
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.context.annotation.Import;

@@ -27,7 +27,6 @@ spring:
 primavera:
   testcontainers:
     mariadb:
-      enabled: true
       dockerImageName: mariadb:11.4.7
       driverClassName: org.mariadb.jdbc.Driver
       databaseName: primavera

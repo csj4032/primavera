@@ -1,4 +1,4 @@
-package com.genius.primavera.testcontainer;
+package com.genius.primavera.testContainer;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

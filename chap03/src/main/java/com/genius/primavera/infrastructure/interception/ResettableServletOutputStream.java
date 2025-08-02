@@ -2,11 +2,13 @@ package com.genius.primavera.infrastructure.interception;
 
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.WriteListener;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.io.OutputStream;
 
+@Slf4j
 public class ResettableServletOutputStream extends ServletOutputStream {
 
 	@Autowired
@@ -42,7 +44,7 @@ public class ResettableServletOutputStream extends ServletOutputStream {
 
 	@Override
 	public void close() throws IOException {
-		System.out.println("** RESPONSE CLOSE **");
+		log.debug("Response stream closed");
 		outputStream.close();
 		primaveraInterceptor.writeResponsePayloadAudit(wrappedResponse);
 	}

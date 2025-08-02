@@ -24,10 +24,10 @@ public class MessageService {
         String greeting = greetingService.sayHello(userName);
         String timeGreeting = greetingService.sayHelloWithTime(userName);
         
-        System.out.println("=== 환영 메시지 ===");
-        System.out.println(greeting);
-        System.out.println(timeGreeting);
-        System.out.println("================");
+        log.info("=== 환영 메시지 ===");
+        log.info(greeting);
+        log.info(timeGreeting);
+        log.info("================");
         
         log.info("환영 메시지 처리 완료");
     }
@@ -40,9 +40,9 @@ public class MessageService {
         
         String goodbye = greetingService.sayGoodbye(userName);
         
-        System.out.println("=== 작별 메시지 ===");
-        System.out.println(goodbye);
-        System.out.println("================");
+        log.info("=== 작별 메시지 ===");
+        log.info(goodbye);
+        log.info("================");
         
         log.info("작별 메시지 처리 완료");
     }
@@ -53,8 +53,8 @@ public class MessageService {
     public void processCustomMessage(String message) {
         log.info("커스텀 메시지 처리: {}", message);
         
-        System.out.println("=== 커스텀 메시지 ===");
-        System.out.println("🌸 " + message);
-        System.out.println("==================");
+        log.info("=== 커스텀 메시지 ===");
+        log.info("🌸 {}", message);
+        log.info("==================");
     }
 }

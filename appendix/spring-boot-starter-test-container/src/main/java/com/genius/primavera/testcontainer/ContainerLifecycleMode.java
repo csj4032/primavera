@@ -1,4 +1,4 @@
-package com.genius.primavera.testcontainer;
+package com.genius.primavera.testContainer;
 
 public enum ContainerLifecycleMode {
     REUSE,

@@ -16,6 +16,9 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 @Order(3)
 @ActiveProfiles("test")
 @EnablePrimaveraTestcontainers
@@ -26,7 +29,7 @@ public class UserPasswordMatchValidationTest {
 
     @Autowired
     private TestRestTemplate restTemplate;
-    
+
     @MockBean
     private UserService userService;
 
@@ -145,7 +148,7 @@ public class UserPasswordMatchValidationTest {
         HttpEntity<User> httpEntity = new HttpEntity<>(source, headers);
         ResponseEntity<String> destination = restTemplate.exchange("/users/save", HttpMethod.POST, httpEntity, String.class, source);
         int actualStatus = destination.getStatusCode().value();
-        Assertions.assertTrue(actualStatus == 200 || actualStatus == 201, "비밀번호 일치 시 정상 등록되어야 함");
+        assertTrue(actualStatus == 200 || actualStatus == 201, "비밀번호 일치 시 정상 등록되어야 함");
     }
 
     @Test
@@ -183,7 +186,7 @@ public class UserPasswordMatchValidationTest {
         HttpEntity<User> httpEntity = new HttpEntity<>(source, headers);
         ResponseEntity<String> destination = restTemplate.exchange("/users/update", HttpMethod.POST, httpEntity, String.class, source);
         int actualStatus = destination.getStatusCode().value();
-        Assertions.assertTrue(actualStatus == 200 || actualStatus == 201, "비밀번호 일치 시 정상 수정되어야 함");
+        assertTrue(actualStatus == 200 || actualStatus == 201, "비밀번호 일치 시 정상 수정되어야 함");
     }
 
     private void saveUser(User source) {
@@ -192,7 +195,7 @@ public class UserPasswordMatchValidationTest {
         HttpEntity<User> httpEntity = new HttpEntity<>(source, headers);
         ResponseEntity<String> destination = restTemplate.exchange("/users/save", HttpMethod.POST, httpEntity, String.class, source);
         int actualStatus = destination.getStatusCode().value();
-        Assertions.assertEquals(400, actualStatus, "비밀번호 불일치 시 400 Bad Request 반환");
+        assertEquals(400, actualStatus, "비밀번호 불일치 시 400 Bad Request 반환");
     }
 
     private void updateUser(User source) {
@@ -201,6 +204,6 @@ public class UserPasswordMatchValidationTest {
         HttpEntity<User> httpEntity = new HttpEntity<>(source, headers);
         ResponseEntity<String> destination = restTemplate.exchange("/users/update", HttpMethod.POST, httpEntity, String.class, source);
         int actualStatus = destination.getStatusCode().value();
-        Assertions.assertEquals(400, actualStatus, "비밀번호 불일치 시 400 Bad Request 반환");
+        assertEquals(400, actualStatus, "비밀번호 불일치 시 400 Bad Request 반환");
     }
 }

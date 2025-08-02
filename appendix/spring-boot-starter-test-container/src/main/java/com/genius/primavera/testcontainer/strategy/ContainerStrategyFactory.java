@@ -1,6 +1,6 @@
-package com.genius.primavera.testcontainer.strategy;
+package com.genius.primavera.testContainer.strategy;
 
-import com.genius.primavera.testcontainer.ContainerType;
+import com.genius.primavera.testContainer.ContainerType;
 
 public class ContainerStrategyFactory {
     

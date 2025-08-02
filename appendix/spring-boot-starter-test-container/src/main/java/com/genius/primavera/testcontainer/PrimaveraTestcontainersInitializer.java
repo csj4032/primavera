@@ -1,7 +1,7 @@
-package com.genius.primavera.testcontainer;
+package com.genius.primavera.testContainer;
 
-import com.genius.primavera.testcontainer.strategy.ContainerStrategy;
-import com.genius.primavera.testcontainer.strategy.ContainerStrategyFactory;
+import com.genius.primavera.testContainer.strategy.ContainerStrategy;
+import com.genius.primavera.testContainer.strategy.ContainerStrategyFactory;
 import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;

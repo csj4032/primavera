@@ -1,10 +1,13 @@
 package com.genius.primavera.application.account;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.Month;
 
+@Slf4j
 public class AccountAnalyzer {
 
 	private static String resource = "src/main/resources/";
@@ -18,8 +21,8 @@ public class AccountAnalyzer {
 	}
 
 	private void collectSummary(AccountProcessor accountProcessor) {
-		System.out.println("Total : " + accountProcessor.calculationTotalAmount());
-		System.out.println("Month : " + accountProcessor.calculationTotalForMonth(Month.JANUARY));
-		System.out.println("Category : " + accountProcessor.calculationTotalForCategory(Category.Type0));
+		log.info("Total : {}", accountProcessor.calculationTotalAmount());
+		log.info("Month : {}", accountProcessor.calculationTotalForMonth(Month.JANUARY));
+		log.info("Category : {}", accountProcessor.calculationTotalForCategory(Category.Type0));
 	}
 }
