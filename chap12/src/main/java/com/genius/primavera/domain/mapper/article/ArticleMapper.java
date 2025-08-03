@@ -29,7 +29,7 @@ public interface ArticleMapper {
     String SELECT_WITH_USER_CONTENTS_SQL = "SELECT A.ID, A.P_ID, A.REFERENCE, A.STEP, A.LEVEL, A.AUTHOR, B.EMAIL, B.NICKNAME, A.SUBJECT, A.STATUS, A.HIT, A.RECOMMEND, A.DISAPPROVE, C.ID AS CONTENTS_ID, C.CONTENTS, A.CREATED_AT, A.UPDATED_AT FROM ARTICLES A INNER JOIN USERS B ON A.AUTHOR = B.ID INNER JOIN ARTICLE_CONTENT C ON A.ID = C.ARTICLE_ID ";
 
     @InsertProvider(type = ArticleProvider.class, method = "save")
-    @Options(useGeneratedKeys = true, keyColumn = "ID", keyProperty = "id", useCache=false)
+    @Options(useGeneratedKeys = true, keyColumn = "ID", keyProperty = "id", useCache = false)
     int save(Article article);
 
     @Results(id = "ARTICLE_WITH_USER",
@@ -173,10 +173,8 @@ public interface ArticleMapper {
         public String save(Article article) {
             String sql = "INSERT INTO ARTICLES (P_ID, REFERENCE, STEP, LEVEL, SUBJECT, AUTHOR, STATUS, CREATED_AT) VALUES (";
             if (article.getPId() == 0l) {
-                // 최상위 게시글: P_ID는 NULL, REFERENCE는 자동 생성된 ID
                 sql += "NULL, LAST_INSERT_ID()";
             } else {
-                // 답글: P_ID는 부모 ID, REFERENCE는 부모와 동일한 그룹 번호
                 sql += "#{pId}, #{reference}";
             }
             sql += ", #{step}, #{level}, #{subject}, #{author.id}, #{status, typeHandler=com.genius.primavera.domain.typehandler.ArticleStatusTypeHandler}, #{createdAt})";

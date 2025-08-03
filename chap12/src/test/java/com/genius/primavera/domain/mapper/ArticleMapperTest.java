@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Slf4j
 @SpringBootTest
-@ActiveProfiles("test") 
+@ActiveProfiles("test")
 @EnablePrimaveraTestcontainers
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ArticleMapperTest {
@@ -97,25 +97,16 @@ public class ArticleMapperTest {
     @DisplayName("게시글 조회")
     public void findAllArticle() {
         List<Article> articles = articleMapper.findAll();
-        System.out.println("🔍 Article count: " + articles.size());
         articles.forEach(article -> {
-            System.out.println("📄 Article: " + article.toString());
             if (article.getAuthor() != null) {
-                System.out.println("👤 Author - ID: " + article.getAuthor().getId() + 
-                    ", Nickname: " + article.getAuthor().getNickname() + 
-                    ", Email: " + article.getAuthor().getEmail());
+                System.out.println("👤 Author - ID: " + article.getAuthor().getId() + ", Nickname: " + article.getAuthor().getNickname() + ", Email: " + article.getAuthor().getEmail());
             } else {
                 System.out.println("⚠️ Author is null for article ID: " + article.getId());
             }
         });
-        // 이 테스트에서 생성한 6개 아티클이 존재하는지 확인 (기존 데이터 + 6개)
         assertTrue(articles.size() >= 6, "최소 6개의 아티클이 있어야 합니다. 실제: " + articles.size());
-        
-        // 첫 번째 아티클의 작성자 정보 확인
         Article firstArticle = articles.get(0);
         Assertions.assertNotNull(firstArticle.getAuthor(), "Article의 author가 null이면 안됩니다");
         Assertions.assertNotNull(firstArticle.getAuthor().getNickname(), "Author의 nickname이 null이면 안됩니다");
-        System.out.println("✅ 사용자 정보 조회 성공: " + firstArticle.getAuthor().getNickname() + 
-            " (ID: " + firstArticle.getAuthor().getId() + ")");
     }
 }
