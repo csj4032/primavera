@@ -16,6 +16,7 @@ import org.springframework.util.MultiValueMap;
 
 import static com.genius.primavera.testContainer.ContainerType.MARIADB;
 import static com.genius.primavera.testContainer.ContainerType.MONGODB;
+import com.genius.primavera.testContainer.ContainerLifecycleMode;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;

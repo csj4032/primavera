@@ -27,7 +27,7 @@ import java.util.List;
 @Repository
 public interface ArticleMapper {
 
-    String SELECT_WITH_USER_SQL = "SELECT A.ID, A.P_ID, A.REFERENCE, A.STEP, A.LEVEL, A.AUTHOR, B.EMAIL, B.NICKNAME, A.SUBJECT, A.STATUS, A.HIT, A.RECOMMEND, A.DISAPPROVE, A.CREATED_AT, A.UPDATED_AT FROM ARTICLE A INNER JOIN USERS B ON A.AUTHOR = B.ID ";
+    String SELECT_WITH_USER_SQL = "SELECT A.ID, A.P_ID, A.REFERENCE, A.STEP, A.LEVEL, A.AUTHOR, B.EMAIL, B.NICKNAME, A.SUBJECT, A.STATUS, A.HIT, A.RECOMMEND, A.DISAPPROVE, C.ID AS CONTENTS_ID, C.CONTENTS, A.CREATED_AT, A.UPDATED_AT FROM ARTICLE A INNER JOIN USERS B ON A.AUTHOR = B.ID LEFT JOIN ARTICLE_CONTENT C ON A.ID = C.ARTICLE_ID ";
     String SELECT_WITH_USER_CONTENTS_SQL = "SELECT A.ID, A.P_ID, A.REFERENCE, A.STEP, A.LEVEL, A.AUTHOR, B.EMAIL, B.NICKNAME, A.SUBJECT, A.STATUS, A.HIT, A.RECOMMEND, A.DISAPPROVE, C.ID AS CONTENTS_ID, C.CONTENTS, A.CREATED_AT, A.UPDATED_AT FROM ARTICLE A INNER JOIN USERS B ON A.AUTHOR = B.ID INNER JOIN ARTICLE_CONTENT C ON A.ID = C.ARTICLE_ID ";
 
     @InsertProvider(type = ArticleProvider.class, method = "save")
@@ -48,6 +48,11 @@ public interface ArticleMapper {
                     @Result(property = "author.nickname", column = "NICKNAME"),
                     @Result(property = "subject", column = "SUBJECT"),
                     @Result(property = "status", typeHandler = com.genius.primavera.domain.typehandler.ArticleStatusTypeHandler.class, column = "STATUS"),
+                    @Result(property = "hit", column = "HIT"),
+                    @Result(property = "recommend", column = "RECOMMEND"),
+                    @Result(property = "disapprove", column = "DISAPPROVE"),
+                    @Result(property = "content.id", column = "CONTENTS_ID"),
+                    @Result(property = "content.contents", column = "CONTENTS"),
                     @Result(property = "createdAt", column = "CREATED_AT"),
                     @Result(property = "updatedAt", column = "UPDATED_AT")
 
@@ -67,6 +72,11 @@ public interface ArticleMapper {
                     @Result(property = "author.nickname", column = "NICKNAME"),
                     @Result(property = "subject", column = "SUBJECT"),
                     @Result(property = "status", typeHandler = com.genius.primavera.domain.typehandler.ArticleStatusTypeHandler.class, column = "STATUS"),
+                    @Result(property = "hit", column = "HIT"),
+                    @Result(property = "recommend", column = "RECOMMEND"),
+                    @Result(property = "disapprove", column = "DISAPPROVE"),
+                    @Result(property = "content.id", column = "CONTENTS_ID"),
+                    @Result(property = "content.contents", column = "CONTENTS"),
                     @Result(property = "createdAt", column = "CREATED_AT"),
                     @Result(property = "updatedAt", column = "UPDATED_AT")
             })
@@ -85,6 +95,11 @@ public interface ArticleMapper {
             @Result(property = "author.nickname", column = "NICKNAME"),
             @Result(property = "subject", column = "SUBJECT"),
             @Result(property = "status", typeHandler = com.genius.primavera.domain.typehandler.ArticleStatusTypeHandler.class, column = "STATUS"),
+            @Result(property = "hit", column = "HIT"),
+            @Result(property = "recommend", column = "RECOMMEND"),
+            @Result(property = "disapprove", column = "DISAPPROVE"),
+            @Result(property = "content.id", column = "CONTENTS_ID"),
+            @Result(property = "content.contents", column = "CONTENTS"),
             @Result(property = "createdAt", column = "CREATED_AT"),
             @Result(property = "updatedAt", column = "UPDATED_AT")
     })
@@ -111,7 +126,8 @@ public interface ArticleMapper {
             @Result(property = "hit", column = "HIT"),
             @Result(property = "recommend", column = "RECOMMEND"),
             @Result(property = "disapprove", column = "DISAPPROVE"),
-            @Result(property = "hit", column = "HIT"),
+            @Result(property = "content.id", column = "CONTENTS_ID"),
+            @Result(property = "content.contents", column = "CONTENTS"),
             @Result(property = "createdAt", column = "CREATED_AT"),
             @Result(property = "updatedAt", column = "UPDATED_AT")
     })

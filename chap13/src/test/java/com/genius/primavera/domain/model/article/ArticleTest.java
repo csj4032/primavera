@@ -1,19 +1,11 @@
 package com.genius.primavera.domain.model.article;
 
-import com.genius.primavera.testContainer.ContainerType;
-import com.genius.primavera.testContainer.EnablePrimaveraTestcontainers;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
-@ActiveProfiles("test")
-@EnablePrimaveraTestcontainers(containers = {ContainerType.MARIADB, ContainerType.MONGODB})
 public class ArticleTest {
 
     private static Article root;
@@ -31,7 +23,6 @@ public class ArticleTest {
         first_second = Article.builder().id(4).parent(first).level(2).subject("Root 직계 첫번째 first 직계 두번째").build();
         first_second_first = Article.builder().id(5).parent(first_second).level(3).subject("Root 직계 첫번째 first 직계 두번째 first_second 첫번째").build();
         second = Article.builder().id(3).parent(root).level(1).subject("Root 직계 두번째").build();
-
         first_second.setChildren(new Article[]{first_second_first});
         first.setChildren(new Article[]{first_first});
         root.setChildren(new Article[]{first, second});

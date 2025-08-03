@@ -4,6 +4,7 @@ import com.genius.primavera.domain.model.article.Article;
 import com.genius.primavera.domain.model.article.ArticleDto;
 import com.genius.primavera.domain.model.article.WriteType;
 import com.genius.primavera.interfaces.WithMockPrimaveraUserDetails;
+import com.genius.primavera.testContainer.ContainerLifecycleMode;
 import com.genius.primavera.testContainer.ContainerType;
 import com.genius.primavera.testContainer.EnablePrimaveraTestcontainers;
 import lombok.extern.slf4j.Slf4j;

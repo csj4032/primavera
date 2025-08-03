@@ -2,13 +2,14 @@ package com.genius.primavera.testContainer;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.extension.AfterAllCallback;
+import org.junit.jupiter.api.extension.AfterTestExecutionCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
 import java.util.Set;
 
 @Slf4j
-public class TestContainerLifecycleExtension implements BeforeAllCallback, AfterAllCallback {
+public class TestContainerLifecycleExtension implements BeforeAllCallback, AfterAllCallback, AfterTestExecutionCallback {
 
     @Override
     public void beforeAll(ExtensionContext context) throws Exception {
@@ -33,10 +34,15 @@ public class TestContainerLifecycleExtension implements BeforeAllCallback, After
 
     @Override
     public void afterAll(ExtensionContext context) throws Exception {
+        log.info("Stopping containers after all tests in class: {}", context.getRequiredTestClass().getName());
         ContainerManager.stopContainers(ContainerLifecycleMode.PER_TEST);
         TestContextHolder.clearContext();
         System.clearProperty("primavera.testcontainers.test-class");
         System.clearProperty("primavera.testcontainers.container-types");
-        System.clearProperty("primavera.testcontainers.lifecycle-mode");
+    }
+
+    @Override
+    public void afterTestExecution(ExtensionContext context) throws Exception {
+        log.info("Test execution completed for: {}", context.getRequiredTestMethod().getName());
     }
 }

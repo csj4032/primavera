@@ -47,11 +47,11 @@ public class Article {
 	}
 
 	public String getContents() {
-		return content.getContents();
+		return content != null ? content.getContents() : "";
 	}
 
 	public long getContentsId() {
-		return content.getId();
+		return content != null ? content.getId() : 0;
 	}
 
 	public boolean hasParents() {
@@ -78,7 +78,9 @@ public class Article {
 	}
 
 	public void setContents(String contents) {
-		content.setContents(contents);
+		if (content != null) {
+			content.setContents(contents);
+		}
 	}
 
 	public long getParentReference() {

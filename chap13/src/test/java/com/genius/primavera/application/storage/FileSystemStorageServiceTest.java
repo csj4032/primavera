@@ -1,5 +1,6 @@
 package com.genius.primavera.application.storage;
 
+import com.genius.primavera.testContainer.ContainerLifecycleMode;
 import com.genius.primavera.testContainer.ContainerType;
 import com.genius.primavera.testContainer.EnablePrimaveraTestcontainers;
 import org.junit.jupiter.api.Assertions;
