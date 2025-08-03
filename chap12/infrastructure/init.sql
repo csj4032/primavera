@@ -19,14 +19,11 @@ CREATE TABLE IF NOT EXISTS USERS
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
 
--- 권한 테이블
+-- 권한 테이블 (Role 모델: id, type 필드만)
 CREATE TABLE IF NOT EXISTS ROLES
 (
-    ID          BIGINT AUTO_INCREMENT PRIMARY KEY,
-    NAME        VARCHAR(50) UNIQUE NOT NULL,
-    DESCRIPTION VARCHAR(255),
-    TYPE        INT                NOT NULL,
-    CREATED_AT  DATETIME DEFAULT CURRENT_TIMESTAMP
+    ID   BIGINT AUTO_INCREMENT PRIMARY KEY,
+    TYPE INT NOT NULL
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
@@ -40,6 +37,25 @@ CREATE TABLE IF NOT EXISTS USER_ROLES
     FOREIGN KEY (USER_ID) REFERENCES USERS (ID) ON DELETE CASCADE,
     FOREIGN KEY (ROLE_ID) REFERENCES ROLES (ID) ON DELETE CASCADE,
     UNIQUE KEY UNIQUE_USER_ROLE (USER_ID, ROLE_ID)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_unicode_ci;
+
+-- 소셜 로그인 연결 테이블 (댓글 매퍼에서 사용)
+CREATE TABLE IF NOT EXISTS USER_CONNECTION
+(
+    ID           BIGINT AUTO_INCREMENT PRIMARY KEY,
+    EMAIL        VARCHAR(100)  NOT NULL,
+    PROVIDER     INT           NOT NULL,
+    PROVIDER_ID  VARCHAR(100)  NOT NULL,
+    DISPLAY_NAME VARCHAR(100),
+    PROFILE_URL  VARCHAR(500),
+    IMAGE_URL    VARCHAR(500),
+    ACCESS_TOKEN VARCHAR(1000),
+    EXPIRE_TIME  BIGINT DEFAULT 0,
+    FOREIGN KEY (EMAIL) REFERENCES USERS (EMAIL) ON DELETE CASCADE,
+    UNIQUE KEY UNIQUE_PROVIDER_USER (PROVIDER, PROVIDER_ID),
+    INDEX IDX_USER_CONNECTION_EMAIL (EMAIL)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
@@ -107,19 +123,20 @@ CREATE TABLE IF NOT EXISTS ARTICLE_COMMENT
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
 
--- 기본 권한 데이터
-INSERT INTO ROLES (ID, NAME, DESCRIPTION, TYPE)
-VALUES (1, 'ROLE_ADMINISTRATOR', '최고 관리자', 1),
-       (2, 'ROLE_MANAGER', '관리자', 2),
-       (3, 'ROLE_USER', '일반 사용자', 3)
-ON DUPLICATE KEY UPDATE NAME = VALUES(NAME);
+-- 기본 권한 데이터 (RoleType enum: 1=ADMINISTRATOR, 2=MANAGER, 3=USER)
+INSERT INTO ROLES (ID, TYPE)
+VALUES (1, 1),  -- ADMINISTRATOR
+       (2, 2),  -- MANAGER  
+       (3, 3)   -- USER
+ON DUPLICATE KEY UPDATE TYPE = VALUES(TYPE);
 
--- 기본 사용자 데이터
-INSERT INTO USERS (ID, EMAIL, PASSWORD, NICKNAME, STATUS)
-VALUES (1, 'admin@primavera.com', '{noop}admin123', 'Administrator', 1),
-       (2, 'manager@primavera.com', '{noop}manager123', 'Manager', 1),
-       (3, 'user@primavera.com', '{noop}user123', 'User', 1),
-       (4, 'genius@primavera.com', '{noop}test', 'Genius', 1)
+-- 기본 사용자 데이터 (테스트에서 사용하는 사용자 포함)
+INSERT INTO USERS (ID, EMAIL, PASSWORD, NICKNAME, STATUS, CREATED_AT, UPDATED_AT)
+VALUES (1, 'admin@primavera.com', '{bcrypt}$2a$10$7UEHLpn1r4gZY2qxiZFJ5.7wa3Hdz8IXgxUtFogy0Ac10fh7TG4V.', 'Administrator', 1, NOW(), NOW()),
+       (2, 'manager@primavera.com', '{bcrypt}$2a$10$7UEHLpn1r4gZY2qxiZFJ5.7wa3Hdz8IXgxUtFogy0Ac10fh7TG4V.', 'Manager', 1, NOW(), NOW()),
+       (3, 'user@primavera.com', '{bcrypt}$2a$10$7UEHLpn1r4gZY2qxiZFJ5.7wa3Hdz8IXgxUtFogy0Ac10fh7TG4V.', 'User', 1, NOW(), NOW()),
+       (4, 'genius@primavera.com', '{bcrypt}$2a$10$7UEHLpn1r4gZY2qxiZFJ5.7wa3Hdz8IXgxUtFogy0Ac10fh7TG4V.', 'Genius', 1, NOW(), NOW()),
+       (5, 'Genius Choi', '{bcrypt}$2a$10$7UEHLpn1r4gZY2qxiZFJ5.7wa3Hdz8IXgxUtFogy0Ac10fh7TG4V.', 'Genius', 1, NOW(), NOW())
 ON DUPLICATE KEY UPDATE EMAIL = VALUES(EMAIL);
 
 -- 사용자-권한 매핑
@@ -127,8 +144,16 @@ INSERT INTO USER_ROLES (USER_ID, ROLE_ID)
 VALUES (1, 1), (1, 2), (1, 3), -- admin has all roles
        (2, 2), (2, 3),          -- manager has manager and user roles
        (3, 3),                  -- user has user role
-       (4, 1), (4, 2), (4, 3)   -- genius has all roles
+       (4, 1), (4, 2), (4, 3),  -- genius has all roles
+       (5, 3)                   -- Genius Choi has user role (for test)
 ON DUPLICATE KEY UPDATE USER_ID = VALUES(USER_ID);
+
+-- 소셜 로그인 연결 데이터 (댓글 매퍼에서 사용)
+INSERT INTO USER_CONNECTION (EMAIL, PROVIDER, PROVIDER_ID, DISPLAY_NAME, PROFILE_URL, IMAGE_URL, ACCESS_TOKEN, EXPIRE_TIME)
+VALUES ('admin@primavera.com', 2, 'google123456', 'Administrator', 'https://plus.google.com/+admin', 'https://lh3.googleusercontent.com/admin.jpg', 'google_access_token_admin', 1234567890),
+       ('genius@primavera.com', 3, 'github789', 'Genius GitHub', 'https://github.com/genius', 'https://avatars.githubusercontent.com/genius', 'github_access_token_genius', 1234567890),
+       ('Genius Choi', 1, 'facebook456', 'Genius Choi', 'https://facebook.com/geniuschoi', 'https://graph.facebook.com/geniuschoi/picture', 'facebook_access_token_genius', 1234567890)
+ON DUPLICATE KEY UPDATE PROVIDER_ID = VALUES(PROVIDER_ID);
 
 -- 계층형 게시글 테스트 데이터
 INSERT INTO ARTICLES (ID, P_ID, REFERENCE, STEP, LEVEL, SUBJECT, AUTHOR, STATUS, HIT)

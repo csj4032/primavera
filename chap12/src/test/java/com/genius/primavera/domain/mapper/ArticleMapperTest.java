@@ -30,7 +30,6 @@ public class ArticleMapperTest {
     private ArticleMapper articleMapper;
 
     private static User user;
-    private static User user2;
     private static Article article1;
     private static Article article1_1;
     private static Article article1_1_1;
@@ -40,8 +39,7 @@ public class ArticleMapperTest {
 
     @BeforeAll
     public static void setUp() {
-        user = User.builder().id(100L).nickname("Genius").build();
-        user2 = User.builder().id(200L).nickname("Son").build();
+        user = User.builder().id(1L).nickname("SuperAdmin").build();
     }
 
     @Test
