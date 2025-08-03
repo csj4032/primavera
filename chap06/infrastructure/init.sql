@@ -1,8 +1,9 @@
 -- ==============================================
+-- Chapter 06 - Validation Application
 -- Database: primavera
 -- ==============================================
 
--- 사용자 테이블
+-- 사용자 테이블 (유효성 검증 예제용)
 CREATE TABLE IF NOT EXISTS USERS
 (
     ID         BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -12,56 +13,48 @@ CREATE TABLE IF NOT EXISTS USERS
     STATUS     INT DEFAULT 1,
     CREATED_AT DATETIME    DEFAULT CURRENT_TIMESTAMP,
     UPDATED_AT DATETIME    DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    INDEX IDX_EMAIL (EMAIL),
-    INDEX IDX_STATUS (STATUS)
+    INDEX IDX_USERS_EMAIL (EMAIL),
+    INDEX IDX_USERS_STATUS (STATUS)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
 
--- 권한 테이블
-CREATE TABLE IF NOT EXISTS ROLES
+-- 권한 테이블 (매퍼에서 ROLE 테이블명 사용, ID와 TYPE만 포함)
+CREATE TABLE IF NOT EXISTS ROLE
 (
-    ID          BIGINT AUTO_INCREMENT PRIMARY KEY,
-    NAME        VARCHAR(50) UNIQUE NOT NULL,
-    DESCRIPTION VARCHAR(255),
-    TYPE        INT                NOT NULL,
-    CREATED_AT  DATETIME DEFAULT CURRENT_TIMESTAMP
+    ID   BIGINT AUTO_INCREMENT PRIMARY KEY,
+    TYPE INT NOT NULL,
+    INDEX IDX_ROLE_TYPE (TYPE)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
 
--- 사용자-권한 연결 테이블
-CREATE TABLE IF NOT EXISTS USER_ROLES
+-- 사용자-권한 연결 테이블 (매퍼에서 USER_ROLE 테이블명 사용)
+CREATE TABLE IF NOT EXISTS USER_ROLE
 (
     ID      BIGINT AUTO_INCREMENT PRIMARY KEY,
     USER_ID BIGINT NOT NULL,
     ROLE_ID BIGINT NOT NULL,
     FOREIGN KEY (USER_ID) REFERENCES USERS (ID) ON DELETE CASCADE,
-    FOREIGN KEY (ROLE_ID) REFERENCES ROLES (ID) ON DELETE CASCADE,
-    UNIQUE KEY UNIQUE_USER_ROLE (USER_ID, ROLE_ID)
+    FOREIGN KEY (ROLE_ID) REFERENCES ROLE (ID) ON DELETE CASCADE,
+    UNIQUE KEY UK_USER_ROLE (USER_ID, ROLE_ID)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
 
--- 기본 권한 데이터
-INSERT INTO ROLES (ID, NAME, DESCRIPTION, TYPE)
-VALUES (1, 'ROLE_ADMINISTRATOR', '최고 관리자', 1),
-       (2, 'ROLE_MANAGER', '관리자', 2),
-       (3, 'ROLE_USER', '일반 사용자', 3)
-ON DUPLICATE KEY UPDATE NAME = VALUES(NAME);
+-- 테스트 데이터: 권한 (RoleType enum 값에 따라)
+INSERT INTO ROLE (ID, TYPE)
+VALUES (1, 1), -- ADMINISTRATOR
+       (2, 2), -- MANAGER  
+       (3, 3)  -- USER
+ON DUPLICATE KEY UPDATE TYPE = VALUES(TYPE);
 
--- 기본 사용자 데이터
+-- 테스트 데이터: 사용자 (테스트에서 /users/1 조회)
 INSERT INTO USERS (ID, EMAIL, PASSWORD, NICKNAME, STATUS)
-VALUES (1, 'admin@primavera.com', '{noop}admin123', 'Administrator', 1),
-       (2, 'manager@primavera.com', '{noop}manager123', 'Manager', 1),
-       (3, 'user@primavera.com', '{noop}user123', 'User', 1),
-       (4, 'genius@primavera.com', '{noop}test', 'Genius', 1)
+VALUES (1, 'admin@primavera.com', 'Secret0!', 'Administrator', 1)
 ON DUPLICATE KEY UPDATE EMAIL = VALUES(EMAIL);
 
--- 사용자-권한 매핑
-INSERT INTO USER_ROLES (USER_ID, ROLE_ID)
-VALUES (1, 1), (1, 2), (1, 3), -- admin has all roles
-       (2, 2), (2, 3),          -- manager has manager and user roles
-       (3, 3),                  -- user has user role
-       (4, 1), (4, 2), (4, 3)   -- genius has all roles
+-- 테스트 데이터: 사용자-권한 매핑
+INSERT INTO USER_ROLE (USER_ID, ROLE_ID)
+VALUES (1, 1) -- admin has ADMINISTRATOR role
 ON DUPLICATE KEY UPDATE USER_ID = VALUES(USER_ID);

@@ -1,3 +1,9 @@
+-- ==============================================
+-- Chapter 05 - MyBatis Application
+-- Database: primavera
+-- ==============================================
+
+-- 사용자 테이블 (MyBatis 매핑 예제용)
 CREATE TABLE IF NOT EXISTS USERS
 (
     ID         BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -7,23 +13,23 @@ CREATE TABLE IF NOT EXISTS USERS
     STATUS     INT      DEFAULT 1,
     CREATED_AT DATETIME DEFAULT CURRENT_TIMESTAMP,
     UPDATED_AT DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    INDEX IDX_EMAIL (EMAIL),
-    INDEX IDX_STATUS (STATUS)
+    INDEX IDX_USERS_EMAIL (EMAIL),
+    INDEX IDX_USERS_STATUS (STATUS)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
 
+-- 권한 테이블 (TYPE 컬럼만 사용)
 CREATE TABLE IF NOT EXISTS ROLES
 (
-    ID          BIGINT AUTO_INCREMENT PRIMARY KEY,
-    NAME        VARCHAR(50) UNIQUE NOT NULL,
-    DESCRIPTION VARCHAR(255),
-    TYPE        INT                NOT NULL,
-    CREATED_AT  DATETIME DEFAULT CURRENT_TIMESTAMP
+    ID   BIGINT AUTO_INCREMENT PRIMARY KEY,
+    TYPE INT NOT NULL,
+    INDEX IDX_ROLES_TYPE (TYPE)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
 
+-- 사용자-권한 연결 테이블
 CREATE TABLE IF NOT EXISTS USER_ROLES
 (
     ID      BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -31,11 +37,12 @@ CREATE TABLE IF NOT EXISTS USER_ROLES
     ROLE_ID BIGINT NOT NULL,
     FOREIGN KEY (USER_ID) REFERENCES USERS (ID) ON DELETE CASCADE,
     FOREIGN KEY (ROLE_ID) REFERENCES ROLES (ID) ON DELETE CASCADE,
-    UNIQUE KEY UNIQUE_USER_ROLE (USER_ID, ROLE_ID)
+    UNIQUE KEY UK_USER_ROLE (USER_ID, ROLE_ID)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
 
+-- 우승자 테이블 (벌크 인서트 테스트용)
 CREATE TABLE IF NOT EXISTS WINNERS
 (
     ID     BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -44,41 +51,16 @@ CREATE TABLE IF NOT EXISTS WINNERS
     SPORT  VARCHAR(50) NOT NULL,
     PRIZE  VARCHAR(50) NOT NULL,
     AMOUNT DECIMAL(10, 2) DEFAULT 0.00,
-    INDEX IDX_YEAR (YEAR),
-    INDEX IDX_SPORT (SPORT)
+    INDEX IDX_WINNERS_YEAR (YEAR),
+    INDEX IDX_WINNERS_SPORT (SPORT)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
 
-INSERT INTO ROLES (ID, NAME, DESCRIPTION, TYPE)
-VALUES (1, 'ROLE_ADMINISTRATOR', '최고 관리자', 1),
-       (2, 'ROLE_MANAGER', '관리자', 2),
-       (3, 'ROLE_USER', '일반 사용자', 3)
-ON DUPLICATE KEY UPDATE NAME = VALUES(NAME);
-
-INSERT INTO USERS (ID, EMAIL, PASSWORD, NICKNAME, STATUS)
-VALUES (1, 'admin@primavera.com', '{noop}admin123', 'Administrator', 1),
-       (2, 'manager@primavera.com', '{noop}manager123', 'Manager', 1),
-       (3, 'user@primavera.com', '{noop}user123', 'User', 1),
-       (4, 'genius@primavera.com', '{noop}test', 'Genius', 1)
-ON DUPLICATE KEY UPDATE EMAIL = VALUES(EMAIL);
-
-INSERT INTO USER_ROLES (USER_ID, ROLE_ID)
-VALUES (1, 1),
-       (1, 2),
-       (1, 3), -- admin has all roles
-       (2, 2),
-       (2, 3), -- manager has manager and user roles
-       (3, 3), -- user has user role
-       (4, 1),
-       (4, 2),
-       (4, 3)  -- genius has all roles
-ON DUPLICATE KEY UPDATE USER_ID = VALUES(USER_ID);
-
-INSERT INTO WINNERS (ID, NAME, YEAR, SPORT, PRIZE, AMOUNT)
-VALUES (1, 'Lionel Messi', 2023, 'Football', 'Ballon d''Or', 1000000.00),
-       (2, 'Erling Haaland', 2023, 'Football', 'Golden Boot', 500000.00),
-       (3, 'Lewis Hamilton', 2023, 'Formula 1', 'World Championship', 2000000.00),
-       (4, 'Serena Williams', 2023, 'Tennis', 'Wimbledon', 750000.00),
-       (5, 'Tiger Woods', 2023, 'Golf', 'Masters Tournament', 1500000.00)
-ON DUPLICATE KEY UPDATE ID = VALUES(ID);
+-- 테스트 데이터: 권한 (RoleType enum 값에 따라)
+INSERT INTO ROLES (ID, TYPE)
+VALUES (1, 1), -- ADMINISTRATOR
+       (2, 2), -- MANAGER  
+       (3, 3), -- USER
+       (4, 4)  -- ETC
+ON DUPLICATE KEY UPDATE TYPE = VALUES(TYPE);

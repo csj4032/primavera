@@ -12,9 +12,9 @@ import jakarta.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Role {
-	@NotNull
-	@Min(value = 1)
-	private long id;
-	@NotNull
-	private RoleType type;
+    @NotNull
+    @Min(value = 1)
+    private long id;
+    @NotNull
+    private RoleType type;
 }

@@ -13,6 +13,8 @@ dependencies {
     webUiDependencies.each { dep -> implementation dep }
     testContainersDependencies.each { dep -> testImplementation dep }
     securityDependencies.each { dep -> implementation dep }
+    implementation "org.springframework.cloud:spring-cloud-starter-vault-config:${springCloudVaultVersion}"
+    implementation "org.springframework.cloud:spring-cloud-vault-config-databases:${springCloudVaultVersion}"
     implementation "org.thymeleaf.extras:thymeleaf-extras-springsecurity6:${thymeleafExtrasSpringSecurity6Version}"
     implementation "org.hibernate:hibernate-core:${hibernateVersion}"
     testImplementation "org.springframework.security:spring-security-test:${springSecurityVersion}"

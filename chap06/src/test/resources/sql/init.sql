@@ -1,9 +1,9 @@
 -- ==============================================
--- Chapter 06 - MyBatis Basic Test Data
--- Uses primavera_test database (TestContainers)
+-- Chapter 06 - Validation Application Test Data
+-- Database: primavera_test (TestContainers)
 -- ==============================================
 
--- 공통 테스트 사용자 테이블
+-- 사용자 테이블 (유효성 검증 테스트용)
 CREATE TABLE IF NOT EXISTS USERS
 (
     ID         BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -13,72 +13,52 @@ CREATE TABLE IF NOT EXISTS USERS
     STATUS     INT DEFAULT 1,
     CREATED_AT DATETIME    DEFAULT CURRENT_TIMESTAMP,
     UPDATED_AT DATETIME    DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    INDEX IDX_EMAIL (EMAIL),
-    INDEX IDX_STATUS (STATUS)
+    INDEX IDX_USERS_EMAIL (EMAIL),
+    INDEX IDX_USERS_STATUS (STATUS)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
 
--- 권한 테이블
-CREATE TABLE IF NOT EXISTS ROLES
+-- 권한 테이블 (매퍼에서 ROLE 테이블명 사용, ID와 TYPE만 포함)
+CREATE TABLE IF NOT EXISTS ROLE
 (
-    ID          BIGINT AUTO_INCREMENT PRIMARY KEY,
-    NAME        VARCHAR(50) UNIQUE NOT NULL,
-    DESCRIPTION VARCHAR(255),
-    TYPE        INT                NOT NULL,
-    CREATED_AT  DATETIME DEFAULT CURRENT_TIMESTAMP
+    ID   BIGINT AUTO_INCREMENT PRIMARY KEY,
+    TYPE INT NOT NULL,
+    INDEX IDX_ROLE_TYPE (TYPE)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
 
--- 사용자-권한 연결 테이블
-CREATE TABLE IF NOT EXISTS USER_ROLES
+-- 사용자-권한 연결 테이블 (매퍼에서 USER_ROLE 테이블명 사용)
+CREATE TABLE IF NOT EXISTS USER_ROLE
 (
     ID      BIGINT AUTO_INCREMENT PRIMARY KEY,
     USER_ID BIGINT NOT NULL,
     ROLE_ID BIGINT NOT NULL,
     FOREIGN KEY (USER_ID) REFERENCES USERS (ID) ON DELETE CASCADE,
-    FOREIGN KEY (ROLE_ID) REFERENCES ROLES (ID) ON DELETE CASCADE,
-    UNIQUE KEY UNIQUE_USER_ROLE (USER_ID, ROLE_ID)
+    FOREIGN KEY (ROLE_ID) REFERENCES ROLE (ID) ON DELETE CASCADE,
+    UNIQUE KEY UK_USER_ROLE (USER_ID, ROLE_ID)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
 
--- Chapter 06 특화 테이블 - MYBATIS 접두사 사용
-CREATE TABLE IF NOT EXISTS MYBATIS_ITEMS
-(
-    ID     BIGINT AUTO_INCREMENT PRIMARY KEY,
-    TYPE   VARCHAR(10)  NOT NULL,
-    NAME   VARCHAR(100) NOT NULL,
-    PRICE  DECIMAL(10, 2) DEFAULT 0.00,
-    STATUS VARCHAR(20)    DEFAULT 1,
-    INDEX IDX_TYPE (TYPE),
-    INDEX IDX_STATUS (STATUS)
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8mb4
-  COLLATE = utf8mb4_unicode_ci;
+-- 테스트 데이터: 권한 (RoleType enum 값)
+INSERT INTO ROLE (ID, TYPE)
+VALUES (1, 1), -- ADMINISTRATOR
+       (2, 2), -- MANAGER
+       (3, 3)  -- USER
+ON DUPLICATE KEY UPDATE TYPE = VALUES(TYPE);
 
--- 기본 테스트 데이터
-INSERT INTO ROLES (ID, NAME, DESCRIPTION, TYPE)
-VALUES (1, 'ROLE_ADMIN', '테스트 관리자', 1),
-       (2, 'ROLE_MANAGER', '테스트 매니저', 2),
-       (3, 'ROLE_USER', '테스트 사용자', 3)
-ON DUPLICATE KEY UPDATE NAME = VALUES(NAME);
-
+-- 테스트 데이터: 사용자 (getUserById 테스트를 위한 ID=1)
 INSERT INTO USERS (ID, EMAIL, PASSWORD, NICKNAME, STATUS)
-VALUES (1, 'genius@primavera.com', '{noop}test', 'Genius', 1),
-       (2, 'admin@primavera.com', '{noop}test', 'Admin', 1),
-       (3, 'user@primavera.com', '{noop}test', 'User', 1)
+VALUES (1, 'admin@primavera.com', 'Secret0!', 'Administrator', 1),
+       (2, 'manager@primavera.com', 'Secret0!', 'Manager', 1),
+       (3, 'user@primavera.com', 'Secret0!', 'User', 1)
 ON DUPLICATE KEY UPDATE EMAIL = VALUES(EMAIL);
 
-INSERT INTO USER_ROLES (USER_ID, ROLE_ID)
-VALUES (1, 1), (1, 2), (1, 3), -- genius -> all roles
-       (2, 1), (2, 2),         -- admin -> admin, manager
-       (3, 3)                  -- user -> user
+-- 테스트 데이터: 사용자-권한 매핑
+INSERT INTO USER_ROLE (USER_ID, ROLE_ID)
+VALUES (1, 1), -- admin has ADMINISTRATOR role
+       (2, 2), -- manager has MANAGER role
+       (3, 3)  -- user has USER role
 ON DUPLICATE KEY UPDATE USER_ID = VALUES(USER_ID);
-
-INSERT INTO MYBATIS_ITEMS (ID, TYPE, NAME, PRICE, STATUS)
-VALUES (1, 'BOOK', 'MyBatis Guide', 25000.00, 1),
-       (2, 'ALBUM', 'Spring Music', 15000.00, 1),
-       (3, 'MOVIE', 'Java Documentary', 12000.00, 1)
-ON DUPLICATE KEY UPDATE ID = VALUES(ID);

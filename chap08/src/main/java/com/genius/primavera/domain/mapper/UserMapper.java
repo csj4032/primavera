@@ -23,8 +23,8 @@ import java.util.List;
 @Mapper
 public interface UserMapper {
 
-	String SELECT_ID_NAME_CREATED_AT_UPDATED_AT_FROM_USER = "SELECT ID, EMAIL, NICKNAME, PASSWORD, STATUS, CREATED_AT, UPDATED_AT FROM USER ";
-	String INSERT_SQL = "INSERT INTO USER (EMAIL, PASSWORD, NICKNAME, STATUS, CREATED_AT, UPDATED_AT) " +
+	String SELECT_ID_NAME_CREATED_AT_UPDATED_AT_FROM_USER = "SELECT ID, EMAIL, NICKNAME, PASSWORD, STATUS, CREATED_AT, UPDATED_AT FROM USERS ";
+	String INSERT_SQL = "INSERT INTO USERS (EMAIL, PASSWORD, NICKNAME, STATUS, CREATED_AT, UPDATED_AT) " +
 			"VALUES (#{user.email}, #{user.password}, #{user.nickname}, #{user.status, typeHandler=UserStatusTypeHandler}, #{user.createdAt}, #{user.updatedAt})";
 
 	@Results(id = "USER", value = {
@@ -60,12 +60,12 @@ public interface UserMapper {
 	@SelectKey(statement = "SELECT LAST_INSERT_ID()", keyProperty = "user.id", before = false, resultType = long.class)
 	int save(@Param("user") User user);
 
-	@Update(value = "UPDATE USER SET NICKNAME = #{user.nickname}, UPDATED_AT = #{user.updatedAt} WHERE ID = #{user.id}")
+	@Update(value = "UPDATE USERS SET NICKNAME = #{user.nickname}, UPDATED_AT = #{user.updatedAt} WHERE ID = #{user.id}")
 	int update(@Param("user") User user);
 
-	@Delete(value = "DELETE FROM USER")
+	@Delete(value = "DELETE FROM USERS")
 	int deleteAll();
 
-	@Delete(value = "DELETE FROM USER WHERE ID = #{id}")
+	@Delete(value = "DELETE FROM USERS WHERE ID = #{id}")
 	int deleteById(@Param(value = "id") long id);
 }

@@ -8,6 +8,8 @@ dependencies {
     loggingDependencies.each { dep -> implementation dep }
     webUiDependencies.each { dep -> implementation dep }
     testContainersDependencies.each { dep -> testImplementation dep }
+    implementation "org.springframework.cloud:spring-cloud-starter-vault-config:${springCloudVaultVersion}"
+    implementation "org.springframework.cloud:spring-cloud-vault-config-databases:${springCloudVaultVersion}"
     implementation "org.springframework.security:spring-security-crypto:${springSecurityVersion}"
     implementation "org.hibernate:hibernate-core:${hibernateVersion}"
     implementation project(":appendix:spring-boot-starter-lucy-filter")

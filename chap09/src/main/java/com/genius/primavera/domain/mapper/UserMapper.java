@@ -24,8 +24,8 @@ import java.util.List;
 @Mapper
 public interface UserMapper {
 
-	String SELECT_ID_NAME_CREATED_DATE_UPDATED_DATE_FROM_USER = "SELECT ID, EMAIL, NICKNAME, PASSWORD, STATUS, CREATED_AT, UPDATED_AT FROM USER ";
-	String INSERT_SQL = "INSERT INTO USER (EMAIL, PASSWORD, NICKNAME, STATUS, CREATED_DATE, UPDATED_DATE) " +
+	String SELECT_ID_NAME_CREATED_DATE_UPDATED_DATE_FROM_USER = "SELECT ID, EMAIL, NICKNAME, PASSWORD, STATUS, CREATED_AT, UPDATED_AT FROM USERS ";
+	String INSERT_SQL = "INSERT INTO USERS (EMAIL, PASSWORD, NICKNAME, STATUS, CREATED_AT, UPDATED_AT) " +
 			"VALUES (#{user.email}, #{user.password}, #{user.nickname}, #{user.status, typeHandler=UserStatusTypeHandler}, #{user.createdAt}, #{user.updatedAt})";
 
 	@Results(id = "USER", value = {
@@ -33,8 +33,8 @@ public interface UserMapper {
 			@Result(property = "email", column = "EMAIL"),
 			@Result(property = "nickname", column = "NICKNAME"),
 			@Result(property = "status", column = "STATUS"),
-			@Result(property = "createdAt", column = "CREATED_DATE"),
-			@Result(property = "updatedAt", column = "UPDATED_DATE")
+			@Result(property = "createdAt", column = "CREATED_AT"),
+			@Result(property = "updatedAt", column = "UPDATED_AT")
 	})
 	@Select(value = SELECT_ID_NAME_CREATED_DATE_UPDATED_DATE_FROM_USER + "WHERE ID = #{id}")
 	User findById(@Param(value = "id") long id);
@@ -68,12 +68,12 @@ public interface UserMapper {
 	@SelectKey(statement = "SELECT LAST_INSERT_ID()", keyProperty = "user.id", before = false, resultType = long.class)
 	int save(@Param("user") User user);
 
-	@Update(value = "UPDATE USER SET NICKNAME = #{user.nickname}, UPDATED_DATE = #{user.updatedAt} WHERE ID = #{user.id}")
+	@Update(value = "UPDATE USERS SET NICKNAME = #{user.nickname}, UPDATED_AT = #{user.updatedAt} WHERE ID = #{user.id}")
 	int update(@Param("user") User user);
 
-	@Delete(value = "DELETE FROM USER")
+	@Delete(value = "DELETE FROM USERS")
 	int deleteAll();
 
-	@Delete(value = "DELETE FROM USER WHERE ID = #{id}")
+	@Delete(value = "DELETE FROM USERS WHERE ID = #{id}")
 	int deleteById(@Param(value = "id") long id);
 }
