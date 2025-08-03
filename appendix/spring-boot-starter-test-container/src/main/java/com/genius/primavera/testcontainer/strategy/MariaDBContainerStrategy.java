@@ -1,15 +1,16 @@
 package com.genius.primavera.testContainer.strategy;
 
 import com.genius.primavera.testContainer.PrimaveraTestcontainersProperties;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MapPropertySource;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.MariaDBContainer;
 
-import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 public class MariaDBContainerStrategy implements ContainerStrategy {
 
     @Override

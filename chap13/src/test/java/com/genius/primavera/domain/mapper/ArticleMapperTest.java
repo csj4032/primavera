@@ -29,13 +29,12 @@ import static com.genius.primavera.testContainer.ContainerType.MONGODB;
 import com.genius.primavera.testContainer.ContainerLifecycleMode;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-
 @Slf4j
 @SpringBootTest
 @ActiveProfiles("test")
-@EnablePrimaveraTestcontainers(containers = {MARIADB, MONGODB})
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @DisplayName("ArticleMapper 통합 테스트")
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@EnablePrimaveraTestcontainers(containers = {MARIADB, MONGODB})
 public class ArticleMapperTest {
 
     @Autowired
@@ -158,12 +157,12 @@ public class ArticleMapperTest {
         assertEquals(1, count);
     }
 
-//    @Test
-//    @Order(6)
-//    @DisplayName("모든 게시글을 성공적으로 조회한다")
-//    void shouldFindAllArticlesSuccessfully() {
-//        List<Article> articles = articleMapper.findAll();
-//        assertEquals(30, articles.size());
-//        articles.forEach(article -> log.info("Article: {}", article));
-//    }
+    @Test
+    @Order(6)
+    @DisplayName("모든 게시글을 성공적으로 조회한다")
+    void shouldFindAllArticlesSuccessfully() {
+        List<Article> articles = articleMapper.findAll();
+        assertEquals(30, articles.size());
+        articles.forEach(article -> log.info("Article: {}", article));
+    }
 }

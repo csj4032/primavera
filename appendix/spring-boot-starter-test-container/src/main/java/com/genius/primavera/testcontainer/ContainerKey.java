@@ -28,8 +28,7 @@ public class ContainerKey {
     }
 
     public static ContainerKey forPerTest(ContainerType containerType) {
-        return new ContainerKey(containerType, ContainerLifecycleMode.PER_TEST,
-                "THREAD-" + Thread.currentThread().getId());
+        return new ContainerKey(containerType, ContainerLifecycleMode.PER_TEST, "THREAD-" + Thread.currentThread().getId());
     }
 
     public static ContainerKey create(ContainerType containerType, ContainerLifecycleMode lifecycleMode, String testClassName) {

@@ -4,20 +4,15 @@ import com.genius.primavera.domain.model.article.Article;
 import com.genius.primavera.domain.model.article.ArticleDto;
 import com.genius.primavera.domain.model.article.WriteType;
 import com.genius.primavera.interfaces.WithMockPrimaveraUserDetails;
-import com.genius.primavera.testContainer.ContainerLifecycleMode;
 import com.genius.primavera.testContainer.ContainerType;
 import com.genius.primavera.testContainer.EnablePrimaveraTestcontainers;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -26,8 +21,8 @@ import static org.mockito.BDDMockito.given;
 @Slf4j
 @SpringBootTest
 @ActiveProfiles("test")
-@EnablePrimaveraTestcontainers(containers = {ContainerType.MARIADB, ContainerType.MONGODB})
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@EnablePrimaveraTestcontainers(containers = {ContainerType.MARIADB, ContainerType.MONGODB})
 public class WriteArticleServiceTest {
 
     @Autowired

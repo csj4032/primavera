@@ -40,6 +40,20 @@ public class ContainerManager {
         });
     }
 
+    public static void stopAndRemoveContainer(ContainerType containerType, ContainerLifecycleMode mode, String testClassName) {
+        ContainerKey key = ContainerKey.create(containerType, mode, testClassName);
+        GenericContainer<?> container = containers.remove(key);
+//        if (container != null) {
+//            try {
+//                if (container.isRunning()) {
+//                    container.stop();
+//                }
+//            } catch (Exception e) {
+//                // Log but continue
+//            }
+//        }
+    }
+
     public static void stopAllContainers() {
         containers.entrySet().removeIf(entry -> {
             ContainerKey key = entry.getKey();
