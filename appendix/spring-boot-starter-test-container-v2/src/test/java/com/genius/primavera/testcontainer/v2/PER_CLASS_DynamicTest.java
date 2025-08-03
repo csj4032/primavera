@@ -15,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @ActiveProfiles("test")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS) // PER_CLASS 모드
+@
 @EnableTestContainers(containers = {ContainerType.MARIADB})
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @DisplayName("PER_CLASS + DynamicPropertySource 통합 테스트")

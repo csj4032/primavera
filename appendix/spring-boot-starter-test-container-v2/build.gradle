@@ -52,4 +52,30 @@ java {
 
 test {
     useJUnitPlatform()
+    
+    // 병렬 실행 설정
+    systemProperty 'junit.jupiter.execution.parallel.enabled', 'true'
+    systemProperty 'junit.jupiter.execution.parallel.mode.default', 'concurrent'
+    systemProperty 'junit.jupiter.execution.parallel.mode.classes.default', 'concurrent'
+    systemProperty 'junit.jupiter.execution.parallel.config.strategy', 'dynamic'
+    systemProperty 'junit.jupiter.execution.parallel.config.fixed.parallelism', '4'
+    
+    // 메모리 설정 (병렬 실행 시 더 많은 메모리 필요)
+    minHeapSize = "512m"
+    maxHeapSize = "2g"
+    
+    // 포크 설정 (병렬 실행을 위해 새 JVM 프로세스 사용)
+    forkEvery = 0  // 모든 테스트를 같은 JVM에서 실행
+    
+    // TestContainers 관련 설정
+    systemProperty 'testcontainers.reuse.enable', 'false'
+    
+    // 로깅 설정
+    testLogging {
+        events "passed", "skipped", "failed", "standard_out", "standard_error"
+        exceptionFormat "full"
+        showCauses true
+        showExceptions true
+        showStackTraces true
+    }
 }
