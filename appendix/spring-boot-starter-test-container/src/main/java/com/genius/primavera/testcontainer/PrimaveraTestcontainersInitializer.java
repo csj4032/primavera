@@ -32,10 +32,10 @@ public class PrimaveraTestcontainersInitializer implements ApplicationContextIni
 
     private Set<ContainerType> getEnabledContainerTypes(String testClassName) {
         TestContextHolder.TestContext context = TestContextHolder.getContext();
-        log.info("Retrieving enabled container types for test class: {}", context.getContainerTypes());
-        if (context.getContainerTypes() != null) {
-            log.info("Found container types from ThreadLocal context: {}", context.getContainerTypes());
-            return context.getContainerTypes();
+        log.info("Retrieving enabled container types for test class: {}", context.containerTypes());
+        if (context.containerTypes() != null) {
+            log.info("Found container types from ThreadLocal context: {}", context.containerTypes());
+            return context.containerTypes();
         }
 
         String containerTypesProperty = System.getProperty("primavera.testcontainers.container-types");
@@ -77,7 +77,7 @@ public class PrimaveraTestcontainersInitializer implements ApplicationContextIni
 
     private String getTestClassName() {
         TestContextHolder.TestContext context = TestContextHolder.getContext();
-        if (context != null && context.getTestClassName() != null) return context.getTestClassName();
+        if (context != null && context.testClassName() != null) return context.testClassName();
         String testClassName = System.getProperty("primavera.testcontainers.test-class");
         if (testClassName != null && !testClassName.isEmpty()) return testClassName;
         StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
@@ -98,18 +98,14 @@ public class PrimaveraTestcontainersInitializer implements ApplicationContextIni
                 container.start();
                 ContainerManager.putContainer(containerType, container, lifecycleMode, testClassName);
                 strategy.configureApplicationContext(applicationContext, container);
-                System.out.println("✅ Container started: " + containerType + " for " + testClassName);
+                log.info("Initialized container: {} for test class: {}", containerType, testClassName);
             } catch (Exception e) {
                 throw new RuntimeException("Failed to initialize container: " + containerType, e);
             }
         } else {
             GenericContainer<?> existingContainer = ContainerManager.getContainer(containerType, lifecycleMode, testClassName);
             strategy.configureApplicationContext(applicationContext, existingContainer);
-            System.out.println("♻️ Reusing existing container: " + containerType + " for " + testClassName);
+            log.info("Reusing existing container: {} for test class: {}", containerType, testClassName);
         }
-    }
-
-    public static void stopContainers() {
-        ContainerManager.stopAllContainers();
     }
 }

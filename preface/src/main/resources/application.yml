@@ -1,6 +1,3 @@
-# Primavera Lightweight Framework Demo Configuration
-
-# 애플리케이션 설정
 app:
   name: Primavera 경량 프레임워크
   version: 1.0.0
@@ -10,25 +7,21 @@ app:
   startup:
     greeting: 안녕하세요! Primavera 프레임워크입니다.
 
-# 로깅 설정
 logging:
   level:
     com.genius.primavera.lightweight: DEBUG
     root: INFO
 
-# 시스템 설정
 system:
   max:
     threads: 10
   timeout:
     seconds: 30
 
-# 개발자 정보
 developer:
   name: Primavera 개발팀
   email: team@primavera.com
 
-# 추가 한글 테스트 설정
 test:
   korean:
     message: 한글 인코딩 테스트 메시지입니다

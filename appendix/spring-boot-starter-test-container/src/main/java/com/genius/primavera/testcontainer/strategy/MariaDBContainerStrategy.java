@@ -27,12 +27,12 @@ public class MariaDBContainerStrategy implements ContainerStrategy {
     @Override
     public void configureApplicationContext(ConfigurableApplicationContext applicationContext, GenericContainer<?> container) {
         MariaDBContainer<?> mariadbContainer = (MariaDBContainer<?>) container;
-        Map<String, Object> properties = new HashMap<>();
-        properties.put("spring.datasource.url", mariadbContainer.getJdbcUrl());
-        properties.put("spring.datasource.username", mariadbContainer.getUsername());
-        properties.put("spring.datasource.password", mariadbContainer.getPassword());
-        properties.put("spring.datasource.driver-class-name", mariadbContainer.getDriverClassName());
         ConfigurableEnvironment environment = applicationContext.getEnvironment();
-        environment.getPropertySources().addFirst(new MapPropertySource("testcontainers-mariadb", properties));
+        environment.getPropertySources().addFirst(new MapPropertySource("testcontainers-mariadb", Map.of(
+                "spring.datasource.url", mariadbContainer.getJdbcUrl(),
+                "spring.datasource.username", mariadbContainer.getUsername(),
+                "spring.datasource.password", mariadbContainer.getPassword(),
+                "spring.datasource.driver-class-name", mariadbContainer.getDriverClassName()
+        )));
     }
 }

@@ -8,7 +8,6 @@ import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.utility.DockerImageName;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class KafkaContainerStrategy implements ContainerStrategy {
@@ -16,21 +15,20 @@ public class KafkaContainerStrategy implements ContainerStrategy {
     @Override
     public GenericContainer<?> createContainer(PrimaveraTestcontainersProperties.ContainerConfig config) {
         KafkaContainer container = new KafkaContainer(DockerImageName.parse(config.getDockerImageName()));
-
-        // 환경 변수 설정
         config.getEnvironment().forEach(container::withEnv);
-
         return container;
     }
 
     @Override
     public void configureApplicationContext(ConfigurableApplicationContext applicationContext, GenericContainer<?> container) {
         KafkaContainer kafkaContainer = (KafkaContainer) container;
-        
-        Map<String, Object> properties = new HashMap<>();
-        properties.put("spring.kafka.bootstrap-servers", kafkaContainer.getBootstrapServers());
-
         ConfigurableEnvironment environment = applicationContext.getEnvironment();
-        environment.getPropertySources().addFirst(new MapPropertySource("testcontainers-kafka", properties));
+        environment.getPropertySources().addFirst(new MapPropertySource("testcontainers-kafka", Map.of(
+                "spring.kafka.bootstrap-servers", kafkaContainer.getBootstrapServers(),
+                "spring.kafka.producer.key-serializer", "org.apache.kafka.common.serialization.StringSerializer",
+                "spring.kafka.producer.value-serializer", "org.apache.kafka.common.serialization.StringSerializer",
+                "spring.kafka.consumer.key-deserializer", "org.apache.kafka.common.serialization.StringDeserializer",
+                "spring.kafka.consumer.value-deserializer", "org.apache.kafka.common.serialization.StringDeserializer"
+        )));
     }
 }

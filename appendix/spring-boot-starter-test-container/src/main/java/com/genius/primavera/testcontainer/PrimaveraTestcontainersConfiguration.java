@@ -1,9 +1,11 @@
 package com.genius.primavera.testContainer;
 
 import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
+@Slf4j
 @Configuration
 @EnableConfigurationProperties(PrimaveraTestcontainersProperties.class)
 public class PrimaveraTestcontainersConfiguration {
@@ -16,11 +18,8 @@ public class PrimaveraTestcontainersConfiguration {
 
     @PostConstruct
     public void initialize() {
-        System.out.println("🚀 Primavera TestContainers Configuration initialized");
-        System.out.println("📋 Lifecycle Mode: " + properties.getLifecycleMode());
-        System.out.println("📦 Available Containers:");
         properties.getContainers().forEach((type, config) -> {
-            System.out.println("  - " + type.toUpperCase() + ": " + config.getDockerImageName());
+            log.info("{} container config: {}", type, config);
         });
     }
 }
