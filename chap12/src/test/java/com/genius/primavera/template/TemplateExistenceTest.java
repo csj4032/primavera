@@ -1,32 +1,29 @@
 package com.genius.primavera.template;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.*;
 
 import java.io.InputStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * 템플릿 파일 존재 여부 검증 테스트
- * 
- * 실제 렌더링은 하지 않고, 템플릿 파일들이 
- * 올바른 위치에 존재하는지만 확인
- */
-class TemplateExistenceTest {
+@Slf4j
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+public class TemplateExistenceTest {
 
     @Test
+    @Order(1)
     @DisplayName("게시글 관련 템플릿 파일들이 존재하는지 확인")
-    void articleTemplatesExist() {
-        // Given & When & Then
+    public void articleTemplatesExist() {
         assertTemplateExists("templates/article/list.html");
         assertTemplateExists("templates/article/detail.html");
         assertTemplateExists("templates/article/form.html");
     }
 
     @Test
+    @Order(2)
     @DisplayName("공통 템플릿 파일들이 존재하는지 확인")
-    void commonTemplatesExist() {
+    public void commonTemplatesExist() {
         assertTemplateExists("templates/fragments/header.html");
         assertTemplateExists("templates/fragments/footer.html");
         assertTemplateExists("templates/fragments/aside.html");
@@ -34,26 +31,22 @@ class TemplateExistenceTest {
     }
 
     @Test
+    @Order(3)
     @DisplayName("기본 페이지 템플릿이 존재하는지 확인")
-    void basicTemplatesExist() {
+    public void basicTemplatesExist() {
         assertTemplateExists("templates/index.html");
         assertTemplateExists("templates/login.html");
         assertTemplateExists("templates/admin.html");
         assertTemplateExists("templates/manager.html");
     }
 
-    /**
-     * 템플릿 파일 존재 여부 확인 헬퍼 메서드
-     */
     private void assertTemplateExists(String templatePath) {
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream(templatePath);
         assertNotNull(inputStream, "Template file should exist: " + templatePath);
         try {
-            if (inputStream != null) {
-                inputStream.close();
-            }
+            inputStream.close();
         } catch (Exception e) {
-            // Ignore close exception
+            log.error(e.getMessage(), e);
         }
     }
 }

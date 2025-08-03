@@ -25,8 +25,8 @@ import java.util.List;
 @Repository
 public interface ArticleMapper {
 
-    String SELECT_WITH_USER_SQL = "SELECT A.ID, A.P_ID, A.REFERENCE, A.STEP, A.LEVEL, A.AUTHOR, B.EMAIL, B.NICKNAME, A.SUBJECT, A.STATUS, A.HIT, A.RECOMMEND, A.DISAPPROVE, A.CREATED_AT, A.UPDATED_AT FROM ARTICLE A INNER JOIN USER B ON A.AUTHOR = B.ID ";
-    String SELECT_WITH_USER_CONTENTS_SQL = "SELECT A.ID, A.P_ID, A.REFERENCE, A.STEP, A.LEVEL, A.AUTHOR, B.EMAIL, B.NICKNAME, A.SUBJECT, A.STATUS, A.HIT, A.RECOMMEND, A.DISAPPROVE, C.ID AS CONTENTS_ID, C.CONTENTS, A.CREATED_AT, A.UPDATED_AT FROM ARTICLE A INNER JOIN USER B ON A.AUTHOR = B.ID INNER JOIN ARTICLE_CONTENT C ON A.ID = C.ARTICLE_ID ";
+    String SELECT_WITH_USER_SQL = "SELECT A.ID, A.P_ID, A.REFERENCE, A.STEP, A.LEVEL, A.AUTHOR, B.EMAIL, B.NICKNAME, A.SUBJECT, A.STATUS, A.HIT, A.RECOMMEND, A.DISAPPROVE, A.CREATED_AT, A.UPDATED_AT FROM ARTICLES A INNER JOIN USERS B ON A.AUTHOR = B.ID ";
+    String SELECT_WITH_USER_CONTENTS_SQL = "SELECT A.ID, A.P_ID, A.REFERENCE, A.STEP, A.LEVEL, A.AUTHOR, B.EMAIL, B.NICKNAME, A.SUBJECT, A.STATUS, A.HIT, A.RECOMMEND, A.DISAPPROVE, C.ID AS CONTENTS_ID, C.CONTENTS, A.CREATED_AT, A.UPDATED_AT FROM ARTICLES A INNER JOIN USERS B ON A.AUTHOR = B.ID INNER JOIN ARTICLE_CONTENT C ON A.ID = C.ARTICLE_ID ";
 
     @InsertProvider(type = ArticleProvider.class, method = "save")
     @Options(useGeneratedKeys = true, keyColumn = "ID", keyProperty = "id", useCache=false)
@@ -89,10 +89,10 @@ public interface ArticleMapper {
     @Select(SELECT_WITH_USER_SQL + " WHERE A.P_ID = #{id}")
     Article findByIdForChildren(long id);
 
-    @Update("UPDATE ARTICLE SET STEP = STEP + 1 WHERE REFERENCE = #{reference} AND STEP > #{step}")
+    @Update("UPDATE ARTICLES SET STEP = STEP + 1 WHERE REFERENCE = #{reference} AND STEP > #{step}")
     void updateStep(@Param("reference") long reference, @Param("step") int step);
 
-    @Select("SELECT COUNT(*) AS CNT FROM ARTICLE WHERE STATUS = 1")
+    @Select("SELECT COUNT(*) AS CNT FROM ARTICLES WHERE STATUS = 1")
     int findAllCount();
 
     @Results(value = {
@@ -163,21 +163,23 @@ public interface ArticleMapper {
     @Select(value = SELECT_WITH_USER_CONTENTS_SQL + " WHERE A.ID = #{id}")
     Article findByIdWithContentAndComment(long id);
 
-    @Update("UPDATE ARTICLE SET SUBJECT = #{subject}, STATUS = #{status, typeHandler=ArticleStatusTypeHandler}, UPDATED_AT = #{updatedAt} WHERE ID = #{id} ")
+    @Update("UPDATE ARTICLES SET SUBJECT = #{subject}, STATUS = #{status, typeHandler=ArticleStatusTypeHandler}, UPDATED_AT = #{updatedAt} WHERE ID = #{id} ")
     int update(Article article);
 
-    @Update("UPDATE ARTICLE SET HIT = HIT + 1 WHERE ID = #{id} ")
+    @Update("UPDATE ARTICLES SET HIT = HIT + 1 WHERE ID = #{id} ")
     int articleHit(long id);
 
     class ArticleProvider {
         public String save(Article article) {
-            String sql = "INSERT INTO ARTICLE (P_ID, REFERENCE, STEP, LEVEL, SUBJECT, AUTHOR, STATUS, CREATED_AT) VALUES (#{pId}, ";
+            String sql = "INSERT INTO ARTICLES (P_ID, REFERENCE, STEP, LEVEL, SUBJECT, AUTHOR, STATUS, CREATED_AT) VALUES (";
             if (article.getPId() == 0l) {
-                sql += "LAST_INSERT_ID() + 1";
+                // 최상위 게시글: P_ID는 NULL, REFERENCE는 자동 생성된 ID
+                sql += "NULL, LAST_INSERT_ID()";
             } else {
-                sql += "#{reference}";
+                // 답글: P_ID는 부모 ID, REFERENCE는 부모와 동일한 그룹 번호
+                sql += "#{pId}, #{reference}";
             }
-            sql += ", #{step}, #{level}, #{subject}, #{author.id}, #{status, typeHandler=ArticleStatusTypeHandler}, #{createdAt})";
+            sql += ", #{step}, #{level}, #{subject}, #{author.id}, #{status, typeHandler=com.genius.primavera.domain.typehandler.ArticleStatusTypeHandler}, #{createdAt})";
             return sql;
         }
     }

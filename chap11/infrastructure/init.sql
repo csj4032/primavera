@@ -46,14 +46,17 @@ CREATE TABLE IF NOT EXISTS USER_ROLES
 -- OAuth2 사용자 연결 테이블
 CREATE TABLE IF NOT EXISTS USER_CONNECTION
 (
-    ID          BIGINT AUTO_INCREMENT PRIMARY KEY,
-    EMAIL       VARCHAR(100) NOT NULL,
-    PROVIDER    INT          NOT NULL,
-    PROVIDER_ID VARCHAR(100) NOT NULL,
-    PROFILE_URL VARCHAR(500),
-    IMAGE_URL   VARCHAR(500),
-    CREATED_AT  DATETIME DEFAULT CURRENT_TIMESTAMP,
-    UPDATED_AT  DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    ID           BIGINT AUTO_INCREMENT PRIMARY KEY,
+    EMAIL        VARCHAR(100) NOT NULL,
+    PROVIDER     INT          NOT NULL,
+    PROVIDER_ID  VARCHAR(100) NOT NULL,
+    DISPLAY_NAME VARCHAR(100),
+    PROFILE_URL  VARCHAR(500),
+    IMAGE_URL    VARCHAR(500),
+    ACCESS_TOKEN VARCHAR(1000),
+    EXPIRE_TIME  BIGINT,
+    CREATED_AT   DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UPDATED_AT   DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (EMAIL) REFERENCES USERS (EMAIL) ON DELETE CASCADE,
     UNIQUE KEY UNIQUE_PROVIDER_USER (PROVIDER, PROVIDER_ID),
     INDEX IDX_EMAIL (EMAIL),
@@ -171,8 +174,8 @@ VALUES (1, 1, 'test-document.pdf', 'test-doc-20241201.pdf', '/uploads/files/test
 ON DUPLICATE KEY UPDATE ID = VALUES(ID);
 
 -- OAuth2 사용자 연결 테스트 데이터 추가
-INSERT INTO USER_CONNECTION (EMAIL, PROVIDER, PROVIDER_ID, PROFILE_URL, IMAGE_URL)
-VALUES ('genius@primavera.com', 1, 'google_123456', 'https://plus.google.com/123456', 'https://lh3.googleusercontent.com/a/default-user'),
-       ('admin@primavera.com', 2, 'facebook_789012', 'https://www.facebook.com/789012', 'https://graph.facebook.com/789012/picture'),
-       ('manager@primavera.com', 3, 'github_345678', 'https://github.com/345678', 'https://avatars.githubusercontent.com/u/345678')
+INSERT INTO USER_CONNECTION (EMAIL, PROVIDER, PROVIDER_ID, DISPLAY_NAME, PROFILE_URL, IMAGE_URL, ACCESS_TOKEN, EXPIRE_TIME)
+VALUES ('genius@primavera.com', 1, 'google_123456', 'Genius Choi', 'https://plus.google.com/123456', 'https://lh3.googleusercontent.com/a/default-user', 'google_access_token_123', 1735689600000),
+       ('admin@primavera.com', 2, 'facebook_789012', 'Administrator', 'https://www.facebook.com/789012', 'https://graph.facebook.com/789012/picture', 'facebook_access_token_456', 1735689600000),
+       ('manager@primavera.com', 3, 'github_345678', 'Manager User', 'https://github.com/345678', 'https://avatars.githubusercontent.com/u/345678', 'github_access_token_789', 1735689600000)
 ON DUPLICATE KEY UPDATE EMAIL = VALUES(EMAIL);

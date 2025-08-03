@@ -19,8 +19,6 @@ spring:
     time-zone: UTC
 
 lucy-filter:
-  enabled: true
-  name: lucyXssFilter
   order: 1
   addUrlPatterns: /*
 
