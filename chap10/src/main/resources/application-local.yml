@@ -89,7 +89,7 @@ spring:
             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
           kakao:
             client-id: ${OAUTH2_KAKAO_CLIENTID}
-            client-secret: ${OAUTH2_KAKAO_CLIENTSECRET:}
+            client-secret: ${OAUTH2_KAKAO_CLIENTSECRET}
             authorization-grant-type: authorization_code
             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
             scope:

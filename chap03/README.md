@@ -10,6 +10,20 @@ Spring MVC 아키텍처 패턴과 AOP(Aspect-Oriented Programming)를 통한 횡
 - **@Aspect, @Around** 어노테이션 마스터
 - **ResponseBodyAdvice** 를 통한 응답 처리
 
+## 🔄 최신 업데이트 - 로깅 시스템 개선
+
+**System.out.println을 SLF4J 로깅으로 전환:**
+
+### 변경된 파일:
+- `ResettableServletOutputStream`: HTTP 응답 스트림 디버깅 로그 개선
+  - `System.out.println("** RESPONSE CLOSE **")` → `log.debug("Response stream closed")`
+  - 응답 처리 디버깅을 위한 구조화된 로깅 적용
+
+### 개선 효과:
+- **성능 최적화**: 디버그 로그는 운영 환경에서 자동 비활성화
+- **시스템 모니터링**: 응답 처리 상태를 로그로 추적 가능
+- **문제 해결**: HTTP 응답 관련 이슈 디버깅 용이
+
 ## 🛠️ 핵심 기술 스택
 - **Spring Web MVC** - 웹 애플리케이션 아키텍처
 - **Spring AOP** - 관점 지향 프로그래밍
