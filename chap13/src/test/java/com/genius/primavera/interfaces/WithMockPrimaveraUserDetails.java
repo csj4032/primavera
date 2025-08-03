@@ -9,7 +9,7 @@ import java.lang.annotation.RetentionPolicy;
 @WithSecurityContext(factory = WithMockPrimaveraUserSecurityContextFactory.class)
 public @interface WithMockPrimaveraUserDetails {
 
-    String username() default "Genius Choi";
+    String username() default "genius@primavera.com";
 
-    String name() default "Choi";
+    String name() default "genius";
 }

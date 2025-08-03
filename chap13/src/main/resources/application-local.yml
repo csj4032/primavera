@@ -67,7 +67,6 @@ mybatis:
   type-aliases-package: com.genius.primavera.domain
   type-handlers-package: com.genius.primavera.domain
 
-
 server:
   ssl:
     key-alias: primavera

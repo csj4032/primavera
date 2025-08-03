@@ -6,5 +6,6 @@ public enum ContainerType {
     POSTGRESQL,
     REDIS,
     KAFKA,
+    MONGODB,
     ELASTICSEARCH
 }

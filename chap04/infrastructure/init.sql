@@ -1,16 +1,10 @@
--- ==============================================
--- Chapter 04 - Data Access Application
--- Database: primavera
--- ==============================================
-
--- 사용자 테이블 (JDBC 템플릿 예제용)
 CREATE TABLE IF NOT EXISTS USERS
 (
     ID         BIGINT AUTO_INCREMENT PRIMARY KEY,
     EMAIL      VARCHAR(100) UNIQUE NOT NULL,
-    PASSWORD   VARCHAR(255),                    -- SimpleJdbcInsert에서 필요
+    PASSWORD   VARCHAR(255),
     NICKNAME   VARCHAR(50)         NOT NULL,
-    STATUS     INT DEFAULT 1,                   -- User 도메인 클래스에 있음
+    STATUS     INT      DEFAULT 1,
     CREATED_AT DATETIME DEFAULT CURRENT_TIMESTAMP,
     UPDATED_AT DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX IDX_USERS_EMAIL (EMAIL)
@@ -18,10 +12,10 @@ CREATE TABLE IF NOT EXISTS USERS
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
 
--- 테스트 데이터 (UserDaoTest에서 초기 4명, saveUser()로 1명 추가해서 총 5명)
-INSERT INTO USERS (ID, EMAIL, PASSWORD, NICKNAME, STATUS)
-VALUES (1, 'genius@primavera.com', 'password', 'Genius', 1),      -- PrimaveraServiceTest에서 필요
-       (2, 'admin@primavera.com', 'password', 'Administrator', 1),
-       (3, 'user@primavera.com', 'password', 'User', 1),
-       (4, 'test@primavera.com', 'password', 'TestUser', 1)
+INSERT INTO USERS (ID, EMAIL, PASSWORD, NICKNAME, STATUS, CREATED_AT, UPDATED_AT)
+VALUES (1, 'admin@primavera.com', '{bcrypt}$2a$10$7UEHLpn1r4gZY2qxiZFJ5.7wa3Hdz8IXgxUtFogy0Ac10fh7TG4V.', 'Admin', 1, NOW(), NOW()),
+       (2, 'manager@primavera.com', '{bcrypt}$2a$10$7UEHLpn1r4gZY2qxiZFJ5.7wa3Hdz8IXgxUtFogy0Ac10fh7TG4V.', 'Manager', 1, NOW(), NOW()),
+       (3, 'tester@primavera.com', '{bcrypt}$2a$10$7UEHLpn1r4gZY2qxiZFJ5.7wa3Hdz8IXgxUtFogy0Ac10fh7TG4V.', 'Tester', 1, NOW(), NOW()),
+       (4, 'user@primavera.com', '{bcrypt}$2a$10$7UEHLpn1r4gZY2qxiZFJ5.7wa3Hdz8IXgxUtFogy0Ac10fh7TG4V.', 'User', 1, NOW(), NOW()),
+       (5, 'genius@primavera.com', '{bcrypt}$2a$10$7UEHLpn1r4gZY2qxiZFJ5.7wa3Hdz8IXgxUtFogy0Ac10fh7TG4V.', 'Genius', 1, NOW(), NOW())
 ON DUPLICATE KEY UPDATE EMAIL = VALUES(EMAIL);

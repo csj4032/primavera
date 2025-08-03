@@ -2,6 +2,7 @@ package com.genius.primavera.testContainer;
 
 import com.genius.primavera.testContainer.strategy.ContainerStrategy;
 import com.genius.primavera.testContainer.strategy.ContainerStrategyFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -12,23 +13,15 @@ import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Slf4j
 public class PrimaveraTestcontainersInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
 
     @Override
     public void initialize(ConfigurableApplicationContext applicationContext) {
-        System.out.println("🚀 PrimaveraTestcontainersInitializer.initialize() called");
         ConfigurableEnvironment environment = applicationContext.getEnvironment();
-        PrimaveraTestcontainersProperties properties = Binder.get(environment)
-                .bind("primavera.testcontainers", PrimaveraTestcontainersProperties.class)
-                .orElse(new PrimaveraTestcontainersProperties());
-        System.out.println("📋 Properties loaded. Lifecycle mode: " + properties.getLifecycleMode());
-        
+        PrimaveraTestcontainersProperties properties = Binder.get(environment).bind("primavera.testcontainers", PrimaveraTestcontainersProperties.class).orElse(new PrimaveraTestcontainersProperties());
         String testClassName = getTestClassName();
-        System.out.println("🔍 Detected test class: " + testClassName);
         Set<ContainerType> enabledContainerTypes = getEnabledContainerTypes(testClassName);
-        System.out.println("📦 Enabled container types: " + enabledContainerTypes);
-        
-        // 어노테이션에서 지정된 컨테이너 타입들만 처리
         enabledContainerTypes.forEach(containerType -> {
             PrimaveraTestcontainersProperties.ContainerConfig config = getContainerConfig(properties, containerType);
             if (config != null) {
@@ -37,29 +30,40 @@ public class PrimaveraTestcontainersInitializer implements ApplicationContextIni
         });
     }
 
-    /**
-     * 테스트 클래스의 EnablePrimaveraTestcontainers 어노테이션에서 지정된 컨테이너 타입들을 반환
-     */
     private Set<ContainerType> getEnabledContainerTypes(String testClassName) {
+        TestContextHolder.TestContext context = TestContextHolder.getContext();
+        log.info("Retrieving enabled container types for test class: {}", context.getContainerTypes());
+        if (context.getContainerTypes() != null) {
+            log.info("Found container types from ThreadLocal context: {}", context.getContainerTypes());
+            return context.getContainerTypes();
+        }
+
+        String containerTypesProperty = System.getProperty("primavera.testcontainers.container-types");
+        log.info("Retrieving container types from system property: primavera.testcontainers.container-types");
+        if (containerTypesProperty != null && !containerTypesProperty.isEmpty()) {
+            log.info("Found container types from system property: {}", containerTypesProperty);
+            return Arrays.stream(containerTypesProperty.split(","))
+                    .map(String::trim)
+                    .map(ContainerType::valueOf)
+                    .collect(Collectors.toSet());
+        }
+
         try {
             Class<?> testClass = Class.forName(testClassName);
             EnablePrimaveraTestcontainers annotation = testClass.getAnnotation(EnablePrimaveraTestcontainers.class);
             if (annotation != null) {
+                log.info("Found annotation on test class: {}", testClassName);
                 return Arrays.stream(annotation.containers()).collect(Collectors.toSet());
             }
         } catch (ClassNotFoundException | SecurityException e) {
-            System.out.println("Warning: Could not load test class or find annotation: " + testClassName);
+            log.warn("Failed to load test class: {} - {}", testClassName, e.getMessage());
         }
-        
-        // 기본값으로 MARIADB 반환
+
+        log.info("No container configuration found, using default MARIADB");
         return Set.of(ContainerType.MARIADB);
     }
 
-    /**
-     * ContainerType에 해당하는 설정을 반환 (application.yml 설정 우선, 없으면 기본값)
-     */
-    private PrimaveraTestcontainersProperties.ContainerConfig getContainerConfig(
-            PrimaveraTestcontainersProperties properties, ContainerType containerType) {
+    private PrimaveraTestcontainersProperties.ContainerConfig getContainerConfig(PrimaveraTestcontainersProperties properties, ContainerType containerType) {
         return switch (containerType) {
             case MARIADB -> properties.getMariadb();
             case MYSQL -> properties.getMysql();
@@ -67,10 +71,15 @@ public class PrimaveraTestcontainersInitializer implements ApplicationContextIni
             case REDIS -> properties.getRedis();
             case KAFKA -> properties.getKafka();
             case ELASTICSEARCH -> properties.getElasticsearch();
+            case MONGODB -> properties.getMongodb();
         };
     }
 
     private String getTestClassName() {
+        TestContextHolder.TestContext context = TestContextHolder.getContext();
+        if (context != null && context.getTestClassName() != null) return context.getTestClassName();
+        String testClassName = System.getProperty("primavera.testcontainers.test-class");
+        if (testClassName != null && !testClassName.isEmpty()) return testClassName;
         StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
         for (StackTraceElement element : stackTrace) {
             String className = element.getClassName();
@@ -81,29 +90,20 @@ public class PrimaveraTestcontainersInitializer implements ApplicationContextIni
         return "UnknownTestClass";
     }
 
-    private void initializeContainer(ConfigurableApplicationContext applicationContext, 
-                                   ContainerType containerType, 
-                                   PrimaveraTestcontainersProperties.ContainerConfig config, 
-                                   ContainerLifecycleMode lifecycleMode, 
-                                   String testClassName) {
+    private void initializeContainer(ConfigurableApplicationContext applicationContext, ContainerType containerType, PrimaveraTestcontainersProperties.ContainerConfig config, ContainerLifecycleMode lifecycleMode, String testClassName) {
         ContainerStrategy strategy = ContainerStrategyFactory.getStrategy(containerType);
-        if (strategy == null) {
-            throw new IllegalArgumentException("Unsupported container type: " + containerType);
-        }
-        
-        String containerKey = containerType.name().toLowerCase();
-        if (!ContainerManager.containsContainer(containerKey, lifecycleMode, testClassName)) {
+        if (!ContainerManager.containsContainer(containerType, lifecycleMode, testClassName)) {
             try {
                 GenericContainer<?> container = strategy.createContainer(config);
                 container.start();
-                ContainerManager.putContainer(containerKey, container, lifecycleMode, testClassName);
+                ContainerManager.putContainer(containerType, container, lifecycleMode, testClassName);
                 strategy.configureApplicationContext(applicationContext, container);
                 System.out.println("✅ Container started: " + containerType + " for " + testClassName);
             } catch (Exception e) {
                 throw new RuntimeException("Failed to initialize container: " + containerType, e);
             }
         } else {
-            GenericContainer<?> existingContainer = ContainerManager.getContainer(containerKey, lifecycleMode, testClassName);
+            GenericContainer<?> existingContainer = ContainerManager.getContainer(containerType, lifecycleMode, testClassName);
             strategy.configureApplicationContext(applicationContext, existingContainer);
             System.out.println("♻️ Reusing existing container: " + containerType + " for " + testClassName);
         }

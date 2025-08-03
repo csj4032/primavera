@@ -10,6 +10,8 @@ dependencies {
     validationDependencies.each { dep -> implementation dep }
     developmentDependencies.each { dep -> implementation dep }
     thymeleafDependencies.each { dep -> implementation dep }
+    implementation "org.springframework.cloud:spring-cloud-starter-config"
+    implementation "org.springframework.cloud:spring-cloud-starter-vault-config:${springCloudVaultVersion}"
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-json'
     implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
@@ -27,4 +29,6 @@ dependencies {
     testImplementation 'org.springframework.security:spring-security-test'
     testImplementation "io.rest-assured:rest-assured:5.5.0"
     implementation project(":appendix:spring-boot-starter-lucy-filter")
+    testImplementation project(":appendix:spring-boot-starter-lucy-filter")
+    testImplementation project(":appendix:spring-boot-starter-test-container")
 }

@@ -10,9 +10,9 @@ CREATE TABLE IF NOT EXISTS USERS
     EMAIL      VARCHAR(100) UNIQUE NOT NULL,
     PASSWORD   VARCHAR(255)        NOT NULL,
     NICKNAME   VARCHAR(50)         NOT NULL,
-    STATUS     INT DEFAULT 1,
-    CREATED_AT DATETIME    DEFAULT CURRENT_TIMESTAMP,
-    UPDATED_AT DATETIME    DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    STATUS     INT      DEFAULT 1,
+    CREATED_AT DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UPDATED_AT DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX IDX_EMAIL (EMAIL),
     INDEX IDX_STATUS (STATUS)
 ) ENGINE = InnoDB
@@ -45,9 +45,9 @@ CREATE TABLE IF NOT EXISTS USER_ROLES
 CREATE TABLE IF NOT EXISTS USER_CONNECTION
 (
     ID           BIGINT AUTO_INCREMENT PRIMARY KEY,
-    EMAIL        VARCHAR(100)  NOT NULL,
-    PROVIDER     INT           NOT NULL,
-    PROVIDER_ID  VARCHAR(100)  NOT NULL,
+    EMAIL        VARCHAR(100) NOT NULL,
+    PROVIDER     INT          NOT NULL,
+    PROVIDER_ID  VARCHAR(100) NOT NULL,
     DISPLAY_NAME VARCHAR(100),
     PROFILE_URL  VARCHAR(500),
     IMAGE_URL    VARCHAR(500),
@@ -92,8 +92,8 @@ CREATE TABLE IF NOT EXISTS ARTICLES
 CREATE TABLE IF NOT EXISTS ARTICLE_CONTENT
 (
     ID         BIGINT AUTO_INCREMENT PRIMARY KEY,
-    ARTICLE_ID BIGINT    NOT NULL,
-    CONTENTS   LONGTEXT  NOT NULL,
+    ARTICLE_ID BIGINT   NOT NULL,
+    CONTENTS   LONGTEXT NOT NULL,
     CREATED_AT DATETIME DEFAULT CURRENT_TIMESTAMP,
     UPDATED_AT DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (ARTICLE_ID) REFERENCES ARTICLES (ID) ON DELETE CASCADE,
@@ -106,14 +106,14 @@ CREATE TABLE IF NOT EXISTS ARTICLE_CONTENT
 CREATE TABLE IF NOT EXISTS ARTICLE_COMMENT
 (
     ID         BIGINT AUTO_INCREMENT PRIMARY KEY,
-    ARTICLE_ID BIGINT   NOT NULL,
-    LEVEL      INT      NOT NULL DEFAULT 1,
-    STEP       INT      NOT NULL DEFAULT 1,
-    COMMENT    TEXT     NOT NULL,
-    AUTHOR     BIGINT   NOT NULL,
-    STATUS     INT      NOT NULL DEFAULT 1,
-    CREATED_AT DATETIME          DEFAULT CURRENT_TIMESTAMP,
-    UPDATED_AT DATETIME          DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    ARTICLE_ID BIGINT NOT NULL,
+    LEVEL      INT    NOT NULL DEFAULT 1,
+    STEP       INT    NOT NULL DEFAULT 1,
+    COMMENT    TEXT   NOT NULL,
+    AUTHOR     BIGINT NOT NULL,
+    STATUS     INT    NOT NULL DEFAULT 1,
+    CREATED_AT DATETIME        DEFAULT CURRENT_TIMESTAMP,
+    UPDATED_AT DATETIME        DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (ARTICLE_ID) REFERENCES ARTICLES (ID) ON DELETE CASCADE,
     FOREIGN KEY (AUTHOR) REFERENCES USERS (ID),
     INDEX IDX_ARTICLE_COMMENT_ARTICLE_ID (ARTICLE_ID),
@@ -125,27 +125,32 @@ CREATE TABLE IF NOT EXISTS ARTICLE_COMMENT
 
 -- 기본 권한 데이터 (RoleType enum: 1=ADMINISTRATOR, 2=MANAGER, 3=USER)
 INSERT INTO ROLES (ID, TYPE)
-VALUES (1, 1),  -- ADMINISTRATOR
-       (2, 2),  -- MANAGER  
-       (3, 3)   -- USER
+VALUES (1, 1), -- ADMINISTRATOR
+       (2, 2), -- MANAGER
+       (3, 3)  -- USER
 ON DUPLICATE KEY UPDATE TYPE = VALUES(TYPE);
 
 -- 기본 사용자 데이터 (테스트에서 사용하는 사용자 포함)
 INSERT INTO USERS (ID, EMAIL, PASSWORD, NICKNAME, STATUS, CREATED_AT, UPDATED_AT)
 VALUES (1, 'admin@primavera.com', '{bcrypt}$2a$10$7UEHLpn1r4gZY2qxiZFJ5.7wa3Hdz8IXgxUtFogy0Ac10fh7TG4V.', 'Administrator', 1, NOW(), NOW()),
        (2, 'manager@primavera.com', '{bcrypt}$2a$10$7UEHLpn1r4gZY2qxiZFJ5.7wa3Hdz8IXgxUtFogy0Ac10fh7TG4V.', 'Manager', 1, NOW(), NOW()),
-       (3, 'user@primavera.com', '{bcrypt}$2a$10$7UEHLpn1r4gZY2qxiZFJ5.7wa3Hdz8IXgxUtFogy0Ac10fh7TG4V.', 'User', 1, NOW(), NOW()),
-       (4, 'genius@primavera.com', '{bcrypt}$2a$10$7UEHLpn1r4gZY2qxiZFJ5.7wa3Hdz8IXgxUtFogy0Ac10fh7TG4V.', 'Genius', 1, NOW(), NOW()),
-       (5, 'Genius Choi', '{bcrypt}$2a$10$7UEHLpn1r4gZY2qxiZFJ5.7wa3Hdz8IXgxUtFogy0Ac10fh7TG4V.', 'Genius', 1, NOW(), NOW())
+       (3, 'tester@primavera.com', '{bcrypt}$2a$10$7UEHLpn1r4gZY2qxiZFJ5.7wa3Hdz8IXgxUtFogy0Ac10fh7TG4V.', 'Tester', 1, NOW(), NOW()),
+       (4, 'user@primavera.com', '{bcrypt}$2a$10$7UEHLpn1r4gZY2qxiZFJ5.7wa3Hdz8IXgxUtFogy0Ac10fh7TG4V.', 'User', 1, NOW(), NOW()),
+       (5, 'genius@primavera.com', '{bcrypt}$2a$10$7UEHLpn1r4gZY2qxiZFJ5.7wa3Hdz8IXgxUtFogy0Ac10fh7TG4V.', 'Genius', 1, NOW(), NOW())
 ON DUPLICATE KEY UPDATE EMAIL = VALUES(EMAIL);
 
 -- 사용자-권한 매핑
 INSERT INTO USER_ROLES (USER_ID, ROLE_ID)
-VALUES (1, 1), (1, 2), (1, 3), -- admin has all roles
-       (2, 2), (2, 3),          -- manager has manager and user roles
-       (3, 3),                  -- user has user role
-       (4, 1), (4, 2), (4, 3),  -- genius has all roles
-       (5, 3)                   -- Genius Choi has user role (for test)
+VALUES (1, 1),
+       (1, 2),
+       (1, 3), -- admin has all roles
+       (2, 2),
+       (2, 3), -- manager has manager and user roles
+       (3, 3), -- user has user role
+       (4, 1),
+       (4, 2),
+       (4, 3), -- genius has all roles
+       (5, 3)  -- Genius Choi has user role (for test)
 ON DUPLICATE KEY UPDATE USER_ID = VALUES(USER_ID);
 
 -- 소셜 로그인 연결 데이터 (댓글 매퍼에서 사용)

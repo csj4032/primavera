@@ -53,13 +53,13 @@
 										<tbody>
 										<tr th:each="article : ${page.getContents()}">
 											<td th:text="${article.id}">1</td>
-											<td th:style="${'padding-left:' + (article.level*10) + 'px'}"><a th:href="${'/articles/' + article.id}" th:text="${T(org.springframework.web.util.HtmlUtils).htmlUnescape(article.subject)}"></a></td>
+											<td th:style="${'padding-left:' + (article.level*10) + 'px'}"><a th:href="${'/articles/' + article.id}" th:text="${article.subject}"></a></td>
 											<td th:text="${article.authorName}">Genius</td>
 											<td th:text="${article.hit}">0</td>
 											<td th:text="${article.recommend}">0</td>
 											<td th:text="${article.disapprove}">0</td>
-											<td th:text="${#temporals.format(article.regDt, 'yyyy-MM-dd HH:mm:ss')}">2019-05-20</td>
-											<td th:text="${article.modDt}">2019-05-20</td>
+											<td th:text="${#temporals.format(article.createdAt, 'yyyy-MM-dd HH:mm:ss')}">2019-05-20</td>
+											<td th:text="${#temporals.format(article.updatedAt, 'yyyy-MM-dd HH:mm:ss')}">2019-05-20</td>
 										</tr>
 										<tbody>
 										</tbody>

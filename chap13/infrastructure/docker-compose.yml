@@ -1,7 +1,6 @@
 version: '3.8'
 
 services:
-  # MariaDB for AdvancedAuthorizationApplication (chap13)
   mariadb-chap13:
     image: mariadb:11.4.7
     container_name: mariadb-primavera-chap13
@@ -18,7 +17,7 @@ services:
       - mariadb-chap13-data:/var/lib/mysql
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     healthcheck:
-      test: ["CMD", "mariadb", "-uprimavera", "-pprimavera", "-e", "SELECT 1"]
+      test: [ "CMD", "mariadb", "-uprimavera", "-pprimavera", "-e", "SELECT 1" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -26,23 +25,22 @@ services:
     networks:
       - chap13-network
 
-  # MongoDB for AdvancedAuthorizationApplication (chap13)
   mongodb-chap13:
     image: mongo:7.0
     container_name: mongodb-primavera-chap13
     restart: unless-stopped
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: root
+      MONGO_INITDB_ROOT_USERNAME: primavera
+      MONGO_INITDB_ROOT_PASSWORD: primavera
       MONGO_INITDB_DATABASE: primavera
-      TZ: Asia/Seoul
+      TZ: UTC
     ports:
       - "27017:27017"
     volumes:
       - mongodb-chap13-data:/data/db
       - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
     healthcheck:
-      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      test: [ "CMD", "mongosh", "--eval", "db.adminCommand('ping')" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -50,7 +48,6 @@ services:
     networks:
       - chap13-network
 
-  # Vault for Configuration Management
   vault-chap13:
     image: hashicorp/vault:1.15
     container_name: vault-primavera-chap13
@@ -62,7 +59,7 @@ services:
       VAULT_DEV_LISTEN_ADDRESS: '0.0.0.0:8200'
       VAULT_LOG_LEVEL: 'info'
     ports:
-      - "8209:8200"
+      - "8200:8200"
     volumes:
       - vault-chap13-data:/vault/data
       - ./vault-init.sh:/vault-init.sh:ro
@@ -84,7 +81,7 @@ services:
                spring.data.mongodb.authentication-database=admin &&
              tail -f /dev/null"
     healthcheck:
-      test: ["CMD", "vault", "status"]
+      test: [ "CMD", "vault", "status" ]
       interval: 10s
       timeout: 5s
       retries: 5

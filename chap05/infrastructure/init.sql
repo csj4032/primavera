@@ -1,9 +1,3 @@
--- ==============================================
--- Chapter 05 - MyBatis Application
--- Database: primavera
--- ==============================================
-
--- 사용자 테이블 (MyBatis 매핑 예제용)
 CREATE TABLE IF NOT EXISTS USERS
 (
     ID         BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -19,7 +13,6 @@ CREATE TABLE IF NOT EXISTS USERS
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
 
--- 권한 테이블 (TYPE 컬럼만 사용)
 CREATE TABLE IF NOT EXISTS ROLES
 (
     ID   BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -29,7 +22,6 @@ CREATE TABLE IF NOT EXISTS ROLES
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
 
--- 사용자-권한 연결 테이블
 CREATE TABLE IF NOT EXISTS USER_ROLES
 (
     ID      BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -42,7 +34,6 @@ CREATE TABLE IF NOT EXISTS USER_ROLES
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
 
--- 우승자 테이블 (벌크 인서트 테스트용)
 CREATE TABLE IF NOT EXISTS WINNERS
 (
     ID     BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -57,7 +48,6 @@ CREATE TABLE IF NOT EXISTS WINNERS
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
 
--- 테스트 데이터: 권한 (RoleType enum 값에 따라)
 INSERT INTO ROLES (ID, TYPE)
 VALUES (1, 1), -- ADMINISTRATOR
        (2, 2), -- MANAGER  

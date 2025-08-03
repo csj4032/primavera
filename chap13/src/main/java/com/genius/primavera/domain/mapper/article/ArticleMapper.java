@@ -4,7 +4,6 @@ import com.genius.primavera.domain.PageRequest;
 import com.genius.primavera.domain.model.article.Article;
 import com.genius.primavera.domain.model.article.Attachment;
 import com.genius.primavera.domain.model.article.Comment;
-import com.genius.primavera.domain.model.typehandler.ArticleStatusTypeHandler;
 
 import org.apache.ibatis.annotations.InsertProvider;
 import org.apache.ibatis.annotations.Many;
@@ -28,8 +27,8 @@ import java.util.List;
 @Repository
 public interface ArticleMapper {
 
-    String SELECT_WITH_USER_SQL = "SELECT A.ID, A.P_ID, A.REFERENCE, A.STEP, A.LEVEL, A.AUTHOR, B.EMAIL, B.NICKNAME, A.SUBJECT, A.STATUS, A.HIT, A.RECOMMEND, A.DISAPPROVE, A.CREATED_AT, A.UPDATED_AT FROM ARTICLE A INNER JOIN USER B ON A.AUTHOR = B.ID ";
-    String SELECT_WITH_USER_CONTENTS_SQL = "SELECT A.ID, A.P_ID, A.REFERENCE, A.STEP, A.LEVEL, A.AUTHOR, B.EMAIL, B.NICKNAME, A.SUBJECT, A.STATUS, A.HIT, A.RECOMMEND, A.DISAPPROVE, C.ID AS CONTENTS_ID, C.CONTENTS, A.CREATED_AT, A.UPDATED_AT FROM ARTICLE A INNER JOIN USER B ON A.AUTHOR = B.ID INNER JOIN ARTICLE_CONTENT C ON A.ID = C.ARTICLE_ID ";
+    String SELECT_WITH_USER_SQL = "SELECT A.ID, A.P_ID, A.REFERENCE, A.STEP, A.LEVEL, A.AUTHOR, B.EMAIL, B.NICKNAME, A.SUBJECT, A.STATUS, A.HIT, A.RECOMMEND, A.DISAPPROVE, A.CREATED_AT, A.UPDATED_AT FROM ARTICLE A INNER JOIN USERS B ON A.AUTHOR = B.ID ";
+    String SELECT_WITH_USER_CONTENTS_SQL = "SELECT A.ID, A.P_ID, A.REFERENCE, A.STEP, A.LEVEL, A.AUTHOR, B.EMAIL, B.NICKNAME, A.SUBJECT, A.STATUS, A.HIT, A.RECOMMEND, A.DISAPPROVE, C.ID AS CONTENTS_ID, C.CONTENTS, A.CREATED_AT, A.UPDATED_AT FROM ARTICLE A INNER JOIN USERS B ON A.AUTHOR = B.ID INNER JOIN ARTICLE_CONTENT C ON A.ID = C.ARTICLE_ID ";
 
     @InsertProvider(type = ArticleProvider.class, method = "save")
     @Options(useGeneratedKeys = true, keyColumn = "ID", keyProperty = "id", useCache=false)
@@ -48,7 +47,7 @@ public interface ArticleMapper {
                     @Result(property = "author.email", column = "EMAIL"),
                     @Result(property = "author.nickname", column = "NICKNAME"),
                     @Result(property = "subject", column = "SUBJECT"),
-                    @Result(property = "status", typeHandler = ArticleStatusTypeHandler.class, column = "STATUS"),
+                    @Result(property = "status", typeHandler = com.genius.primavera.domain.typehandler.ArticleStatusTypeHandler.class, column = "STATUS"),
                     @Result(property = "createdAt", column = "CREATED_AT"),
                     @Result(property = "updatedAt", column = "UPDATED_AT")
 
@@ -67,7 +66,7 @@ public interface ArticleMapper {
                     @Result(property = "author.email", column = "EMAIL"),
                     @Result(property = "author.nickname", column = "NICKNAME"),
                     @Result(property = "subject", column = "SUBJECT"),
-                    @Result(property = "status", typeHandler = ArticleStatusTypeHandler.class, column = "STATUS"),
+                    @Result(property = "status", typeHandler = com.genius.primavera.domain.typehandler.ArticleStatusTypeHandler.class, column = "STATUS"),
                     @Result(property = "createdAt", column = "CREATED_AT"),
                     @Result(property = "updatedAt", column = "UPDATED_AT")
             })
@@ -85,7 +84,7 @@ public interface ArticleMapper {
             @Result(property = "author.email", column = "EMAIL"),
             @Result(property = "author.nickname", column = "NICKNAME"),
             @Result(property = "subject", column = "SUBJECT"),
-            @Result(property = "status", typeHandler = ArticleStatusTypeHandler.class, column = "STATUS"),
+            @Result(property = "status", typeHandler = com.genius.primavera.domain.typehandler.ArticleStatusTypeHandler.class, column = "STATUS"),
             @Result(property = "createdAt", column = "CREATED_AT"),
             @Result(property = "updatedAt", column = "UPDATED_AT")
     })
@@ -108,7 +107,7 @@ public interface ArticleMapper {
             @Result(property = "author.email", column = "EMAIL"),
             @Result(property = "author.nickname", column = "NICKNAME"),
             @Result(property = "subject", column = "SUBJECT"),
-            @Result(property = "status", typeHandler = ArticleStatusTypeHandler.class, column = "STATUS"),
+            @Result(property = "status", typeHandler = com.genius.primavera.domain.typehandler.ArticleStatusTypeHandler.class, column = "STATUS"),
             @Result(property = "hit", column = "HIT"),
             @Result(property = "recommend", column = "RECOMMEND"),
             @Result(property = "disapprove", column = "DISAPPROVE"),
@@ -130,7 +129,7 @@ public interface ArticleMapper {
                     @Result(property = "author.email", column = "EMAIL"),
                     @Result(property = "author.nickname", column = "NICKNAME"),
                     @Result(property = "subject", column = "SUBJECT"),
-                    @Result(property = "status", typeHandler = ArticleStatusTypeHandler.class, column = "STATUS"),
+                    @Result(property = "status", typeHandler = com.genius.primavera.domain.typehandler.ArticleStatusTypeHandler.class, column = "STATUS"),
                     @Result(property = "hit", column = "HIT"),
                     @Result(property = "recommend", column = "RECOMMEND"),
                     @Result(property = "disapprove", column = "DISAPPROVE"),
@@ -153,7 +152,7 @@ public interface ArticleMapper {
                     @Result(property = "author.email", column = "EMAIL"),
                     @Result(property = "author.nickname", column = "NICKNAME"),
                     @Result(property = "subject", column = "SUBJECT"),
-                    @Result(property = "status", typeHandler = ArticleStatusTypeHandler.class, column = "STATUS"),
+                    @Result(property = "status", typeHandler = com.genius.primavera.domain.typehandler.ArticleStatusTypeHandler.class, column = "STATUS"),
                     @Result(property = "hit", column = "HIT"),
                     @Result(property = "recommend", column = "RECOMMEND"),
                     @Result(property = "disapprove", column = "DISAPPROVE"),
@@ -167,7 +166,7 @@ public interface ArticleMapper {
     @Select(value = SELECT_WITH_USER_CONTENTS_SQL + " WHERE A.ID = #{id}")
     Article findByIdWithContentAndComment(long id);
 
-    @Update("UPDATE ARTICLE SET SUBJECT = #{subject}, STATUS = #{status, typeHandler=ArticleStatusTypeHandler}, UPDATED_AT = #{updatedAt} WHERE ID = #{id} ")
+    @Update("UPDATE ARTICLE SET SUBJECT = #{subject}, STATUS = #{status, typeHandler=com.genius.primavera.domain.typehandler.ArticleStatusTypeHandler}, UPDATED_AT = #{updatedAt} WHERE ID = #{id} ")
     int update(Article article);
 
     @Update("UPDATE ARTICLE SET HIT = HIT + 1 WHERE ID = #{id} ")
@@ -175,13 +174,13 @@ public interface ArticleMapper {
 
     class ArticleProvider {
         public String save(Article article) {
-            String sql = "INSERT INTO ARTICLE (P_ID, REFERENCE, STEP, LEVEL, SUBJECT, AUTHOR, STATUS, CREATED_AT) VALUES (#{pId}, ";
+            String sql = "INSERT INTO ARTICLE (P_ID, REFERENCE, STEP, LEVEL, SUBJECT, AUTHOR, STATUS, CREATED_AT) VALUES (";
             if (article.getPId() == 0l) {
-                sql += "LAST_INSERT_ID() + 1";
+                sql += "NULL, LAST_INSERT_ID() + 1";
             } else {
-                sql += "#{reference}";
+                sql += "#{pId}, #{reference}";
             }
-            sql += ", #{step}, #{level}, #{subject}, #{author.id}, #{status, typeHandler=ArticleStatusTypeHandler}, #{createdAt})";
+            sql += ", #{step}, #{level}, #{subject}, #{author.id}, #{status, typeHandler=com.genius.primavera.domain.typehandler.ArticleStatusTypeHandler}, #{createdAt})";
             return sql;
         }
     }

@@ -1,5 +1,7 @@
 package com.genius.primavera.application.storage;
 
+import com.genius.primavera.testContainer.ContainerType;
+import com.genius.primavera.testContainer.EnablePrimaveraTestcontainers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
@@ -10,6 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.File;
@@ -17,7 +20,8 @@ import java.nio.file.Path;
 import java.util.stream.Stream;
 
 @SpringBootTest
-@ExtendWith(SpringExtension.class)
+@ActiveProfiles("test")
+@EnablePrimaveraTestcontainers(containers = {ContainerType.MARIADB, ContainerType.MONGODB})
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class FileSystemStorageServiceTest {
 

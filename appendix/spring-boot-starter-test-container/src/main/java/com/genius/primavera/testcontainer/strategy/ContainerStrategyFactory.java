@@ -12,6 +12,7 @@ public class ContainerStrategyFactory {
             case REDIS -> new RedisContainerStrategy();
             case KAFKA -> new KafkaContainerStrategy();
             case ELASTICSEARCH -> new ElasticsearchContainerStrategy();
+            case MONGODB -> new MongoDBStrategy();
         };
     }
 }

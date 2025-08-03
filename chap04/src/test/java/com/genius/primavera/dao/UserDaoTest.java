@@ -41,7 +41,7 @@ public class UserDaoTest {
     public void getAllUser() {
         List<User> users = userDao.getUsers();
         log.info("조회된 사용자 수: {}", users.size());
-        assertEquals(5, users.size());
+        assertEquals(6, users.size());
     }
 
     @Test
@@ -60,6 +60,6 @@ public class UserDaoTest {
     public void deleteAll() {
         int deletedCount = userDao.deleteAll();
         log.info("삭제된 사용자 수: {}", deletedCount);
-        assertEquals(deletedCount, 5, "모든 사용자가 삭제되지 않았습니다.");
+        assertEquals(deletedCount, 6, "모든 사용자가 삭제되지 않았습니다.");
     }
 }

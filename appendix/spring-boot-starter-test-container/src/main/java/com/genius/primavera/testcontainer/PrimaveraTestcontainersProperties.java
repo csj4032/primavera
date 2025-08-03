@@ -19,6 +19,7 @@ public class PrimaveraTestcontainersProperties {
     private RedisConfig redis = new RedisConfig();
     private KafkaConfig kafka = new KafkaConfig();
     private ElasticsearchConfig elasticsearch = new ElasticsearchConfig();
+    private MongoDBConfig mongodb = new MongoDBConfig();
 
     public Map<String, ContainerConfig> getContainers() {
         Map<String, ContainerConfig> containers = new HashMap<>();
@@ -28,6 +29,7 @@ public class PrimaveraTestcontainersProperties {
         containers.put("redis", redis);
         containers.put("kafka", kafka);
         containers.put("elasticsearch", elasticsearch);
+        containers.put("mongodb", mongodb);
         return containers;
     }
 
@@ -114,6 +116,21 @@ public class PrimaveraTestcontainersProperties {
 
         public ElasticsearchConfig() {
             setDockerImageName("elasticsearch:8.5.0");
+        }
+    }
+
+    @Data
+    @EqualsAndHashCode(callSuper = true)
+    public static class MongoDBConfig extends ContainerConfig {
+        private String host = "localhost";
+        private int port = 27017;
+        private String username = "primavera";
+        private String password = "primavera";
+        private String database = "primavera";
+        private String authenticationDatabase = "admin";
+
+        public MongoDBConfig() {
+            setDockerImageName("mongo:6.0");
         }
     }
 }

@@ -4,28 +4,16 @@
 -- Focus: Hierarchical comments, advanced security, board management
 -- ==============================================
 
--- 사용자 테이블 (고급 보안 기능 포함)
+-- 사용자 테이블 (User 클래스 기준으로 정리)
 CREATE TABLE IF NOT EXISTS USERS
 (
-    ID                    BIGINT AUTO_INCREMENT PRIMARY KEY,
-    EMAIL                 VARCHAR(100) UNIQUE NOT NULL,
-    PASSWORD              VARCHAR(255),
-    NICKNAME              VARCHAR(50)         NOT NULL,
-    FIRST_NAME            VARCHAR(50),
-    LAST_NAME             VARCHAR(50),
-    PHONE                 VARCHAR(20),
-    PROFILE_IMAGE         VARCHAR(500),
-    PROVIDER              VARCHAR(20) DEFAULT 'LOCAL',
-    PROVIDER_ID           VARCHAR(100),
-    EMAIL_VERIFIED        BOOLEAN     DEFAULT FALSE,
-    PHONE_VERIFIED        BOOLEAN     DEFAULT FALSE,
-    TWO_FACTOR_ENABLED    BOOLEAN     DEFAULT FALSE,
-    FAILED_LOGIN_ATTEMPTS INT         DEFAULT 0,
-    ACCOUNT_LOCKED_UNTIL  DATETIME,
-    STATUS                INT DEFAULT 1,
-    LAST_LOGIN_AT         DATETIME,
-    CREATED_AT            DATETIME    DEFAULT CURRENT_TIMESTAMP,
-    UPDATED_AT            DATETIME    DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    ID         BIGINT AUTO_INCREMENT PRIMARY KEY,
+    EMAIL      VARCHAR(100) UNIQUE NOT NULL,
+    PASSWORD   VARCHAR(255),
+    NICKNAME   VARCHAR(50)         NOT NULL,
+    STATUS     INT                 DEFAULT 1,    -- UserStatus enum: 1=ON, 2=BLOCK, 3=DORMANT, 4=LEAVE
+    CREATED_AT DATETIME            DEFAULT CURRENT_TIMESTAMP,
+    UPDATED_AT DATETIME            DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     
     INDEX IDX_USERS_EMAIL (EMAIL),
     INDEX IDX_USERS_NICKNAME (NICKNAME),
@@ -34,18 +22,30 @@ CREATE TABLE IF NOT EXISTS USERS
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
 
--- 역할 테이블 (계층형)
+-- 역할 테이블 (Role 클래스 기준으로 정리)
 CREATE TABLE IF NOT EXISTS ROLES
 (
-    ID          BIGINT AUTO_INCREMENT PRIMARY KEY,
-    ROLE_NAME   VARCHAR(50) UNIQUE NOT NULL,
-    DESCRIPTION VARCHAR(200),
-    LEVEL       INT DEFAULT 0,
-    IS_SYSTEM   BOOLEAN DEFAULT FALSE,
-    PARENT_ID   BIGINT,
-    CREATED_AT  DATETIME DEFAULT CURRENT_TIMESTAMP,
+    ID   BIGINT AUTO_INCREMENT PRIMARY KEY,
+    TYPE INT NOT NULL    -- RoleType enum: 1=ADMINISTRATOR, 2=MANAGER, 3=USER
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_unicode_ci;
 
-    FOREIGN KEY (PARENT_ID) REFERENCES ROLES (ID)
+-- 사용자 소셜 연결 테이블 (UserConnection 클래스 기준)
+CREATE TABLE IF NOT EXISTS USER_CONNECTION
+(
+    ID           BIGINT AUTO_INCREMENT PRIMARY KEY,
+    EMAIL        VARCHAR(100) NOT NULL,
+    PROVIDER     INT          NOT NULL,  -- ProviderType enum
+    PROVIDER_ID  VARCHAR(255) NOT NULL,
+    DISPLAY_NAME VARCHAR(100),
+    PROFILE_URL  VARCHAR(500),
+    IMAGE_URL    VARCHAR(500),
+    ACCESS_TOKEN VARCHAR(1000),
+    EXPIRE_TIME  BIGINT,
+    
+    FOREIGN KEY (EMAIL) REFERENCES USERS (EMAIL) ON DELETE CASCADE,
+    UNIQUE KEY UK_PROVIDER_USER (EMAIL, PROVIDER)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
@@ -53,11 +53,9 @@ CREATE TABLE IF NOT EXISTS ROLES
 -- 사용자 역할 매핑 테이블
 CREATE TABLE IF NOT EXISTS USER_ROLES
 (
-    ID         BIGINT AUTO_INCREMENT PRIMARY KEY,
-    USER_ID    BIGINT   NOT NULL,
-    ROLE_ID    BIGINT   NOT NULL,
-    GRANTED_AT DATETIME DEFAULT CURRENT_TIMESTAMP,
-    IS_ACTIVE  BOOLEAN  DEFAULT TRUE,
+    ID      BIGINT AUTO_INCREMENT PRIMARY KEY,
+    USER_ID BIGINT NOT NULL,
+    ROLE_ID BIGINT NOT NULL,
     
     FOREIGN KEY (USER_ID) REFERENCES USERS (ID) ON DELETE CASCADE,
     FOREIGN KEY (ROLE_ID) REFERENCES ROLES (ID) ON DELETE CASCADE,
@@ -147,21 +145,35 @@ CREATE TABLE IF NOT EXISTS ARTICLE_COMMENT
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
 
--- 테스트 데이터 - Chapter 12: Advanced Board with Hierarchical Comments
-INSERT INTO ROLES (ROLE_NAME, DESCRIPTION, LEVEL, IS_SYSTEM, PARENT_ID) VALUES
-('ROLE_USER', '일반 사용자', 1, TRUE, NULL),
-('ROLE_MANAGER', '매니저', 5, TRUE, 1),
-('ROLE_ADMINISTRATOR', '관리자', 10, TRUE, 2)
-ON DUPLICATE KEY UPDATE ROLE_NAME = VALUES(ROLE_NAME);
+-- 테스트 데이터 - Chapter 12: Advanced Board with Hierarchical Comments (User, Role 클래스 기준)
 
-INSERT INTO USERS (EMAIL, PASSWORD, NICKNAME, FIRST_NAME, LAST_NAME, EMAIL_VERIFIED, STATUS) VALUES 
-('admin@primavera.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.', 'SuperAdmin', '슈퍼', '관리자', TRUE, 1),
-('manager@primavera.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.', 'BoardManager', '게시판', '매니저', TRUE, 1),
-('user1@primavera.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.', 'TestUser1', '테스트', '사용자1', TRUE, 1)
+-- 역할 데이터 (RoleType enum 기준)
+INSERT INTO ROLES (ID, TYPE) VALUES 
+(1, 1),  -- ADMINISTRATOR
+(2, 2),  -- MANAGER
+(3, 3)   -- USER
+ON DUPLICATE KEY UPDATE TYPE = VALUES(TYPE);
+
+-- 사용자 데이터 (User 클래스 기준)
+INSERT INTO USERS (ID, EMAIL, PASSWORD, NICKNAME, STATUS, CREATED_AT, UPDATED_AT) VALUES 
+(1, 'admin@primavera.com', '{bcrypt}$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.', 'SuperAdmin', 1, NOW(), NOW()),
+(2, 'manager@primavera.com', '{bcrypt}$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.', 'BoardManager', 1, NOW(), NOW()),
+(3, 'user1@primavera.com', '{bcrypt}$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.', 'TestUser1', 1, NOW(), NOW()),
+(4, 'genius@primavera.com', '{bcrypt}$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.', 'Genius', 1, NOW(), NOW())
 ON DUPLICATE KEY UPDATE EMAIL = VALUES(EMAIL);
 
+-- 사용자-역할 매핑
 INSERT INTO USER_ROLES (USER_ID, ROLE_ID) VALUES 
-(1, 3), -- Admin
-(2, 2), -- Manager
-(3, 1)  -- User
+(1, 1), -- SuperAdmin -> ADMINISTRATOR
+(2, 2), -- BoardManager -> MANAGER
+(3, 3), -- TestUser1 -> USER
+(4, 1)  -- Genius -> ADMINISTRATOR
 ON DUPLICATE KEY UPDATE USER_ID = VALUES(USER_ID);
+
+-- 사용자 소셜 연결 정보 (ProviderType enum: 1=FACEBOOK, 2=GITHUB, 3=GOOGLE)
+INSERT INTO USER_CONNECTION (ID, EMAIL, PROVIDER, PROVIDER_ID, DISPLAY_NAME, PROFILE_URL, IMAGE_URL) VALUES 
+(1, 'admin@primavera.com', 3, 'google_admin_123', 'SuperAdmin', 'https://profile.google.com/admin', 'https://profile.google.com/admin/photo.jpg'),
+(2, 'manager@primavera.com', 2, 'github_manager_456', 'BoardManager', 'https://github.com/manager', 'https://github.com/manager.avatar'),
+(3, 'user1@primavera.com', 1, 'facebook_user_789', 'TestUser1', 'https://facebook.com/user1', 'https://facebook.com/user1/photo.jpg'),
+(4, 'genius@primavera.com', 3, 'google_genius_999', 'Genius', 'https://profile.google.com/genius', 'https://profile.google.com/genius/photo.jpg')
+ON DUPLICATE KEY UPDATE EMAIL = VALUES(EMAIL);
