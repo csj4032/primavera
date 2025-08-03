@@ -2,10 +2,13 @@ package com.genius.primavera.testcontainer.v2;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.extension.*;
-import org.springframework.test.context.TestContextManager;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.MariaDBContainer;
+import org.testcontainers.containers.MongoDBContainer;
+import org.testcontainers.containers.MySQLContainer;
+import org.testcontainers.containers.PostgreSQLContainer;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -14,17 +17,10 @@ import java.util.concurrent.ConcurrentHashMap;
  * 다중 컨테이너를 관리하는 JUnit 5 확장
  */
 @Slf4j
-public class MultipleTestContainerExtension implements BeforeAllCallback, AfterAllCallback, BeforeEachCallback, AfterEachCallback, TestInstancePostProcessor {
+public class MultipleTestContainerExtension implements BeforeAllCallback, AfterAllCallback, BeforeEachCallback, AfterEachCallback {
 
     private static final Map<String, List<GenericContainer<?>>> classContainers = new ConcurrentHashMap<>();
     private static final Map<String, List<GenericContainer<?>>> methodContainers = new ConcurrentHashMap<>();
-
-    @Override
-    public void postProcessTestInstance(Object testInstance, ExtensionContext context) throws Exception {
-        // Spring TestContext와 통합
-        TestContextManager testContextManager = SpringExtension.getTestContextManager(context);
-        testContextManager.prepareTestInstance(testInstance);
-    }
 
     @Override
     public void beforeAll(ExtensionContext context) throws Exception {
@@ -105,12 +101,15 @@ public class MultipleTestContainerExtension implements BeforeAllCallback, AfterA
     }
 
     private List<GenericContainer<?>> createContainers(EnableMultipleTestContainers.ContainerDefinition[] definitions) {
-        return java.util.Arrays.stream(definitions)
-                .map(def -> {
-                    TestContainerProperties.ContainerConfig config = createConfig(def);
-                    return ContainerFactory.createContainer(def.type(), config);
-                })
-                .toList();
+        List<GenericContainer<?>> containers = new ArrayList<>();
+        
+        for (EnableMultipleTestContainers.ContainerDefinition def : definitions) {
+            TestContainerProperties.ContainerConfig config = createConfig(def);
+            GenericContainer<?> container = ContainerFactory.createContainer(def.type(), config);
+            containers.add(container);
+        }
+        
+        return containers;
     }
 
     private TestContainerProperties.ContainerConfig createConfig(EnableMultipleTestContainers.ContainerDefinition def) {
