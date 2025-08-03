@@ -16,6 +16,7 @@ public class MariaDBContainerStrategy implements ContainerStrategy {
     @Override
     public GenericContainer<?> createContainer(PrimaveraTestcontainersProperties.ContainerConfig config) {
         PrimaveraTestcontainersProperties.DatabaseConfig dbConfig = (PrimaveraTestcontainersProperties.DatabaseConfig) config;
+        log.info("Creating MariaDB container with image: {}", dbConfig.getDatabaseName());
         MariaDBContainer<?> container = new MariaDBContainer<>(config.getDockerImageName())
                 .withDatabaseName(dbConfig.getDatabaseName())
                 .withUsername(dbConfig.getUsername())

@@ -3,131 +3,140 @@ package com.genius.primavera.infrastructure;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
+import com.genius.primavera.domain.model.Temp;
 import com.genius.primavera.domain.model.article.Article;
 import com.genius.primavera.domain.model.article.ArticleDto;
 import com.genius.primavera.domain.model.article.Comment;
 import com.genius.primavera.domain.model.article.CommentDto;
-import com.genius.primavera.domain.model.post.Post;
-import com.genius.primavera.domain.model.post.PostDto;
-import com.genius.primavera.domain.model.user.User;
 import com.genius.primavera.infrastructure.serializer.KryoRedisSerializer;
-import com.genius.primavera.infrastructure.serializer.KryoSerializer;
 import com.genius.primavera.infrastructure.serializer.SnappyRedisSerializer;
 import com.navercorp.lucy.security.xss.servletfilter.XssEscapeServletFilter;
 
 import io.lettuce.core.ClientOptions;
 import io.lettuce.core.resource.DefaultClientResources;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
-// import org.jetbrains.annotations.NotNull; // Not used
 import org.modelmapper.ModelMapper;
-import org.modelmapper.convention.MatchingStrategies;
 import org.modelmapper.convention.NameTokenizers;
-import org.modelmapper.convention.NamingConventions;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.context.annotation.Profile;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
-import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettucePoolingClientConfiguration;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
-import org.springframework.format.datetime.DateFormatter;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.time.Duration;
-import java.time.format.DateTimeFormatter;
 
 @Configuration
 @EnableJpaAuditing
 public class ApplicationConfiguration implements WebMvcConfigurer {
 
-	 @Bean
-	 public FilterRegistrationBean filterRegistrationBean() {
-	 	var filterRegistration = new FilterRegistrationBean();
-	 	filterRegistration.setFilter(new XssEscapeServletFilter());
-	 	filterRegistration.setOrder(1);
-	 	filterRegistration.addUrlPatterns("/*");
-	 	return filterRegistration;
-	 }
+    @Bean
+    public FilterRegistrationBean<XssEscapeServletFilter> xssFilterRegistrationBean() {
+        FilterRegistrationBean<XssEscapeServletFilter> registrationBean = new FilterRegistrationBean<>();
+        registrationBean.setFilter(new XssEscapeServletFilter());
+        registrationBean.setOrder(1);
+        registrationBean.addUrlPatterns("/*");
+        registrationBean.setName("xssEscapeServletFilter");
+        return registrationBean;
+    }
 
-	@Bean
-	public ObjectMapper objectMapper() {
-		return new ObjectMapper()
-				.registerModule(new JavaTimeModule())
-				.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-				.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-	}
+    @Bean
+    public ObjectMapper objectMapper() {
+        return new ObjectMapper()
+                .registerModule(new JavaTimeModule())
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    }
 
-	@Bean
-	public ModelMapper modelMapper() {
-		ModelMapper modelMapper = new ModelMapper();
-		modelMapper.getConfiguration()
-				.setSourceNameTokenizer(NameTokenizers.CAMEL_CASE)
-				.setDestinationNameTokenizer(NameTokenizers.CAMEL_CASE);
+    @Bean
+    public ModelMapper modelMapper() {
+        ModelMapper modelMapper = new ModelMapper();
+        modelMapper.getConfiguration()
+                .setSourceNameTokenizer(NameTokenizers.CAMEL_CASE)
+                .setDestinationNameTokenizer(NameTokenizers.CAMEL_CASE);
 
-		modelMapper.createTypeMap(Article.class, ArticleDto.DetailArticle.class).addMappings(mapper -> {
-			mapper.map(Article::getAuthorName, ArticleDto.DetailArticle::setAuthorName);
-			mapper.map(Article::getContents, ArticleDto.DetailArticle::setContents);
-		});
+        modelMapper.createTypeMap(Article.class, ArticleDto.DetailArticle.class).addMappings(mapper -> {
+            mapper.map(Article::getAuthorName, ArticleDto.DetailArticle::setAuthorName);
+            mapper.map(Article::getContents, ArticleDto.DetailArticle::setContents);
+        });
 
-		modelMapper.createTypeMap(Comment.class, CommentDto.Detail.class).addMappings(mapper -> {
-			mapper.map(src -> src.getAuthor().getNickname(), CommentDto.Detail::setAuthorName);
-			mapper.map(src -> src.getAuthor().getConnection().getImageUrl(), CommentDto.Detail::setAuthorImage);
-		});
+        modelMapper.createTypeMap(Comment.class, CommentDto.Detail.class).addMappings(mapper -> {
+            mapper.map(src -> src.getAuthor().getNickname(), CommentDto.Detail::setAuthorName);
+            mapper.map(src -> src.getAuthor().getConnection().getImageUrl(), CommentDto.Detail::setAuthorImage);
+        });
 
-		modelMapper.createTypeMap(PostDto.RequestForSave.class, Post.class).addMappings(mapping -> {
-			mapping.<Long>map(src -> src.getWriterId(), (dest, v) -> dest.getWriter().setId(v));
-		});
+        return modelMapper;
+    }
 
-		return modelMapper;
-	}
+    @Bean
+    @ConditionalOnMissingBean(name = "redisTemplate")
+    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
+        RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setConnectionFactory(redisConnectionFactory);
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        redisTemplate.setHashKeySerializer(new StringRedisSerializer());
+        redisTemplate.setValueSerializer(new SnappyRedisSerializer<>(new KryoRedisSerializer<>()));
+        redisTemplate.setHashValueSerializer(new SnappyRedisSerializer<>(new KryoRedisSerializer<>()));
+        redisTemplate.afterPropertiesSet();
+        return redisTemplate;
+    }
 
-	@Bean(name = "redisTemplate")
-	public <K, V> RedisTemplate<K, V> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
-		RedisTemplate<K, V> redisTemplate = new RedisTemplate<>();
-		redisTemplate.setConnectionFactory(redisConnectionFactory);
-		redisTemplate.setKeySerializer(new StringRedisSerializer());
-		redisTemplate.setValueSerializer(new SnappyRedisSerializer(new KryoRedisSerializer()));
-		return redisTemplate;
-	}
+    @Bean(name = "tempRedisTemplate")
+    public RedisTemplate<String, Temp> tempRedisTemplate(RedisConnectionFactory redisConnectionFactory) {
+        RedisTemplate<String, Temp> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setConnectionFactory(redisConnectionFactory);
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        redisTemplate.setHashKeySerializer(new StringRedisSerializer());
+        redisTemplate.setValueSerializer(new SnappyRedisSerializer<>(new KryoRedisSerializer<>()));
+        redisTemplate.setHashValueSerializer(new SnappyRedisSerializer<>(new KryoRedisSerializer<>()));
+        redisTemplate.afterPropertiesSet();
+        return redisTemplate;
+    }
 
-	@Bean
-	public RedisConnectionFactory redisConnectionFactory() {
-		return new LettuceConnectionFactory(getRedisStandaloneConfiguration(), getLettucePoolingClientConfigurationBuilder());
-	}
+    @Bean
+    @ConditionalOnMissingBean
+    @Profile("!test")
+    public RedisConnectionFactory redisConnectionFactory() {
+        RedisStandaloneConfiguration redisConfig = new RedisStandaloneConfiguration();
+        redisConfig.setHostName("localhost");
+        redisConfig.setPort(6380);
+        
+        LettucePoolingClientConfiguration clientConfig = LettucePoolingClientConfiguration.builder()
+                .poolConfig(createGenericObjectPoolConfig())
+                .commandTimeout(Duration.ofSeconds(30))
+                .shutdownTimeout(Duration.ofSeconds(5))
+                .clientOptions(ClientOptions.builder()
+                        .autoReconnect(true)
+                        .disconnectedBehavior(ClientOptions.DisconnectedBehavior.REJECT_COMMANDS)
+                        .build())
+                .clientResources(DefaultClientResources.builder()
+                        .ioThreadPoolSize(4)
+                        .computationThreadPoolSize(4)
+                        .build())
+                .build();
+                
+        return new LettuceConnectionFactory(redisConfig, clientConfig);
+    }
 
-	private RedisStandaloneConfiguration getRedisStandaloneConfiguration() {
-		RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration();
-		configuration.setHostName("localhost");
-		configuration.setPort(6380);
-		return configuration;
-	}
-
-	private LettuceClientConfiguration getLettucePoolingClientConfigurationBuilder() {
-		return LettucePoolingClientConfiguration.builder()
-				.poolConfig(genericObjectPoolConfig())
-				.commandTimeout(Duration.ofMillis(100000))
-				.clientOptions(ClientOptions.builder().build())
-				.shutdownTimeout(Duration.ofMillis(100000))
-				.clientResources(DefaultClientResources.create()).build();
-	}
-
-	private GenericObjectPoolConfig genericObjectPoolConfig() {
-		GenericObjectPoolConfig genericObjectPoolConfig = new GenericObjectPoolConfig();
-		genericObjectPoolConfig.setMinIdle(5);
-		genericObjectPoolConfig.setMaxIdle(10);
-		genericObjectPoolConfig.setMaxTotal(10);
-		genericObjectPoolConfig.setMaxWaitMillis(100);
-		genericObjectPoolConfig.setTestOnBorrow(true);
-		genericObjectPoolConfig.setTestOnReturn(true);
-		genericObjectPoolConfig.setTestWhileIdle(true);
-		return genericObjectPoolConfig;
-	}
+    private GenericObjectPoolConfig<Object> createGenericObjectPoolConfig() {
+        GenericObjectPoolConfig<Object> poolConfig = new GenericObjectPoolConfig<>();
+        poolConfig.setMinIdle(2);
+        poolConfig.setMaxIdle(8);
+        poolConfig.setMaxTotal(8);
+        poolConfig.setMaxWaitMillis(2000); // 2 seconds in milliseconds
+        poolConfig.setTestOnBorrow(true);
+        poolConfig.setTestOnReturn(true);
+        poolConfig.setTestWhileIdle(true);
+        poolConfig.setTimeBetweenEvictionRunsMillis(30000); // 30 seconds in milliseconds
+        poolConfig.setBlockWhenExhausted(true);
+        return poolConfig;
+    }
 }

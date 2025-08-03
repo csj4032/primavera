@@ -2,6 +2,7 @@ package com.genius.primavera.testContainer;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.HashMap;
@@ -34,6 +35,7 @@ public class PrimaveraTestcontainersProperties {
     }
 
     @Data
+    @ToString
     public static abstract class ContainerConfig {
         private String dockerImageName;
         private Map<String, String> environment = new HashMap<>();

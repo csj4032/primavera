@@ -1,0 +1,55 @@
+plugins {
+    id 'java-library'
+    id 'org.springframework.boot' apply false
+    id 'io.spring.dependency-management'
+}
+
+dependencyManagement {
+    imports {
+        mavenBom org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
+    }
+}
+
+dependencies {
+    // Spring Boot
+    api 'org.springframework.boot:spring-boot-starter'
+    api 'org.springframework.boot:spring-boot-starter-test'
+    api 'org.springframework.boot:spring-boot-starter-jdbc'
+    
+    // TestContainers
+    api "org.testcontainers:testcontainers:${testContainersVersion}"
+    api "org.testcontainers:junit-jupiter:${testContainersVersion}"
+    api "org.testcontainers:mariadb:${testContainersVersion}"
+    api "org.testcontainers:mysql:${testContainersVersion}"
+    api "org.testcontainers:postgresql:${testContainersVersion}"
+    api "org.testcontainers:kafka:${testContainersVersion}"
+    api "org.testcontainers:elasticsearch:${testContainersVersion}"
+    api "org.testcontainers:mongodb:${testContainersVersion}"    
+    
+    // Redis for testing
+    testImplementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    
+    // Database Drivers
+    api "org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}"
+    api "com.mysql:mysql-connector-j:${mysqlVersion}"
+    api "org.postgresql:postgresql"
+    
+    // MongoDB Driver
+    testImplementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+    
+    // Lombok
+    compileOnly "org.projectlombok:lombok:${lombokVersion}"
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+    
+    // Configuration Processor
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+test {
+    useJUnitPlatform()
+}

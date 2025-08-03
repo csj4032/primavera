@@ -4,10 +4,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.genius.primavera.domain.model.Temp;
 import com.genius.primavera.domain.repository.TempRepository;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.lambda.Seq;
 import org.jooq.lambda.tuple.Tuple2;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -17,12 +17,19 @@ import static java.util.stream.Collectors.toList;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class RedisCache {
 
 	private final TempRepository tempTempRepository;
 	private final RedisTemplate<String, Temp> redisTemplate;
 	private final ObjectMapper objectMapper;
+
+	public RedisCache(TempRepository tempTempRepository, 
+	                  @Qualifier("tempRedisTemplate") RedisTemplate<String, Temp> redisTemplate,
+	                  ObjectMapper objectMapper) {
+		this.tempTempRepository = tempTempRepository;
+		this.redisTemplate = redisTemplate;
+		this.objectMapper = objectMapper;
+	}
 
 	public Optional<Temp> getTempById(Long id) throws JsonProcessingException {
 		return Optional.of(redisTemplate.opsForValue().get(String.valueOf(id)));

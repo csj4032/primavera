@@ -7,3 +7,52 @@ spring:
       enabled: false
     vault:
       enabled: false
+  security:
+    oauth2:
+      client:
+        registration: {}
+        provider: {}
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.security.oauth2.client.servlet.OAuth2ClientAutoConfiguration
+  datasource:
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 10
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      connection-timeout: 30000
+      pool-name: "TestHikariPool"
+      leak-detection-threshold: 60000
+      connection-test-query: "SELECT 1"
+      validation-timeout: 5000
+  flyway:
+    enabled: false
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+        generate_statistics: false
+
+primavera:
+  testcontainers:
+    mariadb:
+      dockerImageName: mariadb:11.4.7
+      driverClassName: org.mariadb.jdbc.Driver
+      databaseName: primavera12121212
+      username: primavera
+      password: primavera
+      initScript: sql/init.sql
+    redis:
+      dockerImageName: redis:7.0
+      port: 6379
+    mongodb:
+      dockerImageName: mongo:6.0
+      port: 27017
+      username: primavera
+      password: primavera
+      database: primavera
+      authenticationDatabase: admin

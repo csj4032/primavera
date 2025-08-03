@@ -28,14 +28,14 @@ public class ContainerKey {
     }
 
     public static ContainerKey forPerTest(ContainerType containerType) {
-        return new ContainerKey(containerType, ContainerLifecycleMode.PER_TEST, "THREAD-" + Thread.currentThread().getId());
+        return new ContainerKey(containerType, ContainerLifecycleMode.PER_METHOD, "THREAD-" + Thread.currentThread().getId());
     }
 
     public static ContainerKey create(ContainerType containerType, ContainerLifecycleMode lifecycleMode, String testClassName) {
         return switch (lifecycleMode) {
             case REUSE -> forReuse(containerType);
             case PER_CLASS -> forPerClass(containerType, testClassName);
-            case PER_TEST -> forPerTest(containerType);
+            case PER_METHOD -> forPerTest(containerType);
         };
     }
 
@@ -43,7 +43,7 @@ public class ContainerKey {
         return switch (lifecycleMode) {
             case REUSE -> containerType + "(GLOBAL)";
             case PER_CLASS -> containerType + "(" + getSimpleClassName() + ")";
-            case PER_TEST -> containerType + "(" + testClassName + ")";
+            case PER_METHOD -> containerType + "(" + testClassName + ")";
         };
     }
 

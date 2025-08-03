@@ -19,5 +19,6 @@ public class TestContextHolder {
     }
 
     public record TestContext(String testClassName, Set<ContainerType> containerTypes, ContainerLifecycleMode lifecycleMode) {
+
     }
 }

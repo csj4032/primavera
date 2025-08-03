@@ -30,6 +30,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-authorization-server'
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
+    implementation "org.springframework.cloud:spring-cloud-starter-config"
+    implementation "org.springframework.cloud:spring-cloud-starter-vault-config:${springCloudVaultVersion}"
     implementation "org.thymeleaf.extras:thymeleaf-extras-springsecurity6:${thymeleafExtrasSpringSecurity6Version}"
     implementation 'org.springframework.data:spring-data-envers'
     implementation "org.modelmapper:modelmapper:${modelMapperVersion}"
@@ -57,4 +59,6 @@ dependencies {
     testImplementation "javax.persistence:javax.persistence-api:2.2"
     testImplementation "javax.servlet:javax.servlet-api:4.0.1"
     implementation project(":appendix:spring-boot-starter-lucy-filter")
+    testImplementation project(":appendix:spring-boot-starter-lucy-filter")
+    testImplementation project(":appendix:spring-boot-starter-test-container")
 }

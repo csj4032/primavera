@@ -1,0 +1,47 @@
+primavera:
+  testcontainers:
+    lifecycleMode: PER_METHOD
+    mariadb:
+      enabled: true
+      dockerImageName: mariadb:11.4.7
+      driverClassName: org.mariadb.jdbc.Driver
+      databaseName: primavera
+      username: primavera
+      password: primavera
+      initScript: sql/init.sql
+    mysql:
+      enabled: true
+      dockerImageName: mysql:8.0
+      driverClassName: com.mysql.cj.jdbc.Driver
+      databaseName: primavera
+      username: primavera
+      password: primavera
+      initScript: sql/init.sql
+    postgresql:
+      enabled: true
+      dockerImageName: postgres:16
+      driverClassName: org.postgresql.Driver
+      databaseName: primavera
+      username: primavera
+      password: primavera
+      initScript: sql/init.sql
+    redis:
+      enabled: true
+      dockerImageName: redis:7-alpine
+    kafka:
+      enabled: true
+      dockerImageName: confluentinc/cp-kafka:latest
+    elasticsearch:
+      enabled: true
+      dockerImageName: elasticsearch:8.11.0
+    mongodb:
+      enabled: true
+      dockerImageName: mongo:7
+      databaseName: primavera
+      username: primavera
+      password: primavera
+
+logging:
+  level:
+    com.genius.primavera.testcontainer.v2: DEBUG
+    org.testcontainers: INFO
