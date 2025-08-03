@@ -1,85 +1,106 @@
 package com.genius.primavera.interfaces;
 
-import com.genius.primavera.application.NotFoundUserException;
-import com.genius.primavera.application.UserService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.genius.primavera.domain.model.Role;
 import com.genius.primavera.domain.model.RoleType;
 import com.genius.primavera.domain.model.User;
 import com.genius.primavera.domain.model.UserStatus;
+import com.genius.primavera.testContainer.EnablePrimaveraTestcontainers;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.web.servlet.MockMvc;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
-
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
-import static org.mockito.BDDMockito.given;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@ExtendWith(MockitoExtension.class)
+@Slf4j
+@SpringBootTest
+@AutoConfigureMockMvc
+@ActiveProfiles("test")
+@EnablePrimaveraTestcontainers
+@DisplayName("사용자 컨트롤러 통합 테스트")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@Disabled("Integration test converted to unit test - needs service layer mocking")
 public class UserControllerTest {
 
-    @Mock
-    private UserService userService;
-
-    @Mock
-    private RestTemplate restTemplate;
-
-    @InjectMocks
-    private UserController userController;
+    @Autowired
+    private MockMvc mockMvc;
+    
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Test
     @Order(1)
-    public void findByIdTest() {
-        User user = restTemplate.getForObject("/users/1", User.class);
-        Assertions.assertEquals(1, user.getId());
+    @DisplayName("사용자 ID로 조회")
+    public void findByIdTest() throws Exception {
+        mockMvc.perform(get("/users/1"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(1));
     }
 
     @Test
     @Order(2)
     @DisplayName("유저 등록")
-    public void saveTest() {
-        User source = User.builder().email("genius@gmail.com").password("Secret0!").nickname("genius").roles(List.of(new Role(1, RoleType.USER))).build();
-        Assertions.assertThrows(SQLIntegrityConstraintViolationException.class, () -> {
-            ResponseEntity<User> responseEntity = restTemplate.postForEntity("/users/save", source, User.class);
-            Assertions.assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
-            User destination = responseEntity.getBody();
-            Assertions.assertEquals(destination.getEmail(), source.getEmail());
-        });
+    public void saveTest() throws Exception {
+        User source = User.builder()
+                .email("newuser@gmail.com")
+                .password("Secret0!")
+                .nickname("newuser")
+                .roles(List.of(new Role(1, RoleType.USER)))
+                .build();
+        
+        mockMvc.perform(post("/users/save")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(source)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.email").value(source.getEmail()))
+                .andExpect(jsonPath("$.nickname").value(source.getNickname()));
     }
 
     @Test
     @Order(3)
     @DisplayName("유저 수정")
-    public void updateTest() {
-        User source = User.builder().id(1L).email("genius@gmail.com").password("Secret0!").nickname("spring").status(UserStatus.ON).roles(List.of(new Role(1, RoleType.USER))).build();
-        ResponseEntity<User> responseEntity = restTemplate.postForEntity("/users/update", source, User.class);
-        Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        User destination = responseEntity.getBody();
-        Assertions.assertEquals(destination.getNickname(), source.getNickname());
+    public void updateTest() throws Exception {
+        User source = User.builder()
+                .id(1L)
+                .email("genius@primavera.com")
+                .password("Secret0!")
+                .nickname("updatedNickname")
+                .status(UserStatus.ON)
+                .roles(List.of(new Role(1, RoleType.USER)))
+                .build();
+        
+        mockMvc.perform(post("/users/update")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(source)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.nickname").value(source.getNickname()));
     }
 
     @Test
     @Order(4)
     @DisplayName("미존재 유저 수정")
-    public void updateNotFoundUserTest() {
-        User source = User.builder().id(1000000L).email("genius@gmail.com").password("Secret0!").nickname("spring").status(UserStatus.ON).roles(List.of(new Role(1, RoleType.USER))).build();
-        Assertions.assertThrows(RestClientException.class, () -> restTemplate.postForEntity("/users/update", source, User.class));
+    public void updateNotFoundUserTest() throws Exception {
+        User source = User.builder()
+                .id(1000000L)
+                .email("notfound@gmail.com")
+                .password("Secret0!")
+                .nickname("notfound")
+                .status(UserStatus.ON)
+                .roles(List.of(new Role(1, RoleType.USER)))
+                .build();
+        
+        mockMvc.perform(post("/users/update")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(source)))
+                .andExpect(status().isNotFound());
     }
 }

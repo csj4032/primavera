@@ -16,18 +16,17 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.SelectKey;
 import org.apache.ibatis.annotations.SelectProvider;
 import org.apache.ibatis.annotations.Update;
-import org.hibernate.envers.event.spi.EnversListener;
 import org.mybatis.dynamic.sql.select.render.SelectStatementProvider;
 import org.mybatis.dynamic.sql.util.SqlProviderAdapter;
 
 import java.util.List;
 
 @Mapper
-public interface UserMapper extends EnversListener {
+public interface UserMapper {
 
-    String SELECT_FROM_USER_JOIN_CONNECTION = "SELECT A.ID, A.EMAIL, NICKNAME, PASSWORD, STATUS, B.PROVIDER, B.PROVIDER_ID, B.PROFILE_URL, B.IMAGE_URL, A.CREATED_AT, A.UPDATED_AT FROM USER A INNER JOIN USER_CONNECTION B ON A.EMAIL = B.EMAIL ";
-    String SELECT_FROM_USER = "SELECT ID, EMAIL, NICKNAME, PASSWORD, STATUS, CREATED_AT, UPDATED_AT FROM USER ";
-    String INSERT_SQL = "INSERT INTO USER (EMAIL, PASSWORD, NICKNAME, STATUS, CREATED_AT, UPDATED_AT) VALUES (#{user.email}, #{user.password}, #{user.nickname}, #{user.status, typeHandler=UserStatusTypeHandler}, #{user.createdAt}, #{user.updatedAt})";
+    String SELECT_FROM_USER_JOIN_CONNECTION = "SELECT A.ID, A.EMAIL, A.NICKNAME, A.PASSWORD, A.STATUS, B.PROVIDER, B.PROVIDER_ID, B.PROFILE_URL, B.IMAGE_URL, A.CREATED_AT, A.UPDATED_AT FROM USERS A INNER JOIN USER_CONNECTION B ON A.EMAIL = B.EMAIL ";
+    String SELECT_FROM_USER = "SELECT ID, EMAIL, NICKNAME, PASSWORD, STATUS, CREATED_AT, UPDATED_AT FROM USERS ";
+    String INSERT_SQL = "INSERT INTO USERS (EMAIL, PASSWORD, NICKNAME, STATUS, CREATED_AT, UPDATED_AT) VALUES (#{user.email}, #{user.password}, #{user.nickname}, #{user.status, typeHandler=com.genius.primavera.domain.typehandler.UserStatusTypeHandler}, #{user.createdAt}, #{user.updatedAt})";
 
     @Results(id = "USER", value = {
             @Result(property = "id", column = "ID"),
@@ -73,13 +72,13 @@ public interface UserMapper extends EnversListener {
     @SelectKey(statement = "SELECT LAST_INSERT_ID()", keyProperty = "user.id", before = false, resultType = long.class)
     int save(@Param("user") User user);
 
-    @Update(value = "UPDATE USER SET NICKNAME = #{user.nickname}, UPDATED_AT = #{user.updatedAt} WHERE ID = #{user.id}")
+    @Update(value = "UPDATE USERS SET NICKNAME = #{user.nickname}, UPDATED_AT = #{user.updatedAt} WHERE ID = #{user.id}")
     int update(@Param("user") User user);
 
-    @Delete(value = "DELETE FROM USER")
+    @Delete(value = "DELETE FROM USERS")
     int deleteAll();
 
-    @Delete(value = "DELETE FROM USER WHERE ID = #{id}")
+    @Delete(value = "DELETE FROM USERS WHERE ID = #{id}")
     int deleteById(@Param(value = "id") long id);
 
     User findBySocial(UserConnection userConnection);

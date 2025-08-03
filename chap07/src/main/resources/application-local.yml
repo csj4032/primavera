@@ -10,10 +10,10 @@ spring:
   cloud:
     vault:
       host: localhost
-      port: 8200
+      port: 8207
       scheme: http
       authentication: TOKEN
-      token: ${VAULT_TOKEN:primavera-dev-token}
+      token: ${VAULT_TOKEN:chap07-vault-token}
       connection-timeout: 5000
       read-timeout: 15000
       fail-fast: true

@@ -1,5 +1,6 @@
 package com.genius.primavera.interfaces;
 
+import com.genius.primavera.testContainer.EnablePrimaveraTestcontainers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
@@ -16,6 +17,7 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -38,69 +40,54 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Slf4j
 @SpringBootTest
 @AutoConfigureMockMvc
-@ExtendWith(SpringExtension.class)
+@ActiveProfiles("test")
+@EnablePrimaveraTestcontainers
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@Testcontainers
 public class SecurityLoginPageTest {
 
-	@Container
-	protected static final MariaDBContainer<?> mysqlContainer = new MariaDBContainer<>("mariadb:11.4.7")
-			.withDatabaseName("primavera")
-			.withUsername("primavera")
-			.withPassword("primavera");
+    @Autowired
+    private MockMvc mockMvc;
 
-	@DynamicPropertySource
-	static void configureProperties(DynamicPropertyRegistry registry) {
-		registry.add("spring.datasource.url", mysqlContainer::getJdbcUrl);
-		registry.add("spring.datasource.username", mysqlContainer::getUsername);
-		registry.add("spring.datasource.password", mysqlContainer::getPassword);
-		registry.add("spring.datasource.driver-class-name", () -> "org.mariadb.jdbc.Driver");
-		registry.add("spring.main.allow-bean-definition-overriding", () -> "true");
-	}
+    @Test
+    @Order(1)
+    @DisplayName("권한이 없는 경우 로그인 화면으로 이동")
+    public void loginPage() throws Exception {
+        mockMvc.perform(get("/"))
+                .andDo(print())
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("http://localhost/login"));
+    }
 
-	@Autowired
-	private MockMvc mockMvc;
+    @Test
+    @Order(2)
+    @DisplayName("로그인 시도 성공 후 메인 페이지 이동")
+    public void signInFail() throws Exception {
+        mockMvc.perform(post("/signin")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .param("email", "Genius")
+                        .param("password", "password"))
+                .andExpect(status().is3xxRedirection())
+                .andDo(print());
+    }
 
-	@Test
-	@Order(1)
-	@DisplayName("권한이 없는 경우 로그인 화면으로 이동")
-	public void loginPage() throws Exception {
-		mockMvc.perform(get("/"))
-				.andDo(print())
-				.andExpect(status().is3xxRedirection())
-				.andExpect(redirectedUrl("http://localhost/login"));
-	}
+    @Test
+    @Order(3)
+    @DisplayName("USER 권한으로 메인 페이지 접근")
+    @WithMockUser(username = "Genius")
+    public void index() throws Exception {
+        mockMvc.perform(get("/index"))
+                .andDo(print())
+                .andExpect(status().is2xxSuccessful());
+    }
 
-	@Test
-	@Order(2)
-	@DisplayName("로그인 시도 성공 후 메인 페이지 이동")
-	public void signInFail() throws Exception {
-		mockMvc.perform(post("/signin")
-				.with(csrf())
-				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.param("email", "Genius")
-				.param("password", "password"))
-				.andExpect(status().is3xxRedirection())
-				.andDo(print());
-	}
-
-	@Test
-	@Order(3)
-	@DisplayName("USER 권한으로 메인 페이지 접근")
-	@WithMockUser(username = "Genius")
-	public void index() throws Exception {
-		mockMvc.perform(get("/index"))
-				.andDo(print())
-				.andExpect(status().is2xxSuccessful());
-	}
-
-	@Test
-	@Order(4)
-	@DisplayName("USER 권한으로  Manager 페이지 접근")
-	@WithMockUser(username = "Genius", roles = "USER")
-	public void manager() throws Exception {
-		mockMvc.perform(get("/manager"))
-				.andDo(print())
-				.andExpect(status().isOk());
-	}
+    @Test
+    @Order(4)
+    @DisplayName("USER 권한으로  Manager 페이지 접근")
+    @WithMockUser(username = "Genius", roles = "USER")
+    public void manager() throws Exception {
+        mockMvc.perform(get("/manager"))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
 }

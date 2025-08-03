@@ -1,16 +1,3 @@
-// ==========================================
-// CHAP12 - Flyway Migration & Hibernate Envers
-// ==========================================
-// Dependencies inherited from root build.gradle:
-// - spring-boot-starter-web ✓ (Tomcat excluded, Undertow used)
-// - lombok (compileOnly + annotationProcessor) ✓ (duplicated below, will remove)  
-// - spring-boot-starter-test ✓ (exclusions handled by root)
-// - slf4j-api ✓
-// - jetbrains annotations ✓ (duplicated below, will remove)
-// - jakarta.validation-api (compileOnly) ✓
-// Note: plugins block with Flyway added
-// ==========================================
-
 plugins {
     id 'org.flywaydb.flyway' version "${flywayVersion}"
 }
@@ -22,93 +9,30 @@ flyway {
 }
 
 dependencies {
-    // ==========================================
-    // Web Server Dependencies (Undertow instead of Tomcat)
-    // ==========================================
     implementation('org.springframework.boot:spring-boot-starter-web') {
         exclude module: "spring-boot-starter-tomcat"
     }
     implementation 'org.springframework.boot:spring-boot-starter-undertow'
-    
-    // ==========================================
-    // AOP Dependencies
-    // ==========================================
     aopDependencies.each { dep -> implementation dep }
-    
-    // ==========================================
-    // Database Dependencies  
-    // ==========================================
     databaseDependencies.each { dep -> implementation dep }
-    
-    // ==========================================
-    // MyBatis Dependencies
-    // ==========================================
     mybatisDependencies.each { dep -> implementation dep }
-    
-    // ==========================================
-    // Thymeleaf Dependencies
-    // ==========================================
     thymeleafDependencies.each { dep -> implementation dep }
-    
-    // ==========================================
-    // Validation Dependencies
-    // ==========================================
     validationDependencies.each { dep -> implementation dep }
-    
-    // ==========================================
-    // Development Dependencies
-    // ==========================================
     developmentDependencies.each { dep -> implementation dep }
-    
-    // ==========================================
-    // TestContainers Dependencies
-    // ==========================================
     testContainersDependencies.each { dep -> testImplementation dep }
-    
-    // ==========================================
-    // JPA & Data Dependencies
-    // ==========================================
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-json'
-    
-    // ==========================================
-    // Security Dependencies
-    // ==========================================
     implementation 'org.springframework.boot:spring-boot-starter-security'
-    // implementation('org.springframework.boot:spring-boot-starter-oauth2-client') // Commented out in original
-    
-    // ==========================================
-    // Thymeleaf Security Integration
-    // ==========================================
+    implementation "org.springframework.cloud:spring-cloud-starter-config"
+    implementation "org.springframework.cloud:spring-cloud-starter-vault-config:${springCloudVaultVersion}"
+    implementation "org.springframework.boot:spring-boot-starter-oauth2-client"
+    implementation "org.springframework.security:spring-security-oauth2-client:${springSecurityVersion}"
+    implementation "org.springframework.security:spring-security-oauth2-jose:${springSecurityVersion}"
     implementation "org.thymeleaf.extras:thymeleaf-extras-springsecurity6:${thymeleafExtrasSpringSecurity6Version}"
-    
-    // ==========================================
-    // Hibernate Envers Dependencies
-    // ==========================================
-    implementation "org.hibernate:hibernate-envers:${hibernateVersion}"
-    
-    // ==========================================
-    // Object Mapping Dependencies
-    // ==========================================
     implementation "org.modelmapper:modelmapper:${modelMapperVersion}"
-    
-    // ==========================================
-    // Database Migration Dependencies
-    // ==========================================
-    implementation "org.flywaydb:flyway-core:${flywayVersion}"
-    
-    // ==========================================
-    // Security Test Dependencies
-    // ==========================================
     testImplementation 'org.springframework.security:spring-security-test'
-    
-    // ==========================================
-    // API Testing Dependencies
-    // ==========================================
     testImplementation "io.rest-assured:rest-assured:${restAssuredVersion}"
-    
-    // ==========================================
-    // XSS Protection Module
-    // ==========================================
     implementation project(":appendix:spring-boot-starter-lucy-filter")
+    testImplementation project(":appendix:spring-boot-starter-lucy-filter")
+    testImplementation project(":appendix:spring-boot-starter-test-container")
 }

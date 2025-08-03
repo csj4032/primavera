@@ -23,10 +23,6 @@ spring:
   jackson:
     time-zone: UTC
 
-server:
-  tomcat:
-    use-apr: never
-
 primavera:
   logs:
     path: ./logs

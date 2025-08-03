@@ -8,6 +8,7 @@ import com.genius.primavera.domain.model.post.Post;
 import com.genius.primavera.domain.model.post.PostDto;
 import com.genius.primavera.domain.model.user.User;
 
+import com.genius.primavera.testContainer.EnablePrimaveraTestcontainers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -24,6 +25,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -42,118 +44,104 @@ import static org.hamcrest.Matchers.containsString;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Slf4j
-@SpringBootTest(properties = "spring.profiles.active=test")
-@EnableAutoConfiguration(exclude = {
-    org.springframework.boot.autoconfigure.security.oauth2.client.servlet.OAuth2ClientAutoConfiguration.class,
-    org.springframework.boot.autoconfigure.security.oauth2.resource.servlet.OAuth2ResourceServerAutoConfiguration.class
-})
+@SpringBootTest
+@ActiveProfiles("test")
 @AutoConfigureMockMvc
-@ExtendWith(SpringExtension.class)
+@EnablePrimaveraTestcontainers
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@Testcontainers
+@Import(TestSecurityConfiguration.class)
+@EnableAutoConfiguration(exclude = {
+        org.springframework.boot.autoconfigure.security.oauth2.client.servlet.OAuth2ClientAutoConfiguration.class,
+        org.springframework.boot.autoconfigure.security.oauth2.resource.servlet.OAuth2ResourceServerAutoConfiguration.class
+})
 public class PostMockControllerTest {
 
-	@Container
-	protected static final MariaDBContainer<?> mysqlContainer = new MariaDBContainer<>("mariadb:11.4.7")
-			.withDatabaseName("primavera")
-			.withUsername("primavera")
-			.withPassword("primavera")
-			.withInitScript("sql/init.sql");
+    @Autowired
+    private MockMvc mockMvc;
 
-	@DynamicPropertySource
-	static void configureProperties(DynamicPropertyRegistry registry) {
-		registry.add("spring.datasource.url", mysqlContainer::getJdbcUrl);
-		registry.add("spring.datasource.username", mysqlContainer::getUsername);
-		registry.add("spring.datasource.password", mysqlContainer::getPassword);
-		registry.add("spring.datasource.driver-class-name", () -> "org.mariadb.jdbc.Driver");
-		registry.add("spring.main.allow-bean-definition-overriding", () -> "true");
-	}
+    @MockBean
+    private PostingService postService;
 
-	@Autowired
-	private MockMvc mockMvc;
+    @Test
+    @Order(1)
+    @Disabled
+    @DisplayName("포스팅 목록 화면 접근")
+    @WithUserDetails(value = "board@primavera.com", userDetailsServiceBeanName = "primaveraUserDetailsService")
+    public void postList() throws Exception {
+        given(this.postService.findAll()).willReturn(List.of(
+                Post.builder().id(1).subject("로마는 하루아침에 이루어지지 않았다.").contents("제1권 로마는 하루아침에 이루어지지 않았다.").writer(User.builder().id(1).email("Genius Choi").nickname("Genius").build()).build(),
+                Post.builder().id(2).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1).email("Genius Choi").nickname("Genius").build()).build()));
+        mockMvc.perform(get("/posts/all").accept(MediaType.TEXT_HTML))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("로마는 하루아침에 이루어지지 않았다.")))
+                .andExpect(content().string(containsString("Genius")));
+    }
 
-	@MockBean
-	private PostingService postService;
+    @Test
+    @Order(2)
+    @DisplayName("포스팅 페이징 목록 화면 접근")
+    @WithUserDetails(value = "board@primavera.com", userDetailsServiceBeanName = "primaveraUserDetailsService")
+    public void postListOfPagination() throws Exception {
+        PageRequest pageable = PageRequest.of(1, 10);
+        List<Post> list = List.of(
+                Post.builder().id(1).subject("로마는 하루아침에 이루어지지 않았다.").contents("제1권 로마는 하루아침에 이루어지지 않았다.").writer(User.builder().id(1).email("Genius Choi").nickname("Genius").build()).build(),
+                Post.builder().id(2).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1).email("Genius Choi").nickname("Genius").build()).build(),
+                Post.builder().id(3).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1).email("Genius Choi").nickname("Genius").build()).build(),
+                Post.builder().id(3).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1).email("Genius Choi").nickname("Genius").build()).build(),
+                Post.builder().id(4).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1).email("Genius Choi").nickname("Genius").build()).build(),
+                Post.builder().id(5).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1).email("Genius Choi").nickname("Genius").build()).build(),
+                Post.builder().id(6).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1).email("Genius Choi").nickname("Genius").build()).build(),
+                Post.builder().id(7).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1).email("Genius Choi").nickname("Genius").build()).build(),
+                Post.builder().id(8).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1).email("Genius Choi").nickname("Genius").build()).build(),
+                Post.builder().id(9).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1).email("Genius Choi").nickname("Genius").build()).build(),
+                Post.builder().id(10).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1).email("Genius Choi").nickname("Genius").build()).build(),
+                Post.builder().id(11).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1).email("Genius Choi").nickname("Genius").build()).build(),
+                Post.builder().id(12).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1).email("Genius Choi").nickname("Genius").build()).build()
+        );
+        Paged<PostDto.ResponseForList> postPage = new Paged(pageable, list, list.size());
+        given(this.postService.findForPageable(pageable, "")).willReturn(postPage);
+        Assertions.assertEquals(10, postPage.getPageSize());
+        Assertions.assertEquals(13, postPage.getTotalElements());
+        Assertions.assertEquals(2, postPage.getTotalPages());
+        Assertions.assertEquals(1, postPage.getPageNumber());
+        Assertions.assertEquals(13, postPage.getTotalElements());
+    }
 
-	@Test
-	@Order(1)
-	@Disabled
-	@DisplayName("포스팅 목록 화면 접근")
-	@WithUserDetails(value = "Genius Choi", userDetailsServiceBeanName = "primaveraUserDetailsService")
-	public void postList() throws Exception {
-		given(this.postService.findAll()).willReturn(List.of(
-				Post.builder().id(1).subject("로마는 하루아침에 이루어지지 않았다.").contents("제1권 로마는 하루아침에 이루어지지 않았다.").writer(User.builder().id(1).email("Genius Choi").nickname("Genius").build()).build(),
-				Post.builder().id(2).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1).email("Genius Choi").nickname("Genius").build()).build()));
-		mockMvc.perform(get("/posts/all").accept(MediaType.TEXT_HTML))
-				.andExpect(status().isOk())
-				.andExpect(content().string(containsString("로마는 하루아침에 이루어지지 않았다.")))
-				.andExpect(content().string(containsString("Genius")));
-	}
+    @Test
+    @Order(3)
+    @DisplayName("포스팅 상세 화면 접근")
+    @WithUserDetails(value = "board@primavera.com", userDetailsServiceBeanName = "primaveraUserDetailsService")
+    public void postDetail() throws Exception {
+        given(this.postService.findById(1)).willReturn(Post.builder().id(1).subject("제1권 로마는 하루아침에 이루어지지 않았다.").contents("제1권 로마는 하루아침에 이루어지지 않았다.").writer(User.builder().id(1).nickname("Genius").build()).build());
+        mockMvc.perform(get("/posts/1").accept(MediaType.TEXT_HTML))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("하루아침에")))
+                .andExpect(content().string(containsString("이루어지지")))
+                .andExpect(content().string(containsString("Genius")));
+    }
 
-	@Test
-	@Order(2)
-	@DisplayName("포스팅 페이징 목록 화면 접근")
-	@WithUserDetails(value = "Genius Choi", userDetailsServiceBeanName = "primaveraUserDetailsService")
-	public void postListOfPagination() throws Exception {
-		PageRequest pageable = PageRequest.of(1, 10);
-		List<Post> list = List.of(
-				Post.builder().id(1).subject("로마는 하루아침에 이루어지지 않았다.").contents("제1권 로마는 하루아침에 이루어지지 않았다.").writer(User.builder().id(1).email("Genius Choi").nickname("Genius").build()).build(),
-				Post.builder().id(2).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1).email("Genius Choi").nickname("Genius").build()).build(),
-				Post.builder().id(3).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1).email("Genius Choi").nickname("Genius").build()).build(),
-				Post.builder().id(3).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1).email("Genius Choi").nickname("Genius").build()).build(),
-				Post.builder().id(4).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1).email("Genius Choi").nickname("Genius").build()).build(),
-				Post.builder().id(5).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1).email("Genius Choi").nickname("Genius").build()).build(),
-				Post.builder().id(6).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1).email("Genius Choi").nickname("Genius").build()).build(),
-				Post.builder().id(7).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1).email("Genius Choi").nickname("Genius").build()).build(),
-				Post.builder().id(8).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1).email("Genius Choi").nickname("Genius").build()).build(),
-				Post.builder().id(9).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1).email("Genius Choi").nickname("Genius").build()).build(),
-				Post.builder().id(10).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1).email("Genius Choi").nickname("Genius").build()).build(),
-				Post.builder().id(11).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1).email("Genius Choi").nickname("Genius").build()).build(),
-				Post.builder().id(12).subject("한니발 전쟁").contents("제2권 한니발 전쟁").writer(User.builder().id(1).email("Genius Choi").nickname("Genius").build()).build()
-		);
-		Paged<PostDto.ResponseForList> postPage = new Paged(pageable, list, list.size());
-		given(this.postService.findForPageable(pageable, "")).willReturn(postPage);
-		Assertions.assertEquals(10, postPage.getPageSize());
-		Assertions.assertEquals(13, postPage.getTotalElements());
-		Assertions.assertEquals(2, postPage.getTotalPages());
-		Assertions.assertEquals(1, postPage.getPageNumber());
-		Assertions.assertEquals(13, postPage.getTotalElements());
-	}
+    @Test
+    @Order(4)
+    @DisplayName("포스팅 등록 화면 접근")
+    @WithUserDetails(value = "board@primavera.com", userDetailsServiceBeanName = "primaveraUserDetailsService")
+    public void postForm() throws Exception {
+        mockMvc.perform(get("/post/form")).andExpect(status().isOk());
+    }
 
-	@Test
-	@Order(3)
-	@DisplayName("포스팅 상세 화면 접근")
-	@WithUserDetails(value = "Genius Choi", userDetailsServiceBeanName = "primaveraUserDetailsService")
-	public void postDetail() throws Exception {
-		given(this.postService.findById(1)).willReturn(Post.builder().id(1).subject("제1권 로마는 하루아침에 이루어지지 않았다.").contents("제1권 로마는 하루아침에 이루어지지 않았다.").writer(User.builder().id(1).nickname("Genius").build()).build());
-		mockMvc.perform(get("/posts/1").accept(MediaType.TEXT_HTML))
-				.andExpect(status().isOk())
-				.andExpect(content().string(containsString("하루아침에")))
-				.andExpect(content().string(containsString("이루어지지")))
-				.andExpect(content().string(containsString("Genius")));
-	}
-
-	@Test
-	@Order(4)
-	@DisplayName("포스팅 등록 화면 접근")
-	@WithUserDetails(value = "Genius Choi", userDetailsServiceBeanName = "primaveraUserDetailsService")
-	public void postForm() throws Exception {
-		mockMvc.perform(get("/post/form")).andExpect(status().isOk());
-	}
-
-	@Test
-	@Order(5)
-	@DisplayName("포스팅 저장 후 목록 화면")
-	@WithUserDetails(value = "Genius Choi", userDetailsServiceBeanName = "primaveraUserDetailsService")
-	public void postSave() throws Exception {
-		MultiValueMap params = new LinkedMultiValueMap();
-		params.set("subject", "승자의 혼미");
-		params.set("contents", "카르타고의 멸망에서부터 카이사르가 역사적 무대로 등장하기 전까지를 그리고 있는 <로마인 이야기> 그 세번째 이야기.");
-		params.set("writerId", "2");
-		mockMvc.perform(post("/post/save").params(params)).andExpect(status().is3xxRedirection());
-	}
+    @Test
+    @Order(5)
+    @DisplayName("포스팅 저장 후 목록 화면")
+    @WithUserDetails(value = "board@primavera.com", userDetailsServiceBeanName = "primaveraUserDetailsService")
+    public void postSave() throws Exception {
+        MultiValueMap params = new LinkedMultiValueMap();
+        params.set("subject", "승자의 혼미");
+        params.set("contents", "카르타고의 멸망에서부터 카이사르가 역사적 무대로 등장하기 전까지를 그리고 있는 <로마인 이야기> 그 세번째 이야기.");
+        params.set("writerId", "1");
+        mockMvc.perform(post("/post/save").params(params).with(csrf())).andExpect(status().is3xxRedirection());
+    }
 }

@@ -20,9 +20,9 @@ import java.util.List;
 @Mapper
 public interface PostMapper {
 
-    String INSERT_SQL = "INSERT INTO POST (WRITER_ID, SUBJECT, CONTENTS, STATUS, CREATED_AT) " + "VALUES (#{writer.id}, #{subject}, #{contents}, #{status, typeHandler=PostStatusTypeHandler}, #{createdAt})";
-    String SELECT_SQL = "SELECT A.ID, A.SUBJECT, A.CONTENTS, A.CREATED_AT, A.UPDATED_AT, A.WRITER_ID, B.EMAIL, B.NICKNAME FROM POST AS A INNER JOIN USER B ON A.WRITER_ID = B.ID";
-    String SELECT_COUNT_SQL = "SELECT COUNT(*) AS CNT FROM POST AS A INNER JOIN USER B ON A.WRITER_ID = B.ID";
+    String INSERT_SQL = "INSERT INTO POSTS (WRITER_ID, SUBJECT, CONTENTS, STATUS, CREATED_AT) " + "VALUES (#{writer.id}, #{subject}, #{contents}, #{status, typeHandler=com.genius.primavera.domain.typehandler.PostStatusTypeHandler}, #{createdAt})";
+    String SELECT_SQL = "SELECT A.ID, A.SUBJECT, A.CONTENTS, A.CREATED_AT, A.UPDATED_AT, A.WRITER_ID, B.EMAIL, B.NICKNAME FROM POSTS AS A INNER JOIN USERS B ON A.WRITER_ID = B.ID";
+    String SELECT_COUNT_SQL = "SELECT COUNT(*) AS CNT FROM POSTS AS A INNER JOIN USERS B ON A.WRITER_ID = B.ID";
 
     @Insert(value = INSERT_SQL)
     @Options(useGeneratedKeys = true, keyProperty = "id")

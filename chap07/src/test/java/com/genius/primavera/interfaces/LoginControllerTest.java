@@ -1,12 +1,11 @@
 package com.genius.primavera.interfaces;
 
-import com.genius.primavera.domain.model.AbstractContainerTest;
+import com.genius.primavera.testContainer.EnablePrimaveraTestcontainers;
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -14,11 +13,13 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+@SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-@ExtendWith(SpringExtension.class)
+@EnablePrimaveraTestcontainers
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class LoginControllerTest extends AbstractContainerTest {
+@DisplayName("로그인 컨트롤러 통합 테스트")
+public class LoginControllerTest {
 
 	@Autowired
 	private MockMvc mockMvc;

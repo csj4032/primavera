@@ -3,7 +3,7 @@ spring:
     name: HierarchicalCommentApplication
   banner:
     charset: UTF-8
-    location: classpath:primavera.txt
+    location: classpath:banner.txt
   profiles:
     active: local
     group:

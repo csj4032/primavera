@@ -3,7 +3,7 @@ spring:
     name: BoardSystemApplication
   banner:
     charset: UTF-8
-    location: classpath:primavera.txt
+    location: classpath:banner.txt
   profiles:
     active: local
     group:
@@ -19,7 +19,6 @@ spring:
     time-zone: UTC
 
 lucy-filter:
-  enabled: true
   name: lucyXssFilter
   order: 1
   addUrlPatterns: /*

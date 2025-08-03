@@ -1,6 +1,6 @@
 package com.genius.primavera.config;
 
-import com.genius.primavera.domain.model.typehandler.ArticleStatusTypeHandler;
+import com.genius.primavera.domain.typehandler.ArticleStatusTypeHandler;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 import org.mybatis.spring.SqlSessionFactoryBean;

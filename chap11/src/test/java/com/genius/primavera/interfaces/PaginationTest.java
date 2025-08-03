@@ -3,21 +3,15 @@ package com.genius.primavera.interfaces;
 import com.genius.primavera.domain.PageRequest;
 import com.genius.primavera.domain.Paged;
 import com.genius.primavera.domain.model.post.Post;
-
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import lombok.extern.slf4j.Slf4j;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -37,12 +31,12 @@ public class PaginationTest {
         PageRequest pageRequest = PageRequest.of(6, 5);
         List<Post> contents = posts.stream().skip(pageRequest.getOffset()).limit(pageRequest.getRowNumber()).collect(Collectors.toList());
         Paged<Post> paged = new Paged(pageRequest, contents, posts.size());
-        Assertions.assertEquals(5, paged.getPageSize());
-        Assertions.assertEquals(List.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10), paged.getPaginates());
-        Assertions.assertEquals(6, paged.getPageNumber());
-        Assertions.assertEquals(5, paged.getContents().size());
-        Assertions.assertEquals(26, paged.getContents().get(0).getId());
-        Assertions.assertEquals(30, paged.getContents().get(4).getId());
+        assertEquals(5, paged.getPageSize());
+        assertEquals(List.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10), paged.getPaginates());
+        assertEquals(6, paged.getPageNumber());
+        assertEquals(5, paged.getContents().size());
+        assertEquals(26, paged.getContents().get(0).getId());
+        assertEquals(30, paged.getContents().get(4).getId());
     }
 
     @Test
@@ -52,12 +46,12 @@ public class PaginationTest {
         PageRequest pageRequest = PageRequest.of(2);
         List<Post> contents = posts.stream().skip(pageRequest.getOffset()).limit(pageRequest.getRowNumber()).collect(Collectors.toList());
         Paged<Post> paged = new Paged(pageRequest, contents, posts.size());
-        Assertions.assertEquals(2, paged.getPageNumber());
-        Assertions.assertEquals(10, paged.getPageSize());
-        Assertions.assertEquals(List.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10), paged.getPaginates());
-        Assertions.assertEquals(10, paged.getContents().size());
-        Assertions.assertEquals(11, paged.getContents().get(0).getId());
-        Assertions.assertEquals(20, paged.getContents().get(9).getId());
+        assertEquals(2, paged.getPageNumber());
+        assertEquals(10, paged.getPageSize());
+        assertEquals(List.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10), paged.getPaginates());
+        assertEquals(10, paged.getContents().size());
+        assertEquals(11, paged.getContents().get(0).getId());
+        assertEquals(20, paged.getContents().get(9).getId());
     }
 
     @Test
@@ -67,12 +61,12 @@ public class PaginationTest {
         PageRequest pageRequest = PageRequest.of(3, 20);
         List<Post> contents = posts.stream().skip(pageRequest.getOffset()).limit(pageRequest.getRowNumber()).collect(Collectors.toList());
         Paged<Post> paged = new Paged(pageRequest, contents, posts.size());
-        Assertions.assertEquals(3, paged.getPageNumber());
-        Assertions.assertEquals(20, paged.getPageSize());
-        Assertions.assertEquals(List.of(1, 2, 3, 4, 5), paged.getPaginates());
-        Assertions.assertEquals(20, paged.getContents().size());
-        Assertions.assertEquals(41, paged.getContents().get(0).getId());
-        Assertions.assertEquals(60, paged.getContents().get(19).getId());
+        assertEquals(3, paged.getPageNumber());
+        assertEquals(20, paged.getPageSize());
+        assertEquals(List.of(1, 2, 3, 4, 5), paged.getPaginates());
+        assertEquals(20, paged.getContents().size());
+        assertEquals(41, paged.getContents().get(0).getId());
+        assertEquals(60, paged.getContents().get(19).getId());
     }
 
     @Test
@@ -82,12 +76,12 @@ public class PaginationTest {
         PageRequest pageRequest = PageRequest.of(5, 20, 20);
         List<Post> contents = posts.stream().skip(pageRequest.getOffset()).limit(pageRequest.getRowNumber()).collect(Collectors.toList());
         Paged<Post> paged = new Paged(pageRequest, contents, posts.size());
-        Assertions.assertEquals(5, paged.getPageNumber());
-        Assertions.assertEquals(20, paged.getPageSize());
-        Assertions.assertEquals(List.of(1, 2, 3, 4, 5), paged.getPaginates());
-        Assertions.assertEquals(15, paged.getContents().size());
-        Assertions.assertEquals(81, paged.getContents().get(0).getId());
-        Assertions.assertEquals(95, paged.getContents().get(14).getId());
+        assertEquals(5, paged.getPageNumber());
+        assertEquals(20, paged.getPageSize());
+        assertEquals(List.of(1, 2, 3, 4, 5), paged.getPaginates());
+        assertEquals(15, paged.getContents().size());
+        assertEquals(81, paged.getContents().get(0).getId());
+        assertEquals(95, paged.getContents().get(14).getId());
     }
 
     @Test
@@ -97,14 +91,14 @@ public class PaginationTest {
         PageRequest pageRequest = PageRequest.of(4, 20, 3);
         List<Post> contents = posts.stream().skip(pageRequest.getOffset()).limit(pageRequest.getRowNumber()).collect(Collectors.toList());
         Paged<Post> paged = new Paged(pageRequest, contents, posts.size());
-        Assertions.assertEquals(4, paged.getPageNumber());
-        Assertions.assertEquals(20, paged.getPageSize());
-        Assertions.assertEquals(List.of(4,5), paged.getPaginates());
-        Assertions.assertEquals(4, paged.getFirstPagedNumber());
-        Assertions.assertEquals(5, paged.getLastPagedNumber());
-        Assertions.assertEquals(20, paged.getContents().size());
-        Assertions.assertEquals(61, paged.getContents().get(0).getId());
-        Assertions.assertEquals(80, paged.getContents().get(19).getId());
+        assertEquals(4, paged.getPageNumber());
+        assertEquals(20, paged.getPageSize());
+        assertEquals(List.of(4,5), paged.getPaginates());
+        assertEquals(4, paged.getFirstPagedNumber());
+        assertEquals(5, paged.getLastPagedNumber());
+        assertEquals(20, paged.getContents().size());
+        assertEquals(61, paged.getContents().get(0).getId());
+        assertEquals(80, paged.getContents().get(19).getId());
     }
 
     @Test
@@ -114,16 +108,16 @@ public class PaginationTest {
         PageRequest pageRequest = PageRequest.of(10, 1, 20);
         List<Post> contents = posts.stream().skip(pageRequest.getOffset()).limit(pageRequest.getRowNumber()).collect(Collectors.toList());
         Paged<Post> paged = new Paged(pageRequest, contents, posts.size());
-        Assertions.assertEquals(10, paged.getPageNumber());
-        Assertions.assertEquals(1, paged.getPageSize());
-        Assertions.assertEquals(List.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20), paged.getPaginates());
-        Assertions.assertEquals(1, paged.getFirstPagedNumber());
-        Assertions.assertEquals(20, paged.getLastPagedNumber());
-        Assertions.assertEquals(1, paged.getContents().size());
-        Assertions.assertEquals(10, paged.getContents().get(0).getId());
-        Assertions.assertEquals(10, paged.getContents().get(0).getId());
-        Assertions.assertTrue(paged.hasNext());
-        Assertions.assertTrue(paged.hasPrevious());
+        assertEquals(10, paged.getPageNumber());
+        assertEquals(1, paged.getPageSize());
+        assertEquals(List.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20), paged.getPaginates());
+        assertEquals(1, paged.getFirstPagedNumber());
+        assertEquals(20, paged.getLastPagedNumber());
+        assertEquals(1, paged.getContents().size());
+        assertEquals(10, paged.getContents().get(0).getId());
+        assertEquals(10, paged.getContents().get(0).getId());
+        assertTrue(paged.hasNext());
+        assertTrue(paged.hasPrevious());
     }
 
     @Test
@@ -133,15 +127,15 @@ public class PaginationTest {
         PageRequest pageRequest = PageRequest.of(10, 10, 10);
         List<Post> contents = posts.stream().skip(pageRequest.getOffset()).limit(pageRequest.getRowNumber()).collect(Collectors.toList());
         Paged<Post> paged = new Paged(pageRequest, contents, posts.size());
-        Assertions.assertEquals(10, paged.getPageNumber());
-        Assertions.assertEquals(10, paged.getPageSize());
-        Assertions.assertEquals(List.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10), paged.getPaginates());
-        Assertions.assertEquals(1, paged.getFirstPagedNumber());
-        Assertions.assertEquals(10, paged.getLastPagedNumber());
-        Assertions.assertEquals(5, paged.getContents().size());
-        Assertions.assertEquals(91, paged.getContents().get(0).getId());
-        Assertions.assertEquals(95, paged.getContents().get(4).getId());
-        Assertions.assertFalse(paged.hasNext());
-        Assertions.assertTrue(paged.hasPrevious());
+        assertEquals(10, paged.getPageNumber());
+        assertEquals(10, paged.getPageSize());
+        assertEquals(List.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10), paged.getPaginates());
+        assertEquals(1, paged.getFirstPagedNumber());
+        assertEquals(10, paged.getLastPagedNumber());
+        assertEquals(5, paged.getContents().size());
+        assertEquals(91, paged.getContents().get(0).getId());
+        assertEquals(95, paged.getContents().get(4).getId());
+        assertFalse(paged.hasNext());
+        assertTrue(paged.hasPrevious());
     }
 }

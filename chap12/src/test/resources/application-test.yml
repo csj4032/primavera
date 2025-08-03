@@ -7,3 +7,32 @@ spring:
       enabled: false
     vault:
       enabled: false
+  datasource:
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 10
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      connection-timeout: 30000
+      pool-name: "BalancedHikariPool"
+      leak-detection-threshold: 60000
+      connection-test-query: "SELECT 1"
+      validation-timeout: 5000
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+    default-fetch-size: 1000
+    default-statement-timeout: 30
+  type-aliases-package: com.genius.primavera.domain
+  type-handlers-package: com.genius.primavera.domain
+
+primavera:
+  testcontainers:
+    mariadb:
+      dockerImageName: mariadb:11.4.7
+      driverClassName: org.mariadb.jdbc.Driver
+      databaseName: primavera
+      username: primavera
+      password: primavera
+      initScript: sql/init.sql

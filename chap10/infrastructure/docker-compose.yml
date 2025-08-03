@@ -1,0 +1,77 @@
+version: '3.8'
+
+services:
+  # MariaDB for OAuth2SocialLoginApplication (chap10)
+  mariadb-chap10:
+    image: mariadb:11.4.7
+    container_name: mariadb-primavera-chap10
+    restart: unless-stopped
+    environment:
+      MARIADB_ROOT_PASSWORD: root
+      MARIADB_DATABASE: primavera
+      MARIADB_USER: primavera
+      MARIADB_PASSWORD: primavera
+      TZ: Asia/Seoul
+    ports:
+      - "3314:3306"
+    volumes:
+      - mariadb-chap10-data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD", "mariadb", "-uprimavera", "-pprimavera", "-e", "SELECT 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - chap10-network
+
+  # Vault for Configuration Management
+  vault-chap10:
+    image: hashicorp/vault:1.15
+    container_name: vault-primavera-chap10
+    restart: unless-stopped
+    cap_add:
+      - IPC_LOCK
+    environment:
+      VAULT_DEV_ROOT_TOKEN_ID: 'primavera-vault-token'
+      VAULT_DEV_LISTEN_ADDRESS: '0.0.0.0:8200'
+      VAULT_LOG_LEVEL: 'info'
+    ports:
+      - "8206:8200"
+    volumes:
+      - vault-chap10-data:/vault/data
+      - ./vault-init.sh:/vault-init.sh:ro
+    command: >
+      sh -c "vault server -dev -dev-root-token-id=primavera-vault-token &
+             sleep 5 &&
+             export VAULT_ADDR='http://0.0.0.0:8200' &&
+             export VAULT_TOKEN='primavera-vault-token' &&
+             vault kv put secret/OAuth2SocialLoginApplication/local \
+               spring.datasource.driver-class-name=org.mariadb.jdbc.Driver \
+               spring.datasource.url=jdbc:mariadb://mariadb-chap10:3306/primavera \
+               spring.datasource.username=primavera \
+               spring.datasource.password=primavera &&
+             tail -f /dev/null"
+    healthcheck:
+      test: ["CMD", "vault", "status"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    depends_on:
+      mariadb-chap10:
+        condition: service_healthy
+    networks:
+      - chap10-network
+
+volumes:
+  mariadb-chap10-data:
+    name: mariadb-chap10-data
+  vault-chap10-data:
+    name: vault-chap10-data
+
+networks:
+  chap10-network:
+    name: primavera-chap10-network
+    driver: bridge

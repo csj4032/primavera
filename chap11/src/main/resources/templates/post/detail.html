@@ -25,7 +25,7 @@
 						<div class="user-block">
 							<img class="img-circle" th:src="${#authorization.expression('isAuthenticated()') and #authorization.getAuthentication()?.principal?.imageUrl != null ? #authorization.getAuthentication().principal.imageUrl : '../dist/img/user1-128x128.jpg'}" src="../dist/img/user1-128x128.jpg" alt="User Image">
 							<span class="username"><a href="#" th:text="${post.writer.nickname}">Jonathan Burke Jr.</a></span>
-							<span class="description" th:text="${'Shared publicly -' +  post.regDt}">Shared publicly - 7:30 PM Today</span>
+							<span class="description" th:text="${'Shared publicly -' +  post.createdAt}">Shared publicly - 7:30 PM Today</span>
 						</div>
 						<div class="box-tools">
 							<button type="button" class="btn btn-box-tool" data-toggle="tooltip" title data-original-title="line"><i class="fa fa-heart-o"></i></button>
