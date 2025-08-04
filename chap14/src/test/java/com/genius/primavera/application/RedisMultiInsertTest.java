@@ -1,7 +1,11 @@
 package com.genius.primavera.application;
 
 import com.genius.primavera.domain.model.Temp;
-import com.genius.primavera.testContainer.EnablePrimaveraTestcontainers;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.containers.MariaDBContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,17 +23,30 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.genius.primavera.testContainer.ContainerType.MARIADB;
-import static com.genius.primavera.testContainer.ContainerType.REDIS;
 
 @Slf4j
 @SpringBootTest
 @ActiveProfiles("test")
 @Execution(value = ExecutionMode.CONCURRENT)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@EnablePrimaveraTestcontainers(containers = {REDIS, MARIADB})
+@Testcontainers
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class RedisMultiInsertTest {
+
+    @Container
+    static MariaDBContainer<?> mariadb = new MariaDBContainer<>("mariadb:11.4")
+            .withDatabaseName("primavera")
+            .withUsername("primavera")
+            .withPassword("primavera")
+            .withInitScript("sql/init.sql");
+
+    @DynamicPropertySource
+    static void configureProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", mariadb::getJdbcUrl);
+        registry.add("spring.datasource.username", mariadb::getUsername);
+        registry.add("spring.datasource.password", mariadb::getPassword);
+        registry.add("spring.datasource.driver-class-name", mariadb::getDriverClassName);
+    }
 
     @Autowired
     private RedisTemplate<String, Temp> redisTemplate;

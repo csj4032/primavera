@@ -7,9 +7,11 @@ import com.genius.primavera.domain.model.post.Post;
 import com.genius.primavera.domain.model.post.PostDto;
 import com.genius.primavera.domain.model.user.User;
 
-import com.genius.primavera.testContainer.ContainerLifecycleMode;
-import com.genius.primavera.testContainer.ContainerType;
-import com.genius.primavera.testContainer.EnablePrimaveraTestcontainers;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.containers.MariaDBContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -35,8 +37,6 @@ import java.util.List;
 
 import lombok.extern.slf4j.Slf4j;
 
-import static com.genius.primavera.testContainer.ContainerType.MARIADB;
-import static com.genius.primavera.testContainer.ContainerType.MONGODB;
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
@@ -53,9 +53,24 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-@EnablePrimaveraTestcontainers(containers = {MARIADB, MONGODB})
+@Testcontainers
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class PostMockControllerTest {
+
+    @Container
+    static MariaDBContainer<?> mariadb = new MariaDBContainer<>("mariadb:11.4")
+            .withDatabaseName("primavera")
+            .withUsername("primavera")
+            .withPassword("primavera")
+            .withInitScript("sql/init.sql");
+
+    @DynamicPropertySource
+    static void configureProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", mariadb::getJdbcUrl);
+        registry.add("spring.datasource.username", mariadb::getUsername);
+        registry.add("spring.datasource.password", mariadb::getPassword);
+        registry.add("spring.datasource.driver-class-name", mariadb::getDriverClassName);
+    }
 
     @Autowired
     private MockMvc mockMvc;

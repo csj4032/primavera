@@ -7,9 +7,16 @@ import com.genius.primavera.domain.model.User;
 import com.genius.primavera.domain.model.UserStatus;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.containers.MariaDBContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.Instant;
 import java.util.List;
@@ -19,10 +26,28 @@ import java.util.List;
  * 
  * AbstractIntegrationTest를 상속받아 MariaDB 컨테이너를 자동으로 사용합니다.
  */
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ActiveProfiles("test")
+@Testcontainers
 @Order(4)
 @DisplayName("사용자 등록 유효성 검증 테스트")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class UserSaveValidationTest extends AbstractIntegrationTest {
+public class UserSaveValidationTest {
+
+    @Container
+    static MariaDBContainer<?> mariadb = new MariaDBContainer<>("mariadb:11.4")
+            .withDatabaseName("primavera")
+            .withUsername("primavera")
+            .withPassword("primavera")
+            .withInitScript("sql/init.sql");
+
+    @DynamicPropertySource
+    static void configureProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", mariadb::getJdbcUrl);
+        registry.add("spring.datasource.username", mariadb::getUsername);
+        registry.add("spring.datasource.password", mariadb::getPassword);
+        registry.add("spring.datasource.driver-class-name", mariadb::getDriverClassName);
+    }
 
     @Autowired
     private TestRestTemplate restTemplate;
@@ -91,7 +116,7 @@ public class UserSaveValidationTest extends AbstractIntegrationTest {
     @Test
     @Order(8)
     @DisplayName("권한 타입 누락 검증")
-        User source = User.builder().id(1L).email("genius@gmail.com").password("Secret0!").createdAt(Instant.now().plusDays(1)).updatedAt(Instant.now()).nickname("genius").roles(List.of(new Role(1, null))).build();
+    public void saveAndReturnUserNullRoleType() {
         User source = User.builder()
                 .id(1L)
                 .email("genius@gmail.com")

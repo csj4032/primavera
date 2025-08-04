@@ -1,8 +1,5 @@
 package com.genius.primavera.application.storage;
 
-import com.genius.primavera.testContainer.ContainerLifecycleMode;
-import com.genius.primavera.testContainer.ContainerType;
-import com.genius.primavera.testContainer.EnablePrimaveraTestcontainers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
@@ -22,7 +19,6 @@ import java.util.stream.Stream;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@EnablePrimaveraTestcontainers(containers = {ContainerType.MARIADB, ContainerType.MONGODB})
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class FileSystemStorageServiceTest {
 

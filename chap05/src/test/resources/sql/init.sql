@@ -54,3 +54,17 @@ VALUES (1, 1), -- ADMINISTRATOR
        (3, 3), -- USER
        (4, 4)  -- ETC (RoleMapperTest에서 ETC 타입 저장)
 ON DUPLICATE KEY UPDATE TYPE = VALUES(TYPE);
+
+-- 테스트 데이터: 사용자 (getUserById 테스트를 위한 ID=1)
+INSERT INTO USERS (ID, EMAIL, PASSWORD, NICKNAME, STATUS)
+VALUES (1, 'admin@primavera.com', 'Secret0!', 'Administrator', 1),
+       (2, 'manager@primavera.com', 'Secret0!', 'Manager', 1),
+       (3, 'user@primavera.com', 'Secret0!', 'User', 1)
+ON DUPLICATE KEY UPDATE EMAIL = VALUES(EMAIL);
+
+-- 테스트 데이터: 사용자-권한 매핑
+INSERT INTO USER_ROLES (USER_ID, ROLE_ID)
+VALUES (1, 1), -- admin has ADMINISTRATOR role
+       (2, 2), -- manager has MANAGER role
+       (3, 3)  -- user has USER role
+ON DUPLICATE KEY UPDATE USER_ID = VALUES(USER_ID);

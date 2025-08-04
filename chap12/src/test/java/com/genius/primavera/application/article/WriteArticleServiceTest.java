@@ -7,7 +7,6 @@ import com.genius.primavera.domain.model.user.User;
 import com.genius.primavera.domain.model.user.Role;
 import com.genius.primavera.domain.model.user.RoleType;
 import com.genius.primavera.infrastructure.security.PrimaveraUserDetails;
-import com.genius.primavera.testContainer.EnablePrimaveraTestcontainers;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,9 +35,24 @@ import static org.mockito.BDDMockito.given;
 @ActiveProfiles("test")
 @Rollback(false)
 @Transactional
-@EnablePrimaveraTestcontainers
+@Testcontainers
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class WriteArticleServiceTest {
+
+    @Container
+    static MariaDBContainer<?> mariadb = new MariaDBContainer<>("mariadb:11.4")
+            .withDatabaseName("primavera")
+            .withUsername("primavera")
+            .withPassword("primavera")
+            .withInitScript("sql/init.sql");
+
+    @DynamicPropertySource
+    static void configureProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", mariadb::getJdbcUrl);
+        registry.add("spring.datasource.username", mariadb::getUsername);
+        registry.add("spring.datasource.password", mariadb::getPassword);
+        registry.add("spring.datasource.driver-class-name", mariadb::getDriverClassName);
+    }
 
     @Autowired
     private WriteArticleService writeArticleService;

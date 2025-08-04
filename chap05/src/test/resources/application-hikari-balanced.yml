@@ -19,16 +19,6 @@ spring:
       connection-test-query: "SELECT 1"
       validation-timeout: 5000           # 검증 타임아웃: 5초
 
-primavera:
-  testcontainers:
-    mariadb:
-      dockerImageName: mariadb:11.4.7
-      driverClassName: org.mariadb.jdbc.Driver
-      databaseName: primavera
-      username: primavera
-      password: primavera
-      initScript: sql/init.sql
-
 mybatis:
   configuration:
     map-underscore-to-camel-case: true

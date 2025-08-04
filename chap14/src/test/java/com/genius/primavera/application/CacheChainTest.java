@@ -3,8 +3,11 @@ package com.genius.primavera.application;
 import com.genius.primavera.application.cache.LocalCache;
 import com.genius.primavera.domain.model.Temp;
 import com.genius.primavera.domain.repository.TempRepository;
-import com.genius.primavera.testContainer.ContainerType;
-import com.genius.primavera.testContainer.EnablePrimaveraTestcontainers;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.containers.MariaDBContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.lambda.Unchecked;
 import org.junit.jupiter.api.*;
@@ -22,17 +25,29 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.LongStream;
 
-import static com.genius.primavera.testContainer.ContainerType.MARIADB;
-import static com.genius.primavera.testContainer.ContainerType.MONGODB;
-import static com.genius.primavera.testContainer.ContainerType.REDIS;
 
 @Slf4j
 @SpringBootTest
 @ActiveProfiles("test")
 @DisplayName("Cache Chain Test")
-@EnablePrimaveraTestcontainers(containers = {REDIS, MARIADB, MONGODB})
+@Testcontainers
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class CacheChainTest {
+
+    @Container
+    static MariaDBContainer<?> mariadb = new MariaDBContainer<>("mariadb:11.4")
+            .withDatabaseName("primavera")
+            .withUsername("primavera")
+            .withPassword("primavera")
+            .withInitScript("sql/init.sql");
+
+    @DynamicPropertySource
+    static void configureProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", mariadb::getJdbcUrl);
+        registry.add("spring.datasource.username", mariadb::getUsername);
+        registry.add("spring.datasource.password", mariadb::getPassword);
+        registry.add("spring.datasource.driver-class-name", mariadb::getDriverClassName);
+    }
 
     @Autowired
     private LocalCache localCache;
