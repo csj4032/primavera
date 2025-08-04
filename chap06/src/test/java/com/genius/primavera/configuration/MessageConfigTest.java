@@ -1,6 +1,5 @@
 package com.genius.primavera.configuration;
 
-import com.genius.primavera.testContainer.EnablePrimaveraTestcontainers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -28,7 +27,6 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
  */
 @SpringBootTest
 @ActiveProfiles("test")
-@EnablePrimaveraTestcontainers
 @DisplayName("국제화 설정 테스트")
 class MessageConfigTest {
 

@@ -4,7 +4,6 @@ import com.genius.primavera.domain.model.Role;
 import com.genius.primavera.domain.model.RoleType;
 import com.genius.primavera.domain.model.User;
 import com.genius.primavera.domain.model.UserStatus;
-import com.genius.primavera.testContainer.EnablePrimaveraTestcontainers;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import jakarta.validation.groups.Default;
@@ -18,7 +17,6 @@ import java.util.Set;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@EnablePrimaveraTestcontainers
 @DisplayName("Groovy 스크립트 검증 테스트")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class UserGroovyScriptValidationTest {

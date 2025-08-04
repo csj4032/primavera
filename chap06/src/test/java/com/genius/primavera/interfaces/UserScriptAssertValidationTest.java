@@ -1,7 +1,6 @@
 package com.genius.primavera.interfaces;
 
 import com.genius.primavera.domain.model.UserWithScriptAssert;
-import com.genius.primavera.testContainer.EnablePrimaveraTestcontainers;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import org.junit.jupiter.api.*;
@@ -14,7 +13,6 @@ import java.util.Set;
 @Order(5)
 @SpringBootTest
 @ActiveProfiles("test")
-@EnablePrimaveraTestcontainers
 @DisplayName("@ScriptAssert Groovy 스크립트 검증 테스트")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class UserScriptAssertValidationTest {

@@ -1,6 +1,5 @@
 package com.genius.primavera.interfaces;
 
-import com.genius.primavera.AbstractIntegrationTest;
 import com.genius.primavera.application.UserService;
 import com.genius.primavera.domain.model.Role;
 import com.genius.primavera.domain.model.RoleType;

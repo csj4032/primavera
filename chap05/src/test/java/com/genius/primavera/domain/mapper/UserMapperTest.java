@@ -1,6 +1,5 @@
 package com.genius.primavera.domain.mapper;
 
-import com.genius.primavera.AbstractIntegrationTest;
 import com.genius.primavera.domain.mapper.support.UserTableSupport;
 import com.genius.primavera.domain.model.*;
 import lombok.extern.slf4j.Slf4j;

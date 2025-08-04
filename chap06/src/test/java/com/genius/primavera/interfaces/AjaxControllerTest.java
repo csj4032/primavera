@@ -2,7 +2,6 @@ package com.genius.primavera.interfaces;
 
 import com.genius.primavera.domain.model.User;
 
-import com.genius.primavera.testContainer.EnablePrimaveraTestcontainers;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,7 +13,6 @@ import java.util.Map;
 
 @Order(1)
 @ActiveProfiles("test")
-@EnablePrimaveraTestcontainers
 @DisplayName("Ajax 컨트롤러 테스트 - REST API 응답 검증")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)

@@ -1,7 +1,6 @@
 package com.genius.primavera.domain.mapper;
 
 import com.genius.primavera.domain.model.Winner;
-import com.genius.primavera.testContainer.EnablePrimaveraTestcontainers;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,10 +23,25 @@ import java.util.stream.IntStream;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@EnablePrimaveraTestcontainers
+@Testcontainers
 @DisplayName(value = "벌크 인서트 테스트")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class WinnerMapperTest {
+
+    @Container
+    static MariaDBContainer<?> mariadb = new MariaDBContainer<>("mariadb:11.4")
+            .withDatabaseName("primavera")
+            .withUsername("primavera")
+            .withPassword("primavera")
+            .withInitScript("sql/init.sql");
+
+    @DynamicPropertySource
+    static void configureProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", mariadb::getJdbcUrl);
+        registry.add("spring.datasource.username", mariadb::getUsername);
+        registry.add("spring.datasource.password", mariadb::getPassword);
+        registry.add("spring.datasource.driver-class-name", mariadb::getDriverClassName);
+    }
 
     @Autowired
     private WinnerMapper winnerMapper;
