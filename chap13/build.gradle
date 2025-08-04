@@ -30,5 +30,4 @@ dependencies {
     testImplementation "io.rest-assured:rest-assured:5.5.0"
     implementation project(":appendix:spring-boot-starter-lucy-filter")
     testImplementation project(":appendix:spring-boot-starter-lucy-filter")
-    testImplementation project(":appendix:spring-boot-starter-test-container")
 }

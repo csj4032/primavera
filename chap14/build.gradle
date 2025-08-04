@@ -60,5 +60,4 @@ dependencies {
     testImplementation "javax.servlet:javax.servlet-api:4.0.1"
     implementation project(":appendix:spring-boot-starter-lucy-filter")
     testImplementation project(":appendix:spring-boot-starter-lucy-filter")
-    testImplementation project(":appendix:spring-boot-starter-test-container")
 }

@@ -31,6 +31,5 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-data-redis"
     implementation "org.redisson:redisson-spring-boot-starter:${redissonVersion}"
     implementation "com.github.ben-manes.caffeine:caffeine:${caffeineVersion}"
-    implementation project(":appendix:spring-boot-starter-test-container")
     implementation project(":appendix:spring-boot-starter-lucy-filter")
 }
