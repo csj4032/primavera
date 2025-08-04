@@ -9,7 +9,7 @@ dependencies {
     databaseDependencies.each { dep -> implementation dep }
     validationDependencies.each { dep -> implementation dep }
     developmentDependencies.each { dep -> implementation dep }
-    testImplementation project(':integration-test-support')
+    testImplementation project(':appendix:spring-boot-test-support')
     thymeleafDependencies.each { dep -> implementation dep }
     implementation "org.springframework.cloud:spring-cloud-starter-config"
     implementation "org.springframework.cloud:spring-cloud-starter-vault-config:${springCloudVaultVersion}"
