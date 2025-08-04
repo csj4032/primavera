@@ -9,24 +9,24 @@ import java.util.UUID;
 
 @Slf4j
 public class BeanScopeExample {
-    
+
+    @Getter
     @Component
     @Scope("singleton")
-    @Getter
     public static class SingletonBean {
         private final String id = UUID.randomUUID().toString();
-        
+
         public SingletonBean() {
             log.info("SingletonBean 생성: {}", id);
         }
     }
-    
+
+    @Getter
     @Component
     @Scope("prototype")
-    @Getter
     public static class PrototypeBean {
         private final String id = UUID.randomUUID().toString();
-        
+
         public PrototypeBean() {
             log.info("PrototypeBean 생성: {}", id);
         }

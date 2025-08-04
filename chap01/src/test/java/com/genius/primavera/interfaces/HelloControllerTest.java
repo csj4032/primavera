@@ -37,8 +37,9 @@ class HelloControllerTest {
     @DisplayName("hello() 메서드는 GreetingService의 hello() 메서드 결과를 반환해야 한다")
     void helloTest() {
         when(greetingService.hello()).thenReturn("Hello");
+        when(worldService.world()).thenReturn("World");
         String result = helloController.hello();
-        assertThat(result).isEqualTo("Hello");
+        assertThat(result).isEqualTo("Hello World");
     }
 
     @Test

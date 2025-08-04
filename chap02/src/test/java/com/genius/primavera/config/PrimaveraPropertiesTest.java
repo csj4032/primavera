@@ -1,5 +1,6 @@
 package com.genius.primavera.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,9 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Slf4j
 @SpringBootTest
+@ActiveProfiles("test")
 public class PrimaveraPropertiesTest {
 
     @Autowired
@@ -25,7 +28,7 @@ public class PrimaveraPropertiesTest {
         String databaseUrl = properties.getDatabase().getUrl();
         List<String> tables = properties.getDatabase().getTables();
         assertThat(databaseUsername).isEqualTo("test_user");
-        assertThat(databaseUrl).isEqualTo("jdbc:mysql://localhost:1109/primavera?serverTimezone=UTC");
+        assertThat(databaseUrl).isEqualTo("jdbc:mariadb://localhost:3308/primavera?serverTimezone=UTC");
         assertThat(tables).containsExactly("user", "role");
     }
 

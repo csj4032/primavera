@@ -8,7 +8,7 @@ com:
       database:
         username: test_user
         password: test_password123
-        url: jdbc:mysql://localhost:1109/primavera?serverTimezone=UTC
+        url: jdbc:mariadb://localhost:3308/primavera?serverTimezone=UTC
         tables:
           - user
           - role
@@ -35,6 +35,7 @@ com:
         betaFeatures: disabled
         maxUploadSize: 10MB
       cache:
-        enabled: false
-        time-to-live: 10m
-        max-entries: 2000
+        enabled: true
+        time-to-live: 5m
+        type: local
+        max-entries: 1000

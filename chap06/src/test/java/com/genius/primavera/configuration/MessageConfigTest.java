@@ -1,6 +1,7 @@
 package com.genius.primavera.configuration;
 
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -9,6 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.MessageSource;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.context.TestPropertySource;
+import org.testcontainers.containers.MariaDBContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.Locale;
 import java.util.stream.Stream;
@@ -19,6 +26,11 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 /**
  * 국제화 설정과 메시지 소스 기능을 테스트하는 클래스입니다.
  * <p>
+ * Spring Boot 3.x 최신 테스트 접근법을 사용:
+ * - 경량화된 컨텍스트 로딩
+ * - 중첩 테스트 클래스를 통한 논리적 그룹화
+ * - 불필요한 TestContainers 제거 (MessageSource는 DB 불필요)
+ * <p>
  * 테스트 범위:
  * - MessageSource Bean 생성 확인
  * - 다국어 메시지 로딩 테스트
@@ -26,9 +38,25 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
  * - 존재하지 않는 메시지 키 처리
  */
 @SpringBootTest
+@Testcontainers
 @ActiveProfiles("test")
 @DisplayName("국제화 설정 테스트")
-class MessageConfigTest {
+public class MessageConfigTest {
+
+    @Container
+    static MariaDBContainer<?> mariadb = new MariaDBContainer<>("mariadb:11.4")
+            .withDatabaseName("primavera")
+            .withUsername("primavera")
+            .withPassword("primavera")
+            .withInitScript("sql/init.sql");
+
+    @DynamicPropertySource
+    static void configureProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", mariadb::getJdbcUrl);
+        registry.add("spring.datasource.username", mariadb::getUsername);
+        registry.add("spring.datasource.password", mariadb::getPassword);
+        registry.add("spring.datasource.driver-class-name", mariadb::getDriverClassName);
+    }
 
     @Autowired
     private MessageSource messageSource;
@@ -39,36 +67,41 @@ class MessageConfigTest {
         assertThat(messageSource).isNotNull();
     }
 
-    static Stream<Arguments> provideMultiLanguageMessages() {
-        return Stream.of(
-                // 한국어
-                Arguments.of(Locale.KOREAN, "user.registration.success", "회원가입이 성공적으로 완료되었습니다."),
-                Arguments.of(Locale.KOREAN, "label.email", "이메일"),
-                Arguments.of(Locale.KOREAN, "button.save", "저장"),
-                Arguments.of(Locale.KOREAN, "com.genius.primavera.validate.nickname.message", "올바르지 않은 별명입니다. (2-20자, 한글/영문/숫자만 허용)"),
+    @Nested
+    @DisplayName("다국어 메시지 테스트")
+    class MultiLanguageMessageTests {
 
-                // 영어
-                Arguments.of(Locale.ENGLISH, "user.registration.success", "Registration completed successfully."),
-                Arguments.of(Locale.ENGLISH, "label.email", "Email"),
-                Arguments.of(Locale.ENGLISH, "button.save", "Save"),
-                Arguments.of(Locale.ENGLISH, "com.genius.primavera.validate.nickname.message",
-                        "Invalid nickname format. (2-20 characters, Korean/English/Numbers only)"),
+        static Stream<Arguments> provideMultiLanguageMessages() {
+            return Stream.of(
+                    // 한국어
+                    Arguments.of(Locale.KOREAN, "user.registration.success", "회원가입이 성공적으로 완료되었습니다."),
+                    Arguments.of(Locale.KOREAN, "label.email", "이메일"),
+                    Arguments.of(Locale.KOREAN, "button.save", "저장"),
+                    Arguments.of(Locale.KOREAN, "com.genius.primavera.validate.nickname.message", "올바르지 않은 별명입니다. (2-20자, 한글/영문/숫자만 허용)"),
 
-                // 일본어
-                Arguments.of(Locale.JAPANESE, "user.registration.success", "会員登録が正常に完了しました。"),
-                Arguments.of(Locale.JAPANESE, "label.email", "メールアドレス"),
-                Arguments.of(Locale.JAPANESE, "button.save", "保存"),
-                Arguments.of(Locale.JAPANESE, "com.genius.primavera.validate.nickname.message",
-                        "ニックネームの形式が正しくありません。(2-20文字、ひらがな/カタカナ/漢字/英数字のみ許可)")
-        );
-    }
+                    // 영어
+                    Arguments.of(Locale.ENGLISH, "user.registration.success", "Registration completed successfully."),
+                    Arguments.of(Locale.ENGLISH, "label.email", "Email"),
+                    Arguments.of(Locale.ENGLISH, "button.save", "Save"),
+                    Arguments.of(Locale.ENGLISH, "com.genius.primavera.validate.nickname.message",
+                            "Invalid nickname format. (2-20 characters, Korean/English/Numbers only)"),
 
-    @ParameterizedTest
-    @MethodSource("provideMultiLanguageMessages")
-    @DisplayName("로케일별 메시지가 정확히 로딩되는지 확인")
-    void shouldLoadCorrectMessageForEachLocale(Locale locale, String messageKey, String expectedMessage) {
-        String actualMessage = messageSource.getMessage(messageKey, null, locale);
-        assertThat(actualMessage).isEqualTo(expectedMessage);
+                    // 일본어
+                    Arguments.of(Locale.JAPANESE, "user.registration.success", "会員登録が正常に完了しました。"),
+                    Arguments.of(Locale.JAPANESE, "label.email", "メールアドレス"),
+                    Arguments.of(Locale.JAPANESE, "button.save", "保存"),
+                    Arguments.of(Locale.JAPANESE, "com.genius.primavera.validate.nickname.message",
+                            "ニックネームの形式が正しくありません。(2-20文字、ひらがな/カタカナ/漢字/英数字のみ許可)")
+            );
+        }
+
+        @ParameterizedTest
+        @MethodSource("provideMultiLanguageMessages")
+        @DisplayName("로케일별 메시지가 정확히 로딩되는지 확인")
+        void shouldLoadCorrectMessageForEachLocale(Locale locale, String messageKey, String expectedMessage) {
+            String actualMessage = messageSource.getMessage(messageKey, null, locale);
+            assertThat(actualMessage).isEqualTo(expectedMessage);
+        }
     }
 
     static Stream<Arguments> provideBeanValidationMessages() {

@@ -12,7 +12,7 @@ public class WorldServiceImpl implements WorldService {
 
     @Override
     public String world() {
-        return "World!!!";
+        return "World";
     }
 }
 

@@ -26,12 +26,11 @@ import java.util.List;
  * 
  * AbstractIntegrationTest를 상속받아 MariaDB 컨테이너를 자동으로 사용합니다.
  */
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("test")
 @Testcontainers
-@Order(4)
+@ActiveProfiles("test")
 @DisplayName("사용자 등록 유효성 검증 테스트")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class UserSaveValidationTest {
 
     @Container

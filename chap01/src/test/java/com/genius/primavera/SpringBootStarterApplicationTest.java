@@ -15,7 +15,7 @@ import org.springframework.test.context.event.RecordApplicationEvents;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(classes = {SpringBootStarterApplication.class, SpringBootStarterApplicationTest.TestConfig.class})
+@SpringBootTest
 @RecordApplicationEvents
 public class SpringBootStarterApplicationTest {
 
@@ -26,13 +26,11 @@ public class SpringBootStarterApplicationTest {
     static class TestConfig {
         @Bean
         public WorldController worldController(@Autowired ApplicationContext context) {
-            // 컴포넌트 스캔으로 등록된 구현체들을 사용
             HelloService helloService = context.getBean("helloServiceImpl", HelloService.class);
             WorldService worldService = context.getBean("worldServiceImpl", WorldService.class);
             return new WorldController(helloService, worldService);
         }
     }
-
 
     @Test
     @DisplayName("WorldService 빈이 정상적으로 등록되고 hello()가 'Hello'를 반환한다.")
@@ -50,19 +48,17 @@ public class SpringBootStarterApplicationTest {
         String helloResult = helloController.hello();
         String worldResult = helloController.world();
         assertThat(helloController).isNotNull();
-        assertThat(helloResult).isEqualTo("Hello World!!!");  // helloService.hello() + " " + worldService.world()
-        assertThat(worldResult).isEqualTo("World!!!");
+        assertThat(helloResult).isEqualTo("Hello World");
+        assertThat(worldResult).isEqualTo("World");
     }
 
     @Test
     @DisplayName("ApplicationContext가 정상적으로 생성되고 모든 필요한 빈이 등록되어 있다.")
     void applicationContextEventsArePublished() {
         assertThat(context).isNotNull();
-        // 컴포넌트 스캔으로 등록된 빈들
         assertThat(context.getBean(WorldService.class)).isNotNull();
         assertThat(context.getBean(HelloController.class)).isNotNull();
         assertThat(context.getBean("helloServiceImpl")).isNotNull();
-        // 프로그래매틱으로 등록된 빈들
         assertThat(context.getBean(WorldController.class)).isNotNull();
         assertThat(context.getBean(HelloService.class)).isNotNull();
     }
@@ -72,7 +68,7 @@ public class SpringBootStarterApplicationTest {
     void worldServiceWorldMethodReturnsExpectedValue() {
         WorldService worldService = context.getBean(WorldService.class);
         String worldResult = worldService.world();
-        assertThat(worldResult).isEqualTo("World!!!");
+        assertThat(worldResult).isEqualTo("World");
     }
 
     @Test
@@ -87,10 +83,8 @@ public class SpringBootStarterApplicationTest {
     void worldControllerConstructorInjection() {
         WorldController worldController = context.getBean(WorldController.class);
         assertThat(worldController).isNotNull();
-        
-        // WorldController의 world() 메서드가 정상 동작하는지 확인
         String worldResult = worldController.world();
-        assertThat(worldResult).isEqualTo("World!!! Hello");
+        assertThat(worldResult).isEqualTo("World Hello");
     }
 
     @Test
