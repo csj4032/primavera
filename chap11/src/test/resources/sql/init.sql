@@ -127,15 +127,24 @@ VALUES (1, 'ROLE_ADMIN', 'Board 테스트 관리자', 1),
 ON DUPLICATE KEY UPDATE NAME = VALUES(NAME);
 
 INSERT INTO USERS (ID, EMAIL, PASSWORD, NICKNAME, STATUS)
-VALUES (1, 'board@primavera.com', '{noop}test', 'BoardAdmin', 1),
-       (2, 'writer@primavera.com', '{noop}test', 'Writer', 1),
-       (3, 'reader@primavera.com', '{noop}test', 'Reader', 1)
+VALUES (1, 'genius@primavera.com', '{noop}test', 'Genius', 1),
+       (2, 'admin@primavera.com', '{noop}test', 'Admin', 1),
+       (3, 'user@primavera.com', '{noop}test', 'User', 1),
+       (4, 'son@primavera.com', '{noop}test', 'Son', 1),
+       (5, 'messi@primavera.com', '{noop}test', 'Messi', 1),
+       (6, 'ronaldo@primavera.com', '{noop}test', 'Ronaldo', 1)
 ON DUPLICATE KEY UPDATE EMAIL = VALUES(EMAIL);
 
 INSERT INTO USER_ROLES (USER_ID, ROLE_ID)
-VALUES (1, 1), (1, 2), (1, 3), -- board -> all roles
-       (2, 2),                 -- writer -> manager
-       (3, 3)                  -- reader -> user
+VALUES (1, 1),
+       (1, 2),
+       (1, 3), -- genius -> all roles
+       (2, 1),
+       (2, 2), -- admin -> admin, manager  
+       (3, 3), -- user -> user
+       (4, 3),
+       (5, 3),
+       (6, 3)  -- sports players -> user
 ON DUPLICATE KEY UPDATE USER_ID = VALUES(USER_ID);
 
 -- 게시글 테스트 데이터
@@ -160,7 +169,7 @@ ON DUPLICATE KEY UPDATE ID = VALUES(ID);
 
 -- OAuth2 사용자 연결 테스트 데이터
 INSERT INTO USER_CONNECTION (EMAIL, PROVIDER, PROVIDER_ID, PROFILE_URL, IMAGE_URL)
-VALUES ('board@primavera.com', 1, 'google_123456', 'https://plus.google.com/123456', 'https://lh3.googleusercontent.com/a/default-user'),
-       ('writer@primavera.com', 2, 'facebook_789012', 'https://www.facebook.com/789012', 'https://graph.facebook.com/789012/picture'),
-       ('reader@primavera.com', 3, 'github_345678', 'https://github.com/345678', 'https://avatars.githubusercontent.com/u/345678')
+VALUES ('genius@primavera.com', 1, 'google_123456', 'https://plus.google.com/123456', 'https://lh3.googleusercontent.com/a/default-user'),
+       ('admin@primavera.com', 2, 'facebook_789012', 'https://www.facebook.com/789012', 'https://graph.facebook.com/789012/picture'),
+       ('user@primavera.com', 3, 'github_345678', 'https://github.com/345678', 'https://avatars.githubusercontent.com/u/345678')
 ON DUPLICATE KEY UPDATE EMAIL = VALUES(EMAIL);

@@ -156,24 +156,33 @@ ON DUPLICATE KEY UPDATE TYPE = VALUES(TYPE);
 
 -- 사용자 데이터 (User 클래스 기준)
 INSERT INTO USERS (ID, EMAIL, PASSWORD, NICKNAME, STATUS, CREATED_AT, UPDATED_AT) VALUES 
-(1, 'admin@primavera.com', '{bcrypt}$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.', 'SuperAdmin', 1, NOW(), NOW()),
-(2, 'manager@primavera.com', '{bcrypt}$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.', 'BoardManager', 1, NOW(), NOW()),
-(3, 'user1@primavera.com', '{bcrypt}$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.', 'TestUser1', 1, NOW(), NOW()),
-(4, 'genius@primavera.com', '{bcrypt}$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.', 'Genius', 1, NOW(), NOW())
+(1, 'genius@primavera.com', '{noop}test', 'Genius', 1, NOW(), NOW()),
+(2, 'admin@primavera.com', '{noop}test', 'Admin', 1, NOW(), NOW()),
+(3, 'user@primavera.com', '{noop}test', 'User', 1, NOW(), NOW()),
+(4, 'son@primavera.com', '{noop}test', 'Son', 1, NOW(), NOW()),
+(5, 'messi@primavera.com', '{noop}test', 'Messi', 1, NOW(), NOW()),
+(6, 'ronaldo@primavera.com', '{noop}test', 'Ronaldo', 1, NOW(), NOW())
 ON DUPLICATE KEY UPDATE EMAIL = VALUES(EMAIL);
 
 -- 사용자-역할 매핑
 INSERT INTO USER_ROLES (USER_ID, ROLE_ID) VALUES 
-(1, 1), -- SuperAdmin -> ADMINISTRATOR
-(2, 2), -- BoardManager -> MANAGER
-(3, 3), -- TestUser1 -> USER
-(4, 1)  -- Genius -> ADMINISTRATOR
+(1, 1),
+(1, 2),
+(1, 3), -- genius -> all roles
+(2, 1),
+(2, 2), -- admin -> admin, manager  
+(3, 3), -- user -> user
+(4, 3),
+(5, 3),
+(6, 3)  -- sports players -> user
 ON DUPLICATE KEY UPDATE USER_ID = VALUES(USER_ID);
 
 -- 사용자 소셜 연결 정보 (ProviderType enum: 1=FACEBOOK, 2=GITHUB, 3=GOOGLE)
 INSERT INTO USER_CONNECTION (ID, EMAIL, PROVIDER, PROVIDER_ID, DISPLAY_NAME, PROFILE_URL, IMAGE_URL) VALUES 
-(1, 'admin@primavera.com', 3, 'google_admin_123', 'SuperAdmin', 'https://profile.google.com/admin', 'https://profile.google.com/admin/photo.jpg'),
-(2, 'manager@primavera.com', 2, 'github_manager_456', 'BoardManager', 'https://github.com/manager', 'https://github.com/manager.avatar'),
-(3, 'user1@primavera.com', 1, 'facebook_user_789', 'TestUser1', 'https://facebook.com/user1', 'https://facebook.com/user1/photo.jpg'),
-(4, 'genius@primavera.com', 3, 'google_genius_999', 'Genius', 'https://profile.google.com/genius', 'https://profile.google.com/genius/photo.jpg')
+(1, 'genius@primavera.com', 3, 'google_genius_123', 'Genius', 'https://profile.google.com/genius', 'https://profile.google.com/genius/photo.jpg'),
+(2, 'admin@primavera.com', 2, 'github_admin_456', 'Admin', 'https://github.com/admin', 'https://github.com/admin.avatar'),
+(3, 'user@primavera.com', 1, 'facebook_user_789', 'User', 'https://facebook.com/user', 'https://facebook.com/user/photo.jpg'),
+(4, 'son@primavera.com', 3, 'google_son_999', 'Son', 'https://profile.google.com/son', 'https://profile.google.com/son/photo.jpg'),
+(5, 'messi@primavera.com', 1, 'facebook_messi_555', 'Messi', 'https://facebook.com/messi', 'https://facebook.com/messi/photo.jpg'),
+(6, 'ronaldo@primavera.com', 2, 'github_ronaldo_777', 'Ronaldo', 'https://github.com/ronaldo', 'https://github.com/ronaldo.avatar')
 ON DUPLICATE KEY UPDATE EMAIL = VALUES(EMAIL);

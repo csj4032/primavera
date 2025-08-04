@@ -48,14 +48,12 @@ CREATE TABLE IF NOT EXISTS WINNERS
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
 
--- 표준 권한 테이블 데이터
 INSERT INTO ROLES (ID, TYPE)
-VALUES (1, 1), -- ADMINISTRATOR
-       (2, 2), -- MANAGER  
-       (3, 3)  -- USER
+VALUES (1, 1),
+       (2, 2),
+       (3, 3)
 ON DUPLICATE KEY UPDATE TYPE = VALUES(TYPE);
 
--- 표준 사용자 테이블 데이터
 INSERT INTO USERS (ID, EMAIL, PASSWORD, NICKNAME, STATUS)
 VALUES (1, 'genius@primavera.com', '{noop}test', 'Genius', 1),
        (2, 'admin@primavera.com', '{noop}test', 'Admin', 1),
@@ -65,15 +63,14 @@ VALUES (1, 'genius@primavera.com', '{noop}test', 'Genius', 1),
        (6, 'ronaldo@primavera.com', '{noop}test', 'Ronaldo', 1)
 ON DUPLICATE KEY UPDATE EMAIL = VALUES(EMAIL);
 
--- 표준 사용자-권한 매핑 데이터
 INSERT INTO USER_ROLES (USER_ID, ROLE_ID)
 VALUES (1, 1),
        (1, 2),
-       (1, 3), -- genius -> all roles
+       (1, 3),
        (2, 1),
-       (2, 2), -- admin -> admin, manager  
-       (3, 3), -- user -> user
+       (2, 2),
+       (3, 3),
        (4, 3),
        (5, 3),
-       (6, 3)  -- sports players -> user
+       (6, 3)
 ON DUPLICATE KEY UPDATE USER_ID = VALUES(USER_ID);

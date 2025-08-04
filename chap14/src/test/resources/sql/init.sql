@@ -130,10 +130,13 @@ CREATE TABLE IF NOT EXISTS REVIEWS
   COLLATE = utf8mb4_unicode_ci;
 
 -- 테스트 데이터 - Chapter 14: JPA Advanced Features
-INSERT INTO USERS (EMAIL, PASSWORD, NICKNAME, FIRST_NAME, LAST_NAME, STATUS) VALUES 
-('jpa@primavera.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.', 'JPAAdmin', 'JPA', 'Administrator', 'ACTIVE'),
-('customer@primavera.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.', 'Customer', 'Test', 'Customer', 'ACTIVE'),
-('seller@primavera.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.', 'Seller', 'Product', 'Seller', 'ACTIVE')
+INSERT INTO USERS (ID, EMAIL, PASSWORD, NICKNAME, FIRST_NAME, LAST_NAME, STATUS) VALUES 
+(1, 'genius@primavera.com', '{noop}test', 'Genius', 'Genius', 'User', 'ACTIVE'),
+(2, 'admin@primavera.com', '{noop}test', 'Admin', 'Admin', 'User', 'ACTIVE'),
+(3, 'user@primavera.com', '{noop}test', 'User', 'Regular', 'User', 'ACTIVE'),
+(4, 'son@primavera.com', '{noop}test', 'Son', 'Heung-Min', 'Son', 'ACTIVE'),
+(5, 'messi@primavera.com', '{noop}test', 'Messi', 'Lionel', 'Messi', 'ACTIVE'),
+(6, 'ronaldo@primavera.com', '{noop}test', 'Ronaldo', 'Cristiano', 'Ronaldo', 'ACTIVE')
 ON DUPLICATE KEY UPDATE EMAIL = VALUES(EMAIL);
 
 INSERT INTO CATEGORIES (NAME, DESCRIPTION, PARENT_ID, LEVEL, SORT_ORDER) VALUES 
@@ -146,17 +149,17 @@ INSERT INTO CATEGORIES (NAME, DESCRIPTION, PARENT_ID, LEVEL, SORT_ORDER) VALUES
 ON DUPLICATE KEY UPDATE NAME = VALUES(NAME);
 
 INSERT INTO PRODUCTS (NAME, DESCRIPTION, PRICE, STOCK, CATEGORY_ID, CREATED_BY, STATUS) VALUES 
-('MacBook Pro 16', 'Apple MacBook Pro 16-inch with M2 chip', 2499.99, 10, 3, 3, 'ACTIVE'),
-('ThinkPad X1 Carbon', 'Lenovo ThinkPad X1 Carbon Gen 11', 1899.99, 15, 3, 3, 'ACTIVE'),
-('iMac 24', 'Apple iMac 24-inch with M2 chip', 1499.99, 8, 4, 3, 'ACTIVE'),
+('MacBook Pro 16', 'Apple MacBook Pro 16-inch with M2 chip', 2499.99, 10, 3, 2, 'ACTIVE'),
+('ThinkPad X1 Carbon', 'Lenovo ThinkPad X1 Carbon Gen 11', 1899.99, 15, 3, 2, 'ACTIVE'),
+('iMac 24', 'Apple iMac 24-inch with M2 chip', 1499.99, 8, 4, 2, 'ACTIVE'),
 ('Spring Boot in Action', 'Comprehensive guide to Spring Boot', 49.99, 50, 6, 1, 'ACTIVE'),
 ('Effective Java', 'Best practices for Java programming', 54.99, 30, 6, 1, 'ACTIVE')
 ON DUPLICATE KEY UPDATE NAME = VALUES(NAME);
 
 INSERT INTO ORDERS (ORDER_NUMBER, USER_ID, TOTAL_AMOUNT, STATUS, ORDER_DATE) VALUES 
-('ORD-2024-001', 2, 2499.99, 'COMPLETED', '2024-01-15 10:30:00'),
-('ORD-2024-002', 2, 104.98, 'PROCESSING', '2024-01-20 14:45:00'),
-('ORD-2024-003', 2, 1899.99, 'PENDING', '2024-01-25 09:15:00')
+('ORD-2024-001', 3, 2499.99, 'COMPLETED', '2024-01-15 10:30:00'),
+('ORD-2024-002', 3, 104.98, 'PROCESSING', '2024-01-20 14:45:00'),
+('ORD-2024-003', 3, 1899.99, 'PENDING', '2024-01-25 09:15:00')
 ON DUPLICATE KEY UPDATE ORDER_NUMBER = VALUES(ORDER_NUMBER);
 
 INSERT INTO ORDER_ITEMS (ORDER_ID, PRODUCT_ID, QUANTITY, UNIT_PRICE, TOTAL_PRICE) VALUES 
@@ -167,7 +170,7 @@ INSERT INTO ORDER_ITEMS (ORDER_ID, PRODUCT_ID, QUANTITY, UNIT_PRICE, TOTAL_PRICE
 ON DUPLICATE KEY UPDATE ORDER_ID = VALUES(ORDER_ID);
 
 INSERT INTO REVIEWS (PRODUCT_ID, USER_ID, RATING, TITLE, CONTENT) VALUES 
-(1, 2, 5, 'Excellent MacBook Pro', 'The performance and build quality are outstanding. Highly recommended for developers.'),
-(4, 2, 4, 'Great Spring Boot Guide', 'Very comprehensive and well-written. Perfect for learning Spring Boot from scratch.'),
-(5, 2, 5, 'Must-read for Java developers', 'Joshua Bloch''s insights are invaluable. Every Java developer should read this book.')
+(1, 3, 5, 'Excellent MacBook Pro', 'The performance and build quality are outstanding. Highly recommended for developers.'),
+(4, 3, 4, 'Great Spring Boot Guide', 'Very comprehensive and well-written. Perfect for learning Spring Boot from scratch.'),
+(5, 3, 5, 'Must-read for Java developers', 'Joshua Bloch''s insights are invaluable. Every Java developer should read this book.')
 ON DUPLICATE KEY UPDATE PRODUCT_ID = VALUES(PRODUCT_ID);

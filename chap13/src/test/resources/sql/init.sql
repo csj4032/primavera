@@ -130,29 +130,33 @@ VALUES (1, 1),
 ON DUPLICATE KEY UPDATE TYPE = VALUES(TYPE);
 
 INSERT INTO USERS (ID, EMAIL, PASSWORD, NICKNAME, STATUS, CREATED_AT, UPDATED_AT)
-VALUES (1, 'admin@primavera.com', '{bcrypt}$2a$10$7UEHLpn1r4gZY2qxiZFJ5.7wa3Hdz8IXgxUtFogy0Ac10fh7TG4V.', 'Admin', 1, NOW(), NOW()),
-       (2, 'manager@primavera.com', '{bcrypt}$2a$10$7UEHLpn1r4gZY2qxiZFJ5.7wa3Hdz8IXgxUtFogy0Ac10fh7TG4V.', 'Manager', 1, NOW(), NOW()),
-       (3, 'user@primavera.com', '{bcrypt}$2a$10$7UEHLpn1r4gZY2qxiZFJ5.7wa3Hdz8IXgxUtFogy0Ac10fh7TG4V.', 'User', 1, NOW(), NOW()),
-       (4, 'genius@primavera.com', '{bcrypt}$2a$10$7UEHLpn1r4gZY2qxiZFJ5.7wa3Hdz8IXgxUtFogy0Ac10fh7TG4V.', 'Genius', 1, NOW(), NOW())
+VALUES (1, 'genius@primavera.com', '{noop}test', 'Genius', 1, NOW(), NOW()),
+       (2, 'admin@primavera.com', '{noop}test', 'Admin', 1, NOW(), NOW()),
+       (3, 'user@primavera.com', '{noop}test', 'User', 1, NOW(), NOW()),
+       (4, 'son@primavera.com', '{noop}test', 'Son', 1, NOW(), NOW()),
+       (5, 'messi@primavera.com', '{noop}test', 'Messi', 1, NOW(), NOW()),
+       (6, 'ronaldo@primavera.com', '{noop}test', 'Ronaldo', 1, NOW(), NOW())
 ON DUPLICATE KEY UPDATE EMAIL = VALUES(EMAIL);
 
 INSERT INTO USER_ROLES (USER_ID, ROLE_ID)
 VALUES (1, 1),
        (1, 2),
-       (1, 3),
-       (2, 2),
-       (2, 3),
-       (3, 3),
-       (4, 1),
-       (4, 2),
-       (4, 3)
+       (1, 3), -- genius -> all roles
+       (2, 1),
+       (2, 2), -- admin -> admin, manager  
+       (3, 3), -- user -> user
+       (4, 3),
+       (5, 3),
+       (6, 3)  -- sports players -> user
 ON DUPLICATE KEY UPDATE USER_ID = VALUES(USER_ID);
 
 INSERT INTO USER_CONNECTION (ID, EMAIL, PROVIDER, PROVIDER_ID, DISPLAY_NAME, PROFILE_URL, IMAGE_URL)
-VALUES (1, 'admin@primavera.com', 1, 'google_admin_123', 'Admin', 'https://profile.google.com/admin', 'https://profile.google.com/admin/photo.jpg'),
-       (2, 'manager@primavera.com', 2, 'facebook_manager_456', 'Manager', 'https://profile.facebook.com/manager', 'https://profile.facebook.com/manager/photo.jpg'),
+VALUES (1, 'genius@primavera.com', 1, 'google_genius_123', 'Genius', 'https://profile.google.com/genius', 'https://profile.google.com/genius/photo.jpg'),
+       (2, 'admin@primavera.com', 2, 'facebook_admin_456', 'Admin', 'https://profile.facebook.com/admin', 'https://profile.facebook.com/admin/photo.jpg'),
        (3, 'user@primavera.com', 3, 'kakao_user_789', 'User', 'https://profile.kakao.com/user', 'https://profile.kakao.com/user/photo.jpg'),
-       (4, 'genius@primavera.com', 1, 'google_genius_999', 'Genius', 'https://profile.google.com/genius', 'https://profile.google.com/genius/photo.jpg')
+       (4, 'son@primavera.com', 1, 'google_son_999', 'Son', 'https://profile.google.com/son', 'https://profile.google.com/son/photo.jpg'),
+       (5, 'messi@primavera.com', 2, 'facebook_messi_555', 'Messi', 'https://profile.facebook.com/messi', 'https://profile.facebook.com/messi/photo.jpg'),
+       (6, 'ronaldo@primavera.com', 3, 'kakao_ronaldo_777', 'Ronaldo', 'https://profile.kakao.com/ronaldo', 'https://profile.kakao.com/ronaldo/photo.jpg')
 ON DUPLICATE KEY UPDATE EMAIL = VALUES(EMAIL);
 
 INSERT INTO ARTICLE (ID, P_ID, REFERENCE, STEP, LEVEL, SUBJECT, AUTHOR, STATUS, HIT, CREATED_AT)
