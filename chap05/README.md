@@ -319,58 +319,80 @@ docker run -d --name mariadb-primavera \
 ./gradlew :chap05:test --tests WinnerServicePropagationTest
 ```
 
-## TestContainers 사용법 개선
+## ✅ 최근 테스트 개선사항
 
-### 기존 방식 (복잡한 설정)
+### TestContainers 현대화 마이그레이션 완료
+
+**Spring Boot 3.x 호환성을 위한 TestContainers 접근 방식 개선:**
+
+#### 마이그레이션된 테스트 파일들:
+- `UserMapperTest`: MyBatis 동적 SQL 매퍼 테스트
+- `RoleMapperTest`: 역할 관리 매퍼 테스트  
+- `WinnerMapperTest`: 승부 결과 매퍼 테스트
+- `HikariBalancedPoolTest`: 균형 잡힌 커넥션 풀 테스트
+- `HikariMinimalPoolTest`: 최소 커넥션 풀 테스트
+- `HikariPerformancePoolTest`: 성능 최적화 커넥션 풀 테스트
+- `HikariResourceConstrainedPoolTest`: 리소스 제한 커넥션 풀 테스트
+- `ACIDPropertiesTest`: ACID 속성 검증 테스트
+- `IsolationLevelTest`: 트랜잭션 격리 수준 테스트
+- `SpringPropagationTest`: 트랜잭션 전파 테스트
+- `ReadPhenomenaTest`: 읽기 현상 테스트
+
+#### 새로운 TestContainers 패턴 (현재 방식)
 ```java
 @SpringBootTest
 @Testcontainers
 @ActiveProfiles("test")
-class MyIntegrationTest {
+@DisplayName("사용자 매퍼 통합 테스트")
+class UserMapperTest {
+
     @Container
-    static MariaDBContainer<?> mariadb = new MariaDBContainer<>("mariadb:11.4.7")
-        .withDatabaseName("primavera")
-        .withUsername("primavera")
-        .withPassword("primavera")
-        .withInitScript("sql/init.sql");
-    
+    static MariaDBContainer<?> mariadb = new MariaDBContainer<>("mariadb:11.4")
+            .withDatabaseName("primavera")
+            .withUsername("primavera")
+            .withPassword("primavera")
+            .withInitScript("sql/init.sql");
+
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
         registry.add("spring.datasource.url", mariadb::getJdbcUrl);
         registry.add("spring.datasource.username", mariadb::getUsername);
         registry.add("spring.datasource.password", mariadb::getPassword);
-        registry.add("spring.datasource.driver-class-name", () -> "org.mariadb.jdbc.Driver");
+        registry.add("spring.datasource.driver-class-name", mariadb::getDriverClassName);
     }
-}
-```
 
-### 새로운 방식 (@EnablePrimaveraTestcontainers)
-```java
-@SpringBootTest
-@EnablePrimaveraTestcontainers
-class MyIntegrationTest {
-    // TestContainers 설정이 자동으로 완료됨
-    // 바로 테스트 코드 작성 가능
-    
     @Autowired
     private UserMapper userMapper;
-    
+
     @Test
     void testUserCreation() {
-        User user = new User();
-        user.setEmail("test@example.com");
-        userMapper.insert(user);
+        User user = User.builder()
+            .email("test@example.com")
+            .nickname("testuser")
+            .build();
+        userMapper.save(user);
         
         assertThat(user.getId()).isNotNull();
     }
 }
 ```
 
-### @EnablePrimaveraTestcontainers 장점
-- **간단한 설정**: 한 줄의 어노테이션으로 모든 설정 완료
-- **자동 프로퍼티 설정**: DataSource 관련 프로퍼티 자동 주입
-- **일관된 환경**: 모든 테스트에서 동일한 MariaDB 11.4.7 사용
-- **스키마 자동 초기화**: init.sql 파일 자동 실행
+#### 이전 방식 (@EnablePrimaveraTestcontainers)
+```java
+@SpringBootTest
+@EnablePrimaveraTestcontainers  // 더 이상 사용하지 않음
+@ActiveProfiles("test")
+class MyIntegrationTest {
+    // 커스텀 어노테이션에 의존
+}
+```
+
+#### 마이그레이션의 주요 개선 효과:
+- **Spring Boot 3.x 완전 호환**: 표준 TestContainers 어노테이션 사용
+- **투명성 향상**: 테스트 설정이 명시적으로 보여 디버깅 용이
+- **종속성 독립**: 커스텀 스타터에 의존하지 않는 표준 접근법  
+- **유연성 증대**: 각 테스트별로 컨테이너 설정 개별 커스터마이징 가능
+- **표준 준수**: Spring 공식 TestContainers 가이드라인 준수
 
 ### 실무 활용 팁
 

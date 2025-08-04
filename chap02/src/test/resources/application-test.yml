@@ -1,6 +1,6 @@
 plantPlaces:
   api:
-    url: https://api.plantplaces.com
+    url: https://api.plantplaces.com/
 
 com:
   genius:

@@ -12,10 +12,12 @@ CREATE TABLE IF NOT EXISTS USERS
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
 
+-- 표준 사용자 테이블 데이터 (chap04는 ROLES/USER_ROLES 테이블 없음)
 INSERT INTO USERS (ID, EMAIL, PASSWORD, NICKNAME, STATUS, CREATED_AT, UPDATED_AT)
-VALUES (1, 'admin@primavera.com', '{bcrypt}$2a$10$7UEHLpn1r4gZY2qxiZFJ5.7wa3Hdz8IXgxUtFogy0Ac10fh7TG4V.', 'Admin', 1, NOW(), NOW()),
-       (2, 'manager@primavera.com', '{bcrypt}$2a$10$7UEHLpn1r4gZY2qxiZFJ5.7wa3Hdz8IXgxUtFogy0Ac10fh7TG4V.', 'Manager', 1, NOW(), NOW()),
-       (3, 'tester@primavera.com', '{bcrypt}$2a$10$7UEHLpn1r4gZY2qxiZFJ5.7wa3Hdz8IXgxUtFogy0Ac10fh7TG4V.', 'Tester', 1, NOW(), NOW()),
-       (4, 'user@primavera.com', '{bcrypt}$2a$10$7UEHLpn1r4gZY2qxiZFJ5.7wa3Hdz8IXgxUtFogy0Ac10fh7TG4V.', 'User', 1, NOW(), NOW()),
-       (5, 'genius@primavera.com', '{bcrypt}$2a$10$7UEHLpn1r4gZY2qxiZFJ5.7wa3Hdz8IXgxUtFogy0Ac10fh7TG4V.', 'Genius', 1, NOW(), NOW())
+VALUES (1, 'genius@primavera.com', '{noop}test', 'Genius', 1, NOW(), NOW()),
+       (2, 'admin@primavera.com', '{noop}test', 'Admin', 1, NOW(), NOW()),
+       (3, 'user@primavera.com', '{noop}test', 'User', 1, NOW(), NOW()),
+       (4, 'son@primavera.com', '{noop}test', 'Son', 1, NOW(), NOW()),
+       (5, 'messi@primavera.com', '{noop}test', 'Messi', 1, NOW(), NOW()),
+       (6, 'ronaldo@primavera.com', '{noop}test', 'Ronaldo', 1, NOW(), NOW())
 ON DUPLICATE KEY UPDATE EMAIL = VALUES(EMAIL);

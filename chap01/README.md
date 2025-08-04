@@ -668,6 +668,25 @@ public class SpringBootStarterApplicationTest {
 - **테스트 환경에서의 동적 Bean 등록**: `ApplicationContextInitializer`가 테스트에서 다르게 동작하므로 `@TestConfiguration`으로 별도 설정
 - **Bean 이름 기반 참조**: 인터페이스 타입이 아닌 구현체 Bean 이름으로 직접 참조
 
+## ✅ 최근 테스트 개선사항
+
+### HelloControllerTest 수정 (2025-08-04)
+**문제**: `helloTest()` 메서드에서 "Hello null" 반환 오류
+- **원인**: `HelloController.hello()` 메서드가 `helloService.hello() + " " + worldService.world()`를 반환하는데, `worldService.world()`가 모킹되지 않아 null 반환
+- **해결**: `when(worldService.world()).thenReturn("World");` 추가하여 두 의존성 모두 모킹
+
+### BeanLifecycleExampleTest 수정 (2025-08-04)
+**문제**: `testBeanDestruction()` 메서드에서 ApplicationContext 수동 종료로 인한 `IllegalStateException` 발생
+- **원인**: Spring Boot Test 환경에서 수동으로 ApplicationContext를 종료하면 테스트 프레임워크와 충돌
+- **해결**: 
+  - 수동 컨텍스트 종료 코드 제거
+  - Bean 생명주기 상태와 컨텍스트 존재 여부만 검증하도록 변경
+  - 테스트 이름을 실제 검증 내용에 맞게 변경: "Bean의 생명주기 상태와 컨텍스트 내 존재 여부 확인"
+
+**테스트 안정성 향상**: 
+- Spring Boot 테스트 환경에 최적화된 검증 방식 적용
+- 불필요한 컨텍스트 조작 제거로 테스트 신뢰성 증대
+
 ## 🐳 인프라 설정
 
 ### Docker Compose 환경 설정

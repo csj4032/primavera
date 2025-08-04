@@ -438,3 +438,63 @@ docker-compose -f docker-compose.jpa.yml down -v
 - 엔티티 간의 다양한 연관 관계를 JPA 어노테이션으로 표현
 - 성능과 유지보수성을 고려한 매핑 전략 선택
 - TestContainers를 활용한 실제 데이터베이스 환경에서의 테스트
+
+## ✅ 최근 테스트 개선사항
+
+### TestContainers 현대화 마이그레이션 완료
+
+**Spring Boot 3.x 표준 방식으로 JPA 연관 관계 매핑 테스트 현대화:**
+
+#### 마이그레이션된 테스트 파일들:
+- `BaseHierarchyJpaTest`: 계층형 데이터 구조 JPA 매핑 테스트
+- `BaseJpaTest`: JPA 기본 CRUD 및 영속성 컨텍스트 테스트
+- `BaseManyToManyJpaTest`: 다대다 연관 관계 매핑 테스트  
+- `BaseManyToOneJpaTest`: 다대일 연관 관계 매핑 테스트
+- `BaseOneToManyJpaTest`: 일대다 연관 관계 매핑 테스트
+- `BaseOneToOneJpaTest`: 일대일 연관 관계 매핑 테스트
+
+#### 새로운 TestContainers 패턴 (현재 방식)
+```java
+@SpringBootTest
+@Testcontainers
+@ActiveProfiles("test")
+@DisplayName("JPA 연관 관계 매핑 통합 테스트")
+class BaseManyToManyJpaTest {
+
+    @Container
+    static MariaDBContainer<?> mariadb = new MariaDBContainer<>("mariadb:11.4")
+            .withDatabaseName("primavera")
+            .withUsername("primavera")
+            .withPassword("primavera")
+            .withInitScript("sql/init.sql");
+
+    @DynamicPropertySource
+    static void configureProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", mariadb::getJdbcUrl);
+        registry.add("spring.datasource.username", mariadb::getUsername);
+        registry.add("spring.datasource.password", mariadb::getPassword);
+        registry.add("spring.datasource.driver-class-name", mariadb::getDriverClassName);
+    }
+
+    @Test
+    @DisplayName("다대다 연관 관계 저장 및 조회 검증")
+    void manyToManyRelationshipMapping() {
+        User user = User.builder().email("test@example.com").build();
+        Role role = Role.builder().name("ADMIN").build();
+        
+        user.addRole(role);
+        userRepository.save(user);
+        
+        User savedUser = userRepository.findById(user.getId()).orElseThrow();
+        assertThat(savedUser.getRoles()).hasSize(1);
+        assertThat(savedUser.getRoles().iterator().next().getName()).isEqualTo("ADMIN");
+    }
+}
+```
+
+#### 마이그레이션의 주요 개선 효과:
+- **JPA 연관 관계 검증**: @OneToOne, @OneToMany, @ManyToOne, @ManyToMany 매핑 테스트
+- **지연 로딩 검증**: FetchType.LAZY 및 프록시 객체 동작 확인
+- **영속성 컨텍스트 검증**: 1차 캐시, 변경 감지, 쓰기 지연 동작 테스트
+- **계층형 데이터 검증**: Self-referencing 관계 및 트리 구조 매핑 테스트
+- **N+1 문제 해결 검증**: @EntityGraph, JOIN FETCH 쿼리 최적화 테스트

@@ -616,3 +616,56 @@ docker-compose -f docker-compose.jpa.yml down -v
 6. **Vault 보안**: 프로덕션에서는 반드시 TLS 활성화 및 토큰 기반 인증 사용
 7. **시크릿 로테이션**: 정기적인 패스워드 및 API 키 로테이션 정책 수립
 8. **접근 제어**: 최소 권한 원칙에 따른 Vault 정책 설정
+
+## ✅ 최근 테스트 개선사항
+
+### TestContainers 현대화 마이그레이션 완료
+
+**Spring Boot 3.x 표준 방식으로 리액티브 통합 및 캐시 시스템 테스트 현대화:**
+
+#### 마이그레이션된 테스트 파일들:
+- `CacheChainTest`: Redis 캐시 체인 및 멀티레벨 캐싱 통합 테스트
+- `RedisMultiInsertTest`: Redis 대용량 데이터 처리 및 성능 최적화 테스트
+
+#### 새로운 TestContainers 패턴 (현재 방식)
+```java
+@SpringBootTest
+@Testcontainers
+@ActiveProfiles("test")
+@DisplayName("Redis 캐시 체인 통합 테스트")
+class CacheChainTest {
+
+    @Container
+    static MariaDBContainer<?> mariadb = new MariaDBContainer<>("mariadb:11.4")
+            .withDatabaseName("primavera")
+            .withUsername("primavera")
+            .withPassword("primavera")
+            .withInitScript("sql/init.sql");
+
+    @DynamicPropertySource
+    static void configureProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", mariadb::getJdbcUrl);
+        registry.add("spring.datasource.username", mariadb::getUsername);
+        registry.add("spring.datasource.password", mariadb::getPassword);
+        registry.add("spring.datasource.driver-class-name", mariadb::getDriverClassName);
+    }
+
+    @Test
+    @DisplayName("멀티레벨 캐시 체인 동작 검증")
+    void multiLevelCacheChain() {
+        // L1 Cache (Local) → L2 Cache (Redis) → Database 순서로 데이터 조회
+        Article article = articleService.getArticleWithCaching(1L);
+        
+        assertThat(article).isNotNull();
+        // 캐시 히트/미스 통계 검증
+        assertThat(cacheManager.getCache("articles").get(1L)).isNotNull();
+    }
+}
+```
+
+#### 마이그레이션의 주요 개선 효과:
+- **리액티브 스택 통합 검증**: Spring WebFlux와 전통적 JPA의 하이브리드 아키텍처 테스트
+- **멀티 데이터소스 검증**: MariaDB(JPA), MongoDB(Reactive), Redis 동시 운영 테스트
+- **캐시 체인 검증**: L1(Local) → L2(Redis) → Database 계층형 캐싱 동작 확인
+- **대용량 처리 검증**: Redis Pipeline 및 배치 처리 성능 테스트
+- **JPA Auditing 검증**: 생성/수정 시간 자동 관리 및 버전 관리 테스트

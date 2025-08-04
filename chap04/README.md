@@ -418,3 +418,50 @@ public class PrimaveraTestcontainersListener implements TestExecutionListener {
 5. **토큰 보안**: Vault 토큰은 환경변수로 관리, 코드에 하드코딩 금지
 6. **정기 로테이션**: 데이터베이스 패스워드 및 API 키 정기 변경
 7. **TestContainers**: 테스트 실행 시 Docker가 실행 중이어야 함
+
+## ✅ 최근 테스트 개선사항
+
+### TestContainers 마이그레이션 (chap04)
+이 챕터의 테스트는 Spring Boot 3.x 모범 사례에 따라 최신 TestContainers 직접 설정 방식으로 업데이트되었습니다.
+
+#### 변경된 테스트 파일들
+1. **PrimaveraServiceTest**: 서비스 계층 통합 테스트
+   - **변경전**: `@EnablePrimaveraTestcontainers` 커스텀 어노테이션 사용
+   - **변경후**: `@Container`와 `@DynamicPropertySource` 직접 사용
+   - **특징**: 비즈니스 로직 및 트랜잭션 처리 검증
+
+2. **UserDaoTest**: DAO 계층 데이터 접근 테스트
+   - **변경전**: `@EnablePrimaveraTestcontainers` 커스텀 어노테이션 사용
+   - **변경후**: `@Container`와 `@DynamicPropertySource` 직접 사용
+   - **특징**: CRUD 작업 및 데이터 무결성 검증
+
+#### 마이그레이션 세부사항
+```java
+// 새로운 TestContainers 직접 설정 패턴
+@Container
+static MariaDBContainer<?> mariadb = new MariaDBContainer<>("mariadb:11.4")
+        .withDatabaseName("primavera")
+        .withUsername("primavera")  
+        .withPassword("primavera")
+        .withInitScript("sql/init.sql");
+
+@DynamicPropertySource
+static void configureProperties(DynamicPropertyRegistry registry) {
+    registry.add("spring.datasource.url", mariadb::getJdbcUrl);
+    registry.add("spring.datasource.username", mariadb::getUsername);
+    registry.add("spring.datasource.password", mariadb::getPassword);
+    registry.add("spring.datasource.driver-class-name", mariadb::getDriverClassName);
+}
+```
+
+#### 마이그레이션 장점
+- **표준 준수**: Spring Boot 3.x 및 TestContainers 공식 패턴 사용
+- **투명성**: 테스트 설정이 명확하고 이해하기 쉬움
+- **독립성**: 각 테스트 클래스가 독립적인 컨테이너 설정을 가짐
+- **유지보수성**: 커스텀 어노테이션 의존성 제거로 코드 단순화
+
+#### 테스트 커버리지
+- **PrimaveraServiceTest**: 동적 프록시 패턴, AOP 기반 서비스 로직 검증
+- **UserDaoTest**: JDBC 템플릿 기반 데이터 접근, SQL 매핑 검증
+
+이러한 변경으로 chap04는 현대적이고 표준화된 TestContainers 테스트 환경을 갖추게 되었습니다.

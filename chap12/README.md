@@ -160,5 +160,60 @@ docker-compose -f docker-compose.board.yml down -v
 ./gradlew :chap12:bootRun -Dspring.profiles.active=local
 ```
 
+## ✅ 최근 테스트 개선사항
+
+### TestContainers 현대화 마이그레이션 완료
+
+**Spring Boot 3.x 표준 방식으로 게시글 관리 시스템 테스트 현대화:**
+
+#### 마이그레이션된 테스트 파일들:
+- `WriteArticleServiceTest`: 게시글 작성 서비스 비즈니스 로직 통합 테스트
+- `ArticleMapperTest`: MyBatis 기반 게시글 데이터 접근 계층 테스트
+
+#### 새로운 TestContainers 패턴 (현재 방식)
+```java
+@SpringBootTest
+@Testcontainers
+@ActiveProfiles("test")
+@DisplayName("게시글 작성 서비스 통합 테스트")
+class WriteArticleServiceTest {
+
+    @Container
+    static MariaDBContainer<?> mariadb = new MariaDBContainer<>("mariadb:11.4")
+            .withDatabaseName("primavera")
+            .withUsername("primavera")
+            .withPassword("primavera")
+            .withInitScript("sql/init.sql");
+
+    @DynamicPropertySource
+    static void configureProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", mariadb::getJdbcUrl);
+        registry.add("spring.datasource.username", mariadb::getUsername);
+        registry.add("spring.datasource.password", mariadb::getPassword);
+        registry.add("spring.datasource.driver-class-name", mariadb::getDriverClassName);
+    }
+
+    @Test
+    @DisplayName("게시글 작성 및 저장 검증")
+    void createAndSaveArticle() {
+        Article article = Article.builder()
+            .title("테스트 게시글")
+            .content("게시글 내용 테스트")
+            .author("테스트 작성자")
+            .build();
+            
+        Article saved = writeArticleService.save(article);
+        assertThat(saved.getId()).isNotNull();
+        assertThat(saved.getTitle()).isEqualTo("테스트 게시글");
+    }
+}
+```
+
+#### 마이그레이션의 주요 개선 효과:
+- **서비스 계층 통합 검증**: 게시글 작성/수정/삭제 비즈니스 로직 테스트
+- **MyBatis 매퍼 테스트**: 동적 SQL 쿼리 및 결과 매핑 검증
+- **트랜잭션 처리 검증**: @Transactional 어노테이션 기반 트랜잭션 경계 테스트
+- **데이터 무결성 검증**: 게시글 데이터 저장/조회 일관성 확인
+
 ### MockitoExtension
 * https://mincong.io/2020/04/19/mockito-junit5/

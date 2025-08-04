@@ -144,3 +144,62 @@ docker ps
 docker exec -it mongo bash
 
 ```
+
+## ✅ 최근 테스트 개선사항
+
+### TestContainers 현대화 마이그레이션 완료
+
+**Spring Boot 3.x 표준 방식으로 AOP 기반 로깅 시스템 테스트 현대화:**
+
+#### 마이그레이션된 테스트 파일들:
+- `WriteArticleServiceTest`: AOP 로깅 Aspect가 적용된 서비스 통합 테스트
+- `ArticleMapperTest`: MongoDB와 연동된 게시글 매퍼 테스트
+- `ArticleControllerTest`: 시스템 로그 저장을 포함한 컨트롤러 통합 테스트
+- `PostMockControllerTest`: AOP 포인트컷 동작을 검증하는 모킹 테스트
+
+#### 새로운 TestContainers 패턴 (현재 방식)
+```java
+@SpringBootTest
+@Testcontainers
+@ActiveProfiles("test")
+@DisplayName("AOP 로깅 시스템 통합 테스트")
+class WriteArticleServiceTest {
+
+    @Container
+    static MariaDBContainer<?> mariadb = new MariaDBContainer<>("mariadb:11.4")
+            .withDatabaseName("primavera")
+            .withUsername("primavera")
+            .withPassword("primavera")
+            .withInitScript("sql/init.sql");
+
+    @DynamicPropertySource
+    static void configureProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", mariadb::getJdbcUrl);
+        registry.add("spring.datasource.username", mariadb::getUsername);
+        registry.add("spring.datasource.password", mariadb::getPassword);
+        registry.add("spring.datasource.driver-class-name", mariadb::getDriverClassName);
+    }
+
+    @Test
+    @DisplayName("게시글 작성 시 AOP 로깅 동작 검증")
+    void articleCreationWithLogging() {
+        Article article = Article.builder()
+            .title("AOP 테스트 게시글")
+            .content("시스템 로그 저장 테스트")
+            .build();
+            
+        Article saved = writeArticleService.save(article);
+        
+        // AOP Aspect가 실행되어 시스템 로그가 저장되었는지 검증
+        assertThat(saved.getId()).isNotNull();
+        // 추가로 로그 테이블에서 로그 엔트리 확인
+    }
+}
+```
+
+#### 마이그레이션의 주요 개선 효과:
+- **AOP Aspect 동작 검증**: @Around, @Before, @After 어드바이스 실행 테스트
+- **포인트컷 표현식 검증**: 특정 메서드 패턴에 대한 AOP 적용 확인
+- **시스템 로그 저장 검증**: 비즈니스 로직 실행과 로깅의 분리된 동작 테스트
+- **MongoDB 통합 테스트**: NoSQL 데이터베이스와의 연동 검증
+- **크로스커팅 관심사 테스트**: 로깅, 보안, 트랜잭션 등 횡단 관심사 검증

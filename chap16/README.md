@@ -1737,6 +1737,64 @@ public record TestAwsProperties(
 
 이제 다양한 환경에서 S3 통합 테스트를 유연하게 실행할 수 있습니다! 🎉
 
+## ✅ 최근 테스트 개선사항
+
+### TestContainers 현대화 마이그레이션 완료
+
+**Spring Boot 3.x 표준 방식으로 AWS S3 및 Vault 보안 시스템 테스트 현대화:**
+
+#### 마이그레이션된 테스트 파일들:
+- `S3FileServiceIntegrationTest`: AWS S3 파일 업로드/다운로드 통합 테스트 
+- `S3FileServiceVaultIntegrationTest`: Vault 기반 보안 자격증명 관리와 S3 연동 테스트
+
+#### 새로운 TestContainers 패턴 (현재 방식)
+```java
+@SpringBootTest
+@Testcontainers
+@ActiveProfiles("test")
+@DisplayName("AWS S3 파일 서비스 통합 테스트")
+class S3FileServiceIntegrationTest {
+
+    @Container
+    static MariaDBContainer<?> mariadb = new MariaDBContainer<>("mariadb:11.4")
+            .withDatabaseName("primavera")
+            .withUsername("primavera")
+            .withPassword("primavera")
+            .withInitScript("sql/init.sql");
+
+    @DynamicPropertySource
+    static void configureProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", mariadb::getJdbcUrl);
+        registry.add("spring.datasource.username", mariadb::getUsername);
+        registry.add("spring.datasource.password", mariadb::getPassword);
+        registry.add("spring.datasource.driver-class-name", mariadb::getDriverClassName);
+    }
+
+    @Test
+    @DisplayName("S3 파일 업로드 및 메타데이터 저장 검증")
+    void uploadFileToS3AndSaveMetadata() {
+        MockMultipartFile file = new MockMultipartFile(
+            "file", "test.txt", "text/plain", "테스트 파일 내용".getBytes());
+            
+        FileUploadResult result = s3FileService.uploadFile(file);
+        
+        assertThat(result.getS3Url()).isNotNull();
+        assertThat(result.getFileId()).isNotNull();
+        
+        // JOOQ를 통한 파일 메타데이터 저장 검증
+        FileRecord fileRecord = fileRepository.findById(result.getFileId());
+        assertThat(fileRecord.getOriginalFilename()).isEqualTo("test.txt");
+    }
+}
+```
+
+#### 마이그레이션의 주요 개선 효과:
+- **AWS S3 통합 검증**: 파일 업로드/다운로드/삭제 전체 라이프사이클 테스트
+- **Vault 보안 검증**: 민감한 AWS 자격증명의 안전한 저장 및 관리 테스트
+- **JOOQ 타입 안전성 검증**: 컴파일 타임 SQL 검증 및 타입 안전한 쿼리 테스트
+- **파일 메타데이터 검증**: 파일 정보, 업로드 상태, 버전 관리 테스트
+- **멀티파트 파일 처리 검증**: 대용량 파일 업로드 및 청크 단위 처리 테스트
+
 ---
 
 **🎓 학습 포인트**: 파일 처리는 엔터프라이즈 애플리케이션의 핵심 기능입니다. 검증, 변환, 모니터링과 함께 **보안 자격증명 관리**를 체계적으로 구현하면 안정적이고 확장 가능한 시스템을 구축할 수 있습니다.

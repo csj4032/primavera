@@ -374,6 +374,55 @@ docker-compose -f docker-compose.mybatis.yml down -v
 ./gradlew :chap09:bootRun -Dspring.profiles.active=local
 ```
 
+## ✅ 최근 테스트 개선사항
+
+### TestContainers 현대화 마이그레이션 완료
+
+**Spring Boot 3.x 표준 방식으로 Spring Security 테스트 현대화:**
+
+#### 마이그레이션된 테스트 파일들:
+- `SecurityLoginPageTest`: Spring Security 로그인 페이지 및 인증 플로우 통합 테스트
+
+#### 새로운 TestContainers 패턴 (현재 방식)
+```java
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Testcontainers
+@ActiveProfiles("test")
+@DisplayName("Spring Security 로그인 페이지 테스트")
+class SecurityLoginPageTest {
+
+    @Container
+    static MariaDBContainer<?> mariadb = new MariaDBContainer<>("mariadb:11.4")
+            .withDatabaseName("primavera")
+            .withUsername("primavera")
+            .withPassword("primavera")
+            .withInitScript("sql/init.sql");
+
+    @DynamicPropertySource
+    static void configureProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", mariadb::getJdbcUrl);
+        registry.add("spring.datasource.username", mariadb::getUsername);
+        registry.add("spring.datasource.password", mariadb::getPassword);
+        registry.add("spring.datasource.driver-class-name", mariadb::getDriverClassName);
+    }
+
+    @Test
+    @DisplayName("인증되지 않은 사용자 로그인 페이지 리다이렉트")
+    void unauthenticatedUserRedirectToLogin() {
+        ResponseEntity<String> response = restTemplate.getForEntity("/secured", String.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FOUND);
+        assertThat(response.getHeaders().getLocation().toString()).contains("/login");
+    }
+}
+```
+
+#### 마이그레이션의 주요 개선 효과:
+- **Spring Security 통합 검증**: 인증/인가 플로우 전체 테스트
+- **로그인 페이지 렌더링**: Thymeleaf와 Spring Security 통합 확인
+- **세션 관리 테스트**: 인증 세션 생성 및 유지 검증
+- **접근 권한 제어**: URL 패턴별 접근 권한 검증
+- **CSRF 보호 검증**: Cross-Site Request Forgery 방어 메커니즘 테스트
+
 ### 참고
 * Spring Security3 (피터 뮬라리엔)
 * https://docs.spring.io/spring-security/site/docs/5.4.1/reference/html5/#introduction

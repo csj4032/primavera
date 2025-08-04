@@ -19,30 +19,30 @@ import java.util.List;
 @EnableWebSecurity
 public class TestSecurityConfiguration {
 
-	@Bean
-	@Primary
-	public SecurityFilterChain testFilterChain(HttpSecurity http) throws Exception {
-		http
-				.csrf(csrf -> csrf.disable())
-				.authorizeHttpRequests(authz -> authz
-						.anyRequest().permitAll()
-				)
-				.httpBasic(httpBasic -> httpBasic.disable())
-				.formLogin(form -> form.disable());
-		
-		return http.build();
-	}
+    @Bean
+    @Primary
+    public SecurityFilterChain testFilterChain(HttpSecurity http) throws Exception {
+        http
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(authz -> authz
+                        .anyRequest().permitAll()
+                )
+                .httpBasic(httpBasic -> httpBasic.disable())
+                .formLogin(form -> form.disable());
 
-	@Bean
-	@Primary
-	public UserDetailsService testUserDetailsService() {
-		var genius = new User("Genius Choi", "{noop}password", List.of(new SimpleGrantedAuthority("USER")));
-		return new InMemoryUserDetailsManager(genius);
-	}
+        return http.build();
+    }
 
-	@Bean
-	@Primary
-	public PasswordEncoder testPasswordEncoder() {
-		return PasswordEncoderFactories.createDelegatingPasswordEncoder();
-	}
+    @Bean
+    @Primary
+    public UserDetailsService testUserDetailsService() {
+        var genius = new User("Genius Choi", "{noop}password", List.of(new SimpleGrantedAuthority("USER")));
+        return new InMemoryUserDetailsManager(genius);
+    }
+
+    @Bean
+    @Primary
+    public PasswordEncoder testPasswordEncoder() {
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    }
 }

@@ -92,23 +92,34 @@ VALUES (1, 'ROLE_ADMIN', 'OAuth2 테스트 관리자', 1),
        (3, 'ROLE_USER', 'OAuth2 테스트 사용자', 3)
 ON DUPLICATE KEY UPDATE NAME = VALUES(NAME);
 
+-- 표준 사용자 테이블 데이터
 INSERT INTO USERS (ID, EMAIL, PASSWORD, NICKNAME, STATUS)
-VALUES (1, 'oauth2@primavera.com', '{noop}test', 'OAuth2Test', 1),
-       (2, 'social@primavera.com', '{noop}test', 'SocialTest', 1),
-       (3, 'kakao@primavera.com', '{noop}test', 'KakaoUser', 1),
-       (4, 'google@primavera.com', '{noop}test', 'GoogleUser', 1)
+VALUES (1, 'genius@primavera.com', '{noop}test', 'Genius', 1),
+       (2, 'admin@primavera.com', '{noop}test', 'Admin', 1),
+       (3, 'user@primavera.com', '{noop}test', 'User', 1),
+       (4, 'son@primavera.com', '{noop}test', 'Son', 1),
+       (5, 'messi@primavera.com', '{noop}test', 'Messi', 1),
+       (6, 'ronaldo@primavera.com', '{noop}test', 'Ronaldo', 1)
 ON DUPLICATE KEY UPDATE EMAIL = VALUES(EMAIL);
 
+-- 표준 사용자-권한 매핑 데이터
 INSERT INTO USER_ROLES (USER_ID, ROLE_ID)
-VALUES (1, 1), (1, 2), (1, 3), -- oauth2 -> all roles
-       (2, 2),                 -- social -> manager
-       (3, 3), (4, 3)          -- social users -> user
+VALUES (1, 1),
+       (1, 2),
+       (1, 3), -- genius -> all roles
+       (2, 1),
+       (2, 2), -- admin -> admin, manager  
+       (3, 3), -- user -> user
+       (4, 3),
+       (5, 3),
+       (6, 3)  -- sports players -> user
 ON DUPLICATE KEY UPDATE USER_ID = VALUES(USER_ID);
 
--- OAuth2 소셜 로그인 연결 테스트 데이터
+-- OAuth2 소셜 로그인 연결 테스트 데이터 (스포츠 선수들의 소셜 연결)
 INSERT INTO USER_CONNECTIONS (ID, USER_ID, PROVIDER_ID, PROVIDER_USER_ID, DISPLAY_NAME, ACCESS_TOKEN)
-VALUES (1, 3, 'kakao', '123456789', 'Kakao Test User', 'test_access_token_kakao'),
-       (2, 4, 'google', 'google123456', 'Google Test User', 'test_access_token_google')
+VALUES (1, 4, 'kakao', '123456789', 'Son Heung-min', 'test_access_token_kakao'),
+       (2, 5, 'google', 'google123456', 'Lionel Messi', 'test_access_token_google'),
+       (3, 6, 'github', '987654321', 'Cristiano Ronaldo', 'test_access_token_github')
 ON DUPLICATE KEY UPDATE ID = VALUES(ID);
 
 -- OAuth2 클라이언트 설정 테스트 데이터

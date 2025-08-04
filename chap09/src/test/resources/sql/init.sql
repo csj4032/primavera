@@ -82,10 +82,15 @@ VALUES (1, 'genius@primavera.com', '{noop}test', 'Genius', 1),
 ON DUPLICATE KEY UPDATE EMAIL = VALUES(EMAIL);
 
 INSERT INTO USER_ROLES (USER_ID, ROLE_ID)
-VALUES (1, 1), (1, 2), (1, 3), -- genius -> all roles
-       (2, 1), (2, 2),         -- admin -> admin, manager
-       (3, 3),                 -- user -> user
-       (4, 3), (5, 3), (6, 3)  -- sports players -> user
+VALUES (1, 1),
+       (1, 2),
+       (1, 3), -- genius -> all roles
+       (2, 1),
+       (2, 2), -- admin -> admin, manager  
+       (3, 3), -- user -> user
+       (4, 3),
+       (5, 3),
+       (6, 3)  -- sports players -> user
 ON DUPLICATE KEY UPDATE USER_ID = VALUES(USER_ID);
 
 -- Chapter 09 특화 테스트 데이터 - 소셜 로그인 연결

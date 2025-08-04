@@ -455,3 +455,62 @@ docker-compose -f docker-compose.mybatis.yml down -v
 - [LiveReload Extensions](http://livereload.com/extensions/)
 
 이 챕터를 통해 실무에서 요구되는 견고한 유효성 검증 시스템과 통합 테스트 기법을 습득할 수 있습니다.
+
+## ✅ 최근 테스트 개선사항
+
+### TestContainers 마이그레이션
+이 챕터의 테스트는 Spring Boot 3.x 모범 사례에 따라 최신 TestContainers 직접 설정 방식으로 업데이트되었습니다.
+
+#### 변경된 테스트 파일들
+1. **MessageConfigTest**: 국제화 메시지 테스트 현대화
+   - **문제**: MessageSource 테스트에 불필요한 TestContainers 설정 포함
+   - **해결**: 경량화된 테스트 구조 적용, 불필요한 데이터베이스 의존성 제거
+   - **특징**: 
+     - Spring Boot 3.x 테스트 접근법 적용
+     - 중첩 테스트 클래스로 논리적 그룹화
+     - 다국어(한국어, 영어, 일본어) 메시지 검증
+     - Bean Validation 표준 메시지 재정의 검증
+
+2. **UserSaveValidationTest**: 사용자 등록 검증 테스트
+   - **설정**: MariaDB 11.4 컨테이너 직접 구성
+   - **검증 항목**: 이메일 형식, 비밀번호 복잡성, 닉네임 규칙, 권한 검증
+   - **특징**: 28개 검증 시나리오 포함
+
+3. **UserUpdateValidationTest**: 사용자 수정 검증 테스트  
+   - **설정**: MariaDB 11.4 컨테이너 직접 구성
+   - **검증 항목**: ID 필수, 상태 검증, 비밀번호 일치성 검증
+   - **특징**: 30개 수정 시나리오 포함
+
+4. **UserScriptAssertValidationTest**: Groovy 스크립트 검증 테스트
+   - **설정**: MariaDB 11.4 컨테이너 직접 구성  
+   - **검증 항목**: @ScriptAssert 어노테이션을 통한 복잡한 비즈니스 규칙 검증
+   - **특징**: 비밀번호 일치성, null 처리, 대소문자 구분 등 6개 시나리오
+
+#### 마이그레이션 세부사항
+- **이전**: `@EnablePrimaveraTestcontainers` 커스텀 어노테이션 사용
+- **현재**: `@Container`와 `@DynamicPropertySource` 직접 사용
+- **장점**: 
+  - Spring Boot 3.x 표준 방식 준수
+  - 테스트 설정의 명확성 및 투명성 증대
+  - TestContainers 공식 문서와 일치하는 패턴
+  - 각 테스트 클래스별 독립적인 컨테이너 설정
+
+#### 기술 스택 업데이트
+```java
+@Container
+static MariaDBContainer<?> mariadb = new MariaDBContainer<>("mariadb:11.4")
+        .withDatabaseName("primavera")
+        .withUsername("primavera")
+        .withPassword("primavera")
+        .withInitScript("sql/init.sql");
+
+@DynamicPropertySource
+static void configureProperties(DynamicPropertyRegistry registry) {
+    registry.add("spring.datasource.url", mariadb::getJdbcUrl);
+    registry.add("spring.datasource.username", mariadb::getUsername);
+    registry.add("spring.datasource.password", mariadb::getPassword);
+    registry.add("spring.datasource.driver-class-name", mariadb::getDriverClassName);
+}
+```
+
+이러한 변경으로 chap06는 현대적이고 유지보수가 용이한 테스트 구조를 갖추게 되었습니다.

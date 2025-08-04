@@ -4,6 +4,12 @@ spring:
   jackson:
     time-zone: UTC
 
+logging:
+  level:
+    org.springframework: debug
+    com.genius.primavera: debug
+
+
 server:
   tomcat:
     use-apr: never
@@ -12,10 +18,9 @@ primavera:
   logs:
     path: ./logs
 
-# 챕터별 고유 설정
 plantPlaces:
   api:
-    url: https://api.plantplaces.com
+    url: https://api.plantplaces.com/
 
 com:
   genius:

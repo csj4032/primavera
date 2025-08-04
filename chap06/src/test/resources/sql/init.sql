@@ -42,23 +42,32 @@ CREATE TABLE IF NOT EXISTS USER_ROLES
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
 
--- 테스트 데이터: 권한 (RoleType enum 값)
+-- 표준 권한 테이블 데이터
 INSERT INTO ROLES (ID, TYPE)
 VALUES (1, 1), -- ADMINISTRATOR
        (2, 2), -- MANAGER
        (3, 3)  -- USER
 ON DUPLICATE KEY UPDATE TYPE = VALUES(TYPE);
 
--- 테스트 데이터: 사용자 (getUserById 테스트를 위한 ID=1)
+-- 표준 사용자 테이블 데이터
 INSERT INTO USERS (ID, EMAIL, PASSWORD, NICKNAME, STATUS)
-VALUES (1, 'admin@primavera.com', 'Secret0!', 'Administrator', 1),
-       (2, 'manager@primavera.com', 'Secret0!', 'Manager', 1),
-       (3, 'user@primavera.com', 'Secret0!', 'User', 1)
+VALUES (1, 'genius@primavera.com', '{noop}test', 'Genius', 1),
+       (2, 'admin@primavera.com', '{noop}test', 'Admin', 1),
+       (3, 'user@primavera.com', '{noop}test', 'User', 1),
+       (4, 'son@primavera.com', '{noop}test', 'Son', 1),
+       (5, 'messi@primavera.com', '{noop}test', 'Messi', 1),
+       (6, 'ronaldo@primavera.com', '{noop}test', 'Ronaldo', 1)
 ON DUPLICATE KEY UPDATE EMAIL = VALUES(EMAIL);
 
--- 테스트 데이터: 사용자-권한 매핑
+-- 표준 사용자-권한 매핑 데이터
 INSERT INTO USER_ROLES (USER_ID, ROLE_ID)
-VALUES (1, 1), -- admin has ADMINISTRATOR role
-       (2, 2), -- manager has MANAGER role
-       (3, 3)  -- user has USER role
+VALUES (1, 1),
+       (1, 2),
+       (1, 3), -- genius -> all roles
+       (2, 1),
+       (2, 2), -- admin -> admin, manager  
+       (3, 3), -- user -> user
+       (4, 3),
+       (5, 3),
+       (6, 3)  -- sports players -> user
 ON DUPLICATE KEY UPDATE USER_ID = VALUES(USER_ID);

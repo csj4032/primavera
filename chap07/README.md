@@ -241,6 +241,59 @@ docker-compose -f docker-compose.mybatis.yml down -v
 ./gradlew :chap07:bootRun -Dspring.profiles.active=local
 ```
 
+## ✅ 최근 테스트 개선사항
+
+### TestContainers 현대화 마이그레이션 완료
+
+**Spring Boot 3.x 표준 방식 적용으로 테스트 인프라 현대화:**
+
+#### 마이그레이션된 테스트 파일들:
+- `LoginControllerTest`: 로그인/로그아웃 컨트롤러 통합 테스트
+- `UserControllerTest`: 사용자 관리 컨트롤러 통합 테스트
+
+#### 새로운 TestContainers 패턴 (현재 방식)
+```java
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Testcontainers
+@ActiveProfiles("test")
+@DisplayName("로그인 컨트롤러 테스트")
+class LoginControllerTest {
+
+    @Container
+    static MariaDBContainer<?> mariadb = new MariaDBContainer<>("mariadb:11.4")
+            .withDatabaseName("primavera")
+            .withUsername("primavera")
+            .withPassword("primavera")
+            .withInitScript("sql/init.sql");
+
+    @DynamicPropertySource
+    static void configureProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", mariadb::getJdbcUrl);
+        registry.add("spring.datasource.username", mariadb::getUsername);
+        registry.add("spring.datasource.password", mariadb::getPassword);
+        registry.add("spring.datasource.driver-class-name", mariadb::getDriverClassName);
+    }
+
+    @Autowired
+    private TestRestTemplate restTemplate;
+
+    @Test
+    @DisplayName("로그인 페이지 접근")
+    void loginPageAccess() {
+        ResponseEntity<String> response = restTemplate.getForEntity("/login", String.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).contains("AdminLTE");
+    }
+}
+```
+
+#### 마이그레이션의 주요 개선 효과:
+- **Thymeleaf UI 테스트**: 웹 페이지 렌더링 및 템플릿 엔진 통합 테스트
+- **AdminLTE 통합 검증**: 관리자 UI 컴포넌트 정상 작동 확인
+- **Session 관리 테스트**: 로그인/로그아웃 플로우 검증
+- **RESTful API 검증**: 웹 페이지와 API 엔드포인트 동시 테스트
+- **SQL 로깅 검증**: Log4jdbc를 통한 쿼리 실행 추적
+
 ### ETC
 * thymeleaf [참고](https://www.thymeleaf.org/)
 * adminLTE [참고](https://adminlte.io)

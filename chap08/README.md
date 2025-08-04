@@ -66,5 +66,52 @@ docker-compose -f docker-compose.mybatis.yml down -v
 ./gradlew :chap08:bootRun -Dspring.profiles.active=local
 ```
 
+## ✅ 최근 테스트 개선사항
+
+### TestContainers 현대화 마이그레이션 완료
+
+**Spring Boot 3.x 표준 방식으로 필터 체인 테스트 현대화:**
+
+#### 마이그레이션된 테스트 파일들:
+- `PrimaveraFilterTest`: Lucy XSS 필터와 커스텀 필터 체인 통합 테스트
+
+#### 새로운 TestContainers 패턴 (현재 방식)
+```java
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Testcontainers
+@ActiveProfiles("test")
+@DisplayName("Primavera 필터 체인 테스트")
+class PrimaveraFilterTest {
+
+    @Container
+    static MariaDBContainer<?> mariadb = new MariaDBContainer<>("mariadb:11.4")
+            .withDatabaseName("primavera")
+            .withUsername("primavera")
+            .withPassword("primavera")
+            .withInitScript("sql/init.sql");
+
+    @DynamicPropertySource
+    static void configureProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", mariadb::getJdbcUrl);
+        registry.add("spring.datasource.username", mariadb::getUsername);
+        registry.add("spring.datasource.password", mariadb::getPassword);
+        registry.add("spring.datasource.driver-class-name", mariadb::getDriverClassName);
+    }
+
+    @Test
+    @DisplayName("XSS 필터를 통한 스크립트 공격 방어")
+    void xssFilterDefense() {
+        String maliciousInput = "<script>alert('XSS')</script>";
+        // XSS 필터가 스크립트 태그를 무력화하는지 검증
+    }
+}
+```
+
+#### 마이그레이션의 주요 개선 효과:
+- **XSS 보안 필터 검증**: Lucy 필터의 스크립트 태그 무력화 테스트
+- **필터 체인 순서 검증**: 커스텀 필터와 보안 필터의 실행 순서 확인
+- **Chain of Responsibility 패턴**: 필터 체인의 책임 연쇄 패턴 구현 검증
+- **웹 보안 통합 테스트**: 실제 HTTP 요청을 통한 보안 검증
+
 ### ETC
 * Chain of Responsibility Pattern 참고
