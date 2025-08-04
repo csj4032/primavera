@@ -1,16 +1,14 @@
 package com.genius.primavera.domain.mapper;
 
+import com.genius.primavera.AbstractIntegrationTest;
 import com.genius.primavera.domain.mapper.support.UserTableSupport;
 import com.genius.primavera.domain.model.*;
-import com.genius.primavera.testContainer.EnablePrimaveraTestcontainers;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.mybatis.dynamic.sql.render.RenderingStrategies;
 import org.mybatis.dynamic.sql.select.render.SelectStatementProvider;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -20,13 +18,15 @@ import static java.util.stream.Collectors.toList;
 import static org.mybatis.dynamic.sql.SqlBuilder.isIn;
 import static org.mybatis.dynamic.sql.SqlBuilder.select;
 
+/**
+ * UserMapper 통합 테스트
+ * 
+ * AbstractIntegrationTest를 상속받아 MariaDB 컨테이너를 자동으로 사용합니다.
+ */
 @Slf4j
-@SpringBootTest
-@ActiveProfiles("test")
-@EnablePrimaveraTestcontainers
 @DisplayName(value = "유저 관련 테스트")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class UserMapperTest {
+public class UserMapperTest extends AbstractIntegrationTest {
 
     @Autowired
     private UserMapper userMapper;

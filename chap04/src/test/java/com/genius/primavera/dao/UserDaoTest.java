@@ -1,12 +1,10 @@
 package com.genius.primavera.dao;
 
+import com.genius.primavera.AbstractIntegrationTest;
 import com.genius.primavera.domain.User;
-import com.genius.primavera.testContainer.EnablePrimaveraTestcontainers;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.time.Instant;
 import java.util.List;
@@ -15,12 +13,15 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+/**
+ * UserDao 통합 테스트
+ * 
+ * AbstractIntegrationTest를 상속받아 MariaDB 컨테이너를 자동으로 사용합니다.
+ */
 @Slf4j
-@SpringBootTest
-@ActiveProfiles("test")
-@EnablePrimaveraTestcontainers
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class UserDaoTest {
+@DisplayName("UserDao 통합 테스트")
+public class UserDaoTest extends AbstractIntegrationTest {
 
     @Autowired
     private UserDao userDao;

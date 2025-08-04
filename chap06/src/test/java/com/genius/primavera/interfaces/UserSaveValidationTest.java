@@ -1,31 +1,29 @@
 package com.genius.primavera.interfaces;
 
+import com.genius.primavera.AbstractIntegrationTest;
 import com.genius.primavera.application.UserService;
 import com.genius.primavera.domain.model.Role;
 import com.genius.primavera.domain.model.RoleType;
 import com.genius.primavera.domain.model.User;
 import com.genius.primavera.domain.model.UserStatus;
-import com.genius.primavera.testContainer.EnablePrimaveraTestcontainers;
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.Instant;
 import java.util.List;
 
+/**
+ * 사용자 등록 유효성 검증 통합 테스트
+ * 
+ * AbstractIntegrationTest를 상속받아 MariaDB 컨테이너를 자동으로 사용합니다.
+ */
 @Order(4)
-@ActiveProfiles("test")
 @DisplayName("사용자 등록 유효성 검증 테스트")
-@EnablePrimaveraTestcontainers
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class UserSaveValidationTest {
+public class UserSaveValidationTest extends AbstractIntegrationTest {
 
     @Autowired
     private TestRestTemplate restTemplate;
@@ -94,16 +92,7 @@ public class UserSaveValidationTest {
     @Test
     @Order(8)
     @DisplayName("권한 타입 누락 검증")
-    public void saveAndReturnUserIllegalRoleType() {
-        User source = User.builder().id(1L).email("genius@gmail.com").password("Secret0!").nickname("genius").roles(List.of(new Role(1, null))).build();
-        saveUser(source);
-    }
-
-    @Test
-    @Order(9)
-    @DisplayName("등록일자와 수정일자 순서 검증")
-    public void saveAndCreatedDateUpdatedDate() {
-        // createdAt이 updatedAt보다 미래일 때 유효성 검증
+        User source = User.builder().id(1L).email("genius@gmail.com").password("Secret0!").createdAt(Instant.now().plusDays(1)).updatedAt(Instant.now()).nickname("genius").roles(List.of(new Role(1, null))).build();
         User source = User.builder()
                 .id(1L)
                 .email("genius@gmail.com")

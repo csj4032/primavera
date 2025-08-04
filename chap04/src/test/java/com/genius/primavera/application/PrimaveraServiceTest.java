@@ -3,17 +3,15 @@ package com.genius.primavera.application;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.genius.primavera.AbstractIntegrationTest;
 import com.genius.primavera.domain.User;
-import com.genius.primavera.testContainer.EnablePrimaveraTestcontainers;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.client.ExpectedCount;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.HttpClientErrorException;
@@ -31,14 +29,13 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 /**
  * PrimaveraService의 사용자 조회 기능을 검증하는 테스트입니다.
  * MockRestServiceServer를 사용하여 외부 API 호출을 모킹합니다.
+ * 
+ * AbstractIntegrationTest를 상속받아 MariaDB 컨테이너를 자동으로 사용합니다.
  */
 @Slf4j
-@SpringBootTest
-@ActiveProfiles("test")
-@EnablePrimaveraTestcontainers
 @DisplayName("PrimaveraService 테스트")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class PrimaveraServiceTest {
+public class PrimaveraServiceTest extends AbstractIntegrationTest {
 
     private MockRestServiceServer mockServer;
     private PrimaveraService primaveraService;

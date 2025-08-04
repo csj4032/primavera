@@ -18,5 +18,5 @@ dependencies {
     testImplementation "org.mybatis.spring.boot:mybatis-spring-boot-starter-test:${mybatisSpringBootStarterVersion}"
     testImplementation "org.mockito:mockito-core:4.+"
     testImplementation project(":appendix:spring-boot-starter-lucy-filter")
-    testImplementation project(":appendix:spring-boot-starter-test-container")
+    // testImplementation project(":appendix:spring-boot-starter-test-container") // 제거됨: AbstractIntegrationTest 상속 방식 사용
 }

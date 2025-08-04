@@ -1,0 +1,48 @@
+spring:
+  application:
+    name: FileProcessingMonitoringApplication
+  banner:
+    charset: UTF-8
+    location: classpath:primavera.txt
+  profiles:
+    active: local
+    group:
+      local:
+        - console-appender
+        - file-debug-appender
+        - file-error-appender
+        - file-info-appender
+        - file-warn-appender
+        - sentry-appender
+      test:
+        - console-appender
+  jackson:
+    time-zone: UTC
+
+lucy-filter:
+  enabled: true
+  name: lucyXssFilter
+  order: 1
+  addUrlPatterns: /*
+
+logging:
+  config: classpath:logback-spring.xml
+
+primavera:
+  config:
+    name: primavera
+    enabled: true
+  logs:
+    path: ./logs
+
+server:
+  tomcat:
+    arp:
+      enabled: false
+  ssl:
+    key-alias: primavera
+    key-store: infrastructure/certs/primavera.p12
+    key-store-type: PKCS12
+    key-store-password: primavera
+    enabled: true
+  port: 8443

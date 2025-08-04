@@ -1,3 +1,0 @@
-org.springframework.context.ApplicationContextInitializer=com.genius.primavera.testcontainer.v2.TestContainerContextInitializer
-org.springframework.test.context.TestExecutionListener=com.genius.primavera.testcontainer.v2.TestContainerTestExecutionListener,com.genius.primavera.testcontainer.v2.PerMethodTestExecutionListener
-org.springframework.test.context.ContextCustomizerFactory=com.genius.primavera.testcontainer.v2.TestContextCustomizerFactory
