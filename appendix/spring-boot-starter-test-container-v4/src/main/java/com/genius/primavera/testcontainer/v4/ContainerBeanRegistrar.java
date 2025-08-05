@@ -42,10 +42,9 @@ public class ContainerBeanRegistrar {
             Object bean = beanCreator.apply(container);
             if (bean != null) {
                 String beanName = extractBeanName(container);
-                beanFactory.registerSingleton(beanName, bean);
-                logBeanRegistration(bean, beanName, container);
+                registerBeanSafely(beanFactory, beanName, bean, container);
             } else {
-                log.warn("Bean creation returned null for container: {}", container);
+                handleNullBeanCreation(container);
             }
         } catch (Exception e) {
             handleRegistrationError(container, e);
@@ -53,13 +52,34 @@ public class ContainerBeanRegistrar {
     }
     
     private boolean isValidContainer(Object container) {
-        if (container instanceof ContainerInfo containerInfo) {
-            return containerInfo.getName() != null && 
-                   containerInfo.getType() != null && 
-                   containerInfo.getContainer() != null &&
-                   containerInfo.getContainer().isRunning();
+        if (!(container instanceof ContainerInfo containerInfo)) {
+            log.warn("Container validation failed: not a ContainerInfo instance - {}", container.getClass().getSimpleName());
+            return false;
         }
-        return false;
+        
+        if (containerInfo.getName() == null || containerInfo.getName().trim().isEmpty()) {
+            log.warn("Container validation failed: name is null or empty for container {}", containerInfo);
+            return false;
+        }
+        
+        if (containerInfo.getType() == null) {
+            log.warn("Container validation failed: container type is null for container '{}'", containerInfo.getName());
+            return false;
+        }
+        
+        if (containerInfo.getContainer() == null) {
+            log.warn("Container validation failed: underlying container instance is null for '{}'", containerInfo.getName());
+            return false;
+        }
+        
+        if (!containerInfo.getContainer().isRunning()) {
+            log.warn("Container validation failed: container '{}' is not running (state: {})", 
+                containerInfo.getName(), 
+                containerInfo.getContainer().isCreated() ? "created" : "stopped");
+            return false;
+        }
+        
+        return true;
     }
     
     private String extractBeanName(Object container) {
@@ -78,6 +98,43 @@ public class ContainerBeanRegistrar {
         }
     }
     
+    private synchronized void registerBeanSafely(
+            ConfigurableListableBeanFactory beanFactory, 
+            String beanName, 
+            Object bean, 
+            Object container) {
+        
+        if (beanFactory.containsSingleton(beanName)) {
+            log.warn("Bean '{}' already exists in factory. Skipping registration for container: {}", beanName, container);
+            return;
+        }
+        
+        try {
+            beanFactory.registerSingleton(beanName, bean);
+            logBeanRegistration(bean, beanName, container);
+        } catch (Exception e) {
+            log.error("Failed to register bean '{}' in factory for container: {}", beanName, container, e);
+            throw e;
+        }
+    }
+    
+    private void handleNullBeanCreation(Object container) {
+        String containerName = extractBeanName(container);
+        
+        if (container instanceof ContainerInfo containerInfo) {
+            boolean creatorExists = BeanCreatorRegistry.isSupported(containerInfo.getType());
+            if (!creatorExists) {
+                log.error("Bean creation returned null: No bean creator registered for container type '{}' (container: '{}')", 
+                    containerInfo.getType(), containerName);
+            } else {
+                log.warn("Bean creation returned null: Bean creator exists but failed to create bean for container '{}' (type: '{}')", 
+                    containerName, containerInfo.getType());
+            }
+        } else {
+            log.warn("Bean creation returned null for container: {}", container);
+        }
+    }
+    
     private void handleRegistrationError(Object container, Exception e) {
         String containerName = extractBeanName(container);
         log.error("Failed to register bean for container: {}", containerName, e);
@@ -90,7 +147,8 @@ public class ContainerBeanRegistrar {
     }
     
     private Object createBean(ContainerInfo containerInfo) {
-        BeanCreator creator = BeanCreatorRegistry.getCreator(containerInfo.getType());
-        return creator.createBean(containerInfo);
+        return BeanCreatorRegistry.findCreator(containerInfo.getType())
+            .map(creator -> creator.createBean(containerInfo))
+            .orElse(null);
     }
 }
