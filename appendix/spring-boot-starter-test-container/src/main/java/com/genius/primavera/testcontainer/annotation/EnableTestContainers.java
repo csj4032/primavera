@@ -2,16 +2,17 @@ package com.genius.primavera.testcontainer.annotation;
 
 import com.genius.primavera.testcontainer.ContainerType;
 import com.genius.primavera.testcontainer.config.ContainerConfigurationSelector;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.*;
 
 /**
  * 테스트에서 TestContainers를 활성화하는 애노테이션
- * 
+ *
  * @TestInstance(TestInstance.Lifecycle.PER_CLASS)와
  * @TestInstance(TestInstance.Lifecycle.PER_METHOD) 모두 지원
- * 
+ *
  * 사용 예:
  * <pre>
  * // 단일 컨테이너
@@ -20,19 +21,26 @@ import java.lang.annotation.*;
  * class MariaDBIntegrationTest {
  *     // MariaDB 컨테이너가 시작되고 DataSource가 구성됨
  * }
- * 
+ *
  * // 다중 컨테이너
  * @SpringBootTest
  * @EnableTestContainers(containers = {ContainerType.MARIADB, ContainerType.REDIS})
  * class MultiContainerTest {
  *     // MariaDB와 Redis 컨테이너가 모두 시작됨
  * }
- * 
+ *
  * // 기본값 (MariaDB)
  * @SpringBootTest
  * @EnableTestContainers
  * class DefaultTest {
  *     // MariaDB 컨테이너가 시작됨 (기본값)
+ * }
+ *
+ * // Web 환경 격리
+ * @SpringBootTest
+ * @EnableTestContainers(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+ * class IsolatedWebTest {
+ *     // 독립적인 ApplicationContext와 랜덤 포트로 실행
  * }
  * </pre>
  */
@@ -40,22 +48,29 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Import(ContainerConfigurationSelector.class)
 public @interface EnableTestContainers {
-    
+
     /**
      * 활성화할 컨테이너 타입들
      * 기본값은 MariaDB
      */
     ContainerType[] containers() default {ContainerType.MARIADB};
-    
+
     /**
      * 컨테이너별 초기화 스크립트 경로
      * 기본값은 "sql/init.sql"
      */
     String initScript() default "sql/init.sql";
-    
+
     /**
      * 컨테이너 재사용 여부
      * true일 경우 동일한 컨테이너를 여러 테스트에서 재사용
      */
     boolean reuse() default false;
+
+    /**
+     * 웹 환경 설정 (테스트 격리 용도)
+     * RANDOM_PORT를 사용하면 각 테스트가 독립적인 ApplicationContext를 가짐
+     * 기본값은 MOCK
+     */
+    SpringBootTest.WebEnvironment webEnvironment() default SpringBootTest.WebEnvironment.RANDOM_PORT;
 }
