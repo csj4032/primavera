@@ -116,7 +116,6 @@ ext {
             "org.testcontainers:kafka:${testContainersVersion}",
             "org.testcontainers:elasticsearch:${testContainersVersion}",
             "org.testcontainers:postgresql:${testContainersVersion}",
-            // "org.testcontainers:redis:${testContainersVersion}",
             "org.testcontainers:mongodb:${testContainersVersion}",
     ]
 
