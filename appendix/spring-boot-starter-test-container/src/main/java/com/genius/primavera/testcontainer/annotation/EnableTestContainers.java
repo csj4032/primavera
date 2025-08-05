@@ -1,5 +1,6 @@
 package com.genius.primavera.testcontainer.annotation;
 
+import com.genius.primavera.testcontainer.ContainerSpec;
 import com.genius.primavera.testcontainer.ContainerType;
 import com.genius.primavera.testcontainer.config.ContainerConfigurationSelector;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -8,39 +9,46 @@ import org.springframework.context.annotation.Import;
 import java.lang.annotation.*;
 
 /**
- * 테스트에서 TestContainers를 활성화하는 애노테이션
- *
- * @TestInstance(TestInstance.Lifecycle.PER_CLASS)와
- * @TestInstance(TestInstance.Lifecycle.PER_METHOD) 모두 지원
+ * 테스트에서 TestContainers를 활성화하는 어노테이션
+ * 
+ * ContainerSpec을 사용하여 다중 컨테이너 환경 지원
+ * 각 컨테이너별로 이름, 설정, 역할을 명확히 구분
  *
  * 사용 예:
  * <pre>
- * // 단일 컨테이너
- * @SpringBootTest
- * @EnableTestContainers(containers = ContainerType.MARIADB)
- * class MariaDBIntegrationTest {
- *     // MariaDB 컨테이너가 시작되고 DataSource가 구성됨
- * }
- *
- * // 다중 컨테이너
- * @SpringBootTest
- * @EnableTestContainers(containers = {ContainerType.MARIADB, ContainerType.REDIS})
- * class MultiContainerTest {
- *     // MariaDB와 Redis 컨테이너가 모두 시작됨
- * }
- *
- * // 기본값 (MariaDB)
+ * // 기본 단일 컨테이너
  * @SpringBootTest
  * @EnableTestContainers
  * class DefaultTest {
- *     // MariaDB 컨테이너가 시작됨 (기본값)
+ *     @Qualifier("primaryDataSource")
+ *     @Autowired DataSource dataSource;
  * }
  *
- * // Web 환경 격리
+ * // Primary/Secondary 다중 데이터베이스
  * @SpringBootTest
- * @EnableTestContainers(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
- * class IsolatedWebTest {
- *     // 독립적인 ApplicationContext와 랜덤 포트로 실행
+ * @EnableTestContainers(containers = {
+ *     @ContainerSpec(type = ContainerType.MARIADB, name = "primary", initScript = "sql/primary.sql"),
+ *     @ContainerSpec(type = ContainerType.MARIADB, name = "secondary", initScript = "sql/secondary.sql")
+ * })
+ * class MultiDatabaseTest {
+ *     @Qualifier("primaryDataSource")
+ *     @Autowired DataSource primaryDataSource;
+ *     
+ *     @Qualifier("secondaryDataSource") 
+ *     @Autowired DataSource secondaryDataSource;
+ * }
+ *
+ * // 혼합 컨테이너 (데이터베이스 + 캐시 + 검색)
+ * @SpringBootTest
+ * @EnableTestContainers(containers = {
+ *     @ContainerSpec(type = ContainerType.MARIADB, name = "primary"),
+ *     @ContainerSpec(type = ContainerType.REDIS, name = "cache"),
+ *     @ContainerSpec(type = ContainerType.ELASTICSEARCH, name = "search")
+ * })
+ * class MixedContainerTest {
+ *     @Qualifier("primaryDataSource") @Autowired DataSource database;
+ *     @Qualifier("cacheRedisTemplate") @Autowired RedisTemplate<String, String> cache;
+ *     @Qualifier("searchElasticsearchTemplate") @Autowired ElasticsearchTemplate search;
  * }
  * </pre>
  */
@@ -50,27 +58,18 @@ import java.lang.annotation.*;
 public @interface EnableTestContainers {
 
     /**
-     * 활성화할 컨테이너 타입들
-     * 기본값은 MariaDB
+     * 컨테이너 스펙 배열
+     * 각 컨테이너의 타입, 이름, 설정을 정의
+     * 기본값: MariaDB primary 컨테이너
      */
-    ContainerType[] containers() default {ContainerType.MARIADB};
-
-    /**
-     * 컨테이너별 초기화 스크립트 경로
-     * 기본값은 "sql/init.sql"
-     */
-    String initScript() default "sql/init.sql";
-
-    /**
-     * 컨테이너 재사용 여부
-     * true일 경우 동일한 컨테이너를 여러 테스트에서 재사용
-     */
-    boolean reuse() default false;
+    ContainerSpec[] containers() default {
+        @ContainerSpec(type = ContainerType.MARIADB, name = "primary")
+    };
 
     /**
      * 웹 환경 설정 (테스트 격리 용도)
      * RANDOM_PORT를 사용하면 각 테스트가 독립적인 ApplicationContext를 가짐
-     * 기본값은 MOCK
+     * 기본값: RANDOM_PORT
      */
     SpringBootTest.WebEnvironment webEnvironment() default SpringBootTest.WebEnvironment.RANDOM_PORT;
 }

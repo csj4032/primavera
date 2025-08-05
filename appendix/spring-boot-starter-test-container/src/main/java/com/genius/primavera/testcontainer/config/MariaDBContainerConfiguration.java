@@ -2,18 +2,24 @@ package com.genius.primavera.testcontainer.config;
 
 import com.genius.primavera.testcontainer.ContainerType;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Role;
+import org.springframework.context.annotation.Scope;
 import org.testcontainers.containers.MariaDBContainer;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * MariaDB TestContainer 설정 - 테스트 클래스별 독립적인 컨테이너 생성
- * Thread 기반 컨테이너 격리 전략 사용
+ * MariaDB TestContainer 설정 - 다중 컨테이너 지원
+ * ContainerSpec에 정의된 각 MariaDB 컨테이너를 개별적으로 생성
+ * name 기반으로 Bean 이름과 Qualifier 결정
  */
 @Slf4j
 @TestConfiguration(proxyBeanMethods = false)
@@ -21,83 +27,166 @@ public class MariaDBContainerConfiguration {
 
     private static final ConcurrentHashMap<String, MariaDBContainer<?>> containerCache = new ConcurrentHashMap<>();
     private static final AtomicInteger containerCounter = new AtomicInteger(0);
-    private static final ThreadLocal<MariaDBContainer<?>> threadLocalContainer = new ThreadLocal<>();
 
+    /**
+     * 시스템 프로퍼티에서 ContainerSpec 정보를 읽어서 MariaDB 컨테이너들을 동적으로 생성
+     */
     @Bean
-    @ServiceConnection
-    @Primary
-    public MariaDBContainer<?> mariaDBContainer() {
-        // 환경 변수에서 테스트 격리 식별자 추출
-        String testIsolationId = System.getProperty("primavera.test.isolation", "Unknown");
-        String threadName = Thread.currentThread().getName();
-        int containerNumber = containerCounter.incrementAndGet();
-        
-        // 테스트별 고유 캐시 키 생성
-        String cacheKey = testIsolationId + "_" + threadName + "_" + containerNumber + "_" + System.currentTimeMillis();
-        
-        log.info("★ MariaDB TestContainer 생성 요청:");
-        log.info("   - 테스트 격리 ID: {}", testIsolationId);
-        log.info("   - 스레드: {}", threadName);
-        log.info("   - 컨테이너 번호: {}", containerNumber);
-        log.info("   - 캐시키: {}", cacheKey);
-        
-        // 완전히 독립적인 새 컨테이너 생성
-        MariaDBContainer<?> container = new MariaDBContainer<>(ContainerType.MARIADB.getDefaultImage())
-                .withUsername("primavera")
-                .withPassword("primavera")
-                .withDatabaseName("primavera")
-                .withInitScript("sql/init.sql")
-                .withReuse(false) // 절대 재사용 안함
-                .withLabel("test-isolation-id", testIsolationId)
-                .withLabel("thread-name", threadName)
-                .withLabel("container-number", String.valueOf(containerNumber))
-                .withLabel("cache-key", cacheKey)
-                .withLabel("creation-time", String.valueOf(System.currentTimeMillis()));
-        
-        // JVM Identity 추가 (컨테이너 생성 후)
-        container = container.withLabel("jvm-id", String.valueOf(System.identityHashCode(container)));
-        
-        // 캐시에 저장 (디버깅 목적)
-        containerCache.put(cacheKey, container);
-        
-        log.info("★ 새로운 독립 MariaDB 컨테이너 생성 완료:");
-        log.info("   - 테스트 격리 ID: {}", testIsolationId);
-        log.info("   - JVM Identity: {}", System.identityHashCode(container));
-        log.info("   - 캐시키: {}", cacheKey);
-        log.info("   - 총 생성된 컨테이너 수: {}", containerCache.size());
-        
-        return container;
+    @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
+    public MariaDBContainerRegistrar mariaDBContainerRegistrar() {
+        return new MariaDBContainerRegistrar();
     }
 
     /**
-     * 현재 실행 중인 테스트 클래스명을 추출
+     * MariaDB ContainerSpec들을 파싱하고 각각에 대해 컨테이너 Bean을 등록하는 클래스
      */
-    private String getCurrentTestClassName() {
-        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+    public static class MariaDBContainerRegistrar {
         
-        // 스택 트레이스에서 테스트 클래스 찾기
-        for (StackTraceElement element : stackTrace) {
-            String className = element.getClassName();
-            if (className.contains("test") && 
-                (className.endsWith("Test") || 
-                 className.endsWith("TestA") || 
-                 className.endsWith("TestB"))) {
-                return className.substring(className.lastIndexOf('.') + 1);
+        public MariaDBContainerRegistrar() {
+            registerMariaDBContainers();
+        }
+        
+        private void registerMariaDBContainers() {
+            int specCount = Integer.parseInt(System.getProperty("primavera.testcontainer.spec.count", "0"));
+            log.info("MariaDB 컨테이너 등록 시작 - 전체 ContainerSpec 개수: {}", specCount);
+            
+            List<ContainerSpec> mariadbSpecs = new ArrayList<>();
+            
+            // 시스템 프로퍼티에서 MariaDB 스펙들만 필터링
+            for (int i = 0; i < specCount; i++) {
+                String prefix = "primavera.testcontainer.spec." + i;
+                String typeStr = System.getProperty(prefix + ".type");
+                
+                if ("MARIADB".equals(typeStr)) {
+                    ContainerSpec spec = new ContainerSpec(
+                        i,
+                        System.getProperty(prefix + ".name"),
+                        System.getProperty(prefix + ".initScript"),
+                        Boolean.parseBoolean(System.getProperty(prefix + ".reuse")),
+                        Integer.parseInt(System.getProperty(prefix + ".port")),
+                        System.getProperty(prefix + ".databaseName"),
+                        System.getProperty(prefix + ".username"),
+                        System.getProperty(prefix + ".password"),
+                        System.getProperty(prefix + ".labels", "").split(",")
+                    );
+                    mariadbSpecs.add(spec);
+                }
+            }
+            
+            log.info("발견된 MariaDB ContainerSpec 개수: {}", mariadbSpecs.size());
+            
+            // 각 MariaDB 스펙에 대해 컨테이너 생성
+            for (ContainerSpec spec : mariadbSpecs) {
+                createMariaDBContainer(spec);
             }
         }
         
-        // Spring 관련 클래스들을 제외하고 테스트 관련 클래스 찾기
-        for (StackTraceElement element : stackTrace) {
-            String className = element.getClassName();
-            if (!className.startsWith("org.springframework") && 
-                !className.startsWith("java.") && 
-                !className.startsWith("sun.") &&
-                className.contains("isolation")) {
-                return className.substring(className.lastIndexOf('.') + 1);
+        private void createMariaDBContainer(ContainerSpec spec) {
+            String containerName = spec.name + "MariaDBContainer";
+            int containerNumber = containerCounter.incrementAndGet();
+            
+            log.info("★ MariaDB TestContainer 생성: {}", containerName);
+            log.info("   - 이름: {}", spec.name);
+            log.info("   - 초기화 스크립트: {}", spec.initScript);
+            log.info("   - 재사용: {}", spec.reuse);
+            log.info("   - 데이터베이스명: {}", spec.databaseName);
+            
+            // 컨테이너 생성
+            MariaDBContainer<?> container = new MariaDBContainer<>(ContainerType.MARIADB.getDefaultImage())
+                    .withUsername(spec.username)
+                    .withPassword(spec.password)
+                    .withDatabaseName(spec.databaseName)
+                    .withInitScript(spec.initScript)
+                    .withReuse(spec.reuse)
+                    .withLabel("container-name", spec.name)
+                    .withLabel("container-number", String.valueOf(containerNumber))
+                    .withLabel("creation-time", String.valueOf(System.currentTimeMillis()));
+            
+            // 추가 라벨 적용
+            for (String label : spec.labels) {
+                if (!label.isEmpty()) {
+                    String[] keyValue = label.split("=", 2);
+                    if (keyValue.length == 2) {
+                        container = container.withLabel(keyValue[0], keyValue[1]);
+                    }
+                }
             }
+            
+            // 포트 오버라이드 (필요한 경우)
+            if (spec.port > 0) {
+                container = container.withExposedPorts(spec.port);
+            }
+            
+            // 캐시에 저장
+            containerCache.put(spec.name, container);
+            
+            log.info("★ MariaDB 컨테이너 생성 완료: {}", containerName);
+            log.info("   - JVM Identity: {}", System.identityHashCode(container));
+            log.info("   - 캐시 키: {}", spec.name);
+        }
+    }
+    
+    /**
+     * ContainerSpec 정보를 담는 내부 클래스
+     */
+    private static class ContainerSpec {
+        final int index;
+        final String name;
+        final String initScript;
+        final boolean reuse;
+        final int port;
+        final String databaseName;
+        final String username;
+        final String password;
+        final String[] labels;
+        
+        ContainerSpec(int index, String name, String initScript, boolean reuse, int port, 
+                     String databaseName, String username, String password, String[] labels) {
+            this.index = index;
+            this.name = name;
+            this.initScript = initScript;
+            this.reuse = reuse;
+            this.port = port;
+            this.databaseName = databaseName;
+            this.username = username;
+            this.password = password;
+            this.labels = labels;
+        }
+    }
+
+    /**
+     * 각 컨테이너 이름별로 개별 Bean 생성
+     */
+    @Bean
+    @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
+    public MariaDBContainerBeanRegistry mariaDBContainerBeanRegistry() {
+        return new MariaDBContainerBeanRegistry();
+    }
+    
+    /**
+     * 동적으로 각 MariaDB 컨테이너 Bean을 등록하는 클래스
+     */
+    public static class MariaDBContainerBeanRegistry {
+        
+        public MariaDBContainerBeanRegistry() {
+            registerContainerBeans();
         }
         
-        return "UnknownTest_" + System.currentTimeMillis();
+        private void registerContainerBeans() {
+            log.info("MariaDB 컨테이너 Bean 등록 시작");
+            
+            // 캐시된 모든 컨테이너에 대해 Bean 등록 정보 로깅
+            for (String containerName : containerCache.keySet()) {
+                MariaDBContainer<?> container = containerCache.get(containerName);
+                log.info("등록된 MariaDB 컨테이너: {} -> {}", containerName, System.identityHashCode(container));
+                
+                // 컨테이너 시작
+                if (!container.isRunning()) {
+                    log.info("컨테이너 시작: {}", containerName);
+                    container.start();
+                }
+            }
+        }
     }
 
     /**
@@ -108,21 +197,10 @@ public class MariaDBContainerConfiguration {
     }
 
     /**
-     * 현재 ThreadLocal 컨테이너 정보
+     * 특정 이름의 컨테이너 조회
      */
-    public static MariaDBContainer<?> getCurrentThreadContainer() {
-        return threadLocalContainer.get();
-    }
-
-    /**
-     * ThreadLocal 정리
-     */
-    public static void clearThreadLocal() {
-        MariaDBContainer<?> container = threadLocalContainer.get();
-        if (container != null) {
-            log.info("ThreadLocal 컨테이너 정리: {}", container.getContainerId());
-        }
-        threadLocalContainer.remove();
+    public static MariaDBContainer<?> getContainer(String name) {
+        return containerCache.get(name);
     }
 
     /**
@@ -144,7 +222,6 @@ public class MariaDBContainerConfiguration {
         
         containerCache.clear();
         containerCounter.set(0);
-        threadLocalContainer.remove();
         
         log.info("MariaDB 컨테이너 캐시 정리 완료");
     }
