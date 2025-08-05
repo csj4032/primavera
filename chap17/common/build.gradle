@@ -1,0 +1,21 @@
+plugins {
+    id 'java-library'
+}
+
+dependencies {
+    api "org.springframework.boot:spring-boot-starter:${springBootVersion}"
+    api "org.springframework.boot:spring-boot-starter-data-jpa:${springBootVersion}"
+    implementation 'org.apache.commons:commons-lang3:3.14.0'
+    compileOnly "org.projectlombok:lombok:${lombokVersion}"
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+    testImplementation "org.junit.jupiter:junit-jupiter:${junitJupiterVersion}"
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
+test {
+    useJUnitPlatform()
+}
