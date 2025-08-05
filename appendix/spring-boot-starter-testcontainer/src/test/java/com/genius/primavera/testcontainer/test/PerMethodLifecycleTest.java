@@ -17,9 +17,9 @@ import static org.assertj.core.api.Assertions.assertThat;
  * 컨테이너가 각 테스트 메소드마다 새로 생성되는지 확인
  */
 @Slf4j
-@SpringBootTest
 @EnableTestContainers
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class PerMethodLifecycleTest {
     
     @Autowired

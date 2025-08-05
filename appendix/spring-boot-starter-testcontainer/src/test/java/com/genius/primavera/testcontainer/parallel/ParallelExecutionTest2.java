@@ -22,10 +22,10 @@ import static org.assertj.core.api.Assertions.assertThat;
  * 클래스 레벨에서 컨테이너를 공유하면서 병렬 실행이 어떻게 작동하는지 확인
  */
 @Slf4j
-@SpringBootTest
 @EnableTestContainers
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Execution(ExecutionMode.CONCURRENT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class ParallelExecutionTest2 {
 
     @Autowired

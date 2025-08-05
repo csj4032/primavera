@@ -37,6 +37,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-configuration-processor'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation 'org.springframework.boot:spring-boot-testcontainers'
 
     compileOnly 'org.projectlombok:lombok'
@@ -44,6 +45,7 @@ dependencies {
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-jdbc'
+    testImplementation 'org.springframework.boot:spring-boot-starter-data-redis'
     testImplementation 'org.mariadb.jdbc:mariadb-java-client'
     testImplementation 'org.postgresql:postgresql'
     testImplementation 'com.mysql:mysql-connector-j'

@@ -22,9 +22,9 @@ import static org.assertj.core.api.Assertions.assertThat;
  * 특정 리소스에 대한 접근을 제어하여 동시성 문제를 방지하는 방법 시연
  */
 @Slf4j
-@SpringBootTest
 @EnableTestContainers
 @Execution(ExecutionMode.CONCURRENT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class ParallelExecutionTest3 {
 
     @Autowired
