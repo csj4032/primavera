@@ -24,7 +24,7 @@ public record UserDto(
      * 활성 사용자 여부를 확인하는 편의 메서드
      */
     public boolean isActive() {
-        return status == UserStatus.ACTIVE;
+        return status == UserStatus.ON;
     }
     
     /**

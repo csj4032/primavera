@@ -1,10 +1,12 @@
 package com.genius.primavera.application;
 
-import com.genius.primavera.testingsupport.annotation.TestCacheableService;
+import com.genius.primavera.testingsupport.WebCacheIntegrationTest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.Duration;
@@ -15,10 +17,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * 캐시 기능 통합 테스트 - Mixin 어노테이션 데모
+ * 캐시 기능 통합 테스트 - 인터페이스 기반 접근법
  * 
- * <p>{@link TestCacheableService} 어노테이션을 사용하여 
- * MariaDB + Redis 환경에서 캐시 기능을 테스트하는 예시입니다.</p>
+ * <p>{@link WebCacheIntegrationTest} 인터페이스를 구현하여 
+ * MariaDB + Redis + MockMvc 환경에서 캐시 기능을 테스트하는 예시입니다.</p>
  * 
  * <h3>테스트 환경:</h3>
  * <ul>
@@ -36,10 +38,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * </ul>
  */
 @Slf4j
-@TestCacheableService(initScript = "sql/init.sql")
+@SpringBootTest
+@ActiveProfiles("test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@DisplayName("캐시 서비스 통합 테스트 - Redis + MariaDB")
-public class CacheServiceDemoTest {
+@DisplayName("캐시 서비스 통합 테스트 - Redis + MariaDB + MockMvc")
+public class CacheServiceDemoTest implements WebCacheIntegrationTest {
+
+    static {
+        WebCacheIntegrationTest.startWebCacheContainers();
+    }
 
     @Autowired
     private MockMvc mockMvc;

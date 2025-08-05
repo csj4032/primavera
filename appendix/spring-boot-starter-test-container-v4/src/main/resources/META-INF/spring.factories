@@ -1,0 +1,8 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.genius.primavera.testcontainer.v4.TestContainerAutoConfiguration
+
+org.springframework.boot.context.properties.EnableConfigurationProperties=\
+  com.genius.primavera.testcontainer.v4.ContainerConfiguration
+
+org.junit.jupiter.api.extension.Extension=\
+  com.genius.primavera.testcontainer.v4.TestContainerExtension

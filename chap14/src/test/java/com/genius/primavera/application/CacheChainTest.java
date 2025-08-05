@@ -3,22 +3,15 @@ package com.genius.primavera.application;
 import com.genius.primavera.application.cache.LocalCache;
 import com.genius.primavera.domain.model.Temp;
 import com.genius.primavera.domain.repository.TempRepository;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.containers.MariaDBContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
+import com.genius.primavera.testingsupport.FullStackIntegrationTest;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.lambda.Unchecked;
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit.jupiter.EnabledIf;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.Instant;
 import java.util.List;
@@ -29,24 +22,12 @@ import java.util.stream.LongStream;
 @Slf4j
 @SpringBootTest
 @ActiveProfiles("test")
-@DisplayName("Cache Chain Test")
-@Testcontainers
+@DisplayName("캐시 체인 테스트 - 로컬캐시 → Redis → MongoDB")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class CacheChainTest {
+public class CacheChainTest implements FullStackIntegrationTest {
 
-    @Container
-    static MariaDBContainer<?> mariadb = new MariaDBContainer<>("mariadb:11.4")
-            .withDatabaseName("primavera")
-            .withUsername("primavera")
-            .withPassword("primavera")
-            .withInitScript("sql/init.sql");
-
-    @DynamicPropertySource
-    static void configureProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", mariadb::getJdbcUrl);
-        registry.add("spring.datasource.username", mariadb::getUsername);
-        registry.add("spring.datasource.password", mariadb::getPassword);
-        registry.add("spring.datasource.driver-class-name", mariadb::getDriverClassName);
+    static {
+        FullStackIntegrationTest.startAllContainers();
     }
 
     @Autowired

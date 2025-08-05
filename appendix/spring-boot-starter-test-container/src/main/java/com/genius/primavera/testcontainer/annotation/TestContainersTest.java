@@ -5,6 +5,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.annotation.AliasFor;
 import org.springframework.test.context.ActiveProfiles;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.lang.annotation.*;
 
@@ -45,6 +46,8 @@ import java.lang.annotation.*;
 @Inherited
 @SpringBootTest
 @EnableTestContainers
+@TestInstance(TestInstance.Lifecycle.PER_CLASS) // 클래스 단위로 테스트 인스턴스 생성
+@Testcontainers // Testcontainers 활성화
 @ActiveProfiles("test")
 public @interface TestContainersTest {
     
