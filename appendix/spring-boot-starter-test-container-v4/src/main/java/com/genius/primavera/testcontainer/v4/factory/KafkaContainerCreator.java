@@ -1,4 +1,4 @@
-package com.genius.primavera.testcontainer.v4.creator;
+package com.genius.primavera.testcontainer.v4.factory;
 
 import com.genius.primavera.testcontainer.v4.ContainerConfiguration;
 import com.genius.primavera.testcontainer.v4.ContainerCreator;

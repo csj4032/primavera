@@ -1,19 +1,19 @@
-package com.genius.primavera.testcontainer.v4.creator;
+package com.genius.primavera.testcontainer.v4.factory;
 
 import com.genius.primavera.testcontainer.v4.ContainerConfiguration;
 import com.genius.primavera.testcontainer.v4.ContainerCreator;
 import com.genius.primavera.testcontainer.v4.ContainerType;
 import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.containers.MySQLContainer;
+import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.utility.DockerImageName;
 
 import java.time.Duration;
 
-public class MySQLContainerCreator implements ContainerCreator {
+public class PostgreSQLContainerCreator implements ContainerCreator {
     
     @Override
     public GenericContainer<?> create(ContainerConfiguration.ContainerSpec spec) {
-        MySQLContainer<?> container = new MySQLContainer<>(DockerImageName.parse(spec.getImageOrDefault(ContainerType.MYSQL)))
+        PostgreSQLContainer<?> container = new PostgreSQLContainer<>(DockerImageName.parse(spec.getImageOrDefault(ContainerType.POSTGRESQL)))
                 .withDatabaseName(spec.getDatabaseOrDefault())
                 .withUsername(spec.getUsernameOrDefault())
                 .withPassword(spec.getPasswordOrDefault())
@@ -25,6 +25,6 @@ public class MySQLContainerCreator implements ContainerCreator {
     
     @Override
     public ContainerType getSupportedType() {
-        return ContainerType.MYSQL;
+        return ContainerType.POSTGRESQL;
     }
 }

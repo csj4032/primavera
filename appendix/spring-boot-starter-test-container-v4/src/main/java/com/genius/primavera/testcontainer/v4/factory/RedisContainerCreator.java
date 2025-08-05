@@ -1,20 +1,24 @@
-package com.genius.primavera.testcontainer.v4.creator;
+package com.genius.primavera.testcontainer.v4.factory;
 
 import com.genius.primavera.testcontainer.v4.ContainerConfiguration;
 import com.genius.primavera.testcontainer.v4.ContainerCreator;
 import com.genius.primavera.testcontainer.v4.ContainerType;
 import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.elasticsearch.ElasticsearchContainer;
 import org.testcontainers.utility.DockerImageName;
 
 import java.time.Duration;
+import java.util.Optional;
 
-public class ElasticsearchContainerCreator implements ContainerCreator {
+public class RedisContainerCreator implements ContainerCreator {
     
     @Override
     public GenericContainer<?> create(ContainerConfiguration.ContainerSpec spec) {
-        ElasticsearchContainer container = new ElasticsearchContainer(DockerImageName.parse(spec.getImageOrDefault(ContainerType.ELASTICSEARCH)))
+        GenericContainer<?> container = new GenericContainer<>(DockerImageName.parse(spec.getImageOrDefault(ContainerType.REDIS)))
+                .withExposedPorts(6379)
                 .withStartupTimeout(Duration.ofSeconds(spec.getStartupTimeoutOrDefault()));
+        
+        Optional.ofNullable(spec.getPassword())
+                .ifPresent(password -> container.withCommand("redis-server", "--requirepass", password));
         
         ContainerConfigurationHelper.configureContainer(container, spec);
         return container;
@@ -22,6 +26,6 @@ public class ElasticsearchContainerCreator implements ContainerCreator {
     
     @Override
     public ContainerType getSupportedType() {
-        return ContainerType.ELASTICSEARCH;
+        return ContainerType.REDIS;
     }
 }
