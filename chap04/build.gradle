@@ -12,5 +12,7 @@ dependencies {
     implementation "org.reflections:reflections:${reflectionsVersion}"
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
     testImplementation "org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}"
+    testImplementation "org.springframework.cloud:spring-cloud-starter-config"
+    testImplementation "org.springframework.cloud:spring-cloud-starter-vault-config:${springCloudVaultVersion}"
     testImplementation project(':appendix:spring-boot-starter-test-containers')
 }
