@@ -1,69 +1,18 @@
-// ==========================================
-// CHAP04 - MyBatis & Vault Configuration
-// ==========================================
-// Dependencies inherited from root build.gradle:
-// - spring-boot-starter-web ✓
-// - lombok (compileOnly + annotationProcessor) ✓  
-// - spring-boot-starter-test ✓
-// - slf4j-api ✓
-// - jetbrains annotations ✓
-// - jakarta.validation-api (compileOnly) ✓
-// ==========================================
-
 dependencies {
-    // ==========================================
-    // AOP Dependencies
-    // ==========================================
     aopDependencies.each { dep -> implementation dep }
-    
-    // ==========================================
-    // Database Dependencies  
-    // ==========================================
     databaseDependencies.each { dep -> implementation dep }
-    
-    // ==========================================
-    // MyBatis Dependencies
-    // ==========================================
     mybatisDependencies.each { dep -> implementation dep }
-    
-    // ==========================================
-    // TestContainers Dependencies
-    // ==========================================
     testContainersDependencies.each { dep -> testImplementation dep }
-    
-    // ==========================================
-    // Spring Boot Starters
-    // ==========================================
     implementation "org.springframework.boot:spring-boot-starter-data-redis"
-    
-    // ==========================================
-    // Spring Cloud Dependencies
-    // ==========================================
     implementation "org.springframework.cloud:spring-cloud-starter-config"
     implementation "org.springframework.cloud:spring-cloud-starter-vault-config:${springCloudVaultVersion}"
     implementation "org.springframework.cloud:spring-cloud-vault-config-databases:${springCloudVaultVersion}"
-    
-    // ==========================================
-    // Database Drivers
-    // ==========================================
     implementation "org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}"
-    
-    // ==========================================
-    // Utility Libraries
-    // ==========================================
     implementation "commons-io:commons-io:${commonsIoVersion}"
     implementation "org.reflections:reflections:${reflectionsVersion}"
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
-    
-    // ==========================================
-    // Test Dependencies
-    // ==========================================
     testImplementation "org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}"
     testImplementation "org.springframework.cloud:spring-cloud-starter-config"
     testImplementation "org.springframework.cloud:spring-cloud-starter-vault-config:${springCloudVaultVersion}"
-    
-    // ==========================================
-    // Project Module Dependencies
-    // ==========================================
     testImplementation project(':appendix:spring-boot-starter-test-containers')
 }

@@ -1,15 +1,3 @@
-// ==========================================
-// CHAP03 - AOP & Database Integration
-// ==========================================
-// Dependencies inherited from root build.gradle:
-// - spring-boot-starter-web ✓
-// - lombok (compileOnly + annotationProcessor) ✓  
-// - spring-boot-starter-test ✓
-// - slf4j-api ✓
-// - jetbrains annotations ✓
-// - jakarta.validation-api (compileOnly) ✓
-// ==========================================
-
 dependencies {
     aopDependencies.each { dep -> implementation dep }
     testContainersDependencies.each { dep -> testImplementation dep }

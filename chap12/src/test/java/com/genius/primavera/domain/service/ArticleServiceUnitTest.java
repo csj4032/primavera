@@ -61,20 +61,16 @@ class ArticleServiceUnitTest {
     @Test
     @DisplayName("게시글 저장 - Mock을 사용한 단위 테스트")
     void shouldSaveArticleSuccessfully() {
-        // Given
         given(articleMapper.save(any(Article.class))).willReturn(1);
 
-        // When
-        Article newArticle = Article.builder()
+        var newArticle = Article.builder()
                 .author(testUser)
                 .subject("새로운 게시글")
                 .status(ArticleStatus.PUBLIC)
                 .createdAt(Instant.now())
                 .build();
+        var result = articleMapper.save(newArticle);
 
-        int result = articleMapper.save(newArticle);
-
-        // Then
         assertEquals(1, result);
         verify(articleMapper).save(any(Article.class));
     }

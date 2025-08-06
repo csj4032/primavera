@@ -1,35 +1,14 @@
-// ==========================================
-// CHAP17 Common Library Module
-// ==========================================
-// Shared library for batch and streaming modules
-// Contains common entities, utilities, and configurations
-// ==========================================
 
 plugins {
     id 'java-library'
 }
 
 dependencies {
-    // ==========================================
-    // Spring Boot Dependencies
-    // ==========================================
     api "org.springframework.boot:spring-boot-starter:${springBootVersion}"
     api "org.springframework.boot:spring-boot-starter-data-jpa:${springBootVersion}"
-    
-    // ==========================================
-    // Utility Libraries
-    // ==========================================
     implementation 'org.apache.commons:commons-lang3:3.14.0'
-    
-    // ==========================================
-    // Lombok Support
-    // ==========================================
     compileOnly "org.projectlombok:lombok:${lombokVersion}"
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
-    
-    // ==========================================
-    // Test Dependencies
-    // ==========================================
     testImplementation "org.junit.jupiter:junit-jupiter:${junitJupiterVersion}"
 }
 
@@ -42,7 +21,6 @@ test {
     useJUnitPlatform()
 }
 
-// Disable Spring Boot tasks for the common module (this is a library)
 bootJar {
     enabled = false
 }

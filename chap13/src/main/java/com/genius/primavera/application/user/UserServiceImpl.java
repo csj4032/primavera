@@ -41,7 +41,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public User signUp(UserConnection userConnection) {
-        User user = new User();
+        var user = new User();
         user.setEmail(userConnection.getEmail());
         user.setNickname(userConnection.getDisplayName());
         user.setPassword(userConnection.getEmail());

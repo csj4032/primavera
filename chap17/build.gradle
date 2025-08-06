@@ -1,9 +1,3 @@
-// ==========================================
-// CHAP17 - Multi-Module Project Structure
-// ==========================================
-// Root module for multi-module architecture
-// Sub-modules: common (library), batch, streaming
-// ==========================================
 
 repositories {
     mavenCentral()
@@ -15,7 +9,6 @@ dependencyManagement {
     }
 }
 
-// Disable Spring Boot tasks for the root module (this is a multi-module project)
 bootJar {
     enabled = false
 }

@@ -1,31 +1,9 @@
-// ==========================================
-// CHAP02 - Basic Spring Boot with JPA
-// ==========================================
-// Dependencies inherited from root build.gradle:
-// - spring-boot-starter-web ✓
-// - lombok (compileOnly + annotationProcessor) ✓  
-// - spring-boot-starter-test ✓
-// - slf4j-api ✓
-// - jetbrains annotations ✓
-// ==========================================
-
 dependencies {
-    // ==========================================
-    // JPA & Database Dependencies
-    // ==========================================
     implementation "org.springframework.boot:spring-boot-starter-data-jpa"
     runtimeOnly "com.h2database:h2:${h2Version}"
-    
-    // ==========================================
-    // HTTP Client Dependencies
-    // ==========================================
     implementation "com.squareup.retrofit2:retrofit:${retrofitVersion}"
     implementation "com.squareup.retrofit2:converter-gson:${retrofitVersion}"
     implementation "com.google.code.gson:gson:${gsonVersion}"
-    
-    // ==========================================
-    // Additional Dependencies  
-    // ==========================================
     implementation "org.hibernate.validator:hibernate-validator:${hibernateValidatorVersion}"
     implementation "jakarta.annotation:jakarta.annotation-api:${javaxAnnotationVersion}"
 }

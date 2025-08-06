@@ -40,7 +40,7 @@ public class ApplicationConfiguration implements WebMvcConfigurer {
 
     @Bean
     public FilterRegistrationBean<XssEscapeServletFilter> xssFilterRegistrationBean() {
-        FilterRegistrationBean<XssEscapeServletFilter> registrationBean = new FilterRegistrationBean<>();
+        var registrationBean = new FilterRegistrationBean<XssEscapeServletFilter>();
         registrationBean.setFilter(new XssEscapeServletFilter());
         registrationBean.setOrder(1);
         registrationBean.addUrlPatterns("/*");
@@ -58,7 +58,7 @@ public class ApplicationConfiguration implements WebMvcConfigurer {
 
     @Bean
     public ModelMapper modelMapper() {
-        ModelMapper modelMapper = new ModelMapper();
+        var modelMapper = new ModelMapper();
         modelMapper.getConfiguration()
                 .setSourceNameTokenizer(NameTokenizers.CAMEL_CASE)
                 .setDestinationNameTokenizer(NameTokenizers.CAMEL_CASE);
@@ -79,7 +79,7 @@ public class ApplicationConfiguration implements WebMvcConfigurer {
     @Bean
     @ConditionalOnMissingBean(name = "redisTemplate")
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
-        RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
+        var redisTemplate = new RedisTemplate<String, Object>();
         redisTemplate.setConnectionFactory(redisConnectionFactory);
         redisTemplate.setKeySerializer(new StringRedisSerializer());
         redisTemplate.setHashKeySerializer(new StringRedisSerializer());
@@ -91,7 +91,7 @@ public class ApplicationConfiguration implements WebMvcConfigurer {
 
     @Bean(name = "tempRedisTemplate")
     public RedisTemplate<String, Temp> tempRedisTemplate(RedisConnectionFactory redisConnectionFactory) {
-        RedisTemplate<String, Temp> redisTemplate = new RedisTemplate<>();
+        var redisTemplate = new RedisTemplate<String, Temp>();
         redisTemplate.setConnectionFactory(redisConnectionFactory);
         redisTemplate.setKeySerializer(new StringRedisSerializer());
         redisTemplate.setHashKeySerializer(new StringRedisSerializer());
@@ -105,11 +105,11 @@ public class ApplicationConfiguration implements WebMvcConfigurer {
     @ConditionalOnMissingBean
     @Profile("!test")
     public RedisConnectionFactory redisConnectionFactory() {
-        RedisStandaloneConfiguration redisConfig = new RedisStandaloneConfiguration();
+        var redisConfig = new RedisStandaloneConfiguration();
         redisConfig.setHostName("localhost");
         redisConfig.setPort(6380);
         
-        LettucePoolingClientConfiguration clientConfig = LettucePoolingClientConfiguration.builder()
+        var clientConfig = LettucePoolingClientConfiguration.builder()
                 .poolConfig(createGenericObjectPoolConfig())
                 .commandTimeout(Duration.ofSeconds(30))
                 .shutdownTimeout(Duration.ofSeconds(5))
@@ -127,15 +127,15 @@ public class ApplicationConfiguration implements WebMvcConfigurer {
     }
 
     private GenericObjectPoolConfig<Object> createGenericObjectPoolConfig() {
-        GenericObjectPoolConfig<Object> poolConfig = new GenericObjectPoolConfig<>();
+        var poolConfig = new GenericObjectPoolConfig<Object>();
         poolConfig.setMinIdle(2);
         poolConfig.setMaxIdle(8);
         poolConfig.setMaxTotal(8);
-        poolConfig.setMaxWaitMillis(2000); // 2 seconds in milliseconds
+        poolConfig.setMaxWaitMillis(2000);
         poolConfig.setTestOnBorrow(true);
         poolConfig.setTestOnReturn(true);
         poolConfig.setTestWhileIdle(true);
-        poolConfig.setTimeBetweenEvictionRunsMillis(30000); // 30 seconds in milliseconds
+        poolConfig.setTimeBetweenEvictionRunsMillis(30000);
         poolConfig.setBlockWhenExhausted(true);
         return poolConfig;
     }

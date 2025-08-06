@@ -1,69 +1,14 @@
-// ==========================================
-// CHAP15 - Reactive Programming with WebFlux
-// ==========================================
-// Dependencies inherited from root build.gradle:
-// - spring-boot-starter-web ✓
-// - lombok (compileOnly + annotationProcessor) ✓  
-// - spring-boot-starter-test ✓
-// - slf4j-api ✓
-// - jetbrains annotations ✓
-// - jakarta.validation-api (compileOnly) ✓ (duplicated below, will use inherited)
-// Note: plugins block removed (inherited from root)
-// ==========================================
 
 dependencies {
-    // ==========================================
-    // AOP Dependencies
-    // ==========================================
     aopDependencies.each { dep -> implementation dep }
-    
-    // ==========================================
-    // Database Dependencies  
-    // ==========================================
     databaseDependencies.each { dep -> implementation dep }
-    
-    // ==========================================
-    // Thymeleaf Dependencies
-    // ==========================================
     thymeleafDependencies.each { dep -> implementation dep }
-    
-    // ==========================================
-    // Validation Dependencies
-    // ==========================================
     validationDependencies.each { dep -> implementation dep }
-    
-    // ==========================================
-    // Development Dependencies
-    // ==========================================
     developmentDependencies.each { dep -> implementation dep }
-    
-    // ==========================================
-    // Logging Dependencies
-    // ==========================================
     loggingDependencies.each { dep -> implementation dep }
-    
-    // ==========================================
-    // Web UI Dependencies
-    // ==========================================
     webUiDependencies.each { dep -> implementation dep }
-    
-    // ==========================================
-    // TestContainers Dependencies
-    // ==========================================
     testContainersDependencies.each { dep -> testImplementation dep }
-    
-    // ==========================================
-    // JPA Dependencies
-    // ==========================================
     implementation "org.springframework.boot:spring-boot-starter-data-jpa"
-    
-    // ==========================================
-    // Security Dependencies (Crypto only)
-    // ==========================================
     implementation "org.springframework.security:spring-security-crypto:${springSecurityVersion}"
-    
-    // ==========================================
-    // Envers Auditing Dependencies
-    // ==========================================
     implementation "org.springframework.data:spring-data-envers"
 }

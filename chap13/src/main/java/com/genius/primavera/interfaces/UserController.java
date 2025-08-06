@@ -37,9 +37,9 @@ public class UserController {
 		log.info("{}", bindingResult);
 		if (!bindingResult.hasErrors()) {
 			userService.save(user);
-			return new ResponseEntity<>(user, HttpStatus.CREATED);
+			return ResponseEntity.status(HttpStatus.CREATED).body(user);
 		}
-		return new ResponseEntity<>(user, HttpStatus.BAD_REQUEST);
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(user);
 	}
 
 	@PostMapping(value = "/update")
@@ -47,8 +47,8 @@ public class UserController {
 		log.info("{}", bindingResult);
 		if (!bindingResult.hasErrors()) {
 			userService.update(user);
-			return new ResponseEntity<>(user, HttpStatus.CREATED);
+			return ResponseEntity.status(HttpStatus.CREATED).body(user);
 		}
-		return new ResponseEntity<>(user, HttpStatus.BAD_REQUEST);
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(user);
 	}
 }

@@ -18,7 +18,7 @@ public class Attachment {
     private String path;
     private File file;
 
-    public boolean isExists() {
+    public boolean exists() {
         return this.id != 0;
     }
 

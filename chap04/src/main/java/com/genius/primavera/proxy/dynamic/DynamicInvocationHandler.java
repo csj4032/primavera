@@ -28,19 +28,13 @@ public class DynamicInvocationHandler implements InvocationHandler {
 	}
 
 	private Object handleTransactionalMethod(Method method, Object[] args, ProxyPointAnnotation annotation) {
-		Object result;
-		try {
-			result = uncheckedInvoke(method, args);
-		} catch (RuntimeException e) {
-			throw e;
-		}
-		return result;
+		return uncheckedInvoke(method, args);
 	}
 
-	private Object uncheckedInvoke(Method method, Object[] args) throws RuntimeException {
+	private Object uncheckedInvoke(Method method, Object[] args) {
 		try {
 			log.info("method : {}, args : {}", method.getName(), Arrays.toString(args));
-			Object result = method.invoke(target, args);
+			var result = method.invoke(target, args);
 			log.info("result : {}", result);
 			return result;
 		} catch (IllegalAccessException | InvocationTargetException e) {

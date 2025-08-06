@@ -1,9 +1,3 @@
-// ==========================================
-// CHAP18 - Microservices Architecture
-// ==========================================
-// Root module for microservices architecture
-// Sub-modules: account, order, product, configuration, front
-// ==========================================
 
 plugins {
     id 'io.spring.dependency-management' version "${springDependencyManagementVersion}"
@@ -15,7 +9,6 @@ dependencyManagement {
     }
 }
 
-// Disable Spring Boot tasks for the root module (this is a multi-module microservices project)
 bootJar {
     enabled = false
 }

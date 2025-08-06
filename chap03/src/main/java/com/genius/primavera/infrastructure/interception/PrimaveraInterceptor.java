@@ -47,26 +47,18 @@ public class PrimaveraInterceptor implements HandlerInterceptor {
 	}
 
 	public String getRawHeaders(HttpServletRequest request) {
-		StringBuffer rawHeaders = new StringBuffer();
-		Enumeration headerNames = request.getHeaderNames();
-		while (headerNames.hasMoreElements()) {
-			String key = (String) headerNames.nextElement();
-			String value = request.getHeader(key);
-			rawHeaders.append(key).append(":").append(value).append("\n");
-		}
-
-		return rawHeaders.toString();
+		return Collections.list(request.getHeaderNames())
+				.stream()
+				.map(key -> key + ":" + request.getHeader(key))
+				.reduce("", (acc, header) -> acc + header + "\n");
 	}
 
 	public String getRawHeaders(HttpServletResponse response) {
-		StringBuffer rawHeaders = new StringBuffer();
-		Enumeration headerNames = Collections.enumeration(response.getHeaderNames());
-		while (headerNames.hasMoreElements()) {
-			String key = (String) headerNames.nextElement();
-			String value = response.getHeader(key);
-			rawHeaders.append(key).append(":").append(value).append("\n");
-		}
-		return rawHeaders.toString().trim();
+		return response.getHeaderNames()
+				.stream()
+				.map(key -> key + ":" + response.getHeader(key))
+				.reduce("", (acc, header) -> acc + header + "\n")
+				.trim();
 	}
 
 	public void writeResponsePayloadAudit(ResettableStreamHttpServletResponse wrappedResponse) {

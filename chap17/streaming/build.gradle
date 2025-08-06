@@ -1,9 +1,3 @@
-// ==========================================
-// CHAP17 Streaming Processing Module
-// ==========================================
-// Real-time data streaming with Debezium CDC
-// GraalVM native image support for performance
-// ==========================================
 
 plugins {
     id 'org.graalvm.buildtools.native' version '0.10.3'
@@ -16,65 +10,25 @@ configurations {
 }
 
 dependencies {
-    // ==========================================
-    // Common Module Dependency
-    // ==========================================
     implementation project(':chap17:common')
-    
-    // ==========================================
-    // Spring Boot Web Dependencies
-    // ==========================================
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    
-    // ==========================================
-    // Kafka Dependencies
-    // ==========================================
     implementation "org.apache.kafka:connect-api:${kafkaVersion}"
     implementation "org.apache.kafka:connect-runtime:${kafkaVersion}"
-    
-    // ==========================================
-    // Database Dependencies
-    // ==========================================
     runtimeOnly "org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}"
-    
-    // ==========================================
-    // Elasticsearch Dependencies
-    // ==========================================
     implementation "co.elastic.clients:elasticsearch-java:${elasticsearchVersion}"
     implementation "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
-    
-    // ==========================================
-    // Debezium CDC Dependencies
-    // ==========================================
     implementation "io.debezium:debezium-embedded:${debeziumVersion}"
     implementation "io.debezium:debezium-connector-mariadb:${debeziumVersion}"
-    
-    // ==========================================
-    // JSON Processing
-    // ==========================================
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonVersion}"
-    
-    // ==========================================
-    // Utility Libraries
-    // ==========================================
     implementation "org.apache.commons:commons-lang3:${commonsLang3Version}"
-    
-    // ==========================================
-    // Test Dependencies
-    // ==========================================
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation "org.testcontainers:junit-jupiter:${testContainersVersion}"
     testImplementation "org.testcontainers:mariadb:${testContainersVersion}"
     testImplementation "org.testcontainers:elasticsearch:${testContainersVersion}"
-    
-    // ==========================================
-    // Annotation Processors
-    // ==========================================
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
-    
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
