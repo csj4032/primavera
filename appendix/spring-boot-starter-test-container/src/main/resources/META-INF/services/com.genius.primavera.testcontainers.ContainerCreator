@@ -1,0 +1,4 @@
+# Service Provider Interface for ContainerCreator
+# External libraries can add their own container creators by adding them to this file
+# Example:
+# com.external.library.CustomContainerCreator
