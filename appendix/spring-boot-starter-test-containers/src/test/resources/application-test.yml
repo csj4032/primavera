@@ -10,7 +10,7 @@ logging:
 
 testcontainers:
   containers:
-    primaryDb:
+    multiTypePrimaryDb:
       image: "mariadb:11.4.7"
       database: "primary_db"
       username: "primary_user"
@@ -31,25 +31,32 @@ testcontainers:
       startup-timeout: 120
       init-script: ./sql/init.sql
     
-    secondaryDb:
+    multiPrimaryDb:
       image: "mariadb:11.4.7"
-      database: "secondary_db"
-      username: "secondary_user"
-      password: "secondary_pass"
+      database: "multi_primary_db"
+      username: "multi_primary_user"
+      password: "multi_primary_pass"
+      startup-timeout: 120
+    
+    multiSecondaryDb:
+      image: "mariadb:11.4.7"
+      database: "multi_secondary_db"
+      username: "multi_secondary_user"
+      password: "multi_secondary_pass"
       startup-timeout: 120
       network-aliases:
-        - "secondary-db"
-        - "replica-db"
+        - "multi-secondary-db"
+        - "multi-replica-db"
     
-    cache:
+    multiCache:
       image: "redis:7-alpine"
-      password: "redis_password"
+      password: "multi_redis_password"
       startup-timeout: 60
       environment:
         REDIS_MAXMEMORY: "256mb"
         REDIS_MAXMEMORY_POLICY: "allkeys-lru"
     
-    messaging:
+    multiMessaging:
       image: "confluentinc/cp-kafka:7.5.0"
       startup-timeout: 180
       environment:

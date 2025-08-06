@@ -23,7 +23,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * - 스크립트 경로 처리 및 로깅 검증
  */
 @Slf4j
-@SpringBootTest
+@SpringBootTest(properties = {
+    "spring.test.context.cache.maxSize=0",  // Context 캐싱 비활성화로 격리 강화
+    "spring.main.allow-bean-definition-overriding=true"
+})
 @ActiveProfiles("test")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)

@@ -18,32 +18,35 @@ import javax.sql.DataSource;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
-@SpringBootTest
+@SpringBootTest(properties = {
+    "spring.test.context.cache.maxSize=0",  // Context 캐싱 비활성화로 격리 강화
+    "spring.main.allow-bean-definition-overriding=true"
+})
 @ActiveProfiles("test")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Execution(ExecutionMode.CONCURRENT)
 @EnableTestContainers({
-    @EnableTestContainers.TestContainer(type = ContainerType.MARIADB, name = "primaryDb"),
-    @EnableTestContainers.TestContainer(type = ContainerType.MARIADB, name = "secondaryDb"),
-    @EnableTestContainers.TestContainer(type = ContainerType.REDIS, name = "cache"),
-    @EnableTestContainers.TestContainer(type = ContainerType.KAFKA, name = "messaging")
+    @EnableTestContainers.TestContainer(type = ContainerType.MARIADB, name = "multiPrimaryDb"),
+    @EnableTestContainers.TestContainer(type = ContainerType.MARIADB, name = "multiSecondaryDb"),
+    @EnableTestContainers.TestContainer(type = ContainerType.REDIS, name = "multiCache"),
+    @EnableTestContainers.TestContainer(type = ContainerType.KAFKA, name = "multiMessaging")
 })
 class MultiContainerTest {
     
     @Autowired
-    @Qualifier("primaryDb")
+    @Qualifier("multiPrimaryDb")
     private DataSource primaryDataSource;
     
     @Autowired
-    @Qualifier("secondaryDb") 
+    @Qualifier("multiSecondaryDb") 
     private DataSource secondaryDataSource;
     
     @Autowired
-    @Qualifier("cache")
+    @Qualifier("multiCache")
     private RedisTemplate<String, Object> redisTemplate;
     
     @Autowired
-    @Qualifier("messaging")
+    @Qualifier("multiMessaging")
     private KafkaTemplate<String, Object> kafkaTemplate;
     
     @Test
