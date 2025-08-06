@@ -7,3 +7,12 @@ spring:
       enabled: false
     vault:
       enabled: false
+
+testContainer:
+  containers:
+    primaryDb:
+      image: "mariadb:11.4.7"
+      database: "primary_db"
+      username: "primary_user"
+      password: "primary_pass"
+      startup-timeout: 120

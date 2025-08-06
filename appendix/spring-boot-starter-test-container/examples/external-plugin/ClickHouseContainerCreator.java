@@ -1,8 +1,8 @@
-package com.genius.primavera.testcontainer.v4.examples;
+package com.genius.primavera.testcontainers.v4.examples;
 
-import com.genius.primavera.testcontainer.v4.ContainerConfiguration;
-import com.genius.primavera.testcontainer.v4.ContainerCreator;
-import com.genius.primavera.testcontainer.v4.ContainerType;
+import com.genius.primavera.testcontainers.v4.ContainerConfiguration;
+import com.genius.primavera.testcontainers.v4.ContainerCreator;
+import com.genius.primavera.testcontainers.v4.ContainerType;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.utility.DockerImageName;
 
@@ -15,8 +15,8 @@ import java.time.Duration;
  * 
  * To use this plugin:
  * 1. Add this class to your project
- * 2. Add the following line to META-INF/services/com.genius.primavera.testcontainer.v4.ContainerCreator:
- *    com.genius.primavera.testcontainer.v4.examples.ClickHouseContainerCreator
+ * 2. Add the following line to META-INF/services/com.genius.primavera.testcontainers.v4.ContainerCreator:
+ *    com.genius.primavera.testcontainers.v4.examples.ClickHouseContainerCreator
  * 3. Add CLICKHOUSE to your ContainerType enum (if extending)
  * 4. Use @EnableTestContainers with type = ContainerType.CLICKHOUSE
  * 

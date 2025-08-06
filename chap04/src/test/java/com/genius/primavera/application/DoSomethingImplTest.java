@@ -1,23 +1,18 @@
 package com.genius.primavera.application;
 
-import com.genius.primavera.testcontainer.v4.EnableTestContainers;
+import com.genius.primavera.testcontainer.EnableTestContainers;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.containers.MariaDBContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Slf4j
 @SpringBootTest
+@EnableTestContainers
 @ActiveProfiles("test")
-@EnableTestContainers()
 public class DoSomethingImplTest {
 
     @Test

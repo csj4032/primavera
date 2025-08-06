@@ -1,8 +1,8 @@
-package com.genius.primavera.testcontainer.v4.examples;
+package com.genius.primavera.testcontainers.v4.examples;
 
-import com.genius.primavera.testcontainer.v4.ContainerInfo;
-import com.genius.primavera.testcontainer.v4.ContainerType;
-import com.genius.primavera.testcontainer.v4.bean.BeanCreator;
+import com.genius.primavera.testcontainers.v4.ContainerInfo;
+import com.genius.primavera.testcontainers.v4.ContainerType;
+import com.genius.primavera.testcontainers.v4.bean.BeanCreator;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
@@ -13,8 +13,8 @@ import com.zaxxer.hikari.HikariDataSource;
  * 
  * To use this plugin:
  * 1. Add this class to your project
- * 2. Add the following line to META-INF/services/com.genius.primavera.testcontainer.v4.bean.BeanCreator:
- *    com.genius.primavera.testcontainer.v4.examples.ClickHouseBeanCreator
+ * 2. Add the following line to META-INF/services/com.genius.primavera.testcontainers.v4.bean.BeanCreator:
+ *    com.genius.primavera.testcontainers.v4.examples.ClickHouseBeanCreator
  * 3. Make sure ClickHouse JDBC driver is in your dependencies:
  *    implementation 'com.clickhouse:clickhouse-jdbc:0.4.6'
  * 

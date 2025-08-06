@@ -4,11 +4,11 @@ spring:
 
 logging:
   level:
-    com.genius.primavera.testcontainer: DEBUG
+    com.genius.primavera.testcontainers: DEBUG
     org.testcontainers: INFO
     org.springframework.test: INFO
 
-testcontainer:
+testcontainers:
   containers:
     primaryDb:
       image: "mariadb:11.4.7"
