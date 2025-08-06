@@ -797,22 +797,22 @@ docker-compose --version
 
 ```bash
 # 특정 챕터의 Docker 환경 시작
-./infrastructure/scripts/docker-manager.sh start chap04
+./docker-manager.sh start chap04
 
 # 특정 챕터의 Docker 환경 중지
-./infrastructure/scripts/docker-manager.sh stop chap04
+./docker-manager.sh stop chap04
 
 # 모든 챕터의 Docker 환경 시작
-./infrastructure/scripts/docker-manager.sh start-all
+./docker-manager.sh start-all
 
 # 모든 챕터의 Docker 환경 상태 확인
-./infrastructure/scripts/docker-manager.sh status-all
+./docker-manager.sh status-all
 
 # 사용 가능한 챕터 목록 확인
-./infrastructure/scripts/docker-manager.sh list
+./docker-manager.sh list
 
 # 도움말 보기
-./infrastructure/scripts/docker-manager.sh help
+./docker-manager.sh help
 ```
 
 #### 📊 챕터별 포트 할당
@@ -825,17 +825,17 @@ docker-compose --version
 
 ```bash
 # chap04 환경 시작
-./infrastructure/scripts/docker-manager.sh start chap04
+./docker-manager.sh start chap04
 # ✅ chap04 services started successfully!
 
 # 상태 확인
-./infrastructure/scripts/docker-manager.sh status chap04
+./docker-manager.sh status chap04
 # Status for chap04:
 # ✅ mariadb (mariadb-primavera-chap04): Up 30 seconds (healthy)
 # ✅ vault (vault-primavera-chap04): Up 25 seconds (healthy)
 
 # chap04 환경 중지
-./infrastructure/scripts/docker-manager.sh stop chap04
+./docker-manager.sh stop chap04
 # ✅ chap04 services stopped successfully!
 ```
 

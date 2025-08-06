@@ -36,19 +36,19 @@ Primavera는 기본 개념부터 고급 마이크로서비스 아키텍처까지
 
 ```bash
 # 특정 챕터 Docker 환경 시작
-./infrastructure/scripts/docker-manager.sh start chap04
+./docker-manager.sh start chap04
 
 # 특정 챕터 Docker 환경 중지
-./infrastructure/scripts/docker-manager.sh stop chap04
+./docker-manager.sh stop chap04
 
 # 모든 챕터 Docker 환경 시작
-./infrastructure/scripts/docker-manager.sh start-all
+./docker-manager.sh start-all
 
 # 모든 챕터 Docker 환경 상태 확인
-./infrastructure/scripts/docker-manager.sh status-all
+./docker-manager.sh status-all
 
 # 사용 가능한 챕터 목록
-./infrastructure/scripts/docker-manager.sh list
+./docker-manager.sh list
 
 # TestContainers가 자동으로 MariaDB 11.4.7 테스트 관리
 ```

@@ -75,8 +75,6 @@ generate_docker_compose() {
     load_config "$chapter"
     
     cat > "$output_file" << EOF
-version: '3.8'
-
 services:
 EOF
 

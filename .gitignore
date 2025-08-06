@@ -68,3 +68,6 @@ Thumbs.db
 /infrastructure/certs
 /infrastructure/vault
 /logs
+# Docker Manager Generated Files
+/infrastructure/generated/
+*.docker-compose.yml
