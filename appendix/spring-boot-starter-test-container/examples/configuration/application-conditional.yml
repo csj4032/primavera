@@ -1,7 +1,7 @@
 # Example configuration for conditional container registration
 # This shows how to selectively enable/disable container types
 
-testcontainer:
+testcontainers:
   # Registry configuration for conditional loading
   registry:
     # Control which container types are enabled
@@ -48,7 +48,7 @@ spring:
     activate:
       on-profile: minimal
 
-testcontainer:
+testcontainers:
   registry:
     enabled:
       mariadb: true
@@ -73,7 +73,7 @@ spring:
     activate:
       on-profile: performance
 
-testcontainer:
+testcontainers:
   registry:
     # Enable only lightweight containers
     enabled:
