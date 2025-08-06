@@ -29,7 +29,7 @@ testcontainers:
       username: "primavera"
       password: "primavera"
       startup-timeout: 120
-      init-script: classpath:./sql/init.sql
+      init-script: ./sql/init.sql
     
     secondaryDb:
       image: "mariadb:11.4.7"

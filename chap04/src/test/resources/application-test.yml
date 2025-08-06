@@ -16,4 +16,4 @@ testcontainers:
       username: "primavera"
       password: "primavera"
       startup-timeout: 120
-      init-script: classpath:./sql/init.sql
+      init-script: ./sql/init.sql

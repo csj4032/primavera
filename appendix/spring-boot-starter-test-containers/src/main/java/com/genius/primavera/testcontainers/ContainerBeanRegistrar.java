@@ -1,6 +1,5 @@
 package com.genius.primavera.testcontainers;
 
-import com.genius.primavera.testcontainers.bean.BeanCreator;
 import com.genius.primavera.testcontainers.bean.BeanCreatorRegistry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

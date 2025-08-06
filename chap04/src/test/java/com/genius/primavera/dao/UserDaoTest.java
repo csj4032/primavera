@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @ActiveProfiles("test")
 @DisplayName("UserDao 통합 테스트")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@EnableTestContainers({@EnableTestContainers.TestContainer(type = ContainerType.MARIADB, name = "primavera")})
+@EnableTestContainers
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class UserDaoTest {
 

@@ -1,17 +1,17 @@
-# Spring Boot Starter TestContainer V4
+# Spring Boot Starter Test-Containers
 
-TestContainers와 Spring Boot의 완벽한 통합을 제공하는 커스텀 Spring Boot Starter입니다. 어노테이션 기반 선언으로 테스트 클래스별 컨테이너 격리와 다중 컨테이너 지원을 제공합니다.
+TestContainers를 Spring Boot 테스트 환경에서 쉽게 사용할 수 있도록 하는 커스텀 스타터입니다. 어노테이션 기반의 설정을 통해 다양한 데이터베이스와 미들웨어 컨테이너를 자동으로 관리하며, 초기화 스크립트 지원과 YAML 설정 통합을 제공합니다.
 
-## 주요 특징
+## 주요 기능
 
-- 🎯 **어노테이션 기반 선언**: `@EnableTestContainers`로 간편한 컨테이너 설정
-- 🔄 **완벽한 테스트 격리**: 테스트 클래스별 독립적인 컨테이너 생명주기
-- 🚀 **병렬 컨테이너 시작**: CompletableFuture를 통한 성능 최적화
-- 🎛️ **다중/이중화 컨테이너**: 동일한 타입의 여러 컨테이너 지원
-- 🔧 **자동 Bean 등록**: Spring Context에 자동으로 DataSource, RedisTemplate 등 등록
-- 📊 **JUnit 5 완벽 지원**: PER_CLASS/PER_METHOD 라이프사이클 모두 지원
-- ⚡ **병렬 테스트 실행**: CONCURRENT 실행 모드 지원
-- 🏗️ **확장 가능한 아키텍처**: Factory Pattern 기반 새 컨테이너 타입 추가 용이
+- **어노테이션 기반 컨테이너 관리**: `@EnableTestContainers`를 통한 선언적 컨테이너 설정
+- **다중 컨테이너 지원**: MariaDB, PostgreSQL, Redis, Kafka 등 다양한 컨테이너 타입
+- **YAML 설정 통합**: `application-test.yml`을 통한 세밀한 컨테이너 구성
+- **자동 데이터소스 바인딩**: Spring의 `@Qualifier`를 통한 컨테이너별 데이터소스 자동 등록
+- **초기화 스크립트 지원**: 데이터베이스 컨테이너의 스키마 및 데이터 초기화
+- **라이프사이클 관리**: 테스트 클래스 단위의 컨테이너 시작/중지
+- **병렬 컨테이너 시작**: CompletableFuture를 통한 성능 최적화
+- **테스트 격리**: 테스트 클래스별 독립적인 컨테이너 생명주기
 
 ## 지원하는 컨테이너 타입
 
@@ -64,21 +64,27 @@ class MyIntegrationTest {
 ### 3. application-test.yml 설정
 
 ```yaml
-testcontainer:
+spring:
+  config:
+    activate:
+      on-profile: test
+
+testcontainers:
   containers:
     testDb:
       image: "mariadb:11.4.7"
       database: "testdb"
       username: "test"
       password: "test"
-      startupTimeout: 60
+      startup-timeout: 60
+      init-script: ./sql/init.sql
       environment:
         MARIADB_CHARACTER_SET_SERVER: "utf8mb4"
         MARIADB_COLLATION_SERVER: "utf8mb4_unicode_ci"
     testCache:
       image: "redis:7-alpine"
       password: "test123"
-      startupTimeout: 30
+      startup-timeout: 30
 ```
 
 ## 고급 사용법
