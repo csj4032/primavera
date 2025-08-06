@@ -1,4 +1,0 @@
-# Service Provider Interface for BeanCreator
-# External libraries can add their own bean creators by adding them to this file
-# Example:
-# com.external.library.CustomBeanCreator
