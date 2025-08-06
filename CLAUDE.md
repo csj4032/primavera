@@ -88,7 +88,7 @@ docker-compose up -d
 
 ### 커스텀 Spring Boot 스타터
 
-- **spring-boot-starter-test-container**: 자동화된 TestContainers 설정
+- **spring-boot-starter-test-containers**: 자동화된 TestContainers 설정
 - **spring-boot-starter-lucy-filter**: XSS 보호
 - **spring-boot-starter-social-kakao**: 카카오 OAuth2 연동
 
@@ -390,7 +390,7 @@ refactor: 결제 처리 로직 추출
 
 이 프로젝트는 기본 개념부터 운영 준비된 마이크로서비스 아키텍처까지 Spring Boot 개발을 위한 종합적인 학습 자료로 사용됩니다.
 
-## spring-boot-starter-test-container-v4
+## spring-boot-starter-test-containers-v4
 어노테이션 기반 선언: Application.yml이 아닌, 테스트 클래스에 직접 어노테이션으로 필요한 컨테이너의 타입과 이름을 선언합니다.
 Application.yml 상세 설정 : 각 컨테이너에 대해 Docker 이미지, 데이터베이스 이름, 사용자명, 비밀번호 등의 상세 설정을 application.yml에 정의합니다.
 다양한 컨테이너 지원: PostgreSQL, MySQL, MariaDB, Redis, Kafka, MongoDB, Elasticsearch 등 주요 컨테이너를 지원합니다.

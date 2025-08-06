@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.genius.primavera.domain.User;
+import com.genius.primavera.testcontainers.EnableTestContainers;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,15 +14,11 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.client.ExpectedCount;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
-import org.testcontainers.containers.MariaDBContainer;
-import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.Instant;
@@ -34,26 +31,11 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 
 @Slf4j
 @SpringBootTest
-@Testcontainers
+@EnableTestContainers
 @ActiveProfiles("test")
 @DisplayName("PrimaveraService 테스트")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class PrimaveraServiceTest {
-
-    @Container
-    static MariaDBContainer<?> mariadb = new MariaDBContainer<>("mariadb:11.4")
-            .withDatabaseName("primavera")
-            .withUsername("primavera")
-            .withPassword("primavera")
-            .withInitScript("sql/init.sql");
-
-    @DynamicPropertySource
-    static void configureProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", mariadb::getJdbcUrl);
-        registry.add("spring.datasource.username", mariadb::getUsername);
-        registry.add("spring.datasource.password", mariadb::getPassword);
-        registry.add("spring.datasource.driver-class-name", mariadb::getDriverClassName);
-    }
 
     private MockRestServiceServer mockServer;
     private PrimaveraService primaveraService;

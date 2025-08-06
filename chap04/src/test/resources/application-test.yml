@@ -8,11 +8,12 @@ spring:
     vault:
       enabled: false
 
-testContainer:
+testcontainers:
   containers:
-    primaryDb:
+    primavera:
       image: "mariadb:11.4.7"
-      database: "primary_db"
-      username: "primary_user"
-      password: "primary_pass"
+      database: "primavera"
+      username: "primavera"
+      password: "primavera"
       startup-timeout: 120
+      init-script: classpath:./sql/init.sql
