@@ -1,3 +1,15 @@
+// ==========================================
+// CHAP12 - Flyway Migration & OAuth2
+// ==========================================
+// Dependencies inherited from root build.gradle:
+// - spring-boot-starter-web ✓
+// - lombok (compileOnly + annotationProcessor) ✓  
+// - spring-boot-starter-test ✓
+// - slf4j-api ✓
+// - jetbrains annotations ✓
+// - jakarta.validation-api (compileOnly) ✓
+// ==========================================
+
 plugins {
     id 'org.flywaydb.flyway' version "${flywayVersion}"
 }
@@ -9,29 +21,88 @@ flyway {
 }
 
 dependencies {
+    // ==========================================
+    // Web Server Configuration (Exclude Tomcat)
+    // ==========================================
     implementation('org.springframework.boot:spring-boot-starter-web') {
         exclude module: "spring-boot-starter-tomcat"
     }
     implementation 'org.springframework.boot:spring-boot-starter-undertow'
+    
+    // ==========================================
+    // AOP Dependencies
+    // ==========================================
     aopDependencies.each { dep -> implementation dep }
+    
+    // ==========================================
+    // Database Dependencies  
+    // ==========================================
     databaseDependencies.each { dep -> implementation dep }
+    
+    // ==========================================
+    // MyBatis Dependencies
+    // ==========================================
     mybatisDependencies.each { dep -> implementation dep }
+    
+    // ==========================================
+    // Thymeleaf Dependencies
+    // ==========================================
     thymeleafDependencies.each { dep -> implementation dep }
+    
+    // ==========================================
+    // Validation Dependencies
+    // ==========================================
     validationDependencies.each { dep -> implementation dep }
+    
+    // ==========================================
+    // Development Dependencies
+    // ==========================================
     developmentDependencies.each { dep -> implementation dep }
+    
+    // ==========================================
+    // TestContainers Dependencies
+    // ==========================================
     testContainersDependencies.each { dep -> testImplementation dep }
+    
+    // ==========================================
+    // Spring Boot Starters
+    // ==========================================
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-json'
     implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+    
+    // ==========================================
+    // Spring Cloud Dependencies
+    // ==========================================
     implementation "org.springframework.cloud:spring-cloud-starter-config"
     implementation "org.springframework.cloud:spring-cloud-starter-vault-config:${springCloudVaultVersion}"
-    implementation "org.springframework.boot:spring-boot-starter-oauth2-client"
+    
+    // ==========================================
+    // OAuth2 Security Dependencies
+    // ==========================================
     implementation "org.springframework.security:spring-security-oauth2-client:${springSecurityVersion}"
     implementation "org.springframework.security:spring-security-oauth2-jose:${springSecurityVersion}"
+    
+    // ==========================================
+    // Thymeleaf Security Integration
+    // ==========================================
     implementation "org.thymeleaf.extras:thymeleaf-extras-springsecurity6:${thymeleafExtrasSpringSecurity6Version}"
+    
+    // ==========================================
+    // Object Mapping
+    // ==========================================
     implementation "org.modelmapper:modelmapper:${modelMapperVersion}"
+    
+    // ==========================================
+    // Security Test Dependencies
+    // ==========================================
     testImplementation 'org.springframework.security:spring-security-test'
     testImplementation "io.rest-assured:rest-assured:${restAssuredVersion}"
+    
+    // ==========================================
+    // Project Module Dependencies
+    // ==========================================
     implementation project(":appendix:spring-boot-starter-lucy-filter")
     testImplementation project(":appendix:spring-boot-starter-lucy-filter")
 }

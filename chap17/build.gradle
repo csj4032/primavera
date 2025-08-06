@@ -1,3 +1,10 @@
+// ==========================================
+// CHAP17 - Multi-Module Project Structure
+// ==========================================
+// Root module for multi-module architecture
+// Sub-modules: common (library), batch, streaming
+// ==========================================
+
 repositories {
     mavenCentral()
 }

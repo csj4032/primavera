@@ -1,3 +1,10 @@
+// ==========================================
+// APPENDIX - Lucy XSS Filter Starter
+// ==========================================
+// Custom Spring Boot starter for XSS protection
+// Auto-configuration for Lucy XSS servlet filter
+// ==========================================
+
 plugins {
     id 'org.springframework.boot' version "${springBootVersion}"
     id 'io.spring.dependency-management' version "${springDependencyManagementVersion}"
@@ -12,19 +19,46 @@ jar {
 }
 
 dependencies {
+    // ==========================================
+    // Spring Framework Dependencies
+    // ==========================================
     implementation "org.springframework:spring-web"
     implementation "org.springframework:spring-webmvc"
     implementation "org.springframework:spring-context"
+    
+    // ==========================================
+    // Spring Boot Auto-Configuration
+    // ==========================================
     implementation "org.springframework.boot:spring-boot-autoconfigure"
     implementation "org.springframework.boot:spring-boot-autoconfigure-processor"
+    
+    // ==========================================
+    // Servlet API
+    // ==========================================
     implementation "jakarta.servlet:jakarta.servlet-api:${jakartaServletVersion}"
+    
+    // ==========================================
+    // Apache Commons Utilities
+    // ==========================================
     implementation "org.apache.commons:commons-lang3:${commonsLangVersion}"
     implementation "org.apache.commons:commons-text:${commonsTextVersion}"
     implementation "commons-codec:commons-codec"
+    
+    // ==========================================
+    // Lucy XSS Filter Dependencies
+    // ==========================================
     implementation "com.navercorp.lucy:lucy-xss-servlet:${lucyXssServletVersion}"
     implementation "com.navercorp.lucy:lucy-xss:${lucyXssFilterVersion}"
+    
+    // ==========================================
+    // Lombok Support
+    // ==========================================
     implementation "org.projectlombok:lombok:${lombokVersion}"
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+    
+    // ==========================================
+    // Test Dependencies
+    // ==========================================
     testImplementation "org.projectlombok:lombok:${lombokVersion}"
     testImplementation "org.springframework.boot:spring-boot-starter-test"
     testImplementation "org.springframework.boot:spring-boot-starter-web"

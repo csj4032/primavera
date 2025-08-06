@@ -1,34 +1,174 @@
+// ==========================================
+// CHAP13 - Reactive Programming & NoSQL
+// ==========================================
+// Dependencies inherited from root build.gradle:
+// - spring-boot-starter-web ✓
+// - lombok (compileOnly + annotationProcessor) ✓  
+// - spring-boot-starter-test ✓
+// - slf4j-api ✓
+// - jetbrains annotations ✓
+// - jakarta.validation-api (compileOnly) ✓
+// ==========================================
+
 dependencies {
+    // ==========================================
+    // Web Server Configuration (Exclude Tomcat)
+    // ==========================================
     implementation('org.springframework.boot:spring-boot-starter-web') {
         exclude module: "spring-boot-starter-tomcat"
     }
     implementation 'org.springframework.boot:spring-boot-starter-undertow'
+    
+    // ==========================================
+    // Reactive Dependencies
+    // ==========================================
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
     implementation 'org.springframework.boot:spring-boot-starter-reactor-netty'
+    
+    // ==========================================
+    // AOP Dependencies
+    // ==========================================
     aopDependencies.each { dep -> implementation dep }
+    
+    // ==========================================
+    // Database Dependencies  
+    // ==========================================
     databaseDependencies.each { dep -> implementation dep }
+    
+    // ==========================================
+    // Validation Dependencies
+    // ==========================================
     validationDependencies.each { dep -> implementation dep }
+    
+    // ==========================================
+    // Development Dependencies
+    // ==========================================
     developmentDependencies.each { dep -> implementation dep }
-    testImplementation project(':appendix:spring-boot-test-support')
+    
+    // ==========================================
+    // Thymeleaf Dependencies
+    // ==========================================
     thymeleafDependencies.each { dep -> implementation dep }
-    implementation "org.springframework.cloud:spring-cloud-starter-config"
-    implementation "org.springframework.cloud:spring-cloud-starter-vault-config:${springCloudVaultVersion}"
+    
+    // ==========================================
+    // TestContainers Dependencies
+    // ==========================================
+    testContainersDependencies.each { dep -> testImplementation dep }
+    
+    // ==========================================
+    // Spring Boot Starters
+    // ==========================================
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-json'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
     implementation 'org.springframework.boot:spring-boot-starter-data-mongodb-reactive'
     implementation 'org.springframework.boot:spring-boot-starter-security'
-    implementation 'org.springframework.security:spring-security-oauth2-client'
-    implementation 'org.springframework.security:spring-security-oauth2-jose'
-    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6:3.1.3.RELEASE'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-authorization-server'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
+    
+    // ==========================================
+    // Spring Cloud Dependencies
+    // ==========================================
+    implementation "org.springframework.cloud:spring-cloud-starter-config"
+    implementation "org.springframework.cloud:spring-cloud-starter-vault-config:${springCloudVaultVersion}"
+    
+    // ==========================================
+    // Thymeleaf Security Integration
+    // ==========================================
+    implementation "org.thymeleaf.extras:thymeleaf-extras-springsecurity6:${thymeleafExtrasSpringSecurity6Version}"
+    
+    // ==========================================
+    // JPA Auditing
+    // ==========================================
+    implementation 'org.springframework.data:spring-data-envers'
+    
+    // ==========================================
+    // Object Mapping
+    // ==========================================
+    implementation "org.modelmapper:modelmapper:${modelMapperVersion}"
+    
+    // ==========================================
+    // Database Migration
+    // ==========================================
+    implementation "org.flywaydb:flyway-core:${flywayVersion}"
+    
+    // ==========================================
+    // Performance Dependencies
+    // ==========================================
+    implementation "org.jctools:jctools-core:${jctoolsCoreVersion}"
+    implementation "com.github.ben-manes.caffeine:caffeine:${caffeineVersion}"
+    implementation "com.esotericsoftware:kryo:${kryoVersion}"
+    implementation "org.xerial.snappy:snappy-java:${snappyJavaVersion}"
+    implementation "org.apache.commons:commons-pool2:${commonsPoolVersion}"
+    
+    // ==========================================
+    // MyBatis Dependencies (Hardcoded Versions)
+    // ==========================================
     implementation "org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.4"
     implementation "org.mybatis.dynamic-sql:mybatis-dynamic-sql:1.5.2"
     implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.4.0'
-    implementation "org.modelmapper:modelmapper:3.2.1"
-    implementation "org.flywaydb:flyway-core:10.10.0"
-    implementation "org.jctools:jctools-core:2.1.2"
+    
+    // ==========================================
+    // Query DSL
+    // ==========================================
+    implementation 'com.querydsl:querydsl-jpa'
+    implementation 'com.querydsl:querydsl-apt'
+    annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jpa"
+    
+    // ==========================================
+    // HTTP Client
+    // ==========================================
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-jackson:2.9.0'
+    
+    // ==========================================
+    // Utility Libraries
+    // ==========================================
+    implementation 'org.jooq:jool:0.9.15'
+    implementation "org.apache.commons:commons-lang3:${commonsLangVersion}"
+    
+    // ==========================================
+    // Legacy API Support
+    // ==========================================
+    implementation "jakarta.persistence:jakarta.persistence-api"
+    implementation "javax.persistence:javax.persistence-api:2.2"
+    implementation "javax.servlet:javax.servlet-api:4.0.1"
+    
+    // ==========================================
+    // Annotation Processors
+    // ==========================================
+    annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+    annotationProcessor "jakarta.annotation:jakarta.annotation-api"
+    annotationProcessor "javax.persistence:javax.persistence-api:2.2"
+    
+    // ==========================================
+    // Security Test Dependencies
+    // ==========================================
     testImplementation 'org.springframework.security:spring-security-test'
-    testImplementation "io.rest-assured:rest-assured:5.5.0"
+    testImplementation "io.rest-assured:rest-assured:${restAssuredVersion}"
+    testImplementation "javax.persistence:javax.persistence-api:2.2"
+    testImplementation "javax.servlet:javax.servlet-api:4.0.1"
+    
+    // ==========================================
+    // Test Support Dependencies
+    // ==========================================
+    testImplementation project(':appendix:spring-boot-starter-test-containers')
+    
+    // ==========================================
+    // Project Module Dependencies
+    // ==========================================
     implementation project(":appendix:spring-boot-starter-lucy-filter")
     testImplementation project(":appendix:spring-boot-starter-lucy-filter")
+}
+
+def querydslSrcDir = 'src/main/java'
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java', querydslSrcDir]
+        }
+    }
 }

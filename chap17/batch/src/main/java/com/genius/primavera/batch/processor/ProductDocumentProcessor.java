@@ -1,4 +1,5 @@
 package com.genius.primavera.batch.processor;
+import com.genius.primavera.common.domain.Product;
 import com.genius.primavera.common.dto.ProductDocument;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.stereotype.Component;

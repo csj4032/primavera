@@ -1,3 +1,10 @@
+// ==========================================
+// APPENDIX - Utility Module Container
+// ==========================================
+// Root module for custom Spring Boot starters
+// Sub-modules: spring-boot-starter-lucy-filter, spring-boot-starter-test-containers
+// ==========================================
+
 bootJar {
     enabled = false
 }

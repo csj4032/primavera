@@ -1,21 +1,84 @@
+// ==========================================
+// CHAP06 - Thymeleaf & Web UI Development
+// ==========================================
+// Dependencies inherited from root build.gradle:
+// - spring-boot-starter-web ✓
+// - lombok (compileOnly + annotationProcessor) ✓  
+// - spring-boot-starter-test ✓
+// - slf4j-api ✓
+// - jetbrains annotations ✓
+// - jakarta.validation-api (compileOnly) ✓
+// ==========================================
+
 dependencies {
+    // ==========================================
+    // AOP Dependencies
+    // ==========================================
     aopDependencies.each { dep -> implementation dep }
+    
+    // ==========================================
+    // Database Dependencies  
+    // ==========================================
     databaseDependencies.each { dep -> implementation dep }
+    
+    // ==========================================
+    // MyBatis Dependencies
+    // ==========================================
     mybatisDependencies.each { dep -> implementation dep }
+    
+    // ==========================================
+    // Thymeleaf Dependencies
+    // ==========================================
     thymeleafDependencies.each { dep -> implementation dep }
+    
+    // ==========================================
+    // Web UI Dependencies
+    // ==========================================
     webUiDependencies.each { dep -> implementation dep }
+    
+    // ==========================================
+    // Validation Dependencies
+    // ==========================================
     validationDependencies.each { dep -> implementation dep }
+    
+    // ==========================================
+    // TestContainers Dependencies
+    // ==========================================
     testContainersDependencies.each { dep -> testImplementation dep }
+    
+    // ==========================================
+    // Spring Cloud Dependencies
+    // ==========================================
     implementation "org.springframework.cloud:spring-cloud-starter-config"
     implementation "org.springframework.cloud:spring-cloud-starter-vault-config:${springCloudVaultVersion}"
     implementation "org.springframework.cloud:spring-cloud-vault-config-databases:${springCloudVaultVersion}"
+    
+    // ==========================================
+    // Hibernate Dependencies
+    // ==========================================
     compileOnly "org.hibernate:hibernate-validator:${hibernateValidatorVersion}"
     compileOnly "com.zaxxer:HikariCP:${hikariCPVersion}"
     implementation "org.hibernate.validator:hibernate-validator-cdi:${hibernateValidatorVersion}"
-    testImplementation "org.apache.groovy:groovy-jsr223:4.0.24"
+    
+    // ==========================================
+    // Security Dependencies (Test Only)
+    // ==========================================
     testImplementation "org.springframework.security:spring-security-crypto:${springSecurityVersion}"
     testImplementation "org.springframework.security:spring-security-test"
+    
+    // ==========================================
+    // MyBatis Test Dependencies
+    // ==========================================
     testImplementation "org.mybatis.spring.boot:mybatis-spring-boot-starter-test:${mybatisSpringBootStarterVersion}"
+    
+    // ==========================================
+    // Test Framework Dependencies
+    // ==========================================
+    testImplementation "org.apache.groovy:groovy-jsr223:4.0.24"
     testImplementation "org.mockito:mockito-core:4.+"
+    
+    // ==========================================
+    // Project Module Dependencies
+    // ==========================================
     testImplementation project(":appendix:spring-boot-starter-lucy-filter")
 }

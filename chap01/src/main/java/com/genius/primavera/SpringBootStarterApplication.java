@@ -25,29 +25,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.event.EventListener;
 
-/**
- * Spring Boot 애플리케이션의 시작점입니다.
- * 이 클래스는 Spring Boot의 자동 설정, 컴포넌트 스캔 및 애플리케이션 초기화를 담당합니다.
- * 
- * =============================================================================
- * 🚀 실행 가이드 (Chapter 01: Spring Boot 기초)
- * =============================================================================
- * 
- * ✅ Docker 환경 불필요 - H2 메모리 데이터베이스 사용
- * 
- * 📋 애플리케이션 실행:
- *    ./gradlew :chap01:bootRun
- * 
- * 📊 기능:
- *    - Spring Boot 기본 설정
- *    - H2 메모리 데이터베이스
- *    - 컴포넌트 스캔 및 DI
- * 
- * 🔗 접속:
- *    http://localhost:8080
- * 
- * =============================================================================
- */
 @ComponentScan
 @SpringBootConfiguration
 @EnableAutoConfiguration
@@ -60,9 +37,7 @@ public class SpringBootStarterApplication {
         SpringApplication springApplication = (new SpringApplicationBuilder(SpringBootStarterApplication.class)).initializers((applicationContext) -> {
             log.info("[SpringBoot] SpringBootStarterApplication initializers");
             if (applicationContext instanceof org.springframework.context.support.GenericApplicationContext genericContext) {
-                // 컴포넌트 스캔으로 이미 등록된 구현체들을 사용하여 WorldController를 등록
                 genericContext.registerBean("worldController", WorldController.class, () -> {
-                    // 컴포넌트 스캔으로 등록된 구현체들을 가져와서 사용
                     WorldService worldService = genericContext.getBean("worldServiceImpl", WorldService.class);
                     HelloService helloService = genericContext.getBean("helloServiceImpl", HelloService.class);
                     log.info("[SpringBoot] WorldController 동적 등록 - WorldService: {}, HelloService: {}", worldService.getClass().getSimpleName(), helloService.getClass().getSimpleName());
@@ -74,73 +49,41 @@ public class SpringBootStarterApplication {
         springApplication.run(args);
     }
 
-    /**
-     * Spring Boot 애플리케이션의 시작 이벤트를 처리합니다.
-     * 이 메서드는 애플리케이션이 시작될 때 호출됩니다.
-     */
     @EventListener({ApplicationStartingEvent.class})
     public void applicationStartingEvent(ApplicationStartingEvent applicationStartingEvent) {
         log.info("[SpringBoot] ApplicationStartingEvent: {}", applicationStartingEvent);
     }
 
-    /**
-     * ServletWebServerInitializedEvent 이벤트를 처리합니다.
-     * 이 메서드는 서블릿 웹 서버가 초기화될 때 호출됩니다.
-     */
     @EventListener({ServletWebServerInitializedEvent.class})
     public void servletWebServerInitializedEvent(ServletWebServerInitializedEvent event) {
         log.info("[SpringBoot] ServletWebServerInitializedEvent: {}", event);
     }
 
-    /**
-     * ApplicationContextInitializedEvent 이벤트를 처리합니다.
-     * 이 메서드는 애플리케이션 컨텍스트가 초기화될 때 호출됩니다.
-     */
     @EventListener({ApplicationContextInitializedEvent.class})
     public void applicationContextInitializedEvent(ApplicationContextInitializedEvent event) {
         log.info("[SpringBoot] ApplicationContextInitializedEvent: {}", event);
     }
 
-    /**
-     * @PostConstruct 메서드입니다.
-     * 이 메서드는 Spring Bean이 초기화된 후 호출됩니다.
-     */
     @PostConstruct
     private void postConstruct() {
         log.info("[SpringBoot] @PostConstruct 호출");
     }
 
-    /**
-     * ApplicationStartedEvent 이벤트를 처리합니다.
-     * 이 메서드는 애플리케이션이 시작된 후 호출됩니다.
-     */
     @EventListener({ApplicationStartedEvent.class})
     public void applicationStartedEvent(ApplicationStartedEvent event) {
         log.info("[SpringBoot] ApplicationStartedEvent: {}", event);
     }
 
-    /**
-     * ApplicationReadyEvent 이벤트를 처리합니다.
-     * 이 메서드는 애플리케이션이 준비되었을 때 호출됩니다.
-     */
     @EventListener({ApplicationReadyEvent.class})
     public void applicationReadyEvent(ApplicationReadyEvent event) {
         log.info("[SpringBoot] ApplicationReadyEvent: {}", event);
     }
 
-    /**
-     * ApplicationRunner Bean을 등록합니다.
-     * 이 메서드는 애플리케이션이 시작된 후 실행됩니다.
-     */
     @Bean
     protected ApplicationRunner applicationRunner() {
         return (args) -> log.info("[SpringBoot] ApplicationRunner Args: {}", (Object) args);
     }
 
-    /**
-     * CommandLineRunner Bean을 등록합니다.
-     * 이 메서드는 애플리케이션이 시작된 후 실행됩니다.
-     */
     @Bean
     protected CommandLineRunner commandLineRunner() {
         return (args) -> log.info("[SpringBoot] CommandLineRunner Args: {}", (Object) args);

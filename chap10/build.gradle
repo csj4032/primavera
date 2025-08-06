@@ -1,35 +1,122 @@
+// ==========================================
+// CHAP10 - OAuth2 & Cache Integration
+// ==========================================
+// Dependencies inherited from root build.gradle:
+// - spring-boot-starter-web ✓
+// - lombok (compileOnly + annotationProcessor) ✓  
+// - spring-boot-starter-test ✓
+// - slf4j-api ✓
+// - jetbrains annotations ✓
+// - jakarta.validation-api (compileOnly) ✓
+// ==========================================
+
 compileJava {
     options.compilerArgs += ["-Xlint:deprecation"]
 }
 
 dependencies {
+    // ==========================================
+    // Web Server Configuration (Exclude Tomcat)
+    // ==========================================
     implementation("org.springframework.boot:spring-boot-starter-web") {
         exclude module: "spring-boot-starter-tomcat"
     }
     implementation "org.springframework.boot:spring-boot-starter-undertow"
+    
+    // ==========================================
+    // AOP Dependencies
+    // ==========================================
     aopDependencies.each { dep -> implementation dep }
+    
+    // ==========================================
+    // Database Dependencies  
+    // ==========================================
     databaseDependencies.each { dep -> implementation dep }
+    
+    // ==========================================
+    // MyBatis Dependencies
+    // ==========================================
     mybatisDependencies.each { dep -> implementation dep }
+    
+    // ==========================================
+    // Thymeleaf Dependencies
+    // ==========================================
     thymeleafDependencies.each { dep -> implementation dep }
+    
+    // ==========================================
+    // Validation Dependencies
+    // ==========================================
     validationDependencies.each { dep -> implementation dep }
+    
+    // ==========================================
+    // Development Dependencies
+    // ==========================================
     developmentDependencies.each { dep -> implementation dep }
+    
+    // ==========================================
+    // Logging Dependencies
+    // ==========================================
     loggingDependencies.each { dep -> implementation dep }
+    
+    // ==========================================
+    // Web UI Dependencies
+    // ==========================================
     webUiDependencies.each { dep -> implementation dep }
+    
+    // ==========================================
+    // TestContainers Dependencies
+    // ==========================================
     testContainersDependencies.each { dep -> testImplementation dep }
-    implementation "org.springframework.cloud:spring-cloud-starter-config"
-    implementation "org.springframework.cloud:spring-cloud-starter-vault-config:${springCloudVaultVersion}"
+    
+    // ==========================================
+    // Spring Boot Starters
+    // ==========================================
     implementation "org.springframework.boot:spring-boot-starter-security"
     implementation "org.springframework.boot:spring-boot-starter-oauth2-client"
-    implementation "org.springframework.security:spring-security-oauth2-client:${springSecurityVersion}"
-    implementation "org.springframework.security:spring-security-oauth2-jose:${springSecurityVersion}"
-    implementation "org.thymeleaf.extras:thymeleaf-extras-springsecurity6:${thymeleafExtrasSpringSecurity6Version}"
-    implementation "org.hibernate:hibernate-core:${hibernateVersion}"
-    testImplementation "org.springframework.security:spring-security-test:${springSecurityVersion}"
-    testImplementation "io.rest-assured:rest-assured:${restAssuredVersion}"
-    implementation "commons-codec:commons-codec:${commonsCodecVersion}"
     implementation "org.springframework.boot:spring-boot-starter-cache"
     implementation "org.springframework.boot:spring-boot-starter-data-redis"
+    
+    // ==========================================
+    // Spring Cloud Dependencies
+    // ==========================================
+    implementation "org.springframework.cloud:spring-cloud-starter-config"
+    implementation "org.springframework.cloud:spring-cloud-starter-vault-config:${springCloudVaultVersion}"
+    
+    // ==========================================
+    // OAuth2 Security Dependencies
+    // ==========================================
+    implementation "org.springframework.security:spring-security-oauth2-client:${springSecurityVersion}"
+    implementation "org.springframework.security:spring-security-oauth2-jose:${springSecurityVersion}"
+    
+    // ==========================================
+    // Thymeleaf Security Integration
+    // ==========================================
+    implementation "org.thymeleaf.extras:thymeleaf-extras-springsecurity6:${thymeleafExtrasSpringSecurity6Version}"
+    
+    // ==========================================
+    // Hibernate Dependencies
+    // ==========================================
+    implementation "org.hibernate:hibernate-core:${hibernateVersion}"
+    
+    // ==========================================
+    // Cache Dependencies
+    // ==========================================
     implementation "org.redisson:redisson-spring-boot-starter:${redissonVersion}"
     implementation "com.github.ben-manes.caffeine:caffeine:${caffeineVersion}"
+    
+    // ==========================================
+    // Encoding Utilities
+    // ==========================================
+    implementation "commons-codec:commons-codec:${commonsCodecVersion}"
+    
+    // ==========================================
+    // Security Test Dependencies
+    // ==========================================
+    testImplementation "org.springframework.security:spring-security-test:${springSecurityVersion}"
+    testImplementation "io.rest-assured:rest-assured:${restAssuredVersion}"
+    
+    // ==========================================
+    // Project Module Dependencies
+    // ==========================================
     implementation project(":appendix:spring-boot-starter-lucy-filter")
 }

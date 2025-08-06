@@ -3,25 +3,31 @@ dependencies {
         exclude module: "spring-boot-starter-tomcat"
     }
     implementation 'org.springframework.boot:spring-boot-starter-undertow'
+    
     databaseDependencies.each { dep -> implementation dep }
     mybatisDependencies.each { dep -> implementation dep }
     thymeleafDependencies.each { dep -> implementation dep }
     validationDependencies.each { dep -> implementation dep }
     developmentDependencies.each { dep -> implementation dep }
     testContainersDependencies.each { dep -> testImplementation dep }
-    testImplementation project(':appendix:spring-boot-test-support')
+    
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-json'
     implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+    
     implementation "org.springframework.cloud:spring-cloud-starter-config"
     implementation "org.springframework.cloud:spring-cloud-starter-vault-config:${springCloudVaultVersion}"
-    implementation "org.springframework.boot:spring-boot-starter-oauth2-client"
+    
     implementation "org.springframework.security:spring-security-oauth2-client:${springSecurityVersion}"
     implementation "org.springframework.security:spring-security-oauth2-jose:${springSecurityVersion}"
     implementation "org.thymeleaf.extras:thymeleaf-extras-springsecurity6:${thymeleafExtrasSpringSecurity6Version}"
     implementation "org.modelmapper:modelmapper:${modelMapperVersion}"
+    
     testImplementation 'org.springframework.security:spring-security-test'
     testImplementation "io.rest-assured:rest-assured:${restAssuredVersion}"
+    testImplementation project(':appendix:spring-boot-starter-test-containers')
+    
     implementation project(":appendix:spring-boot-starter-lucy-filter")
     testImplementation project(":appendix:spring-boot-starter-lucy-filter")
 }

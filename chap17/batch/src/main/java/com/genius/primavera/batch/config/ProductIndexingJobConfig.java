@@ -2,6 +2,8 @@ package com.genius.primavera.batch.config;
 
 import com.genius.primavera.batch.processor.ProductDocumentProcessor;
 import com.genius.primavera.batch.writer.ElasticsearchItemWriter;
+import com.genius.primavera.common.domain.Product;
+import com.genius.primavera.common.dto.ProductDocument;
 import jakarta.persistence.EntityManagerFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;

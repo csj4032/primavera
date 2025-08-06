@@ -1,17 +1,95 @@
+// ==========================================
+// CHAP07 - Security & Authentication
+// ==========================================
+// Dependencies inherited from root build.gradle:
+// - spring-boot-starter-web ✓
+// - lombok (compileOnly + annotationProcessor) ✓  
+// - spring-boot-starter-test ✓
+// - slf4j-api ✓
+// - jetbrains annotations ✓
+// - jakarta.validation-api (compileOnly) ✓
+// ==========================================
+
 dependencies {
+    // ==========================================
+    // Web Server Configuration (Exclude Tomcat)
+    // ==========================================
+    implementation("org.springframework.boot:spring-boot-starter-web") {
+        exclude module: "spring-boot-starter-tomcat"
+    }
+    implementation "org.springframework.boot:spring-boot-starter-undertow"
+    
+    // ==========================================
+    // AOP Dependencies
+    // ==========================================
     aopDependencies.each { dep -> implementation dep }
+    
+    // ==========================================
+    // Database Dependencies  
+    // ==========================================
     databaseDependencies.each { dep -> implementation dep }
+    
+    // ==========================================
+    // MyBatis Dependencies
+    // ==========================================
     mybatisDependencies.each { dep -> implementation dep }
+    
+    // ==========================================
+    // Thymeleaf Dependencies
+    // ==========================================
     thymeleafDependencies.each { dep -> implementation dep }
+    
+    // ==========================================
+    // Validation Dependencies
+    // ==========================================
     validationDependencies.each { dep -> implementation dep }
+    
+    // ==========================================
+    // Development Dependencies
+    // ==========================================
     developmentDependencies.each { dep -> implementation dep }
+    
+    // ==========================================
+    // Logging Dependencies
+    // ==========================================
     loggingDependencies.each { dep -> implementation dep }
+    
+    // ==========================================
+    // Web UI Dependencies
+    // ==========================================
     webUiDependencies.each { dep -> implementation dep }
+    
+    // ==========================================
+    // TestContainers Dependencies
+    // ==========================================
     testContainersDependencies.each { dep -> testImplementation dep }
+    
+    // ==========================================
+    // Spring Cloud Dependencies
+    // ==========================================
     implementation "org.springframework.cloud:spring-cloud-starter-vault-config:${springCloudVaultVersion}"
     implementation "org.springframework.cloud:spring-cloud-vault-config-databases:${springCloudVaultVersion}"
+    
+    // ==========================================
+    // Security Dependencies
+    // ==========================================
+    implementation "org.springframework.security:spring-security-core:${springSecurityVersion}"
     implementation "org.springframework.security:spring-security-crypto:${springSecurityVersion}"
+    implementation "org.springframework.security:spring-security-web:${springSecurityVersion}"
+    
+    // ==========================================
+    // Hibernate Dependencies
+    // ==========================================
     implementation "org.hibernate:hibernate-core:${hibernateVersion}"
+    
+    // ==========================================
+    // Servlet Dependencies
+    // ==========================================
+    implementation "jakarta.servlet:jakarta.servlet-api"
+    
+    // ==========================================
+    // Project Module Dependencies
+    // ==========================================
     implementation project(":appendix:spring-boot-starter-lucy-filter")
     testImplementation project(":appendix:spring-boot-starter-lucy-filter")
 }

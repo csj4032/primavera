@@ -9,12 +9,10 @@ plugins {
 task jacocoRootReport(type: JacocoReport) {
     description = 'Generates an aggregate report from all subprojects'
     group = 'reporting'
-
-    // 모든 서브프로젝트의 jacocoTestReport에 의존 (실패하는 모듈 제외)
     dependsOn {
         subprojects.findAll {
             it.plugins.hasPlugin('jacoco') &&
-                    it.name == 'chap01' // 현재는 chap01만 포함
+                    it.name == 'chap01'
         }.collect {
             it.tasks.jacocoTestReport
         }

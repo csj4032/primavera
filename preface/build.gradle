@@ -1,34 +1,49 @@
+// ==========================================
+// PREFACE - Lightweight Framework Demo
+// ==========================================
+// Primavera lightweight framework demonstration
+// Minimal dependencies for educational purposes
+// ==========================================
+
 plugins {
     id 'org.springframework.boot' version "${springBootVersion}"
     id 'io.spring.dependency-management' version "${springDependencyManagementVersion}"
 }
 
 dependencies {
-    // Primavera 경량 프레임워크를 위한 최소한의 의존성
+    // ==========================================
+    // Primavera Lightweight Framework Dependencies
+    // ==========================================
     implementation('org.springframework.boot:spring-boot-starter')
     implementation('org.springframework.boot:spring-boot-devtools')
+    
+    // ==========================================
+    // Lombok Support
+    // ==========================================
     implementation('org.projectlombok:lombok')
     annotationProcessor('org.projectlombok:lombok')
     
-    // 테스트 의존성
+    // ==========================================
+    // Test Dependencies
+    // ==========================================
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude module: 'junit'
     }
 }
 
-// Primavera 경량 프레임워크 데모 실행을 위한 task
+// Primavera lightweight framework demo task
 task runLightweightDemo(type: JavaExec) {
     group = 'application'
     description = 'Primavera 경량 프레임워크 데모 애플리케이션을 실행합니다'
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'com.genius.primavera.lightweight.example.PrimaveraLightweightDemo'
     
-    // JVM 옵션
+    // JVM options
     jvmArgs = [
         '-Dspring.profiles.active=local',
         '-Dlogging.level.com.genius.primavera.lightweight=DEBUG'
     ]
     
-    // 콘솔 입력 허용
+    // Console input support
     standardInput = System.in
 }

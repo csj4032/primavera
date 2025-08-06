@@ -13,8 +13,6 @@ import jakarta.annotation.PostConstruct;
 @Configuration
 public class ApplicationConfiguration implements WebMvcConfigurer {
 
-	// XSS Filter removed due to Jakarta EE compatibility issues
-	// TODO: Add Jakarta EE compatible XSS filter in future
 
 	@Bean
 	public ObjectMapper objectMapper() {
