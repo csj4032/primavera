@@ -1,4 +1,4 @@
-# Chapter 04 - Data Access & Dynamic Proxy
+# Chapter 04: 데이터 접근 계층
 
 ## 개요
 Chapter 04는 Spring Boot의 데이터 접근 계층과 동적 프록시 패턴을 학습하는 모듈입니다. JDBC를 활용한 데이터베이스 연동, Spring AOP의 기반이 되는 동적 프록시 구현, 그리고 다양한 데이터소스 설정 방법을 다룹니다.

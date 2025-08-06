@@ -1,4 +1,4 @@
-## Chap05 - MyBatis, Logging, Transaction 관리
+# Chapter 05: MyBatis와 로깅
 
 ### 개요
 MyBatis를 활용한 데이터 액세스 계층 구현과 Spring Transaction 관리, Logback을 통한 로깅 설정을 다루는 모듈입니다. 트랜잭션 전파(Propagation)와 격리 수준(Isolation Level)의 실제 구현 사례를 포함합니다.
@@ -196,6 +196,237 @@ CREATE TABLE IF NOT EXISTS WINNER (
 * 일관성(Consistency) : 트랜잭션의 액션이 모두 완료되면 커밋되고 데이터 및 리소스는 비즈니스 규칙에 맞게 일관된 상태를 유지
 * 격리성(Isolation) : 동일한 데이터 여러 트랜잭션이 동시에 처리할 경우 데이터가 변질되지 않게 하려면 각각의 트랜잭션을 격리
 * 지속성(Durability) : 트랜잭션 완료 후 그 결과는 설령 시스템이 실패 하더라도 살마남아야 함 (보통 트랜잭션 결과물은 퍼시스턴스 저장소에 씌어짐)
+
+## 🎯 WinnerServiceImpl - 트랜잭션 전파 및 격리수준 실습
+
+### 📋 서비스 설계 의도
+
+`WinnerServiceImpl`은 Spring의 트랜잭션 전파(Propagation)와 격리 수준(Isolation Level)을 체계적으로 학습하기 위한 교육용 서비스입니다. 다양한 트랜잭션 시나리오를 시뮬레이션하여 실무에서 마주할 수 있는 트랜잭션 처리 상황을 경험할 수 있도록 설계되었습니다.
+
+### 🔄 트랜잭션 전파 패턴 분석
+
+#### 1. **기본 저장 메서드**
+```java
+@Transactional(propagation = Propagation.REQUIRED, rollbackFor = RollbackForClass.class, noRollbackFor = NoRollbackForClass.class)
+public int save(Winner winner) {
+    return winnerMapper.save(winner);
+}
+```
+- **목적**: 기본적인 트랜잭션 동작 학습
+- **특징**: 커스텀 롤백/논롤백 예외 처리 시연
+- **학습 포인트**: 예외별 롤백 정책 제어
+
+#### 2. **복합 트랜잭션 패턴**
+
+**`saveAndNew` - 독립 트랜잭션 조합**
+```java
+@Transactional(propagation = Propagation.REQUIRED, noRollbackFor = DataIntegrityViolationException.class)
+public int saveAndNew(Winner winner1, Winner winner2, Winner winner3, WinnerService winnerService) {
+    winnerMapper.save(winner1);    // 부모 트랜잭션
+    winnerService.saveRequiresNew(winner2);  // 독립 트랜잭션
+    winnerMapper.save(winner3);    // 부모 트랜잭션
+    return 0;
+}
+```
+
+**`saveAndNested` - 중첩 트랜잭션 패턴 (현재 REQUIRES_NEW로 수정됨)**
+```java
+@Transactional(propagation = Propagation.REQUIRED, noRollbackFor = DataIntegrityViolationException.class)
+public int saveAndNested(Winner winner1, Winner winner2, Winner winner3, WinnerService winnerService) {
+    winnerMapper.save(winner1);     // 부모 트랜잭션
+    winnerService.saveNested(winner2);     // 새 트랜잭션 (원래는 NESTED 의도)
+    winnerMapper.save(winner3);     // 부모 트랜잭션
+    return 0;
+}
+```
+
+**`saveAndNotSupported` - 트랜잭션 일시정지**
+```java
+@Transactional(propagation = Propagation.REQUIRED)
+public int saveAndNotSupported(Winner winner1, Winner winner2, Winner winner3, WinnerService winnerService) {
+    winnerMapper.save(winner1);          // 트랜잭션 내
+    winnerService.saveNotSupported(winner2);    // 트랜잭션 일시정지
+    winnerMapper.save(winner3);          // 트랜잭션 재개
+    return 0;
+}
+```
+
+#### 3. **전파 유형별 개별 메서드**
+
+| 메서드 | 전파 타입 | 동작 특성 | 사용 목적 |
+|--------|-----------|-----------|-----------|
+| `saveNotSupported` | NOT_SUPPORTED | 트랜잭션 없이 실행 | 트랜잭션 일시정지 학습 |
+| `saveNested` | REQUIRES_NEW | 새 독립 트랜잭션 | 격리된 처리 학습 |
+| `saveRequiresNew` | REQUIRES_NEW | 새 독립 트랜잭션 | 독립 트랜잭션 학습 |
+
+#### 4. **배치 처리 패턴**
+
+**`saveAll` - 단일 트랜잭션 배치**
+```java
+@Transactional(propagation = Propagation.REQUIRES_NEW)
+public int saveAll(List<Winner> winners) {
+    for (int i = 0; i < winners.size(); i++) {
+        winnerMapper.save(winners.get(i));
+    }
+    return winners.size();
+}
+```
+
+**`innerSave` - 내부 호출 패턴**
+```java
+@Transactional(propagation = Propagation.REQUIRED)
+public int innerSave(List<Winner> winners) {
+    for (Winner winner : winners) this.save(winner);  // 같은 객체 내 메서드 호출
+    return winners.size();
+}
+```
+- **학습 포인트**: 같은 객체 내 메서드 호출 시 AOP 프록시가 적용되지 않는 문제
+
+**`innerSaveNew` - 내부 호출 + 새 트랜잭션**
+```java
+@Transactional(propagation = Propagation.REQUIRED)
+public int innerSaveNew(List<Winner> winners) {
+    for (Winner winner : winners) this.saveRequiresNew(winner);  // REQUIRES_NEW 호출 시도
+    return winners.size();
+}
+```
+- **주의사항**: 셀프 인보케이션으로 인해 REQUIRES_NEW가 동작하지 않음
+
+### 🔒 격리 수준(Isolation Level) 학습
+
+#### 1. **READ_UNCOMMITTED**
+```java
+@Transactional(isolation = Isolation.READ_UNCOMMITTED)
+public List<Winner> findAllUncommitted() {
+    return winnerMapper.findAll();
+}
+```
+- **특징**: 가장 낮은 격리 수준, 더티 리드 허용
+- **용도**: 속도 우선, 정확성 차순위인 경우
+
+#### 2. **READ_COMMITTED**
+```java
+@Transactional(isolation = Isolation.READ_COMMITTED)
+public List<Winner> findAllCommitted() {
+    return winnerMapper.findAll();
+}
+
+@Transactional(isolation = Isolation.READ_COMMITTED)
+public Winner findAllByIdReadCommitted(Long id) {
+    return winnerMapper.findById(id);
+}
+```
+- **특징**: 커밋된 데이터만 읽기, 더티 리드 방지
+- **용도**: 일반적인 조회 작업
+
+#### 3. **REPEATABLE_READ**
+```java
+@Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.REPEATABLE_READ)
+public Winner findAllByIdRepeatableRead(Long id) {
+    return winnerMapper.findById(id);
+}
+```
+- **특징**: 같은 트랜잭션 내에서 동일한 데이터 보장
+- **용도**: 일관된 읽기가 필요한 비즈니스 로직
+
+### 🧪 테스트 시나리오별 학습 목표
+
+#### 1. **기본 CRUD 테스트**
+```java
+@Test
+@Order(1)
+@DisplayName("save 메소드 테스트")
+public void save() {
+    // 기본 트랜잭션 동작 확인
+}
+```
+
+#### 2. **복합 트랜잭션 테스트**
+- `saveAndNew`: 독립 트랜잭션과 부모 트랜잭션의 상호작용
+- `saveAndNested`: 중첩 트랜잭션(현재 REQUIRES_NEW) 동작
+- `saveAndNotSupported`: 트랜잭션 일시정지/재개
+
+#### 3. **격리수준 테스트**
+- `findAllUncommitted`: 더티 리드 가능성 테스트
+- `findAllCommitted`: 커밋된 데이터만 읽기
+- `findAllByIdRepeatableRead`: 반복 읽기 일관성 테스트
+
+### 💡 실무 적용 시나리오
+
+#### 1. **은행 송금 시스템**
+```java
+// 송금 처리 - 출금과 입금이 별도 트랜잭션
+@Transactional(propagation = Propagation.REQUIRED)
+public void transfer(Account from, Account to, BigDecimal amount) {
+    withdraw(from, amount);        // 출금 (부모 트랜잭션)
+    depositInNewTransaction(to, amount);  // 입금 (새 트랜잭션)
+}
+```
+
+#### 2. **배치 처리 시스템**
+```java
+// 대용량 데이터 처리 - 부분 실패 허용
+@Transactional(propagation = Propagation.REQUIRED, noRollbackFor = BusinessException.class)
+public void processBatch(List<Data> dataList) {
+    for (Data data : dataList) {
+        processInNewTransaction(data);  // 개별 트랜잭션으로 처리
+    }
+}
+```
+
+#### 3. **로깅 시스템**
+```java
+// 감사 로그 - 비즈니스 트랜잭션 실패와 무관
+@Transactional(propagation = Propagation.NOT_SUPPORTED)
+public void auditLog(String operation, Object data) {
+    // 트랜잭션 없이 감사 로그 기록
+}
+```
+
+### ⚠️ 주의사항과 함정
+
+#### 1. **셀프 인보케이션 문제**
+```java
+// ❌ 동작하지 않음
+@Transactional(propagation = Propagation.REQUIRED)
+public void methodA() {
+    this.methodB();  // AOP 프록시 우회
+}
+
+@Transactional(propagation = Propagation.REQUIRES_NEW)
+public void methodB() {
+    // REQUIRES_NEW가 적용되지 않음
+}
+
+// ✅ 해결책: 별도 서비스 주입
+@Transactional(propagation = Propagation.REQUIRED)  
+public void methodA() {
+    otherService.methodB();  // 프록시를 통한 호출
+}
+```
+
+#### 2. **예외 처리 전략**
+```java
+// DataIntegrityViolationException은 롤백하지 않음
+@Transactional(noRollbackFor = DataIntegrityViolationException.class)
+public void saveWithConstraintHandling() {
+    // 제약조건 위반 시에도 부분 커밋 허용
+}
+```
+
+#### 3. **격리수준 선택 가이드**
+- **READ_UNCOMMITTED**: 성능 최우선, 대용량 집계
+- **READ_COMMITTED**: 일반적인 업무 처리 (기본값)
+- **REPEATABLE_READ**: 정합성 중요한 금융 업무
+- **SERIALIZABLE**: 매우 높은 정합성 요구 시
+
+### 🎓 학습 체크리스트
+
+- [ ] 각 전파 타입의 동작 차이를 이해했는가?
+- [ ] 셀프 인보케이션 문제를 인지하고 있는가?
+- [ ] 예외별 롤백 정책을 설정할 수 있는가?
+- [ ] 격리수준별 데이터 가시성 차이를 아는가?
+- [ ] 실무에서 어떤 패턴을 사용해야 할지 판단할 수 있는가?
 
 ### Spring Propagation
 | 전달 속성 | 설명 |

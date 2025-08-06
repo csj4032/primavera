@@ -1,4 +1,4 @@
-# Chapter 03 - MVC와 AOP 🎯
+# Chapter 03: MVC와 AOP
 
 ## 📋 개요
 Spring MVC 아키텍처 패턴과 AOP(Aspect-Oriented Programming)를 통한 횡단 관심사 분리를 학습하는 챕터입니다. 웹 계층의 구성 요소와 관점 지향 프로그래밍의 핵심 개념을 실무 중심으로 익힙니다.

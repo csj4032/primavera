@@ -74,3 +74,18 @@ VALUES (1, 1),
        (5, 3),
        (6, 3)
 ON DUPLICATE KEY UPDATE USER_ID = VALUES(USER_ID);
+
+INSERT INTO WINNERS (NAME, YEAR, SPORT, PRIZE, AMOUNT)
+VALUES ('Lionel Messi', 2021, 'Football', 'Ballon', 10.00),
+       ('Cristiano Ronaldo', 2021, 'Football', 'Ballon', 100.00),
+       ('Novak Djokovic', 2021, 'Tennis', 'Grand Slam', 110.00),
+       ('Tom Brady', 2021, 'American Football', 'Super Bowl MVP', 10.00),
+       ('Simone Biles', 2021, 'Gymnastics', 'Olympic Gold', 10.00),
+       ('LeBron James', 2021, 'Basketball', 'NBA Championship', 10.00),
+       ('Lewis Hamilton', 2021, 'Formula 1', 'World Champion', 10.00),
+       ('Tiger Woods', 2021, 'Golf', 'Masters Tournament', 10.00),
+       ('Serena Williams', 2021, 'Tennis', 'Wimbledon Champion', 1000.00),
+       ('Roger Federer', 2021, 'Tennis', 'Australian Open Champion', 1000.00),
+       ('Kylian Mbappé', 2021, 'Football', 'FIFA World Cup', 1000.00),
+       ('Virat Kohli', 2021, 'Cricket', 'ICC World Cup', 100.00),
+       ('Usain Bolt', 2021, 'Athletics', 'Olympic Gold', 100.00)

@@ -17,7 +17,6 @@ public class WinnerServiceImpl implements WinnerService {
 
     private final WinnerMapper winnerMapper;
 
-
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = RollbackForClass.class, noRollbackFor = NoRollbackForClass.class)
     public int save(Winner winner) {
@@ -58,7 +57,7 @@ public class WinnerServiceImpl implements WinnerService {
     }
 
     @Override
-    @Transactional(propagation = Propagation.NESTED)
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public int saveNested(Winner winner) {
         winnerMapper.save(winner);
         return 0;
@@ -80,20 +79,16 @@ public class WinnerServiceImpl implements WinnerService {
     }
 
     @Override
-    @Transactional(propagation = Propagation.NESTED)
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public int saveAllNested(List<Winner> winners) {
-        for (int i = 0; i < winners.size(); i++) {
-            winnerMapper.save(winners.get(i));
-        }
+        for (Winner winner : winners) winnerMapper.save(winner);
         return winners.size();
     }
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public int innerSave(List<Winner> winners) {
-        for (int i = 0; i < winners.size(); i++) {
-            this.save(winners.get(i));
-        }
+        for (Winner winner : winners) this.save(winner);
         return winners.size();
     }
 
@@ -101,17 +96,13 @@ public class WinnerServiceImpl implements WinnerService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     public int innerSaveNew(List<Winner> winners) {
-        for (int i = 0; i < winners.size(); i++) {
-            this.saveRequiresNew(winners.get(i));
-        }
+        for (Winner winner : winners) this.saveRequiresNew(winner);
         return winners.size();
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
     public int innerNotSupported(List<Winner> winners) {
-        for (int i = 0; i < winners.size(); i++) {
-            this.saveNotSupported(winners.get(i));
-        }
+        for (Winner winner : winners) this.saveNotSupported(winner);
         return winners.size();
     }
 
@@ -134,7 +125,7 @@ public class WinnerServiceImpl implements WinnerService {
     }
 
     @Override
-    @Transactional(propagation = Propagation.NESTED, isolation = Isolation.REPEATABLE_READ)
+    @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.REPEATABLE_READ)
     public Winner findAllByIdRepeatableRead(Long id) {
         return winnerMapper.findById(id);
     }
