@@ -1,0 +1,96 @@
+spring:
+  main:
+    allow-bean-definition-overriding: true
+
+logging:
+  level:
+    com.genius.primavera.testcontainerss: DEBUG
+    org.testcontainerss: INFO
+    org.springframework.test: INFO
+
+testcontainers:
+  containers:
+    multiTypePrimaryDb:
+      image: "mariadb:11.4.7"
+      database: "primary_db"
+      username: "primary_user"
+      password: "primary_pass"
+      startup-timeout: 120
+      environment:
+        MYSQL_CHARSET: "utf8mb4"
+        MYSQL_COLLATION: "utf8mb4_unicode_ci"
+      network-aliases:
+        - "primary-db"
+        - "main-db"
+    
+    primavera:
+      image: "mariadb:11.4.7"
+      database: "primavera"
+      username: "primavera"
+      password: "primavera"
+      startup-timeout: 120
+      init-script: ./sql/init.sql
+    
+    multiPrimaryDb:
+      image: "mariadb:11.4.7"
+      database: "multi_primary_db"
+      username: "multi_primary_user"
+      password: "multi_primary_pass"
+      startup-timeout: 120
+    
+    multiSecondaryDb:
+      image: "mariadb:11.4.7"
+      database: "multi_secondary_db"
+      username: "multi_secondary_user"
+      password: "multi_secondary_pass"
+      startup-timeout: 120
+      network-aliases:
+        - "multi-secondary-db"
+        - "multi-replica-db"
+    
+    multiCache:
+      image: "redis:7-alpine"
+      password: "multi_redis_password"
+      startup-timeout: 60
+      environment:
+        REDIS_MAXMEMORY: "256mb"
+        REDIS_MAXMEMORY_POLICY: "allkeys-lru"
+    
+    multiMessaging:
+      image: "confluentinc/cp-kafka:7.5.0"
+      startup-timeout: 180
+      environment:
+        KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+        KAFKA_NUM_PARTITIONS: "3"
+        KAFKA_DEFAULT_REPLICATION_FACTOR: "1"
+
+    configPrimaryDb:
+      image: "mariadb:11.4.7"
+      database: "primary_db"
+      username: "primary_user"
+      password: "primary_pass"
+      startup-timeout: 120
+      environment:
+        MYSQL_CHARSET: "utf8mb4"
+        MYSQL_COLLATION: "utf8mb4_unicode_ci"
+      network-aliases:
+        - "primary-db"
+        - "main-db"
+    
+    configSecondaryDb:
+      image: "mariadb:11.4.7"
+      database: "secondary_db"
+      username: "secondary_user"
+      password: "secondary_pass"
+      startup-timeout: 120
+      network-aliases:
+        - "secondary-db"
+        - "replica-db"
+    
+    configCache:
+      image: "redis:7-alpine"
+      password: "redis_password"
+      startup-timeout: 60
+      environment:
+        REDIS_MAXMEMORY: "256mb"
+        REDIS_MAXMEMORY_POLICY: "allkeys-lru"

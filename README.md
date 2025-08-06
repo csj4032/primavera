@@ -229,7 +229,7 @@ git commit -m "deps: update spring boot to 3.3.6"
 - **JPA/Hibernate** (ORM)
 - **Spring Data R2DBC** (Reactive Database Access)
 - **Flyway** (Database Migration)
-- **spring-boot-starter-test-container** (Custom TestContainers Starter)
+- **spring-boot-starter-test-containers** (Custom TestContainers Starter)
 
 ### Security & Authentication
 - **Spring Security 6.4.4**
@@ -255,7 +255,7 @@ git commit -m "deps: update spring boot to 3.3.6"
 ### Testing & Quality
 - **JUnit 5** (Unit Testing)
 - **TestContainers with MariaDB 11.4.7** (Docker-based Integration Testing)
-- **spring-boot-starter-test-container** (Custom TestContainers AutoConfiguration)
+- **spring-boot-starter-test-containers** (Custom TestContainers AutoConfiguration)
 - **MockMvc** (Web Layer Testing)
 - **Lombok 1.18.36** (Code Generation)
 - **SonarQube** (Code Quality)
@@ -1197,7 +1197,7 @@ open http://localhost:8080
 ./gradlew :chap11:test --continue
 ```
 
-#### 2. spring-boot-starter-test-container 사용법
+#### 2. spring-boot-starter-test-containers 사용법
 
 **간단한 어노테이션 기반 사용:**
 ```java
@@ -1281,7 +1281,7 @@ docker start mariadb-primavera-local
 # TestContainers가 자동으로 MariaDB 컨테이너 관리
 ./gradlew :chap11:test
 
-# spring-boot-starter-test-container가 자동으로:
+# spring-boot-starter-test-containers가 자동으로:
 # 1. MariaDB 11.4.7 Docker 이미지 다운로드 (최초 1회)
 # 2. 테스트용 컨테이너 시작
 # 3. 데이터소스 자동 설정 (URL, 사용자명, 비밀번호)
@@ -1302,7 +1302,7 @@ docker start mariadb-primavera-local
 
 **Primavera의 TestContainers 구성:**
 ```java
-// spring-boot-starter-test-container가 자동으로 생성하는 설정
+// spring-boot-starter-test-containers가 자동으로 생성하는 설정
 @Container
 static MariaDBContainer<?> mariadb = new MariaDBContainer<>("mariadb:11.4.7")
     .withDatabaseName("primavera")
@@ -1333,7 +1333,7 @@ spring:
 ✅ **개발 효율성**: 로컬은 빠른 개발, 테스트는 격리된 환경  
 ✅ **테이블 접두사 전략**: BASIC_, MYBATIS_, JPA_ 접두사로 교육적 독립성 유지  
 ✅ **초기화 스크립트 최적화**: 각 챕터별 맞춤형 init.sql 제공  
-✅ **커스텀 스타터**: spring-boot-starter-test-container로 간편한 설정  
+✅ **커스텀 스타터**: spring-boot-starter-test-containers로 간편한 설정  
 
 ### 3. 개발 환경 설정
 ![IntelliJ, Gradle](https://github.com/csj4032/primavera/blob/master/gradle.png)
@@ -1412,7 +1412,7 @@ spring:
   - **TestContainers 혁신**: `@EnablePrimaveraTestcontainers` 자동 설정
 - **2025년 최신 기능**:
   - **비밀번호 확인 검증**: `@PasswordMatch` 커스텀 애노테이션으로 비밀번호-확인 일치 검증
-  - **자동화된 테스트 환경**: spring-boot-starter-test-container 통합으로 설정 코드 99% 감소
+  - **자동화된 테스트 환경**: spring-boot-starter-test-containers 통합으로 설정 코드 99% 감소
   - **MariaDB 11.4.7 표준화**: 개발/테스트 환경 데이터베이스 버전 통일
   - **MyBatis 고급 매핑**: 어노테이션 기반 중첩 결과 매핑 및 커스텀 타입 핸들러
 - **핵심 클래스**: `NicknameValidator`, `PasswordMatchValidator`, `@EnablePrimaveraTestcontainers`
@@ -1689,7 +1689,7 @@ spring:
 | `<img src="x" onerror="alert(1)">` | `<img src="x">` |
 | `javascript:alert(1)` | `alert(1)` |
 
-### 2. spring-boot-starter-test-container 🧪
+### 2. spring-boot-starter-test-containers 🧪
 **TestContainers 자동 설정 스타터 - 99% 코드 감소**
 
 #### 혁신적 특징
@@ -1787,7 +1787,7 @@ dependencies {
 ```gradle
 dependencies {
     // 자동화된 TestContainers 환경
-    testImplementation project(':appendix:spring-boot-starter-test-container')
+    testImplementation project(':appendix:spring-boot-starter-test-containers')
 }
 ```
 
@@ -1828,7 +1828,7 @@ dependencies {
 ```
 
 ### TestContainers 활용
-- **데이터베이스**: MariaDB 11.4.7 컨테이너 (spring-boot-starter-test-container)
+- **데이터베이스**: MariaDB 11.4.7 컨테이너 (spring-boot-starter-test-containers)
 - **Redis**: Redis 컨테이너 기반 캐시 테스트
 - **외부 서비스**: WireMock을 통한 API 모킹
 - **전체 스택**: 실제 환경과 동일한 테스트

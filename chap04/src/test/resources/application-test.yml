@@ -7,3 +7,13 @@ spring:
       enabled: false
     vault:
       enabled: false
+
+testcontainers:
+  containers:
+    primavera:
+      image: "mariadb:11.4.7"
+      database: "primavera"
+      username: "primavera"
+      password: "primavera"
+      startup-timeout: 120
+      init-script: ./sql/init.sql

@@ -1,28 +1,19 @@
 package com.genius.primavera.application;
 
 import com.genius.primavera.domain.mapper.WinnerMapper;
-
 import com.genius.primavera.domain.model.Winner;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
-
-@Service(value = "winnerService")
 @RequiredArgsConstructor
+@Service(value = "winnerService")
 public class WinnerServiceImpl implements WinnerService {
-
-    @Autowired
-    private PlatformTransactionManager transactionManager;
 
     private final WinnerMapper winnerMapper;
 

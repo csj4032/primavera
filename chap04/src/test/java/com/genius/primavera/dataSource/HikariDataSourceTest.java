@@ -1,16 +1,12 @@
 package com.genius.primavera.dataSource;
 
+import com.genius.primavera.testcontainers.EnableTestContainers;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.containers.MariaDBContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
@@ -18,26 +14,11 @@ import java.sql.SQLException;
 
 @Slf4j
 @SpringBootTest
-@Testcontainers
+@EnableTestContainers
 @ActiveProfiles("test")
 @DisplayName("HikariDataSource 통합 테스트")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class HikariDataSourceTest {
-
-    @Container
-    static MariaDBContainer<?> mariadb = new MariaDBContainer<>("mariadb:11.4")
-            .withDatabaseName("primavera")
-            .withUsername("primavera")
-            .withPassword("primavera")
-            .withInitScript("sql/init.sql");
-
-    @DynamicPropertySource
-    static void configureProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", mariadb::getJdbcUrl);
-        registry.add("spring.datasource.username", mariadb::getUsername);
-        registry.add("spring.datasource.password", mariadb::getPassword);
-        registry.add("spring.datasource.driver-class-name", mariadb::getDriverClassName);
-    }
 
     @Autowired
     private DataSource dataSource;
