@@ -70,10 +70,10 @@ public class ContainerManager {
 
         containers.values().parallelStream().forEach(containerInfo -> {
             try {
-                containerInfo.getContainer().stop();
-                log.debug("Stopped container: {}", containerInfo.getName());
+                containerInfo.container().stop();
+                log.debug("Stopped container: {}", containerInfo.name());
             } catch (Exception e) {
-                log.error("Failed to stop container: {}", containerInfo.getName(), e);
+                log.error("Failed to stop container: {}", containerInfo.name(), e);
             }
         });
 

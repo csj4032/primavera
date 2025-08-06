@@ -216,7 +216,7 @@ class ThreadSafetyTest {
                         ContainerInfo cacheInfo = manager.getContainer("concurrentCache");
                         
                         if (isStarted && dbInfo != null && cacheInfo != null &&
-                            dbInfo.getContainer().isRunning() && cacheInfo.getContainer().isRunning()) {
+                            dbInfo.container().isRunning() && cacheInfo.container().isRunning()) {
                             consistentStateCount.incrementAndGet();
                         } else {
                             inconsistentStateCount.incrementAndGet();

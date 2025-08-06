@@ -57,23 +57,23 @@ class ConfigurationBindingTest {
         ContainerInfo secondaryInfo = manager.getContainer("configSecondaryDb");
         ContainerInfo cacheInfo = manager.getContainer("configCache");
         
-        assertEquals("mariadb:11.4.7", primaryInfo.getSpec().getImage(), 
+        assertEquals("mariadb:11.4.7", primaryInfo.spec().getImage(), 
             "Primary DB should use configured image");
-        assertEquals("primary_db", primaryInfo.getSpec().getDatabase(),
+        assertEquals("primary_db", primaryInfo.spec().getDatabase(),
             "Primary DB should use configured database name");
-        assertEquals("primary_user", primaryInfo.getSpec().getUsername(),
+        assertEquals("primary_user", primaryInfo.spec().getUsername(),
             "Primary DB should use configured username");
-        assertEquals("primary_pass", primaryInfo.getSpec().getPassword(),
+        assertEquals("primary_pass", primaryInfo.spec().getPassword(),
             "Primary DB should use configured password");
         
-        assertEquals("secondary_db", secondaryInfo.getSpec().getDatabase(),
+        assertEquals("secondary_db", secondaryInfo.spec().getDatabase(),
             "Secondary DB should use configured database name");
-        assertEquals("secondary_user", secondaryInfo.getSpec().getUsername(),
+        assertEquals("secondary_user", secondaryInfo.spec().getUsername(),
             "Secondary DB should use configured username");
         
-        assertEquals("redis:7-alpine", cacheInfo.getSpec().getImage(),
+        assertEquals("redis:7-alpine", cacheInfo.spec().getImage(),
             "Cache should use configured Redis image");
-        assertEquals("redis_password", cacheInfo.getSpec().getPassword(),
+        assertEquals("redis_password", cacheInfo.spec().getPassword(),
             "Cache should use configured password");
         
         log.info("All configuration properties bound correctly");
@@ -85,17 +85,17 @@ class ConfigurationBindingTest {
     void testEnvironmentVariables() {
         ContainerManager manager = ContainerRegistry.get();
         
-        ContainerInfo primaryInfo = manager.getContainer("primaryDb");
-        ContainerInfo cacheInfo = manager.getContainer("cache");
+        ContainerInfo primaryInfo = manager.getContainer("configPrimaryDb");
+        ContainerInfo cacheInfo = manager.getContainer("configCache");
         
-        Map<String, String> primaryEnv = primaryInfo.getSpec().getEnvironment();
+        Map<String, String> primaryEnv = primaryInfo.spec().getEnvironment();
         assertNotNull(primaryEnv, "Primary DB environment should not be null");
         assertEquals("utf8mb4", primaryEnv.get("MYSQL_CHARSET"),
             "Primary DB should have configured charset");
         assertEquals("utf8mb4_unicode_ci", primaryEnv.get("MYSQL_COLLATION"),
             "Primary DB should have configured collation");
         
-        Map<String, String> cacheEnv = cacheInfo.getSpec().getEnvironment();
+        Map<String, String> cacheEnv = cacheInfo.spec().getEnvironment();
         assertNotNull(cacheEnv, "Cache environment should not be null");
         assertEquals("256mb", cacheEnv.get("REDIS_MAXMEMORY"),
             "Cache should have configured max memory");
@@ -111,17 +111,17 @@ class ConfigurationBindingTest {
     void testNetworkAliases() {
         ContainerManager manager = ContainerRegistry.get();
         
-        ContainerInfo primaryInfo = manager.getContainer("primaryDb");
-        ContainerInfo secondaryInfo = manager.getContainer("secondaryDb");
+        ContainerInfo primaryInfo = manager.getContainer("configPrimaryDb");
+        ContainerInfo secondaryInfo = manager.getContainer("configSecondaryDb");
         
-        assertTrue(Arrays.asList(primaryInfo.getSpec().getNetworkAliases()).contains("primary-db"),
+        assertTrue(Arrays.asList(primaryInfo.spec().getNetworkAliases()).contains("primary-db"),
             "Primary DB should have primary-db alias");
-        assertTrue(Arrays.asList(primaryInfo.getSpec().getNetworkAliases()).contains("main-db"),
+        assertTrue(Arrays.asList(primaryInfo.spec().getNetworkAliases()).contains("main-db"),
             "Primary DB should have main-db alias");
         
-        assertTrue(Arrays.asList(secondaryInfo.getSpec().getNetworkAliases()).contains("secondary-db"),
+        assertTrue(Arrays.asList(secondaryInfo.spec().getNetworkAliases()).contains("secondary-db"),
             "Secondary DB should have secondary-db alias");
-        assertTrue(Arrays.asList(secondaryInfo.getSpec().getNetworkAliases()).contains("replica-db"),
+        assertTrue(Arrays.asList(secondaryInfo.spec().getNetworkAliases()).contains("replica-db"),
             "Secondary DB should have replica-db alias");
         
         log.info("Network aliases configured correctly");
@@ -137,11 +137,11 @@ class ConfigurationBindingTest {
         ContainerInfo secondaryInfo = manager.getContainer("configSecondaryDb");
         ContainerInfo cacheInfo = manager.getContainer("configCache");
         
-        assertEquals(120, primaryInfo.getSpec().getStartupTimeout(),
+        assertEquals(120, primaryInfo.spec().getStartupTimeout(),
             "Primary DB should have 120s startup timeout");
-        assertEquals(120, secondaryInfo.getSpec().getStartupTimeout(),
+        assertEquals(120, secondaryInfo.spec().getStartupTimeout(),
             "Secondary DB should have 120s startup timeout");
-        assertEquals(60, cacheInfo.getSpec().getStartupTimeout(),
+        assertEquals(60, cacheInfo.spec().getStartupTimeout(),
             "Cache should have 60s startup timeout");
         
         log.info("Startup timeouts configured correctly");
@@ -225,16 +225,16 @@ class ConfigurationBindingTest {
     void testConfigurationDefaults() {
         ContainerManager manager = ContainerRegistry.get();
         
-        ContainerInfo primaryInfo = manager.getContainer("primaryDb");
+        ContainerInfo primaryInfo = manager.getContainer("configPrimaryDb");
         
-        assertEquals(ContainerType.MARIADB, primaryInfo.getType(),
+        assertEquals(ContainerType.MARIADB, primaryInfo.type(),
             "Container type should match annotation");
-        assertEquals("primaryDb", primaryInfo.getName(),
+        assertEquals("configPrimaryDb", primaryInfo.name(),
             "Container name should match annotation");
         
-        assertNotNull(primaryInfo.getContainer(),
+        assertNotNull(primaryInfo.container(),
             "Container instance should be created");
-        assertTrue(primaryInfo.getContainer().isRunning(),
+        assertTrue(primaryInfo.container().isRunning(),
             "Container should be running after configuration");
         
         log.info("Configuration and defaults properly applied");

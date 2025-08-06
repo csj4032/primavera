@@ -63,20 +63,20 @@ class CompleteValidationTest {
         assertNotNull(dbInfo, "Database container info should exist");
         assertNotNull(cacheInfo, "Cache container info should exist");
         
-        assertEquals("completeDb", dbInfo.getName(), "Database container name should match");
-        assertEquals("completeCache", cacheInfo.getName(), "Cache container name should match");
+        assertEquals("completeDb", dbInfo.name(), "Database container name should match");
+        assertEquals("completeCache", cacheInfo.name(), "Cache container name should match");
         
-        assertEquals(ContainerType.MARIADB, dbInfo.getType(), "Database type should be MariaDB");
-        assertEquals(ContainerType.REDIS, cacheInfo.getType(), "Cache type should be Redis");
+        assertEquals(ContainerType.MARIADB, dbInfo.type(), "Database type should be MariaDB");
+        assertEquals(ContainerType.REDIS, cacheInfo.type(), "Cache type should be Redis");
         
-        assertNotNull(dbInfo.getContainer(), "Database container instance should exist");
-        assertNotNull(cacheInfo.getContainer(), "Cache container instance should exist");
+        assertNotNull(dbInfo.container(), "Database container instance should exist");
+        assertNotNull(cacheInfo.container(), "Cache container instance should exist");
         
-        assertTrue(dbInfo.getContainer().isRunning(), "Database container should be running");
-        assertTrue(cacheInfo.getContainer().isRunning(), "Cache container should be running");
+        assertTrue(dbInfo.container().isRunning(), "Database container should be running");
+        assertTrue(cacheInfo.container().isRunning(), "Cache container should be running");
         
-        assertNotNull(dbInfo.getSpec(), "Database container spec should exist");
-        assertNotNull(cacheInfo.getSpec(), "Cache container spec should exist");
+        assertNotNull(dbInfo.spec(), "Database container spec should exist");
+        assertNotNull(cacheInfo.spec(), "Cache container spec should exist");
         
         log.info("✅ Complete container lifecycle and state management validated");
     }
@@ -211,11 +211,11 @@ class CompleteValidationTest {
         ContainerInfo dbInfo = manager.getContainer("completeDb");
         ContainerInfo cacheInfo = manager.getContainer("completeCache");
         
-        assertTrue(dbInfo.getContainer().getFirstMappedPort() > 0, "Database container should have mapped port");
-        assertTrue(cacheInfo.getContainer().getFirstMappedPort() > 0, "Cache container should have mapped port");
+        assertTrue(dbInfo.container().getFirstMappedPort() > 0, "Database container should have mapped port");
+        assertTrue(cacheInfo.container().getFirstMappedPort() > 0, "Cache container should have mapped port");
         
-        assertNotNull(dbInfo.getContainer().getHost(), "Database container should have host");
-        assertNotNull(cacheInfo.getContainer().getHost(), "Cache container should have host");
+        assertNotNull(dbInfo.container().getHost(), "Database container should have host");
+        assertNotNull(cacheInfo.container().getHost(), "Cache container should have host");
         
         log.info("✅ Environment properties and runtime configuration validated");
     }

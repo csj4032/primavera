@@ -56,3 +56,34 @@ testcontainers:
         KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
         KAFKA_NUM_PARTITIONS: "3"
         KAFKA_DEFAULT_REPLICATION_FACTOR: "1"
+
+    configPrimaryDb:
+      image: "mariadb:11.4.7"
+      database: "primary_db"
+      username: "primary_user"
+      password: "primary_pass"
+      startup-timeout: 120
+      environment:
+        MYSQL_CHARSET: "utf8mb4"
+        MYSQL_COLLATION: "utf8mb4_unicode_ci"
+      network-aliases:
+        - "primary-db"
+        - "main-db"
+    
+    configSecondaryDb:
+      image: "mariadb:11.4.7"
+      database: "secondary_db"
+      username: "secondary_user"
+      password: "secondary_pass"
+      startup-timeout: 120
+      network-aliases:
+        - "secondary-db"
+        - "replica-db"
+    
+    configCache:
+      image: "redis:7-alpine"
+      password: "redis_password"
+      startup-timeout: 60
+      environment:
+        REDIS_MAXMEMORY: "256mb"
+        REDIS_MAXMEMORY_POLICY: "allkeys-lru"

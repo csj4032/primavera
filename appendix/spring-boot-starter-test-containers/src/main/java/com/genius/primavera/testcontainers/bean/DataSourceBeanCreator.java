@@ -13,11 +13,11 @@ public abstract class DataSourceBeanCreator implements BeanCreator {
     public Object createBean(ContainerInfo containerInfo) {
         HikariConfig config = new HikariConfig();
         config.setJdbcUrl(containerInfo.getJdbcUrl());
-        config.setDriverClassName(containerInfo.getType().getDriverClassName());
-        config.setUsername(containerInfo.getSpec().getUsernameOrDefault());
-        config.setPassword(containerInfo.getSpec().getPasswordOrDefault());
+        config.setDriverClassName(containerInfo.type().getDriverClassName());
+        config.setUsername(containerInfo.spec().getUsernameOrDefault());
+        config.setPassword(containerInfo.spec().getPasswordOrDefault());
         
-        config.setPoolName(containerInfo.getName() + "-pool");
+        config.setPoolName(containerInfo.name() + "-pool");
         config.setMaximumPoolSize(10);
         config.setMinimumIdle(2);
         config.setConnectionTimeout(30000);

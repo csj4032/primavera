@@ -68,24 +68,24 @@ class ContainerLifecycleTest {
         assertNotNull(dbInfo, "DB 컨테이너 정보가 존재해야 함");
         assertNotNull(cacheInfo, "캐시 컨테이너 정보가 존재해야 함");
 
-        assertTrue(dbInfo.getContainer().isRunning(), "DB 컨테이너가 실행 중이어야 함");
-        assertTrue(cacheInfo.getContainer().isRunning(), "캐시 컨테이너가 실행 중이어야 함");
+        assertTrue(dbInfo.container().isRunning(), "DB 컨테이너가 실행 중이어야 함");
+        assertTrue(cacheInfo.container().isRunning(), "캐시 컨테이너가 실행 중이어야 함");
 
         // 컨테이너 기본 정보 검증
-        assertTrue(dbInfo.getContainer().isHealthy(), "DB 컨테이너가 건강해야 함");
-        assertNotNull(dbInfo.getContainer().getContainerId(), "컨테이너 ID가 존재해야 함");
-        assertTrue(dbInfo.getContainer().getContainerId().length() > 10, "컨테이너 ID가 유효해야 함");
+        assertTrue(dbInfo.container().isHealthy(), "DB 컨테이너가 건강해야 함");
+        assertNotNull(dbInfo.container().getContainerId(), "컨테이너 ID가 존재해야 함");
+        assertTrue(dbInfo.container().getContainerId().length() > 10, "컨테이너 ID가 유효해야 함");
 
         // 네트워크 설정 검증
-        String dbHost = dbInfo.getContainer().getHost();
-        Integer dbPort = dbInfo.getContainer().getFirstMappedPort();
+        String dbHost = dbInfo.container().getHost();
+        Integer dbPort = dbInfo.container().getFirstMappedPort();
         
         assertNotNull(dbHost, "DB 호스트가 설정되어야 함");
         assertNotNull(dbPort, "DB 포트가 매핑되어야 함");
         assertTrue(dbPort > 0, "DB 포트가 유효해야 함");
 
         log.info("컨테이너 기본 상태 검증 완료 - DB: {}:{}, Cache: {}:{}", 
-            dbHost, dbPort, cacheInfo.getContainer().getHost(), cacheInfo.getContainer().getFirstMappedPort());
+            dbHost, dbPort, cacheInfo.container().getHost(), cacheInfo.container().getFirstMappedPort());
     }
 
     @Test
@@ -136,10 +136,10 @@ class ContainerLifecycleTest {
         ContainerInfo cacheInfo = containerManager.getContainer("lifecycleCache");
 
         // 컨테이너별 고유 네트워크 설정 확인
-        String dbHost = dbInfo.getContainer().getHost();
-        Integer dbPort = dbInfo.getContainer().getFirstMappedPort();
-        String cacheHost = cacheInfo.getContainer().getHost();
-        Integer cachePort = cacheInfo.getContainer().getFirstMappedPort();
+        String dbHost = dbInfo.container().getHost();
+        Integer dbPort = dbInfo.container().getFirstMappedPort();
+        String cacheHost = cacheInfo.container().getHost();
+        Integer cachePort = cacheInfo.container().getFirstMappedPort();
 
         assertNotNull(dbHost, "DB 호스트가 설정되어야 함");
         assertNotNull(dbPort, "DB 포트가 설정되어야 함");
@@ -150,8 +150,8 @@ class ContainerLifecycleTest {
         assertNotEquals(dbPort, cachePort, "DB와 캐시는 다른 포트를 사용해야 함");
 
         // 컨테이너 ID가 다른지 확인
-        String dbContainerId = dbInfo.getContainer().getContainerId();
-        String cacheContainerId = cacheInfo.getContainer().getContainerId();
+        String dbContainerId = dbInfo.container().getContainerId();
+        String cacheContainerId = cacheInfo.container().getContainerId();
         
         assertNotNull(dbContainerId, "DB 컨테이너 ID가 존재해야 함");
         assertNotNull(cacheContainerId, "캐시 컨테이너 ID가 존재해야 함");
@@ -180,12 +180,12 @@ class ContainerLifecycleTest {
         ContainerInfo cacheInfo = containerManager.getContainer("lifecycleCache");
 
         // 컨테이너 건강성 검사
-        assertTrue(dbInfo.getContainer().isHealthy(), "DB 컨테이너가 건강해야 함");
-        assertTrue(cacheInfo.getContainer().isHealthy(), "캐시 컨테이너가 건강해야 함");
+        assertTrue(dbInfo.container().isHealthy(), "DB 컨테이너가 건강해야 함");
+        assertTrue(cacheInfo.container().isHealthy(), "캐시 컨테이너가 건강해야 함");
 
         // 네트워크 연결 상태 검증
-        assertNotNull(dbInfo.getContainer().getHost(), "DB 호스트가 설정되어야 함");
-        assertNotNull(dbInfo.getContainer().getFirstMappedPort(), "DB 포트가 매핑되어야 함");
+        assertNotNull(dbInfo.container().getHost(), "DB 호스트가 설정되어야 함");
+        assertNotNull(dbInfo.container().getFirstMappedPort(), "DB 포트가 매핑되어야 함");
         
         // 실제 연결 테스트로 건강성 검사
         assertDoesNotThrow(() -> {
@@ -262,7 +262,7 @@ class ContainerLifecycleTest {
     @DisplayName("리소스 사용량 및 정리 검증")
     void testResourceUsageAndCleanup() {
         ContainerInfo dbInfo = containerManager.getContainer("lifecycleDb");
-        GenericContainer<?> container = dbInfo.getContainer();
+        GenericContainer<?> container = dbInfo.container();
 
         // 컨테이너 리소스 정보 확인
         assertNotNull(container.getContainerId(), "컨테이너 ID가 존재해야 함");

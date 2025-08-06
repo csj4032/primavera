@@ -1,5 +1,6 @@
 package com.genius.primavera.testcontainers;
 
+import com.genius.primavera.testcontainers.bean.BeanCreatorRegistry;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.extension.*;
 import org.junit.platform.commons.util.AnnotationUtils;
@@ -13,6 +14,9 @@ public class TestContainerExtension implements TestInstancePreConstructCallback,
     
     @Override
     public void preConstructTestInstance(TestInstanceFactoryContext factoryContext, ExtensionContext context) throws Exception {
+        // Initialize BeanCreatorRegistry early to ensure creators are available
+        BeanCreatorRegistry.initialize();
+        
         Class<?> testClass = context.getRequiredTestClass();
         String testClassName = testClass.getName();
         

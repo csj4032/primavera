@@ -1,20 +1,27 @@
 package com.genius.primavera.testcontainers;
 
-import lombok.Getter;
 import org.testcontainers.containers.GenericContainer;
 
-@Getter
-public class ContainerInfo {
-    private final String name;
-    private final ContainerType type;
-    private final GenericContainer<?> container;
-    private final ContainerConfiguration.ContainerSpec spec;
+public record ContainerInfo(
+    String name,
+    ContainerType type,
+    GenericContainer<?> container,
+    ContainerConfiguration.ContainerSpec spec
+) {
     
-    public ContainerInfo(String name, ContainerType type, GenericContainer<?> container, ContainerConfiguration.ContainerSpec spec) {
-        this.name = name;
-        this.type = type;
-        this.container = container;
-        this.spec = spec;
+    public ContainerInfo {
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("Container name cannot be null or empty");
+        }
+        if (type == null) {
+            throw new IllegalArgumentException("Container type cannot be null");
+        }
+        if (container == null) {
+            throw new IllegalArgumentException("Container instance cannot be null");
+        }
+        if (spec == null) {
+            throw new IllegalArgumentException("Container spec cannot be null");
+        }
     }
     
     public String getHost() {

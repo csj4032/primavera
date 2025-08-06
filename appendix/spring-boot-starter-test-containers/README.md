@@ -87,6 +87,127 @@ testcontainers:
       startup-timeout: 30
 ```
 
+## 설정 파일 요구사항 및 제약사항
+
+### 1. 설정 파일 우선순위
+
+스타터는 다음 순서로 설정 파일을 탐색합니다:
+
+```
+1. application-test.yml (우선)
+2. application-test.yaml 
+3. application-test.properties (후순위)
+```
+
+**⚠️ 중요한 제약사항:**
+- 최소 하나의 설정 파일이 **반드시 존재**해야 합니다 (`src/test/resources/` 하위)
+- YAML 파일이 존재하면 properties 파일은 무시됩니다
+- 설정 파일이 없으면 기본값으로 동작하지만, 컨테이너 세부 설정이 불가능합니다
+- `testcontainers` 프로퍼티 prefix를 반드시 사용해야 합니다
+
+### 2. YAML 설정 구조 및 규칙
+
+```yaml
+spring:
+  config:
+    activate:
+      on-profile: test  # 필수: test 프로파일 활성화
+
+testcontainers:  # 필수: 정확한 prefix 사용
+  containers:    # 필수: containers 하위에 컨테이너 정의
+    [컨테이너명]:  # 컨테이너명은 알파벳, 숫자, 언더스코어만 허용
+      image: "[Docker 이미지]"              # 선택사항 - 기본값 사용 가능
+      database: "[데이터베이스명]"          # 데이터베이스 컨테이너만 해당
+      username: "[사용자명]"               # 기본값: "test"  
+      password: "[비밀번호]"               # 기본값: "test"
+      startup-timeout: [초단위]            # 기본값: 60초, kebab-case 필수
+      init-script: "[초기화 스크립트 경로]" # 데이터베이스만 지원
+      environment:                         # 환경변수 (선택사항)
+        KEY: "value"
+      network-aliases:                     # 네트워크 별칭 (선택사항)
+        - "alias1"
+        - "alias2"
+```
+
+### 3. Properties 설정 형식
+
+```properties
+# 기본 컨테이너 설정
+testcontainers.containers.[컨테이너명].image=mariadb:11.4.7
+testcontainers.containers.[컨테이너명].database=testdb
+testcontainers.containers.[컨테이너명].username=testuser
+testcontainers.containers.[컨테이너명].password=testpass
+testcontainers.containers.[컨테이너명].startup-timeout=120
+testcontainers.containers.[컨테이너명].init-script=./sql/init.sql
+
+# 환경변수 설정
+testcontainers.containers.[컨테이너명].environment.MYSQL_CHARSET=utf8mb4
+testcontainers.containers.[컨테이너명].environment.MYSQL_COLLATION=utf8mb4_unicode_ci
+
+# 네트워크 별칭 (Properties에서는 지원 제한)
+testcontainers.containers.[컨테이너명].network-aliases[0]=alias1
+testcontainers.containers.[컨테이너명].network-aliases[1]=alias2
+```
+
+### 4. 프로퍼티 네이밍 규칙
+
+**⚠️ 중요한 제약사항:**
+- YAML에서는 **kebab-case 필수**: `startup-timeout`, `init-script`, `network-aliases`
+- Properties에서는 **camelCase 또는 kebab-case**: `startupTimeout` 또는 `startup-timeout`
+- **잘못된 네이밍**: `startupTimeout` (YAML에서), `startup_timeout` (언더스코어 사용)
+
+### 5. 초기화 스크립트 제약사항
+
+**지원되는 경로 형식:**
+| 형식 | 예시 | 설명 |
+|------|------|------|
+| 상대경로 | `./sql/init.sql` | `src/test/resources/sql/init.sql` |
+| classpath 접두사 | `classpath:./sql/init.sql` | 클래스패스 기준 경로 |
+| 직접 경로 | `sql/schema.sql` | `src/test/resources/sql/schema.sql` |
+
+**⚠️ 초기화 스크립트 제약사항:**
+- 초기화 스크립트는 **데이터베이스 컨테이너**에서만 지원 (MariaDB, PostgreSQL)
+- 스크립트 파일은 **반드시** `src/test/resources/` 하위에 위치
+- 스크립트는 컨테이너 시작 시 **한 번만** 실행
+- 여러 SQL 문 포함 가능하지만, **트랜잭션은 스크립트 작성자가 관리**
+- 스크립트 실행 실패 시 컨테이너 시작 실패
+
+### 6. 네이밍 및 식별자 규칙
+
+**컨테이너명 규칙:**
+- **허용**: 알파벳, 숫자, 언더스코어 (`primaryDb`, `cache_store`, `db1`)
+- **금지**: 하이픈, 특수문자, 공백 (`primary-db`, `cache@store`, `db 1`)
+- **추천**: camelCase 사용 (`primaryDb`, `analyticsCache`)
+
+**데이터소스 빈명:**
+- 컨테이너명과 동일한 이름으로 자동 등록
+- `@Qualifier("컨테이너명")`으로 주입
+
+### 7. 환경변수 제약사항
+
+**일반 규칙:**
+- 모든 환경변수 값은 **문자열로 처리**
+- YAML에서 특수문자 포함 시 **따옴표로 감싸야 함**
+- Boolean/숫자 값도 문자열로 설정: `"true"`, `"123"`
+
+**컨테이너별 지원 환경변수:**
+```yaml
+# MariaDB/MySQL
+environment:
+  MYSQL_CHARSET: "utf8mb4"
+  MYSQL_COLLATION: "utf8mb4_unicode_ci"
+  MYSQL_INNODB_BUFFER_POOL_SIZE: "256M"
+
+# Redis  
+environment:
+  REDIS_MAXMEMORY: "128mb"
+  REDIS_MAXMEMORY_POLICY: "allkeys-lru"
+
+# PostgreSQL
+environment:
+  POSTGRES_INITDB_ARGS: "--encoding=UTF-8"
+```
+
 ## 고급 사용법
 
 ### 다중 컨테이너 구성
@@ -112,14 +233,15 @@ class MultiContainerTest {
 ### 상세 컨테이너 설정
 
 ```yaml
-testcontainer:
+testcontainers:
   containers:
     advancedDb:
       image: "mariadb:11.4.7"
       database: "advanced_test"
       username: "advanced_user"
       password: "secure_password"
-      startupTimeout: 120
+      startup-timeout: 120
+      init-script: ./sql/advanced_init.sql
       environment:
         MARIADB_CHARACTER_SET_SERVER: "utf8mb4"
         MARIADB_COLLATION_SERVER: "utf8mb4_unicode_ci"
@@ -137,6 +259,110 @@ testcontainer:
         REDIS_MAXMEMORY_POLICY: "allkeys-lru"
       networkAliases:
         - "cache-server"
+```
+
+### 초기화 스크립트 사용법
+
+#### 1. 기본 사용법
+
+```yaml
+testcontainers:
+  containers:
+    testDb:
+      image: "mariadb:11.4.7"
+      database: "testdb" 
+      username: "testuser"
+      password: "testpass"
+      init-script: ./sql/init.sql  # 초기화 스크립트 지정
+```
+
+#### 2. 스크립트 파일 작성 예시
+
+```sql
+-- src/test/resources/sql/init.sql
+CREATE TABLE IF NOT EXISTS USERS
+(
+    ID         BIGINT AUTO_INCREMENT PRIMARY KEY,
+    EMAIL      VARCHAR(100) UNIQUE NOT NULL,
+    PASSWORD   VARCHAR(255),
+    NICKNAME   VARCHAR(50) NOT NULL,
+    STATUS     INT DEFAULT 1,
+    CREATED_AT DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UPDATED_AT DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX IDX_USERS_EMAIL (EMAIL)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+
+-- 기본 테스트 데이터 삽입
+INSERT INTO USERS (EMAIL, PASSWORD, NICKNAME, STATUS) VALUES 
+('admin@test.com', '{noop}admin', 'Administrator', 1),
+('user@test.com', '{noop}user', 'TestUser', 1)
+ON DUPLICATE KEY UPDATE EMAIL = VALUES(EMAIL);
+```
+
+#### 3. 테스트에서 초기화된 데이터 사용
+
+```java
+@SpringBootTest
+@ActiveProfiles("test")
+@EnableTestContainers({
+    @EnableTestContainers.TestContainer(type = ContainerType.MARIADB, name = "testDb")
+})
+class InitScriptTest {
+    
+    @Autowired
+    @Qualifier("testDb")
+    private DataSource dataSource;
+    
+    private JdbcTemplate jdbcTemplate;
+    
+    @BeforeEach
+    void setup() {
+        jdbcTemplate = new JdbcTemplate(dataSource);
+    }
+    
+    @Test
+    void testInitializedData() {
+        // 초기화 스크립트로 생성된 사용자 수 확인
+        Integer userCount = jdbcTemplate.queryForObject(
+            "SELECT COUNT(*) FROM USERS", Integer.class);
+        assertEquals(2, userCount);
+        
+        // 특정 사용자 존재 확인
+        String email = jdbcTemplate.queryForObject(
+            "SELECT EMAIL FROM USERS WHERE NICKNAME = ?", 
+            String.class, "Administrator");
+        assertEquals("admin@test.com", email);
+    }
+}
+```
+
+#### 4. 복잡한 스크립트 구조화
+
+```
+src/test/resources/
+├── sql/
+│   ├── schema/
+│   │   ├── 01_users.sql
+│   │   ├── 02_orders.sql
+│   │   └── 03_products.sql
+│   ├── data/
+│   │   ├── test-users.sql
+│   │   ├── test-orders.sql
+│   │   └── test-products.sql
+│   └── init.sql  # 메인 스크립트
+```
+
+```sql
+-- src/test/resources/sql/init.sql
+-- 스키마 생성
+SOURCE schema/01_users.sql;
+SOURCE schema/02_orders.sql;
+SOURCE schema/03_products.sql;
+
+-- 테스트 데이터 삽입
+SOURCE data/test-users.sql;
+SOURCE data/test-orders.sql;
+SOURCE data/test-products.sql;
 ```
 
 ### 런타임 컨테이너 정보 접근
@@ -442,18 +668,100 @@ void cleanUp() {
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 ```
 
+### 5. 초기화 스크립트 베스트 프랙티스
+
+```sql
+-- ✅ 좋은 예: 멱등성 보장
+CREATE TABLE IF NOT EXISTS USERS (
+    ID BIGINT AUTO_INCREMENT PRIMARY KEY,
+    EMAIL VARCHAR(100) UNIQUE NOT NULL
+);
+
+INSERT INTO USERS (EMAIL, NICKNAME) VALUES 
+('admin@test.com', 'Admin')
+ON DUPLICATE KEY UPDATE NICKNAME = VALUES(NICKNAME);
+
+-- ❌ 나쁜 예: 멱등성 없음
+CREATE TABLE USERS (
+    ID BIGINT AUTO_INCREMENT PRIMARY KEY,
+    EMAIL VARCHAR(100) UNIQUE NOT NULL
+);
+
+INSERT INTO USERS VALUES (1, 'admin@test.com', 'Admin');
+```
+
+```yaml
+# ✅ 좋은 예: 명확한 경로 지정
+testcontainers:
+  containers:
+    testDb:
+      init-script: ./sql/init.sql
+
+# ❌ 나쁜 예: 절대 경로 또는 잘못된 형식
+testcontainers:
+  containers:
+    testDb:
+      init-script: /absolute/path/init.sql  # 절대 경로 사용 금지
+      init-script: init.sql                # ./ 접두사 없음
+```
+
 ## 문제 해결
 
-### 자주 발생하는 문제
+### 1. 설정 파일 관련 오류
 
-#### 1. 컨테이너 시작 실패
+#### BindException 발생
+```
+org.springframework.boot.context.properties.bind.BindException: 
+Failed to bind properties under 'testcontainers'
+```
+
+**원인 및 해결방법:**
+- `application-test.yml` 파일이 올바른 위치(`src/test/resources/`)에 있는지 확인
+- YAML 문법 확인 (들여쓰기, 콜론 뒤 공백 등)
+- 프로퍼티명이 kebab-case인지 확인 (`startup-timeout`, `init-script`)
+- `testcontainers` prefix가 정확한지 확인
+
+#### 컨버터 오류
+```
+No converter found capable of converting from type [java.lang.String] to type [...ContainerConfiguration]
+```
+
+**해결방법:**
+- YAML 파일에서 ResourcePropertySource 대신 YamlPropertySourceLoader 사용 확인
+- 프로퍼티 바인딩을 위한 @ConfigurationProperties 어노테이션 확인
+
+### 2. 초기화 스크립트 관련 오류
+
+#### 스크립트 파일을 찾을 수 없음
+```
+Resource not found: sql/init.sql
+```
+
+**해결방법:**
+- 스크립트 파일이 `src/test/resources/` 하위에 있는지 확인
+- 경로가 올바른지 확인 (`./sql/init.sql` 또는 `sql/init.sql`)
+- 파일 확장자가 `.sql`인지 확인
+
+#### SQL 실행 오류
+```
+SQL syntax error in init script
+```
+
+**해결방법:**
+- SQL 문법이 해당 데이터베이스 타입에 맞는지 확인
+- 문자 인코딩 문제인지 확인 (UTF-8 권장)
+- 테이블/데이터베이스가 이미 존재하는 경우 `IF NOT EXISTS` 사용
+
+### 3. 컨테이너 시작 관련 오류
+
+#### 컨테이너 시작 실패
 ```
 org.testcontainers.containers.ContainerLaunchException: Container startup failed
 ```
 **해결방안**:
 - Docker 데몬 실행 확인
 - 이미지 이름 확인
-- startupTimeout 증가
+- startup-timeout 증가 (기본값: 60초)
 
 #### 2. 포트 충돌
 ```

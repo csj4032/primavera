@@ -55,7 +55,7 @@ class InitScriptDatabaseTest {
         ContainerInfo containerInfo = containerManager.getContainer("primavera");
         
         assertNotNull(containerInfo, "Primavera 컨테이너 정보가 존재해야 함");
-        assertTrue(containerInfo.getContainer().isRunning(), "컨테이너가 실행 중이어야 함");
+        assertTrue(containerInfo.container().isRunning(), "컨테이너가 실행 중이어야 함");
         
         // MariaDB containers don't have healthcheck by default, so we verify connection instead
         assertDoesNotThrow(() -> {

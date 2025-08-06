@@ -1,5 +1,6 @@
 package com.genius.primavera.testcontainers;
 
+import com.genius.primavera.testcontainers.bean.BeanCreatorRegistry;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -16,6 +17,9 @@ public class TestContainerContextInitializer implements ApplicationContextInitia
 
     @Override
     public void initialize(ConfigurableApplicationContext applicationContext) {
+        // Ensure BeanCreatorRegistry is initialized early
+        BeanCreatorRegistry.initialize();
+        
         ConfigurableEnvironment environment = applicationContext.getEnvironment();
 
         ContainerManager containerManager = ContainerRegistry.get();
@@ -32,33 +36,33 @@ public class TestContainerContextInitializer implements ApplicationContextInitia
         Map<String, Object> properties = new HashMap<>();
 
         ContainerInfo primaryContainer = containerManager.getAllContainers().stream()
-                .filter(container -> container.getType().isSqlDatabase())
+                .filter(container -> container.type().isSqlDatabase())
                 .findFirst()
                 .orElse(null);
 
         containerManager.getAllContainers().forEach(containerInfo -> {
-            String prefix = "testcontainers.runtime." + containerInfo.getName();
+            String prefix = "testcontainer.runtime." + containerInfo.name();
 
             properties.put(prefix + ".host", containerInfo.getHost());
             properties.put(prefix + ".port", containerInfo.getMappedPort());
-            properties.put(prefix + ".type", containerInfo.getType().name());
+            properties.put(prefix + ".type", containerInfo.type().name());
             properties.put(prefix + ".connection-string", containerInfo.getConnectionString());
 
-            if (containerInfo.getType().isSqlDatabase()) {
-                properties.put(prefix + ".jdbc-url", containerInfo.getJdbcUrl());
-                properties.put(prefix + ".driver-class-name", containerInfo.getType().getDriverClassName());
-                properties.put(prefix + ".username", containerInfo.getSpec().getUsernameOrDefault());
-                properties.put(prefix + ".password", containerInfo.getSpec().getPasswordOrDefault());
-                properties.put(prefix + ".database", containerInfo.getSpec().getDatabaseOrDefault());
+            if (containerInfo.type().isSqlDatabase()) {
+                properties.put(prefix + ".jdbcUrl", containerInfo.getJdbcUrl());
+                properties.put(prefix + ".driver-class-name", containerInfo.type().getDriverClassName());
+                properties.put(prefix + ".username", containerInfo.spec().getUsernameOrDefault());
+                properties.put(prefix + ".password", containerInfo.spec().getPasswordOrDefault());
+                properties.put(prefix + ".database", containerInfo.spec().getDatabaseOrDefault());
 
                 if (containerInfo.equals(primaryContainer)) {
                     properties.put("spring.datasource.url", containerInfo.getJdbcUrl());
-                    properties.put("spring.datasource.driver-class-name", containerInfo.getType().getDriverClassName());
-                    properties.put("spring.datasource.username", containerInfo.getSpec().getUsernameOrDefault());
-                    properties.put("spring.datasource.password", containerInfo.getSpec().getPasswordOrDefault());
+                    properties.put("spring.datasource.driver-class-name", containerInfo.type().getDriverClassName());
+                    properties.put("spring.datasource.username", containerInfo.spec().getUsernameOrDefault());
+                    properties.put("spring.datasource.password", containerInfo.spec().getPasswordOrDefault());
 
                     log.info("Configured primary DataSource for container: {} ({})",
-                            containerInfo.getName(), containerInfo.getJdbcUrl());
+                            containerInfo.name(), containerInfo.getJdbcUrl());
                 }
             }
 
@@ -79,7 +83,7 @@ public class TestContainerContextInitializer implements ApplicationContextInitia
     }
 
     private void configureSpecificContainerProperties(ContainerInfo containerInfo, Map<String, Object> properties) {
-        switch (containerInfo.getType()) {
+        switch (containerInfo.type()) {
             case REDIS -> configureRedisProperties(containerInfo, properties);
             case MONGODB -> configureMongoProperties(containerInfo, properties);
             case KAFKA -> configureKafkaProperties(containerInfo, properties);
@@ -88,28 +92,28 @@ public class TestContainerContextInitializer implements ApplicationContextInitia
     }
 
     private void configureRedisProperties(ContainerInfo containerInfo, Map<String, Object> properties) {
-        String redisPrefix = "spring.data.redis." + containerInfo.getName();
+        String redisPrefix = "spring.data.redis." + containerInfo.name();
         properties.put(redisPrefix + ".host", containerInfo.getHost());
         properties.put(redisPrefix + ".port", containerInfo.getMappedPort());
 
-        String password = containerInfo.getSpec().getPassword();
+        String password = containerInfo.spec().getPassword();
         if (password != null && !password.isEmpty()) {
             properties.put(redisPrefix + ".password", password);
         }
     }
 
     private void configureMongoProperties(ContainerInfo containerInfo, Map<String, Object> properties) {
-        String mongoPrefix = "spring.data.mongodb." + containerInfo.getName();
+        String mongoPrefix = "spring.data.mongodb." + containerInfo.name();
         properties.put(mongoPrefix + ".uri", containerInfo.getConnectionString());
     }
 
     private void configureKafkaProperties(ContainerInfo containerInfo, Map<String, Object> properties) {
-        String kafkaPrefix = "spring.kafka." + containerInfo.getName();
+        String kafkaPrefix = "spring.kafka." + containerInfo.name();
         properties.put(kafkaPrefix + ".bootstrap-servers", containerInfo.getConnectionString());
     }
 
     private void configureElasticsearchProperties(ContainerInfo containerInfo, Map<String, Object> properties) {
-        String esPrefix = "spring.elasticsearch." + containerInfo.getName();
+        String esPrefix = "spring.elasticsearch." + containerInfo.name();
         properties.put(esPrefix + ".uris", containerInfo.getConnectionString());
     }
 }

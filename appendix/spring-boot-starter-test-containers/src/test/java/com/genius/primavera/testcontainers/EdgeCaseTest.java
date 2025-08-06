@@ -53,7 +53,7 @@ class EdgeCaseTest {
         
         ContainerInfo dbInfo = manager.getContainer("edgeCaseDb");
         assertNotNull(dbInfo, "Database container should be created with defaults");
-        assertEquals(ContainerType.MARIADB, dbInfo.getType(), "Container type should be preserved");
+        assertEquals(ContainerType.MARIADB, dbInfo.type(), "Container type should be preserved");
         
         log.info("Empty configuration handled gracefully");
     }
@@ -166,7 +166,7 @@ class EdgeCaseTest {
         ContainerManager manager = ContainerRegistry.get();
         ContainerInfo dbInfo = manager.getContainer("edgeCaseDb");
         
-        assertTrue(dbInfo.getContainer().isRunning(), "Container should be running initially");
+        assertTrue(dbInfo.container().isRunning(), "Container should be running initially");
         
         JdbcTemplate jdbcTemplate = new JdbcTemplate(edgeCaseDataSource);
         jdbcTemplate.execute("CREATE TABLE IF NOT EXISTS restart_test (id INT PRIMARY KEY, data VARCHAR(50))");
@@ -281,14 +281,14 @@ class EdgeCaseTest {
         ContainerManager manager = ContainerRegistry.get();
         ContainerInfo dbInfo = manager.getContainer("edgeCaseDb");
         
-        assertNotNull(dbInfo.getSpec().getStartupTimeout(),
+        assertNotNull(dbInfo.spec().getStartupTimeout(),
             "Startup timeout should be properly coerced to integer");
-        assertTrue(dbInfo.getSpec().getStartupTimeout() > 0,
+        assertTrue(dbInfo.spec().getStartupTimeout() > 0,
             "Startup timeout should be positive value");
         
-        assertNotNull(dbInfo.getSpec().getImage(),
+        assertNotNull(dbInfo.spec().getImage(),
             "Image name should be properly handled as string");
-        assertTrue(dbInfo.getSpec().getImage().contains(":"),
+        assertTrue(dbInfo.spec().getImage().contains(":"),
             "Image should contain version tag");
         
         log.info("Configuration property type coercion validated");

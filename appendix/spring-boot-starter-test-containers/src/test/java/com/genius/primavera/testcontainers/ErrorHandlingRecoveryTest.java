@@ -209,7 +209,7 @@ class ErrorHandlingRecoveryTest {
         ContainerInfo containerInfo = containerManager.getContainer("resilientDb");
         assertNotNull(containerInfo, "컨테이너 정보가 존재해야 함");
         
-        GenericContainer<?> container = containerInfo.getContainer();
+        GenericContainer<?> container = containerInfo.container();
         assertTrue(container.isRunning(), "컨테이너가 실행 중이어야 함");
 
         // 정상적인 작업 수행

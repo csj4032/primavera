@@ -147,9 +147,9 @@ class MultiTypeContainerIntegrationTest {
         ContainerInfo analyticsInfo = containerManager.getContainer("analyticsDb");
         ContainerInfo cacheInfo = containerManager.getContainer("cacheStore");
 
-        assertTrue(primaryInfo.getContainer().isRunning(), "Primary DB should be running");
-        assertTrue(analyticsInfo.getContainer().isRunning(), "Analytics DB should be running");
-        assertTrue(cacheInfo.getContainer().isRunning(), "Cache should be running");
+        assertTrue(primaryInfo.container().isRunning(), "Primary DB should be running");
+        assertTrue(analyticsInfo.container().isRunning(), "Analytics DB should be running");
+        assertTrue(cacheInfo.container().isRunning(), "Cache should be running");
 
         log.info("All container types connectivity verified");
     }
@@ -456,12 +456,12 @@ class MultiTypeContainerIntegrationTest {
         ContainerInfo cacheInfo = containerManager.getContainer("cacheStore");
 
         // Verify network isolation
-        String primaryHost = primaryInfo.getContainer().getHost();
-        Integer primaryPort = primaryInfo.getContainer().getFirstMappedPort();
-        String analyticsHost = analyticsInfo.getContainer().getHost();
-        Integer analyticsPort = analyticsInfo.getContainer().getFirstMappedPort();
-        String cacheHost = cacheInfo.getContainer().getHost();
-        Integer cachePort = cacheInfo.getContainer().getFirstMappedPort();
+        String primaryHost = primaryInfo.container().getHost();
+        Integer primaryPort = primaryInfo.container().getFirstMappedPort();
+        String analyticsHost = analyticsInfo.container().getHost();
+        Integer analyticsPort = analyticsInfo.container().getFirstMappedPort();
+        String cacheHost = cacheInfo.container().getHost();
+        Integer cachePort = cacheInfo.container().getFirstMappedPort();
 
         // Hosts can be the same, but ports should be different
         assertNotEquals(primaryPort, analyticsPort, "Primary and Analytics DB should use different ports");
@@ -469,9 +469,9 @@ class MultiTypeContainerIntegrationTest {
         assertNotEquals(analyticsPort, cachePort, "Analytics DB and Cache should use different ports");
 
         // Verify all container IDs are different
-        String primaryId = primaryInfo.getContainer().getContainerId();
-        String analyticsId = analyticsInfo.getContainer().getContainerId();
-        String cacheId = cacheInfo.getContainer().getContainerId();
+        String primaryId = primaryInfo.container().getContainerId();
+        String analyticsId = analyticsInfo.container().getContainerId();
+        String cacheId = cacheInfo.container().getContainerId();
 
         assertNotEquals(primaryId, analyticsId, "Primary and Analytics container IDs should be different");
         assertNotEquals(primaryId, cacheId, "Primary and Cache container IDs should be different");

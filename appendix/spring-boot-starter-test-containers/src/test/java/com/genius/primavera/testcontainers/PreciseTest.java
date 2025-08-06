@@ -89,13 +89,13 @@ class PreciseTest {
         assertNotNull(cacheInfo, "Cache container info should exist");
         assertNotNull(messagingInfo, "Messaging container info should exist");
         
-        assertEquals(ContainerType.MARIADB, dbInfo.getType(), "Database should be MariaDB type");
-        assertEquals(ContainerType.REDIS, cacheInfo.getType(), "Cache should be Redis type");
-        assertEquals(ContainerType.KAFKA, messagingInfo.getType(), "Messaging should be Kafka type");
+        assertEquals(ContainerType.MARIADB, dbInfo.type(), "Database should be MariaDB type");
+        assertEquals(ContainerType.REDIS, cacheInfo.type(), "Cache should be Redis type");
+        assertEquals(ContainerType.KAFKA, messagingInfo.type(), "Messaging should be Kafka type");
         
-        assertTrue(dbInfo.getContainer().isRunning(), "Database container should be running");
-        assertTrue(cacheInfo.getContainer().isRunning(), "Cache container should be running");
-        assertTrue(messagingInfo.getContainer().isRunning(), "Messaging container should be running");
+        assertTrue(dbInfo.container().isRunning(), "Database container should be running");
+        assertTrue(cacheInfo.container().isRunning(), "Cache container should be running");
+        assertTrue(messagingInfo.container().isRunning(), "Messaging container should be running");
         
         log.info("✅ Container manager state and lifecycle validated");
     }

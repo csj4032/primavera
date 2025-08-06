@@ -75,8 +75,8 @@ class CoreFunctionalityTest {
         assertNotNull(dbInfo, "Database container info should exist");
         assertNotNull(cacheInfo, "Cache container info should exist");
         
-        assertEquals(ContainerType.MARIADB, dbInfo.getType(), "Database should be MariaDB");
-        assertEquals(ContainerType.REDIS, cacheInfo.getType(), "Cache should be Redis");
+        assertEquals(ContainerType.MARIADB, dbInfo.type(), "Database should be MariaDB");
+        assertEquals(ContainerType.REDIS, cacheInfo.type(), "Cache should be Redis");
         
         log.info("✅ Container manager available with {} containers", manager.getAllContainers().size());
     }
@@ -151,15 +151,15 @@ class CoreFunctionalityTest {
         ContainerManager manager = ContainerRegistry.get();
         
         for (ContainerInfo containerInfo : manager.getAllContainers()) {
-            assertTrue(containerInfo.getContainer().isRunning(), 
-                "Container " + containerInfo.getName() + " should be running");
+            assertTrue(containerInfo.container().isRunning(), 
+                "Container " + containerInfo.name() + " should be running");
             
             try {
-                boolean isHealthy = containerInfo.getContainer().isHealthy();
-                log.info("Container {} health status: {}", containerInfo.getName(), isHealthy);
+                boolean isHealthy = containerInfo.container().isHealthy();
+                log.info("Container {} health status: {}", containerInfo.name(), isHealthy);
             } catch (Exception e) {
                 log.info("Container {} does not have health check configured: {}", 
-                    containerInfo.getName(), e.getMessage());
+                    containerInfo.name(), e.getMessage());
             }
         }
         
@@ -205,7 +205,7 @@ class CoreFunctionalityTest {
         assertEquals(2, containerCount, "Should have exactly 2 containers");
         
         for (ContainerInfo containerInfo : manager.getAllContainers()) {
-            assertNotNull(containerInfo.getContainer().getContainerId(), 
+            assertNotNull(containerInfo.container().getContainerId(), 
                 "Container ID should be available for cleanup");
         }
         

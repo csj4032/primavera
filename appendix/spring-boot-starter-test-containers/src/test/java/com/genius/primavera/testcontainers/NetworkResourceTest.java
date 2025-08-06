@@ -63,9 +63,9 @@ class NetworkResourceTest {
         assertNotNull(cacheInfo, "Cache container should exist");
         assertNotNull(messagingInfo, "Messaging container should exist");
         
-        GenericContainer<?> dbContainer = dbInfo.getContainer();
-        GenericContainer<?> cacheContainer = cacheInfo.getContainer();
-        GenericContainer<?> messagingContainer = messagingInfo.getContainer();
+        GenericContainer<?> dbContainer = dbInfo.container();
+        GenericContainer<?> cacheContainer = cacheInfo.container();
+        GenericContainer<?> messagingContainer = messagingInfo.container();
         
         assertTrue(dbContainer.getFirstMappedPort() > 0, "Database should have mapped port");
         assertTrue(cacheContainer.getFirstMappedPort() > 0, "Cache should have mapped port");
@@ -90,10 +90,10 @@ class NetworkResourceTest {
         ContainerInfo dbInfo = manager.getContainer("networkDb");
         ContainerInfo cacheInfo = manager.getContainer("networkCache");
         
-        String dbHost = dbInfo.getContainer().getHost();
-        Integer dbPort = dbInfo.getContainer().getFirstMappedPort();
-        String cacheHost = cacheInfo.getContainer().getHost();
-        Integer cachePort = cacheInfo.getContainer().getFirstMappedPort();
+        String dbHost = dbInfo.container().getHost();
+        Integer dbPort = dbInfo.container().getFirstMappedPort();
+        String cacheHost = cacheInfo.container().getHost();
+        Integer cachePort = cacheInfo.container().getFirstMappedPort();
         
         assertTrue(isPortReachable(dbHost, dbPort, 5000),
             String.format("Database should be reachable at %s:%d", dbHost, dbPort));
@@ -256,13 +256,13 @@ class NetworkResourceTest {
         ContainerInfo cacheInfo = manager.getContainer("networkCache");
         ContainerInfo messagingInfo = manager.getContainer("networkMessaging");
         
-        assertTrue(dbInfo.getContainer().isHealthy(), "Database container should be healthy");
-        assertTrue(cacheInfo.getContainer().isHealthy(), "Cache container should be healthy");
-        assertTrue(messagingInfo.getContainer().isHealthy(), "Messaging container should be healthy");
+        assertTrue(dbInfo.container().isHealthy(), "Database container should be healthy");
+        assertTrue(cacheInfo.container().isHealthy(), "Cache container should be healthy");
+        assertTrue(messagingInfo.container().isHealthy(), "Messaging container should be healthy");
         
-        assertTrue(dbInfo.getContainer().isRunning(), "Database container should be running");
-        assertTrue(cacheInfo.getContainer().isRunning(), "Cache container should be running");
-        assertTrue(messagingInfo.getContainer().isRunning(), "Messaging container should be running");
+        assertTrue(dbInfo.container().isRunning(), "Database container should be running");
+        assertTrue(cacheInfo.container().isRunning(), "Cache container should be running");
+        assertTrue(messagingInfo.container().isRunning(), "Messaging container should be running");
         
         log.info("All container health checks passed");
     }
@@ -276,14 +276,14 @@ class NetworkResourceTest {
         ContainerInfo dbInfo = manager.getContainer("networkDb");
         ContainerInfo cacheInfo = manager.getContainer("networkCache");
         
-        String dbContainerId = dbInfo.getContainer().getContainerId();
-        String cacheContainerId = cacheInfo.getContainer().getContainerId();
+        String dbContainerId = dbInfo.container().getContainerId();
+        String cacheContainerId = cacheInfo.container().getContainerId();
         
         assertNotEquals(dbContainerId, cacheContainerId,
             "Different containers should have different container IDs");
         
-        assertNotEquals(dbInfo.getContainer().getFirstMappedPort(),
-            cacheInfo.getContainer().getFirstMappedPort(),
+        assertNotEquals(dbInfo.container().getFirstMappedPort(),
+            cacheInfo.container().getFirstMappedPort(),
             "Different containers should use different ports");
         
         JdbcTemplate jdbcTemplate = new JdbcTemplate(networkDataSource);
@@ -316,7 +316,7 @@ class NetworkResourceTest {
         assertTrue(initialContainerCount > 0, "Should have active containers");
         
         manager.getAllContainers().forEach(containerInfo -> {
-            assertTrue(containerInfo.getContainer().isRunning(),
+            assertTrue(containerInfo.container().isRunning(),
                 "All containers should be running before cleanup test");
         });
         
