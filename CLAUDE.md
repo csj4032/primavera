@@ -32,10 +32,31 @@ Primavera는 기본 개념부터 고급 마이크로서비스 아키텍처까지
 ./gradlew build --parallel
 ```
 
-### 데이터베이스 작업
+### 중앙화된 Docker 인프라 관리 (2025년 8월 업데이트)
 
 ```bash
-# Docker로 MariaDB 11.4.7 시작
+# 특정 챕터 Docker 환경 시작
+./infrastructure/scripts/docker-manager.sh start chap04
+
+# 특정 챕터 Docker 환경 중지
+./infrastructure/scripts/docker-manager.sh stop chap04
+
+# 모든 챕터 Docker 환경 시작
+./infrastructure/scripts/docker-manager.sh start-all
+
+# 모든 챕터 Docker 환경 상태 확인
+./infrastructure/scripts/docker-manager.sh status-all
+
+# 사용 가능한 챕터 목록
+./infrastructure/scripts/docker-manager.sh list
+
+# TestContainers가 자동으로 MariaDB 11.4.7 테스트 관리
+```
+
+### 데이터베이스 작업 (기존 호환성 유지)
+
+```bash
+# Docker로 MariaDB 11.4.7 시작 (수동 방법)
 docker run -d --name mariadb-primavera \
   -e MARIADB_ROOT_PASSWORD=root \
   -e MARIADB_DATABASE=primavera \
@@ -43,10 +64,8 @@ docker run -d --name mariadb-primavera \
   -e MARIADB_PASSWORD=primavera \
   -p 3308:3306 mariadb:11.4.7
 
-# 전체 설정을 위한 docker-compose 사용 (권장)
+# 전체 설정을 위한 docker-compose 사용 (기존 방법)
 docker-compose up -d
-
-# TestContainers가 자동으로 MariaDB 11.4.7 테스트 관리
 ```
 
 ## 아키텍처 및 철학

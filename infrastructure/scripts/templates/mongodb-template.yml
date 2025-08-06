@@ -1,0 +1,21 @@
+  mongodb-${CHAPTER}:
+    image: mongo:7.0
+    container_name: mongodb-primavera-${CHAPTER}
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+      MONGO_INITDB_DATABASE: primavera
+    ports:
+      - "${MONGODB_PORT}:27017"
+    volumes:
+      - mongodb-${CHAPTER}-data:/data/db
+      - ${MONGO_INIT_PATH}:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    healthcheck:
+      test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - ${CHAPTER}-network

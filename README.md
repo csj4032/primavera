@@ -781,7 +781,65 @@ docker --version
 docker-compose --version
 ```
 
-### 2. Infrastructure Docker 환경 구성 ⚡ **2025년 1월 업데이트**
+### 2. 🆕 중앙화된 Docker 인프라 관리 ⚡ **2025년 8월 업데이트**
+
+**🎯 새로운 Docker 관리 시스템으로 업그레이드되었습니다!**
+
+모든 챕터의 Docker 인프라가 중앙화되어 더욱 효율적이고 간편하게 관리할 수 있습니다.
+
+#### 📋 주요 특징
+- **중앙 관리**: 모든 Docker 설정을 `/infrastructure/` 디렉토리에서 통합 관리
+- **자동화**: Shell 스크립트로 원클릭 환경 구성
+- **포트 자동 할당**: 챕터별로 고유 포트 자동 배정 (충돌 방지)
+- **템플릿 기반**: MariaDB, Vault, MongoDB 서비스 조합 자유 설정
+
+#### 🛠️ 사용법
+
+```bash
+# 특정 챕터의 Docker 환경 시작
+./infrastructure/scripts/docker-manager.sh start chap04
+
+# 특정 챕터의 Docker 환경 중지
+./infrastructure/scripts/docker-manager.sh stop chap04
+
+# 모든 챕터의 Docker 환경 시작
+./infrastructure/scripts/docker-manager.sh start-all
+
+# 모든 챕터의 Docker 환경 상태 확인
+./infrastructure/scripts/docker-manager.sh status-all
+
+# 사용 가능한 챕터 목록 확인
+./infrastructure/scripts/docker-manager.sh list
+
+# 도움말 보기
+./infrastructure/scripts/docker-manager.sh help
+```
+
+#### 📊 챕터별 포트 할당
+- **chap04**: MariaDB(3308), Vault(8200)
+- **chap05**: MariaDB(3309), Vault(8201)
+- **chap13**: MariaDB(3317), Vault(8209), MongoDB(27017)
+- **기타 챕터**: 순차적 포트 할당
+
+#### ✨ 사용 예시
+
+```bash
+# chap04 환경 시작
+./infrastructure/scripts/docker-manager.sh start chap04
+# ✅ chap04 services started successfully!
+
+# 상태 확인
+./infrastructure/scripts/docker-manager.sh status chap04
+# Status for chap04:
+# ✅ mariadb (mariadb-primavera-chap04): Up 30 seconds (healthy)
+# ✅ vault (vault-primavera-chap04): Up 25 seconds (healthy)
+
+# chap04 환경 중지
+./infrastructure/scripts/docker-manager.sh stop chap04
+# ✅ chap04 services stopped successfully!
+```
+
+### 3. Infrastructure Docker 환경 구성 (기존 방법 - 호환성 유지)
 
 #### 📦 Infrastructure 디렉토리 구성
 ```
