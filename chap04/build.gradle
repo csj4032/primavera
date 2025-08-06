@@ -3,7 +3,6 @@ dependencies {
     databaseDependencies.each { dep -> implementation dep }
     mybatisDependencies.each { dep -> implementation dep }
     testContainersDependencies.each { dep -> testImplementation dep }
-    testImplementation project(':appendix:spring-boot-test-support')
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
     implementation "org.springframework.cloud:spring-cloud-starter-config"
     implementation "org.springframework.cloud:spring-cloud-starter-vault-config:${springCloudVaultVersion}"
@@ -12,5 +11,5 @@ dependencies {
     implementation "org.reflections:reflections:${reflectionsVersion}"
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
     testImplementation "org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}"
-    testImplementation "org.h2database:h2:${h2Version}"
+    testImplementation project(':appendix:spring-boot-starter-test-container')
 }

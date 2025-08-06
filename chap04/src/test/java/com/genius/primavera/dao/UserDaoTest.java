@@ -1,7 +1,6 @@
 package com.genius.primavera.dao;
 
 import com.genius.primavera.domain.User;
-import com.genius.primavera.testingsupport.MariaDBAndRedisIntegrationTest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,13 +18,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @SpringBootTest
 @ActiveProfiles("test")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@DisplayName("UserDao 통합 테스트 - 새로운 Mixin 어노테이션 적용")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class UserDaoTest implements MariaDBAndRedisIntegrationTest {
-
-    static {
-        MariaDBAndRedisIntegrationTest.mariadbAndRedisStart();
-    }
+@DisplayName("UserDao 통합 테스트")
+public class UserDaoTest {
 
     @Autowired
     private UserDao userDao;

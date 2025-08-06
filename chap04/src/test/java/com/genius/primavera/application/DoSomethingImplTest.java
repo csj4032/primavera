@@ -1,5 +1,6 @@
 package com.genius.primavera.application;
 
+import com.genius.primavera.testcontainer.v4.EnableTestContainers;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,23 +17,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @Slf4j
 @SpringBootTest
 @ActiveProfiles("test")
-@Testcontainers
+@EnableTestContainers()
 public class DoSomethingImplTest {
-
-    @Container
-    static MariaDBContainer<?> mariadb = new MariaDBContainer<>("mariadb:11.4")
-            .withDatabaseName("primavera")
-            .withUsername("primavera")
-            .withPassword("primavera")
-            .withInitScript("sql/init.sql");
-
-    @DynamicPropertySource
-    static void configureProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", mariadb::getJdbcUrl);
-        registry.add("spring.datasource.username", mariadb::getUsername);  
-        registry.add("spring.datasource.password", mariadb::getPassword);
-        registry.add("spring.datasource.driver-class-name", mariadb::getDriverClassName);
-    }
 
     @Test
     @DisplayName("DoSomethingImpl 테스트")
