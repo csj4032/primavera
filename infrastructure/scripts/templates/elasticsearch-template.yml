@@ -1,0 +1,30 @@
+  elasticsearch-${CHAPTER}:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0
+    container_name: elasticsearch-primavera-${CHAPTER}
+    restart: unless-stopped
+    environment:
+      - discovery.type=single-node
+      - cluster.name=primavera-cluster
+      - node.name=primavera-node
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
+      - xpack.security.enabled=false
+      - xpack.security.http.ssl.enabled=false
+      - xpack.security.transport.ssl.enabled=false
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - "${ELASTICSEARCH_PORT}:9200"
+      - "${ELASTICSEARCH_TRANSPORT_PORT}:9300"
+    volumes:
+      - elasticsearch-${CHAPTER}-data:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl --silent --fail http://localhost:9200/_cluster/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    networks:
+      - ${CHAPTER}-network

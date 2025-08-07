@@ -1,0 +1,31 @@
+  mariadb-${CHAPTER}:
+    image: mariadb:11.4.7
+    container_name: mariadb-primavera-${CHAPTER}
+    restart: unless-stopped
+    environment:
+      MARIADB_ROOT_PASSWORD: root
+      MARIADB_DATABASE: primavera
+      MARIADB_USER: primavera
+      MARIADB_PASSWORD: primavera
+      TZ: Asia/Seoul
+    ports:
+      - "${MARIADB_PORT}:3306"
+    volumes:
+      - mariadb-${CHAPTER}-data:/var/lib/mysql
+      - ${SQL_INIT_PATH}:/docker-entrypoint-initdb.d/init.sql:ro
+      - ./my.cnf:/etc/mysql/conf.d/my.cnf:ro
+    command: >
+      --log-bin=mysql-bin
+      --server-id=1
+      --binlog-format=row
+      --binlog-row-image=full
+      --expire-logs-days=10
+      --log-slave-updates=1
+    healthcheck:
+      test: ["CMD", "mariadb", "-uprimavera", "-pprimavera", "-e", "SELECT 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - ${CHAPTER}-network

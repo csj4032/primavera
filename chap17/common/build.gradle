@@ -6,7 +6,9 @@ plugins {
 dependencies {
     api "org.springframework.boot:spring-boot-starter:${springBootVersion}"
     api "org.springframework.boot:spring-boot-starter-data-jpa:${springBootVersion}"
-    implementation 'org.apache.commons:commons-lang3:3.14.0'
+    api "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
+    api "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonVersion}"
+    implementation "org.apache.commons:commons-lang3:${commonsLang3Version}"
     compileOnly "org.projectlombok:lombok:${lombokVersion}"
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
     testImplementation "org.junit.jupiter:junit-jupiter:${junitJupiterVersion}"

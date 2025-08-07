@@ -1,7 +1,17 @@
-# Chapter 17 - Enterprise Data Pipeline with Spring Batch & Debezium Embedded
+# Chapter 17: 마이크로서비스 데이터 파이프라인
 
-## 개요
-Chapter 17은 **엔터프라이즈급 데이터 파이프라인**을 구현하는 프로젝트입니다. **Spring Batch**로 초기 대용량 인덱싱을 수행하고, **Debezium Embedded**로 실시간 변경사항을 감지하여 Elasticsearch를 업데이트하는 완전한 데이터 파이프라인을 구축합니다.
+## 🚀 개요
+
+Chapter 17은 Spring Boot를 활용한 **고급 마이크로서비스 데이터 파이프라인**을 구현하는 프로젝트입니다. 실시간 데이터 처리, 검색, 스트리밍을 통한 완전한 데이터 파이프라인 아키텍처를 제공합니다.
+
+### 주요 특징
+
+- **🔄 실시간 데이터 파이프라인**: Debezium CDC를 통한 실시간 데이터베이스 변경 감지
+- **📊 Spring Batch**: 대용량 데이터 배치 처리 및 Elasticsearch 색인
+- **⚡ WebFlux**: 반응형 웹 프로그래밍을 통한 비동기 스트리밍 API
+- **🔍 Elasticsearch**: 고성능 검색 및 분석 엔진
+- **🐳 완전한 Docker 환경**: MariaDB, Elasticsearch, Kibana, Vault 통합 환경
+- **🧪 포괄적인 테스트**: TestContainers를 활용한 통합 테스트
 
 ## 서브모듈 구조
 ```

@@ -1,0 +1,152 @@
+version: '3.8'
+
+services:
+  # MariaDB for chap17 data pipeline
+  mariadb-chap17:
+    image: mariadb:11.4.7
+    container_name: mariadb-primavera-chap17
+    restart: unless-stopped
+    environment:
+      MARIADB_ROOT_PASSWORD: root
+      MARIADB_DATABASE: primavera
+      MARIADB_USER: primavera
+      MARIADB_PASSWORD: primavera
+      TZ: Asia/Seoul
+    ports:
+      - "3321:3306"
+    volumes:
+      - mariadb-chap17-data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - ./my.cnf:/etc/mysql/conf.d/my.cnf:ro
+    command: >
+      --log-bin=mysql-bin
+      --server-id=1
+      --binlog-format=row
+      --binlog-row-image=full
+      --expire-logs-days=10
+      --log-slave-updates=1
+    healthcheck:
+      test: ["CMD", "mariadb", "-uprimavera", "-pprimavera", "-e", "SELECT 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - chap17-network
+
+  # Elasticsearch for search and indexing
+  elasticsearch-chap17:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0
+    container_name: elasticsearch-primavera-chap17
+    restart: unless-stopped
+    environment:
+      - discovery.type=single-node
+      - cluster.name=primavera-cluster
+      - node.name=primavera-node
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
+      - xpack.security.enabled=false
+      - xpack.security.http.ssl.enabled=false
+      - xpack.security.transport.ssl.enabled=false
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - elasticsearch-chap17-data:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl --silent --fail http://localhost:9200/_cluster/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    networks:
+      - chap17-network
+
+  # Kibana for Elasticsearch visualization
+  kibana-chap17:
+    image: docker.elastic.co/kibana/kibana:8.12.0
+    container_name: kibana-primavera-chap17
+    restart: unless-stopped
+    environment:
+      ELASTICSEARCH_HOSTS: http://elasticsearch-chap17:9200
+      SERVER_NAME: kibana-primavera
+      SERVER_BASEPATH: ""
+    ports:
+      - "5601:5601"
+    depends_on:
+      elasticsearch-chap17:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl --silent --fail http://localhost:5601/api/status || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s
+    networks:
+      - chap17-network
+
+  # Vault for Configuration Management
+  vault-chap17:
+    image: hashicorp/vault:1.15
+    container_name: vault-primavera-chap17
+    restart: unless-stopped
+    cap_add:
+      - IPC_LOCK
+    environment:
+      VAULT_DEV_ROOT_TOKEN_ID: 'primavera-vault-token'
+      VAULT_DEV_LISTEN_ADDRESS: '0.0.0.0:8200'
+      VAULT_LOG_LEVEL: 'info'
+    ports:
+      - "8213:8200"
+    volumes:
+      - vault-chap17-data:/vault/data
+    command: >
+      sh -c "vault server -dev -dev-root-token-id=primavera-vault-token &
+             sleep 5 &&
+             export VAULT_ADDR='http://0.0.0.0:8200' &&
+             export VAULT_TOKEN='primavera-vault-token' &&
+             vault kv put secret/FileProcessingMonitoringApplication/local \\
+               spring.datasource.driver-class-name=org.mariadb.jdbc.Driver \\
+               spring.datasource.url=jdbc:mariadb://mariadb-chap17:3306/primavera \\
+               spring.datasource.username=primavera \\
+               spring.datasource.password=primavera \\
+               elasticsearch.host=elasticsearch-chap17 \\
+               elasticsearch.port=9200 \\
+               elasticsearch.scheme=http \\
+               debezium.enabled=true \\
+               debezium.database.hostname=mariadb-chap17 \\
+               debezium.database.port=3306 \\
+               debezium.database.user=primavera \\
+               debezium.database.password=primavera \\
+               debezium.database.name=primavera &&
+             tail -f /dev/null"
+    healthcheck:
+      test: ["CMD", "vault", "status"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    depends_on:
+      mariadb-chap17:
+        condition: service_healthy
+      elasticsearch-chap17:
+        condition: service_healthy
+    networks:
+      - chap17-network
+
+volumes:
+  mariadb-chap17-data:
+    name: mariadb-chap17-data
+  elasticsearch-chap17-data:
+    name: elasticsearch-chap17-data
+  vault-chap17-data:
+    name: vault-chap17-data
+
+networks:
+  chap17-network:
+    name: primavera-chap17-network
+    driver: bridge

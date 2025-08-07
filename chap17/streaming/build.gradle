@@ -11,24 +11,40 @@ configurations {
 
 dependencies {
     implementation project(':chap17:common')
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    implementation 'org.springframework.boot:spring-boot-starter-data-r2dbc'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    implementation "org.apache.kafka:connect-api:${kafkaVersion}"
-    implementation "org.apache.kafka:connect-runtime:${kafkaVersion}"
-    runtimeOnly "org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}"
+    
+    // R2DBC MariaDB Driver
+    implementation "org.mariadb:r2dbc-mariadb:${r2dbcMariadbVersion}"
+    implementation "io.r2dbc:r2dbc-pool:${r2dbcPoolVersion}"
+    
+    // Elasticsearch
     implementation "co.elastic.clients:elasticsearch-java:${elasticsearchVersion}"
     implementation "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
-    implementation "io.debezium:debezium-embedded:${debeziumVersion}"
-    implementation "io.debezium:debezium-connector-mariadb:${debeziumVersion}"
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonVersion}"
+    
+    // Debezium CDC
+    implementation "io.debezium:debezium-embedded:${debeziumVersion}"
+    implementation "io.debezium:debezium-connector-mysql:${debeziumVersion}"
+    implementation "io.debezium:debezium-api:${debeziumVersion}"
+    implementation "io.debezium:debezium-core:${debeziumVersion}"
+    
+    // Utilities
     implementation "org.apache.commons:commons-lang3:${commonsLang3Version}"
+    
+    // Test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'io.projectreactor:reactor-test'
     testImplementation "org.testcontainers:junit-jupiter:${testContainersVersion}"
     testImplementation "org.testcontainers:mariadb:${testContainersVersion}"
     testImplementation "org.testcontainers:elasticsearch:${testContainersVersion}"
+    testImplementation "org.testcontainers:r2dbc:${testContainersVersion}"
+    
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+    compileOnly "org.projectlombok:lombok:${lombokVersion}"
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 

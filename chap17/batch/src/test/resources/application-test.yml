@@ -1,0 +1,38 @@
+spring:
+  application:
+    name: FileProcessingMonitoringApplication-Test
+  datasource:
+    hikari:
+      minimum-idle: 1
+      maximum-pool-size: 5
+      connection-timeout: 20000
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    open-in-view: false
+
+logging:
+  level:
+    com.genius.primavera: DEBUG
+    org.springframework.batch: DEBUG
+    co.elastic.clients: INFO
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+batch:
+  async.enabled: false
+  thread:
+    core-pool-size: 2
+    max-pool-size: 4
+    queue-capacity: 10
+
+elasticsearch:
+  username: ""
+  password: ""
+
+debezium:
+  enabled: false
