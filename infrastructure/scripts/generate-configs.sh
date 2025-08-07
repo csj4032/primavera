@@ -2,9 +2,9 @@
 
 # Generate config files for each chapter with standard ports
 chapters=(
-    "chap04:PrimaveraApplication"
-    "chap05:PrimaveraApplication"
-    "chap06:ValidationApplication"
+    "chap04:DataAccessApplication"
+    "chap05:MyBatisLoggingApplication"
+    "chap06:VaadinApplication"
     "chap07:ThymeleafWebApplication"
     "chap08:SecurityFilterApplication"
     "chap09:SpringSecurityBasicApplication"

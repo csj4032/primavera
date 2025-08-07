@@ -16,10 +16,6 @@ spring:
   jackson:
     time-zone: UTC
 
-server:
-  tomcat:
-    use-apr: never
-
 lucy-filter:
   enabled: true
   name: xssEscapeServletFilter

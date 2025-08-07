@@ -6,18 +6,21 @@ spring:
       - "optional:vault:"
       - "optional:configserver:"
   cloud:
+    config:
+      enabled: false
     vault:
+      enabled: true
       host: localhost
       port: 8200
       scheme: http
       authentication: TOKEN
-      token: ${VAULT_TOKEN:primavera-dev-token}
+      token: primavera-vault-token
       connection-timeout: 5000
       read-timeout: 15000
-      fail-fast: true
+      fail-fast: false
       kv:
         enabled: true
         backend: secret
         profile-separator: '/'
-        default-context: DataAccessApplication
-        application-name: DataAccessApplication
+        default-context: MyBatisLoggingApplication
+        application-name: MyBatisLoggingApplication

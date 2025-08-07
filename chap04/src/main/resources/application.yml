@@ -7,10 +7,6 @@ spring:
   jackson:
     time-zone: UTC
 
-server:
-  tomcat:
-    use-apr: never
-
 logging:
   level:
     org.springframework.cloud.vault: DEBUG

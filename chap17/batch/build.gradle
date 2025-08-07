@@ -51,14 +51,14 @@ graalvmNative {
     binaries {
         main {
             imageName = 'product-batch-indexer'
-            mainClass = 'com.genius.primavera.batch.ProductBatchApplication'
+            mainClass = 'com.genius.primavera.ProductBatchApplication'
             useFatJar = false
         }
     }
 }
 
 springBoot {
-    mainClass = 'com.genius.primavera.batch.ProductBatchApplication'
+    mainClass = 'com.genius.primavera.ProductBatchApplication'
     buildInfo()
 }
 

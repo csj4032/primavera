@@ -2,7 +2,6 @@ spring:
   application:
     name: MyBatisLoggingApplication
   profiles:
-    active: local
     group:
       local:
         - console-appender
