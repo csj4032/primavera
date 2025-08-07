@@ -7,7 +7,7 @@ spring:
       - "optional:configserver:"
   cloud:
     config:
-      enabled: false
+      enabled: true
     vault:
       enabled: true
       host: localhost
@@ -22,5 +22,16 @@ spring:
         enabled: true
         backend: secret
         profile-separator: '/'
-        default-context: MyBatisLoggingApplication
-        application-name: MyBatisLoggingApplication
+        default-context: DataAccessApplication
+        application-name: DataAccessApplication
+  datasource:
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 10
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      connection-timeout: 30000
+      pool-name: "DataAccessHikariPool"
+      leak-detection-threshold: 60000
+      connection-test-query: "SELECT 1"
+      validation-timeout: 5000

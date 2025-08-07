@@ -9,7 +9,7 @@ spring:
     proxy-target-class: true
   cloud:
     config:
-      enabled: false
+      enabled: true
     vault:
       enabled: true
       host: localhost

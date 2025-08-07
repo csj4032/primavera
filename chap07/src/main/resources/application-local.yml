@@ -8,15 +8,18 @@ spring:
   aop:
     proxy-target-class: true
   cloud:
+    config:
+      enabled: true
     vault:
+      enabled: true
       host: localhost
-      port: 8207
+      port: 8200
       scheme: http
       authentication: TOKEN
-      token: ${VAULT_TOKEN:chap07-vault-token}
+      token: primavera-vault-token
       connection-timeout: 5000
       read-timeout: 15000
-      fail-fast: true
+      fail-fast: false
       kv:
         enabled: true
         backend: secret

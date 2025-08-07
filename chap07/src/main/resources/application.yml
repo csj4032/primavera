@@ -2,7 +2,6 @@ spring:
   application:
     name: ThymeleafWebApplication
   profiles:
-    active: local
     group:
       local:
         - console-appender
