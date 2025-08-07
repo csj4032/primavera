@@ -1,6 +1,6 @@
 spring:
   application:
-    name: ProductBatchApplication
+    name: ProductStreamingApplication
   profiles:
     active: local
     group:
@@ -15,11 +15,6 @@ spring:
         - console-appender
   jackson:
     time-zone: UTC
-  batch:
-    job:
-      enabled: true
-    jdbc:
-      initialize-schema: never
 
 logging:
   config: classpath:logback-spring.xml

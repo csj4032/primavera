@@ -7,8 +7,18 @@ spring:
       enabled: false
     vault:
       enabled: false
-  datasource:
-    hikari:
-      minimum-idle: 1
-      maximum-pool-size: 5
-      connection-timeout: 20000
+  r2dbc:
+    url: ${testcontainers.mariadb.r2dbc-url:r2dbc:h2:mem:///testdb}
+    username: ${testcontainers.mariadb.username:sa}
+    password: ${testcontainers.mariadb.password:}
+
+testcontainers:
+  mariadb:
+    image: mariadb:11.4.7
+    database: primavera
+    username: primavera
+    password: primavera
+    init-script: sql/init.sql
+
+debezium:
+  enabled: false

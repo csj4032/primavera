@@ -1,0 +1,28 @@
+spring:
+  config:
+    activate:
+      on-profile: local
+  cloud:
+    vault:
+      host: ${VAULT_HOST:localhost}
+      port: ${VAULT_PORT:8200}
+      scheme: ${VAULT_SCHEME:http}
+      authentication: TOKEN
+      token: ${VAULT_TOKEN:primavera-dev-token}
+      kv:
+        enabled: true
+        backend: secret
+        profile-separator: '/'
+        default-context: ProductStreamingApplication
+        application-name: ProductStreamingApplication
+  datasource:
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 10
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      connection-timeout: 30000
+      pool-name: "BalancedHikariPool"
+      leak-detection-threshold: 60000
+      connection-test-query: "SELECT 1"
+      validation-timeout: 5000

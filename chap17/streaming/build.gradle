@@ -1,4 +1,3 @@
-
 plugins {
     id 'org.graalvm.buildtools.native' version '0.10.3'
 }
@@ -15,37 +14,35 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-r2dbc'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    
-    // R2DBC MariaDB Driver
     implementation "org.mariadb:r2dbc-mariadb:${r2dbcMariadbVersion}"
-    implementation "io.r2dbc:r2dbc-pool:${r2dbcPoolVersion}"
-    
-    // Elasticsearch
+    implementation "io.r2dbc:r2dbc-pool"
     implementation "co.elastic.clients:elasticsearch-java:${elasticsearchVersion}"
     implementation "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonVersion}"
-    
-    // Debezium CDC
     implementation "io.debezium:debezium-embedded:${debeziumVersion}"
     implementation "io.debezium:debezium-connector-mysql:${debeziumVersion}"
     implementation "io.debezium:debezium-api:${debeziumVersion}"
     implementation "io.debezium:debezium-core:${debeziumVersion}"
-    
-    // Utilities
     implementation "org.apache.commons:commons-lang3:${commonsLang3Version}"
-    
-    // Test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'io.projectreactor:reactor-test'
     testImplementation "org.testcontainers:junit-jupiter:${testContainersVersion}"
     testImplementation "org.testcontainers:mariadb:${testContainersVersion}"
     testImplementation "org.testcontainers:elasticsearch:${testContainersVersion}"
     testImplementation "org.testcontainers:r2dbc:${testContainersVersion}"
-    
+    testRuntimeOnly "org.mariadb:r2dbc-mariadb:${r2dbcMariadbVersion}"
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
     compileOnly "org.projectlombok:lombok:${lombokVersion}"
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    implementation "org.springframework.cloud:spring-cloud-starter-config"
+    implementation "org.springframework.cloud:spring-cloud-starter-vault-config:${springCloudVaultVersion}"
+    testImplementation 'io.r2dbc:r2dbc-h2'
+    testImplementation project(':appendix:spring-boot-starter-test-containers')
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 }
 
 tasks.named('test') {

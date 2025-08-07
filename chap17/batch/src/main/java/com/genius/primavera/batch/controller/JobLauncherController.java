@@ -29,62 +29,53 @@ public class JobLauncherController {
     private final Job productIndexingJob;
 
     @PostMapping("/product-indexing/run")
-    public ResponseEntity<Map<String, Object>> runProductIndexingJob(
-            @RequestParam(value = "forceRestart", defaultValue = "false") boolean forceRestart) {
-        
+    public ResponseEntity<Map<String, Object>> runProductIndexingJob(@RequestParam(value = "forceRestart", defaultValue = "false") boolean forceRestart) {
+
         Map<String, Object> response = new HashMap<>();
-        
+
         try {
             JobParametersBuilder paramsBuilder = new JobParametersBuilder();
             paramsBuilder.addString("executionTime", LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
             paramsBuilder.addString("jobType", "MANUAL");
-            
-            if (forceRestart) {
-                paramsBuilder.addLong("timestamp", System.currentTimeMillis());
-            }
-            
+            if (forceRestart) paramsBuilder.addLong("timestamp", System.currentTimeMillis());
             JobParameters jobParameters = paramsBuilder.toJobParameters();
-            
             var jobExecution = asyncJobLauncher.run(productIndexingJob, jobParameters);
-            
             response.put("success", true);
             response.put("jobId", jobExecution.getId());
             response.put("jobStatus", jobExecution.getStatus().toString());
             response.put("startTime", jobExecution.getStartTime());
             response.put("message", "Product indexing job started successfully");
-            
             log.info("Product indexing job started with ID: {}", jobExecution.getId());
-            
             return ResponseEntity.ok(response);
-            
+
         } catch (JobExecutionAlreadyRunningException e) {
             log.warn("Job is already running", e);
             response.put("success", false);
             response.put("error", "JOB_ALREADY_RUNNING");
             response.put("message", "Product indexing job is already running");
             return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
-            
+
         } catch (JobRestartException e) {
             log.error("Job restart failed", e);
             response.put("success", false);
             response.put("error", "JOB_RESTART_FAILED");
             response.put("message", "Failed to restart job. Try with forceRestart=true");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-            
+
         } catch (JobInstanceAlreadyCompleteException e) {
             log.info("Job instance already completed", e);
             response.put("success", false);
             response.put("error", "JOB_ALREADY_COMPLETE");
             response.put("message", "This job instance has already completed. Use forceRestart=true to run again");
             return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
-            
+
         } catch (JobParametersInvalidException e) {
             log.error("Invalid job parameters", e);
             response.put("success", false);
             response.put("error", "INVALID_PARAMETERS");
             response.put("message", "Invalid job parameters provided");
             return ResponseEntity.badRequest().body(response);
-            
+
         } catch (Exception e) {
             log.error("Unexpected error while starting job", e);
             response.put("success", false);

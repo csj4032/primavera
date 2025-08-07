@@ -4,8 +4,10 @@ import co.elastic.clients.elasticsearch.ElasticsearchAsyncClient;
 import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import co.elastic.clients.elasticsearch._types.query_dsl.QueryBuilders;
+import co.elastic.clients.elasticsearch.cluster.HealthResponse;
 import co.elastic.clients.elasticsearch.core.*;
 import co.elastic.clients.elasticsearch.core.search.Hit;
+import co.elastic.clients.json.JsonData;
 import com.genius.primavera.common.dto.ProductDocument;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +16,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -45,8 +48,8 @@ public class ProductSearchService {
 
         if (minPrice != null || maxPrice != null) {
             var rangeBuilder = QueryBuilders.range().field("price");
-            if (minPrice != null) rangeBuilder.gte(minPrice);
-            if (maxPrice != null) rangeBuilder.lte(maxPrice);
+            if (minPrice != null) rangeBuilder.gte(JsonData.of(minPrice));
+            if (maxPrice != null) rangeBuilder.lte(JsonData.of(maxPrice));
             boolQueryBuilder.filter(rangeBuilder.build()._toQuery());
         }
 
@@ -110,20 +113,22 @@ public class ProductSearchService {
     }
 
     public Mono<Map<String, Object>> getIndexHealth() {
-        CompletableFuture<HealthResponse> healthFuture = 
+        CompletableFuture<HealthResponse> healthFuture =
                 elasticsearchAsyncClient.cluster().health();
 
         return Mono.fromFuture(healthFuture)
-                .map(healthResponse -> Map.of(
-                        "status", healthResponse.status().toString(),
-                        "numberOfNodes", healthResponse.numberOfNodes(),
-                        "numberOfDataNodes", healthResponse.numberOfDataNodes(),
-                        "activePrimaryShards", healthResponse.activePrimaryShards(),
-                        "activeShards", healthResponse.activeShards(),
-                        "relocatingShards", healthResponse.relocatingShards(),
-                        "initializingShards", healthResponse.initializingShards(),
-                        "unassignedShards", healthResponse.unassignedShards()
-                ))
+                .map(healthResponse -> {
+                    Map<String, Object> healthMap = new HashMap<>();
+                    healthMap.put("status", healthResponse.status().toString());
+                    healthMap.put("numberOfNodes", healthResponse.numberOfNodes());
+                    healthMap.put("numberOfDataNodes", healthResponse.numberOfDataNodes());
+                    healthMap.put("activePrimaryShards", healthResponse.activePrimaryShards());
+                    healthMap.put("activeShards", healthResponse.activeShards());
+                    healthMap.put("relocatingShards", healthResponse.relocatingShards());
+                    healthMap.put("initializingShards", healthResponse.initializingShards());
+                    healthMap.put("unassignedShards", healthResponse.unassignedShards());
+                    return healthMap;
+                })
                 .doOnSuccess(health -> log.debug("Elasticsearch health: {}", health))
                 .doOnError(error -> log.error("Failed to get Elasticsearch health", error));
     }
