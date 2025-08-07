@@ -43,14 +43,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @ActiveProfiles("test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @DisplayName("Database to Elasticsearch 통합 테스트")
-@SpringBootTest(classes = {
-    com.genius.primavera.ProductBatchApplication.class,
-    com.genius.primavera.batch.TestConfig.class
-})
-@EnableTestContainers(value = {
-    @EnableTestContainers.TestContainer(type = ContainerType.MARIADB, name = "primavera"),
-    @EnableTestContainers.TestContainer(type = ContainerType.ELASTICSEARCH, name = "elasticsearch")
-})
+@SpringBootTest(classes = {com.genius.primavera.ProductBatchApplication.class, com.genius.primavera.batch.TestConfig.class})
+@EnableTestContainers(value = {@EnableTestContainers.TestContainer(type = ContainerType.MARIADB, name = "primavera"), @EnableTestContainers.TestContainer(type = ContainerType.ELASTICSEARCH, name = "elasticsearch")})
 public class DatabaseToElasticsearchIntegrationTest {
 
     @Autowired
@@ -76,32 +70,22 @@ public class DatabaseToElasticsearchIntegrationTest {
 
     @BeforeEach
     void setUp() throws IOException {
-        // 데이터베이스 초기화
         productRepository.deleteAll();
         categoryRepository.deleteAll();
         sellerRepository.deleteAll();
-        
-        // Elasticsearch 인덱스 초기화
-        boolean exists = elasticsearchClient.indices().exists(
-            ExistsRequest.of(e -> e.index(INDEX_NAME))
-        ).value();
-
+        boolean exists = elasticsearchClient.indices().exists(ExistsRequest.of(e -> e.index(INDEX_NAME))).value();
         if (exists) {
             DeleteIndexResponse deleteResponse = elasticsearchClient.indices().delete(d -> d.index(INDEX_NAME));
             log.info("기존 인덱스 삭제: {}", deleteResponse.acknowledged());
         }
 
-        // 인덱스 생성
         Map<String, Property> properties = new HashMap<>();
         properties.put("name", Property.of(p -> p.text(TextProperty.of(t -> t.analyzer("standard")))));
         properties.put("description", Property.of(p -> p.text(TextProperty.of(t -> t.analyzer("standard")))));
         properties.put("price", Property.of(p -> p.integer(i -> i)));
         properties.put("status", Property.of(p -> p.keyword(k -> k)));
 
-        CreateIndexResponse createResponse = elasticsearchClient.indices().create(c -> c
-                .index(INDEX_NAME)
-                .mappings(m -> m.properties(properties))
-        );
+        CreateIndexResponse createResponse = elasticsearchClient.indices().create(c -> c.index(INDEX_NAME).mappings(m -> m.properties(properties)));
         log.info("인덱스 생성: {}", createResponse.acknowledged());
     }
 
@@ -109,21 +93,15 @@ public class DatabaseToElasticsearchIntegrationTest {
     @Order(1)
     @DisplayName("데이터베이스에 테스트 데이터를 생성할 수 있다")
     void shouldCreateTestDataInDatabase() {
-        // 카테고리 생성
         List<Category> categories = createTestCategories();
         List<Category> savedCategories = categoryRepository.saveAll(categories);
         assertEquals(3, savedCategories.size(), "3개의 카테고리가 저장되어야 한다");
-
-        // 판매자 생성
         List<Seller> sellers = createTestSellers();
         List<Seller> savedSellers = sellerRepository.saveAll(sellers);
         assertEquals(3, savedSellers.size(), "3개의 판매자가 저장되어야 한다");
-
-        // 상품 생성
         List<Product> products = createTestProducts(savedCategories, savedSellers);
         List<Product> savedProducts = productRepository.saveAll(products);
         assertEquals(TEST_DATA_COUNT, savedProducts.size(), TEST_DATA_COUNT + "개의 상품이 저장되어야 한다");
-
         log.info("테스트 데이터 생성 완료:");
         log.info("- 카테고리: {}개", savedCategories.size());
         log.info("- 판매자: {}개", savedSellers.size());
@@ -134,25 +112,13 @@ public class DatabaseToElasticsearchIntegrationTest {
     @Order(2)
     @DisplayName("Spring Batch Job으로 데이터를 Elasticsearch에 인덱싱할 수 있다")
     void shouldIndexDataToElasticsearchUsingBatchJob() throws Exception {
-        // 테스트 데이터 준비
         prepareTestData();
-
-        // Job 실행
-        JobParameters jobParameters = new JobParametersBuilder()
-                .addLong("time", System.currentTimeMillis())
-                .toJobParameters();
-
+        JobParameters jobParameters = new JobParametersBuilder().addLong("time", System.currentTimeMillis()).toJobParameters();
         JobExecution jobExecution = jobLauncher.run(productIndexingJob, jobParameters);
-
-        // Job 실행 결과 확인
         assertEquals("COMPLETED", jobExecution.getStatus().toString(), "Job이 성공적으로 완료되어야 한다");
         log.info("Job 실행 상태: {}", jobExecution.getStatus());
         log.info("Job 종료 시간: {}", jobExecution.getEndTime());
-
-        // Elasticsearch 인덱싱 완료 대기
         Thread.sleep(2000);
-
-        // 인덱싱된 문서 수 확인
         CountResponse countResponse = elasticsearchClient.count(c -> c.index(INDEX_NAME));
         assertEquals(TEST_DATA_COUNT, countResponse.count(), TEST_DATA_COUNT + "개의 문서가 인덱싱되어야 한다");
         log.info("인덱싱된 문서 수: {}", countResponse.count());
@@ -162,17 +128,14 @@ public class DatabaseToElasticsearchIntegrationTest {
     @Order(3)
     @DisplayName("인덱싱된 데이터를 Elasticsearch에서 검색할 수 있다")
     void shouldSearchIndexedDataFromElasticsearch() throws Exception {
-        // 테스트 데이터 준비 및 인덱싱
         prepareTestData();
         runBatchJob();
         Thread.sleep(2000);
-
-        // 카테고리별 검색
         SearchResponse<ProductDocument> laptopSearch = elasticsearchClient.search(s -> s
                 .index(INDEX_NAME)
                 .query(q -> q
-                        .match(m -> m
-                                .field("name")
+                        .multiMatch(m -> m
+                                .fields("name", "description")
                                 .query("노트북")
                         )
                 ), ProductDocument.class
@@ -181,7 +144,6 @@ public class DatabaseToElasticsearchIntegrationTest {
         assertTrue(laptopSearch.hits().total().value() > 0, "노트북 관련 상품이 검색되어야 한다");
         log.info("'노트북' 검색 결과: {}개", laptopSearch.hits().total().value());
 
-        // 가격 범위 검색
         SearchResponse<ProductDocument> priceSearch = elasticsearchClient.search(s -> s
                 .index(INDEX_NAME)
                 .query(q -> q
@@ -200,14 +162,9 @@ public class DatabaseToElasticsearchIntegrationTest {
         SearchResponse<ProductDocument> sellerSearch = elasticsearchClient.search(s -> s
                 .index(INDEX_NAME)
                 .query(q -> q
-                        .nested(n -> n
-                                .path("seller")
-                                .query(nq -> nq
-                                        .match(m -> m
-                                                .field("seller.name")
-                                                .query("Tech Store")
-                                        )
-                                )
+                        .match(m -> m
+                                .field("seller.name")
+                                .query("Tech Store")
                         )
                 ), ProductDocument.class
         );
@@ -226,10 +183,10 @@ public class DatabaseToElasticsearchIntegrationTest {
 
         // 데이터베이스의 상품 수
         long dbCount = productRepository.count();
-        
+
         // Elasticsearch의 문서 수
         CountResponse esCount = elasticsearchClient.count(c -> c.index(INDEX_NAME));
-        
+
         assertEquals(dbCount, esCount.count(), "데이터베이스와 Elasticsearch의 데이터 수가 일치해야 한다");
         log.info("데이터 일관성 확인:");
         log.info("- 데이터베이스 상품 수: {}", dbCount);
@@ -248,13 +205,13 @@ public class DatabaseToElasticsearchIntegrationTest {
         );
 
         assertEquals(1, productSearch.hits().total().value(), "특정 상품이 정확히 1개 검색되어야 한다");
-        
+
         ProductDocument document = productSearch.hits().hits().get(0).source();
         assertNotNull(document, "문서가 존재해야 한다");
         assertEquals(firstProduct.getName(), document.getName(), "상품명이 일치해야 한다");
         assertEquals(firstProduct.getPrice(), document.getPrice(), "가격이 일치해야 한다");
         assertEquals(firstProduct.getStatus().name(), document.getStatus(), "상태가 일치해야 한다");
-        
+
         log.info("개별 상품 검증 완료 - ID: {}, Name: {}", firstProduct.getId(), firstProduct.getName());
     }
 
@@ -330,9 +287,9 @@ public class DatabaseToElasticsearchIntegrationTest {
         String[] laptopNames = {"MacBook Pro", "Dell XPS", "ThinkPad"};
         String[] phoneNames = {"iPhone 15", "Galaxy S24", "Pixel 8"};
         String[] tabletNames = {"iPad Pro", "Galaxy Tab", "Surface Pro"};
-        
+
         int index = 0;
-        
+
         // 노트북 상품
         for (int i = 0; i < 3; i++) {
             products.add(Product.builder()
@@ -346,7 +303,7 @@ public class DatabaseToElasticsearchIntegrationTest {
                     .updatedAt(LocalDateTime.now())
                     .build());
         }
-        
+
         // 스마트폰 상품
         for (int i = 0; i < 3; i++) {
             products.add(Product.builder()
@@ -360,7 +317,7 @@ public class DatabaseToElasticsearchIntegrationTest {
                     .updatedAt(LocalDateTime.now())
                     .build());
         }
-        
+
         // 태블릿 상품
         for (int i = 0; i < 4; i++) {
             String tabletName = i < 3 ? tabletNames[i] : "Android Tablet";
@@ -375,7 +332,7 @@ public class DatabaseToElasticsearchIntegrationTest {
                     .updatedAt(LocalDateTime.now())
                     .build());
         }
-        
+
         return products;
     }
 }

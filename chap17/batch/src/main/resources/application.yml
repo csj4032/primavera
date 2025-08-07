@@ -15,6 +15,11 @@ spring:
         - console-appender
   jackson:
     time-zone: UTC
+  batch:
+    job:
+      enabled: true
+    jdbc:
+      initialize-schema: never
 
 lucy-filter:
   enabled: true

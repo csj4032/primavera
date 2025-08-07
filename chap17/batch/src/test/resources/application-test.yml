@@ -21,14 +21,13 @@ spring:
     show-sql: true
     properties:
       hibernate:
+        show_sql: true
         format_sql: true
-        dialect: org.hibernate.dialect.MariaDBDialect
-    database-platform: org.hibernate.dialect.MariaDBDialect
-    open-in-view: false
   batch:
+    job:
+      enabled: true
     jdbc:
       initialize-schema: never
-      table-prefix: BATCH_
 
 batch:
   async.enabled: false
