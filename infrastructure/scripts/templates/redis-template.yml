@@ -1,0 +1,17 @@
+  redis-${CHAPTER}:
+    image: redis:7.2-alpine
+    container_name: redis-primavera-${CHAPTER}
+    restart: unless-stopped
+    ports:
+      - "${REDIS_PORT}:6379"
+    volumes:
+      - redis-${CHAPTER}-data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - ${CHAPTER}-network

@@ -65,7 +65,14 @@
       "Bash(touch:*)",
       "Bash(cp:*)",
       "Bash(# chap06 - 웹 애플리케이션\nsed -i '''' ''s/chap04 데이터 접근/chap06 웹 애플리케이션/g'' /Users/genius/Workspace/primavera/chap06/src/test/java/com/genius/primavera/AbstractIntegrationTest.java\nsed -i '''' ''s/MyBatis 통합/웹 MVC 통합/g'' /Users/genius/Workspace/primavera/chap06/src/test/java/com/genius/primavera/AbstractIntegrationTest.java\n\n# chap07 - JPA\nsed -i '''' ''s/chap04 데이터 접근/chap07 JPA 데이터 접근/g'' /Users/genius/Workspace/primavera/chap07/src/test/java/com/genius/primavera/AbstractIntegrationTest.java\nsed -i '''' ''s/MyBatis 통합/JPA\\/Hibernate 통합/g'' /Users/genius/Workspace/primavera/chap07/src/test/java/com/genius/primavera/AbstractIntegrationTest.java\n\n# chap08 - 보안 기초\nsed -i '''' ''s/chap04 데이터 접근/chap08 보안 기초/g'' /Users/genius/Workspace/primavera/chap08/src/test/java/com/genius/primavera/AbstractIntegrationTest.java\nsed -i '''' ''s/MyBatis 통합/Spring Security 통합/g'' /Users/genius/Workspace/primavera/chap08/src/test/java/com/genius/primavera/AbstractIntegrationTest.java\n\n# chap09 - 권한 관리\nsed -i '''' ''s/chap04 데이터 접근/chap09 권한 관리/g'' /Users/genius/Workspace/primavera/chap09/src/test/java/com/genius/primavera/AbstractIntegrationTest.java\nsed -i '''' ''s/MyBatis 통합/사용자 권한 통합/g'' /Users/genius/Workspace/primavera/chap09/src/test/java/com/genius/primavera/AbstractIntegrationTest.java\n\n# chap10 - OAuth2\nsed -i '''' ''s/chap04 데이터 접근/chap10 OAuth2 인증/g'' /Users/genius/Workspace/primavera/chap10/src/test/java/com/genius/primavera/AbstractIntegrationTest.java\nsed -i '''' ''s/MyBatis 통합/OAuth2 소셜 로그인 통합/g'' /Users/genius/Workspace/primavera/chap10/src/test/java/com/genius/primavera/AbstractIntegrationTest.java\n\n# chap11 - 고급 보안\nsed -i '''' ''s/chap04 데이터 접근/chap11 고급 보안/g'' /Users/genius/Workspace/primavera/chap11/src/test/java/com/genius/primavera/AbstractIntegrationTest.java\nsed -i '''' ''s/MyBatis 통합/보안 강화 통합/g'' /Users/genius/Workspace/primavera/chap11/src/test/java/com/genius/primavera/AbstractIntegrationTest.java\n\n# chap12 - 소셜 로그인\nsed -i '''' ''s/chap04 데이터 접근/chap12 소셜 로그인/g'' /Users/genius/Workspace/primavera/chap12/src/test/java/com/genius/primavera/AbstractIntegrationTest.java\nsed -i '''' ''s/MyBatis 통합/카카오 소셜 로그인 통합/g'' /Users/genius/Workspace/primavera/chap12/src/test/java/com/genius/primavera/AbstractIntegrationTest.java)",
-      "Bash(export:*)"
+      "Bash(export:*)",
+      "Bash(./generate-configs.sh:*)",
+      "Bash(docker ps:*)",
+      "Bash(./docker-manager.sh start:*)",
+      "Bash(./docker-manager.sh stop:*)",
+      "Bash(pkill:*)",
+      "Bash(./infrastructure/scripts/docker-manager.sh start:*)",
+      "Bash(./infrastructure/scripts/docker-manager.sh stop:*)"
     ],
     "deny": []
   }

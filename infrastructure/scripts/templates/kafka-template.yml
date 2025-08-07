@@ -1,0 +1,49 @@
+  zookeeper-${CHAPTER}:
+    image: confluentinc/cp-zookeeper:7.4.0
+    container_name: zookeeper-primavera-${CHAPTER}
+    restart: unless-stopped
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "${ZOOKEEPER_PORT}:2181"
+    volumes:
+      - zookeeper-${CHAPTER}-data:/var/lib/zookeeper/data
+      - zookeeper-${CHAPTER}-log:/var/lib/zookeeper/log
+    healthcheck:
+      test: ["CMD", "bash", "-c", "echo 'ruok' | nc localhost 2181 | grep imok"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - ${CHAPTER}-network
+
+  kafka-${CHAPTER}:
+    image: confluentinc/cp-kafka:7.4.0
+    container_name: kafka-primavera-${CHAPTER}
+    restart: unless-stopped
+    depends_on:
+      zookeeper-${CHAPTER}:
+        condition: service_healthy
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper-${CHAPTER}:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:${KAFKA_PORT}
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: true
+    ports:
+      - "${KAFKA_PORT}:9092"
+    volumes:
+      - kafka-${CHAPTER}-data:/var/lib/kafka/data
+    healthcheck:
+      test: ["CMD", "kafka-broker-api-versions", "--bootstrap-server", "localhost:9092"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    networks:
+      - ${CHAPTER}-network

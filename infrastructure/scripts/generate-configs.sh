@@ -16,6 +16,7 @@ chapters=(
     "chap15:JpaAdvancedMappingApplication"
     "chap16:FileProcessingMonitoringApplication"
     "chap17:MicroserviceApplication"
+    "chap18:ComplexMicroserviceApplication"
 )
 
 # Standard ports for all chapters
@@ -23,6 +24,10 @@ STANDARD_MARIADB_PORT=3306
 STANDARD_VAULT_PORT=8200
 STANDARD_ELASTICSEARCH_PORT=9200
 STANDARD_ELASTICSEARCH_TRANSPORT_PORT=9300
+STANDARD_MONGODB_PORT=27017
+STANDARD_REDIS_PORT=6379
+STANDARD_KAFKA_PORT=9092
+STANDARD_ZOOKEEPER_PORT=2181
 
 for chapter_info in "${chapters[@]}"; do
     IFS=':' read -r chap app_name <<< "$chapter_info"
@@ -48,6 +53,23 @@ ELASTICSEARCH_PORT=${STANDARD_ELASTICSEARCH_PORT}
 ELASTICSEARCH_TRANSPORT_PORT=${STANDARD_ELASTICSEARCH_TRANSPORT_PORT}
 VAULT_PORT=${STANDARD_VAULT_PORT}
 SQL_INIT_PATH=../sql/${chap}-init.sql
+VAULT_INIT_PATH=../vault/vault-init.sh"
+    fi
+
+    # Special configuration for chap18 (complex microservices - needs all services)
+    if [ "$chap" == "chap18" ]; then
+        services="mariadb,mongodb,redis,kafka,vault"
+        config_content="CHAPTER=${chap}
+APP_NAME=${app_name}
+SERVICES=${services}
+MARIADB_PORT=${STANDARD_MARIADB_PORT}
+MONGODB_PORT=${STANDARD_MONGODB_PORT}
+REDIS_PORT=${STANDARD_REDIS_PORT}
+KAFKA_PORT=${STANDARD_KAFKA_PORT}
+ZOOKEEPER_PORT=${STANDARD_ZOOKEEPER_PORT}
+VAULT_PORT=${STANDARD_VAULT_PORT}
+SQL_INIT_PATH=../sql/${chap}-init.sql
+MONGODB_INIT_PATH=../mongodb/${chap}-mongo-init.js
 VAULT_INIT_PATH=../vault/vault-init.sh"
     fi
     
