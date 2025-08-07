@@ -14,7 +14,10 @@ public class ElasticsearchContainerCreator implements ContainerCreator {
     @Override
     public GenericContainer<?> create(ContainerConfiguration.ContainerSpec spec) {
         ElasticsearchContainer container = new ElasticsearchContainer(DockerImageName.parse(spec.getImageOrDefault(ContainerType.ELASTICSEARCH)))
-                .withStartupTimeout(Duration.ofSeconds(spec.getStartupTimeoutOrDefault()));
+                .withStartupTimeout(Duration.ofSeconds(spec.getStartupTimeoutOrDefault()))
+                .withEnv("xpack.security.enabled", "false")
+                .withEnv("xpack.security.http.ssl.enabled", "false")
+                .withEnv("xpack.security.transport.ssl.enabled", "false");
         
         ContainerConfigurationHelper.configureContainer(container, spec);
         return container;

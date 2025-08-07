@@ -10,7 +10,7 @@ public enum ContainerType {
     REDIS("redis:7-alpine", null),
     MONGODB("mongo:7", "com.mongodb.MongoClient"),
     KAFKA("confluentinc/cp-kafka:7.5.0", null),
-    ELASTICSEARCH("elasticsearch:8.11.0", null);
+    ELASTICSEARCH("docker.elastic.co/elasticsearch/elasticsearch:8.12.0", null);
 
     private final String defaultImage;
     private final String driverClassName;

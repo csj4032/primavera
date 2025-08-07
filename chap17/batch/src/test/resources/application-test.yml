@@ -1,6 +1,12 @@
 spring:
-  application:
-    name: FileProcessingMonitoringApplication-Test
+  config:
+    activate:
+      on-profile: test
+  cloud:
+    config:
+      enabled: false
+    vault:
+      enabled: false
   datasource:
     hikari:
       minimum-idle: 1
@@ -9,19 +15,20 @@ spring:
   jpa:
     hibernate:
       ddl-auto: none
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+        implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
     show-sql: true
     properties:
       hibernate:
         format_sql: true
+        dialect: org.hibernate.dialect.MariaDBDialect
+    database-platform: org.hibernate.dialect.MariaDBDialect
     open-in-view: false
-
-logging:
-  level:
-    com.genius.primavera: DEBUG
-    org.springframework.batch: DEBUG
-    co.elastic.clients: INFO
-    org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+  batch:
+    jdbc:
+      initialize-schema: never
+      table-prefix: BATCH_
 
 batch:
   async.enabled: false
@@ -30,9 +37,27 @@ batch:
     max-pool-size: 4
     queue-capacity: 10
 
-elasticsearch:
-  username: ""
-  password: ""
-
 debezium:
   enabled: false
+
+testcontainers:
+  containers:
+    primavera:
+      image: "mariadb:11.4.7"
+      database: "primavera"
+      username: "primavera"
+      password: "primavera"
+      startup-timeout: 120
+      init-script: ./sql/init.sql
+    elasticsearch:
+      image: "docker.elastic.co/elasticsearch/elasticsearch:8.12.0"
+      username: "elastic"
+      password: "elastic"
+      startup-timeout: 120
+
+elasticsearch:
+  host: ${testcontainer.runtime.elasticsearch.host:localhost}
+  port: ${testcontainer.runtime.elasticsearch.port:9200}
+  username: elastic
+  password: elastic
+  scheme: http

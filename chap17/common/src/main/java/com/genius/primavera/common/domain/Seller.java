@@ -30,6 +30,6 @@ public class Seller {
     private Double rating;
     
     @CreatedDate
-    @Column(updatable = false)
+    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 }

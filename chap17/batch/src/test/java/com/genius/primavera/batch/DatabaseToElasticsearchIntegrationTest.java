@@ -1,0 +1,381 @@
+package com.genius.primavera.batch;
+
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch._types.mapping.Property;
+import co.elastic.clients.elasticsearch._types.mapping.TextProperty;
+import co.elastic.clients.elasticsearch.core.CountResponse;
+import co.elastic.clients.elasticsearch.core.SearchResponse;
+import co.elastic.clients.elasticsearch.indices.CreateIndexResponse;
+import co.elastic.clients.elasticsearch.indices.DeleteIndexResponse;
+import co.elastic.clients.elasticsearch.indices.ExistsRequest;
+import com.genius.primavera.batch.repository.CategoryRepository;
+import com.genius.primavera.batch.repository.ProductRepository;
+import com.genius.primavera.batch.repository.SellerRepository;
+import com.genius.primavera.common.domain.Category;
+import com.genius.primavera.common.domain.Product;
+import com.genius.primavera.common.domain.ProductStatus;
+import com.genius.primavera.common.domain.Seller;
+import com.genius.primavera.common.dto.ProductDocument;
+import com.genius.primavera.testcontainers.ContainerType;
+import com.genius.primavera.testcontainers.EnableTestContainers;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.*;
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.JobParametersBuilder;
+import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+@Slf4j
+@ActiveProfiles("test")
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@DisplayName("Database to Elasticsearch 통합 테스트")
+@SpringBootTest(classes = {
+    com.genius.primavera.ProductBatchApplication.class,
+    com.genius.primavera.batch.TestConfig.class
+})
+@EnableTestContainers(value = {
+    @EnableTestContainers.TestContainer(type = ContainerType.MARIADB, name = "primavera"),
+    @EnableTestContainers.TestContainer(type = ContainerType.ELASTICSEARCH, name = "elasticsearch")
+})
+public class DatabaseToElasticsearchIntegrationTest {
+
+    @Autowired
+    private ProductRepository productRepository;
+
+    @Autowired
+    private CategoryRepository categoryRepository;
+
+    @Autowired
+    private SellerRepository sellerRepository;
+
+    @Autowired
+    private ElasticsearchClient elasticsearchClient;
+
+    @Autowired
+    private JobLauncher jobLauncher;
+
+    @Autowired
+    private Job productIndexingJob;
+
+    private static final String INDEX_NAME = "product_catalog_v1";
+    private static final int TEST_DATA_COUNT = 10;
+
+    @BeforeEach
+    void setUp() throws IOException {
+        // 데이터베이스 초기화
+        productRepository.deleteAll();
+        categoryRepository.deleteAll();
+        sellerRepository.deleteAll();
+        
+        // Elasticsearch 인덱스 초기화
+        boolean exists = elasticsearchClient.indices().exists(
+            ExistsRequest.of(e -> e.index(INDEX_NAME))
+        ).value();
+
+        if (exists) {
+            DeleteIndexResponse deleteResponse = elasticsearchClient.indices().delete(d -> d.index(INDEX_NAME));
+            log.info("기존 인덱스 삭제: {}", deleteResponse.acknowledged());
+        }
+
+        // 인덱스 생성
+        Map<String, Property> properties = new HashMap<>();
+        properties.put("name", Property.of(p -> p.text(TextProperty.of(t -> t.analyzer("standard")))));
+        properties.put("description", Property.of(p -> p.text(TextProperty.of(t -> t.analyzer("standard")))));
+        properties.put("price", Property.of(p -> p.integer(i -> i)));
+        properties.put("status", Property.of(p -> p.keyword(k -> k)));
+
+        CreateIndexResponse createResponse = elasticsearchClient.indices().create(c -> c
+                .index(INDEX_NAME)
+                .mappings(m -> m.properties(properties))
+        );
+        log.info("인덱스 생성: {}", createResponse.acknowledged());
+    }
+
+    @Test
+    @Order(1)
+    @DisplayName("데이터베이스에 테스트 데이터를 생성할 수 있다")
+    void shouldCreateTestDataInDatabase() {
+        // 카테고리 생성
+        List<Category> categories = createTestCategories();
+        List<Category> savedCategories = categoryRepository.saveAll(categories);
+        assertEquals(3, savedCategories.size(), "3개의 카테고리가 저장되어야 한다");
+
+        // 판매자 생성
+        List<Seller> sellers = createTestSellers();
+        List<Seller> savedSellers = sellerRepository.saveAll(sellers);
+        assertEquals(3, savedSellers.size(), "3개의 판매자가 저장되어야 한다");
+
+        // 상품 생성
+        List<Product> products = createTestProducts(savedCategories, savedSellers);
+        List<Product> savedProducts = productRepository.saveAll(products);
+        assertEquals(TEST_DATA_COUNT, savedProducts.size(), TEST_DATA_COUNT + "개의 상품이 저장되어야 한다");
+
+        log.info("테스트 데이터 생성 완료:");
+        log.info("- 카테고리: {}개", savedCategories.size());
+        log.info("- 판매자: {}개", savedSellers.size());
+        log.info("- 상품: {}개", savedProducts.size());
+    }
+
+    @Test
+    @Order(2)
+    @DisplayName("Spring Batch Job으로 데이터를 Elasticsearch에 인덱싱할 수 있다")
+    void shouldIndexDataToElasticsearchUsingBatchJob() throws Exception {
+        // 테스트 데이터 준비
+        prepareTestData();
+
+        // Job 실행
+        JobParameters jobParameters = new JobParametersBuilder()
+                .addLong("time", System.currentTimeMillis())
+                .toJobParameters();
+
+        JobExecution jobExecution = jobLauncher.run(productIndexingJob, jobParameters);
+
+        // Job 실행 결과 확인
+        assertEquals("COMPLETED", jobExecution.getStatus().toString(), "Job이 성공적으로 완료되어야 한다");
+        log.info("Job 실행 상태: {}", jobExecution.getStatus());
+        log.info("Job 종료 시간: {}", jobExecution.getEndTime());
+
+        // Elasticsearch 인덱싱 완료 대기
+        Thread.sleep(2000);
+
+        // 인덱싱된 문서 수 확인
+        CountResponse countResponse = elasticsearchClient.count(c -> c.index(INDEX_NAME));
+        assertEquals(TEST_DATA_COUNT, countResponse.count(), TEST_DATA_COUNT + "개의 문서가 인덱싱되어야 한다");
+        log.info("인덱싱된 문서 수: {}", countResponse.count());
+    }
+
+    @Test
+    @Order(3)
+    @DisplayName("인덱싱된 데이터를 Elasticsearch에서 검색할 수 있다")
+    void shouldSearchIndexedDataFromElasticsearch() throws Exception {
+        // 테스트 데이터 준비 및 인덱싱
+        prepareTestData();
+        runBatchJob();
+        Thread.sleep(2000);
+
+        // 카테고리별 검색
+        SearchResponse<ProductDocument> laptopSearch = elasticsearchClient.search(s -> s
+                .index(INDEX_NAME)
+                .query(q -> q
+                        .match(m -> m
+                                .field("name")
+                                .query("노트북")
+                        )
+                ), ProductDocument.class
+        );
+
+        assertTrue(laptopSearch.hits().total().value() > 0, "노트북 관련 상품이 검색되어야 한다");
+        log.info("'노트북' 검색 결과: {}개", laptopSearch.hits().total().value());
+
+        // 가격 범위 검색
+        SearchResponse<ProductDocument> priceSearch = elasticsearchClient.search(s -> s
+                .index(INDEX_NAME)
+                .query(q -> q
+                        .range(r -> r
+                                .field("price")
+                                .gte(co.elastic.clients.json.JsonData.of(500000))
+                                .lte(co.elastic.clients.json.JsonData.of(1000000))
+                        )
+                ), ProductDocument.class
+        );
+
+        assertTrue(priceSearch.hits().total().value() > 0, "가격 범위 내 상품이 검색되어야 한다");
+        log.info("가격 범위(50만원~100만원) 검색 결과: {}개", priceSearch.hits().total().value());
+
+        // 판매자별 검색
+        SearchResponse<ProductDocument> sellerSearch = elasticsearchClient.search(s -> s
+                .index(INDEX_NAME)
+                .query(q -> q
+                        .nested(n -> n
+                                .path("seller")
+                                .query(nq -> nq
+                                        .match(m -> m
+                                                .field("seller.name")
+                                                .query("Tech Store")
+                                        )
+                                )
+                        )
+                ), ProductDocument.class
+        );
+
+        log.info("'Tech Store' 판매자 검색 결과: {}개", sellerSearch.hits().total().value());
+    }
+
+    @Test
+    @Order(4)
+    @DisplayName("데이터베이스와 Elasticsearch의 데이터 일관성을 확인할 수 있다")
+    void shouldVerifyDataConsistency() throws Exception {
+        // 테스트 데이터 준비 및 인덱싱
+        prepareTestData();
+        runBatchJob();
+        Thread.sleep(2000);
+
+        // 데이터베이스의 상품 수
+        long dbCount = productRepository.count();
+        
+        // Elasticsearch의 문서 수
+        CountResponse esCount = elasticsearchClient.count(c -> c.index(INDEX_NAME));
+        
+        assertEquals(dbCount, esCount.count(), "데이터베이스와 Elasticsearch의 데이터 수가 일치해야 한다");
+        log.info("데이터 일관성 확인:");
+        log.info("- 데이터베이스 상품 수: {}", dbCount);
+        log.info("- Elasticsearch 문서 수: {}", esCount.count());
+
+        // 개별 상품 검증
+        Product firstProduct = productRepository.findAll().get(0);
+        SearchResponse<ProductDocument> productSearch = elasticsearchClient.search(s -> s
+                .index(INDEX_NAME)
+                .query(q -> q
+                        .term(t -> t
+                                .field("productId")
+                                .value(firstProduct.getId())
+                        )
+                ), ProductDocument.class
+        );
+
+        assertEquals(1, productSearch.hits().total().value(), "특정 상품이 정확히 1개 검색되어야 한다");
+        
+        ProductDocument document = productSearch.hits().hits().get(0).source();
+        assertNotNull(document, "문서가 존재해야 한다");
+        assertEquals(firstProduct.getName(), document.getName(), "상품명이 일치해야 한다");
+        assertEquals(firstProduct.getPrice(), document.getPrice(), "가격이 일치해야 한다");
+        assertEquals(firstProduct.getStatus().name(), document.getStatus(), "상태가 일치해야 한다");
+        
+        log.info("개별 상품 검증 완료 - ID: {}, Name: {}", firstProduct.getId(), firstProduct.getName());
+    }
+
+    private void prepareTestData() {
+        // 카테고리 생성
+        List<Category> categories = createTestCategories();
+        List<Category> savedCategories = categoryRepository.saveAll(categories);
+
+        // 판매자 생성
+        List<Seller> sellers = createTestSellers();
+        List<Seller> savedSellers = sellerRepository.saveAll(sellers);
+
+        // 상품 생성
+        List<Product> products = createTestProducts(savedCategories, savedSellers);
+        productRepository.saveAll(products);
+    }
+
+    private void runBatchJob() throws Exception {
+        JobParameters jobParameters = new JobParametersBuilder()
+                .addLong("time", System.currentTimeMillis())
+                .toJobParameters();
+
+        jobLauncher.run(productIndexingJob, jobParameters);
+    }
+
+    private List<Category> createTestCategories() {
+        long timestamp = System.currentTimeMillis();
+        List<Category> categories = new ArrayList<>();
+        categories.add(Category.builder()
+                .name("노트북-" + timestamp)
+                .level(1)
+                .createdAt(LocalDateTime.now())
+                .build());
+        categories.add(Category.builder()
+                .name("스마트폰-" + timestamp)
+                .level(1)
+                .createdAt(LocalDateTime.now())
+                .build());
+        categories.add(Category.builder()
+                .name("태블릿-" + timestamp)
+                .level(1)
+                .createdAt(LocalDateTime.now())
+                .build());
+        return categories;
+    }
+
+    private List<Seller> createTestSellers() {
+        long timestamp = System.currentTimeMillis();
+        List<Seller> sellers = new ArrayList<>();
+        sellers.add(Seller.builder()
+                .name("Tech Store-" + timestamp)
+                .email("tech" + timestamp + "@store.com")
+                .rating(4.5)
+                .createdAt(LocalDateTime.now())
+                .build());
+        sellers.add(Seller.builder()
+                .name("Digital Mall-" + timestamp)
+                .email("digital" + timestamp + "@mall.com")
+                .rating(4.2)
+                .createdAt(LocalDateTime.now())
+                .build());
+        sellers.add(Seller.builder()
+                .name("Electronics Plus-" + timestamp)
+                .email("electronics" + timestamp + "@plus.com")
+                .rating(4.8)
+                .createdAt(LocalDateTime.now())
+                .build());
+        return sellers;
+    }
+
+    private List<Product> createTestProducts(List<Category> categories, List<Seller> sellers) {
+        List<Product> products = new ArrayList<>();
+        String[] laptopNames = {"MacBook Pro", "Dell XPS", "ThinkPad"};
+        String[] phoneNames = {"iPhone 15", "Galaxy S24", "Pixel 8"};
+        String[] tabletNames = {"iPad Pro", "Galaxy Tab", "Surface Pro"};
+        
+        int index = 0;
+        
+        // 노트북 상품
+        for (int i = 0; i < 3; i++) {
+            products.add(Product.builder()
+                    .name(laptopNames[i] + " 최신형")
+                    .description("고성능 노트북 " + laptopNames[i] + " 최신 모델입니다")
+                    .price(1500000 + (i * 200000))
+                    .status(ProductStatus.ACTIVE)
+                    .category(categories.get(0))
+                    .seller(sellers.get(i % sellers.size()))
+                    .createdAt(LocalDateTime.now())
+                    .updatedAt(LocalDateTime.now())
+                    .build());
+        }
+        
+        // 스마트폰 상품
+        for (int i = 0; i < 3; i++) {
+            products.add(Product.builder()
+                    .name(phoneNames[i] + " Pro Max")
+                    .description("최신 스마트폰 " + phoneNames[i] + " 프로 모델입니다")
+                    .price(1200000 + (i * 100000))
+                    .status(ProductStatus.ACTIVE)
+                    .category(categories.get(1))
+                    .seller(sellers.get(i % sellers.size()))
+                    .createdAt(LocalDateTime.now())
+                    .updatedAt(LocalDateTime.now())
+                    .build());
+        }
+        
+        // 태블릿 상품
+        for (int i = 0; i < 4; i++) {
+            String tabletName = i < 3 ? tabletNames[i] : "Android Tablet";
+            products.add(Product.builder()
+                    .name(tabletName + " 2024")
+                    .description("프리미엄 태블릿 " + tabletName + " 최신 버전입니다")
+                    .price(800000 + (i * 150000))
+                    .status(i == 3 ? ProductStatus.INACTIVE : ProductStatus.ACTIVE)
+                    .category(categories.get(2))
+                    .seller(sellers.get(i % sellers.size()))
+                    .createdAt(LocalDateTime.now())
+                    .updatedAt(LocalDateTime.now())
+                    .build());
+        }
+        
+        return products;
+    }
+}
