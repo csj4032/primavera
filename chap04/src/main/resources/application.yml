@@ -1,11 +1,28 @@
 spring:
   application:
     name: DataAccessApplication
+  profiles:
+    group:
+      local:
+        - console-appender
+        - file-debug-appender
+        - file-error-appender
+        - file-info-appender
+        - file-warn-appender
+  cloud:
+    config:
+      enabled: false
+      import-check:
+        enabled: false
   banner:
     charset: UTF-8
     location: banner.txt
   jackson:
     time-zone: UTC
+
+primavera:
+  logs:
+    path: ./logs
 
 logging:
   level:

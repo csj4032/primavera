@@ -72,7 +72,8 @@
       "Bash(./docker-manager.sh stop:*)",
       "Bash(pkill:*)",
       "Bash(./infrastructure/scripts/docker-manager.sh start:*)",
-      "Bash(./infrastructure/scripts/docker-manager.sh stop:*)"
+      "Bash(./infrastructure/scripts/docker-manager.sh stop:*)",
+      "Bash(java:*)"
     ],
     "deny": []
   }
