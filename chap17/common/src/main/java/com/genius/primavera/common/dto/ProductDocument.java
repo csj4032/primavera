@@ -1,9 +1,12 @@
 package com.genius.primavera.common.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.time.Instant;
 import java.util.List;
@@ -12,7 +15,8 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductDocument {
+@ToString
+public final class ProductDocument {
     private Long productId;
     private String name;
     private String description;
@@ -30,7 +34,8 @@ public class ProductDocument {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class SellerInfo {
+    @ToString
+    public static final class SellerInfo {
         private Long id;
         private String name;
         private String email;
@@ -41,7 +46,8 @@ public class ProductDocument {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class CategoryInfo {
+    @ToString
+    public static final class CategoryInfo {
         private Long id;
         private String name;
         private String fullPath;

@@ -27,41 +27,41 @@ public class ProductIndexingService {
     private static final String PRODUCTS_INDEX = "products";
 
     public void createProductsIndexIfNotExists() throws IOException {
-        boolean exists = elasticsearchClient.indices().exists(
-            ExistsRequest.of(e -> e.index(PRODUCTS_INDEX))
-        ).value();
+        var exists = elasticsearchClient.indices()
+            .exists(ExistsRequest.of(e -> e.index(PRODUCTS_INDEX)))
+            .value();
 
         if (!exists) {
-            Map<String, Property> properties = new HashMap<>();
-            properties.put("name", Property.of(p -> p.text(TextProperty.of(t -> t.analyzer("standard")))));
-            properties.put("description", Property.of(p -> p.text(TextProperty.of(t -> t.analyzer("standard")))));
-            properties.put("price", Property.of(p -> p.integer(i -> i)));
-            properties.put("status", Property.of(p -> p.keyword(k -> k)));
-            properties.put("seller_name", Property.of(p -> p.text(TextProperty.of(t -> t.analyzer("standard")))));
-            properties.put("seller_email", Property.of(p -> p.keyword(k -> k)));
-            properties.put("category_name", Property.of(p -> p.text(TextProperty.of(t -> t.analyzer("standard")))));;
-            properties.put("created_at", Property.of(p -> p.date(d -> d)));
-            properties.put("updated_at", Property.of(p -> p.date(d -> d)));
-
-            CreateIndexResponse response = elasticsearchClient.indices().create(c -> c
-                    .index(PRODUCTS_INDEX)
-                    .mappings(m -> m.properties(properties))
-            );
+            var properties = createIndexMappingProperties();
+            var response = elasticsearchClient.indices()
+                .create(c -> c.index(PRODUCTS_INDEX).mappings(m -> m.properties(properties)));
 
             log.info("Products 인덱스 생성 완료: acknowledged={}", response.acknowledged());
         } else {
             log.info("Products 인덱스가 이미 존재합니다");
         }
     }
+    
+    private Map<String, Property> createIndexMappingProperties() {
+        return Map.of(
+            "name", Property.of(p -> p.text(TextProperty.of(t -> t.analyzer("standard")))),
+            "description", Property.of(p -> p.text(TextProperty.of(t -> t.analyzer("standard")))),
+            "price", Property.of(p -> p.integer(i -> i)),
+            "status", Property.of(p -> p.keyword(k -> k)),
+            "seller_name", Property.of(p -> p.text(TextProperty.of(t -> t.analyzer("standard")))),
+            "seller_email", Property.of(p -> p.keyword(k -> k)),
+            "category_name", Property.of(p -> p.text(TextProperty.of(t -> t.analyzer("standard")))),
+            "created_at", Property.of(p -> p.date(d -> d)),
+            "updated_at", Property.of(p -> p.date(d -> d))
+        );
+    }
 
     public void indexProduct(Product product) throws IOException {
-        ProductDocument document = convertToDocument(product);
-        
-        IndexResponse response = elasticsearchClient.index(i -> i
-                .index(PRODUCTS_INDEX)
-                .id(product.getId().toString())
-                .document(document)
-        );
+        var document = convertToDocument(product);
+        var response = elasticsearchClient.index(i -> i
+            .index(PRODUCTS_INDEX)
+            .id(product.getId().toString())
+            .document(document));
 
         log.info("상품 인덱싱 완료 - ID: {}, Result: {}", response.id(), response.result());
     }
@@ -79,12 +79,18 @@ public class ProductIndexingService {
     }
 
     private ProductDocument convertToDocument(Product product) {
+        var status = switch (product.getStatus()) {
+            case ACTIVE -> "ACTIVE";
+            case INACTIVE -> "INACTIVE";
+            case SOLD_OUT -> "SOLD_OUT";
+        };
+
         return ProductDocument.builder()
                 .id(product.getId().toString())
                 .name(product.getName())
                 .description(product.getDescription())
                 .price(product.getPrice())
-                .status(product.getStatus().name())
+                .status(status)
                 .sellerName(product.getSeller().getName())
                 .sellerEmail(product.getSeller().getEmail())
                 .categoryName(product.getCategory().getName())

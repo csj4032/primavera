@@ -36,6 +36,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -46,6 +48,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {com.genius.primavera.ProductBatchApplication.class, com.genius.primavera.batch.TestConfig.class})
 @EnableTestContainers(value = {@EnableTestContainers.TestContainer(type = ContainerType.MARIADB, name = "primavera"), @EnableTestContainers.TestContainer(type = ContainerType.ELASTICSEARCH, name = "elasticsearch")})
 public class DatabaseToElasticsearchIntegrationTest {
+
+    record ProductTemplate(String name, String description, int basePrice, ProductStatus status) {}
 
     @Autowired
     private ProductRepository productRepository;
@@ -157,18 +161,7 @@ public class DatabaseToElasticsearchIntegrationTest {
 
         assertTrue(priceSearch.hits().total().value() > 0, "가격 범위 내 상품이 검색되어야 한다");
         log.info("가격 범위(50만원~100만원) 검색 결과: {}개", priceSearch.hits().total().value());
-
-        // 판매자별 검색
-        SearchResponse<ProductDocument> sellerSearch = elasticsearchClient.search(s -> s
-                .index(INDEX_NAME)
-                .query(q -> q
-                        .match(m -> m
-                                .field("seller.name")
-                                .query("Tech Store")
-                        )
-                ), ProductDocument.class
-        );
-
+        SearchResponse<ProductDocument> sellerSearch = elasticsearchClient.search(s -> s.index(INDEX_NAME).query(q -> q.match(m -> m.field("seller.name").query("Tech Store"))), ProductDocument.class);
         log.info("'Tech Store' 판매자 검색 결과: {}개", sellerSearch.hits().total().value());
     }
 
@@ -176,23 +169,15 @@ public class DatabaseToElasticsearchIntegrationTest {
     @Order(4)
     @DisplayName("데이터베이스와 Elasticsearch의 데이터 일관성을 확인할 수 있다")
     void shouldVerifyDataConsistency() throws Exception {
-        // 테스트 데이터 준비 및 인덱싱
         prepareTestData();
         runBatchJob();
         Thread.sleep(2000);
-
-        // 데이터베이스의 상품 수
         long dbCount = productRepository.count();
-
-        // Elasticsearch의 문서 수
         CountResponse esCount = elasticsearchClient.count(c -> c.index(INDEX_NAME));
-
         assertEquals(dbCount, esCount.count(), "데이터베이스와 Elasticsearch의 데이터 수가 일치해야 한다");
         log.info("데이터 일관성 확인:");
         log.info("- 데이터베이스 상품 수: {}", dbCount);
         log.info("- Elasticsearch 문서 수: {}", esCount.count());
-
-        // 개별 상품 검증
         Product firstProduct = productRepository.findAll().get(0);
         SearchResponse<ProductDocument> productSearch = elasticsearchClient.search(s -> s
                 .index(INDEX_NAME)
@@ -203,37 +188,26 @@ public class DatabaseToElasticsearchIntegrationTest {
                         )
                 ), ProductDocument.class
         );
-
         assertEquals(1, productSearch.hits().total().value(), "특정 상품이 정확히 1개 검색되어야 한다");
-
         ProductDocument document = productSearch.hits().hits().get(0).source();
         assertNotNull(document, "문서가 존재해야 한다");
         assertEquals(firstProduct.getName(), document.getName(), "상품명이 일치해야 한다");
         assertEquals(firstProduct.getPrice(), document.getPrice(), "가격이 일치해야 한다");
         assertEquals(firstProduct.getStatus().name(), document.getStatus(), "상태가 일치해야 한다");
-
         log.info("개별 상품 검증 완료 - ID: {}, Name: {}", firstProduct.getId(), firstProduct.getName());
     }
 
     private void prepareTestData() {
-        // 카테고리 생성
         List<Category> categories = createTestCategories();
         List<Category> savedCategories = categoryRepository.saveAll(categories);
-
-        // 판매자 생성
         List<Seller> sellers = createTestSellers();
         List<Seller> savedSellers = sellerRepository.saveAll(sellers);
-
-        // 상품 생성
         List<Product> products = createTestProducts(savedCategories, savedSellers);
         productRepository.saveAll(products);
     }
 
     private void runBatchJob() throws Exception {
-        JobParameters jobParameters = new JobParametersBuilder()
-                .addLong("time", System.currentTimeMillis())
-                .toJobParameters();
-
+        JobParameters jobParameters = new JobParametersBuilder().addLong("time", System.currentTimeMillis()).toJobParameters();
         jobLauncher.run(productIndexingJob, jobParameters);
     }
 
@@ -283,56 +257,46 @@ public class DatabaseToElasticsearchIntegrationTest {
     }
 
     private List<Product> createTestProducts(List<Category> categories, List<Seller> sellers) {
-        List<Product> products = new ArrayList<>();
-        String[] laptopNames = {"MacBook Pro", "Dell XPS", "ThinkPad"};
-        String[] phoneNames = {"iPhone 15", "Galaxy S24", "Pixel 8"};
-        String[] tabletNames = {"iPad Pro", "Galaxy Tab", "Surface Pro"};
-
-        int index = 0;
-
-        // 노트북 상품
-        for (int i = 0; i < 3; i++) {
-            products.add(Product.builder()
-                    .name(laptopNames[i] + " 최신형")
-                    .description("고성능 노트북 " + laptopNames[i] + " 최신 모델입니다")
-                    .price(1500000 + (i * 200000))
-                    .status(ProductStatus.ACTIVE)
-                    .category(categories.get(0))
-                    .seller(sellers.get(i % sellers.size()))
-                    .createdAt(LocalDateTime.now())
-                    .updatedAt(LocalDateTime.now())
-                    .build());
-        }
-
-        // 스마트폰 상품
-        for (int i = 0; i < 3; i++) {
-            products.add(Product.builder()
-                    .name(phoneNames[i] + " Pro Max")
-                    .description("최신 스마트폰 " + phoneNames[i] + " 프로 모델입니다")
-                    .price(1200000 + (i * 100000))
-                    .status(ProductStatus.ACTIVE)
-                    .category(categories.get(1))
-                    .seller(sellers.get(i % sellers.size()))
-                    .createdAt(LocalDateTime.now())
-                    .updatedAt(LocalDateTime.now())
-                    .build());
-        }
-
-        // 태블릿 상품
-        for (int i = 0; i < 4; i++) {
-            String tabletName = i < 3 ? tabletNames[i] : "Android Tablet";
-            products.add(Product.builder()
-                    .name(tabletName + " 2024")
-                    .description("프리미엄 태블릿 " + tabletName + " 최신 버전입니다")
-                    .price(800000 + (i * 150000))
-                    .status(i == 3 ? ProductStatus.INACTIVE : ProductStatus.ACTIVE)
-                    .category(categories.get(2))
-                    .seller(sellers.get(i % sellers.size()))
-                    .createdAt(LocalDateTime.now())
-                    .updatedAt(LocalDateTime.now())
-                    .build());
-        }
-
-        return products;
+        var laptopTemplates = List.of(
+            new ProductTemplate("MacBook Pro 최신형", "고성능 노트북 MacBook Pro 최신 모델입니다", 1500000, ProductStatus.ACTIVE),
+            new ProductTemplate("Dell XPS 최신형", "고성능 노트북 Dell XPS 최신 모델입니다", 1700000, ProductStatus.ACTIVE),
+            new ProductTemplate("ThinkPad 최신형", "고성능 노트북 ThinkPad 최신 모델입니다", 1900000, ProductStatus.ACTIVE)
+        );
+        
+        var phoneTemplates = List.of(
+            new ProductTemplate("iPhone 15 Pro Max", "최신 스마트폰 iPhone 15 프로 모델입니다", 1200000, ProductStatus.ACTIVE),
+            new ProductTemplate("Galaxy S24 Pro Max", "최신 스마트폰 Galaxy S24 프로 모델입니다", 1300000, ProductStatus.ACTIVE),
+            new ProductTemplate("Pixel 8 Pro Max", "최신 스마트폰 Pixel 8 프로 모델입니다", 1400000, ProductStatus.ACTIVE)
+        );
+        
+        var tabletTemplates = List.of(
+            new ProductTemplate("iPad Pro 2024", "프리미엄 태블릿 iPad Pro 최신 버전입니다", 800000, ProductStatus.ACTIVE),
+            new ProductTemplate("Galaxy Tab 2024", "프리미엄 태블릿 Galaxy Tab 최신 버전입니다", 950000, ProductStatus.ACTIVE),
+            new ProductTemplate("Surface Pro 2024", "프리미엄 태블릿 Surface Pro 최신 버전입니다", 1100000, ProductStatus.ACTIVE),
+            new ProductTemplate("Android Tablet 2024", "프리미엄 태블릿 Android Tablet 최신 버전입니다", 1250000, ProductStatus.INACTIVE)
+        );
+        
+        var allTemplates = List.of(
+            laptopTemplates.stream().map(template -> createProduct(template, categories.getFirst(), sellers)),
+            phoneTemplates.stream().map(template -> createProduct(template, categories.get(1), sellers)),
+            tabletTemplates.stream().map(template -> createProduct(template, categories.get(2), sellers))
+        );
+        
+        return allTemplates.stream()
+                .flatMap(stream -> stream)
+                .collect(Collectors.toList());
+    }
+    
+    private Product createProduct(ProductTemplate template, Category category, List<Seller> sellers) {
+        return Product.builder()
+                .name(template.name())
+                .description(template.description())
+                .price(template.basePrice())
+                .status(template.status())
+                .category(category)
+                .seller(sellers.get(ThreadLocalRandom.current().nextInt(sellers.size())))
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
     }
 }

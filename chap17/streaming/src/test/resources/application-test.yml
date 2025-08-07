@@ -1,23 +1,14 @@
 spring:
-  application:
-    name: ProductStreamingApplication-Test
-  r2dbc:
-    url: r2dbc:h2:mem:///testdb
-    username: sa
-    password: ""
-
-logging:
-  level:
-    com.genius.primavera: DEBUG
-    reactor.netty: INFO
-    co.elastic.clients: INFO
-
-elasticsearch:
-  host: localhost
-  port: 9200
-  scheme: http
-  username: ""
-  password: ""
-
-debezium:
-  enabled: false
+  config:
+    activate:
+      on-profile: test
+  cloud:
+    config:
+      enabled: false
+    vault:
+      enabled: false
+  datasource:
+    hikari:
+      minimum-idle: 1
+      maximum-pool-size: 5
+      connection-timeout: 20000

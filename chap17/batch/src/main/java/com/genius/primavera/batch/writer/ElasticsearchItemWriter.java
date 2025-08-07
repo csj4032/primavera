@@ -8,6 +8,8 @@ import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -18,19 +20,40 @@ public class ElasticsearchItemWriter implements ItemWriter<ProductDocument> {
 
     @Override
     public void write(Chunk<? extends ProductDocument> chunk) throws Exception {
-        BulkRequest.Builder bulkRequestBuilder = new BulkRequest.Builder();
+        var bulkRequest = buildBulkRequest(chunk.getItems());
+        executeBulkRequest(bulkRequest, chunk.getItems().size());
+    }
 
-        for (ProductDocument doc : chunk.getItems()) {
-            bulkRequestBuilder.operations(op -> op
-                    .index(idx -> idx
-                            .index(INDEX_NAME)
-                            .id(String.valueOf(doc.getProductId()))
-                            .document(doc)
-                    )
-            );
+    private BulkRequest buildBulkRequest(List<? extends ProductDocument> items) {
+        var builder = new BulkRequest.Builder();
+        
+        items.forEach(doc -> builder.operations(op -> op
+                .index(idx -> idx
+                        .index(INDEX_NAME)
+                        .id(String.valueOf(doc.getProductId()))
+                        .document(doc))));
+        
+        return builder.build();
+    }
+
+    private void executeBulkRequest(BulkRequest request, int itemCount) throws Exception {
+        var response = elasticsearchClient.bulk(request);
+        
+        if (response.errors()) {
+            var errorCount = (int) response.items().stream()
+                    .filter(item -> item.error() != null)
+                    .count();
+            
+            log.warn("Bulk indexing completed with {} errors out of {} documents", errorCount, itemCount);
+            
+            // Log first few errors for debugging
+            response.items().stream()
+                    .filter(item -> item.error() != null)
+                    .limit(5)
+                    .forEach(item -> log.error("Indexing error for document {}: {}", 
+                        item.id(), item.error().reason()));
+        } else {
+            log.info("Successfully indexed {} documents", itemCount);
         }
-
-        elasticsearchClient.bulk(bulkRequestBuilder.build());
-        log.info("{} documents indexed.", chunk.getItems().size());
     }
 }

@@ -21,47 +21,45 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ElasticsearchConfiguration {
 
-    @Value("${elasticsearch.host:localhost}")
+    @Value("${elasticsearch.host}")
     private String host;
 
-    @Value("${elasticsearch.port:9200}")
+    @Value("${elasticsearch.port}")
     private int port;
 
-    @Value("${elasticsearch.username:elastic}")
+    @Value("${elasticsearch.username}")
     private String username;
 
-    @Value("${elasticsearch.password:elastic}")
+    @Value("${elasticsearch.password}")
     private String password;
 
-    @Value("${elasticsearch.scheme:http}")
+    @Value("${elasticsearch.scheme}")
     private String scheme;
 
     @Bean
     public RestClient elasticsearchRestClient() {
-        final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-        credentialsProvider.setCredentials(AuthScope.ANY,
-                new UsernamePasswordCredentials(username, password));
-
-        RestClient restClient = RestClient.builder(
-                        new HttpHost(host, port, scheme))
-                .setHttpClientConfigCallback(httpAsyncClientBuilder ->
-                        httpAsyncClientBuilder.setDefaultCredentialsProvider(credentialsProvider))
+        var credentialsProvider = new BasicCredentialsProvider();
+        credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(username, password));
+        
+        var restClient = RestClient.builder(new HttpHost(host, port, scheme))
+                .setHttpClientConfigCallback(httpAsyncClientBuilder -> 
+                    httpAsyncClientBuilder.setDefaultCredentialsProvider(credentialsProvider))
                 .build();
-
+                
         log.info("Elasticsearch RestClient configured: {}://{}:{}", scheme, host, port);
         return restClient;
     }
 
     @Bean
     public ElasticsearchTransport elasticsearchTransport(RestClient restClient) {
-        ObjectMapper objectMapper = new ObjectMapper();
+        var objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         return new RestClientTransport(restClient, new JacksonJsonpMapper(objectMapper));
     }
 
     @Bean
     public ElasticsearchClient elasticsearchClient(ElasticsearchTransport transport) {
-        ElasticsearchClient client = new ElasticsearchClient(transport);
+        var client = new ElasticsearchClient(transport);
         log.info("ElasticsearchClient initialized");
         return client;
     }
