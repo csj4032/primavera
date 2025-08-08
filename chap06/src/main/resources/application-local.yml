@@ -16,7 +16,7 @@ spring:
       port: 8200
       scheme: http
       authentication: TOKEN
-      token: primavera-dev-token
+      token: primavera-vault-token
       connection-timeout: 5000
       read-timeout: 15000
       fail-fast: false

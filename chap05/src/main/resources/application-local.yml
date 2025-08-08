@@ -12,11 +12,11 @@ spring:
       enabled: true
     vault:
       enabled: true
-      host: localhost
-      port: 8200
-      scheme: http
+      host: ${VAULT_HOST:localhost}
+      port: ${VAULT_PORT:8200}
+      scheme: ${VAULT_SCHEME:http}
       authentication: TOKEN
-      token: primavera-dev-token
+      token: ${VAULT_TOKEN:primavera-vault-token}
       connection-timeout: 5000
       read-timeout: 15000
       fail-fast: false

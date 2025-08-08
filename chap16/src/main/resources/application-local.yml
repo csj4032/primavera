@@ -10,7 +10,7 @@ spring:
       port: ${VAULT_PORT:8200}
       scheme: ${VAULT_SCHEME:http}
       authentication: TOKEN
-      token: primavera-vault-token
+      token: ${VAULT_TOKEN:primavera-vault-token}
       kv:
         enabled: true
         backend: secret
