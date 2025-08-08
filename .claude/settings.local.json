@@ -83,7 +83,10 @@
       "Bash(SPRING_PROFILES_ACTIVE=local ./gradlew :chap16:bootRun)",
       "Bash(SPRING_PROFILES_ACTIVE=local timeout 30 ./gradlew :chap04:bootRun)",
       "Bash(SPRING_PROFILES_ACTIVE=local ./gradlew :chap05:bootRun)",
-      "Bash(SPRING_PROFILES_ACTIVE=local timeout -s TERM 10 ./gradlew :chap06:bootRun)"
+      "Bash(SPRING_PROFILES_ACTIVE=local timeout -s TERM 10 ./gradlew :chap06:bootRun)",
+      "Bash(./infrastructure/scripts/docker-manager.sh:*)",
+      "Bash(timeout:*)",
+      "Bash(SPRING_PROFILES_ACTIVE=local ./gradlew :chap15:bootRun)"
     ],
     "deny": []
   }

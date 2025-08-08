@@ -4,7 +4,6 @@ spring:
       on-profile: local
     import:
       - "optional:vault:"
-      - "optional:configserver:"
   aop:
     proxy-target-class: true
   cloud:
@@ -51,7 +50,7 @@ spring:
         implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.MySQLDialect
+        dialect: org.hibernate.dialect.MariaDBDialect
         globally_quoted_identifiers: true
         jdbc:
           fetch_size: 30

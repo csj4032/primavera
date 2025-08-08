@@ -67,21 +67,21 @@ vault kv put secret/MvcAopApplication/local \
 
 # chap04: DataAccessApplication
 vault kv put secret/DataAccessApplication/local \
-    spring.datasource.url=jdbc:mariadb://localhost:3306/primavera_basic \
+    spring.datasource.url=jdbc:mariadb://localhost:3306/primavera \
     spring.datasource.username=primavera \
     spring.datasource.password=primavera \
     spring.datasource.driver-class-name=org.mariadb.jdbc.Driver
 
 # chap05: MyBatisLoggingApplication
 vault kv put secret/MyBatisLoggingApplication/local \
-    spring.datasource.url=jdbc:mariadb://localhost:3306/primavera_basic \
+    spring.datasource.url=jdbc:mariadb://localhost:3306/primavera \
     spring.datasource.username=primavera \
     spring.datasource.password=primavera \
     spring.datasource.driver-class-name=org.mariadb.jdbc.Driver
 
 # chap06: ValidationApplication
 vault kv put secret/ValidationApplication/local \
-    spring.datasource.url=jdbc:mariadb://localhost:3306/primavera_mybatis \
+    spring.datasource.url=jdbc:mariadb://localhost:3306/primavera \
     spring.datasource.username=primavera \
     spring.datasource.password=primavera \
     spring.datasource.driver-class-name=org.mariadb.jdbc.Driver \
@@ -90,7 +90,7 @@ vault kv put secret/ValidationApplication/local \
 
 # chap07: ThymeleafWebApplication
 vault kv put secret/ThymeleafWebApplication/local \
-    spring.datasource.url=jdbc:mariadb://localhost:3306/primavera_mybatis \
+    spring.datasource.url=jdbc:mariadb://localhost:3306/primavera \
     spring.datasource.username=primavera \
     spring.datasource.password=primavera \
     spring.datasource.driver-class-name=org.mariadb.jdbc.Driver
@@ -130,14 +130,14 @@ vault kv put secret/OAuth2SocialLoginApplication/local \
 
 # chap11: BoardSystemApplication
 vault kv put secret/BoardSystemApplication/local \
-    spring.datasource.url=jdbc:mariadb://localhost:3306/primavera_mybatis \
+    spring.datasource.url=jdbc:mariadb://localhost:3306/primavera \
     spring.datasource.username=primavera \
     spring.datasource.password=primavera \
     spring.datasource.driver-class-name=org.mariadb.jdbc.Driver
 
 # chap12: HierarchicalCommentApplication
 vault kv put secret/HierarchicalCommentApplication/local \
-    spring.datasource.url=jdbc:mariadb://localhost:3306/primavera_mybatis_board \
+    spring.datasource.url=jdbc:mariadb://localhost:3306/primavera \
     spring.datasource.username=primavera \
     spring.datasource.password=primavera \
     spring.datasource.driver-class-name=org.mariadb.jdbc.Driver \
@@ -146,22 +146,22 @@ vault kv put secret/HierarchicalCommentApplication/local \
 
 # chap13: AdvancedAuthorizationApplication
 vault kv put secret/AdvancedAuthorizationApplication/local \
-    spring.datasource.url=jdbc:mariadb://localhost:3306/primavera_mybatis_board \
+    spring.datasource.url=jdbc:mariadb://localhost:3306/primavera \
     spring.datasource.username=primavera \
     spring.datasource.password=primavera \
     spring.datasource.driver-class-name=org.mariadb.jdbc.Driver \
     spring.data.mongodb.uri=mongodb://localhost:27017/primavera_auth
 
-# chap14: JpaAdvancedMappingApplication
-vault kv put secret/JpaAdvancedMappingApplication/local \
-    spring.datasource.url=jdbc:mariadb://localhost:3306/primavera_jpa_advanced \
+# chap14: AdvancedJpaApplication
+vault kv put secret/AdvancedJpaApplication/local \
+    spring.datasource.url=jdbc:mariadb://localhost:3306/primavera \
     spring.datasource.username=primavera \
     spring.datasource.password=primavera \
     spring.datasource.driver-class-name=org.mariadb.jdbc.Driver
 
-# chap15: ReactiveProgrammingApplication
-vault kv put secret/ReactiveProgrammingApplication/local \
-    spring.r2dbc.url=r2dbc:mariadb://localhost:3306/primavera_jpa_advanced \
+# chap15: JpaAdvancedMappingApplication
+vault kv put secret/JpaAdvancedMappingApplication/local \
+    spring.r2dbc.url=jdbc:mariadb://localhost:3306/primavera \
     spring.r2dbc.username=primavera \
     spring.r2dbc.password=primavera \
     spring.redis.host=localhost \
@@ -193,25 +193,25 @@ vault kv put secret/FileProcessingMonitoringApplication/local \
 
 # chap18: 마이크로서비스
 vault kv put secret/FrontApplication/local \
-    spring.datasource.url=jdbc:mariadb://localhost:3306/primavera_microservices \
+    spring.datasource.url=jdbc:mariadb://localhost:3306/primavera \
     spring.datasource.username=primavera \
     spring.datasource.password=primavera \
     spring.datasource.driver-class-name=org.mariadb.jdbc.Driver
 
 vault kv put secret/AccountApplication/local \
-    spring.datasource.url=jdbc:mariadb://localhost:3306/primavera_microservices \
+    spring.datasource.url=jdbc:mariadb://localhost:3306/primavera \
     spring.datasource.username=primavera \
     spring.datasource.password=primavera \
     spring.datasource.driver-class-name=org.mariadb.jdbc.Driver
 
 vault kv put secret/ProductApplication/local \
-    spring.datasource.url=jdbc:mariadb://localhost:3306/primavera_microservices \
+    spring.datasource.url=jdbc:mariadb://localhost:3306/primavera \
     spring.datasource.username=primavera \
     spring.datasource.password=primavera \
     spring.datasource.driver-class-name=org.mariadb.jdbc.Driver
 
 vault kv put secret/ConfigurationApplication/local \
-    spring.datasource.url=jdbc:mariadb://localhost:3306/primavera_microservices \
+    spring.datasource.url=jdbc:mariadb://localhost:3306/primavera \
     spring.datasource.username=primavera \
     spring.datasource.password=primavera \
     spring.datasource.driver-class-name=org.mariadb.jdbc.Driver
@@ -265,30 +265,34 @@ path "secret/data/HierarchicalCommentApplication/*" {
 path "secret/data/AdvancedAuthorizationApplication/*" {
   capabilities = ["read", "list"]
 }
+path "secret/data/AdvancedJpaApplication/*" {
+  capabilities = ["read", "list"]
+}
 path "secret/data/JpaAdvancedMappingApplication/*" {
-  capabilities = ["read", "list"]
-}
-path "secret/data/FrontApplication/*" {
-  capabilities = ["read", "list"]
-}
-path "secret/data/AccountApplication/*" {
-  capabilities = ["read", "list"]
-}
-path "secret/data/ProductApplication/*" {
-  capabilities = ["read", "list"]
-}
-path "secret/data/ConfigurationApplication/*" {
-  capabilities = ["read", "list"]
-}
-path "secret/data/ReactiveProgrammingApplication/*" {
   capabilities = ["read", "list"]
 }
 path "secret/data/FileProcessingMonitoringApplication/*" {
   capabilities = ["read", "list"]
 }
-path "secret/data/CiCdDeploymentApplication/*" {
+path "secret/data/ProductBatchApplication/*" {
   capabilities = ["read", "list"]
 }
+path "secret/data/ProductStreamingApplication/*" {
+  capabilities = ["read", "list"]
+}
+path "secret/data/AccountApplication/*" {
+  capabilities = ["read", "list"]
+}
+path "secret/data/ConfigurationApplication/*" {
+  capabilities = ["read", "list"]
+}
+path "secret/data/OrderApplication/*" {
+  capabilities = ["read", "list"]
+}
+path "secret/data/ProductApplication/*" {
+  capabilities = ["read", "list"]
+}
+
 # 메타데이터 접근 권한
 path "secret/metadata/*" {
   capabilities = ["list", "read"]

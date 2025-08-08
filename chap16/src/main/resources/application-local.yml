@@ -78,8 +78,3 @@ sentry:
   stacktrace:
     app.packages:
       - "com.primavera.genius"
-
-logging:
-  level:
-    org.springframework.cloud.vault: DEBUG
-    org.springframework.vault: DEBUG
