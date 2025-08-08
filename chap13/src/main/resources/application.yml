@@ -25,6 +25,18 @@ lucy-filter:
 logging:
   config: classpath:logback-spring.xml
 
+#server:
+#  ssl:
+#    enabled-protocols: TLSv1.2
+#    key-alias: primavera
+#    key-store: classpath:certs/primavera.p12
+#    key-store-type: PKCS12
+#    key-store-password: primavera
+#    enabled: true
+#  port: 8443
+#  http2:
+#    enabled: true
+
 storage:
   location: upload
 

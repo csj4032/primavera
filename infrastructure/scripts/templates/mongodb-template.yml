@@ -6,6 +6,8 @@
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: root
       MONGO_INITDB_DATABASE: primavera
+      MONGO_INITDB_USERNAME: primavera
+      MONGO_INITDB_PASSWORD: primavera
     ports:
       - "${MONGODB_PORT}:27017"
     volumes:

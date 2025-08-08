@@ -4,10 +4,13 @@ spring:
       on-profile: local
     import:
       - "optional:vault:"
-      - "optional:configserver:"
   aop:
     proxy-target-class: true
   cloud:
+    config:
+      enabled: false
+      import-check:
+        enabled: false
     vault:
       host: localhost
       port: 8200
@@ -42,14 +45,6 @@ spring:
     table: SCHEMA_HISTORY
     baseline-on-migrate: false
     baseline-description: schema history
-  data:
-    mongodb:
-      host: localhost
-      port: 27017
-      authentication-database: admin
-      database: primavera
-      username: primavera
-      password: primavera
   thymeleaf:
     cache: false
     enabled: true
@@ -66,17 +61,6 @@ mybatis:
     default-statement-timeout: 30
   type-aliases-package: com.genius.primavera.domain
   type-handlers-package: com.genius.primavera.domain
-
-server:
-  ssl:
-    key-alias: primavera
-    key-store: classpath:certs/primavera.p12
-    key-store-type: PKCS12
-    key-store-password: primavera
-    enabled: true
-  port: 8443
-  http2:
-    enabled: true
 
 storage:
   location: upload

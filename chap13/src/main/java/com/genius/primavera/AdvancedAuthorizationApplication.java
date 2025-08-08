@@ -18,12 +18,9 @@ import org.springframework.data.mongodb.repository.config.EnableReactiveMongoRep
 @EnableConfigurationProperties(ThymeleafProperties.class)
 public class AdvancedAuthorizationApplication {
 
-    private static final String APPLICATION = "spring.config.location=classpath:/application-${spring.profiles.active:local}.yml,classpath:/social.yml";
-
     public static void main(String[] args) {
         new SpringApplicationBuilder(AdvancedAuthorizationApplication.class)
-                .bannerMode(Banner.Mode.OFF)
-                .properties(APPLICATION)
+                .properties("spring.config.additional-location=classpath:/social.yml")
                 .build()
                 .run(args);
     }
