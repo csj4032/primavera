@@ -79,7 +79,7 @@ mybatis:
 server:
   ssl:
     key-alias: primavera
-    key-store: infrastructure/certs/primavera.p12
+    key-store: classpath:certs/primavera.p12
     key-store-type: PKCS12
     key-store-password: primavera
     enabled: true

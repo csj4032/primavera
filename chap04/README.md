@@ -131,14 +131,38 @@ spring:
 
 ## 실행 방법
 
-### 로컬 환경 실행
+### 🚀 Spring Boot 애플리케이션 실행
+
+#### 1. 환경 변수 방식 (권장)
 ```bash
-./gradlew :chap04:bootRun
+# 로컬 환경으로 실행
+SPRING_PROFILES_ACTIVE=local ./gradlew :chap04:bootRun
+
+# 여러 프로파일 동시 적용 (Vault + 로컬)
+SPRING_PROFILES_ACTIVE=vault,local ./gradlew :chap04:bootRun
 ```
+
+#### 2. Program Arguments 방식
+```bash
+# 기본 실행
+./gradlew :chap04:bootRun --args='--spring.profiles.active=local'
+
+# Vault 설정과 함께 실행
+./gradlew :chap04:bootRun --args='--spring.profiles.active=vault,local'
+```
+
+#### 3. IDE 설정 방식
+- IntelliJ IDEA: Run Configuration → VM Options 또는 Program Arguments 설정
+- VM Options: `-Dspring.profiles.active=local`
+- Program Arguments: `--spring.profiles.active=local`
 
 ### 테스트 실행
 ```bash
+# 전체 테스트 실행 (TestContainers 자동 관리)
 ./gradlew :chap04:test
+
+# 특정 테스트 클래스 실행
+./gradlew :chap04:test --tests UserDaoTest
 ```
 
 ## 테스트
@@ -185,6 +209,27 @@ spring:
 3. **보안 고려**: PreparedStatement 사용, 비밀번호 암호화
 4. **테스트 용이성**: TestContainers를 통한 일관된 테스트 환경
 5. **확장 가능성**: 프록시 패턴을 통한 횡단 관심사 처리
+
+## 실행 방법
+
+### 🚀 Spring Boot 애플리케이션 실행
+
+#### 1. 환경 변수 방식 (권장)
+```bash
+# 로컬 환경으로 실행  
+SPRING_PROFILES_ACTIVE=local ./gradlew :chap04:bootRun
+```
+
+#### 2. Program Arguments 방식
+```bash
+# 기본 실행
+./gradlew :chap04:bootRun --args='--spring.profiles.active=local'
+```
+
+#### 3. IDE 설정 방식
+- IntelliJ IDEA: Run Configuration → VM Options 또는 Program Arguments 설정
+- VM Options: `-Dspring.profiles.active=local`
+- Program Arguments: `--spring.profiles.active=local`
 
 ## 🐳 인프라 설정
 

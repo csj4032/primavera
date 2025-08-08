@@ -3,9 +3,9 @@ rootProject.name = 'primavera'
 // ==========================================
 // Core Learning Modules (chap01-chap18)
 // ==========================================
-//include 'chap01'
-//include 'chap02'
-//include 'chap03'
+include 'chap01'
+include 'chap02'
+include 'chap03'
 include 'chap04'
 include 'chap05'
 include 'chap06'

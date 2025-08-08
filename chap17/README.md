@@ -317,6 +317,33 @@ docker-compose -f docker-compose.jpa.yml down -v
 - **Elasticsearch 8.12.0** (포트: 9200, 9300) - 검색 엔진
 - JPA 전용 데이터베이스 스키마 자동 생성
 
+## 실행 방법
+
+### 🚀 Spring Boot 애플리케이션 실행
+
+#### 1. 환경 변수 방식 (권장)
+```bash
+# 로컬 환경으로 실행 - Batch 서비스
+SPRING_PROFILES_ACTIVE=local ./gradlew :chap17:batch:bootRun
+
+# 로컬 환경으로 실행 - Streaming 서비스  
+SPRING_PROFILES_ACTIVE=local ./gradlew :chap17:streaming:bootRun
+```
+
+#### 2. Program Arguments 방식
+```bash
+# Batch 서비스 실행
+./gradlew :chap17:batch:bootRun --args='--spring.profiles.active=local'
+
+# Streaming 서비스 실행
+./gradlew :chap17:streaming:bootRun --args='--spring.profiles.active=local'
+```
+
+#### 3. IDE 설정 방식
+- IntelliJ IDEA: Run Configuration → VM Options 또는 Program Arguments 설정
+- VM Options: `-Dspring.profiles.active=local`
+- Program Arguments: `--spring.profiles.active=local`
+
 **애플리케이션 실행:**
 ```bash
 # 인프라 시작 후 애플리케이션 실행

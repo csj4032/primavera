@@ -8,7 +8,7 @@ spring:
       port: ${VAULT_PORT:8200}
       scheme: ${VAULT_SCHEME:http}
       authentication: TOKEN
-      token: ${VAULT_TOKEN:primavera-dev-token}
+      token: ${VAULT_TOKEN:primavera-vault-token}
       kv:
         enabled: true
         backend: secret
@@ -74,7 +74,7 @@ server:
       enabled: false
   ssl:
     key-alias: primavera
-    key-store: infrastructure/certs/primavera.p12
+    key-store: classpath:certs/primavera.p12
     key-store-type: PKCS12
     key-store-password: primavera
     enabled: true

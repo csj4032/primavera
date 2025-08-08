@@ -11,8 +11,8 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Vault 설정
-export VAULT_ADDR='http://vault:8200'
-export VAULT_TOKEN='primavera-dev-token'
+export VAULT_ADDR='http://localhost:8200'
+export VAULT_TOKEN='primavera-vault-token'
 
 echo -e "${BLUE}========================================${NC}"
 echo -e "${BLUE}   Primavera Vault 초기화 스크립트${NC}"
@@ -169,7 +169,7 @@ vault kv put secret/ReactiveProgrammingApplication/local \
 
 # chap16: FileProcessingMonitoringApplication
 vault kv put secret/FileProcessingMonitoringApplication/local \
-    spring.datasource.url=jdbc:mariadb://localhost:3308/primavera_jpa_board \
+    spring.datasource.url=jdbc:mariadb://localhost:3306/primavera \
     spring.datasource.username=primavera \
     spring.datasource.password=primavera \
     spring.datasource.driver-class-name=org.mariadb.jdbc.Driver \
@@ -183,20 +183,13 @@ vault kv put secret/FileProcessingMonitoringApplication/local \
 
 # chap17: FileProcessingMonitoringApplication (Data Pipeline)
 vault kv put secret/FileProcessingMonitoringApplication/local \
-    spring.datasource.url=jdbc:mariadb://localhost:3321/primavera \
+    spring.datasource.url=jdbc:mariadb://localhost:3308/primavera \
     spring.datasource.username=primavera \
     spring.datasource.password=primavera \
     spring.datasource.driver-class-name=org.mariadb.jdbc.Driver \
     spring.elasticsearch.uris=http://localhost:9200 \
     spring.data.elasticsearch.client.reactive.username=elastic \
     spring.data.elasticsearch.client.reactive.password=changeme
-
-# chap17: CiCdDeploymentApplication
-vault kv put secret/CiCdDeploymentApplication/local \
-    spring.datasource.url=jdbc:mariadb://localhost:3308/primavera_jpa_board \
-    spring.datasource.username=primavera \
-    spring.datasource.password=primavera \
-    spring.datasource.driver-class-name=org.mariadb.jdbc.Driver
 
 # chap18: 마이크로서비스
 vault kv put secret/FrontApplication/local \
@@ -365,20 +358,13 @@ vault kv put secret/FileProcessingMonitoringApplication/test \
 
 # chap17: FileProcessingMonitoringApplication (Data Pipeline)
 vault kv put secret/FileProcessingMonitoringApplication/test \
-    spring.datasource.url=jdbc:mariadb://localhost:3322/primavera \
+    spring.datasource.url=jdbc:mariadb://localhost:3309/primavera \
     spring.datasource.username=primavera \
     spring.datasource.password=primavera \
     spring.datasource.driver-class-name=org.mariadb.jdbc.Driver \
     spring.elasticsearch.uris=http://localhost:9201 \
     spring.data.elasticsearch.client.reactive.username=elastic \
     spring.data.elasticsearch.client.reactive.password=changeme
-
-# chap17: CiCdDeploymentApplication
-vault kv put secret/CiCdDeploymentApplication/test \
-    spring.datasource.url=jdbc:mariadb://localhost:3309/primavera_jpa_board \
-    spring.datasource.username=primavera \
-    spring.datasource.password=primavera \
-    spring.datasource.driver-class-name=org.mariadb.jdbc.Driver
 
 # chap18: 마이크로서비스 (각 서비스별)
 vault kv put secret/FrontApplication/test \

@@ -419,6 +419,39 @@ Chapter 18에서 학습한 패턴과 기술들은 다음과 같은 실제 프로
 - **실시간 추천 시스템**
 - **마이크로서비스 기반 SaaS 플랫폼**
 
+## 실행 방법
+
+### 🚀 Spring Boot 애플리케이션 실행
+
+#### 1. 환경 변수 방식 (권장)
+```bash
+# Config Server 먼저 시작
+SPRING_PROFILES_ACTIVE=local ./gradlew :chap18:config-server:bootRun
+
+# 각 마이크로서비스 순차 시작
+SPRING_PROFILES_ACTIVE=local ./gradlew :chap18:account-service:bootRun
+SPRING_PROFILES_ACTIVE=local ./gradlew :chap18:product-service:bootRun
+SPRING_PROFILES_ACTIVE=local ./gradlew :chap18:order-service:bootRun
+SPRING_PROFILES_ACTIVE=local ./gradlew :chap18:front-gateway:bootRun
+```
+
+#### 2. Program Arguments 방식
+```bash
+# Config Server 시작
+./gradlew :chap18:config-server:bootRun --args='--spring.profiles.active=local'
+
+# 각 서비스 시작
+./gradlew :chap18:account-service:bootRun --args='--spring.profiles.active=local'
+./gradlew :chap18:product-service:bootRun --args='--spring.profiles.active=local'
+./gradlew :chap18:order-service:bootRun --args='--spring.profiles.active=local'
+./gradlew :chap18:front-gateway:bootRun --args='--spring.profiles.active=local'
+```
+
+#### 3. IDE 설정 방식
+- IntelliJ IDEA: Run Configuration → VM Options 또는 Program Arguments 설정
+- VM Options: `-Dspring.profiles.active=local`
+- Program Arguments: `--spring.profiles.active=local`
+
 ## 🐳 인프라 설정
 
 ### Docker Compose 환경 설정

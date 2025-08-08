@@ -73,7 +73,16 @@
       "Bash(pkill:*)",
       "Bash(./infrastructure/scripts/docker-manager.sh start:*)",
       "Bash(./infrastructure/scripts/docker-manager.sh stop:*)",
-      "Bash(java:*)"
+      "Bash(java:*)",
+      "Bash(./infrastructure/scripts/docker-manager.sh status:*)",
+      "Bash(docker inspect:*)",
+      "Bash(spring.datasource.driver-class-name=org.mariadb.jdbc.Driver )",
+      "Bash(spring.datasource.url=jdbc:mariadb://localhost:3306/primavera )",
+      "Bash(spring.datasource.username=primavera )",
+      "Bash(spring.datasource.password=primavera)",
+      "Bash(SPRING_PROFILES_ACTIVE=local ./gradlew :chap16:bootRun)",
+      "Bash(SPRING_PROFILES_ACTIVE=local timeout 30 ./gradlew :chap04:bootRun)",
+      "Bash(SPRING_PROFILES_ACTIVE=local ./gradlew :chap05:bootRun)"
     ],
     "deny": []
   }

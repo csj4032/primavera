@@ -2,6 +2,8 @@ spring:
   config:
     activate:
       on-profile: local
+    import:
+      - "optional:vault:"
   cloud:
     vault:
       host: ${VAULT_HOST:localhost}
@@ -68,18 +70,6 @@ spring:
   jmx:
     enabled: true
 
-server:
-  tomcat:
-    arp:
-      enabled: false
-  ssl:
-    key-alias: primavera
-    key-store: infrastructure/certs/primavera.p12
-    key-store-type: PKCS12
-    key-store-password: primavera
-    enabled: true
-  port: 8443
-
 sentry:
   dns: https://4084f8500752461897ebbfe3a067d36c@sentry.io/5166811
   environment: local
@@ -88,3 +78,8 @@ sentry:
   stacktrace:
     app.packages:
       - "com.primavera.genius"
+
+logging:
+  level:
+    org.springframework.cloud.vault: DEBUG
+    org.springframework.vault: DEBUG

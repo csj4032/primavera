@@ -525,7 +525,28 @@ public void saveWithConstraintHandling() {
 
 ## 실행 방법
 
-### 1. 데이터베이스 설정
+### 🚀 Spring Boot 애플리케이션 실행
+
+#### 1. 환경 변수 방식 (권장)
+```bash
+# 로컬 환경으로 실행  
+SPRING_PROFILES_ACTIVE=local ./gradlew :chap05:bootRun
+```
+
+#### 2. Program Arguments 방식
+```bash
+# 기본 실행
+./gradlew :chap05:bootRun --args='--spring.profiles.active=local'
+```
+
+#### 3. IDE 설정 방식
+- IntelliJ IDEA: Run Configuration → VM Options 또는 Program Arguments 설정
+- VM Options: `-Dspring.profiles.active=local`
+- Program Arguments: `--spring.profiles.active=local`
+
+### 데이터베이스 설정 및 테스트 실행
+
+#### 1. 데이터베이스 설정
 ```bash
 # MariaDB 11.4.7 실행
 docker run -d --name mariadb-primavera \
@@ -536,12 +557,12 @@ docker run -d --name mariadb-primavera \
   -p 3306:3306 mariadb:11.4.7
 ```
 
-### 2. 애플리케이션 실행
+#### 2. 애플리케이션 실행
 ```bash
 ./gradlew :chap05:bootRun
 ```
 
-### 3. 테스트 실행
+#### 3. 테스트 실행
 ```bash
 # 전체 테스트
 ./gradlew :chap05:test

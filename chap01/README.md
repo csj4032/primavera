@@ -687,6 +687,27 @@ public class SpringBootStarterApplicationTest {
 - Spring Boot 테스트 환경에 최적화된 검증 방식 적용
 - 불필요한 컨텍스트 조작 제거로 테스트 신뢰성 증대
 
+## 실행 방법
+
+### 🚀 Spring Boot 애플리케이션 실행
+
+#### 1. 환경 변수 방식 (권장)
+```bash
+# 로컬 환경으로 실행  
+SPRING_PROFILES_ACTIVE=local ./gradlew :chap01:bootRun
+```
+
+#### 2. Program Arguments 방식
+```bash
+# 기본 실행
+./gradlew :chap01:bootRun --args='--spring.profiles.active=local'
+```
+
+#### 3. IDE 설정 방식
+- IntelliJ IDEA: Run Configuration → VM Options 또는 Program Arguments 설정
+- VM Options: `-Dspring.profiles.active=local`
+- Program Arguments: `--spring.profiles.active=local`
+
 ## 🐳 인프라 설정
 
 ### Docker Compose 환경 설정

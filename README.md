@@ -1087,16 +1087,89 @@ Connection Settings:
 
 ### 3. 프로젝트 실행
 
-#### 일반적인 챕터 실행
+#### 🚀 Spring Boot 애플리케이션 실행 방법
+
+Primavera 프로젝트에서는 다양한 방법으로 Spring Boot 애플리케이션을 실행할 수 있습니다:
+
+##### 1. Gradle 플러그인을 통한 실행
 ```bash
 # Infrastructure가 정상 실행된 후 메인 디렉토리로 이동
 cd ../
 
-# 특정 챕터 실행 (예: chap10)
+# 기본 실행 (default 프로파일)
 ./gradlew :chap10:bootRun
+
+# Spring Profile 지정 방법들 (프로파일 우선순위 순)
+
+# 방법 1: 환경 변수로 설정 (가장 높은 우선순위)
+SPRING_PROFILES_ACTIVE=local ./gradlew :chap10:bootRun
+
+# 방법 2: JVM 시스템 속성으로 설정
+./gradlew :chap10:bootRun -Dspring.profiles.active=local
+
+# 방법 3: Program Arguments로 설정
+./gradlew :chap10:bootRun --args='--spring.profiles.active=local'
+
+# 여러 프로파일 동시 적용
+SPRING_PROFILES_ACTIVE=local,debug ./gradlew :chap10:bootRun
+./gradlew :chap10:bootRun -Dspring.profiles.active=local,debug
 
 # 전체 빌드 및 테스트
 ./gradlew clean build
+```
+
+##### 2. build.gradle 설정으로 프로파일 고정하기
+
+특정 프로파일을 기본값으로 설정하려면 각 모듈의 `build.gradle`에 다음을 추가:
+
+```gradle
+bootRun {
+    // 기본 프로파일 설정
+    args = ['--spring.profiles.active=local']
+    
+    // 또는 환경 변수 기반
+    if (project.hasProperty('profile')) {
+        args = ["--spring.profiles.active=${project.profile}"]
+    }
+    
+    // JVM 옵션 설정
+    jvmArgs = ['-Dspring.profiles.active=local']
+}
+```
+
+사용법:
+```bash
+# build.gradle에 설정된 기본 프로파일로 실행
+./gradlew :chap10:bootRun
+
+# 프로젝트 속성으로 프로파일 지정
+./gradlew :chap10:bootRun -Pprofile=local
+```
+
+##### 3. 실행 방법 우선순위 (Spring Boot 정석 순서)
+
+| 순위 | 방법 | 명령어 | 특징 | 권장 상황 |
+|------|------|---------|------|----------|
+| **1위** | **환경 변수** | `SPRING_PROFILES_ACTIVE=local ./gradlew bootRun` | 12-Factor App 표준 | **모든 상황에서 권장** |
+| **2위** | **Program Args** | `./gradlew bootRun --args='--spring.profiles.active=local'` | Spring Boot 공식 표준 | IDE 실행, 명시적 설정 |
+| **3위** | **IDE 설정** | Run Configuration 설정 | 개발 편의성 | IntelliJ, Eclipse 사용 시 |
+| **4위** | **build.gradle 설정** | `./gradlew bootRun` (미리 설정) | 빌드 도구 종속 | 특별한 경우만 사용 |
+
+> **⚠️ 주의**: `./gradlew -Dspring.profiles.active=local bootRun` (JVM 속성) 방식은 **작동하지 않습니다**. 
+> Gradle과 Spring Boot가 서로 다른 JVM 프로세스에서 실행되기 때문입니다.
+
+##### 4. 통합 Infrastructure와 함께 실행
+```bash
+# 1. Infrastructure 실행 (필수)
+cd infrastructure/
+docker-compose up -d
+
+# 2. 애플리케이션 실행 (루트 디렉토리에서)
+cd ../
+SPRING_PROFILES_ACTIVE=local ./gradlew :chap10:bootRun
+
+# 3. 애플리케이션 접속 확인
+curl -X GET http://localhost:8080/actuator/health
 ```
 
 #### chap17 - Spring Batch + Elasticsearch 데이터 파이프라인 실행 ✅ *완전 구현됨*

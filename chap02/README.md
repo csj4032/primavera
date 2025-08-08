@@ -762,6 +762,27 @@ class ProfileTest {
 | **session** | HTTP 세션당 하나 | 사용자 세션 데이터 | 세션 만료 고려 |
 | **application** | ServletContext당 하나 | 애플리케이션 전역 | 웹 애플리케이션 레벨 |
 
+## 실행 방법
+
+### 🚀 Spring Boot 애플리케이션 실행
+
+#### 1. 환경 변수 방식 (권장)
+```bash
+# 로컬 환경으로 실행  
+SPRING_PROFILES_ACTIVE=local ./gradlew :chap02:bootRun
+```
+
+#### 2. Program Arguments 방식
+```bash
+# 기본 실행
+./gradlew :chap02:bootRun --args='--spring.profiles.active=local'
+```
+
+#### 3. IDE 설정 방식
+- IntelliJ IDEA: Run Configuration → VM Options 또는 Program Arguments 설정
+- VM Options: `-Dspring.profiles.active=local`
+- Program Arguments: `--spring.profiles.active=local`
+
 ## 🚀 애플리케이션 실행
 
 ### 개발 환경 실행

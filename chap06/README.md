@@ -416,6 +416,27 @@ dependencies {
 - ✅ **한국어 지원**: 다국어 메시지 및 한글 닉네임 검증
 - ✅ **LiveReload**: 개발 생산성 향상을 위한 실시간 새로고침
 
+## 실행 방법
+
+### 🚀 Spring Boot 애플리케이션 실행
+
+#### 1. 환경 변수 방식 (권장)
+```bash
+# 로컬 환경으로 실행  
+SPRING_PROFILES_ACTIVE=local ./gradlew :chap06:bootRun
+```
+
+#### 2. Program Arguments 방식
+```bash
+# 기본 실행
+./gradlew :chap06:bootRun --args='--spring.profiles.active=local'
+```
+
+#### 3. IDE 설정 방식
+- IntelliJ IDEA: Run Configuration → VM Options 또는 Program Arguments 설정
+- VM Options: `-Dspring.profiles.active=local`
+- Program Arguments: `--spring.profiles.active=local`
+
 ## 🐳 인프라 설정
 
 ### Docker Compose 환경 설정
