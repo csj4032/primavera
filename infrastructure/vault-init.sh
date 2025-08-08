@@ -161,11 +161,10 @@ vault kv put secret/AdvancedJpaApplication/local \
 
 # chap15: JpaAdvancedMappingApplication
 vault kv put secret/JpaAdvancedMappingApplication/local \
-    spring.r2dbc.url=jdbc:mariadb://localhost:3306/primavera \
-    spring.r2dbc.username=primavera \
-    spring.r2dbc.password=primavera \
-    spring.redis.host=localhost \
-    spring.redis.port=6380
+    spring.datasource.url=jdbc:mariadb://localhost:3306/primavera \
+    spring.datasource.username=primavera \
+    spring.datasource.password=primavera \
+    spring.datasource.driver-class-name=org.mariadb.jdbc.Driver
 
 # chap16: FileProcessingMonitoringApplication
 vault kv put secret/FileProcessingMonitoringApplication/local \

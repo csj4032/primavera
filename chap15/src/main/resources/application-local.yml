@@ -4,15 +4,16 @@ spring:
       on-profile: local
     import:
       - "optional:vault:"
+      - "optional:configserver:"
   aop:
     proxy-target-class: true
   cloud:
     vault:
-      host: localhost
-      port: 8200
-      scheme: http
+      host: ${VAULT_HOST:localhost}
+      port: ${VAULT_PORT:8200}
+      scheme: ${VAULT_SCHEME:http}
       authentication: TOKEN
-      token: primavera-vault-token
+      token: ${VAULT_TOKEN:primavera-vault-token}
       connection-timeout: 5000
       read-timeout: 15000
       fail-fast: false

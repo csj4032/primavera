@@ -4,6 +4,7 @@ spring:
       on-profile: local
     import:
       - "optional:vault:"
+      - "optional:configserver:"
   cloud:
     vault:
       host: ${VAULT_HOST:localhost}

@@ -1,4 +1,3 @@
-
 dependencies {
     implementation('org.springframework.boot:spring-boot-starter-web') {
         exclude module: "spring-boot-starter-tomcat"
@@ -35,6 +34,7 @@ dependencies {
     implementation "io.sentry:sentry-logback:1.7.30"
     implementation "io.awspring.cloud:spring-cloud-aws-starter-s3:${springCloudAwsVersion}"
     implementation "io.awspring.cloud:spring-cloud-aws-starter:${springCloudAwsVersion}"
+    implementation "org.springframework.cloud:spring-cloud-starter-config"
     implementation "org.springframework.cloud:spring-cloud-starter-vault-config:${springCloudVaultVersion}"
     testImplementation "org.testcontainers:localstack:${testContainersVersion}"
     testImplementation "org.testcontainers:junit-jupiter:${testContainersVersion}"
