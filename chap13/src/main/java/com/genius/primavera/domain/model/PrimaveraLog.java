@@ -21,7 +21,7 @@ import lombok.ToString;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@Document(collection = "primaveraLog")
+@Document(collection = "logs")
 public class PrimaveraLog implements Serializable {
 
     private static final long serialVersionUID = 2405172041950251807L;

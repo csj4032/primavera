@@ -56,6 +56,20 @@ MONGODB_INIT_PATH=../mongodb/${chap}-mongo-init.js
 VAULT_INIT_PATH=../vault/vault-init.sh"
     fi
 
+    # Special configuration for chap14 (needs MongoDB)
+    if [ "$chap" == "chap14" ]; then
+        services="mariadb,mongodb,vault"
+        config_content="CHAPTER=${chap}
+APP_NAME=${app_name}
+SERVICES=${services}
+MARIADB_PORT=${STANDARD_MARIADB_PORT}
+MONGODB_PORT=${STANDARD_MONGODB_PORT}
+VAULT_PORT=${STANDARD_VAULT_PORT}
+SQL_INIT_PATH=../sql/${chap}-init.sql
+MONGODB_INIT_PATH=../mongodb/${chap}-mongo-init.js
+VAULT_INIT_PATH=../vault/vault-init.sh"
+    fi
+
     # Special configuration for chap17 (needs Elasticsearch)
     if [ "$chap" == "chap17" ]; then
         services="mariadb-cdc,elasticsearch,vault"
@@ -86,6 +100,8 @@ SQL_INIT_PATH=../sql/${chap}-init.sql
 MONGODB_INIT_PATH=../mongodb/${chap}-mongo-init.js
 VAULT_INIT_PATH=../vault/vault-init.sh"
     fi
+
+    echo "$config_content" > "configs/${chap}-config.env"
 done
 
-echo "All config files generated successfully\!"
+echo "All config files generated successfully"

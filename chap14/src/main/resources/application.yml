@@ -59,24 +59,24 @@ lucy-filter:
 logging:
   config: classpath:logback-spring.xml
 
-server:
-  port: 8443
-  http2:
-    enabled: true
-  ssl:
-    enabled: false
-    key-alias: primavera
-    key-store: classpath:certs/primavera.p12
-    key-store-type: PKCS12
-    key-store-password: primavera
-  error:
-    include-message: always
-    include-binding-errors: always
-  compression:
-    enabled: true
-  netty:
-    connection-timeout: 30s
-    idle-timeout: 60s
+#server:
+#  port: 8443
+#  http2:
+#    enabled: true
+#  ssl:
+#    enabled: false
+#    key-alias: primavera
+#    key-store: classpath:certs/primavera.p12
+#    key-store-type: PKCS12
+#    key-store-password: primavera
+#  error:
+#    include-message: always
+#    include-binding-errors: always
+#  compression:
+#    enabled: true
+#  netty:
+#    connection-timeout: 30s
+#    idle-timeout: 60s
 
 storage:
   location: upload-files

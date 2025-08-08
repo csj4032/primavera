@@ -12,7 +12,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Document(collection = "mongo_sequences")
+@Document(collection = "sequences")
 public class MongoSequence {
 
     @Id

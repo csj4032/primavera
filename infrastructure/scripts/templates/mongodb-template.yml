@@ -5,16 +5,13 @@
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: root
-      MONGO_INITDB_DATABASE: primavera
-      MONGO_INITDB_USERNAME: primavera
-      MONGO_INITDB_PASSWORD: primavera
     ports:
       - "${MONGODB_PORT}:27017"
     volumes:
       - mongodb-${CHAPTER}-data:/data/db
       - ${MONGODB_INIT_PATH}:/docker-entrypoint-initdb.d/mongo-init.js:ro
     healthcheck:
-      test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
       interval: 10s
       timeout: 5s
       retries: 5
