@@ -1,6 +1,5 @@
 package com.genius.primavera;
 
-import org.springframework.boot.Banner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -14,7 +13,6 @@ public class AdvancedJpaApplication {
 
     public static void main(String[] args) {
         new SpringApplicationBuilder(AdvancedJpaApplication.class)
-                .bannerMode(Banner.Mode.OFF)
                 .properties(APPLICATION)
                 .build()
                 .run(args);

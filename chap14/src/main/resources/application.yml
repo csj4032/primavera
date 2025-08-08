@@ -18,15 +18,6 @@ spring:
     proxy-target-class: true
   jackson:
     time-zone: UTC
-    serialization:
-      write-dates-as-timestamps: false
-    deserialization:
-      fail-on-unknown-properties: false
-  devtools:
-    livereload:
-      enabled: false
-    restart:
-      enabled: false
   flyway:
     enabled: false
     encoding: UTF-8

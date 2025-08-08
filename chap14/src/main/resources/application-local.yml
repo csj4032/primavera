@@ -9,11 +9,11 @@ spring:
     proxy-target-class: true
   cloud:
     vault:
-      host: localhost
-      port: 8200
-      scheme: http
+      host: ${VAULT_HOST:localhost}
+      port: ${VAULT_PORT:8200}
+      scheme: ${VAULT_SCHEME:http}
       authentication: TOKEN
-      token: primavera-vault-token
+      token: ${VAULT_TOKEN:primavera-vault-token}
       connection-timeout: 5000
       read-timeout: 15000
       fail-fast: false
@@ -46,7 +46,7 @@ spring:
     mongodb:
       host: localhost
       port: 27017
-      database: primavera_jpa_advanced_local
+      database: primavera
     redis:
       host: localhost
       port: 6379

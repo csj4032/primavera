@@ -62,7 +62,7 @@ load_config() {
     
     source "$config_file"
     
-    export CHAPTER APP_NAME SERVICES MARIADB_PORT VAULT_PORT MONGODB_PORT
+    export CHAPTER APP_NAME SERVICES MARIADB_PORT VAULT_PORT MONGODB_PORT REDIS_PORT
     export ELASTICSEARCH_PORT ELASTICSEARCH_TRANSPORT_PORT KIBANA_PORT
     export SQL_INIT_PATH VAULT_INIT_PATH MONGO_INIT_PATH
 }
@@ -99,6 +99,10 @@ EOF
                 envsubst < "$TEMPLATES_DIR/mongodb-template.yml" >> "$output_file"
                 echo "" >> "$output_file"
                 ;;
+            redis)
+                envsubst < "$TEMPLATES_DIR/redis-template.yml" >> "$output_file"
+                echo "" >> "$output_file"
+                ;;
             elasticsearch)
                 envsubst < "$TEMPLATES_DIR/elasticsearch-template.yml" >> "$output_file"
                 echo "" >> "$output_file"
@@ -133,6 +137,10 @@ EOF
             mongodb)
                 echo "  mongodb-${CHAPTER}-data:" >> "$output_file"
                 echo "    name: mongodb-${CHAPTER}-data" >> "$output_file"
+                ;;
+            redis)
+                echo "  redis-${CHAPTER}-data:" >> "$output_file"
+                echo "    name: redis-${CHAPTER}-data" >> "$output_file"
                 ;;
             elasticsearch)
                 echo "  elasticsearch-${CHAPTER}-data:" >> "$output_file"
@@ -183,7 +191,7 @@ stop_chapter() {
         echo "✅ $chapter services stopped successfully!"
     else
         echo "⚠️  No compose file found for $chapter, trying to stop by container names..."
-        docker stop mariadb-primavera-$chapter vault-primavera-$chapter mongodb-primavera-$chapter elasticsearch-primavera-$chapter kibana-primavera-$chapter 2>/dev/null || true
+        docker stop mariadb-primavera-$chapter vault-primavera-$chapter mongodb-primavera-$chapter redis-primavera-$chapter elasticsearch-primavera-$chapter kibana-primavera-$chapter 2>/dev/null || true
         echo "✅ $chapter services stopped!"
     fi
 }
@@ -213,6 +221,9 @@ status_chapter() {
             mongodb)
                 container_name="mongodb-primavera-$chapter"
                 ;;
+            redis)
+                container_name="redis-primavera-$chapter"
+                ;;
             elasticsearch)
                 container_name="elasticsearch-primavera-$chapter"
                 ;;
@@ -238,8 +249,8 @@ clean_chapter() {
     
     stop_chapter "$chapter"
     
-    docker rm mariadb-primavera-$chapter vault-primavera-$chapter mongodb-primavera-$chapter elasticsearch-primavera-$chapter kibana-primavera-$chapter 2>/dev/null || true
-    docker volume rm mariadb-${chapter}-data vault-${chapter}-data mongodb-${chapter}-data elasticsearch-${chapter}-data 2>/dev/null || true
+    docker rm mariadb-primavera-$chapter vault-primavera-$chapter mongodb-primavera-$chapter redis-primavera-$chapter elasticsearch-primavera-$chapter kibana-primavera-$chapter 2>/dev/null || true
+    docker volume rm mariadb-${chapter}-data vault-${chapter}-data mongodb-${chapter}-data redis-${chapter}-data elasticsearch-${chapter}-data 2>/dev/null || true
     docker network rm primavera-${chapter}-network 2>/dev/null || true
     
     local compose_file="$INFRA_DIR/generated/${chapter}-docker-compose.yml"
