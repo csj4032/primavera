@@ -20,9 +20,14 @@
              export VAULT_TOKEN='primavera-vault-token' &&
              vault kv put secret/${APP_NAME}/local \\
                spring.datasource.driver-class-name=org.mariadb.jdbc.Driver \\
-               spring.datasource.url=jdbc:mariadb://localhost:3306/primavera \\
+               spring.datasource.url=jdbc:mariadb://localhost:${MARIADB_PORT}/primavera \\
                spring.datasource.username=primavera \\
-               spring.datasource.password=primavera &&
+               spring.datasource.password=primavera \\
+               spring.data.mongodb.host=localhost \\
+               spring.data.mongodb.port=${MONGODB_PORT:-27017} \\
+               spring.data.mongodb.database=primavera \\
+               spring.data.redis.host=localhost \\
+               spring.data.redis.port=${REDIS_PORT:-6379} &&
              tail -f /dev/null"
     healthcheck:
       test: ["CMD", "vault", "status"]

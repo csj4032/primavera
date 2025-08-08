@@ -4,10 +4,13 @@ spring:
       on-profile: local
     import:
       - "optional:vault:"
-      - "optional:configserver:"
   aop:
     proxy-target-class: true
   cloud:
+    config:
+      enabled: false
+      import-check:
+        enabled: false
     vault:
       host: ${VAULT_HOST:localhost}
       port: ${VAULT_PORT:8200}
@@ -37,19 +40,11 @@ spring:
   jpa:
     show-sql: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
     properties:
       hibernate:
         format_sql: true
         use_sql_comments: true
-  data:
-    mongodb:
-      host: localhost
-      port: 27017
-      database: primavera
-    redis:
-      host: localhost
-      port: 6379
   thymeleaf:
     cache: false
     reactive:

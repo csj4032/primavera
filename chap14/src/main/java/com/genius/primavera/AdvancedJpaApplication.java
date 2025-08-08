@@ -9,11 +9,9 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 @EnableConfigurationProperties(ThymeleafProperties.class)
 public class AdvancedJpaApplication {
 
-    private static final String APPLICATION = "spring.config.location=classpath:/application-${spring.profiles.active:default}.yml,classpath:/social.yml";
-
     public static void main(String[] args) {
         new SpringApplicationBuilder(AdvancedJpaApplication.class)
-                .properties(APPLICATION)
+                .properties("spring.config.additional-location=classpath:/social.yml")
                 .build()
                 .run(args);
     }

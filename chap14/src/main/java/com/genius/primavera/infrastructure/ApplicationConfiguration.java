@@ -11,7 +11,6 @@ import com.genius.primavera.domain.model.article.Comment;
 import com.genius.primavera.domain.model.article.CommentDto;
 import com.genius.primavera.infrastructure.serializer.KryoRedisSerializer;
 import com.genius.primavera.infrastructure.serializer.SnappyRedisSerializer;
-import com.navercorp.lucy.security.xss.servletfilter.XssEscapeServletFilter;
 
 import io.lettuce.core.ClientOptions;
 import io.lettuce.core.resource.DefaultClientResources;
@@ -20,7 +19,6 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.NameTokenizers;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Profile;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
@@ -38,15 +36,6 @@ import java.time.Duration;
 @EnableJpaAuditing
 public class ApplicationConfiguration implements WebMvcConfigurer {
 
-    @Bean
-    public FilterRegistrationBean<XssEscapeServletFilter> xssFilterRegistrationBean() {
-        var registrationBean = new FilterRegistrationBean<XssEscapeServletFilter>();
-        registrationBean.setFilter(new XssEscapeServletFilter());
-        registrationBean.setOrder(1);
-        registrationBean.addUrlPatterns("/*");
-        registrationBean.setName("xssEscapeServletFilter");
-        return registrationBean;
-    }
 
     @Bean
     public ObjectMapper objectMapper() {
