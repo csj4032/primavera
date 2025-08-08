@@ -23,12 +23,7 @@
                spring.datasource.url=jdbc:mariadb://localhost:${MARIADB_PORT}/primavera \\
                spring.datasource.username=primavera \\
                spring.datasource.password=primavera \\
-               spring.data.mongodb.host=localhost \\
-               spring.data.mongodb.port=${MONGODB_PORT:-27017} \\
-               spring.data.mongodb.database=primavera \\
-               spring.data.mongodb.username=primavera \\
-               spring.data.mongodb.password=primavera \\
-               spring.data.mongodb.authentication-database=admin \\
+               spring.data.mongodb.uri=mongodb://primavera:primavera@localhost:${MONGODB_PORT:-27017}/primavera \\
                spring.data.redis.host=localhost \\
                spring.data.redis.port=${REDIS_PORT:-6379} &&
              tail -f /dev/null"
