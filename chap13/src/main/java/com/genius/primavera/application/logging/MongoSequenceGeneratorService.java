@@ -24,9 +24,7 @@ public class MongoSequenceGeneratorService {
     }
 
     public long generateSequence(String seqName) {
-
-        MongoSequence counter = mongoOperations.findAndModify(query(where("_id").is(seqName)),
-                new Update().inc("seq", 1), options().returnNew(true).upsert(true), MongoSequence.class);
+        MongoSequence counter = mongoOperations.findAndModify(query(where("_id").is(seqName)), new Update().inc("seq", 1), options().returnNew(true).upsert(true), MongoSequence.class);
         return !Objects.isNull(counter) ? counter.getSeq() : 1;
 
     }

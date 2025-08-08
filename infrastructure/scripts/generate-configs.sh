@@ -42,6 +42,20 @@ VAULT_PORT=${STANDARD_VAULT_PORT}
 SQL_INIT_PATH=../sql/${chap}-init.sql
 VAULT_INIT_PATH=../vault/vault-init.sh"
 
+    # Special configuration for chap13 (needs MongoDB)
+    if [ "$chap" == "chap13" ]; then
+        services="mariadb,mongodb,vault"
+        config_content="CHAPTER=${chap}
+APP_NAME=${app_name}
+SERVICES=${services}
+MARIADB_PORT=${STANDARD_MARIADB_PORT}
+MONGODB_PORT=${STANDARD_MONGODB_PORT}
+VAULT_PORT=${STANDARD_VAULT_PORT}
+SQL_INIT_PATH=../sql/${chap}-init.sql
+MONGODB_INIT_PATH=../mongodb/${chap}-mongo-init.js
+VAULT_INIT_PATH=../vault/vault-init.sh"
+    fi
+
     # Special configuration for chap17 (needs Elasticsearch)
     if [ "$chap" == "chap17" ]; then
         services="mariadb-cdc,elasticsearch,vault"
@@ -72,9 +86,6 @@ SQL_INIT_PATH=../sql/${chap}-init.sql
 MONGODB_INIT_PATH=../mongodb/${chap}-mongo-init.js
 VAULT_INIT_PATH=../vault/vault-init.sh"
     fi
-    
-    echo "$config_content" > "/Users/genius/Workspace/primavera/infrastructure/scripts/configs/${chap}-config.env"
-    echo "Generated config for ${chap} with standard ports"
 done
 
 echo "All config files generated successfully\!"

@@ -37,6 +37,10 @@ spring:
       leak-detection-threshold: 60000
       connection-test-query: "SELECT 1"
       validation-timeout: 5000
+  # MongoDB 설정은 Vault에서 가져옴
+  # data:
+  #   mongodb:
+  #     uri: mongodb://primavera:primavera@mongodb-chap13:27017/primavera?authSource=admin
   flyway:
     enabled: false
     encoding: UTF-8

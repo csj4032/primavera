@@ -88,7 +88,8 @@
       "Bash(timeout:*)",
       "Bash(SPRING_PROFILES_ACTIVE=local ./gradlew :chap15:bootRun)",
       "Bash(SPRING_PROFILES_ACTIVE=local timeout 10 ./gradlew :chap14:bootRun)",
-      "Bash(SPRING_PROFILES_ACTIVE=local gtimeout 10 ./gradlew :chap14:bootRun)"
+      "Bash(SPRING_PROFILES_ACTIVE=local gtimeout 10 ./gradlew :chap14:bootRun)",
+      "Bash(SPRING_PROFILES_ACTIVE=local ../gradlew bootRun)"
     ],
     "deny": []
   }

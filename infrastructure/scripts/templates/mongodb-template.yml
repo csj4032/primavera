@@ -12,7 +12,7 @@
       - "${MONGODB_PORT}:27017"
     volumes:
       - mongodb-${CHAPTER}-data:/data/db
-      - ${MONGO_INIT_PATH}:/docker-entrypoint-initdb.d/mongo-init.js:ro
+      - ${MONGODB_INIT_PATH}:/docker-entrypoint-initdb.d/mongo-init.js:ro
     healthcheck:
       test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
       interval: 10s
