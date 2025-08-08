@@ -17,3 +17,9 @@ testcontainers:
       password: "primavera"
       startup-timeout: 120
       init-script: ./sql/init.sql
+    valut:
+      image: "hashicorp/vault:1.14.0"
+      ports:
+        - "8200:8200"
+      environment:
+        VAULT_DEV_ROOT_TOKEN_ID: ""

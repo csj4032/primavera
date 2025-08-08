@@ -10,7 +10,8 @@ public enum ContainerType {
     REDIS("redis:7-alpine", null),
     MONGODB("mongo:7", "com.mongodb.MongoClient"),
     KAFKA("confluentinc/cp-kafka:7.5.0", null),
-    ELASTICSEARCH("docker.elastic.co/elasticsearch/elasticsearch:8.12.0", null);
+    ELASTICSEARCH("docker.elastic.co/elasticsearch/elasticsearch:8.12.0", null),
+    VAULT("hashicorp/vault:1.14.0", null);
 
     private final String defaultImage;
     private final String driverClassName;
@@ -28,7 +29,7 @@ public enum ContainerType {
         if (!isSqlDatabase()) {
             throw new UnsupportedOperationException("JDBC URL not supported for " + this);
         }
-        
+
         String dbName = database != null ? database : "test";
         return switch (this) {
             case MARIADB -> String.format("jdbc:mariadb://%s:%d/%s", host, port, dbName);

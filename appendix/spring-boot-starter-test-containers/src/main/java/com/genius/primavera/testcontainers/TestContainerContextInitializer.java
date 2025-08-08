@@ -17,7 +17,6 @@ public class TestContainerContextInitializer implements ApplicationContextInitia
 
     @Override
     public void initialize(ConfigurableApplicationContext applicationContext) {
-        // Ensure BeanCreatorRegistry is initialized early
         BeanCreatorRegistry.initialize();
         
         ConfigurableEnvironment environment = applicationContext.getEnvironment();
@@ -61,10 +60,10 @@ public class TestContainerContextInitializer implements ApplicationContextInitia
                     properties.put("spring.datasource.username", containerInfo.spec().getUsernameOrDefault());
                     properties.put("spring.datasource.password", containerInfo.spec().getPasswordOrDefault());
 
-                    log.info("Configured primary DataSource for container: {} ({})",
-                            containerInfo.name(), containerInfo.getJdbcUrl());
+                    log.info("Configured primary DataSource for container: {} ({})", containerInfo.name(), containerInfo.getJdbcUrl());
                 }
             }
+
 
             configureSpecificContainerProperties(containerInfo, properties);
         });

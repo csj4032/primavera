@@ -25,6 +25,7 @@ public class ContainerConfiguration {
         private String database;
         private String username;
         private String password;
+        private String token;
         private String initScript;
         private Integer startupTimeout;
         private Map<String, String> environment;
@@ -35,19 +36,23 @@ public class ContainerConfiguration {
         }
 
         public String getUsernameOrDefault() {
-            return username != null ? username : "test";
+            return username != null ? username : "primavera";
         }
 
         public String getPasswordOrDefault() {
-            return password != null ? password : "test";
+            return password != null ? password : "primavera";
         }
 
         public String getDatabaseOrDefault() {
-            return database != null ? database : "test";
+            return database != null ? database : "primavera";
         }
 
         public Integer getStartupTimeoutOrDefault() {
             return startupTimeout != null ? startupTimeout : 60;
+        }
+
+        public String getToken() {
+            return token != null ? token : "primavera-vault-token";
         }
     }
 }

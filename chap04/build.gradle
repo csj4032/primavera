@@ -11,8 +11,10 @@ dependencies {
     implementation "commons-io:commons-io:${commonsIoVersion}"
     implementation "org.reflections:reflections:${reflectionsVersion}"
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
+    implementation "com.bettercloud:vault-java-driver:${vaultJavaDriverVersion}"
     testImplementation "org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}"
     testImplementation "org.springframework.cloud:spring-cloud-starter-config"
     testImplementation "org.springframework.cloud:spring-cloud-starter-vault-config:${springCloudVaultVersion}"
+    testImplementation "com.bettercloud:vault-java-driver:${vaultJavaDriverVersion}"
     testImplementation project(':appendix:spring-boot-starter-test-containers')
 }

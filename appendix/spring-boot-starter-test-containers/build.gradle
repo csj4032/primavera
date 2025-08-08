@@ -23,6 +23,7 @@ dependencies {
     api "org.testcontainers:mongodb:${testContainersVersion}"
     api "org.testcontainers:kafka:${testContainersVersion}"
     api "org.testcontainers:elasticsearch:${testContainersVersion}"
+    api "org.testcontainers:vault:${testContainersVersion}"
     implementation "org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}"
     implementation "com.mysql:mysql-connector-j:${mysqlVersion}"
     implementation "org.postgresql:postgresql"
@@ -35,6 +36,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
     testImplementation 'org.mariadb.jdbc:mariadb-java-client'
     testImplementation 'org.postgresql:postgresql'
+    testImplementation 'com.mysql:mysql-connector-j'
     testImplementation 'com.mysql:mysql-connector-j'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
