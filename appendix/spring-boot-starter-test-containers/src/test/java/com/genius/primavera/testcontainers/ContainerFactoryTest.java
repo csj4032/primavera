@@ -1,5 +1,6 @@
 package com.genius.primavera.testcontainers;
 
+import com.genius.primavera.testcontainers.config.*;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,9 +17,11 @@ class ContainerFactoryTest {
     @Test
     @DisplayName("Create MariaDB container with default configuration")
     void testCreateMariaDbDefault() {
-        ContainerConfiguration.ContainerSpec spec = ContainerConfiguration.ContainerSpec.builder()
-            .image("mariadb:11.4.7")
-            .build();
+        MariaDbContainerSpec spec = new MariaDbContainerSpec();
+        spec.setImage("mariadb:11.4.7");
+        spec.setDatabase("testdb");
+        spec.setUsername("testuser");
+        spec.setPassword("testpass");
         
         GenericContainer<?> container = ContainerFactory.create(ContainerType.MARIADB, spec);
         
@@ -31,15 +34,15 @@ class ContainerFactoryTest {
     @Test
     @DisplayName("Create MariaDB container with custom configuration")
     void testCreateMariaDbCustom() {
-        ContainerConfiguration.ContainerSpec spec = ContainerConfiguration.ContainerSpec.builder()
-            .image("mariadb:11.4.7")
-            .database("custom_db")
-            .username("custom_user")
-            .password("custom_pass")
-            .environment(Map.of("MYSQL_CHARSET", "utf8mb4"))
-            .networkAliases(new String[]{"custom-db"})
-            .startupTimeout(90)
-            .build();
+        MariaDbContainerSpec spec = new MariaDbContainerSpec();
+        spec.setImage("mariadb:11.4.7");
+        spec.setDatabase("custom_db");
+        spec.setUsername("custom_user");
+        spec.setPassword("custom_pass");
+        spec.setCharacterSet("utf8mb4");
+        spec.setCollation("utf8mb4_unicode_ci");
+        spec.setStartupTimeout(90);
+        spec.setEnvironment(Map.of("MYSQL_CHARSET", "utf8mb4"));
         
         GenericContainer<?> container = ContainerFactory.create(ContainerType.MARIADB, spec);
         
@@ -52,9 +55,8 @@ class ContainerFactoryTest {
     @Test
     @DisplayName("Create Redis container with default configuration")
     void testCreateRedisDefault() {
-        ContainerConfiguration.ContainerSpec spec = ContainerConfiguration.ContainerSpec.builder()
-            .image("redis:7-alpine")
-            .build();
+        RedisContainerSpec spec = new RedisContainerSpec();
+        spec.setImage("redis:7-alpine");
         
         GenericContainer<?> container = ContainerFactory.create(ContainerType.REDIS, spec);
         
@@ -67,11 +69,11 @@ class ContainerFactoryTest {
     @Test
     @DisplayName("Create Redis container with password")
     void testCreateRedisWithPassword() {
-        ContainerConfiguration.ContainerSpec spec = ContainerConfiguration.ContainerSpec.builder()
-            .image("redis:7-alpine")
-            .password("redis_password")
-            .environment(Map.of("REDIS_MAXMEMORY", "256mb"))
-            .build();
+        RedisContainerSpec spec = new RedisContainerSpec();
+        spec.setImage("redis:7-alpine");
+        spec.setPassword("redis_password");
+        spec.setMaxMemory("256mb");
+        spec.setEnvironment(Map.of("REDIS_MAXMEMORY", "256mb"));
         
         GenericContainer<?> container = ContainerFactory.create(ContainerType.REDIS, spec);
         
@@ -84,9 +86,8 @@ class ContainerFactoryTest {
     @Test
     @DisplayName("Create Kafka container with default configuration")
     void testCreateKafkaDefault() {
-        ContainerConfiguration.ContainerSpec spec = ContainerConfiguration.ContainerSpec.builder()
-            .image("confluentinc/cp-kafka:7.5.0")
-            .build();
+        BaseContainerSpec spec = new BaseContainerSpec();
+        spec.setImage("confluentinc/cp-kafka:7.5.0");
         
         GenericContainer<?> container = ContainerFactory.create(ContainerType.KAFKA, spec);
         
@@ -99,14 +100,13 @@ class ContainerFactoryTest {
     @Test
     @DisplayName("Create Kafka container with custom environment")
     void testCreateKafkaCustom() {
-        ContainerConfiguration.ContainerSpec spec = ContainerConfiguration.ContainerSpec.builder()
-            .image("confluentinc/cp-kafka:7.5.0")
-            .environment(Map.of(
-                "KAFKA_AUTO_CREATE_TOPICS_ENABLE", "true",
-                "KAFKA_NUM_PARTITIONS", "3"
-            ))
-            .startupTimeout(180)
-            .build();
+        BaseContainerSpec spec = new BaseContainerSpec();
+        spec.setImage("confluentinc/cp-kafka:7.5.0");
+        spec.setEnvironment(Map.of(
+            "KAFKA_AUTO_CREATE_TOPICS_ENABLE", "true",
+            "KAFKA_NUM_PARTITIONS", "3"
+        ));
+        spec.setStartupTimeout(180);
         
         GenericContainer<?> container = ContainerFactory.create(ContainerType.KAFKA, spec);
         
@@ -119,12 +119,11 @@ class ContainerFactoryTest {
     @Test
     @DisplayName("Create MongoDB container")
     void testCreateMongoDB() {
-        ContainerConfiguration.ContainerSpec spec = ContainerConfiguration.ContainerSpec.builder()
-            .image("mongo:7")
-            .username("mongo_user")
-            .password("mongo_pass")
-            .database("mongo_db")
-            .build();
+        MongoContainerSpec spec = new MongoContainerSpec();
+        spec.setImage("mongo:7");
+        spec.setUsername("mongo_user");
+        spec.setPassword("mongo_pass");
+        spec.setDatabase("mongo_db");
         
         GenericContainer<?> container = ContainerFactory.create(ContainerType.MONGODB, spec);
         
@@ -137,12 +136,13 @@ class ContainerFactoryTest {
     @Test
     @DisplayName("Create PostgreSQL container")
     void testCreatePostgreSQL() {
-        ContainerConfiguration.ContainerSpec spec = ContainerConfiguration.ContainerSpec.builder()
-            .image("postgres:16")
-            .username("postgres_user")
-            .password("postgres_pass")
-            .database("postgres_db")
-            .build();
+        PostgreSqlContainerSpec spec = new PostgreSqlContainerSpec();
+        spec.setImage("postgres:16");
+        spec.setUsername("postgres_user");
+        spec.setPassword("postgres_pass");
+        spec.setDatabase("postgres_db");
+        spec.setLocale("en_US.UTF-8");
+        spec.setEncoding("UTF8");
         
         GenericContainer<?> container = ContainerFactory.create(ContainerType.POSTGRESQL, spec);
         
@@ -155,12 +155,13 @@ class ContainerFactoryTest {
     @Test
     @DisplayName("Create MySQL container")
     void testCreateMySQL() {
-        ContainerConfiguration.ContainerSpec spec = ContainerConfiguration.ContainerSpec.builder()
-            .image("mysql:8.0")
-            .username("mysql_user")
-            .password("mysql_pass")
-            .database("mysql_db")
-            .build();
+        MySqlContainerSpec spec = new MySqlContainerSpec();
+        spec.setImage("mysql:8.0");
+        spec.setUsername("mysql_user");
+        spec.setPassword("mysql_pass");
+        spec.setDatabase("mysql_db");
+        spec.setCharacterSet("utf8mb4");
+        spec.setCollation("utf8mb4_unicode_ci");
         
         GenericContainer<?> container = ContainerFactory.create(ContainerType.MYSQL, spec);
         
@@ -173,13 +174,12 @@ class ContainerFactoryTest {
     @Test
     @DisplayName("Create Elasticsearch container")
     void testCreateElasticsearch() {
-        ContainerConfiguration.ContainerSpec spec = ContainerConfiguration.ContainerSpec.builder()
-            .image("elasticsearch:8.11.0")
-            .environment(Map.of(
-                "discovery.type", "single-node",
-                "xpack.security.enabled", "false"
-            ))
-            .build();
+        BaseContainerSpec spec = new BaseContainerSpec();
+        spec.setImage("elasticsearch:8.11.0");
+        spec.setEnvironment(Map.of(
+            "discovery.type", "single-node",
+            "xpack.security.enabled", "false"
+        ));
         
         GenericContainer<?> container = ContainerFactory.create(ContainerType.ELASTICSEARCH, spec);
         
@@ -192,12 +192,10 @@ class ContainerFactoryTest {
     @Test
     @DisplayName("Support all defined container types")
     void testAllContainerTypesSupported() {
-        ContainerConfiguration.ContainerSpec spec = ContainerConfiguration.ContainerSpec.builder()
-            .build();
-        
         ContainerType[] allTypes = ContainerType.values();
         for (ContainerType type : allTypes) {
             assertDoesNotThrow(() -> {
+                BaseContainerSpec spec = createSpecForType(type);
                 GenericContainer<?> container = ContainerFactory.create(type, spec);
                 assertNotNull(container, "Container should be created for type: " + type);
                 String expectedImage = type.getDefaultImage();
@@ -209,13 +207,61 @@ class ContainerFactoryTest {
         log.info("✅ All {} container types supported: {}", allTypes.length, (Object) allTypes);
     }
     
+    private BaseContainerSpec createSpecForType(ContainerType type) {
+        return switch (type) {
+            case MARIADB -> {
+                MariaDbContainerSpec spec = new MariaDbContainerSpec();
+                spec.setImage(type.getDefaultImage());
+                spec.setDatabase("testdb");
+                spec.setUsername("testuser");
+                spec.setPassword("testpass");
+                yield spec;
+            }
+            case MYSQL -> {
+                MySqlContainerSpec spec = new MySqlContainerSpec();
+                spec.setImage(type.getDefaultImage());
+                spec.setDatabase("testdb");
+                spec.setUsername("testuser");
+                spec.setPassword("testpass");
+                yield spec;
+            }
+            case POSTGRESQL -> {
+                PostgreSqlContainerSpec spec = new PostgreSqlContainerSpec();
+                spec.setImage(type.getDefaultImage());
+                spec.setDatabase("testdb");
+                spec.setUsername("testuser");
+                spec.setPassword("testpass");
+                yield spec;
+            }
+            case REDIS -> {
+                RedisContainerSpec spec = new RedisContainerSpec();
+                spec.setImage(type.getDefaultImage());
+                yield spec;
+            }
+            case MONGODB -> {
+                MongoContainerSpec spec = new MongoContainerSpec();
+                spec.setImage(type.getDefaultImage());
+                spec.setDatabase("testdb");
+                spec.setUsername("testuser");
+                spec.setPassword("testpass");
+                yield spec;
+            }
+            default -> {
+                BaseContainerSpec spec = new BaseContainerSpec();
+                spec.setImage(type.getDefaultImage());
+                yield spec;
+            }
+        };
+    }
+    
     @Test
     @DisplayName("Apply network aliases when provided")
     void testNetworkAliases() {
-        ContainerConfiguration.ContainerSpec spec = ContainerConfiguration.ContainerSpec.builder()
-            .image("mariadb:11.4.7")
-            .networkAliases(new String[]{"db-alias", "database"})
-            .build();
+        MariaDbContainerSpec spec = new MariaDbContainerSpec();
+        spec.setImage("mariadb:11.4.7");
+        spec.setDatabase("testdb");
+        spec.setUsername("testuser");
+        spec.setPassword("testpass");
         
         GenericContainer<?> container = ContainerFactory.create(ContainerType.MARIADB, spec);
         
@@ -227,10 +273,12 @@ class ContainerFactoryTest {
     @Test
     @DisplayName("Apply startup timeout when provided")
     void testStartupTimeout() {
-        ContainerConfiguration.ContainerSpec spec = ContainerConfiguration.ContainerSpec.builder()
-            .image("mariadb:11.4.7")
-            .startupTimeout(120)
-            .build();
+        MariaDbContainerSpec spec = new MariaDbContainerSpec();
+        spec.setImage("mariadb:11.4.7");
+        spec.setDatabase("testdb");
+        spec.setUsername("testuser");
+        spec.setPassword("testpass");
+        spec.setStartupTimeout(120);
         
         GenericContainer<?> container = ContainerFactory.create(ContainerType.MARIADB, spec);
         
@@ -242,10 +290,9 @@ class ContainerFactoryTest {
     @Test
     @DisplayName("Handle null environment variables")
     void testNullEnvironment() {
-        ContainerConfiguration.ContainerSpec spec = ContainerConfiguration.ContainerSpec.builder()
-            .image("redis:7-alpine")
-            .environment(null)
-            .build();
+        RedisContainerSpec spec = new RedisContainerSpec();
+        spec.setImage("redis:7-alpine");
+        spec.setEnvironment(null);
         
         assertDoesNotThrow(() -> {
             GenericContainer<?> container = ContainerFactory.create(ContainerType.REDIS, spec);
@@ -258,10 +305,8 @@ class ContainerFactoryTest {
     @Test
     @DisplayName("Handle null network aliases")
     void testNullNetworkAliases() {
-        ContainerConfiguration.ContainerSpec spec = ContainerConfiguration.ContainerSpec.builder()
-            .image("redis:7-alpine")
-            .networkAliases(null)
-            .build();
+        RedisContainerSpec spec = new RedisContainerSpec();
+        spec.setImage("redis:7-alpine");
         
         assertDoesNotThrow(() -> {
             GenericContainer<?> container = ContainerFactory.create(ContainerType.REDIS, spec);
