@@ -1,537 +1,456 @@
-# Chapter 06: 고급 유효성 검증 및 웹 API 개발
+# Chapter 06 - Validation & Security & XSS Protection
 
-## 📋 개요
+입력 데이터 검증, 기본 보안 설정, XSS 공격 방어를 통합한 안전한 웹 애플리케이션을 구축합니다. Bean Validation, Spring Security, Lucy XSS Filter를 조합하여 다계층 보안 시스템을 구현하고, Thymeleaf를 활용한 동적 웹 페이지 생성을 학습합니다.
 
-이 챕터에서는 Spring Boot와 MyBatis를 활용한 고급 유효성 검증 시스템과 RESTful API 개발을 다룹니다. 사용자 관리 시스템을 통해 복잡한 비즈니스 규칙 검증, 커스텀 Validator 구현, 그리고 TestContainers를 활용한 통합 테스트를 학습합니다.
+## 학습 목표
 
-## 🏗️ 아키텍처
+- **Bean Validation**: JSR-303/380 기반 입력 데이터 검증 시스템 구축
+- **Spring Security**: 기본 인증/인가 시스템 구현
+- **XSS 방어**: Lucy XSS Filter를 활용한 Cross-Site Scripting 공격 방어
+- **Thymeleaf 통합**: 서버사이드 템플릿 엔진과 보안 연동
+- **국제화(i18n)**: 다국어 지원 메시지 시스템
 
-### 계층 구조
-```
-┌─────────────────────────────────────┐
-│        Interface Layer              │  ← REST Controllers, AJAX Endpoints
-├─────────────────────────────────────┤
-│        Application Layer            │  ← Business Services, Custom Validators
-├─────────────────────────────────────┤
-│        Domain Layer                 │  ← Models, Mappers, Type Handlers
-└─────────────────────────────────────┘
-```
-
-### 주요 컴포넌트
-- **Domain Models**: 풍부한 유효성 검증이 포함된 엔티티
-- **MyBatis Mappers**: 어노테이션 기반 SQL 매핑
-- **Custom Validators**: 비즈니스 규칙에 특화된 검증 로직
-- **REST Controllers**: 그룹 기반 유효성 검증을 지원하는 API
-
-## 🛠️ 기술 스택
-
-### 핵심 기술
-- **Spring Boot 3.3.6**: 메인 프레임워크
-- **MyBatis 3.x**: SQL 매핑 및 동적 쿼리
-- **Jakarta Bean Validation**: 선언적 유효성 검증
-- **GraalVM JavaScript**: 복잡한 검증 로직 스크립팅
-- **BCrypt**: 비밀번호 암호화
-
-### 데이터베이스
-- **MySQL 8.0**: 주 데이터베이스
-- **TestContainers**: 통합 테스트용 컨테이너
-
-### 테스트 도구
-- **JUnit 5**: 테스트 프레임워크
-- **TestRestTemplate**: REST API 테스트
-- **TestContainers**: 데이터베이스 통합 테스트
-
-## 📁 프로젝트 구조
+## 프로젝트 구조
 
 ```
-chap05/
-├── src/main/java/com/genius/primavera/
-│   ├── PrimaveraApplication.java                    # 메인 애플리케이션
-│   ├── application/                                 # 응용 계층
-│   │   ├── UserService.java                        # 서비스 인터페이스
-│   │   ├── UserServiceImpl.java                    # 서비스 구현체
-│   │   └── validator/                              # 커스텀 검증자
-│   │       ├── Nickname.java                       # 닉네임 검증 어노테이션
-│   │       └── NicknameValidator.java              # 닉네임 검증 로직
-│   ├── domain/                                     # 도메인 계층
-│   │   ├── model/                                  # 도메인 모델
-│   │   │   ├── User.java                          # 사용자 엔티티
-│   │   │   ├── Role.java                          # 권한 엔티티
-│   │   │   ├── UserRole.java                      # 사용자-권한 연관
-│   │   │   ├── RoleType.java                      # 권한 타입 enum
-│   │   │   ├── UserStatus.java                    # 사용자 상태 enum
-│   │   │   ├── TypeHandlerException.java          # 타입 핸들러 예외
-│   │   │   └── typehandler/                       # MyBatis 타입 핸들러
-│   │   │       ├── RoleTypeHandler.java           # 권한 타입 변환
-│   │   │       └── UserStatusTypeHandler.java     # 상태 변환
-│   │   └── mapper/                                 # 데이터 접근 계층
-│   │       ├── UserMapper.java                    # 사용자 매퍼
-│   │       ├── UserRoleMapper.java                # 권한 매퍼
-│   │       └── support/                           # 매퍼 지원 클래스
-│   │           └── UserTableSupport.java          # MyBatis Dynamic SQL 지원
-│   └── interfaces/                                 # 인터페이스 계층
-│       ├── UserController.java                    # 사용자 REST API
-│       └── AjaxController.java                    # AJAX 엔드포인트
-├── src/test/java/com/genius/primavera/
-│   ├── domain/                                     # 테스트 인프라
-│   │   ├── AbstractContainerTest.java             # 컨테이너 테스트 기반 클래스
-│   │   └── AbstractJpaContainerTest.java          # JPA 테스트 기반 클래스
-│   └── interfaces/                                 # 인터페이스 테스트
-│       ├── AjaxControllerTest.java                # AJAX API 테스트
-│       ├── UserSaveValidationTest.java            # 사용자 등록 검증 테스트
-│       └── UserUpdateValidationTest.java          # 사용자 수정 검증 테스트
-└── src/test/resources/
-    └── sql/
-        └── init.sql                              # 테스트 DB 스키마
+src/main/java/com/genius/primavera/
+├── ValidationApplication.java              # 메인 애플리케이션
+├── application/                           # 애플리케이션 서비스 계층
+│   ├── UserService.java                   # 사용자 비즈니스 로직
+│   ├── UserServiceImpl.java              # 사용자 서비스 구현
+│   └── validation/                        # 검증 관련 클래스
+│       ├── CustomValidator.java          # 커스텀 검증기
+│       ├── ValidationGroups.java         # 검증 그룹 정의
+│       └── constraints/                  # 커스텀 제약조건
+│           ├── EmailDomain.java          # 이메일 도메인 검증
+│           ├── Password.java             # 비밀번호 복잡성 검증
+│           └── UniqueEmail.java          # 이메일 중복 검증
+├── config/                               # 설정 클래스
+│   ├── SecurityConfig.java               # Spring Security 설정
+│   ├── WebMvcConfig.java                 # Web MVC 설정
+│   └── MessageConfig.java                # 국제화 메시지 설정
+├── domain/                               # 도메인 계층
+│   ├── entity/                          # 엔티티 클래스
+│   │   └── User.java                    # 사용자 엔티티 (검증 애너테이션 포함)
+│   └── mapper/                          # MyBatis 매퍼
+│       └── UserMapper.java              # 사용자 매퍼
+└── interfaces/                          # 인터페이스 계층
+    ├── UserController.java              # 사용자 REST API
+    ├── UserWebController.java           # 웹 페이지 컨트롤러
+    └── dto/                             # 데이터 전송 객체
+        ├── UserRegistrationDto.java     # 회원가입 DTO
+        └── UserUpdateDto.java           # 사용자 수정 DTO
+
+src/main/resources/
+├── application-local.yml                # 로컬 개발 설정
+├── application.yml                      # 기본 애플리케이션 설정
+├── messages.properties                  # 기본 메시지 (한국어)
+├── messages_en.properties               # 영어 메시지
+├── messages_ja.properties               # 일본어 메시지
+├── lucy-xss-servlet-filter-rule.xml     # Lucy XSS Filter 설정
+└── templates/                           # Thymeleaf 템플릿
+    ├── user.html                        # 사용자 관리 페이지
+    ├── ajax.html                        # AJAX 예제 페이지
+    └── html.html                        # HTML 처리 예제
 ```
 
-## 🔍 주요 기능
+## 주요 기능
 
-### 1. 고급 유효성 검증 시스템
-
-#### 다층 검증 구조
+### 1. Bean Validation 적용
 ```java
-@Getter @Setter @Builder
-@ScriptAssert(lang = "graal.js", 
-    script = "_this.isComplex(_this.createdAt, _this.updatedAt)", 
-    message = "등록일자와 수정일자는 필수 입니다.")
+@Entity
+@Table(name = "USER")
 public class User {
-    @Min(value = 1, groups = UpdateGroup.class)
-    private long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     
-    @Email
+    @NotBlank(message = "{validation.user.email.notblank}")
+    @Email(message = "{validation.user.email.format}")
+    @UniqueEmail(message = "{validation.user.email.unique}")
+    @EmailDomain(domains = {"gmail.com", "naver.com"}, 
+                 message = "{validation.user.email.domain}")
     private String email;
     
-    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&+=])(?=\\S+$).{8,20}$")
-    private String password;
-    
-    @Nickname  // 커스텀 검증자
+    @NotBlank(message = "{validation.user.nickname.notblank}")
+    @Size(min = 2, max = 20, message = "{validation.user.nickname.size}")
     private String nickname;
     
-    @NotNull(groups = UpdateGroup.class)
-    private UserStatus status;
+    @Password(message = "{validation.user.password.complexity}")
+    private String password;
+    
+    @Min(value = 14, message = "{validation.user.age.min}")
+    @Max(value = 120, message = "{validation.user.age.max}")
+    private Integer age;
 }
 ```
 
-#### 커스텀 검증자
+### 2. 커스텀 검증 애너테이션
 ```java
-@Constraint(validatedBy = NicknameValidator.class)
+@Documented
+@Constraint(validatedBy = EmailDomainValidator.class)
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Nickname {
-    String message() default "올바르지 않은 별명입니다.";
+public @interface EmailDomain {
+    String message() default "허용되지 않는 이메일 도메인입니다";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
-}
-```
-
-#### 검증 그룹 활용
-```java
-@PostMapping("/save")
-@Validated(User.SaveGroup.class)
-public ResponseEntity<User> save(@Valid @RequestBody User user) {
-    // 저장 시에만 적용되는 검증 규칙
+    String[] domains() default {};
 }
 
-@PostMapping("/update")  
-@Validated(User.UpdateGroup.class)
-public ResponseEntity<User> update(@Valid @RequestBody User user) {
-    // 수정 시에만 적용되는 검증 규칙 (ID 필수)
-}
-```
-
-### 2. MyBatis 고급 매핑
-
-#### 어노테이션 기반 매핑
-```java
-@Mapper
-public interface UserMapper {
-    @Results(id = "USER_WITH_ROLES", value = {
-        @Result(property = "id", column = "ID"),
-        @Result(property = "email", column = "EMAIL"),
-        @Result(property = "roles", javaType = List.class, column = "ID", 
-                many = @Many(select = "com.genius.primavera.domain.mapper.UserRoleMapper.findByUserId"))
-    })
-    @Select("SELECT ID, EMAIL, NICKNAME, PASSWORD, STATUS, CREATED_AT, UPDATED_AT FROM USERS WHERE ID = #{id}")
-    User findByIdWithRoles(@Param("id") long id);
-}
-```
-
-#### 커스텀 타입 핸들러
-```java
 @Component
-public class UserStatusTypeHandler extends BaseTypeHandler<UserStatus> {
-    @Override
-    public void setNonNullParameter(PreparedStatement ps, int i, UserStatus parameter, JdbcType jdbcType) 
-            throws SQLException {
-        ps.setInt(i, parameter.getValue());
-    }
+public class EmailDomainValidator implements ConstraintValidator<EmailDomain, String> {
+    private String[] allowedDomains;
     
     @Override
-    public UserStatus getNullableResult(ResultSet rs, String columnName) throws SQLException {
-        return UserStatus.findByValue(rs.getInt(columnName));
+    public void initialize(EmailDomain constraintAnnotation) {
+        this.allowedDomains = constraintAnnotation.domains();
     }
-}
-```
-
-### 3. TestContainers 통합 테스트
-
-#### 기존 방식 - 컨테이너 기반 테스트 설정
-```java
-@Testcontainers
-public abstract class AbstractContainerTest {
-    @Container
-    protected static final MySQLContainer<?> mysqlContainer = new MySQLContainer<>("mysql:8.0")
-            .withDatabaseName("primavera")
-            .withUsername("primavera")
-            .withPassword("primavera")
-            .withInitScript("sql/init.sql")
-            .withCommand("--character-set-server=utf8mb4", "--collation-server=utf8mb4_unicode_ci");
-
-    @DynamicPropertySource
-    static void setProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", mysqlContainer::getJdbcUrl);
-        registry.add("spring.datasource.username", mysqlContainer::getUsername);
-        registry.add("spring.datasource.password", mysqlContainer::getPassword);
-    }
-}
-```
-
-#### 새로운 방식 - @EnablePrimaveraTestcontainers 사용
-```java
-@SpringBootTest
-@EnablePrimaveraTestcontainers
-public class UserSaveValidationTest {
-    // TestContainers 설정이 자동으로 완료
-    // MariaDB 11.4.7이 자동으로 시작되고 DataSource가 설정됨
     
-    @Autowired
-    private TestRestTemplate restTemplate;
-    
-    @Test
-    void testUserValidation() {
-        User invalidUser = User.builder()
-            .email("invalid-email")  // 잘못된 이메일 형식
-            .password("weak")        // 약한 비밀번호
-            .build();
-            
-        ResponseEntity<User> response = restTemplate.postForEntity(
-            "/api/users/save", invalidUser, User.class);
-            
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-    }
-}
-```
-
-#### @EnablePrimaveraTestcontainers 장점
-- **코드 간소화**: 복잡한 TestContainers 설정 코드 제거
-- **일관성**: 모든 테스트에서 동일한 MariaDB 11.4.7 환경
-- **자동 설정**: DataSource, 초기화 스크립트 자동 처리
-- **빠른 시작**: 어노테이션 하나로 테스트 환경 구성 완료
-
-#### 포괄적인 검증 테스트
-```java
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@DisplayName("사용자 등록 유효성 검증 테스트")
-public class UserSaveValidationTest extends AbstractContainerTest {
-    
-    @Test
-    @DisplayName("잘못된 이메일 형식 유효성 검증")
-    public void saveAndReturnUserIllegalEmail() {
-        User source = User.builder()
-            .email("genius@")  // 잘못된 이메일 형식
-            .password("Secret0!")
-            .nickname("genius")
-            .roles(List.of(new Role(1, RoleType.USER)))
-            .build();
+    @Override
+    public boolean isValid(String email, ConstraintValidatorContext context) {
+        if (email == null || !email.contains("@")) return false;
         
-        ResponseEntity<User> response = restTemplate.postForEntity("/users/save", source, User.class);
-        assertEquals(400, response.getStatusCodeValue());
+        String domain = email.substring(email.lastIndexOf("@") + 1);
+        return Arrays.asList(allowedDomains).contains(domain);
     }
 }
 ```
 
-## 🚀 실행 방법
+### 3. Spring Security 설정
+```java
+@Configuration
+@EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
+public class SecurityConfig {
+    
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
+                .requestMatchers("/api/users/register").permitAll()
+                .requestMatchers("/admin/**").hasRole("ADMIN")
+                .anyRequest().authenticated()
+            )
+            .formLogin(form -> form
+                .loginPage("/login")
+                .defaultSuccessUrl("/users")
+                .permitAll()
+            )
+            .logout(logout -> logout
+                .logoutSuccessUrl("/login?logout")
+                .permitAll()
+            )
+            .csrf(csrf -> csrf.disable()) // API 테스트용
+            .headers(headers -> headers
+                .frameOptions().deny()
+                .contentTypeOptions().and()
+                .httpStrictTransportSecurity(hstsConfig -> hstsConfig
+                    .maxAgeInSeconds(31536000)
+                    .includeSubDomains(true)
+                )
+            );
+        
+        return http.build();
+    }
+    
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder(12);
+    }
+}
+```
 
-### 1. 환경 요구사항
-- **Java 17+**
-- **Docker** (TestContainers 사용)
-- **MySQL 8.0** (로컬 실행 시)
+### 4. 검증 그룹 활용
+```java
+public interface ValidationGroups {
+    interface Create {}
+    interface Update {}
+    interface Admin {}
+}
+
+@PostMapping("/users")
+public ResponseEntity<?> createUser(
+    @RequestBody @Validated(ValidationGroups.Create.class) UserRegistrationDto dto
+) {
+    User user = userService.createUser(dto);
+    return ResponseEntity.ok(user);
+}
+
+@PutMapping("/users/{id}")
+public ResponseEntity<?> updateUser(
+    @PathVariable Long id,
+    @RequestBody @Validated(ValidationGroups.Update.class) UserUpdateDto dto
+) {
+    User user = userService.updateUser(id, dto);
+    return ResponseEntity.ok(user);
+}
+```
+
+### 5. XSS 방어 설정
+```xml
+<!-- lucy-xss-servlet-filter-rule.xml -->
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns="http://www.navercorp.com/lucy-xss-servlet">
+    <defenders>
+        <defender>
+            <name>xssPreventerDefender</name>
+            <class>com.navercorp.lucy.security.xss.servletfilter.defender.XssPreventerDefender</class>
+        </defender>
+        
+        <defender>
+            <name>xssSaxFilterDefender</name>
+            <class>com.navercorp.lucy.security.xss.servletfilter.defender.XssSaxFilterDefender</class>
+            <init-param>
+                <param-value>lucy-xss.xml</param-value>
+            </init-param>
+        </defender>
+    </defenders>
+
+    <default>
+        <defender>xssPreventerDefender</defender>
+    </default>
+    
+    <url-rule-set>
+        <url-rule>
+            <url disable="false">/api/**</url>
+            <defender>xssSaxFilterDefender</defender>
+        </url-rule>
+        
+        <url-rule>
+            <url disable="true">/css/**</url>
+        </url-rule>
+        
+        <url-rule>
+            <url disable="true">/js/**</url>
+        </url-rule>
+    </url-rule-set>
+</config>
+```
+
+### 6. 국제화 메시지
+```properties
+# messages.properties (한국어 - 기본)
+validation.user.email.notblank=이메일은 필수입니다
+validation.user.email.format=올바른 이메일 형식이 아닙니다
+validation.user.email.unique=이미 사용 중인 이메일입니다
+validation.user.email.domain=허용된 도메인이 아닙니다 (gmail.com, naver.com만 허용)
+validation.user.nickname.notblank=닉네임은 필수입니다
+validation.user.nickname.size=닉네임은 2-20자 사이여야 합니다
+validation.user.password.complexity=비밀번호는 8자 이상, 대소문자/숫자/특수문자를 포함해야 합니다
+validation.user.age.min=14세 이상만 가입 가능합니다
+validation.user.age.max=올바른 나이를 입력해주세요
+
+# messages_en.properties (영어)
+validation.user.email.notblank=Email is required
+validation.user.email.format=Invalid email format
+validation.user.email.unique=Email is already taken
+validation.user.email.domain=Only gmail.com and naver.com domains are allowed
+validation.user.nickname.notblank=Nickname is required
+validation.user.nickname.size=Nickname must be between 2 and 20 characters
+validation.user.password.complexity=Password must be at least 8 characters with uppercase, lowercase, number, and special character
+validation.user.age.min=Must be at least 14 years old
+validation.user.age.max=Please enter a valid age
+```
+
+## 기술 스택
+
+| 기술 | 버전 | 용도 |
+|------|------|------|
+| **Spring Boot** | 3.3.6 | 기본 프레임워크 |
+| **Spring Security** | 6.4.4 | 인증/인가 보안 |
+| **Spring Validation** | 3.3.6 | Bean Validation (JSR-380) |
+| **Thymeleaf** | 3.4.0 | 서버사이드 템플릿 엔진 |
+| **Lucy XSS Filter** | Custom Starter | XSS 공격 방어 |
+| **MyBatis** | 3.0.4 | 데이터베이스 접근 |
+| **MariaDB** | 11.4.7 | 관계형 데이터베이스 |
+| **BCrypt** | 포함 | 비밀번호 해싱 |
+
+## 실행 방법
+
+### 1. 데이터베이스 준비
+```bash
+# Docker로 MariaDB 실행
+./docker-manager.sh start chap06
+
+# 수동 실행
+docker run -d --name mariadb-chap06 \
+  -e MARIADB_ROOT_PASSWORD=root \
+  -e MARIADB_DATABASE=primavera \
+  -e MARIADB_USER=primavera \
+  -e MARIADB_PASSWORD=primavera \
+  -p 3308:3306 mariadb:11.4.7
+```
 
 ### 2. 애플리케이션 실행
 ```bash
-# 1. 프로젝트 루트에서 빌드
-./gradlew :chap05:build
+# 로컬 프로파일로 실행
+./gradlew :chap06:bootRun -Dspring.profiles.active=local
 
-# 2. 애플리케이션 실행
-./gradlew :chap05:bootRun
-
-# 3. 테스트 실행
-./gradlew :chap05:test
+# Lucy XSS Filter 활성화 확인
+curl -i http://localhost:8080/actuator/health
 ```
 
-### 3. API 엔드포인트
-
-#### 사용자 관리 API
-```http
-# 사용자 조회
-GET /users/{id}
-
-# 사용자 등록 (SaveGroup 검증)
-POST /users/save
-Content-Type: application/json
-{
-    "email": "user@example.com",
-    "password": "Complex1!",
-    "nickname": "nickname",
-    "roles": [{"id": 1, "type": "USER"}]
-}
-
-# 사용자 수정 (UpdateGroup 검증)
-POST /users/update
-Content-Type: application/json
-{
-    "id": 1,
-    "nickname": "newNickname",
-    "status": "ON"
-}
+### 3. 웹 인터페이스 접근
+```bash
+# 브라우저에서 접근
+http://localhost:8080/users    # 사용자 관리 페이지
+http://localhost:8080/ajax     # AJAX 예제 페이지
+http://localhost:8080/html     # HTML 처리 예제
 ```
 
-#### AJAX API
-```http
-# AJAX 테스트 페이지
-GET /ajax
+### 4. API 테스트
+```bash
+# 사용자 등록 (검증 성공)
+curl -X POST http://localhost:8080/api/users/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "user@gmail.com",
+    "nickname": "TestUser",
+    "password": "SecurePass123!",
+    "age": 25
+  }'
 
-# HTML 응답
-GET /ajax/html
+# 사용자 등록 (검증 실패)
+curl -X POST http://localhost:8080/api/users/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "invalid-email",
+    "nickname": "A",
+    "password": "123",
+    "age": 10
+  }'
 
-# JSON 응답
-GET /ajax/form
-
-# 파라미터 처리
-GET /ajax/form/data?id=1&email=test@example.com
+# XSS 공격 시도
+curl -X POST http://localhost:8080/api/users/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "test@gmail.com",
+    "nickname": "<script>alert(\"XSS\")</script>",
+    "password": "SecurePass123!",
+    "age": 25
+  }'
 ```
 
-## 🧪 테스트 전략
+## 핵심 학습 포인트
 
-### 1. 유효성 검증 테스트
-- **이메일 형식 검증**: 정규표현식 기반 검증
-- **비밀번호 복잡성**: 대소문자, 숫자, 특수문자 조합
-- **닉네임 검증**: 한글, 영문, 숫자 조합 및 길이 제한
-- **권한 검증**: 필수 권한 및 유효한 권한 ID 검증
-- **날짜 로직 검증**: GraalVM JavaScript를 통한 복잡한 날짜 검증
+### 1. Bean Validation 아키텍처
+- **JSR-380 표준**: 자바 표준 검증 API 활용
+- **애너테이션 기반**: @NotNull, @Size, @Email 등 내장 제약조건
+- **커스텀 검증기**: 비즈니스 규칙에 맞는 검증 로직 구현
+- **검증 그룹**: 시나리오별 검증 규칙 분리
+- **국제화 메시지**: 다국어 검증 오류 메시지 지원
 
-### 2. 통합 테스트
-- **TestContainers**: 실제 MySQL 컨테이너 사용
-- **전체 애플리케이션 컨텍스트**: 모든 레이어 통합 테스트
-- **HTTP 클라이언트 테스트**: TestRestTemplate 활용
+### 2. Spring Security 통합
+- **필터 체인**: SecurityFilterChain을 통한 보안 정책 정의
+- **인증/인가**: 사용자 인증과 권한 기반 접근 제어
+- **비밀번호 보안**: BCrypt를 통한 안전한 비밀번호 해싱
+- **CSRF 보호**: Cross-Site Request Forgery 공격 방어
+- **보안 헤더**: XSS, Clickjacking 등 추가 보안 강화
 
-### 3. 테스트 데이터
-```sql
--- 테스트용 사용자 데이터
-INSERT INTO USERS (ID, EMAIL, PASSWORD, NICKNAME, STATUS, CREATED_AT, UPDATED_AT) VALUES 
-(1, 'genius@gmail.com', '$2a$10$N8kKAJz4rT8d.JLZ8QqC6O8.YhJQrGeFGRqF2QhPZKJf3ZcJwQq7e', 
- 'genius', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+### 3. XSS 방어 시스템
+- **다계층 보안**: Spring Security + Lucy XSS Filter 조합
+- **입력 검증**: 클라이언트 입력 데이터 필터링
+- **출력 인코딩**: HTML 출력 시 안전한 문자로 변환
+- **화이트리스트**: 허용된 HTML 태그와 속성만 통과
+- **URL별 정책**: 경로에 따른 다른 XSS 방어 정책 적용
 
--- 권한 데이터
-INSERT INTO ROLES (ID, TYPE) VALUES 
-(1, 1), -- ADMINISTRATOR
-(2, 2), -- MANAGER  
-(3, 3); -- USER
+### 4. 템플릿 엔진 보안
+- **Thymeleaf 보안**: 템플릿에서의 XSS 방어
+- **CSRF 토큰**: 폼 기반 요청의 CSRF 보호
+- **조건부 렌더링**: 권한에 따른 동적 콘텐츠 표시
+- **국제화**: 다국어 메시지 처리
+
+## 테스트 실행
+
+### 단위 테스트
+```bash
+# 전체 테스트 실행
+./gradlew :chap06:test
+
+# 검증 테스트만 실행
+./gradlew :chap06:test --tests "*ValidationTest"
+
+# 보안 테스트만 실행
+./gradlew :chap06:test --tests "*SecurityTest"
 ```
 
-## 📚 학습 포인트
+### 통합 테스트
+```bash
+# XSS 필터 통합 테스트
+./gradlew :chap06:test --tests "*XssIntegrationTest"
 
-### 1. 고급 유효성 검증
-- **검증 그룹**: 상황별 다른 검증 규칙 적용
-- **커스텀 검증자**: 비즈니스 로직에 특화된 검증
-- **스크립트 검증**: JavaScript를 활용한 복잡한 검증 로직
+# 전체 웹 MVC 테스트
+./gradlew :chap06:test --tests "*WebMvcTest"
+```
 
-### 2. MyBatis 고급 기능
-- **중첩 결과 매핑**: 연관 관계 매핑
-- **타입 핸들러**: 커스텀 타입 변환
-- **동적 SQL**: MyBatis Dynamic SQL 활용
-
-### 3. 테스트 자동화
-- **컨테이너 기반 테스트**: 실제 환경과 동일한 테스트
-- **테스트 격리**: 각 테스트 독립적 실행
-- **포괄적 커버리지**: 다양한 검증 시나리오 테스트
-
-## 🔧 설정
+## 설정 관리
 
 ### application-local.yml
 ```yaml
 spring:
   datasource:
-    driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/primavera
+    url: jdbc:mariadb://localhost:3308/primavera
     username: primavera
     password: primavera
-    hikari:
-      auto-commit: false
-      data-source-properties:
-        cachePrepStmts: false
-        useServerPrepStmts: false
-        useLocalSessionState: false
-        cacheResultSetMetadata: false
-        preparedStatementCacheQueries: 0
-  aop:
-    proxy-target-class: true
+    driver-class-name: org.mariadb.jdbc.Driver
+  
+  # Lucy XSS Filter 설정
+  lucy-filter:
+    enabled: true
+    name: "lucyXssEscapeServletFilter"
+    order: 1
+    add-url-patterns:
+      - "/*"
+  
+  # 국제화 설정
+  messages:
+    basename: messages
+    encoding: UTF-8
+    cache-duration: 3600
 
-mybatis:
-  configuration:
-    map-underscore-to-camel-case: true
-    default-fetch-size: 1000
-    default-statement-timeout: 30
-    cache-enabled: false
-    local-cache-scope: statement
-  type-aliases-package: com.genius.primavera.domain
-  type-handlers-package: com.genius.primavera.domain
+# 로깅 설정
+logging:
+  level:
+    com.genius.primavera: DEBUG
+    org.springframework.security: INFO
+    com.navercorp.lucy: DEBUG
 ```
 
-### build.gradle
-```gradle
-dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
-    implementation 'org.springframework.boot:spring-boot-devtools'
-    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter'
-    implementation 'org.graalvm.js:js:20.2.0'
-    implementation 'org.graalvm.js:js-scriptengine:20.2.0'
-    implementation 'com.mysql:mysql-connector-j'
-    
-    testImplementation 'org.testcontainers:mysql'
-    testImplementation 'org.testcontainers:junit-jupiter'
-}
-```
+## 주요 애너테이션
 
-## 🎯 주요 특징
+| 애너테이션 | 용도 | 예시 |
+|------------|------|------|
+| `@Validated` | 클래스 레벨 검증 활성화 | `@Validated(ValidationGroups.Create.class)` |
+| `@Valid` | 메서드 파라미터 검증 | `public void create(@Valid User user)` |
+| `@NotBlank` | 빈 문자열 검증 | `@NotBlank(message = "필수 입력")` |
+| `@Email` | 이메일 형식 검증 | `@Email(message = "이메일 형식 오류")` |
+| `@Size` | 문자열/컬렉션 크기 검증 | `@Size(min = 2, max = 20)` |
+| `@Min/@Max` | 숫자 범위 검증 | `@Min(value = 14)` |
+| `@PreAuthorize` | 메서드 실행 전 권한 검사 | `@PreAuthorize("hasRole('ADMIN')")` |
 
-- ✅ **다층 유효성 검증**: 어노테이션, 커스텀 검증자, 스크립트 검증
-- ✅ **검증 그룹 지원**: 상황별 검증 규칙 적용
-- ✅ **MyBatis 고급 매핑**: 중첩 결과, 타입 핸들러
-- ✅ **컨테이너 기반 테스트**: TestContainers 활용
-- ✅ **RESTful API**: 표준 HTTP 상태 코드 활용
-- ✅ **한국어 지원**: 다국어 메시지 및 한글 닉네임 검증
-- ✅ **LiveReload**: 개발 생산성 향상을 위한 실시간 새로고침
+## 학습 순서
 
-## 실행 방법
+1. **Bean Validation 기초**: 기본 제약조건 애너테이션 활용
+2. **커스텀 검증기 작성**: 비즈니스 규칙에 맞는 검증 로직 구현  
+3. **Spring Security 설정**: 기본 인증/인가 시스템 구축
+4. **XSS Filter 통합**: Lucy XSS Filter 설정 및 정책 정의
+5. **국제화 메시지**: 다국어 검증 메시지 시스템 구축
+6. **Thymeleaf 통합**: 보안이 적용된 웹 페이지 개발
+7. **통합 테스트**: 전체 보안 시스템 검증
 
-### 🚀 Spring Boot 애플리케이션 실행
+## 활용 방법
 
-#### 1. 환경 변수 방식 (권장)
-```bash
-# 로컬 환경으로 실행  
-SPRING_PROFILES_ACTIVE=local ./gradlew :chap06:bootRun
-```
+### 1. 보안 강화 전략
+- **다계층 보안**: 여러 보안 기술의 조합으로 방어력 강화
+- **입력 검증**: 클라이언트와 서버 양쪽에서 데이터 검증
+- **출력 인코딩**: XSS 공격 방지를 위한 안전한 데이터 출력
+- **보안 헤더**: HTTP 보안 헤더를 통한 추가 보안
 
-#### 2. Program Arguments 방식
-```bash
-# 기본 실행
-./gradlew :chap06:bootRun --args='--spring.profiles.active=local'
-```
+### 2. 사용자 경험 개선
+- **실시간 검증**: AJAX를 통한 실시간 입력 데이터 검증
+- **국제화**: 사용자 언어에 맞는 오류 메시지 제공
+- **접근성**: 스크린 리더 호환 오류 메시지 설계
 
-#### 3. IDE 설정 방식
-- IntelliJ IDEA: Run Configuration → VM Options 또는 Program Arguments 설정
-- VM Options: `-Dspring.profiles.active=local`
-- Program Arguments: `--spring.profiles.active=local`
-
-## 🐳 인프라 설정
-
-### Docker Compose 환경 설정
-
-이 챕터는 **MyBatis + 보안 인프라**를 사용합니다:
-
-```bash
-# infrastructure 디렉터리로 이동
-cd infrastructure
-
-# MyBatis + 보안 학습용 Docker Compose 실행 (MariaDB)
-docker-compose -f docker-compose.mybatis.yml up -d
-
-# 서비스 상태 확인
-docker-compose -f docker-compose.mybatis.yml ps
-
-# 정리 (컨테이너 및 볼륨 삭제)
-docker-compose -f docker-compose.mybatis.yml down -v
-```
-
-**포함된 서비스:**
-- **MariaDB 11.4.7** (포트: 3308)
-- MyBatis 전용 데이터베이스 스키마 자동 생성
-
-**애플리케이션 실행:**
-```bash
-# 인프라 시작 후 애플리케이션 실행
-./gradlew :chap06:bootRun -Dspring.profiles.active=local
-```
-
-## 📖 참고 자료
-
-- [Spring MVC Test Framework](https://docs.spring.io/spring/docs/current/spring-framework-reference/testing.html#spring-mvc-test-framework)
-- [Spring-boot-data-source-decorator](https://github.com/gavlyukovskiy/spring-boot-data-source-decorator)
-- [Migration from Nashorn to GraalVM JavaScript](https://golb.hplar.ch/2020/04/java-javascript-engine.html)
-- [Hibernate Validator](https://docs.jboss.org/hibernate/stable/validator/reference/en-US/html_single/)
-- [LiveReload Extensions](http://livereload.com/extensions/)
-
-이 챕터를 통해 실무에서 요구되는 견고한 유효성 검증 시스템과 통합 테스트 기법을 습득할 수 있습니다.
-
-## ✅ 최근 테스트 개선사항
-
-### TestContainers 마이그레이션
-이 챕터의 테스트는 Spring Boot 3.x 모범 사례에 따라 최신 TestContainers 직접 설정 방식으로 업데이트되었습니다.
-
-#### 변경된 테스트 파일들
-1. **MessageConfigTest**: 국제화 메시지 테스트 현대화
-   - **문제**: MessageSource 테스트에 불필요한 TestContainers 설정 포함
-   - **해결**: 경량화된 테스트 구조 적용, 불필요한 데이터베이스 의존성 제거
-   - **특징**: 
-     - Spring Boot 3.x 테스트 접근법 적용
-     - 중첩 테스트 클래스로 논리적 그룹화
-     - 다국어(한국어, 영어, 일본어) 메시지 검증
-     - Bean Validation 표준 메시지 재정의 검증
-
-2. **UserSaveValidationTest**: 사용자 등록 검증 테스트
-   - **설정**: MariaDB 11.4 컨테이너 직접 구성
-   - **검증 항목**: 이메일 형식, 비밀번호 복잡성, 닉네임 규칙, 권한 검증
-   - **특징**: 28개 검증 시나리오 포함
-
-3. **UserUpdateValidationTest**: 사용자 수정 검증 테스트  
-   - **설정**: MariaDB 11.4 컨테이너 직접 구성
-   - **검증 항목**: ID 필수, 상태 검증, 비밀번호 일치성 검증
-   - **특징**: 30개 수정 시나리오 포함
-
-4. **UserScriptAssertValidationTest**: Groovy 스크립트 검증 테스트
-   - **설정**: MariaDB 11.4 컨테이너 직접 구성  
-   - **검증 항목**: @ScriptAssert 어노테이션을 통한 복잡한 비즈니스 규칙 검증
-   - **특징**: 비밀번호 일치성, null 처리, 대소문자 구분 등 6개 시나리오
-
-#### 마이그레이션 세부사항
-- **이전**: `@EnablePrimaveraTestcontainers` 커스텀 어노테이션 사용
-- **현재**: `@Container`와 `@DynamicPropertySource` 직접 사용
-- **장점**: 
-  - Spring Boot 3.x 표준 방식 준수
-  - 테스트 설정의 명확성 및 투명성 증대
-  - TestContainers 공식 문서와 일치하는 패턴
-  - 각 테스트 클래스별 독립적인 컨테이너 설정
-
-#### 기술 스택 업데이트
-```java
-@Container
-static MariaDBContainer<?> mariadb = new MariaDBContainer<>("mariadb:11.4")
-        .withDatabaseName("primavera")
-        .withUsername("primavera")
-        .withPassword("primavera")
-        .withInitScript("sql/init.sql");
-
-@DynamicPropertySource
-static void configureProperties(DynamicPropertyRegistry registry) {
-    registry.add("spring.datasource.url", mariadb::getJdbcUrl);
-    registry.add("spring.datasource.username", mariadb::getUsername);
-    registry.add("spring.datasource.password", mariadb::getPassword);
-    registry.add("spring.datasource.driver-class-name", mariadb::getDriverClassName);
-}
-```
-
-이러한 변경으로 chap06는 현대적이고 유지보수가 용이한 테스트 구조를 갖추게 되었습니다.
+이 모듈은 현대적인 웹 애플리케이션에서 필수인 보안과 검증 시스템을 종합적으로 다루며, 실무에서 바로 적용할 수 있는 보안 개발 패턴을 학습할 수 있습니다.

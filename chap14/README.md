@@ -1,660 +1,414 @@
-# Chapter 14 - MyBatis to JPA Migration & Reactive Integration
+# Chapter 14: JPA 고급과 Reactive 심화
 
-## 개요
-Chapter 14는 **MyBatis에서 JPA로의 전환과 리액티브 통합**을 다루는 Spring Boot 애플리케이션입니다. 기존 MyBatis 기반 게시판을 JPA로 마이그레이션하면서 Spring WebFlux, MongoDB Reactive, Redis 캐싱을 부분적으로 도입한 **실무적 기술 전환 과정**을 구현합니다.
+Spring Boot에서 JPA 고급 기능과 Reactive 프로그래밍을 심화 학습하는 고급 모듈입니다. JPA Envers 감사 시스템, QueryDSL 동적 쿼리, MongoDB Reactive 고급 패턴, 그리고 하이브리드 아키텍처를 통한 실무적 기술 전환 과정을 구현합니다.
 
-## 주요 기능
-- **JPA 고급 기능**: Spring Data JPA, QueryDSL, Auditing, Envers 활용
-- **MyBatis → JPA 전환**: 기존 MyBatis 기반 게시판을 JPA로 마이그레이션
-- **하이브리드 아키텍처**: 전통적 MVC + 일부 리액티브 컴포넌트 혼합
-- **멀티 데이터소스**: MariaDB (JPA), MongoDB (Reactive), Redis 통합 운영
-- **고급 캐싱**: Redis와 Caffeine을 활용한 다층 캐싱 전략
-- **외부 API 통합**: Retrofit2를 활용한 Kakao API 연동
-- **실시간 차트**: 일부 기능에서 WebFlux 기반 스트리밍 적용
-- **OAuth2 보안**: 소셜 로그인 및 JWT 기반 인증
-- **파일 처리**: 첨부파일 업로드/다운로드 및 스토리지 관리
-- **구조화된 로깅**: MongoDB를 활용한 리액티브 로그 저장
+## 🎯 고급 학습 목표
 
-## 기술 스택
+- **JPA Envers**: 엔티티 변경 이력 추적과 감사 시스템 구현
+- **QueryDSL Integration**: 타입 안전 동적 쿼리와 복합 검색 조건
+- **Reactive Advanced**: 고급 Reactive 패턴과 비동기 처리 최적화
+- **Hybrid Architecture**: 전통적 JPA와 Reactive의 효과적 결합
+- **Multi-DataSource**: MariaDB, MongoDB, Redis 멀티 데이터소스 통합
+- **Advanced Caching**: 다층 캐싱 전략과 성능 최적화
+- **External API Integration**: Retrofit2를 통한 외부 API 연동
 
-### 핵심 프레임워크
-- Spring Boot 3.x
-- **Spring Data JPA** (주요 데이터 접근 계층)
-- **QueryDSL** (타입 안전 쿼리)
-- Spring WebFlux (리액티브 컴포넌트용)
-- Spring Data MongoDB Reactive (로깅용)
-- Spring Data Redis (캐싱용)
-- Spring Security OAuth2
-
-### 데이터베이스
-- **MariaDB 11.x** (주 데이터베이스 - JPA 사용)
-- **MongoDB** (로그 및 NoSQL 데이터 - Reactive 사용)
-- **Redis** (캐싱 및 세션)
-
-### JPA 고급 기능
-- **Spring Data JPA**: Repository 패턴 및 쿼리 메서드
-- **QueryDSL**: 타입 안전 동적 쿼리 생성
-- **JPA Auditing**: 엔티티 생성/수정 시간 자동 관리
-- **Hibernate Envers**: 엔티티 변경 이력 추적
-- **Custom Converters**: Enum 기반 상태 변환
-
-### 하이브리드 리액티브 스택 (일부 기능)
-- Reactor Netty (WebFlux용)
-- MongoDB Reactive Driver (로깅용)
-- WebFlux Reactive Thymeleaf (차트용)
-
-### 외부 통합
-- Retrofit2 (HTTP Client)
-- Kakao API 연동
-- OAuth2 Social Login
-
-### 성능 최적화
-- Caffeine (Local Cache)
-- Kryo (직렬화)
-- Snappy (압축)
-- jOOλ (함수형 프로그래밍)
-
-### 프론트엔드
-- Thymeleaf 템플릿
-- AdminLTE UI Framework
-- jQuery UI Components
-- Chart.js 시각화
-
-## 프로젝트 구조
+## 📁 프로젝트 구조
 
 ```
-chap15/
+chap14/
 ├── src/main/java/com/genius/primavera/
-│   ├── AdvancedJpaApplication.java                 # 메인 애플리케이션
-│   ├── application/                                # 비즈니스 로직
-│   │   ├── cache/                                  # 캐싱 전략
-│   │   │   ├── LocalCache.java                   # Caffeine 로컬 캐시
-│   │   │   └── RedisCache.java                   # Redis 분산 캐시
-│   │   ├── article/                                # 게시글 서비스
-│   │   │   ├── WriteArticleService.java          # 게시글 작성 서비스
-│   │   │   └── WriteArticleServiceImpl.java      # 구현체
-│   │   ├── post/                                   # 포스트 서비스
-│   │   │   ├── PostingService.java               # 포스팅 서비스
-│   │   │   └── PostingServiceImpl.java           # 구현체
-│   │   ├── storage/                                # 파일 스토리지
-│   │   │   ├── StorageService.java               # 스토리지 인터페이스
-│   │   │   ├── FileSystemStorageService.java     # 파일시스템 구현
-│   │   │   └── StorageProperties.java            # 설정 속성
-│   │   ├── logging/                                # 로깅 시스템
-│   │   │   ├── PrimaveraLogService.java          # 로그 서비스
-│   │   │   ├── PrimaveraLogServiceImpl.java      # 구현체
-│   │   │   └── MongoSequenceGeneratorService.java # MongoDB 시퀀스
-│   │   ├── user/                                   # 사용자 서비스
-│   │   │   ├── UserService.java                  # 사용자 서비스
-│   │   │   └── UserServiceImpl.java              # 구현체
-│   │   └── validator/                              # 검증 로직
-│   │       ├── Nickname.java                     # 닉네임 검증 어노테이션
-│   │       └── NicknameValidator.java            # 검증기 구현
-│   ├── domain/                                     # 도메인 모델
-│   │   ├── model/                                  # 엔티티 모델
-│   │   │   ├── BaseEntity.java                   # 공통 엔티티
-│   │   │   ├── user/                              # 사용자 도메인
-│   │   │   │   ├── User.java                     # 사용자 엔티티
-│   │   │   │   ├── Role.java                     # 역할 엔티티
-│   │   │   │   ├── UserConnection.java           # 소셜 연결
-│   │   │   │   └── UserStatus.java               # 사용자 상태
-│   │   │   ├── article/                           # 게시글 도메인
-│   │   │   │   ├── Article.java                  # 게시글 엔티티
-│   │   │   │   ├── Comment.java                  # 댓글 엔티티
-│   │   │   │   ├── Attachment.java               # 첨부파일
-│   │   │   │   └── ArticleStatus.java            # 게시글 상태
-│   │   │   ├── post/                              # 포스트 도메인
-│   │   │   │   ├── Post.java                     # 포스트 엔티티
-│   │   │   │   └── PostStatus.java               # 포스트 상태
-│   │   │   ├── kakao/                             # 카카오 도메인
-│   │   │   │   └── KakaoFriend.java              # 카카오 친구
-│   │   │   └── PrimaveraLog.java                 # 로그 엔티티 (MongoDB)
-│   │   ├── converter/                              # JPA 컨버터
-│   │   │   ├── EnumAttributeConverter.java       # Enum 컨버터 기반
-│   │   │   ├── UserStatusAttributeConverter.java  # 사용자 상태 컨버터
-│   │   │   └── ArticleStatusAttributeConverter.java # 게시글 상태 컨버터
-│   │   └── repository/                             # 저장소 인터페이스
-│   │       ├── UserRepository.java               # 사용자 저장소
-│   │       ├── PrimaveraLogRepository.java       # 로그 저장소 (MongoDB)
-│   │       ├── article/                           # 게시글 저장소
-│   │       │   ├── ArticleRepository.java        # 게시글 저장소
-│   │       │   └── CommentRepository.java        # 댓글 저장소
-│   │       └── post/                              # 포스트 저장소
-│   │           └── PostRepository.java           # 포스트 저장소
-│   ├── infrastructure/                             # 인프라스트럭처
-│   │   ├── ApplicationConfiguration.java          # 애플리케이션 설정
-│   │   ├── KakaoRetrofitClientConfiguration.java  # Kakao API 설정
-│   │   ├── aspect/                                # AOP 관점
-│   │   │   ├── PrimaveraLogging.java             # 로깅 어노테이션
-│   │   │   └── PrimaveraLoggingAspect.java       # 로깅 관점
-│   │   ├── security/                              # 보안 설정
-│   │   │   ├── PrimaveraSecurityConfiguration.java # 보안 설정
-│   │   │   ├── PrimaveraUserDetailsService.java   # 사용자 세부정보 서비스
-│   │   │   └── PrimaveraAuthenticationSuccessHandler.java # 인증 성공 핸들러
-│   │   ├── serializer/                            # 직렬화
-│   │   │   ├── KryoRedisSerializer.java          # Kryo Redis 직렬화
-│   │   │   └── SnappyRedisSerializer.java        # Snappy 압축 직렬화
-│   │   └── filter/                                # 필터
-│   │       └── PrimaveraFilter.java              # 커스텀 필터
-│   └── interfaces/                                 # 웹 계층
-│       ├── ArticleController.java                 # 게시글 컨트롤러
-│       ├── PostingController.java                 # 포스팅 컨트롤러
-│       ├── ChartController.java                   # 차트 컨트롤러 (Reactive)
-│       ├── AttachmentController.java              # 첨부파일 컨트롤러
-│       ├── UserController.java                    # 사용자 컨트롤러
-│       └── LoginController.java                   # 로그인 컨트롤러
+│   ├── AdvancedJpaApplication.java
+│   ├── application/                    # 비즈니스 로직 계층
+│   │   ├── cache/                      # 캐싱 전략
+│   │   │   ├── LocalCache.java         # Caffeine 로컬 캐시
+│   │   │   └── RedisCache.java         # Redis 분산 캐시
+│   │   ├── article/                    # 게시글 서비스 (JPA + Auditing)
+│   │   ├── logging/                    # MongoDB Reactive 로깅
+│   │   ├── post/                       # 포스팅 서비스
+│   │   ├── storage/                    # 파일 저장소 서비스
+│   │   └── user/                       # 사용자 관리 서비스
+│   ├── domain/                         # 도메인 모델과 비즈니스 규칙
+│   │   ├── converter/                  # JPA Attribute Converters
+│   │   │   ├── EnumAttributeConverter.java       # 기반 Enum 컨버터
+│   │   │   ├── UserStatusAttributeConverter.java # 사용자 상태 변환
+│   │   │   ├── ArticleStatusAttributeConverter.java # 게시글 상태 변환
+│   │   │   └── ConvertedEnumResolver.java        # Enum 변환 유틸
+│   │   ├── model/                      # 도메인 모델들
+│   │   │   ├── BaseEntity.java         # JPA Auditing 기반 엔티티
+│   │   │   ├── article/                # 게시글 도메인 (Envers 적용)
+│   │   │   ├── post/                   # 포스트 도메인
+│   │   │   ├── user/                   # 사용자 도메인
+│   │   │   └── kakao/                  # 카카오 API 연동 모델
+│   │   └── repository/                 # 저장소 인터페이스
+│   │       ├── UserRepository.java     # JPA Repository
+│   │       ├── PrimaveraLogRepository.java # MongoDB Reactive Repository
+│   │       ├── article/                # QueryDSL 지원 게시글 저장소
+│   │       │   ├── ArticleRepository.java
+│   │       │   ├── ArticleSupportRepository.java # QueryDSL 인터페이스
+│   │       │   └── ArticleSupportRepositoryImpl.java # QueryDSL 구현
+│   │       └── kakao/                  # 카카오 친구 저장소
+│   ├── infrastructure/                 # 인프라스트럭처 계층
+│   │   ├── ApplicationConfiguration.java # 메인 설정
+│   │   ├── KakaoRetrofitClientConfiguration.java # Retrofit 설정
+│   │   ├── aspect/                     # AOP 기반 로깅
+│   │   ├── security/                   # OAuth2 + JWT 보안
+│   │   ├── serializer/                 # Redis 직렬화 최적화
+│   │   │   ├── KryoRedisSerializer.java # Kryo 직렬화
+│   │   │   └── SnappyRedisSerializer.java # 압축 직렬화
+│   │   └── filter/                     # 커스텀 필터
+│   └── interfaces/                     # 웹 인터페이스 계층
+│       ├── ArticleController.java      # 게시글 API
+│       ├── ChartController.java        # Reactive 차트 API
+│       ├── GreetingController.java     # Reactive 예제 API
+│       └── UserController.java         # 사용자 API
 └── src/main/resources/
-    ├── application-default.yml                    # 기본 설정
-    ├── application-local.yml                      # 로컬 환경 설정
-    ├── social.yml                                 # 소셜 로그인 설정
-    ├── templates/                                 # Thymeleaf 템플릿
-    │   ├── layouts/                               # 레이아웃
-    │   ├── fragments/                             # 프래그먼트
-    │   ├── article/                               # 게시글 템플릿
-    │   ├── post/                                  # 포스트 템플릿
-    │   └── chart.html                            # 리액티브 차트
-    └── static/                                    # 정적 리소스
-        ├── plugins/                               # jQuery 플러그인
-        │   ├── bootstrap-slider/
-        │   ├── iCheck/
-        │   └── jvectormap/
-        └── dist/                                  # 빌드된 자산
+    ├── application.yml                 # 기본 설정
+    ├── application-local.yml           # 로컬 환경 설정
+    ├── application-test.yml            # 테스트 환경 설정
+    └── sql/                           # 데이터베이스 초기화 스크립트
 ```
 
-## 주요 컴포넌트
+## 🔧 고급 기술 기능
 
-### 1. JPA 고급 데이터 접근 계층
-- **Repository Pattern**: Spring Data JPA 기반 데이터 접근
-- **QueryDSL Integration**: 복합 조건 검색 및 동적 쿼리
-- **JPA Auditing**: BaseEntity를 통한 생성/수정 시간 자동 관리
-- **Entity Relationships**: User-Article-Comment 연관관계 매핑
-- **Custom Converters**: Enum 상태 값의 데이터베이스 저장 최적화
+### 1. JPA Envers 감사 시스템
+```java
+@Entity
+@Audited  // Envers 감사 활성화
+@Table(name = "ARTICLE")
+public class Article extends BaseEntity {
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    @Column(name = "SUBJECT", nullable = false)
+    private String subject;
+    
+    @Convert(converter = ArticleStatusAttributeConverter.class)
+    private ArticleStatus status;
+    
+    // 감사 정보는 BaseEntity에서 자동 관리
+}
 
-### 2. 하이브리드 아키텍처
-- **전통적 MVC**: 게시판 CRUD는 JPA + Thymeleaf
-- **리액티브 컴포넌트**: 차트 및 로깅만 WebFlux 적용
-- **선택적 적용**: 필요한 부분에만 리액티브 패턴 도입
-
-### 3. 다층 캐싱 시스템
-- **LocalCache (Caffeine)**: JVM 레벨 고속 캐싱
-- **RedisCache**: 분산 캐싱 및 세션 저장소
-- **Cache Chain**: 로컬 → Redis → DB 순차 조회 최적화
-
-### 4. 멀티 데이터소스 통합
-- **MariaDB**: 주요 관계형 데이터 (JPA)
-- **MongoDB**: 로그 및 NoSQL 데이터 (Reactive)
-- **Redis**: 캐싱 및 세션 관리
-
-### 5. 외부 시스템 통합
-- **Kakao API**: Retrofit2를 통한 친구 목록 조회
-- **OAuth2 Social Login**: Google, Facebook, GitHub, Kakao 로그인
-- **File Storage**: 첨부파일 업로드/다운로드 시스템
-
-### 6. 고급 데이터 처리
-- **QueryDSL**: 타입 안전 동적 쿼리
-- **JPA Envers**: 엔티티 변경 이력 추적
-- **Custom Converters**: Enum 기반 상태 변환
-- **Pagination**: Spring Data의 페이징 및 정렬 기능
-- **Projection**: 필요한 필드만 선택하는 최적화된 쿼리
-
-## 설정
-
-### 멀티 데이터소스 설정
-```yaml
-spring:
-  datasource:                    # MariaDB
-    driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://localhost:3306/primavera
-  data:
-    mongodb:                     # MongoDB
-      host: localhost
-      port: 27017
-      database: primavera
-    redis:                       # Redis
-      host: localhost
-      port: 6379
+@MappedSuperclass
+@EntityListeners(AuditingEntityListener.class)
+public abstract class BaseEntity {
+    
+    @CreatedDate
+    @Column(name = "REG_DT", updatable = false)
+    private LocalDateTime createdDate;
+    
+    @LastModifiedDate
+    @Column(name = "MOD_DT")
+    private LocalDateTime lastModifiedDate;
+    
+    @CreatedBy
+    @Column(name = "CREATED_BY", updatable = false)
+    private String createdBy;
+    
+    @LastModifiedBy
+    @Column(name = "MODIFIED_BY")
+    private String lastModifiedBy;
+}
 ```
 
-### HashiCorp Vault 설정
-
-#### 개발 환경 Vault 구성
-```yaml
-spring:
-  cloud:
-    vault:
-      host: localhost
-      port: 8200
-      scheme: http
-      authentication: TOKEN
-      token: primavera-dev-token
-      kv:
-        enabled: true
-        backend: secret
-        profile-separator: '/'
+### 2. QueryDSL 동적 쿼리
+```java
+@Repository
+public class ArticleSupportRepositoryImpl implements ArticleSupportRepository {
+    
+    private final JPAQueryFactory queryFactory;
+    
+    @Override
+    public List<Article> findArticlesWithDynamicConditions(Search search) {
+        QArticle article = QArticle.article;
+        QUser user = QUser.user;
+        
+        return queryFactory
+            .selectFrom(article)
+            .join(article.author, user).fetchJoin()
+            .where(
+                titleContains(search.getKeyword()),
+                statusEquals(search.getStatus()),
+                dateAfter(search.getStartDate())
+            )
+            .orderBy(article.createdDate.desc())
+            .limit(search.getLimit())
+            .fetch();
+    }
+    
+    private BooleanExpression titleContains(String keyword) {
+        return keyword != null ? QArticle.article.subject.containsIgnoreCase(keyword) : null;
+    }
+    
+    private BooleanExpression statusEquals(ArticleStatus status) {
+        return status != null ? QArticle.article.status.eq(status) : null;
+    }
+}
 ```
 
-#### Vault 시크릿 엔진 초기화
-```bash
-# Key-Value v2 시크릿 엔진 활성화
-export VAULT_ADDR=http://localhost:8200
-export VAULT_TOKEN=primavera-dev-token
-
-vault secrets enable -path=secret kv-v2
-
-# 애플리케이션 시크릿 저장
-vault kv put secret/primavera/chap15 \
-  datasource.password=primavera \
-  mongodb.password=primavera \
-  oauth2.google.client-secret=your-google-secret \
-  oauth2.kakao.client-secret=your-kakao-secret \
-  jwt.secret=your-jwt-secret-key
-
-# 환경별 시크릿 저장
-vault kv put secret/primavera/chap15/local \
-  datasource.url=jdbc:mariadb://localhost:3306/primavera \
-  mongodb.host=localhost
-
-vault kv put secret/primavera/chap15/prod \
-  datasource.url=jdbc:mariadb://prod-db:3306/primavera \
-  mongodb.host=prod-mongo
+### 3. Advanced Reactive Patterns
+```java
+@Service
+public class ChartHandler {
+    
+    private final PrimaveraLogRepository logRepository;
+    
+    public Flux<ChartData> getRealtimeChartData() {
+        return Flux.interval(Duration.ofSeconds(1))
+            .flatMap(tick -> logRepository.findRecentStats())
+            .map(this::convertToChartData)
+            .onBackpressureBuffer(100)
+            .retry(3)
+            .doOnError(error -> log.error("Chart data streaming error", error));
+    }
+    
+    public Mono<DashboardData> getDashboardData() {
+        Mono<Long> totalUsers = userRepository.count();
+        Mono<Long> totalArticles = articleRepository.count(); 
+        Mono<List<PrimaveraLog>> recentLogs = logRepository.findTop10ByOrderByCreateDtDesc().collectList();
+        
+        return Mono.zip(totalUsers, totalArticles, recentLogs)
+            .map(tuple -> DashboardData.builder()
+                .totalUsers(tuple.getT1())
+                .totalArticles(tuple.getT2())
+                .recentLogs(tuple.getT3())
+                .build());
+    }
+}
 ```
 
-#### Vault 시크릿 조회 및 관리
-```bash
-# 저장된 시크릿 조회
-vault kv get secret/primavera/chap15
-vault kv get secret/primavera/chap15/local
-
-# 시크릿 버전 확인
-vault kv metadata get secret/primavera/chap15
-
-# 시크릿 업데이트
-vault kv patch secret/primavera/chap15 jwt.secret=new-secret-key
-
-# 시크릿 삭제
-vault kv delete secret/primavera/chap15
+### 4. Multi-Level Caching Strategy
+```java
+@Service
+public class LocalCache {
+    
+    private final Cache<String, Object> caffeine = Caffeine.newBuilder()
+        .maximumSize(1000)
+        .expireAfterWrite(5, TimeUnit.MINUTES)
+        .build();
+    
+    @Cacheable(value = "articles", unless = "#result == null")
+    public Article getArticle(Long id) {
+        return caffeine.get("article:" + id, key -> {
+            // L1 Cache Miss -> L2 Cache (Redis) 확인
+            return redisCache.get(key).orElseGet(() -> {
+                // L2 Cache Miss -> Database 조회
+                Article article = articleRepository.findById(id).orElse(null);
+                if (article != null) {
+                    redisCache.put(key, article, Duration.ofMinutes(30));
+                }
+                return article;
+            });
+        });
+    }
+}
 ```
 
-### 리액티브 Thymeleaf 설정
-```yaml
-spring:
-  thymeleaf:
-    reactive:
-      chunked-mode-view-names: chart
-      max-chunk-size: 8192
+### 5. JPA Custom Attribute Converters
+```java
+@Converter
+public class ArticleStatusAttributeConverter extends EnumAttributeConverter<ArticleStatus> {
+    
+    public ArticleStatusAttributeConverter() {
+        super(ArticleStatus.class, false);
+    }
+}
+
+public abstract class EnumAttributeConverter<E extends Enum<E> & ConvertedEnum> 
+    implements AttributeConverter<E, String> {
+    
+    private final Class<E> enumClass;
+    private final boolean nullable;
+    
+    @Override
+    public String convertToDatabaseColumn(E attribute) {
+        if (attribute == null) {
+            return nullable ? null : getDefaultValue();
+        }
+        return attribute.getCode();
+    }
+    
+    @Override
+    public E convertToEntityAttribute(String dbData) {
+        if (dbData == null && nullable) {
+            return null;
+        }
+        return ConvertedEnumResolver.fromCode(enumClass, dbData);
+    }
+}
 ```
 
-### Kakao API 설정
-```yaml
-kakao:
-  api:
-    url: https://kapi.kakao.com
-    talk-social:
-      friend-list: v1/api/talk/friends
-```
-
-### SSL/HTTPS 설정
-```yaml
-server:
-  ssl:
-    key-alias: primavera
-    key-store: chap10/primavera.p12
-    key-store-type: PKCS12
-    enabled: true
-  port: 8443
-```
-
-### Spring Cloud Vault 통합 설정
-
-#### application-vault.yml
-```yaml
-spring:
-  cloud:
-    vault:
-      host: localhost
-      port: 8200
-      scheme: http
-      authentication: TOKEN
-      token: primavera-dev-token
-      connection-timeout: 5000
-      read-timeout: 15000
-      config:
-        order: -10
-      generic:
-        enabled: false
-      kv:
-        enabled: true
-        backend: secret
-        profile-separator: '/'
-        default-context: primavera/chap15
-        application-name: primavera
-        profiles: local,prod
-  config:
-    import: vault://
-```
-
-#### VaultConfiguration.java 예시
+### 6. Retrofit2 External API Integration
 ```java
 @Configuration
-@EnableConfigurationProperties
-public class VaultConfiguration {
-    
-    @Value("${spring.cloud.vault.token}")
-    private String vaultToken;
+public class KakaoRetrofitClientConfiguration {
     
     @Bean
-    public VaultTemplate vaultTemplate() {
-        VaultEndpoint endpoint = VaultEndpoint.create("localhost", 8200);
-        endpoint.setScheme("http");
-        
-        ClientAuthentication authentication = new TokenAuthentication(vaultToken);
-        
-        return new VaultTemplate(endpoint, authentication);
+    public KakaoApiService kakaoApiService() {
+        Retrofit retrofit = new Retrofit.Builder()
+            .baseUrl("https://kapi.kakao.com")
+            .addConverterFactory(GsonConverterFactory.create())
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            .client(createOkHttpClient())
+            .build();
+            
+        return retrofit.create(KakaoApiService.class);
     }
     
-    @ConfigurationProperties("datasource")
-    @Component
-    public static class DatabaseProperties {
-        private String url;
-        private String username;
-        private String password;
-        // getters/setters
-    }
-    
-    @ConfigurationProperties("oauth2")
-    @Component
-    public static class OAuth2Properties {
-        private Google google = new Google();
-        private Kakao kakao = new Kakao();
-        
-        public static class Google {
-            private String clientId;
-            private String clientSecret;
-            // getters/setters
-        }
-        
-        public static class Kakao {
-            private String clientId;
-            private String clientSecret;
-            // getters/setters
-        }
+    private OkHttpClient createOkHttpClient() {
+        return new OkHttpClient.Builder()
+            .connectTimeout(10, TimeUnit.SECONDS)
+            .readTimeout(30, TimeUnit.SECONDS)
+            .addInterceptor(new AuthorizationInterceptor())
+            .build();
     }
 }
-```
 
-## 실행 방법
-
-### 로컬 환경 실행
-```bash
-./gradlew :chap15:bootRun -Dspring.profiles.active=local
-```
-
-### 필수 서비스 시작
-```bash
-# MariaDB 시작
-docker run -d --name mariadb-primavera -p 3306:3306 \
-  -e MARIADB_ROOT_PASSWORD=root \
-  -e MARIADB_DATABASE=primavera \
-  mariadb:11.4.7
-
-# MongoDB 시작
-docker run -d --name mongodb-primavera -p 27017:27017 \
-  -e MONGO_INITDB_ROOT_USERNAME=primavera \
-  -e MONGO_INITDB_ROOT_PASSWORD=primavera \
-  mongo:7.0
-
-# Redis 시작
-docker run -d --name redis-primavera -p 6379:6379 redis:7.2
-
-# HashiCorp Vault 시작 (개발 모드)
-docker run -d --name vault-primavera -p 8200:8200 \
-  -e VAULT_DEV_ROOT_TOKEN_ID=primavera-dev-token \
-  -e VAULT_DEV_LISTEN_ADDRESS=0.0.0.0:8200 \
-  --cap-add=IPC_LOCK \
-  hashicorp/vault:1.15
-
-# Vault 초기화 확인
-curl -H "X-Vault-Token: primavera-dev-token" \
-  http://localhost:8200/v1/sys/health
-```
-
-### 테스트 실행
-```bash
-./gradlew :chap15:test
-```
-
-## API 엔드포인트
-
-### 게시글 관리
-```
-GET    /articles          # 게시글 목록
-GET    /articles/{id}     # 게시글 상세
-POST   /articles          # 게시글 작성
-PUT    /articles/{id}     # 게시글 수정
-DELETE /articles/{id}     # 게시글 삭제
-```
-
-### 리액티브 차트
-```
-GET    /chart             # 리액티브 차트 페이지 (SSE)
-```
-
-### 첨부파일
-```
-POST   /attachments       # 파일 업로드
-GET    /attachments/{id}  # 파일 다운로드
-```
-
-### 사용자 관리
-```
-GET    /users             # 사용자 목록
-GET    /users/profile     # 프로필 조회
-POST   /users/register    # 회원가입
-```
-
-## 테스트
-
-### 주요 테스트 클래스
-- **CacheChainTest**: 다층 캐싱 전략 테스트
-- **KakaoFriendTest**: Kakao API 통합 테스트
-- **RedisMultiInsertTest**: Redis 대량 삽입 성능 테스트
-- **ArticleRepositoryTest**: 게시글 저장소 테스트
-- **PostingControllerTest**: 포스팅 컨트롤러 통합 테스트
-
-### TestContainers 활용
-```java
-@SpringBootTest
-@Testcontainers
-class AbstractJpaContainerTest {
-    @Container
-    static MariaDBContainer<?> mariadb = new MariaDBContainer<>("mariadb:11.4.7");
+public interface KakaoApiService {
     
-    @Container
-    static MongoDBContainer mongodb = new MongoDBContainer("mongo:7.0");
-    
-    @Container
-    static GenericContainer<?> redis = new GenericContainer<>("redis:7.2");
+    @GET("v1/api/talk/friends")
+    Call<KakaoFriendResponse> getFriends(
+        @Header("Authorization") String token,
+        @Query("offset") int offset,
+        @Query("limit") int limit
+    );
 }
 ```
 
-## 성능 최적화
+## 🛠️ 기술 스택
 
-### 캐싱 전략
-1. **L1 Cache (Caffeine)**: JVM 내 고속 메모리 캐시
-2. **L2 Cache (Redis)**: 분산 환경 공유 캐시
-3. **Cache Aside Pattern**: 캐시 미스 시 DB 조회 후 캐시 저장
+### Core Framework
+- **Spring Boot**: 3.3.6
+- **Spring Data JPA**: JPA Repository + QueryDSL
+- **Spring WebFlux**: Reactive 컴포넌트
+- **Hibernate Envers**: 엔티티 감사 시스템
+- **QueryDSL**: 4.4.0 (타입 안전 쿼리)
 
-### 직렬화 최적화
-- **Kryo**: 바이너리 직렬화로 성능 향상
-- **Snappy**: 고속 압축으로 네트워크 대역폭 절약
+### Database & Persistence
+- **MariaDB**: 11.4.7 (주 데이터베이스 - JPA)
+- **MongoDB**: 7.0 (로깅 - Reactive)
+- **Redis**: 7.2 (캐싱 및 세션)
+- **JPA Auditing**: 생성/수정 시간 자동 관리
 
-### 리액티브 스트리밍
-- **Backpressure**: 데이터 생산/소비 속도 조절
-- **Non-blocking I/O**: 높은 동시성 처리
+### Advanced Features
+- **Caffeine**: 로컬 메모리 캐싱
+- **Kryo + Snappy**: 직렬화 및 압축 최적화
+- **Retrofit2**: HTTP 클라이언트
+- **jOOλ**: 함수형 프로그래밍 지원
 
-## 특징
+### Testing & Development
+- **TestContainers**: 통합 테스트 환경
+- **Reactor Test**: Reactive 스트림 테스트
+- **JUnit 5**: 단위 테스트 프레임워크
 
-1. **하이브리드 아키텍처**: 전통적 MVC와 리액티브 패러다임 결합
-2. **멀티 스토어 전략**: 각 데이터 특성에 맞는 최적 저장소 선택
-3. **고가용성 캐싱**: 장애 상황에서도 안정적인 데이터 제공
-4. **실시간 데이터**: WebFlux 기반 실시간 차트 및 알림
-5. **외부 시스템 통합**: 다양한 외부 API와의 안정적 연동
-6. **보안 강화**: OAuth2 + JWT 기반 다중 인증 체계
-7. **확장 가능**: 마이크로서비스 전환 가능한 모듈 구조
+## 🚀 실행 방법
 
-## 민감정보 관리
-
-### HashiCorp Vault 보안 가이드라인
-
-#### 프로덕션 환경 설정
-```bash
-# 프로덕션용 Vault 서버 실행 (TLS 활성화)
-docker run -d --name vault-prod \
-  -p 8200:8200 \
-  -v vault-data:/vault/data \
-  -v vault-config:/vault/config \
-  --cap-add=IPC_LOCK \
-  hashicorp/vault:1.15 \
-  vault server -config=/vault/config/vault.hcl
-
-# 프로덕션용 설정 파일 (vault.hcl)
-storage "file" {
-  path = "/vault/data"
-}
-
-listener "tcp" {
-  address = "0.0.0.0:8200"
-  tls_cert_file = "/vault/config/vault.crt"
-  tls_key_file = "/vault/config/vault.key"
-}
-
-api_addr = "https://vault.primavera.com:8200"
-cluster_addr = "https://vault.primavera.com:8201"
-ui = true
-```
-
-#### 시크릿 로테이션 전략
-```bash
-# 데이터베이스 패스워드 로테이션
-vault write secret/primavera/chap15 \
-  datasource.password=$(openssl rand -base64 32) \
-  mongodb.password=$(openssl rand -base64 32)
-
-# JWT 시크릿 로테이션 (주기적 실행)
-vault kv patch secret/primavera/chap15 \
-  jwt.secret=$(openssl rand -base64 64)
-
-# API 키 로테이션
-vault kv patch secret/primavera/chap15 \
-  oauth2.google.client-secret=new-google-secret \
-  oauth2.kakao.client-secret=new-kakao-secret
-```
-
-#### 접근 정책 설정
-```bash
-# 애플리케이션용 정책 생성
-vault policy write primavera-app - <<EOF
-path "secret/data/primavera/chap15/*" {
-  capabilities = ["read"]
-}
-path "secret/metadata/primavera/chap15/*" {
-  capabilities = ["list", "read"]
-}
-EOF
-
-# 개발자용 정책 생성
-vault policy write primavera-dev - <<EOF
-path "secret/data/primavera/chap15/*" {
-  capabilities = ["create", "read", "update", "delete", "list"]
-}
-EOF
-
-# 토큰 생성
-vault token create -policy="primavera-app" -ttl=24h
-vault token create -policy="primavera-dev" -ttl=8h
-```
-
-## 실행 방법
-
-### 🚀 Spring Boot 애플리케이션 실행
-
-#### 1. 환경 변수 방식 (권장)
-```bash
-# 로컬 환경으로 실행  
-SPRING_PROFILES_ACTIVE=local ./gradlew :chap14:bootRun
-```
-
-#### 2. Program Arguments 방식
-```bash
-# 기본 실행
-./gradlew :chap14:bootRun --args='--spring.profiles.active=local'
-```
-
-#### 3. IDE 설정 방식
-- IntelliJ IDEA: Run Configuration → VM Options 또는 Program Arguments 설정
-- VM Options: `-Dspring.profiles.active=local`
-- Program Arguments: `--spring.profiles.active=local`
-
-## 🐳 인프라 설정
-
-### Docker Compose 환경 설정
-
-이 챕터는 **JPA + 캐싱 + 검색 인프라**를 사용합니다:
-
+### 1. 인프라 환경 설정
 ```bash
 # infrastructure 디렉터리로 이동
 cd infrastructure
 
-# JPA + 캐싱 + 검색용 Docker Compose 실행 (MariaDB + Redis + Elasticsearch)
+# JPA + 캐싱 + 검색용 Docker Compose 실행
 docker-compose -f docker-compose.jpa.yml up -d
 
 # 서비스 상태 확인
 docker-compose -f docker-compose.jpa.yml ps
-
-# 정리 (컨테이너 및 볼륨 삭제)
-docker-compose -f docker-compose.jpa.yml down -v
 ```
 
 **포함된 서비스:**
 - **MariaDB 11.4.7** (포트: 3308) - 주 데이터베이스
-- **Redis 7** (포트: 6380) - 캐싱 및 세션 저장소  
+- **Redis 7** (포트: 6380) - 캐싱 및 세션 저장소
 - **Elasticsearch 8.12.0** (포트: 9200, 9300) - 검색 엔진
-- JPA 전용 데이터베이스 스키마 자동 생성
 
-**애플리케이션 실행:**
+### 2. MongoDB 추가 설정
 ```bash
-# 인프라 시작 후 애플리케이션 실행
-./gradlew :chap14:bootRun -Dspring.profiles.active=local
+# MongoDB 실행 (로깅용)
+docker run --name mongodb-reactive -d -p 27017:27017 \
+  -e MONGO_INITDB_ROOT_USERNAME=primavera \
+  -e MONGO_INITDB_ROOT_PASSWORD=primavera \
+  mongo:7.0
 ```
 
-## 주의사항
+### 3. 애플리케이션 실행
+```bash
+# 로컬 프로파일로 실행
+./gradlew :chap14:bootRun -Dspring.profiles.active=local
 
-1. 로컬 환경에서는 MariaDB (포트 3306), MongoDB (포트 27017), Redis (포트 6379), Vault (포트 8200) 필요
-2. Kakao API 연동 시 유효한 API 키를 Vault에 저장하여 관리
-3. HTTPS 사용 시 인증서 파일(primavera.p12) 경로 확인 필요
-4. 리액티브 스택과 전통적 JPA의 혼용으로 트랜잭션 관리 주의
-5. 캐시 일관성 보장을 위한 적절한 TTL 및 무효화 전략 설정 필요
-6. **Vault 보안**: 프로덕션에서는 반드시 TLS 활성화 및 토큰 기반 인증 사용
-7. **시크릿 로테이션**: 정기적인 패스워드 및 API 키 로테이션 정책 수립
-8. **접근 제어**: 최소 권한 원칙에 따른 Vault 정책 설정
+# 또는 환경 변수 방식
+SPRING_PROFILES_ACTIVE=local ./gradlew :chap14:bootRun
+```
 
-## ✅ 최근 테스트 개선사항
+### 4. API 테스트
+```bash
+# QueryDSL 동적 검색 테스트
+curl "http://localhost:8080/articles/search?keyword=spring&status=PUBLISHED&startDate=2024-01-01"
 
-### TestContainers 현대화 마이그레이션 완료
+# Reactive 차트 스트림
+curl -N http://localhost:8080/api/charts/stream
 
-**Spring Boot 3.x 표준 방식으로 리액티브 통합 및 캐시 시스템 테스트 현대화:**
+# JPA Envers 감사 이력 조회
+curl http://localhost:8080/articles/1/history
 
-#### 마이그레이션된 테스트 파일들:
-- `CacheChainTest`: Redis 캐시 체인 및 멀티레벨 캐싱 통합 테스트
-- `RedisMultiInsertTest`: Redis 대용량 데이터 처리 및 성능 최적화 테스트
+# 카카오 친구 목록 (OAuth 토큰 필요)
+curl -H "Authorization: Bearer YOUR_TOKEN" http://localhost:8080/kakao/friends
 
-#### 새로운 TestContainers 패턴 (현재 방식)
+# 다층 캐싱 테스트
+curl http://localhost:8080/articles/1  # DB 조회 후 캐시 저장
+curl http://localhost:8080/articles/1  # 캐시에서 조회
+```
+
+## 🎓 핵심 고급 학습 포인트
+
+### 1. JPA Advanced Features
+- **Envers Auditing**: 엔티티 변경 이력 자동 추적
+- **Custom Converters**: Enum을 데이터베이스 코드로 변환
+- **Entity Listeners**: 생성/수정 시점 이벤트 처리
+- **Batch Processing**: 대량 데이터 효율적 처리
+
+### 2. QueryDSL Integration
+- **Type-Safe Queries**: 컴파일 타임 쿼리 검증
+- **Dynamic Conditions**: 런타임 조건 생성
+- **Complex Joins**: 복합 연관관계 쿼리
+- **Projection**: 필요한 필드만 선택적 조회
+
+### 3. Reactive Advanced Patterns
+- **Backpressure Handling**: 데이터 플로우 제어
+- **Error Recovery**: 재시도 및 복구 전략
+- **Parallel Processing**: 병렬 스트림 처리
+- **Resource Management**: 비동기 리소스 관리
+
+### 4. Hybrid Architecture Benefits
+- **Selective Adoption**: 필요한 부분만 Reactive 적용
+- **Performance Optimization**: 각 패러다임의 장점 활용
+- **Migration Strategy**: 점진적 아키텍처 전환
+- **Risk Mitigation**: 검증된 기술과 신기술의 조화
+
+### 5. Multi-DataSource Management
+- **Transaction Coordination**: 분산 트랜잭션 관리
+- **Data Consistency**: 데이터 일관성 보장
+- **Performance Tuning**: 각 데이터소스 최적화
+- **Monitoring**: 멀티 데이터소스 모니터링
+
+## 🧪 테스트 실행
+
+### 단위 테스트
+```bash
+./gradlew :chap14:test
+```
+
+### 통합 테스트 (TestContainers)
+```bash
+./gradlew :chap14:test --tests="*IntegrationTest"
+```
+
+### JPA Envers 감사 테스트
 ```java
 @SpringBootTest
 @Testcontainers
 @ActiveProfiles("test")
-@DisplayName("Redis 캐시 체인 통합 테스트")
-class CacheChainTest {
+@DisplayName("JPA Envers 감사 시스템 테스트")
+class ArticleEnversTest {
 
     @Container
     static MariaDBContainer<?> mariadb = new MariaDBContainer<>("mariadb:11.4")
@@ -668,25 +422,136 @@ class CacheChainTest {
         registry.add("spring.datasource.url", mariadb::getJdbcUrl);
         registry.add("spring.datasource.username", mariadb::getUsername);
         registry.add("spring.datasource.password", mariadb::getPassword);
-        registry.add("spring.datasource.driver-class-name", mariadb::getDriverClassName);
     }
 
     @Test
-    @DisplayName("멀티레벨 캐시 체인 동작 검증")
-    void multiLevelCacheChain() {
-        // L1 Cache (Local) → L2 Cache (Redis) → Database 순서로 데이터 조회
-        Article article = articleService.getArticleWithCaching(1L);
-        
-        assertThat(article).isNotNull();
-        // 캐시 히트/미스 통계 검증
-        assertThat(cacheManager.getCache("articles").get(1L)).isNotNull();
+    @DisplayName("게시글 수정 시 감사 이력 생성 검증")
+    void shouldCreateAuditHistoryOnArticleUpdate() {
+        // Given: 게시글 생성
+        Article article = Article.builder()
+            .subject("Original Title")
+            .content("Original Content")
+            .build();
+        Article saved = articleRepository.save(article);
+
+        // When: 게시글 수정
+        saved.setSubject("Updated Title");
+        articleRepository.save(saved);
+
+        // Then: 감사 이력 확인
+        List<Number> revisions = auditReader.getRevisions(Article.class, saved.getId());
+        assertThat(revisions).hasSize(2); // 생성 + 수정
+
+        Article revision1 = auditReader.find(Article.class, saved.getId(), revisions.get(0));
+        Article revision2 = auditReader.find(Article.class, saved.getId(), revisions.get(1));
+
+        assertThat(revision1.getSubject()).isEqualTo("Original Title");
+        assertThat(revision2.getSubject()).isEqualTo("Updated Title");
     }
 }
 ```
 
-#### 마이그레이션의 주요 개선 효과:
-- **리액티브 스택 통합 검증**: Spring WebFlux와 전통적 JPA의 하이브리드 아키텍처 테스트
-- **멀티 데이터소스 검증**: MariaDB(JPA), MongoDB(Reactive), Redis 동시 운영 테스트
-- **캐시 체인 검증**: L1(Local) → L2(Redis) → Database 계층형 캐싱 동작 확인
-- **대용량 처리 검증**: Redis Pipeline 및 배치 처리 성능 테스트
-- **JPA Auditing 검증**: 생성/수정 시간 자동 관리 및 버전 관리 테스트
+### QueryDSL 동적 쿼리 테스트
+```java
+@Test
+@DisplayName("QueryDSL 복합 조건 검색 테스트")
+void shouldFindArticlesWithMultipleConditions() {
+    // Given: 테스트 데이터 생성
+    createTestArticles();
+
+    // When: 복합 조건 검색
+    Search search = Search.builder()
+        .keyword("Spring")
+        .status(ArticleStatus.PUBLISHED)
+        .startDate(LocalDate.now().minusDays(7))
+        .limit(10)
+        .build();
+
+    List<Article> results = articleSupportRepository.findArticlesWithDynamicConditions(search);
+
+    // Then: 결과 검증
+    assertThat(results).isNotEmpty();
+    assertThat(results).allMatch(article -> 
+        article.getSubject().contains("Spring") && 
+        article.getStatus() == ArticleStatus.PUBLISHED
+    );
+}
+```
+
+### Multi-Level Cache 테스트
+```java
+@Test
+@DisplayName("멀티레벨 캐시 체인 동작 검증")
+void shouldWorkWithMultiLevelCacheChain() {
+    Long articleId = 1L;
+
+    // First access: Database -> L2 Cache -> L1 Cache
+    Article first = cacheService.getArticle(articleId);
+    assertThat(first).isNotNull();
+
+    // Second access: L1 Cache hit
+    Article second = cacheService.getArticle(articleId);
+    assertThat(second).isSameAs(first);
+
+    // Verify cache statistics
+    CacheStats stats = caffeine.stats();
+    assertThat(stats.hitRate()).isGreaterThan(0.0);
+}
+```
+
+## 📚 학습 순서
+
+1. **JPA Envers 감사 시스템**
+   - @Audited 애너테이션 활용
+   - 커스텀 감사 정보 설정
+   - 이력 조회 및 분석
+
+2. **QueryDSL 고급 활용**
+   - Q 클래스 생성 및 활용
+   - 동적 쿼리 작성 패턴
+   - 복잡한 조인과 서브쿼리
+
+3. **JPA Custom Converters**
+   - Enum 변환 최적화
+   - JSON 데이터 매핑
+   - 커스텀 타입 처리
+
+4. **Advanced Reactive Patterns**
+   - 에러 복구 전략
+   - 병렬 처리 최적화
+   - 리소스 관리
+
+5. **Multi-DataSource Integration**
+   - 트랜잭션 경계 관리
+   - 데이터 일관성 보장
+   - 성능 모니터링
+
+6. **Caching Strategy**
+   - 다층 캐시 설계
+   - TTL 및 무효화 정책
+   - 성능 측정
+
+## 🔧 주요 고급 애너테이션
+
+| 애너테이션 | 용도 | 사용 예시 |
+|-----------|------|----------|
+| `@Audited` | JPA Envers 감사 활성화 | 엔티티 클래스 |
+| `@Convert(converter = CustomConverter.class)` | 커스텀 컨버터 적용 | 엔티티 필드 |
+| `@Query(nativeQuery = true)` | 네이티브 쿼리 실행 | Repository 메서드 |
+| `@EntityListeners(AuditingEntityListener.class)` | 감사 이벤트 리스너 | 엔티티 클래스 |
+| `@CreatedDate`, `@LastModifiedDate` | 자동 시간 관리 | 감사 필드 |
+| `@Modifying` | 수정 쿼리 표시 | Repository 메서드 |
+
+## 🔄 다음 단계
+
+**Chapter 15 (JPA 관계 매핑 심화)**로 진행하여 다음 내용을 학습하세요:
+
+- 복잡한 엔티티 관계 매핑 (1:1, 1:N, N:M)
+- 상속 관계 매핑과 다형성 처리
+- 임베디드 타입과 값 객체 설계
+- 고급 성능 최적화 기법
+- 도메인 주도 설계 패턴 적용
+
+---
+
+이 모듈을 통해 JPA의 고급 기능을 마스터하고, Reactive 프로그래밍의 심화된 패턴을 익힐 수 있습니다. 특히 실무에서 자주 마주치는 하이브리드 아키텍처와 멀티 데이터소스 환경에서의 개발 경험을 쌓을 수 있습니다.

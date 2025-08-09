@@ -1,110 +1,222 @@
-# Chapter 02: 설정과 의존성 관리
+# Chapter 02 - Spring Boot 설정 관리와 외부 설정
 
-## 📋 개요
-Spring Boot의 설정 시스템과 의존성 주입(Dependency Injection) 메커니즘을 마스터하는 챕터입니다. `@ConfigurationProperties`를 통한 타입 안전한 설정 관리와 다양한 Bean Scope, 생성자 기반 의존성 주입의 모든 것을 학습합니다.
+## 학습 목표
 
-## 🎯 학습 목표
-- **@ConfigurationProperties**를 통한 타입 안전한 설정 관리
-- **Bean Scope와 라이프사이클** 완전 이해
-- **생성자 기반 의존성 주입** 마스터
-- **프로파일별 환경 설정** 전략 구축
-- **YAML vs Properties** 차이점과 활용법
+Spring Boot의 다양한 설정 방법과 외부 설정 소스를 활용한 설정 관리를 마스터합니다.
 
-## 🛠️ 핵심 기술 스택
-- **Spring Boot 3.3.6** - Configuration Management
-- **Spring Context** - IoC Container & DI
-- **YAML Configuration** - 계층적 설정 관리
-- **Lombok** - 코드 간소화 도구
-- **JUnit 5** - 현대적 테스트 프레임워크
+- `@ConfigurationProperties`를 통한 타입 안전한 설정 바인딩
+- 프로파일별 설정 분리와 환경별 배포 전략
+- XML, Properties, YAML 설정 형식 비교와 활용
+- 외부 API 연동을 위한 Retrofit 설정 관리
+- Bean 스코프와 생명주기 심화 학습
 
-## 📚 주요 학습 내용
+## 프로젝트 구조
 
-### 1. 순환 의존성 문제와 해결 🔄
-- **BooService ↔ FooService** 실제 순환 참조 분석
-- **생성자 주입 vs 필드 주입** 순환 참조 차이점
-- **@Lazy, ApplicationContextAware** 등 다양한 해결 방법
-- **구조 개선을 통한 근본적 해결** 전략
-
-### 2. Spring Boot 환경 설정
-
-#### 개발 환경 구축
-```bash
-# JDK 21 설치 확인
-java -version
-
-# Gradle 프로젝트 초기화
-spring init --build=gradle --java-version=21 \
-    --dependencies=web,configuration-processor \
-    --groupId=com.genius.primavera primavera
-
-# Gradle Wrapper 업데이트
-./gradlew wrapper --gradle-version 8.12.1
+```
+chap02/
+├── src/main/java/com/genius/primavera/
+│   ├── ConfigurationDependencyApplication.java  # 메인 애플리케이션
+│   ├── config/
+│   │   └── PrimaveraProperties.java             # 설정 프로퍼티 클래스
+│   ├── application/
+│   │   ├── injection/                           # 의존성 주입 예제
+│   │   │   ├── EmailService.java
+│   │   │   ├── EmailServiceImpl.java
+│   │   │   ├── LoggingService.java
+│   │   │   └── LoggingServiceImpl.java
+│   │   ├── plant/                               # Plant 도메인 서비스
+│   │   │   ├── IPlantService.java
+│   │   │   ├── PlantService.java
+│   │   │   ├── IPlantRepository.java
+│   │   │   ├── PlantRepository.java
+│   │   │   └── IPlantRetrofitRepository.java
+│   │   ├── RetrofitClient.java                  # 외부 API 클라이언트
+│   │   ├── RetrofitClientConfig.java            # Retrofit 설정
+│   │   └── ScopeService.java                    # 스코프 테스트 서비스
+│   ├── lifecycle/                               # Bean 생명주기 예제
+│   │   ├── AnnotationClass.java
+│   │   ├── InterfaceImpl.java
+│   │   └── XmlBean.java
+│   ├── scope/                                   # Bean 스코프 예제
+│   │   ├── Singleton.java
+│   │   ├── Prototype.java
+│   │   └── ScopeRunner.java
+│   └── interfaces/
+│       └── HelloController.java                 # REST 컨트롤러
+└── src/main/resources/
+    ├── application.yml                          # 기본 설정 (YAML)
+    ├── banner.txt                              # 커스텀 배너
+    ├── configuration.xml                        # XML 기반 Bean 설정
+    └── templates/
+        └── index.html                          # Thymeleaf 템플릿
 ```
 
-#### Gradle 설정 (build.gradle)
-```gradle
-plugins {
-    id 'java'
-    id 'org.springframework.boot' version '3.3.6'
-    id 'io.spring.dependency-management' version '1.1.6'
-}
+## 기술 스택
 
-dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
-    compileOnly 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
+- **Spring Boot**: 3.3.6
+- **Spring Configuration Processor**: 설정 메타데이터 생성
+- **Retrofit 2**: 외부 API 연동
+- **Gson**: JSON 직렬화/역직렬화
+- **Thymeleaf**: 템플릿 엔진
+- **Java**: 21 (Record 활용)
+
+## 주요 기능
+
+### 1. 타입 안전한 설정 바인딩
+
+```java
+@ConfigurationProperties(prefix = "primavera")
+@Component
+public class PrimaveraProperties {
+    private String name = "Default Primavera";
+    private String version = "1.0.0";
+    private Database database = new Database();
+    private List<String> allowedOrigins = new ArrayList<>();
     
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-}
-
-test {
-    useJUnitPlatform()
+    public record Database(
+        String url,
+        String username, 
+        String password,
+        int maxConnections
+    ) {}
+    
+    // getters and setters...
 }
 ```
 
-### 2. YAML 기반 설정 관리
+### 2. 외부 API 연동 설정
 
-#### application.yml 구조화
+```java
+@Configuration
+public class RetrofitClientConfig {
+    
+    @Bean
+    public Retrofit retrofit(@Value("${external.api.baseUrl}") String baseUrl) {
+        return new Retrofit.Builder()
+            .baseUrl(baseUrl)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build();
+    }
+    
+    @Bean
+    public IPlantRetrofitRepository plantRetrofitRepository(Retrofit retrofit) {
+        return retrofit.create(IPlantRetrofitRepository.class);
+    }
+}
+```
+
+### 3. XML 기반 Bean 설정
+
+```xml
+<!-- configuration.xml -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    
+    <bean id="xmlBean" 
+          class="com.genius.primavera.lifecycle.XmlBean"
+          init-method="init" 
+          destroy-method="destroy">
+        <property name="message" value="XML Configuration Bean"/>
+    </bean>
+</beans>
+```
+
+### 4. Bean 스코프 비교 실습
+
+```java
+@Component
+@Scope("singleton")
+public class Singleton {
+    private final String id = UUID.randomUUID().toString();
+    
+    public String getId() { return id; }
+}
+
+@Component  
+@Scope("prototype")
+public class Prototype {
+    private final String id = UUID.randomUUID().toString();
+    
+    public String getId() { return id; }
+}
+```
+
+## 실행 방법
+
+### 애플리케이션 시작
+
+```bash
+# 기본 프로파일로 실행
+./gradlew :chap02:bootRun
+
+# 특정 프로파일로 실행
+./gradlew :chap02:bootRun -Dspring.profiles.active=dev
+
+# 외부 설정 파일 지정
+./gradlew :chap02:bootRun -Dspring.config.location=classpath:/custom-config.yml
+```
+
+### API 테스트
+
+```bash
+# 설정 정보 확인
+curl http://localhost:8080/hello/config
+
+# Bean 스코프 테스트
+curl http://localhost:8080/hello/scope
+
+# 외부 API 연동 테스트 (Plant API)
+curl http://localhost:8080/hello/plants
+
+# Thymeleaf 템플릿 뷰
+curl http://localhost:8080/hello/view
+```
+
+## 핵심 학습 포인트
+
+### 1. 설정 파일 우선순위
+
+Spring Boot는 다음 순서로 설정을 로드합니다:
+
+1. **커맨드라인 아규먼트** (`--server.port=9090`)
+2. **시스템 프로퍼티** (`-Dserver.port=9090`)
+3. **환경 변수** (`SERVER_PORT=9090`)
+4. **application-{profile}.properties/yml**
+5. **application.properties/yml**
+6. **@PropertySource**
+
+### 2. @ConfigurationProperties vs @Value
+
+```java
+// @Value 방식 - 간단한 설정
+@Component
+public class SimpleConfig {
+    @Value("${app.name:defaultName}")
+    private String appName;
+}
+
+// @ConfigurationProperties 방식 - 복합 설정
+@ConfigurationProperties(prefix = "app")
+@Component
+public class ComplexConfig {
+    private String name;
+    private Database database;
+    private List<String> features;
+    // 중첩된 설정, 리스트, 검증 등 지원
+}
+```
+
+### 3. 프로파일별 설정 분리
+
 ```yaml
-# 기본 프로파일 설정
+# application.yml (공통 설정)
 spring:
-  profiles:
-    default: local
   application:
-    name: Primavera
-  banner:
-    charset: UTF-8
-    location: classpath:primavera.txt
-
-# 로깅 설정
-logging:
-  level:
-    org.springframework: info
-    com.genius.primavera: debug
-  pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
-
-# 커스텀 설정
-com:
-  genius:
-    primavera:
-      database:
-        username: primavera
-        password: primavera
-        url: jdbc:mysql://localhost:3306/primavera
-        tables: [user, role, article]
-      search:
-        params:
-          keyword: genius
-          page: 1
-          sort: desc
-      users:
-        - id: 1
-          email: genius@primavera.com
-        - id: 2
-          email: admin@primavera.com
+    name: primavera-chap02
+    
+primavera:
+  name: "Primavera Configuration Example"
+  version: "2.0.0"
 
 ---
 # 개발 환경 설정
@@ -112,752 +224,194 @@ spring:
   config:
     activate:
       on-profile: dev
-  datasource:
-    driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/primavera_dev
-    username: dev_user
-    password: dev_pass
-    
-logging:
-  level:
-    org.springframework.web: debug
-    org.hibernate.SQL: debug
+      
+external:
+  api:
+    baseUrl: "http://localhost:3000/api/"
+    timeout: 5000
 
 ---
-# 운영 환경 설정
+# 운영 환경 설정  
 spring:
   config:
     activate:
       on-profile: prod
-  datasource:
-    driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mysql://prod-db:3306/primavera
-    username: ${DB_USERNAME:prod_user}
-    password: ${DB_PASSWORD:prod_pass}
-    
-logging:
-  level:
-    org.springframework: warn
-    com.genius.primavera: info
+      
+external:
+  api:
+    baseUrl: "https://api.production.com/"
+    timeout: 30000
 ```
 
-### 3. @ConfigurationProperties 타입 안전한 설정
+### 4. Bean 생명주기 관리
 
-#### 설정 클래스 정의
-```java
-@Data
-@Component
-@ConfigurationProperties(prefix = "com.genius.primavera")
-public class PrimaveraProperties {
-    
-    private Database database = new Database();
-    private Search search = new Search();
-    private List<User> users = new ArrayList<>();
-    
-    @Data
-    public static class Database {
-        private String username;
-        private String password;
-        private String url;
-        private List<String> tables = new ArrayList<>();
-    }
-    
-    @Data
-    public static class Search {
-        private Params params = new Params();
-        
-        @Data
-        public static class Params {
-            private String keyword;
-            private Integer page = 1;
-            private String sort = "asc";
-        }
-    }
-    
-    @Data
-    public static class User {
-        private Long id;
-        private String email;
-    }
-}
-```
-
-#### 설정 검증 (Validation)
-```java
-@Data
-@Component
-@ConfigurationProperties(prefix = "com.genius.primavera.database")
-@Validated
-public class DatabaseProperties {
-    
-    @NotBlank(message = "데이터베이스 사용자명은 필수입니다")
-    private String username;
-    
-    @NotBlank(message = "데이터베이스 비밀번호는 필수입니다")
-    @Size(min = 8, message = "비밀번호는 최소 8자 이상이어야 합니다")
-    private String password;
-    
-    @NotBlank(message = "데이터베이스 URL은 필수입니다")
-    @Pattern(regexp = "^jdbc:.*", message = "올바른 JDBC URL 형식이 아닙니다")
-    private String url;
-    
-    @NotEmpty(message = "최소 하나의 테이블 설정이 필요합니다")
-    private List<String> tables = new ArrayList<>();
-}
-```
-
-### 4. Bean 스코프와 라이프사이클
-
-#### Bean Scope 정의
-```java
-@Configuration
-public class BeanScopeConfiguration {
-    
-    // 싱글톤 스코프 (기본값)
-    @Bean
-    @Scope("singleton")
-    public DatabaseService singletonService() {
-        return new DatabaseService();
-    }
-    
-    // 프로토타입 스코프
-    @Bean
-    @Scope("prototype")
-    public RequestHandler prototypeHandler() {
-        return new RequestHandler();
-    }
-    
-    // 웹 스코프 (Request)
-    @Bean
-    @Scope(value = WebApplicationContext.SCOPE_REQUEST, 
-           proxyMode = ScopedProxyMode.TARGET_CLASS)
-    public UserContext requestScopedContext() {
-        return new UserContext();
-    }
-    
-    // 웹 스코프 (Session)
-    @Bean
-    @Scope(value = WebApplicationContext.SCOPE_SESSION,
-           proxyMode = ScopedProxyMode.TARGET_CLASS)
-    public ShoppingCart sessionScopedCart() {
-        return new ShoppingCart();
-    }
-}
-```
-
-#### Bean 라이프사이클 관리
 ```java
 @Component
 public class LifecycleBean implements InitializingBean, DisposableBean {
     
-    private static final Logger log = LoggerFactory.getLogger(LifecycleBean.class);
+    // Spring 인터페이스 방식
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        log.info("InitializingBean.afterPropertiesSet() 호출");
+    }
     
-    // 의존성 주입 완료 후 초기화
+    @Override
+    public void destroy() throws Exception {
+        log.info("DisposableBean.destroy() 호출"); 
+    }
+    
+    // JSR-250 애너테이션 방식 (권장)
     @PostConstruct
     public void postConstruct() {
-        log.info("@PostConstruct: 빈 초기화 시작");
+        log.info("@PostConstruct 호출");
     }
     
-    // InitializingBean 인터페이스 구현
-    @Override
-    public void afterPropertiesSet() {
-        log.info("afterPropertiesSet: 모든 프로퍼티 설정 완료");
-    }
-    
-    // 커스텀 초기화 메서드
-    @Bean(initMethod = "customInit")
-    public void customInit() {
-        log.info("customInit: 커스텀 초기화 메서드 실행");
-    }
-    
-    // 빈 소멸 전 정리 작업
-    @PreDestroy
+    @PreDestroy  
     public void preDestroy() {
-        log.info("@PreDestroy: 빈 소멸 준비");
-    }
-    
-    // DisposableBean 인터페이스 구현
-    @Override
-    public void destroy() {
-        log.info("destroy: 빈 소멸 처리");
+        log.info("@PreDestroy 호출");
     }
 }
 ```
 
-### 5. 의존성 주입 패턴
+## 설정 검증과 메타데이터
 
-#### 생성자 기반 의존성 주입 (권장)
-```java
-@Service
-@RequiredArgsConstructor
-public class UserService {
-    
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final EmailService emailService;
-    
-    // 생성자가 하나인 경우 @Autowired 생략 가능
-    // Lombok의 @RequiredArgsConstructor가 생성자 자동 생성
-    
-    public User createUser(UserCreateRequest request) {
-        String encodedPassword = passwordEncoder.encode(request.getPassword());
-        
-        User user = User.builder()
-                .email(request.getEmail())
-                .password(encodedPassword)
-                .nickname(request.getNickname())
-                .build();
-        
-        User savedUser = userRepository.save(user);
-        emailService.sendWelcomeEmail(savedUser.getEmail());
-        
-        return savedUser;
-    }
-}
-```
-
-#### 순환 의존성 해결
-
-##### 🔄 실제 순환 참조 예제: BooService ↔ FooService
-
-프로젝트의 `com.genius.primavera.application.injection` 패키지에는 실제 순환 의존성 문제를 보여주는 예제가 있습니다:
+### 1. 설정 검증
 
 ```java
-// FooServiceImpl.java - 정상 동작 (BooService에 의존)
+@ConfigurationProperties(prefix = "primavera")
+@Validated
 @Component
-@RequiredArgsConstructor
-public class FooServiceImpl implements FooService {
+public class ValidatedProperties {
     
-    private final BooService booService;  // BooService 의존성
+    @NotBlank
+    @Size(min = 3, max = 50)
+    private String name;
     
-    @Override
-    public String foo() {
-        booService.boo();  // BooService 호출
-        return "foo";
-    }
-}
-
-// BooServiceImpl.java - 순환 참조 문제 (현재 주석 처리됨)
-@Component
-@RequiredArgsConstructor
-public class BooServiceImpl implements BooService {
+    @Min(1)
+    @Max(65535)
+    private int port = 8080;
     
-    // ❌ 생성자 순환참조 경고 발생
-    // "Requested bean is currently in creation: Is there an unresolvable circular reference?"
-    // private final FooService fooService;
+    @Valid
+    private Database database;
     
-    // ❌ 필드 주입시 StackOverflowError 발생
-    // @Autowired
-    // private FooService fooService;
-    
-    @Override
-    public String boo() {
-        // fooService.foo();  // 호출하면 무한 루프
-        return "boo";
-    }
-}
-```
-
-##### 🚨 순환 의존성 문제점
-
-1. **생성자 주입시**: `BeanCurrentlyInCreationException` 발생
-   ```
-   Error creating bean with name 'booServiceImpl': 
-   Requested bean is currently in creation: 
-   Is there an unresolvable circular reference?
-   ```
-
-2. **필드 주입시**: `StackOverflowError` 발생
-   ```
-   java.lang.StackOverflowError
-   at FooServiceImpl.foo() -> BooServiceImpl.boo() -> FooServiceImpl.foo() -> ...
-   ```
-
-##### ✅ 순환 의존성 해결 방법들
-
-**방법 1: 구조 개선 (권장)**
-```java
-// 공통 인터페이스 추출
-public interface MessageProcessor {
-    String process(String input);
-}
-
-@Service
-@RequiredArgsConstructor
-public class FooServiceImpl implements FooService {
-    private final MessageProcessor messageProcessor; // 인터페이스 의존
-    
-    @Override
-    public String foo() {
-        return messageProcessor.process("foo");
-    }
-}
-
-@Service
-public class BooServiceImpl implements BooService, MessageProcessor {
-    @Override
-    public String boo() {
-        return "boo";
-    }
-    
-    @Override
-    public String process(String input) {
-        return "processed: " + input;
-    }
-}
-```
-
-**방법 2: @Lazy 어노테이션 사용**
-```java
-@Component
-@RequiredArgsConstructor
-public class BooServiceImpl implements BooService {
-    
-    @Lazy  // 지연 로딩으로 순환 참조 해결
-    private final FooService fooService;
-    
-    @Override
-    public String boo() {
-        fooService.foo();
-        return "boo";
-    }
-}
-```
-
-**방법 3: ApplicationContextAware 사용**
-```java
-@Component
-public class BooServiceImpl implements BooService, ApplicationContextAware {
-    
-    private ApplicationContext applicationContext;
-    
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
-    }
-    
-    @Override
-    public String boo() {
-        FooService fooService = applicationContext.getBean(FooService.class);
-        fooService.foo();
-        return "boo";
-    }
-}
-```
-
-**방법 4: @PostConstruct 사용**
-```java
-@Component
-public class BooServiceImpl implements BooService {
-    
-    @Autowired
-    private ApplicationContext applicationContext;
-    private FooService fooService;
-    
-    @PostConstruct
-    public void init() {
-        this.fooService = applicationContext.getBean(FooService.class);
-    }
-    
-    @Override
-    public String boo() {
-        fooService.foo();
-        return "boo";
-    }
-}
-```
-
-##### 🧪 순환 의존성 테스트 전략
-
-```java
-@ExtendWith(MockitoExtension.class)
-public class BooServiceTest {
-    
-    @Mock
-    private FooService fooService;  // Mock으로 순환 참조 해결
-    
-    @InjectMocks
-    private BooServiceImpl booService;
-    
-    @Test
-    @DisplayName("순환 참조 문제가 발생하지 않아야 한다")
-    void circularDependencyShouldBeHandled() {
-        // given
-        when(fooService.foo()).thenReturn("mock-foo");
+    public static class Database {
+        @NotNull
+        @Pattern(regexp = "^jdbc:.*")
+        private String url;
         
-        // when
-        String result = booService.boo();
-        
-        // then
-        assertEquals("boo", result);
-        verify(fooService, times(1)).foo();
+        // getters and setters...
     }
 }
 ```
 
-##### 📊 순환 의존성 해결방법 비교
+### 2. 메타데이터 생성
 
-| 방법 | 장점 | 단점 | 사용 상황 |
-|------|------|------|-----------|
-| **구조 개선** | 근본적 해결, 명확한 책임 분리 | 설계 변경 필요 | 새 프로젝트, 리팩토링 가능 |
-| **@Lazy** | 간단한 적용 | 지연 로딩 성능 이슈 | 임시 해결, 레거시 코드 |
-| **ApplicationContextAware** | 유연한 Bean 접근 | Spring 컨텍스트 강결합 | 복잡한 의존성 관리 |
-| **@PostConstruct** | 생성 후 초기화 | 초기화 시점 지연 | 조건부 의존성 |
+Configuration Processor가 자동으로 생성하는 메타데이터:
 
-##### 🔬 순환 의존성 재현 방법
-
-**1단계: 순환 의존성 활성화**
-```java
-// BooServiceImpl.java에서 주석 해제
-@Component
-@RequiredArgsConstructor
-public class BooServiceImpl implements BooService {
-    
-    private final FooService fooService; // 주석 해제
-    
-    @Override
-    public String boo() {
-        fooService.foo(); // 주석 해제
-        return "boo";
+```json
+{
+  "properties": [
+    {
+      "name": "primavera.name",
+      "type": "java.lang.String",
+      "description": "애플리케이션 이름",
+      "defaultValue": "Default Primavera"
+    },
+    {
+      "name": "primavera.database.url", 
+      "type": "java.lang.String",
+      "description": "데이터베이스 연결 URL"
     }
+  ]
 }
 ```
 
-**2단계: 애플리케이션 실행**
-```bash
-./gradlew :chap02:bootRun
-```
-
-**3단계: 예상 에러 확인**
-```
-***************************
-APPLICATION FAILED TO START
-***************************
-
-Description:
-The dependencies of some of the beans in the application context form a cycle:
-
-┌─────┐
-|  booServiceImpl defined in file [BooServiceImpl.class]
-↑     ↓
-|  fooServiceImpl defined in file [FooServiceImpl.class]
-└─────┘
-```
-
-**4단계: @Lazy로 해결 테스트**
-```java
-@Component
-@RequiredArgsConstructor
-public class BooServiceImpl implements BooService {
-    
-    @Lazy // 추가
-    private final FooService fooService;
-    
-    @Override
-    public String boo() {
-        fooService.foo();
-        return "boo";
-    }
-}
-```
-
-##### 🎯 권장 사항
-
-1. **설계 단계에서 순환 의존성 방지**가 최우선
-2. **인터페이스 분리**와 **의존성 역전 원칙** 적용
-3. **단방향 의존성 구조** 설계
-4. 불가피한 경우에만 **@Lazy** 사용
-5. **단위 테스트에서 Mock 활용**하여 의존성 분리
-
-```java
-// 잘못된 예: 양방향 의존성
-@Service
-public class OrderService {
-    @Autowired
-    private PaymentService paymentService; // PaymentService가 OrderService 참조
-}
-
-@Service
-public class PaymentService {
-    @Autowired
-    private OrderService orderService; // 순환 의존성!
-}
-
-// 올바른 해결방법 1: 구조 개선
-@Service
-@RequiredArgsConstructor
-public class OrderService {
-    private final PaymentProcessor paymentProcessor; // 인터페이스 사용
-}
-
-@Service
-@RequiredArgsConstructor
-public class PaymentService implements PaymentProcessor {
-    // OrderService 의존성 제거
-}
-
-// 올바른 해결방법 2: @Lazy 사용 (임시방편)
-@Service
-@RequiredArgsConstructor
-public class OrderService {
-    @Lazy
-    private final PaymentService paymentService;
-}
-```
-
-### 6. 프로파일별 환경 설정
-
-#### 프로파일별 Bean 등록
-```java
-@Configuration
-public class ProfileConfiguration {
-    
-    @Bean
-    @Profile("local")
-    public DataSource localDataSource() {
-        return DataSourceBuilder.create()
-                .driverClassName("org.h2.Driver")
-                .url("jdbc:mysql://localhost:3306/primavera_local")
-                .username("sa")
-                .password("")
-                .build();
-    }
-    
-    @Bean
-    @Profile("dev")
-    public DataSource devDataSource() {
-        return DataSourceBuilder.create()
-                .driverClassName("org.mariadb.jdbc.Driver")
-                .url("jdbc:mysql://dev-db:3306/primavera")
-                .username("dev_user")
-                .password("dev_pass")
-                .build();
-    }
-    
-    @Bean
-    @Profile("prod")
-    public DataSource prodDataSource() {
-        return DataSourceBuilder.create()
-                .driverClassName("org.mariadb.jdbc.Driver")
-                .url("jdbc:mysql://prod-db:3306/primavera")
-                .username("${DB_USERNAME}")
-                .password("${DB_PASSWORD}")
-                .build();
-    }
-}
-```
-
-## 🔧 실습 예제
-
-### Hello World Controller
-```java
-@Slf4j
-@RestController
-@RequiredArgsConstructor
-@RequestMapping("/")
-public class HelloController {
-    
-    private final PrimaveraProperties properties;
-    private final Environment environment;
-    
-    @GetMapping
-    public ResponseEntity<Map<String, Object>> helloWorld() {
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", "Hello Primavera!");
-        response.put("activeProfiles", environment.getActiveProfiles());
-        response.put("database", properties.getDatabase());
-        response.put("users", properties.getUsers());
-        
-        log.info("Hello World 요청 처리 완료");
-        return ResponseEntity.ok(response);
-    }
-    
-    @GetMapping("/config")
-    public ResponseEntity<PrimaveraProperties> getConfiguration() {
-        return ResponseEntity.ok(properties);
-    }
-}
-```
-
-### Configuration 테스트
-```java
-@SpringBootTest
-@TestMethodOrder(OrderAnnotation.class)
-class ConfigurationTest {
-    
-    @Autowired
-    private PrimaveraProperties properties;
-    
-    @Autowired
-    private ApplicationContext context;
-    
-    @Test
-    @Order(1)
-    @DisplayName("설정 프로퍼티가 올바르게 바인딩되는지 확인")
-    void testConfigurationBinding() {
-        // Given & When & Then
-        assertThat(properties.getDatabase().getUsername()).isEqualTo("primavera");
-        assertThat(properties.getDatabase().getTables()).contains("user", "role");
-        assertThat(properties.getSearch().getParams().getPage()).isEqualTo(1);
-        assertThat(properties.getUsers()).hasSize(2);
-    }
-    
-    @Test
-    @Order(2)
-    @DisplayName("Bean이 올바른 스코프로 등록되는지 확인")
-    void testBeanScope() {
-        // Singleton 빈 테스트
-        Object bean1 = context.getBean("singletonService");
-        Object bean2 = context.getBean("singletonService");
-        assertThat(bean1).isSameAs(bean2);
-        
-        // Prototype 빈 테스트
-        Object prototype1 = context.getBean("prototypeHandler");
-        Object prototype2 = context.getBean("prototypeHandler");
-        assertThat(prototype1).isNotSameAs(prototype2);
-    }
-}
-```
-
-## 🧪 테스트 전략
-
-### JUnit 5 설정
-```gradle
-dependencies {
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.junit.jupiter:junit-jupiter-api'
-    testImplementation 'org.junit.jupiter:junit-jupiter-params'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
-}
-
-test {
-    useJUnitPlatform()
-}
-```
-
-### 테스트 프로파일 설정
-```java
-@SpringBootTest
-@ActiveProfiles("test")
-@TestPropertySource(properties = {
-    "com.genius.primavera.database.username=test_user",
-    "com.genius.primavera.database.password=test_pass"
-})
-class ProfileTest {
-    
-    @Test
-    void testProfileSpecificConfiguration() {
-        // 테스트 전용 설정 검증
-    }
-}
-```
-
-## 📊 Bean Scope 비교표
-
-| 스코프 | 생명주기 | 사용 사례 | 주의사항 |
-|-------|---------|----------|---------|
-| **singleton** | 컨테이너당 하나 | 상태가 없는 서비스 | 스레드 안전성 고려 |
-| **prototype** | 요청시마다 생성 | 상태를 가진 객체 | 메모리 누수 주의 |
-| **request** | HTTP 요청당 하나 | 웹 요청 컨텍스트 | 웹 환경에서만 사용 |
-| **session** | HTTP 세션당 하나 | 사용자 세션 데이터 | 세션 만료 고려 |
-| **application** | ServletContext당 하나 | 애플리케이션 전역 | 웹 애플리케이션 레벨 |
-
-## 실행 방법
-
-### 🚀 Spring Boot 애플리케이션 실행
-
-#### 1. 환경 변수 방식 (권장)
-```bash
-# 로컬 환경으로 실행  
-SPRING_PROFILES_ACTIVE=local ./gradlew :chap02:bootRun
-```
-
-#### 2. Program Arguments 방식
-```bash
-# 기본 실행
-./gradlew :chap02:bootRun --args='--spring.profiles.active=local'
-```
-
-#### 3. IDE 설정 방식
-- IntelliJ IDEA: Run Configuration → VM Options 또는 Program Arguments 설정
-- VM Options: `-Dspring.profiles.active=local`
-- Program Arguments: `--spring.profiles.active=local`
-
-## 🚀 애플리케이션 실행
-
-### 개발 환경 실행
-```bash
-# 기본 프로파일로 실행
-./gradlew bootRun
-
-# 특정 프로파일로 실행
-./gradlew bootRun --args='--spring.profiles.active=dev'
-
-# JAR 파일 빌드 및 실행
-./gradlew build
-java -jar build/libs/chap01-0.0.1-SNAPSHOT.jar --spring.profiles.active=prod
-```
-
-### Docker 환경 실행
-```bash
-# 다중 프로파일 지원
-docker run -p 8080:8080 \
-    -e SPRING_PROFILES_ACTIVE=prod \
-    -e DB_USERNAME=prod_user \
-    -e DB_PASSWORD=prod_pass \
-    primavera:latest
-```
-
-## 🐳 인프라 설정
-
-### Docker Compose 환경 설정
-
-이 챕터는 **기초 학습용 인프라**를 사용합니다:
+## 테스트 실행
 
 ```bash
-# infrastructure 디렉터리로 이동
-cd infrastructure
+# 전체 테스트 실행
+./gradlew :chap02:test
 
-# 기초 학습용 Docker Compose 실행 (MariaDB)
-docker-compose -f docker-compose.basic.yml up -d
+# 설정 관련 테스트만 실행
+./gradlew :chap02:test --tests "*PropertiesTest"
 
-# 서비스 상태 확인
-docker-compose -f docker-compose.basic.yml ps
-
-# 정리 (컨테이너 및 볼륨 삭제)
-docker-compose -f docker-compose.basic.yml down -v
+# 프로파일별 테스트
+./gradlew :chap02:test -Dspring.profiles.active=test
 ```
 
-**포함된 서비스:**
-- **MariaDB 11.4.7** (포트: 3308)
-- 기본 데이터베이스 스키마 자동 생성
+## 주요 애너테이션
 
-**애플리케이션 실행:**
-```bash
-# 인프라 시작 후 애플리케이션 실행
-./gradlew :chap02:bootRun -Dspring.profiles.active=local
+| 애너테이션 | 용도 | 예제 |
+|-----------|------|------|
+| `@ConfigurationProperties` | 설정 프로퍼티 바인딩 | `@ConfigurationProperties(prefix = "app")` |
+| `@EnableConfigurationProperties` | 설정 프로퍼티 활성화 | `@EnableConfigurationProperties(AppProperties.class)` |
+| `@Value` | 단일 프로퍼티 주입 | `@Value("${app.name}")` |
+| `@PropertySource` | 추가 설정 파일 지정 | `@PropertySource("classpath:custom.properties")` |
+| `@Profile` | 프로파일별 Bean 등록 | `@Profile("dev")` |
+| `@Conditional` | 조건부 Bean 등록 | `@ConditionalOnProperty(name = "feature.enabled")` |
+| `@ImportResource` | XML 설정 import | `@ImportResource("classpath:beans.xml")` |
+
+## 실습 과제
+
+### 1. 커스텀 설정 클래스 만들기
+
+```yaml
+# application.yml에 추가
+myapp:
+  features:
+    - user-management
+    - notification
+    - analytics
+  cache:
+    enabled: true
+    ttl: 3600
+    provider: redis
+  notification:
+    email:
+      enabled: true
+      smtp-host: smtp.gmail.com
+      smtp-port: 587
+    slack:
+      enabled: false
+      webhook-url: ""
 ```
 
-## 📖 참고 자료
+이 설정에 맞는 `@ConfigurationProperties` 클래스를 작성해보세요.
 
-### 공식 문서
-- [Spring Boot Configuration](https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.external-config)
-- [Spring Framework IoC Container](https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#beans)
-- [Bean Scopes](https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#beans-factory-scopes)
+### 2. 조건부 Bean 등록
 
-### 모범 사례
-- [Constructor-based vs Setter-based DI](https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#beans-constructor-injection)
-- [Configuration Properties](https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.external-config.typesafe-configuration-properties)
-- [Profile-specific Configuration](https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.profiles)
+특정 설정값에 따라 다른 구현체가 등록되도록 구현해보세요:
 
-## 🚀 다음 단계
+```java
+@ConditionalOnProperty(name = "cache.provider", havingValue = "redis")
+@Service
+public class RedisCacheService implements CacheService { }
 
-다음 Chapter에서는 **MVC와 AOP**를 학습합니다:
-- Spring MVC 아키텍처 패턴 구현
-- AOP를 통한 횡단 관심사 분리
-- 인터셉터와 필터 체인 활용
-- 관점 지향 프로그래밍 실습
+@ConditionalOnProperty(name = "cache.provider", havingValue = "memory")  
+@Service
+public class MemoryCacheService implements CacheService { }
+```
 
----
+## 학습 순서
 
-**🎓 학습 포인트**: 생성자 기반 의존성 주입은 불변성, 테스트 용이성, 순환 의존성 방지에 핵심적입니다. @ConfigurationProperties와 프로파일을 활용한 환경별 설정 관리는 실무에서 매우 중요한 기술입니다.
+1. **설정 파일 형식 비교** - YAML vs Properties vs XML
+2. **@ConfigurationProperties 실습** - `PrimaveraProperties.java` 분석
+3. **프로파일별 설정** - dev/prod 프로파일 전환 테스트
+4. **외부 API 연동** - Retrofit 설정과 Plant API 호출
+5. **Bean 스코프 실험** - Singleton vs Prototype 동작 확인
+6. **생명주기 관리** - 초기화/소멸 메서드 실행 순서 확인
+
+## 다음 단계 안내
+
+**Chapter 03**에서는 Spring MVC와 AOP의 핵심 개념을 학습합니다:
+- MVC 패턴 구현과 계층별 역할 분리
+- AOP를 활용한 횡단 관심사 처리
+- Thymeleaf 템플릿 엔진 활용
+- JSON 파일 기반 Repository 구현
+- Filter, Interceptor, Aspect 비교
+
+```bash  
+# 다음 챕터로 이동
+cd ../chap03
+./gradlew :chap03:bootRun
+```

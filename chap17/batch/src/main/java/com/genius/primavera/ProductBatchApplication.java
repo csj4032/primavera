@@ -7,10 +7,10 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-@SpringBootApplication
-@EnableJpaRepositories(basePackages = {"com.genius.primavera.batch.repository"})
-@EntityScan(basePackages = {"com.genius.primavera.common.domain"})
 @EnableJpaAuditing
+@SpringBootApplication
+@EntityScan(basePackages = {"com.genius.primavera.common.domain"})
+@EnableJpaRepositories(basePackages = {"com.genius.primavera.batch.repository"})
 public class ProductBatchApplication {
 
     public static void main(String[] args) {

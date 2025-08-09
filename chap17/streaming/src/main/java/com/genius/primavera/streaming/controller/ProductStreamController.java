@@ -68,8 +68,7 @@ public class ProductStreamController {
             @RequestParam(value = "maxPrice", required = false) Integer maxPrice,
             @RequestParam(value = "size", defaultValue = "10") int size) {
         
-        log.info("Search request - query: {}, category: {}, price: {}-{}, size: {}", 
-                query, category, minPrice, maxPrice, size);
+        log.info("Search request - query: {}, category: {}, price: {}-{}, size: {}", query, category, minPrice, maxPrice, size);
         
         return productSearchService.searchProducts(query, category, minPrice, maxPrice, size)
                 .doOnNext(product -> log.debug("Found product: {}", product.getProductId()))

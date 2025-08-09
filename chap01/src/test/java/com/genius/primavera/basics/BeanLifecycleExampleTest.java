@@ -31,13 +31,8 @@ class BeanLifecycleExampleTest {
     @Test
     @DisplayName("Bean의 생명주기 상태와 컨텍스트 내 존재 여부 확인")
     public void testBeanDestruction() {
-        // Bean의 현재 상태가 POST_CONSTRUCT인지 확인 (초기화 완료 상태)
         assertThat(beanLifecycleExample.getStatus()).isEqualTo("POST_CONSTRUCT");
-        
-        // Context에 bean이 정상적으로 등록되어 있는지 확인
         assertThat(context.containsBean("beanLifecycleExample")).isTrue();
-        
-        // Context에서 가져온 bean이 주입된 bean과 같은 인스턴스인지 확인 (싱글톤 확인)
         assertThat(context.getBean(BeanLifecycleExample.class)).isSameAs(beanLifecycleExample);
     }
 }

@@ -18,10 +18,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Slf4j
 @SpringBootTest
+@EnableTestContainers
 @ActiveProfiles("test")
 @DisplayName("UserDao 통합 테스트")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@EnableTestContainers
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class UserDaoTest {
 

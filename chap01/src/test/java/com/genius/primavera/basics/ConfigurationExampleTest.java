@@ -32,16 +32,10 @@ public class ConfigurationExampleTest {
         assertThat(appProperties.getVersion()).isEqualTo("1.0.0");
         assertThat(appProperties.isDebug()).isTrue();
         assertThat(appProperties.getMaxUsers()).isEqualTo(200);
-        
-        assertThat(appProperties.getFeatures())
-            .containsExactly("user-management", "authentication", "reporting");
-        
+        assertThat(appProperties.getFeatures()).containsExactly("user-management", "authentication", "reporting");
         assertThat(appProperties.getDatabase()).isNotNull();
         assertThat(appProperties.getDatabase().getUrl()).isEqualTo("jdbc:h2:mem:primavera");
         assertThat(appProperties.getDatabase().getMaxConnections()).isEqualTo(20);
-        
-        assertThat(appProperties.getMetadata())
-            .containsEntry("author", "Genius")
-            .containsEntry("environment", "development");
+        assertThat(appProperties.getMetadata()).containsEntry("author", "Genius").containsEntry("environment", "development");
     }
 }

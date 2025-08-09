@@ -1,0 +1,20 @@
+  kibana-${CHAPTER}:
+    image: docker.elastic.co/kibana/kibana:8.12.0
+    container_name: kibana-primavera-${CHAPTER}
+    restart: unless-stopped
+    ports:
+      - "${KIBANA_PORT}:5601"
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch-${CHAPTER}:9200
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=changeme
+    depends_on:
+      - elasticsearch-${CHAPTER}
+    healthcheck:
+      test: ["CMD-SHELL", "curl --silent --fail http://localhost:5601/api/status || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    networks:
+      - ${CHAPTER}-network

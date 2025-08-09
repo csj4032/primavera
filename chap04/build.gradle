@@ -6,5 +6,6 @@ dependencies {
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
     implementation "org.reflections:reflections:0.10.2"
     testContainersDependencies.each { dep -> testImplementation dep }
+    testImplementation "com.bettercloud:vault-java-driver:5.1.0"
     testImplementation project(':appendix:spring-boot-starter-test-containers')
 }

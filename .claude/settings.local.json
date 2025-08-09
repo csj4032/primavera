@@ -90,7 +90,11 @@
       "Bash(SPRING_PROFILES_ACTIVE=local timeout 10 ./gradlew :chap14:bootRun)",
       "Bash(SPRING_PROFILES_ACTIVE=local gtimeout 10 ./gradlew :chap14:bootRun)",
       "Bash(SPRING_PROFILES_ACTIVE=local ../gradlew bootRun)",
-      "Bash(if grep -q \"spring-boot-starter-web\" $chap/build.gradle)"
+      "Bash(if grep -q \"spring-boot-starter-web\" $chap/build.gradle)",
+      "Bash(./docker-manager.sh:*)",
+      "Bash(./infrastructure/scripts/generate-configs.sh:*)",
+      "Bash(bash --version)",
+      "Bash(/opt/homebrew/bin/bash:*)"
     ],
     "deny": []
   }

@@ -1,19 +1,43 @@
-# Front Service - API Gateway & Orchestration
+# Chapter 18 Front - API Gateway 및 서비스 오케스트레이션
 
-## 📋 Overview
+Spring Boot 교육용 프로젝트 Primavera의 Chapter 18 Front 모듈입니다. API Gateway 패턴과 서비스 오케스트레이션을 통한 마이크로서비스 통합, 로드 밸런싱, 그리고 장애 격리를 학습합니다.
 
-Front Service는 Primavera 마이크로서비스 아키텍처에서 API Gateway 역할과 서비스 오케스트레이션을 담당하는 프론트엔드 서비스입니다. Spring WebFlux와 RestTemplate을 활용하여 여러 마이크로서비스를 조합하고 통합된 API를 제공합니다.
+## 🎯 학습 목표
 
-## 🏗️ 아키텍처 특성
+- **API Gateway 패턴**: 마이크로서비스의 단일 진입점 구현
+- **서비스 오케스트레이션**: 여러 서비스 조합을 통한 비즈니스 로직 구현
+- **부하 분산**: 서비스 인스턴스 간 로드 밸런싱
+- **장애 격리**: Circuit Breaker를 통한 시스템 안정성 확보
+- **응답 집계**: 여러 서비스의 데이터를 통합한 API 제공
 
-### Core Technologies
-- **Spring Boot 3.3.6**: 최신 스프링 부트 프레임워크
-- **Spring WebFlux**: 비동기 반응형 웹 프레임워크
-- **Spring Cloud Config**: 중앙집중식 설정 관리
-- **RestTemplate**: HTTP 클라이언트 통신
-- **@RefreshScope**: 동적 설정 갱신
+## 📁 프로젝트 구조
 
-### Service Orchestration Pattern
+```
+chap18/front/
+├── src/main/java/com/genius/primavera/
+│   ├── FrontApplication.java            # 메인 애플리케이션
+│   ├── FrontController.java             # API Gateway 컨트롤러
+│   ├── FrontHandler.java                # WebFlux 핸들러
+│   ├── FrontRouter.java                 # 함수형 라우팅
+│   ├── FrontService.java                # 서비스 인터페이스
+│   ├── FrontServiceImpl.java            # 서비스 구현체
+│   ├── Config.java                      # 동적 설정 관리
+│   ├── Info.java                        # 서비스 정보
+│   ├── LoadTesting.java                 # 부하 테스트 유틸
+│   ├── FrontOrder.java                  # 통합 주문 모델
+│   ├── OrderAndProduct.java             # 주문-상품 매핑 모델
+│   ├── User.java                        # 사용자 모델
+│   ├── Order.java                       # 주문 모델
+│   ├── Product.java                     # 상품 모델
+│   └── Category.java                    # 카테고리 모델
+├── src/main/resources/
+│   └── application.yaml                # 애플리케이션 설정
+└── build.gradle                        # WebFlux + Cloud Config 의존성
+```
+
+## 🏗 아키텍처 특성
+
+### 1. API Gateway 패턴
 ```java
 @RefreshScope
 @SpringBootApplication
@@ -25,525 +49,510 @@ public class FrontApplication {
         return builder
             .connectTimeout(Duration.ofMillis(1000))
             .readTimeout(Duration.ofMillis(3000))
+            .errorHandler(new CustomErrorHandler())
+            .interceptors(new LoggingInterceptor())
+            .build();
+    }
+    
+    @Bean
+    public WebClient webClient() {
+        return WebClient.builder()
+            .codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(1024 * 1024))
             .build();
     }
 }
 ```
 
-## 🚀 주요 기능
+### 2. 함수형 라우팅 (WebFlux)
+```java
+@Configuration
+public class FrontRouter {
+    
+    @Bean
+    public RouterFunction<ServerResponse> routes(FrontHandler handler) {
+        return RouterFunctions
+            .route(GET("/api/users/{userId}/orders"), handler::getUserOrders)
+            .andRoute(GET("/api/users/{userId}/dashboard"), handler::getUserDashboard)
+            .andRoute(GET("/api/aggregated/{userId}"), handler::getAggregatedData)
+            .andRoute(GET("/api/health"), handler::healthCheck)
+            .filter(this::loggingFilter);
+    }
+    
+    private Mono<ServerResponse> loggingFilter(ServerRequest request, 
+                                              HandlerFunction<ServerResponse> next) {
+        log.info("Processing request: {} {}", request.method(), request.path());
+        return next.handle(request)
+            .doOnSuccess(response -> log.info("Response status: {}", response.statusCode()));
+    }
+}
+```
 
-### 1. API Gateway 역할
-- **서비스 라우팅**: 클라이언트 요청을 적절한 마이크로서비스로 라우팅
-- **요청 집계**: 여러 서비스의 응답을 조합하여 통합된 결과 제공
-- **로드 밸런싱**: 다수의 서비스 인스턴스 간 부하 분산
-- **서킷 브레이커**: 장애 서비스 격리 및 안정성 확보
+### 3. 서비스 오케스트레이션
+```java
+@Component
+public class FrontHandler {
+    
+    private final FrontService frontService;
+    private final WebClient webClient;
+    
+    public Mono<ServerResponse> getAggregatedData(ServerRequest request) {
+        String userId = request.pathVariable("userId");
+        
+        return Mono.zip(
+            getUserFromAccountService(userId),
+            getOrdersFromOrderService(userId),
+            getProductsFromProductService()
+        )
+        .map(tuple -> FrontOrder.builder()
+            .user(tuple.getT1())
+            .orders(tuple.getT2())
+            .products(tuple.getT3())
+            .build())
+        .flatMap(frontOrder -> ServerResponse.ok()
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(frontOrder))
+        .onErrorResume(this::handleError);
+    }
+}
+```
 
-### 2. 서비스 오케스트레이션
+## 🎯 핵심 기능
+
+### 1. 마이크로서비스 통합
 ```java
 @Service
 public class FrontServiceImpl implements FrontService {
     
-    @Autowired
-    private RestTemplate restTemplate;
-    
-    @Override
-    public FrontOrder findAllOrders(String userId) {
-        // 1. Account Service에서 사용자 정보 조회
-        User user = restTemplate.getForObject(
-            "http://localhost:8081/users/{userId}", 
-            User.class, userId);
-        
-        // 2. Order Service에서 주문 정보 조회
-        Order[] orders = restTemplate.getForObject(
-            "http://localhost:8082/users/{userId}/orders", 
-            Order[].class, userId);
-        
-        // 3. Product Service에서 상품 정보 조회
-        Product[] products = restTemplate.getForObject(
-            "http://localhost:8083/products", 
-            Product[].class);
-        
-        // 4. 데이터 조합 및 반환
-        return FrontOrder.builder()
-            .user(user)
-            .orders(Arrays.asList(orders))
-            .products(Arrays.asList(products))
-            .build();
-    }
-}
-```
-
-### 3. 데이터 모델 통합
-```java
-@Data
-@Builder
-public class FrontOrder {
-    private User user;
-    private List<Order> orders;
-    private List<Product> products;
-    private OrderAndProduct orderAndProduct;
-}
-
-@Data
-@Builder  
-public class OrderAndProduct {
-    private Long orderId;
-    private Long productId;
-    private String productName;
-    private Long amount;
-    private Category category;
-}
-```
-
-## 🔧 설정 및 구성
-
-### 애플리케이션 설정
-```yaml
-spring:
-  application:
-    name: front
-  cloud:
-    config:
-      uri: http://localhost:8888  # Config Server 연결
-
-server:
-  port: 8080                     # Gateway 표준 포트
-  tomcat:
-    threads:
-      max: 1                     # WebFlux 단일 스레드
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: refresh         # 동적 설정 갱신
-```
-
-### RestTemplate 설정
-```java
-@Configuration
-public class WebClientConfiguration {
-    
-    @Bean
-    public RestTemplateBuilder restTemplateBuilder() {
-        return new RestTemplateBuilder()
-            .connectTimeout(Duration.ofMillis(1000))
-            .readTimeout(Duration.ofMillis(3000))
-            .errorHandler(new CustomErrorHandler())
-            .interceptors(new LoggingInterceptor());
-    }
-}
-```
-
-### 동적 설정 관리
-```java
-@Component
-@ConfigurationProperties("front")
-@RefreshScope
-public class Config {
-    private String accountServiceUrl;
-    private String orderServiceUrl;
-    private String productServiceUrl;
-    private Integer timeoutMs;
-    
-    // getters and setters
-}
-```
-
-## 📊 서비스 통합 패턴
-
-### 1. Fan-Out Pattern (병렬 호출)
-```java
-@Service
-public class ParallelFrontService {
-    
-    public CompletableFuture<FrontOrder> findAllOrdersAsync(String userId) {
-        CompletableFuture<User> userFuture = CompletableFuture
-            .supplyAsync(() -> getUserFromAccountService(userId));
-            
-        CompletableFuture<List<Order>> ordersFuture = CompletableFuture
-            .supplyAsync(() -> getOrdersFromOrderService(userId));
-            
-        CompletableFuture<List<Product>> productsFuture = CompletableFuture
-            .supplyAsync(() -> getProductsFromProductService());
-        
-        return CompletableFuture.allOf(userFuture, ordersFuture, productsFuture)
-            .thenApply(v -> FrontOrder.builder()
-                .user(userFuture.join())
-                .orders(ordersFuture.join())
-                .products(productsFuture.join())
-                .build());
-    }
-}
-```
-
-### 2. Circuit Breaker Pattern
-```java
-@Component
-public class ResilientFrontService {
-    
-    @CircuitBreaker(name = "account-service", fallbackMethod = "fallbackUser")
-    public User getUser(String userId) {
-        return restTemplate.getForObject(
-            "http://localhost:8081/users/{userId}", 
-            User.class, userId);
-    }
-    
-    public User fallbackUser(String userId, Exception ex) {
-        return User.builder()
-            .id(Long.parseLong(userId))
-            .name("Unknown User")
-            .build();
-    }
-}
-```
-
-### 3. Response Aggregation Pattern
-```java
-@RestController
-public class FrontController {
-    
-    @GetMapping("/dashboard/{userId}")
-    public ResponseEntity<DashboardData> getDashboard(@PathVariable String userId) {
-        // 여러 서비스 호출 및 데이터 집계
-        DashboardData dashboard = DashboardData.builder()
-            .userInfo(accountService.getUser(userId))
-            .recentOrders(orderService.getRecentOrders(userId, 5))
-            .recommendedProducts(productService.getRecommendations(userId))
-            .orderSummary(analyticsService.getOrderSummary(userId))
-            .build();
-            
-        return ResponseEntity.ok(dashboard);
-    }
-}
-```
-
-## 🌐 API 엔드포인트
-
-### 통합 API
-```http
-# 사용자 대시보드 (통합 정보)
-GET /dashboard/{userId}
-
-# 사용자 주문 전체 정보 (User + Orders + Products)
-GET /users/{userId}/orders/full
-
-# 주문-상품 매핑 정보
-GET /users/{userId}/order-products
-
-# 상품별 주문 통계
-GET /products/{productId}/order-stats
-
-# 카테고리별 주문 현황
-GET /categories/{categoryId}/orders
-```
-
-### Gateway API (프록시)
-```http
-# Account Service 프록시
-GET /api/accounts/{userId}
-POST /api/accounts
-PUT /api/accounts/{userId}
-
-# Order Service 프록시  
-GET /api/orders/{userId}
-POST /api/orders
-
-# Product Service 프록시
-GET /api/products
-GET /api/products/{productId}
-```
-
-### 관리 API
-```http
-# 설정 갱신
-POST /actuator/refresh
-
-# Health Check
-GET /actuator/health
-
-# 서비스 상태 확인
-GET /actuator/info
-```
-
-## 🏃‍♂️ 실행 방법
-
-### 1. 의존 서비스 시작
-```bash
-# 1. Configuration Service 시작
-./gradlew :chap18:configuration:bootRun
-
-# 2. Account Service 시작  
-./gradlew :chap18:account:bootRun
-
-# 3. Order Service 시작
-./gradlew :chap18:order:bootRun
-
-# 4. Product Service 시작
-./gradlew :chap18:product:bootRun
-```
-
-### 2. Front Service 시작
-```bash
-# Front Service 실행
-./gradlew :chap18:front:bootRun
-
-# 또는 JAR 실행
-java -jar front/build/libs/front.jar
-```
-
-### 3. 서비스 동작 확인
-```bash
-# Front Service 상태 확인
-curl http://localhost:8080/actuator/health
-
-# 통합 API 테스트
-curl http://localhost:8080/users/1/orders/full
-
-# 대시보드 API 테스트
-curl http://localhost:8080/dashboard/1
-```
-
-## 🔗 서비스 통합 및 통신
-
-### 마이크로서비스 연동
-```java
-@Component
-public class ServiceClient {
-    
     @Value("${services.account.url:http://localhost:8081}")
     private String accountServiceUrl;
     
-    @Value("${services.order.url:http://localhost:8082}")  
+    @Value("${services.order.url:http://localhost:8082}")
     private String orderServiceUrl;
     
     @Value("${services.product.url:http://localhost:8083}")
     private String productServiceUrl;
     
-    public User getUser(String userId) {
-        return restTemplate.getForObject(
-            accountServiceUrl + "/users/{userId}", 
-            User.class, userId);
+    @Override
+    public Mono<FrontOrder> findAllOrders(String userId) {
+        return Mono.zip(
+            getUser(userId),
+            getOrders(userId),
+            getProducts()
+        ).map(tuple -> FrontOrder.builder()
+            .user(tuple.getT1())
+            .orders(tuple.getT2())
+            .products(tuple.getT3())
+            .orderAndProduct(buildOrderAndProduct(tuple.getT2(), tuple.getT3()))
+            .build());
     }
     
-    public List<Order> getOrders(String userId) {
-        Order[] orders = restTemplate.getForObject(
-            orderServiceUrl + "/users/{userId}/orders", 
-            Order[].class, userId);
-        return Arrays.asList(orders);
-    }
-    
-    public List<Product> getProducts() {
-        Product[] products = restTemplate.getForObject(
-            productServiceUrl + "/products", 
-            Product[].class);
-        return Arrays.asList(products);
+    private Mono<User> getUser(String userId) {
+        return webClient.get()
+            .uri(accountServiceUrl + "/users/{userId}", userId)
+            .retrieve()
+            .bodyToMono(User.class)
+            .timeout(Duration.ofSeconds(5))
+            .onErrorReturn(User.builder().id(Long.valueOf(userId)).name("Unknown").build());
     }
 }
 ```
 
-### 에러 처리 및 Fallback
-```java
-@Service
-public class ResilientFrontService {
-    
-    @Retryable(value = {Exception.class}, maxAttempts = 3)
-    public FrontOrder getFrontOrderWithRetry(String userId) {
-        try {
-            return frontService.findAllOrders(userId);
-        } catch (Exception e) {
-            log.warn("Service call failed, retrying...", e);
-            throw e;
-        }
-    }
-    
-    @Recover
-    public FrontOrder recover(Exception ex, String userId) {
-        log.error("All retry attempts failed for user: {}", userId, ex);
-        return FrontOrder.builder()
-            .user(getDefaultUser(userId))
-            .orders(Collections.emptyList())
-            .products(Collections.emptyList())
-            .build();
-    }
-}
-```
-
-## 📈 성능 최적화
-
-### 1. 비동기 처리
-```java
-@Service
-public class AsyncFrontService {
-    
-    @Async
-    public CompletableFuture<User> getUserAsync(String userId) {
-        return CompletableFuture.completedFuture(
-            restTemplate.getForObject(
-                "http://localhost:8081/users/{userId}", 
-                User.class, userId));
-    }
-    
-    @Async
-    public CompletableFuture<List<Order>> getOrdersAsync(String userId) {
-        Order[] orders = restTemplate.getForObject(
-            "http://localhost:8082/users/{userId}/orders", 
-            Order[].class, userId);
-        return CompletableFuture.completedFuture(Arrays.asList(orders));
-    }
-}
-```
-
-### 2. 캐싱 전략
-```java
-@Service
-public class CachedFrontService {
-    
-    @Cacheable(value = "products", unless = "#result.size() == 0")
-    public List<Product> getProducts() {
-        return productService.getAllProducts();
-    }
-    
-    @Cacheable(value = "userOrders", key = "#userId")
-    public FrontOrder getUserOrders(String userId) {
-        return frontService.findAllOrders(userId);
-    }
-    
-    @CacheEvict(value = "userOrders", key = "#userId")
-    public void evictUserOrdersCache(String userId) {
-        // 캐시 무효화
-    }
-}
-```
-
-### 3. Connection Pool 최적화
-```java
-@Configuration
-public class HttpClientConfiguration {
-    
-    @Bean
-    public RestTemplate restTemplate() {
-        HttpComponentsClientHttpRequestFactory factory = 
-            new HttpComponentsClientHttpRequestFactory();
-        factory.setConnectTimeout(1000);
-        factory.setReadTimeout(3000);
-        
-        PoolingHttpClientConnectionManager connectionManager = 
-            new PoolingHttpClientConnectionManager();
-        connectionManager.setMaxTotal(100);
-        connectionManager.setDefaultMaxPerRoute(20);
-        
-        HttpClient httpClient = HttpClients.custom()
-            .setConnectionManager(connectionManager)
-            .build();
-            
-        factory.setHttpClient(httpClient);
-        return new RestTemplate(factory);
-    }
-}
-```
-
-## 🛡️ 보안 및 인증
-
-### 1. JWT Token 전파
+### 2. Circuit Breaker 및 Fallback
 ```java
 @Component
-public class TokenPropagationInterceptor implements ClientHttpRequestInterceptor {
+public class ResilientFrontService {
     
-    @Override
-    public ClientHttpResponse intercept(
-            HttpRequest request, 
-            byte[] body, 
-            ClientHttpRequestExecution execution) throws IOException {
-        
-        String token = getCurrentUserToken();
-        if (token != null) {
-            request.getHeaders().add("Authorization", "Bearer " + token);
-        }
-        
-        return execution.execute(request, body);
+    @CircuitBreaker(name = "account-service", fallbackMethod = "fallbackUser")
+    @TimeLimiter(name = "account-service")
+    @Retry(name = "account-service")
+    public CompletableFuture<User> getUserWithResilience(String userId) {
+        return CompletableFuture.supplyAsync(() -> 
+            restTemplate.getForObject(
+                accountServiceUrl + "/users/{userId}", 
+                User.class, userId)
+        );
+    }
+    
+    public CompletableFuture<User> fallbackUser(String userId, Exception ex) {
+        log.warn("Account service unavailable, returning fallback user for: {}", userId);
+        return CompletableFuture.completedFuture(
+            User.builder()
+                .id(Long.valueOf(userId))
+                .name("Fallback User")
+                .build()
+        );
     }
 }
 ```
 
-### 2. API Rate Limiting
+### 3. 응답 집계 및 데이터 변환
 ```java
 @RestController
-public class RateLimitedController {
+public class FrontController {
     
-    @RateLimiter(name = "front-api", fallbackMethod = "fallbackResponse")
-    @GetMapping("/users/{userId}/orders/full")
-    public ResponseEntity<FrontOrder> getUserOrdersFull(@PathVariable String userId) {
-        return ResponseEntity.ok(frontService.findAllOrders(userId));
+    @GetMapping("/api/users/{userId}/dashboard")
+    public Mono<ResponseEntity<DashboardResponse>> getDashboard(@PathVariable String userId) {
+        return frontService.findAllOrders(userId)
+            .map(frontOrder -> {
+                DashboardResponse dashboard = DashboardResponse.builder()
+                    .userInfo(frontOrder.getUser())
+                    .totalOrders(frontOrder.getOrders().size())
+                    .recentOrders(getRecentOrders(frontOrder.getOrders(), 5))
+                    .favoriteProducts(getFavoriteProducts(frontOrder))
+                    .orderSummary(calculateOrderSummary(frontOrder.getOrders()))
+                    .build();
+                    
+                return ResponseEntity.ok(dashboard);
+            })
+            .onErrorReturn(ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+                .body(DashboardResponse.empty()));
     }
     
-    public ResponseEntity<String> fallbackResponse(String userId, Exception ex) {
-        return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
-            .body("API rate limit exceeded. Please try again later.");
+    private OrderSummary calculateOrderSummary(List<Order> orders) {
+        return OrderSummary.builder()
+            .totalAmount(orders.stream()
+                .mapToLong(Order::getAmount)
+                .sum())
+            .averageAmount(orders.stream()
+                .mapToLong(Order::getAmount)
+                .average()
+                .orElse(0.0))
+            .orderCount(orders.size())
+            .build();
     }
 }
 ```
 
-## 🧪 테스트 전략
+### 4. 동적 설정 관리
+```java
+@Component
+@ConfigurationProperties("front")
+@RefreshScope
+public class Config {
+    private Map<String, ServiceConfig> services = new HashMap<>();
+    private Integer defaultTimeout = 5000;
+    private Integer maxRetries = 3;
+    private Boolean circuitBreakerEnabled = true;
+    
+    @Data
+    public static class ServiceConfig {
+        private String url;
+        private Integer timeout;
+        private Integer retries;
+        private Boolean enabled = true;
+    }
+    
+    public String getServiceUrl(String serviceName) {
+        ServiceConfig config = services.get(serviceName);
+        return config != null ? config.getUrl() : "http://localhost:8080";
+    }
+}
+```
 
-### 통합 테스트
+### 5. 부하 테스트 및 모니터링
+```java
+@Component
+public class LoadTesting {
+    
+    private final FrontService frontService;
+    private final MeterRegistry meterRegistry;
+    
+    @EventListener(ApplicationReadyEvent.class)
+    public void startLoadTesting() {
+        if (isLoadTestingEnabled()) {
+            scheduleLoadTest();
+        }
+    }
+    
+    @Scheduled(fixedDelay = 10000) // 10초마다 실행
+    public void performLoadTest() {
+        Timer.Sample sample = Timer.start(meterRegistry);
+        
+        CompletableFuture.allOf(
+            IntStream.range(1, 11)
+                .mapToObj(i -> frontService.findAllOrders(String.valueOf(i))
+                    .toFuture())
+                .toArray(CompletableFuture[]::new)
+        )
+        .thenRun(() -> sample.stop(Timer.builder("load.test.duration")
+            .register(meterRegistry)))
+        .exceptionally(throwable -> {
+            meterRegistry.counter("load.test.errors").increment();
+            log.error("Load test failed", throwable);
+            return null;
+        });
+    }
+}
+```
+
+## 🛠 기술 스택
+
+### 핵심 기술
+- **Java**: 21
+- **Spring Boot**: 3.3.6
+- **Spring WebFlux**: 리액티브 웹 프레임워크
+- **Spring Cloud Config**: 중앙화된 설정 관리
+
+### 통신 및 클라이언트
+- **WebClient**: 리액티브 HTTP 클라이언트
+- **RestTemplate**: 동기 HTTP 클라이언트
+- **Spring Cloud Gateway**: API 게이트웨이 기능
+
+### 장애 복구
+- **Resilience4j**: Circuit Breaker, Retry, Rate Limiter
+- **Spring Retry**: 재시도 메커니즘
+
+## 🚀 실행 방법
+
+### 1. 전체 마이크로서비스 시작
+```bash
+# 1. Config Server 시작 (필수)
+./gradlew :chap18:configuration:bootRun &
+
+# 2. 백엔드 서비스들 병렬 시작
+./gradlew :chap18:account:bootRun &
+./gradlew :chap18:product:bootRun &
+./gradlew :chap18:order:bootRun &
+
+# 3. 모든 서비스가 시작될 때까지 대기 (약 30초)
+sleep 30
+
+# 4. Front Service (API Gateway) 시작
+./gradlew :chap18:front:bootRun
+```
+
+### 2. Docker Compose로 전체 시스템 시작
+```bash
+# 인프라 서비스 시작 (MariaDB, Kafka, Redis)
+./docker-manager.sh start-all chap18
+
+# 모든 마이크로서비스 시작
+docker-compose -f docker-compose-chap18.yml up -d
+```
+
+### 3. API 테스트
+```bash
+# API Gateway 상태 확인
+curl http://localhost:8080/actuator/health
+
+# 통합 사용자 정보 조회
+curl http://localhost:8080/api/users/1/dashboard
+
+# 사용자 주문 전체 정보
+curl http://localhost:8080/api/users/1/orders
+
+# 집계된 데이터 조회
+curl http://localhost:8080/api/aggregated/1
+
+# 설정 동적 갱신
+curl -X POST http://localhost:8080/actuator/refresh
+```
+
+## 📋 테스트 실행
+
+### API Gateway 테스트
+```bash
+# 전체 테스트 실행
+./gradlew :chap18:front:test
+
+# 통합 테스트
+./gradlew :chap18:front:test --tests "*IntegrationTest"
+
+# Circuit Breaker 테스트
+./gradlew :chap18:front:test --tests "*CircuitBreakerTest"
+
+# 부하 테스트
+./gradlew :chap18:front:test --tests "*LoadTest"
+```
+
+### 테스트 예시
 ```java
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@TestPropertySource(properties = "spring.profiles.active=test")
 class FrontServiceIntegrationTest {
     
+    @Autowired
+    private WebTestClient webTestClient;
+    
     @MockBean
-    private RestTemplate restTemplate;
+    private WebClient webClient;
     
     @Test
-    void shouldReturnFrontOrderWhenAllServicesAvailable() {
+    void shouldReturnAggregatedDataWhenAllServicesAvailable() {
         // Given
-        when(restTemplate.getForObject(anyString(), eq(User.class), anyString()))
-            .thenReturn(mockUser());
-        when(restTemplate.getForObject(anyString(), eq(Order[].class), anyString()))
-            .thenReturn(mockOrders());
-        when(restTemplate.getForObject(anyString(), eq(Product[].class)))
-            .thenReturn(mockProducts());
+        mockServiceResponses();
         
-        // When
-        FrontOrder result = frontService.findAllOrders("1");
+        // When & Then
+        webTestClient.get()
+            .uri("/api/users/1/dashboard")
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody(DashboardResponse.class)
+            .value(response -> {
+                assertThat(response.getUserInfo()).isNotNull();
+                assertThat(response.getTotalOrders()).isGreaterThan(0);
+                assertThat(response.getOrderSummary()).isNotNull();
+            });
+    }
+    
+    @Test
+    void shouldReturnFallbackWhenServiceUnavailable() {
+        // Given
+        mockServiceFailures();
         
-        // Then
-        assertThat(result).isNotNull();
-        assertThat(result.getUser()).isNotNull();
-        assertThat(result.getOrders()).isNotEmpty();
-        assertThat(result.getProducts()).isNotEmpty();
+        // When & Then
+        webTestClient.get()
+            .uri("/api/users/1/dashboard")
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody(DashboardResponse.class)
+            .value(response -> {
+                assertThat(response.getUserInfo().getName()).isEqualTo("Fallback User");
+            });
     }
 }
 ```
 
-### 계약 테스트 (Contract Testing)
+## 🎓 핵심 학습 포인트
+
+### 1. API Gateway 패턴
 ```java
-@Test
-void shouldCallAccountServiceWithCorrectContract() {
-    // Account Service API 계약 검증
-    wireMockServer.stubFor(get(urlEqualTo("/users/1"))
-        .willReturn(aResponse()
-            .withStatus(200)
-            .withHeader("Content-Type", "application/json")
-            .withBody("""
-                {
-                    "id": 1,
-                    "name": "test_user",
-                    "createDate": "2024-01-15T10:30:00Z"
-                }
-                """)));
+// 단일 진입점을 통한 마이크로서비스 액세스
+@GetMapping("/api/**")
+public Mono<ResponseEntity<Object>> proxyToBackend(ServerHttpRequest request) {
+    String serviceName = extractServiceName(request.getPath());
+    String targetUrl = serviceDiscovery.getServiceUrl(serviceName);
+    
+    return webClient.method(request.getMethod())
+        .uri(targetUrl + request.getPath())
+        .headers(headers -> headers.addAll(request.getHeaders()))
+        .exchange()
+        .flatMap(this::handleResponse);
 }
 ```
 
-## 📚 학습 포인트
+### 2. 서비스 오케스트레이션
+```java
+// 여러 서비스를 조합한 비즈니스 로직
+public Mono<OrderProcessingResult> processCompleteOrder(CreateOrderRequest request) {
+    return validateUser(request.getUserId())
+        .flatMap(user -> checkProductAvailability(request.getItems()))
+        .flatMap(products -> reserveInventory(request.getItems()))
+        .flatMap(reservation -> processPayment(request.getPayment()))
+        .flatMap(payment -> createOrder(request))
+        .flatMap(order -> sendConfirmationEmail(order))
+        .map(OrderProcessingResult::success)
+        .onErrorResume(this::handleOrderProcessingError);
+}
+```
 
-이 Front Service는 다음과 같은 마이크로서비스 아키텍처 패턴들을 학습할 수 있습니다:
+### 3. Circuit Breaker 패턴
+```java
+// 장애 전파 방지 및 빠른 실패
+@CircuitBreaker(name = "order-service")
+public Mono<List<Order>> getOrdersWithCircuitBreaker(String userId) {
+    return webClient.get()
+        .uri("/orders?userId=" + userId)
+        .retrieve()
+        .bodyToFlux(Order.class)
+        .collectList()
+        .timeout(Duration.ofSeconds(3))
+        .doOnError(error -> log.error("Order service call failed", error));
+}
+```
 
-1. **API Gateway Pattern**: 단일 진입점을 통한 마이크로서비스 액세스
-2. **Service Orchestration**: 여러 서비스의 조합을 통한 비즈니스 로직 구현
-3. **Circuit Breaker Pattern**: 장애 전파 방지 및 시스템 안정성 확보
-4. **Response Aggregation**: 다수 서비스 응답의 통합 및 변환
-5. **Asynchronous Communication**: 비동기 통신을 통한 성능 최적화
-6. **Dynamic Configuration**: 런타임 설정 변경 및 적용
+### 4. 응답 집계 패턴
+```java
+// 여러 서비스의 데이터를 통합
+public Mono<AggregatedResponse> aggregateUserData(String userId) {
+    return Mono.zip(
+        userService.getUser(userId),
+        orderService.getOrders(userId),
+        recommendationService.getRecommendations(userId),
+        loyaltyService.getPoints(userId)
+    ).map(tuple -> AggregatedResponse.builder()
+        .user(tuple.getT1())
+        .orders(tuple.getT2())
+        .recommendations(tuple.getT3())
+        .loyaltyPoints(tuple.getT4())
+        .build());
+}
+```
 
-Front Service는 마이크로서비스 아키텍처에서 서비스 간 통합과 오케스트레이션의 핵심 역할을 담당하며, 실제 운영 환경에서의 API Gateway 패턴을 학습할 수 있는 실용적인 예제입니다.
+## 📚 주요 애너테이션
+
+### API Gateway 관련
+- `@RestController`: REST API 엔드포인트
+- `@GetMapping`: HTTP GET 매핑
+- `@PathVariable`: 경로 변수 바인딩
+
+### 리액티브 관련
+- `@Bean RouterFunction`: 함수형 라우팅
+- `WebClient`: 리액티브 HTTP 클라이언트
+
+### 장애 복구 관련
+- `@CircuitBreaker`: Circuit Breaker 패턴
+- `@Retry`: 재시도 메커니즘
+- `@TimeLimiter`: 타임아웃 제한
+
+### 설정 관리
+- `@RefreshScope`: 동적 설정 갱신
+- `@ConfigurationProperties`: 설정 바인딩
+
+## 🔧 운영 및 모니터링
+
+### 1. 메트릭 및 모니터링
+```yaml
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics,info,refresh,circuitbreakers
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+```
+
+### 2. 분산 추적
+```java
+@Bean
+public Tracer tracer() {
+    return Tracing.newBuilder()
+        .localServiceName("front-service")
+        .sampler(Sampler.create(1.0f)) // 100% 샘플링
+        .build()
+        .tracer();
+}
+```
+
+### 3. 로드 밸런싱
+```java
+@Component
+public class LoadBalancer {
+    private final List<String> instances;
+    private final AtomicInteger currentIndex = new AtomicInteger(0);
+    
+    public String getNextInstance() {
+        int index = currentIndex.getAndIncrement() % instances.size();
+        return instances.get(index);
+    }
+}
+```
+
+## 🔄 다음 단계
+
+1. **서비스 메시**: Istio를 활용한 고급 마이크로서비스 관리
+2. **분산 추적**: Zipkin/Jaeger를 통한 요청 추적 및 성능 분석
+3. **보안 강화**: OAuth2/JWT 기반 인증 및 권한 부여
+4. **컨테이너 오케스트레이션**: Kubernetes에서의 마이크로서비스 배포
+
+## 📖 관련 문서
+
+- [Spring Cloud Gateway](https://spring.io/projects/spring-cloud-gateway)
+- [API Gateway Pattern](https://microservices.io/patterns/apigateway.html)
+- [Circuit Breaker Pattern](https://martinfowler.com/bliki/CircuitBreaker.html)
+- [Service Orchestration vs Choreography](https://microservices.io/patterns/data/saga.html)

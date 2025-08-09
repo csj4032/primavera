@@ -1,649 +1,492 @@
-# Chapter 03: MVC와 AOP
+# Chapter 03 - Spring MVC와 AOP 기초
 
-## 📋 개요
-Spring MVC 아키텍처 패턴과 AOP(Aspect-Oriented Programming)를 통한 횡단 관심사 분리를 학습하는 챕터입니다. 웹 계층의 구성 요소와 관점 지향 프로그래밍의 핵심 개념을 실무 중심으로 익힙니다.
+## 학습 목표
 
-## 🎯 학습 목표
-- **Spring MVC 아키텍처** 패턴 완전 이해
-- **AOP를 통한 횡단 관심사** 분리 구현
-- **인터셉터와 필터 체인** 설계 및 활용
-- **@Aspect, @Around** 어노테이션 마스터
-- **ResponseBodyAdvice** 를 통한 응답 처리
+Spring MVC 패턴의 구현과 AOP(관점 지향 프로그래밍)의 기본 개념을 실습하며 웹 애플리케이션의 계층별 역할을 이해합니다.
 
-## 🔄 최신 업데이트 - 로깅 시스템 개선
+- MVC 패턴 구현과 계층별 역할 분리 (Controller-Service-Repository)
+- AOP를 활용한 횡단 관심사 처리 (로깅, 성능 측정)
+- Filter, Interceptor, Aspect의 차이점과 활용
+- JSON 파일 기반 Repository 구현
+- Thymeleaf 템플릿 엔진을 통한 뷰 렌더링
+- 글로벌 예외 처리 전략
 
-**System.out.println을 SLF4J 로깅으로 전환:**
+## 프로젝트 구조
 
-### 변경된 파일:
-- `ResettableServletOutputStream`: HTTP 응답 스트림 디버깅 로그 개선
-  - `System.out.println("** RESPONSE CLOSE **")` → `log.debug("Response stream closed")`
-  - 응답 처리 디버깅을 위한 구조화된 로깅 적용
-
-### 개선 효과:
-- **성능 최적화**: 디버그 로그는 운영 환경에서 자동 비활성화
-- **시스템 모니터링**: 응답 처리 상태를 로그로 추적 가능
-- **문제 해결**: HTTP 응답 관련 이슈 디버깅 용이
-
-## 🛠️ 핵심 기술 스택
-- **Spring Web MVC** - 웹 애플리케이션 아키텍처
-- **Spring AOP** - 관점 지향 프로그래밍
-- **AspectJ** - AOP 프레임워크
-- **Thymeleaf** - 템플릿 엔진
-- **Jackson** - JSON 처리
-
-## 📚 주요 학습 내용
-
-### 1. Spring MVC 아키텍처 이해
-
-#### MVC 패턴 구성 요소
-
-| 구성 요소 | 역할 | 주요 책임 |
-|----------|-----|----------|
-| **Model** | 데이터와 비즈니스 로직 | 애플리케이션의 정보 및 데이터 처리 |
-| **View** | 사용자 인터페이스 | 사용자가 보고 상호작용하는 화면 |
-| **Controller** | 요청 처리 및 흐름 제어 | Model과 View 사이의 중계 역할 |
-
-#### Spring Web MVC 요청 처리 흐름
-
-```mermaid
-flowchart LR
-    Client[클라이언트] --> DispatcherServlet[DispatcherServlet]
-    DispatcherServlet --> HandlerMapping[HandlerMapping]
-    HandlerMapping --> Controller[Controller]
-    Controller --> ModelAndView[ModelAndView]
-    ModelAndView --> ViewResolver[ViewResolver]
-    ViewResolver --> View[View]
-    View --> Client
+```
+chap03/
+├── src/main/java/com/genius/primavera/
+│   ├── MvcAopApplication.java                       # 메인 애플리케이션
+│   ├── interfaces/                                  # Presentation Layer
+│   │   └── HelloController.java                     # REST/View 컨트롤러
+│   ├── applicaiton/                                # Application Layer
+│   │   ├── HelloService.java                       # 서비스 인터페이스
+│   │   ├── HelloServiceImpl.java                   # 서비스 구현체
+│   │   ├── UserRepository.java                     # JSON 기반 Repository
+│   │   ├── GlobalExceptionHandler.java             # 전역 예외 처리
+│   │   └── OopsException.java                      # 커스텀 예외
+│   ├── domain/                                      # Domain Layer
+│   │   └── User.java                               # User 도메인 모델
+│   └── infrastructure/                              # Infrastructure Layer
+│       ├── aspect/                                  # AOP 관련
+│       │   ├── PrimaveraLogging.java               # 커스텀 로깅 어노테이션
+│       │   └── PrimaveraLoggingAspect.java         # AOP Aspect 구현체
+│       ├── interception/                           # Request/Response 처리
+│       │   ├── PrimaveraFilter.java                # 서블릿 필터
+│       │   ├── PrimaveraInterceptor.java           # MVC 인터셉터
+│       │   └── ResettableStream*.java              # Request/Response 래퍼
+│       └── WebMvcConfig.java                       # MVC 설정
+└── src/main/resources/
+    ├── application.yml                              # 애플리케이션 설정
+    ├── data/
+    │   └── users.json                              # JSON 데이터 파일
+    └── templates/                                  # Thymeleaf 템플릿
+        ├── hello.html
+        └── world.html
 ```
 
-**상세 처리 단계:**
-1. **클라이언트 요청**: HTTP 요청이 DispatcherServlet에 전달
-2. **핸들러 매핑**: 요청 URL에 맞는 Controller 메서드 검색
-3. **컨트롤러 실행**: 비즈니스 로직 처리 및 Model 데이터 생성
-4. **뷰 리졸버**: 논리적 뷰 이름을 실제 뷰로 변환
-5. **뷰 렌더링**: Model 데이터를 사용하여 최종 응답 생성
-6. **응답 반환**: 완성된 HTML을 클라이언트에게 전송
+## 기술 스택
 
-### 2. Hello World Controller 구현
+- **Spring Web MVC**: RESTful API 및 웹 MVC 지원
+- **Spring AOP**: 관점 지향 프로그래밍 
+- **Thymeleaf**: 서버사이드 템플릿 엔진
+- **Apache Commons IO**: 파일 I/O 유틸리티
+- **Jackson**: JSON 데이터 바인딩
+- **Java**: 21 (Record, Pattern Matching 활용)
+
+## 주요 기능
+
+### 1. MVC 패턴 구현
 
 ```java
-@Slf4j
 @RestController
-@RequiredArgsConstructor
-@RequestMapping("/")
+@RequestMapping("/hello")
 public class HelloController {
+    private final HelloService helloService;
     
-    private final PrimaveraProperties properties;
-    
-    @GetMapping
-    public ResponseEntity<Map<String, Object>> helloWorld() {
-        log.info("Hello World 요청 처리 시작");
-        
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", "Hello Primavera World!");
-        response.put("timestamp", LocalDateTime.now());
-        response.put("version", "2.0.0");
-        response.put("database", properties.getDatabase());
-        
-        log.info("Hello World 응답 데이터 생성 완료");
-        return ResponseEntity.ok(response);
+    public HelloController(HelloService helloService) {
+        this.helloService = helloService;
     }
     
-    @GetMapping("/health")
-    public ResponseEntity<String> healthCheck() {
-        return ResponseEntity.ok("Application is running!");
+    @GetMapping("/users")
+    public ResponseEntity<List<User>> getUsers() {
+        List<User> users = helloService.getAllUsers();
+        return ResponseEntity.ok(users);
+    }
+    
+    @GetMapping("/view")
+    public String viewTemplate(Model model) {
+        model.addAttribute("users", helloService.getAllUsers());
+        return "hello";
     }
 }
 ```
 
-### 3. Spring AOP 핵심 개념
-
-#### AOP 주요 용어 정리
-
-| 용어 | 설명 | 예시 |
-|------|------|------|
-| **Aspect** | 포인트컷과 어드바이스의 결합 | 로깅, 트랜잭션, 보안 |
-| **Join Point** | 어드바이스가 적용될 수 있는 지점 | 메서드 호출, 예외 발생 |
-| **Pointcut** | 어드바이스가 적용될 조인 포인트 선별 | `@Around("execution(* com.genius..*.*(..))")` |
-| **Advice** | 실제 부가 기능 구현체 | Before, After, Around |
-| **Weaving** | 타깃에 애스펙트를 적용하는 과정 | 런타임, 컴파일타임, 로드타임 |
-| **Target** | 부가 기능이 적용될 대상 객체 | 비즈니스 로직 클래스 |
-
-#### Advice 타입별 특징
+### 2. JSON 파일 기반 Repository
 
 ```java
+@Repository
+public class UserRepository {
+    private final ObjectMapper objectMapper = new ObjectMapper();
+    
+    public List<User> findAll() {
+        try {
+            ClassPathResource resource = new ClassPathResource("data/users.json");
+            String jsonContent = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
+            return objectMapper.readValue(jsonContent, 
+                objectMapper.getTypeFactory().constructCollectionType(List.class, User.class));
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load users from JSON", e);
+        }
+    }
+}
+```
+
+### 3. AOP를 통한 로깅
+
+```java
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface PrimaveraLogging {
+    String value() default "";
+}
+
 @Aspect
 @Component
-@Slf4j
 public class PrimaveraLoggingAspect {
     
-    // 메서드 실행 전 처리
-    @Before("execution(* com.genius.primavera.interfaces.*.*(..))")
-    public void beforeAdvice(JoinPoint joinPoint) {
-        String methodName = joinPoint.getSignature().getName();
-        log.info("🔍 [BEFORE] 메서드 실행 시작: {}", methodName);
-    }
-    
-    // 메서드 정상 완료 후 처리
-    @AfterReturning(pointcut = "execution(* com.genius.primavera.interfaces.*.*(..))", 
-                    returning = "result")
-    public void afterReturningAdvice(JoinPoint joinPoint, Object result) {
-        String methodName = joinPoint.getSignature().getName();
-        log.info("✅ [AFTER-RETURNING] 메서드 정상 완료: {} -> 결과: {}", methodName, result);
-    }
-    
-    // 예외 발생 시 처리
-    @AfterThrowing(pointcut = "execution(* com.genius.primavera.interfaces.*.*(..))", 
-                   throwing = "exception")
-    public void afterThrowingAdvice(JoinPoint joinPoint, Exception exception) {
-        String methodName = joinPoint.getSignature().getName();
-        log.error("❌ [AFTER-THROWING] 메서드 예외 발생: {} -> 예외: {}", methodName, exception.getMessage());
-    }
-    
-    // 결과에 관계없이 실행 후 처리
-    @After("execution(* com.genius.primavera.interfaces.*.*(..))")
-    public void afterAdvice(JoinPoint joinPoint) {
-        String methodName = joinPoint.getSignature().getName();
-        log.info("🔚 [AFTER] 메서드 실행 종료: {}", methodName);
-    }
-    
-    // 메서드 실행 전후 모두 제어
-    @Around("execution(* com.genius.primavera.interfaces.*.*(..))")
-    public Object aroundAdvice(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
-        String methodName = proceedingJoinPoint.getSignature().getName();
+    @Around("@annotation(primaveraLogging)")
+    public Object logExecutionTime(ProceedingJoinPoint joinPoint, PrimaveraLogging primaveraLogging) throws Throwable {
         long startTime = System.currentTimeMillis();
         
-        log.info("🚀 [AROUND-BEFORE] 메서드 실행 시작: {}", methodName);
+        Object result = joinPoint.proceed();
         
-        try {
-            // 실제 메서드 실행
-            Object result = proceedingJoinPoint.proceed();
+        long endTime = System.currentTimeMillis();
+        log.info("Method [{}] executed in {} ms - {}", 
+            joinPoint.getSignature().getName(), 
+            endTime - startTime, 
+            primaveraLogging.value());
             
-            long endTime = System.currentTimeMillis();
-            log.info("⏱️ [AROUND-AFTER] 메서드 실행 완료: {} (소요시간: {}ms)", 
-                    methodName, endTime - startTime);
-            
-            return result;
-        } catch (Exception e) {
-            log.error("💥 [AROUND-ERROR] 메서드 실행 중 예외 발생: {} -> {}", methodName, e.getMessage());
-            throw e;
-        }
+        return result;
     }
 }
 ```
 
-### 4. Pointcut 표현식 마스터
-
-#### 다양한 Pointcut 패턴
+### 4. 전역 예외 처리
 
 ```java
-@Aspect
-@Component
-public class AdvancedPointcutAspect {
+@ControllerAdvice
+public class GlobalExceptionHandler {
     
-    // 특정 패키지의 모든 메서드
-    @Pointcut("execution(* com.genius.primavera.interfaces..*.*(..))")
-    public void interfaceLayer() {}
-    
-    // 특정 어노테이션이 붙은 메서드
-    @Pointcut("@annotation(org.springframework.web.bind.annotation.GetMapping)")
-    public void getMappingMethods() {}
-    
-    // 특정 클래스의 public 메서드
-    @Pointcut("execution(public * com.genius.primavera.interfaces.HelloController.*(..))")
-    public void helloControllerPublicMethods() {}
-    
-    // 반환 타입이 ResponseEntity인 메서드
-    @Pointcut("execution(org.springframework.http.ResponseEntity com.genius.primavera.interfaces.*.*(..))")
-    public void responseEntityMethods() {}
-    
-    // 복합 조건 (AND, OR, NOT)
-    @Pointcut("interfaceLayer() && getMappingMethods()")
-    public void getEndpoints() {}
-    
-    @Around("getEndpoints()")
-    public Object monitorGetEndpoints(ProceedingJoinPoint joinPoint) throws Throwable {
-        // GET 엔드포인트 모니터링 로직
-        return joinPoint.proceed();
-    }
-}
-```
-
-### 5. Spring Interceptor 구현
-
-#### 커스텀 인터셉터 개발
-
-```java
-@Slf4j
-@Component
-public class PrimaveraInterceptor implements HandlerInterceptor {
-    
-    // 컨트롤러 메서드 실행 전
-    @Override
-    public boolean preHandle(HttpServletRequest request, 
-                           HttpServletResponse response, 
-                           Object handler) throws Exception {
-        
-        String requestURI = request.getRequestURI();
-        String method = request.getMethod();
-        String userAgent = request.getHeader("User-Agent");
-        
-        log.info("🌐 [PRE-HANDLE] 요청 수신 - {} {} (User-Agent: {})", 
-                method, requestURI, userAgent);
-        
-        // 요청 시작 시간 기록
-        request.setAttribute("startTime", System.currentTimeMillis());
-        
-        // true 반환: 계속 진행, false 반환: 요청 중단
-        return true;
+    @ExceptionHandler(OopsException.class)
+    public ResponseEntity<Map<String, Object>> handleOopsException(OopsException e) {
+        Map<String, Object> response = Map.of(
+            "error", "OOPS_EXCEPTION",
+            "message", e.getMessage(),
+            "timestamp", LocalDateTime.now()
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
     
-    // 컨트롤러 메서드 실행 후, 뷰 렌더링 전
-    @Override
-    public void postHandle(HttpServletRequest request, 
-                          HttpServletResponse response, 
-                          Object handler, 
-                          ModelAndView modelAndView) throws Exception {
-        
-        log.info("📝 [POST-HANDLE] 컨트롤러 처리 완료 - 응답 상태: {}", response.getStatus());
-        
-        if (modelAndView != null) {
-            log.info("🎨 [POST-HANDLE] ModelAndView: {}", modelAndView.getViewName());
-        }
-    }
-    
-    // 요청 처리 완료 후 (뷰 렌더링 완료 후)
-    @Override
-    public void afterCompletion(HttpServletRequest request, 
-                               HttpServletResponse response, 
-                               Object handler, 
-                               Exception ex) throws Exception {
-        
-        Long startTime = (Long) request.getAttribute("startTime");
-        if (startTime != null) {
-            long endTime = System.currentTimeMillis();
-            long executionTime = endTime - startTime;
-            
-            log.info("✅ [AFTER-COMPLETION] 요청 처리 완료 - 총 소요시간: {}ms", executionTime);
-        }
-        
-        if (ex != null) {
-            log.error("❌ [AFTER-COMPLETION] 요청 처리 중 예외 발생: {}", ex.getMessage());
-        }
-    }
-}
-```
-
-#### 인터셉터 등록 설정
-
-```java
-@Configuration
-@RequiredArgsConstructor
-public class WebMvcConfiguration implements WebMvcConfigurer {
-    
-    private final PrimaveraInterceptor primaveraInterceptor;
-    
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(primaveraInterceptor)
-                .addPathPatterns("/**")          // 모든 경로에 적용
-                .excludePathPatterns(            // 제외할 경로
-                    "/health",
-                    "/actuator/**",
-                    "/static/**",
-                    "/css/**",
-                    "/js/**",
-                    "/images/**"
-                );
-    }
-    
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOrigins("http://localhost:3000")
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                .allowedHeaders("*")
-                .allowCredentials(true);
-    }
-}
-```
-
-### 6. ResponseBodyAdvice 활용
-
-#### 전역 응답 처리기
-
-```java
-@RestControllerAdvice
-@Slf4j
-public class GlobalResponseAdvice implements ResponseBodyAdvice<Object> {
-    
-    @Override
-    public boolean supports(MethodParameter returnType, 
-                           Class<? extends HttpMessageConverter<?>> converterType) {
-        // 모든 Controller 응답에 적용
-        return true;
-    }
-    
-    @Override
-    public Object beforeBodyWrite(Object body, 
-                                 MethodParameter returnType, 
-                                 MediaType selectedContentType,
-                                 Class<? extends HttpMessageConverter<?>> selectedConverterType, 
-                                 ServerHttpRequest request, 
-                                 ServerHttpResponse response) {
-        
-        String uri = request.getURI().getPath();
-        log.info("📤 [RESPONSE] 응답 데이터 처리: {} -> {}", uri, body);
-        
-        // API 응답 표준화
-        if (body instanceof String) {
-            // String 응답은 그대로 반환
-            return body;
-        }
-        
-        // 성공 응답 래핑
-        ApiResponse<?> apiResponse = ApiResponse.success(body);
-        response.getHeaders().add("X-Response-Time", String.valueOf(System.currentTimeMillis()));
-        
-        return apiResponse;
-    }
-}
-
-// 표준 API 응답 형태
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class ApiResponse<T> {
-    private boolean success;
-    private String message;
-    private T data;
-    private LocalDateTime timestamp;
-    
-    public static <T> ApiResponse<T> success(T data) {
-        return new ApiResponse<>(true, "Success", data, LocalDateTime.now());
-    }
-    
-    public static <T> ApiResponse<T> error(String message) {
-        return new ApiResponse<>(false, message, null, LocalDateTime.now());
-    }
-}
-```
-
-### 7. Thymeleaf 템플릿 엔진 활용
-
-#### 템플릿 기반 응답 처리
-
-```java
-@Controller
-@RequiredArgsConstructor
-@RequestMapping("/view")
-public class ViewController {
-    
-    private final PrimaveraProperties properties;
-    
-    @GetMapping("/hello")
-    public String helloView(Model model) {
-        model.addAttribute("message", "Hello Primavera MVC!");
-        model.addAttribute("timestamp", LocalDateTime.now());
-        model.addAttribute("version", properties.getVersion());
-        
-        return "hello";  // templates/hello.html
-    }
-    
-    @GetMapping("/user/{id}")
-    public String userDetail(@PathVariable Long id, Model model) {
-        // Mock 사용자 데이터
-        User user = User.builder()
-                .id(id)
-                .name("Primavera User " + id)
-                .email("user" + id + "@primavera.com")
-                .build();
-        
-        model.addAttribute("user", user);
-        return "user";  // templates/user.html
-    }
-}
-```
-
-#### HTML 템플릿 예제
-
-**templates/hello.html:**
-```html
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Primavera MVC Demo</title>
-    <meta charset="UTF-8">
-</head>
-<body>
-    <h1 th:text="${message}">Hello Message</h1>
-    <p>현재 시간: <span th:text="${#temporals.format(timestamp, 'yyyy-MM-dd HH:mm:ss')}"></span></p>
-    <p>버전: <span th:text="${version}"></span></p>
-</body>
-</html>
-```
-
-## 🔧 실습 예제
-
-### 데이터베이스 연결 테스트
-
-```java
-@SpringBootTest
-@Transactional
-class DatabaseConnectionTest {
-    
-    @Autowired
-    private DataSource dataSource;
-    
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
-    
-    @Test
-    @DisplayName("데이터베이스 연결 상태 확인")
-    void testDatabaseConnection() throws SQLException {
-        // Given
-        assertThat(dataSource).isNotNull();
-        
-        // When
-        try (Connection connection = dataSource.getConnection()) {
-            // Then
-            assertThat(connection.isValid(5)).isTrue();
-            log.info("✅ 데이터베이스 연결 성공: {}", connection.getMetaData().getURL());
-        }
-    }
-    
-    @Test
-    @DisplayName("JdbcTemplate을 통한 쿼리 실행 테스트")
-    void testJdbcTemplateQuery() {
-        // Given & When
-        String result = jdbcTemplate.queryForObject("SELECT 'Hello Primavera' as message", String.class);
-        
-        // Then
-        assertThat(result).isEqualTo("Hello Primavera");
-        log.info("📊 쿼리 실행 결과: {}", result);
-    }
-}
-```
-
-### 통합 테스트
-
-```java
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@TestMethodOrder(OrderAnnotation.class)
-class HelloControllerIntegrationTest {
-    
-    @Autowired
-    private TestRestTemplate restTemplate;
-    
-    @Test
-    @Order(1)
-    @DisplayName("Hello World 엔드포인트 통합 테스트")
-    void testHelloWorldEndpoint() {
-        // Given
-        String url = "/";
-        
-        // When
-        ResponseEntity<Map> response = restTemplate.getForEntity(url, Map.class);
-        
-        // Then
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody()).containsKey("message");
-        assertThat(response.getBody().get("message")).isEqualTo("Hello Primavera World!");
-        
-        log.info("🎯 통합 테스트 성공: {}", response.getBody());
-    }
-    
-    @Test
-    @Order(2)
-    @DisplayName("Health Check 엔드포인트 테스트")
-    void testHealthCheckEndpoint() {
-        // Given
-        String url = "/health";
-        
-        // When
-        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-        
-        // Then
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody()).isEqualTo("Application is running!");
-    }
-}
-```
-
-## 🧪 테스트 전략
-
-### MockMvc를 이용한 웹 계층 테스트
-
-```java
-@WebMvcTest(HelloController.class)
-class HelloControllerTest {
-    
-    @Autowired
-    private MockMvc mockMvc;
-    
-    @MockBean
-    private PrimaveraProperties properties;
-    
-    @Test
-    @DisplayName("Hello World API Mock 테스트")
-    void testHelloWorldWithMockMvc() throws Exception {
-        // Given
-        when(properties.getDatabase()).thenReturn(new PrimaveraProperties.Database());
-        
-        // When & Then
-        mockMvc.perform(get("/"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.data.message").value("Hello Primavera World!"))
-                .andDo(print());
-    }
-}
-```
-
-## 📊 성능 모니터링
-
-### AOP 기반 성능 측정
-
-```java
-@Aspect
-@Component
-@Slf4j
-public class PerformanceMonitoringAspect {
-    
-    @Around("execution(* com.genius.primavera.interfaces.*.*(..))")
-    public Object measureExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable {
-        StopWatch stopWatch = new StopWatch();
-        stopWatch.start();
-        
-        try {
-            Object result = joinPoint.proceed();
-            return result;
-        } finally {
-            stopWatch.stop();
-            String methodName = joinPoint.getSignature().toShortString();
-            long executionTime = stopWatch.getTotalTimeMillis();
-            
-            if (executionTime > 1000) {
-                log.warn("⚠️ [SLOW-QUERY] 느린 메서드 감지: {} ({}ms)", methodName, executionTime);
-            } else {
-                log.info("⚡ [PERFORMANCE] 메서드 실행 시간: {} ({}ms)", methodName, executionTime);
-            }
-        }
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Map<String, Object>> handleGeneralException(Exception e) {
+        Map<String, Object> response = Map.of(
+            "error", "INTERNAL_SERVER_ERROR",
+            "message", "An unexpected error occurred",
+            "timestamp", LocalDateTime.now()
+        );
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 }
 ```
 
 ## 실행 방법
 
-### 🚀 Spring Boot 애플리케이션 실행
-
-#### 1. 환경 변수 방식 (권장)
-```bash
-# 로컬 환경으로 실행  
-SPRING_PROFILES_ACTIVE=local ./gradlew :chap03:bootRun
-```
-
-#### 2. Program Arguments 방식
-```bash
-# 기본 실행
-./gradlew :chap03:bootRun --args='--spring.profiles.active=local'
-```
-
-#### 3. IDE 설정 방식
-- IntelliJ IDEA: Run Configuration → VM Options 또는 Program Arguments 설정
-- VM Options: `-Dspring.profiles.active=local`
-- Program Arguments: `--spring.profiles.active=local`
-
-## 🐳 인프라 설정
-
-### Docker Compose 환경 설정
-
-이 챕터는 **기초 학습용 인프라**를 사용합니다:
+### 애플리케이션 시작
 
 ```bash
-# infrastructure 디렉터리로 이동
-cd infrastructure
+# Gradle을 사용한 실행
+./gradlew :chap03:bootRun
 
-# 기초 학습용 Docker Compose 실행 (MariaDB)
-docker-compose -f docker-compose.basic.yml up -d
-
-# 서비스 상태 확인
-docker-compose -f docker-compose.basic.yml ps
-
-# 정리 (컨테이너 및 볼륨 삭제)
-docker-compose -f docker-compose.basic.yml down -v
+# JAR 빌드 후 실행
+./gradlew :chap03:build
+java -jar chap03/build/libs/chap03.jar
 ```
 
-**포함된 서비스:**
-- **MariaDB 11.4.7** (포트: 3308)
-- 기본 데이터베이스 스키마 자동 생성
+### API 테스트
 
-**애플리케이션 실행:**
 ```bash
-# 인프라 시작 후 애플리케이션 실행
-./gradlew :chap03:bootRun -Dspring.profiles.active=local
+# JSON API - 사용자 목록 조회
+curl http://localhost:8080/hello/users
+
+# AOP 로깅 테스트
+curl http://localhost:8080/hello/logging-test
+
+# 예외 처리 테스트
+curl http://localhost:8080/hello/error-test
+
+# Thymeleaf 뷰 렌더링
+curl http://localhost:8080/hello/view
+
+# 정적 리소스 테스트
+open http://localhost:8080/hello/world
 ```
 
-## 📖 참고 자료
+## 핵심 학습 포인트
 
-### 공식 문서
-- [Spring Web MVC](https://docs.spring.io/spring-framework/docs/current/reference/html/web.html#mvc)
-- [Spring AOP](https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#aop)
-- [AspectJ Programming Guide](https://www.eclipse.org/aspectj/doc/released/progguide/index.html)
+### 1. Spring MVC 요청 처리 흐름
 
-### 아키텍처 참고
-- [MVC Context Hierarchy](https://docs.spring.io/spring-framework/docs/current/reference/html/web.html#mvc-servlet-context-hierarchy)
-- [Handler Interceptors](https://docs.spring.io/spring-framework/docs/current/reference/html/web.html#mvc-handlermapping-interceptor)
-- [MariaDB Connector/J](https://mariadb.com/kb/en/library/about-mariadb-connector-j/)
+```
+Client Request
+      ↓
+DispatcherServlet (Front Controller)
+      ↓
+HandlerMapping (URL 매핑)
+      ↓
+HandlerInterceptor (preHandle)
+      ↓
+Controller (비즈니스 로직 호출)
+      ↓
+Service Layer (비즈니스 로직 처리)
+      ↓
+Repository Layer (데이터 액세스)
+      ↓
+HandlerInterceptor (postHandle)
+      ↓
+ViewResolver (뷰 이름 → 뷰 객체)
+      ↓
+View (렌더링)
+      ↓
+HandlerInterceptor (afterCompletion)
+      ↓
+Client Response
+```
 
-## 🚀 다음 단계
+### 2. Filter vs Interceptor vs AOP
 
-다음 Chapter에서는 **데이터 접근 계층**을 학습합니다:
-- HikariCP 커넥션 풀 최적화
-- JdbcTemplate을 통한 SQL 실행
-- 다중 데이터소스 구성
-- 선언적 트랜잭션 관리
+| 구분 | Filter | Interceptor | AOP |
+|------|--------|-------------|-----|
+| **실행 시점** | 서블릿 전/후 | 컨트롤러 전/후 | 메서드 실행 전/후/예외 |
+| **적용 범위** | 모든 요청 | Spring MVC 범위 | 특정 메서드/클래스 |
+| **용도** | 인코딩, 보안, 로깅 | 인증, 권한, 로케일 | 트랜잭션, 로깅, 성능측정 |
 
----
+```java
+// Filter 구현
+@Component
+public class PrimaveraFilter implements Filter {
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) 
+            throws IOException, ServletException {
+        // 요청 전 처리
+        long startTime = System.currentTimeMillis();
+        
+        chain.doFilter(request, response);
+        
+        // 응답 후 처리
+        long duration = System.currentTimeMillis() - startTime;
+        log.info("Request processed in {} ms", duration);
+    }
+}
 
-**🎓 학습 포인트**: AOP는 로깅, 트랜잭션, 보안 등 횡단 관심사를 효과적으로 분리할 수 있는 강력한 도구입니다. Spring MVC의 요청 처리 흐름을 이해하면 웹 애플리케이션의 전체적인 동작 원리를 파악할 수 있습니다.
+// Interceptor 구현
+@Component
+public class PrimaveraInterceptor implements HandlerInterceptor {
+    @Override
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+        log.info("Pre-handle: {}", request.getRequestURI());
+        return true;
+    }
+    
+    @Override
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, 
+                          Object handler, ModelAndView modelAndView) {
+        log.info("Post-handle: {}", request.getRequestURI());
+    }
+}
+```
+
+### 3. JSON 데이터 처리
+
+```java
+// users.json 구조
+[
+  {
+    "id": 1,
+    "name": "김철수",
+    "email": "kim@example.com",
+    "age": 30
+  },
+  {
+    "id": 2,
+    "name": "이영희", 
+    "email": "lee@example.com",
+    "age": 25
+  }
+]
+
+// Repository에서 JSON 파일 읽기
+@Repository
+public class UserRepository {
+    
+    @PrimaveraLogging("사용자 데이터 로딩")
+    public List<User> findAll() {
+        try {
+            ClassPathResource resource = new ClassPathResource("data/users.json");
+            String content = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
+            
+            return objectMapper.readValue(content, 
+                objectMapper.getTypeFactory().constructCollectionType(List.class, User.class));
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load user data", e);
+        }
+    }
+}
+```
+
+### 4. Thymeleaf 템플릿 처리
+
+```html
+<!-- hello.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Primavera Users</title>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <h1>사용자 목록</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>이름</th>
+                <th>이메일</th>
+                <th>나이</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="user : ${users}">
+                <td th:text="${user.id}"></td>
+                <td th:text="${user.name}"></td>
+                <td th:text="${user.email}"></td>
+                <td th:text="${user.age}"></td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>
+```
+
+### 5. 계층별 책임 분리
+
+```java
+// Controller Layer - 요청/응답 처리
+@RestController
+@RequestMapping("/hello")
+public class HelloController {
+    private final HelloService helloService;
+    
+    @GetMapping("/users")
+    @PrimaveraLogging("사용자 목록 조회 API")
+    public ResponseEntity<List<User>> getUsers() {
+        List<User> users = helloService.getAllUsers();
+        return ResponseEntity.ok(users);
+    }
+}
+
+// Service Layer - 비즈니스 로직 처리
+@Service
+public class HelloServiceImpl implements HelloService {
+    private final UserRepository userRepository;
+    
+    @Override
+    @PrimaveraLogging("사용자 비즈니스 로직")
+    public List<User> getAllUsers() {
+        List<User> users = userRepository.findAll();
+        // 비즈니스 로직 처리 (필터링, 정렬, 변환 등)
+        return users.stream()
+            .filter(user -> user.getAge() >= 18)
+            .collect(Collectors.toList());
+    }
+}
+
+// Repository Layer - 데이터 액세스
+@Repository
+public class UserRepository {
+    
+    @PrimaveraLogging("데이터 액세스")
+    public List<User> findAll() {
+        // JSON 파일에서 사용자 데이터 로드
+        return loadUsersFromJson();
+    }
+}
+```
+
+## 테스트 실행
+
+```bash
+# 전체 테스트 실행
+./gradlew :chap03:test
+
+# 특정 테스트 클래스 실행
+./gradlew :chap03:test --tests "HelloControllerTest"
+
+# AOP 관련 테스트 실행
+./gradlew :chap03:test --tests "*AspectTest"
+
+# 테스트 커버리지 리포트 생성
+./gradlew :chap03:jacocoTestReport
+```
+
+## 주요 애너테이션
+
+| 애너테이션 | 용도 | 예제 |
+|-----------|------|------|
+| `@RestController` | REST API 컨트롤러 | `@RestController public class HelloController` |
+| `@RequestMapping` | URL 매핑 | `@RequestMapping("/hello")` |
+| `@GetMapping` | HTTP GET 매핑 | `@GetMapping("/users")` |
+| `@Service` | 서비스 계층 빈 | `@Service public class HelloService` |
+| `@Repository` | 데이터 액세스 계층 빈 | `@Repository public class UserRepository` |
+| `@Aspect` | AOP Aspect 정의 | `@Aspect @Component public class LoggingAspect` |
+| `@Around` | Around Advice | `@Around("@annotation(log)")` |
+| `@ControllerAdvice` | 전역 예외 처리 | `@ControllerAdvice public class GlobalExceptionHandler` |
+
+## 실습 과제
+
+### 1. 커스텀 AOP 어노테이션 만들기
+
+성능 측정을 위한 `@PerformanceMonitoring` 어노테이션을 만들어보세요:
+
+```java
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface PerformanceMonitoring {
+    String value() default "";
+    long threshold() default 1000; // 임계값 (ms)
+}
+
+@Aspect
+@Component
+public class PerformanceAspect {
+    // Around advice 구현
+    // threshold 초과시 WARNING 로그 출력
+}
+```
+
+### 2. JSON 데이터 CRUD Repository 구현
+
+읽기 전용이 아닌 CRUD 기능을 지원하는 Repository를 구현해보세요:
+
+```java
+@Repository
+public class JsonUserRepository {
+    public List<User> findAll() { /* JSON 파일 읽기 */ }
+    public User findById(Long id) { /* ID로 사용자 찾기 */ }
+    public User save(User user) { /* 사용자 저장 */ }
+    public void deleteById(Long id) { /* 사용자 삭제 */ }
+}
+```
+
+### 3. 다중 예외 처리 핸들러
+
+다양한 예외에 대한 세부적인 처리를 구현해보세요:
+
+```java
+@ControllerAdvice
+public class DetailedExceptionHandler {
+    
+    @ExceptionHandler(ValidationException.class)
+    public ResponseEntity<ErrorResponse> handleValidation(ValidationException e) {
+        // 검증 실패 처리
+    }
+    
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleNotFound(ResourceNotFoundException e) {
+        // 리소스 없음 처리
+    }
+}
+```
+
+## 학습 순서
+
+1. **MVC 패턴 이해** - Controller, Service, Repository의 역할 분리 학습
+2. **JSON 데이터 처리** - `users.json` 파일을 읽어 User 객체 변환 과정 확인
+3. **AOP 실습** - `@PrimaveraLogging` 어노테이션과 Aspect 동작 확인
+4. **요청 처리 흐름** - Filter → Interceptor → Controller → Service → Repository 흐름 추적
+5. **템플릿 렌더링** - Thymeleaf를 사용한 서버사이드 렌더링 실습
+6. **예외 처리** - 글로벌 예외 핸들러 동작 확인
+
+## 다음 단계 안내
+
+**Chapter 04**에서는 데이터베이스 연동과 MyBatis를 학습합니다:
+- MyBatis를 통한 SQL 매핑과 동적 쿼리
+- MariaDB 데이터베이스 연동 및 커넥션 풀 관리
+- TestContainers를 활용한 통합 테스트
+- 동적 프록시 패턴 구현
+- 데이터 액세스 계층 아키텍처
+
+```bash
+# 다음 챕터로 이동
+cd ../chap04
+./gradlew :chap04:bootRun -Dspring.profiles.active=local
+```

@@ -62,8 +62,7 @@ public class ProductSearchService {
                 .trackTotalHits(t -> t.enabled(true))
         );
 
-        CompletableFuture<SearchResponse<ProductDocument>> searchFuture = 
-                elasticsearchAsyncClient.search(searchRequest, ProductDocument.class);
+        CompletableFuture<SearchResponse<ProductDocument>> searchFuture = elasticsearchAsyncClient.search(searchRequest, ProductDocument.class);
 
         return Mono.fromFuture(searchFuture)
                 .flatMapMany(searchResponse -> {
@@ -86,12 +85,10 @@ public class ProductSearchService {
                 .document(product)
         );
 
-        CompletableFuture<IndexResponse> indexFuture = 
-                elasticsearchAsyncClient.index(indexRequest);
+        CompletableFuture<IndexResponse> indexFuture = elasticsearchAsyncClient.index(indexRequest);
 
         return Mono.fromFuture(indexFuture)
-                .doOnSuccess(response -> log.info("Product {} indexed with result: {}", 
-                        product.getProductId(), response.result()))
+                .doOnSuccess(response -> log.info("Product {} indexed with result: {}", product.getProductId(), response.result()))
                 .doOnError(error -> log.error("Failed to index product {}", product.getProductId(), error))
                 .then();
     }
@@ -102,19 +99,16 @@ public class ProductSearchService {
                 .id(String.valueOf(productId))
         );
 
-        CompletableFuture<DeleteResponse> deleteFuture = 
-                elasticsearchAsyncClient.delete(deleteRequest);
+        CompletableFuture<DeleteResponse> deleteFuture = elasticsearchAsyncClient.delete(deleteRequest);
 
         return Mono.fromFuture(deleteFuture)
-                .doOnSuccess(response -> log.info("Product {} deleted with result: {}", 
-                        productId, response.result()))
+                .doOnSuccess(response -> log.info("Product {} deleted with result: {}", productId, response.result()))
                 .doOnError(error -> log.error("Failed to delete product {}", productId, error))
                 .then();
     }
 
     public Mono<Map<String, Object>> getIndexHealth() {
-        CompletableFuture<HealthResponse> healthFuture =
-                elasticsearchAsyncClient.cluster().health();
+        CompletableFuture<HealthResponse> healthFuture = elasticsearchAsyncClient.cluster().health();
 
         return Mono.fromFuture(healthFuture)
                 .map(healthResponse -> {
@@ -146,8 +140,7 @@ public class ProductSearchService {
             );
         }
 
-        CompletableFuture<BulkResponse> bulkFuture = 
-                elasticsearchAsyncClient.bulk(bulkRequestBuilder.build());
+        CompletableFuture<BulkResponse> bulkFuture = elasticsearchAsyncClient.bulk(bulkRequestBuilder.build());
 
         return Mono.fromFuture(bulkFuture)
                 .doOnSuccess(response -> {

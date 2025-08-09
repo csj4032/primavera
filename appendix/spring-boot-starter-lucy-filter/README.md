@@ -1,115 +1,295 @@
-# Spring Boot Starter Lucy Filter 🛡️
+# Spring Boot Starter Lucy Filter
 
-## 📋 개요
+Jakarta EE 9+ 환경을 지원하는 Lucy XSS Filter의 Spring Boot 3.x 커스텀 스타터입니다. NHN의 Lucy XSS Filter를 Spring Boot 3.x와 호환되도록 포팅하고, Auto Configuration을 통해 손쉬운 통합을 제공합니다.
 
-**Spring Boot Starter Lucy Filter**는 NHN(구 NHN Corporation)에서 개발한 **Lucy XSS Filter**를 Spring Boot 3.x (Jakarta EE 9+) 환경에서 손쉽게 사용할 수 있도록 만든 **커스텀 Spring Boot Starter**입니다.
+## 학습 목표
 
-## 🎯 개발 배경 및 필요성
+- **커스텀 스타터 제작**: Spring Boot Auto Configuration 원리 이해
+- **Jakarta EE 마이그레이션**: javax.servlet에서 jakarta.servlet로의 포팅 과정
+- **XSS 방어 시스템**: 웹 애플리케이션 보안 강화 방법 학습
+- **필터 체인 통합**: Servlet Filter의 Spring Boot 통합 방법
 
-### 1. **Jakarta EE 전환 문제**
+## 배경 및 필요성
 
-Spring Boot 3.x와 Spring 6.x부터 **Jakarta EE 9+**로 전환되면서 패키지명이 변경되었습니다:
-
-```
-기존: javax.servlet.*
-변경: jakarta.servlet.*
-```
-
-### 2. **Lucy XSS Filter 호환성 문제**
-
-기존 Lucy XSS Filter는 **javax.servlet** 패키지를 사용하여 개발되었기 때문에:
-- Spring Boot 3.x 환경에서 직접 사용 불가
-- ClassNotFoundException 발생
-- 의존성 충돌 문제
-
-### 3. **보안 필요성**
-
-웹 애플리케이션에서 XSS(Cross-Site Scripting) 공격 방어는 필수적입니다:
-- 사용자 입력 데이터의 악성 스크립트 필터링
-- HTML 태그 및 속성 화이트리스트 기반 필터링
-- 안전한 콘텐츠만 허용하는 보안 체계
-
-### 4. **Spring Boot Starter의 장점**
-
-- **Auto Configuration**: 복잡한 설정 없이 자동 구성
-- **Configuration Properties**: application.yml을 통한 쉬운 설정
-- **조건부 빈 등록**: 필요할 때만 활성화
-- **Spring Boot 생태계 통합**: 기존 프로젝트에 쉽게 추가
-
-## 🛠️ 기술적 해결 방안
-
-### 1. **패키지 포팅 (Package Porting)**
-
-기존 Lucy XSS Filter의 핵심 로직을 **jakarta.servlet**로 포팅:
-
+### Jakarta EE 전환 문제
+Spring Boot 3.x부터 Jakarta EE 9+로 전환되면서 패키지명이 변경되었습니다:
 ```java
-// 기존 (javax.servlet)
+// 기존 (Spring Boot 2.x)
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletRequest;
 
-// 포팅 후 (jakarta.servlet)  
+// 변경 (Spring Boot 3.x)
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletRequest;
 ```
 
-### 2. **Spring Boot Auto Configuration 구현**
+기존 Lucy XSS Filter는 javax.servlet 패키지를 사용하여 Spring Boot 3.x 환경에서 직접 사용할 수 없는 문제가 발생했습니다.
 
+## 프로젝트 구조
+
+```
+src/main/java/com/genius/primavera/lucy/
+├── config/                                    # 자동 설정 클래스
+│   ├── LucyFilterAutoConfiguration.java       # 메인 자동 설정
+│   ├── LucyFilterApplicationConfiguration.java # 애플리케이션 설정
+│   └── LucyFilterApplicationConfigurationAdapter.java # 설정 어댑터
+├── properties/                                # 설정 프로퍼티
+│   └── LucyFilterDelegatingProperties.java    # 설정 바인딩 클래스
+├── servlet/                                  # 서블릿 필터
+│   └── XssEscapeServletFilter.java          # Jakarta EE 호환 XSS 필터
+├── defender/                                # 방어 구현체
+│   ├── XssPreventerDefender.java           # 기본 XSS 방어기
+│   └── XssSaxFilterDefender.java           # SAX 기반 방어기
+└── annotation/                              # 애너테이션
+    └── EnableLucyFilter.java                # 필터 활성화 애너테이션
+
+src/main/resources/
+├── META-INF/
+│   ├── spring.factories                     # Auto Configuration 등록
+│   └── spring.provides                      # 제공 기능 명시
+├── lucy-xss-default.xml                     # 기본 XSS 설정
+├── lucy-xss-default-sax.xml                 # SAX 필터 설정
+└── lucy-xss-servlet-filter-rule.xml         # 서블릿 필터 규칙
+```
+
+## 주요 기능
+
+### 1. Auto Configuration
 ```java
 @Configuration
 @ConditionalOnClass(XssEscapeServletFilter.class)
 @EnableConfigurationProperties(LucyFilterDelegatingProperties.class)
 @ConditionalOnProperty(prefix = "spring.lucy-filter", name = "enabled", 
                       havingValue = "true", matchIfMissing = true)
+@AutoConfigureAfter(DispatcherServletAutoConfiguration.class)
+@AutoConfigureBefore(SecurityAutoConfiguration.class)
 public class LucyFilterAutoConfiguration {
-    // 자동 설정 로직
+
+    @Bean
+    @ConditionalOnMissingBean
+    public XssEscapeServletFilter xssEscapeServletFilter() {
+        return new XssEscapeServletFilter();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public FilterRegistrationBean<XssEscapeServletFilter> lucyFilterRegistration(
+            XssEscapeServletFilter xssEscapeServletFilter,
+            LucyFilterDelegatingProperties properties) {
+        
+        FilterRegistrationBean<XssEscapeServletFilter> registration = 
+            new FilterRegistrationBean<>();
+        registration.setFilter(xssEscapeServletFilter);
+        registration.setName(properties.getName());
+        registration.setOrder(properties.getOrder());
+        registration.addUrlPatterns(properties.getAddUrlPatterns()
+            .toArray(new String[0]));
+        
+        return registration;
+    }
 }
 ```
 
-### 3. **FilterRegistrationBean 자동 등록**
-
+### 2. Configuration Properties
 ```java
-private FilterRegistrationBean<XssEscapeServletFilter> filterRegistrationBean() {
-    FilterRegistrationBean<XssEscapeServletFilter> filterRegistration = 
-        new FilterRegistrationBean<>();
-    filterRegistration.setFilter(xssEscapeServletFilter);
-    filterRegistration.setName(properties.getName());
-    filterRegistration.setOrder(properties.getOrder());
-    filterRegistration.addUrlPatterns(properties.getAddUrlPatterns());
-    return filterRegistration;
+@ConfigurationProperties(prefix = "spring.lucy-filter")
+@Data
+public class LucyFilterDelegatingProperties {
+    
+    /**
+     * Lucy XSS Filter 활성화 여부
+     */
+    private boolean enabled = true;
+    
+    /**
+     * 필터 이름
+     */
+    private String name = "lucyXssEscapeServletFilter";
+    
+    /**
+     * 필터 실행 순서 (낮을수록 먼저 실행)
+     */
+    private int order = Ordered.LOWEST_PRECEDENCE - 100;
+    
+    /**
+     * 필터가 적용될 URL 패턴 목록
+     */
+    private List<String> addUrlPatterns = Arrays.asList("/*");
+    
+    /**
+     * 필터에서 제외할 URL 패턴 목록
+     */
+    private List<String> excludePatterns = new ArrayList<>();
 }
 ```
 
-## 🚀 주요 기능
+### 3. Jakarta EE 호환 XSS 필터
+```java
+public class XssEscapeServletFilter implements Filter {
+    
+    private boolean isInitialized = false;
+    private XssFilterConfiguration configuration;
+    
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+        try {
+            this.configuration = XssFilterConfigurationProvider
+                .getConfiguration(filterConfig.getServletContext());
+            this.isInitialized = true;
+            
+            log.info("Lucy XSS Filter 초기화 완료 - 설정 파일: {}", 
+                    configuration.getConfigFile());
+                    
+        } catch (Exception e) {
+            log.error("Lucy XSS Filter 초기화 실패", e);
+            throw new ServletException("XSS Filter 초기화 실패", e);
+        }
+    }
+    
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, 
+                        FilterChain chain) throws IOException, ServletException {
+        
+        if (!isInitialized) {
+            chain.doFilter(request, response);
+            return;
+        }
+        
+        if (!(request instanceof HttpServletRequest httpRequest)) {
+            chain.doFilter(request, response);
+            return;
+        }
+        
+        String requestUri = httpRequest.getRequestURI();
+        XssFilterRule rule = configuration.getRule(requestUri);
+        
+        if (rule.isDisabled()) {
+            chain.doFilter(request, response);
+            return;
+        }
+        
+        // XSS 방어가 적용된 Request Wrapper 생성
+        HttpServletRequest wrappedRequest = new XssFilterRequestWrapper(
+            httpRequest, rule.getDefender());
+            
+        chain.doFilter(wrappedRequest, response);
+    }
+    
+    @Override
+    public void destroy() {
+        log.info("Lucy XSS Filter 종료");
+        this.isInitialized = false;
+        this.configuration = null;
+    }
+}
+```
 
-### 1. **XSS 공격 방어**
-- 악성 스크립트 태그 필터링
-- HTML 태그 화이트리스트 기반 허용
-- 속성값 검증 및 정화
+### 4. XSS 방어 Request Wrapper
+```java
+public class XssFilterRequestWrapper extends HttpServletRequestWrapper {
+    
+    private final XssDefender defender;
+    
+    public XssFilterRequestWrapper(HttpServletRequest request, XssDefender defender) {
+        super(request);
+        this.defender = defender;
+    }
+    
+    @Override
+    public String getParameter(String name) {
+        String value = super.getParameter(name);
+        return value != null ? defender.defend(value, getRequestURI()) : null;
+    }
+    
+    @Override
+    public String[] getParameterValues(String name) {
+        String[] values = super.getParameterValues(name);
+        if (values == null) return null;
+        
+        return Arrays.stream(values)
+            .map(value -> defender.defend(value, getRequestURI()))
+            .toArray(String[]::new);
+    }
+    
+    @Override
+    public Map<String, String[]> getParameterMap() {
+        Map<String, String[]> originalMap = super.getParameterMap();
+        Map<String, String[]> defendedMap = new HashMap<>();
+        
+        originalMap.forEach((key, values) -> {
+            String[] defendedValues = Arrays.stream(values)
+                .map(value -> defender.defend(value, getRequestURI()))
+                .toArray(String[]::new);
+            defendedMap.put(key, defendedValues);
+        });
+        
+        return defendedMap;
+    }
+    
+    @Override
+    public String getHeader(String name) {
+        String value = super.getHeader(name);
+        // 특정 헤더에 대해서만 XSS 방어 적용
+        if (DEFENSIVE_HEADERS.contains(name.toLowerCase())) {
+            return value != null ? defender.defend(value, getRequestURI()) : null;
+        }
+        return value;
+    }
+    
+    private static final Set<String> DEFENSIVE_HEADERS = Set.of(
+        "user-agent", "referer", "x-requested-with"
+    );
+}
+```
 
-### 2. **유연한 설정**
-- XML 기반 세밀한 필터링 규칙 설정
-- 허용할 HTML 태그 및 속성 커스터마이징
-- URL 패턴별 필터 적용/제외
+### 5. @EnableLucyFilter 애너테이션
+```java
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Import(LucyFilterApplicationConfiguration.class)
+public @interface EnableLucyFilter {
+    
+    /**
+     * 필터 활성화 여부
+     */
+    boolean enabled() default true;
+    
+    /**
+     * 필터 실행 순서
+     */
+    int order() default Ordered.LOWEST_PRECEDENCE - 100;
+    
+    /**
+     * 적용할 URL 패턴
+     */
+    String[] urlPatterns() default {"/*"};
+}
+```
 
-### 3. **Spring Boot 통합**
-- Auto Configuration을 통한 자동 설정
-- @EnableLucyFilter 어노테이션 지원
-- Configuration Properties 바인딩
+## 기술 스택
 
-## 📦 사용법
+| 기술 | 버전 | 용도 |
+|------|------|------|
+| **Spring Boot** | 3.3.6 | 기본 프레임워크 |
+| **Jakarta Servlet API** | 6.0+ | 서블릿 API |
+| **Lucy XSS Filter Core** | Custom Port | XSS 방어 핵심 로직 |
+| **Spring Boot Auto Configuration** | 3.3.6 | 자동 설정 기능 |
 
-### 1. **의존성 추가**
+## 사용 방법
+
+### 1. 의존성 추가
 
 #### Gradle
 ```gradle
 dependencies {
-    implementation project(":appendix:spring-boot-starter-lucy-filter")
+    implementation project(':appendix:spring-boot-starter-lucy-filter')
 }
 ```
 
-#### Maven  
+#### Maven
 ```xml
 <dependency>
     <groupId>com.genius.primavera</groupId>
@@ -118,42 +298,55 @@ dependencies {
 </dependency>
 ```
 
-### 2. **애플리케이션 설정**
+### 2. 애플리케이션 설정
 
-#### 방법 1: @EnableLucyFilter 어노테이션 사용
-
+#### 방법 1: 자동 활성화 (기본)
 ```java
 @SpringBootApplication
-@EnableLucyFilter  // Lucy XSS Filter 활성화
-public class PrimaveraApplication {
+public class Application {
     public static void main(String[] args) {
-        SpringApplication.run(PrimaveraApplication.class, args);
+        SpringApplication.run(Application.class, args);
+        // Lucy Filter가 자동으로 활성화됩니다
     }
 }
 ```
 
-#### 방법 2: Auto Configuration (자동 설정)
+#### 방법 2: @EnableLucyFilter 애너테이션 사용
+```java
+@SpringBootApplication
+@EnableLucyFilter(
+    enabled = true,
+    order = 1,
+    urlPatterns = {"/*", "/api/*"}
+)
+public class Application {
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
+}
+```
 
-별도 설정 없이 **자동으로 활성화**됩니다. (기본값: enabled = true)
+### 3. 설정 파일
 
-### 3. **Configuration Properties 설정**
-
-#### application.yml 설정
-
+#### application.yml
 ```yaml
 spring:
   lucy-filter:
-    enabled: true                    # Lucy Filter 활성화 (기본값: true)
-    name: "lucyXssEscapeServletFilter"  # 필터 이름
-    order: 1                        # 필터 실행 순서 (낮을수록 먼저 실행)
-    add-url-patterns:               # 필터 적용 URL 패턴
-      - "/*"                        # 모든 URL에 적용
-      - "/api/*"                    # API 경로에 적용
-      - "/admin/*"                  # 관리자 경로에 적용
+    enabled: true
+    name: "lucyXssEscapeServletFilter"
+    order: 1
+    add-url-patterns:
+      - "/*"
+      - "/api/*"
+      - "/admin/*"
+    exclude-patterns:
+      - "/static/**"
+      - "/css/**"
+      - "/js/**"
+      - "/images/**"
 ```
 
-#### application.properties 설정
-
+#### application.properties
 ```properties
 # Lucy Filter 기본 설정
 spring.lucy-filter.enabled=true
@@ -164,303 +357,265 @@ spring.lucy-filter.order=1
 spring.lucy-filter.add-url-patterns[0]=/*
 spring.lucy-filter.add-url-patterns[1]=/api/*
 spring.lucy-filter.add-url-patterns[2]=/admin/*
+
+# 제외 패턴 설정
+spring.lucy-filter.exclude-patterns[0]=/static/**
+spring.lucy-filter.exclude-patterns[1]=/webjars/**
 ```
 
-### 4. **고급 설정 - lucy-xss-servlet-filter-rule.xml**
-
-세밀한 XSS 필터링 규칙을 설정하려면 `lucy-xss-servlet-filter-rule.xml` 파일을 생성:
+### 4. 고급 설정: lucy-xss-servlet-filter-rule.xml
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <config xmlns="http://www.navercorp.com/lucy-xss-servlet">
     <defenders>
-        <!-- XssPreventer 사용 (기본) -->
+        <!-- 기본 XSS 방어기 -->
         <defender>
             <name>xssPreventerDefender</name>
-            <class>com.navercorp.lucy.security.xss.servletfilter.defender.XssPreventerDefender</class>
+            <class>com.genius.primavera.lucy.defender.XssPreventerDefender</class>
         </defender>
         
-        <!-- XssSaxFilter 사용 (고급) -->
+        <!-- SAX 기반 방어기 -->
         <defender>
             <name>xssSaxFilterDefender</name>
-            <class>com.navercorp.lucy.security.xss.servletfilter.defender.XssSaxFilterDefender</class>
+            <class>com.genius.primavera.lucy.defender.XssSaxFilterDefender</class>
             <init-param>
                 <param-value>lucy-xss-default-sax.xml</param-value>
             </init-param>
         </defender>
     </defenders>
 
-    <!-- URL별 필터 규칙 -->
+    <!-- 기본 방어 정책 -->
     <default>
         <defender>xssPreventerDefender</defender>
     </default>
     
-    <!-- 특정 URL 패턴에 대한 세부 설정 -->
+    <!-- URL별 세부 규칙 -->
     <url-rule-set>
-        
-        <!-- 관리자 페이지 - 엄격한 필터링 -->
+        <!-- API 엔드포인트 - 엄격한 필터링 -->
         <url-rule>
-            <url disable="false">/admin/*</url>
+            <url disable="false">/api/**</url>
             <defender>xssSaxFilterDefender</defender>
         </url-rule>
         
-        <!-- API 엔드포인트 - 기본 필터링 -->
+        <!-- 관리자 영역 - 매우 엄격한 필터링 -->
         <url-rule>
-            <url disable="false">/api/*</url>
-            <defender>xssPreventerDefender</defender>
+            <url disable="false">/admin/**</url>
+            <defender>xssSaxFilterDefender</defender>
         </url-rule>
         
         <!-- 정적 리소스 - 필터링 제외 -->
         <url-rule>
-            <url disable="true">/static/*</url>
+            <url disable="true">/static/**</url>
         </url-rule>
         
         <url-rule>
-            <url disable="true">/css/*</url>
+            <url disable="true">/css/**</url>
         </url-rule>
         
         <url-rule>
-            <url disable="true">/js/*</url>
+            <url disable="true">/js/**</url>
         </url-rule>
         
+        <!-- Actuator 엔드포인트 - 필터링 제외 -->
         <url-rule>
-            <url disable="true">/images/*</url>
+            <url disable="true">/actuator/**</url>
         </url-rule>
-        
     </url-rule-set>
 </config>
 ```
 
-## 🔧 실제 적용 예시
+## 실제 사용 예시
 
-### 1. **컨트롤러에서 XSS 필터링 확인**
-
+### 1. 컨트롤러에서 자동 필터링 확인
 ```java
 @RestController
 @RequestMapping("/api/test")
 public class XssTestController {
     
     @PostMapping("/echo")
-    public ResponseEntity<Map<String, String>> echo(@RequestBody Map<String, String> request) {
-        String userInput = request.get("content");
+    public ResponseEntity<Map<String, String>> echo(
+            @RequestBody Map<String, String> request) {
         
         // Lucy Filter가 자동으로 XSS 공격 코드를 필터링함
-        // 예: <script>alert('xss')</script> → &lt;script&gt;alert('xss')&lt;/script&gt;
+        String userInput = request.get("content");
         
         Map<String, String> response = new HashMap<>();
-        response.put("original", userInput);
-        response.put("filtered", userInput); // 이미 필터링된 상태
+        response.put("original_received", userInput);
+        response.put("processed", userInput); // 이미 필터링된 상태
         
         return ResponseEntity.ok(response);
     }
-}
-```
-
-### 2. **테스트 예시**
-
-```bash
-# XSS 공격 코드 포함된 요청
-curl -X POST http://localhost:8080/api/test/echo \
-  -H "Content-Type: application/json" \
-  -d '{"content": "<script>alert(\"XSS Attack\")</script>Hello World"}'
-
-# 응답 (자동으로 필터링됨)
-{
-  "original": "&lt;script&gt;alert(&quot;XSS Attack&quot;)&lt;/script&gt;Hello World",
-  "filtered": "&lt;script&gt;alert(&quot;XSS Attack&quot;)&lt;/script&gt;Hello World"
-}
-```
-
-### 3. **로그 확인**
-
-```
-2024-01-20 10:30:15.123 INFO  --- LucyFilterConfiguration
-2024-01-20 10:30:15.125 INFO  --- LucyFilterApplicationConfiguration  
-2024-01-20 10:30:15.127 INFO  --- LucyFilterApplicationConfigurationAdapter
-2024-01-20 10:30:15.129 INFO  --- FilterRegistrationBean : {...}
-```
-
-## 🛡️ 보안 효과
-
-### 1. **XSS 공격 차단**
-
-| 입력 | 필터링 후 출력 |
-|------|---------------|
-| `<script>alert('xss')</script>` | `&lt;script&gt;alert('xss')&lt;/script&gt;` |
-| `<img src="x" onerror="alert(1)">` | `<img src="x">` |
-| `javascript:alert(1)` | `alert(1)` |
-| `<iframe src="malicious.com">` | `(제거됨)` |
-
-### 2. **허용되는 안전한 태그**
-
-```html
-<!-- 허용되는 기본 HTML 태그들 -->
-<p>안전한 문단</p>
-<div>안전한 영역</div>
-<b>굵은 글씨</b>
-<i>기울임 글씨</i>
-<ul><li>목록</li></ul>
-<a href="https://safe-site.com">안전한 링크</a>
-```
-
-## 📊 성능 고려사항
-
-### 1. **필터 실행 순서**
-
-```yaml
-spring:
-  lucy-filter:
-    order: 1  # 다른 보안 필터보다 먼저 실행되도록 설정
-```
-
-### 2. **제외 URL 패턴 최적화**
-
-```xml
-<!-- 성능 최적화를 위해 정적 리소스는 필터링 제외 -->
-<url-rule>
-    <url disable="true">/static/*</url>
-</url-rule>
-<url-rule>
-    <url disable="true">/webjars/*</url>
-</url-rule>
-<url-rule>
-    <url disable="true">/actuator/*</url>
-</url-rule>
-```
-
-## 🧪 테스트 가이드
-
-### 1. **단위 테스트**
-
-```java
-@SpringBootTest
-@AutoConfigureTestDatabase
-class LucyFilterAutoConfigurationTest {
     
-    @Autowired
-    private XssEscapeServletFilter xssEscapeServletFilter;
-    
-    @Test
-    @DisplayName("Lucy Filter가 정상적으로 Bean으로 등록되는지 확인")
-    void shouldCreateLucyFilterBean() {
-        assertThat(xssEscapeServletFilter).isNotNull();
+    @GetMapping("/param")
+    public ResponseEntity<String> testParam(@RequestParam String data) {
+        // 쿼리 파라미터도 자동으로 필터링됨
+        return ResponseEntity.ok("받은 데이터: " + data);
     }
 }
 ```
 
-### 2. **통합 테스트**
+### 2. XSS 공격 테스트
+```bash
+# 악성 스크립트가 포함된 요청
+curl -X POST http://localhost:8080/api/test/echo \
+  -H "Content-Type: application/json" \
+  -d '{
+    "content": "<script>alert(\"XSS Attack!\")</script>Hello World"
+  }'
 
+# 응답 (자동으로 필터링됨)
+{
+  "original_received": "&lt;script&gt;alert(&quot;XSS Attack!&quot;)&lt;/script&gt;Hello World",
+  "processed": "&lt;script&gt;alert(&quot;XSS Attack!&quot;)&lt;/script&gt;Hello World"
+}
+
+# 쿼리 파라미터 XSS 테스트
+curl "http://localhost:8080/api/test/param?data=<img src=x onerror=alert(1)>"
+
+# 응답
+받은 데이터: &lt;img src=x&gt;
+```
+
+## 핵심 학습 포인트
+
+### 1. Spring Boot Auto Configuration 패턴
+- **@ConditionalOnClass**: 클래스 존재 여부에 따른 조건부 설정
+- **@ConditionalOnProperty**: 프로퍼티 값에 따른 조건부 활성화
+- **@EnableConfigurationProperties**: 타입 안전한 설정 바인딩
+- **spring.factories**: Auto Configuration 클래스 등록 메커니즘
+
+### 2. Jakarta EE 마이그레이션 전략
+- **패키지 포팅**: javax.servlet → jakarta.servlet 변환
+- **API 호환성**: 기존 API 시그니처 유지하면서 내부 구현 변경
+- **설정 호환성**: 기존 XML 설정 파일 포맷 유지
+- **기능 호환성**: 기존 기능과 동일한 XSS 방어 효과
+
+### 3. Servlet Filter 통합 패턴
+- **FilterRegistrationBean**: Spring Boot에서 Filter 등록 방법
+- **Filter 순서 관리**: @Order를 통한 Filter Chain 순서 제어
+- **URL 패턴 매핑**: 특정 경로에만 Filter 적용하는 방법
+- **예외 처리**: Filter에서 발생하는 예외의 적절한 처리
+
+### 4. XSS 방어 메커니즘
+- **입력 필터링**: 사용자 입력에서 악성 스크립트 제거
+- **화이트리스트 방식**: 허용된 태그와 속성만 통과
+- **컨텍스트 인식**: URL 경로별 다른 방어 정책 적용
+- **성능 최적화**: 불필요한 처리를 피하는 효율적 필터링
+
+## 테스트
+
+### 단위 테스트
+```java
+@SpringBootTest
+@TestPropertySource(properties = {
+    "spring.lucy-filter.enabled=true",
+    "spring.lucy-filter.add-url-patterns[0]=/*"
+})
+class LucyFilterAutoConfigurationTest {
+    
+    @Autowired
+    private XssEscapeServletFilter xssFilter;
+    
+    @Test
+    void shouldCreateLucyFilterBean() {
+        assertThat(xssFilter).isNotNull();
+    }
+    
+    @Test
+    void shouldFilterXssAttack() {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setRequestURI("/test");
+        request.addParameter("data", "<script>alert('xss')</script>");
+        
+        XssFilterRequestWrapper wrapper = new XssFilterRequestWrapper(
+            request, new XssPreventerDefender());
+        
+        String filteredValue = wrapper.getParameter("data");
+        assertThat(filteredValue).doesNotContain("<script>");
+        assertThat(filteredValue).contains("&lt;script&gt;");
+    }
+}
+```
+
+### 통합 테스트
 ```java
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-class XssFilterIntegrationTest {
+class LucyFilterIntegrationTest {
     
     @Autowired
     private MockMvc mockMvc;
     
     @Test
-    @DisplayName("XSS 공격 코드가 필터링되는지 확인")
-    void shouldFilterXssAttack() throws Exception {
-        String xssPayload = "<script>alert('xss')</script>";
+    void shouldFilterXssInPostRequest() throws Exception {
+        String xssPayload = "{\"content\": \"<script>alert('xss')</script>\"}";
         
         mockMvc.perform(post("/api/test/echo")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"content\":\"" + xssPayload + "\"}"))
+                .content(xssPayload))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.filtered").value(not(containsString("<script>"))));
+                .andExpect(jsonPath("$.processed")
+                    .value(not(containsString("<script>"))));
+    }
+    
+    @Test
+    void shouldFilterXssInQueryParam() throws Exception {
+        mockMvc.perform(get("/api/test/param")
+                .param("data", "<img src=x onerror=alert(1)>"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(not(containsString("<img"))));
     }
 }
 ```
 
-## 📚 참고 자료
+## 성능 고려사항
 
-### 1. **Lucy XSS Filter 공식 문서**
-- [GitHub - Lucy XSS Filter](https://github.com/naver/lucy-xss-filter)
-- [Lucy XSS Filter 설정 가이드](https://github.com/naver/lucy-xss-filter/wiki)
-
-### 2. **Spring Boot Auto Configuration**
-- [Spring Boot Auto Configuration](https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.developing-auto-configuration)
-- [Creating Your Own Starter](https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.developing-auto-configuration.custom-starter)
-
-### 3. **웹 보안 참고자료**
-- [OWASP XSS Prevention Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html)
-- [Jakarta EE Migration Guide](https://eclipse-ee4j.github.io/jakartaee-platform/jakartaee9/JakartaEEMigrationGuide)
-
-## 🔄 업그레이드 가이드
-
-### 기존 Lucy Filter에서 마이그레이션
-
-#### 1. **기존 설정 제거**
-
-```xml
-<!-- 기존 web.xml 설정 제거 -->
-<filter>
-    <filter-name>XSSFilter</filter-name>
-    <filter-class>com.navercorp.lucy.security.xss.servletfilter.XssEscapeServletFilter</filter-class>
-</filter>
-```
-
-#### 2. **새로운 Starter 적용**
-
-```gradle
-// 기존 의존성 제거
-// implementation 'com.navercorp.lucy:lucy-xss-servlet:2.0.1'
-
-// 새로운 starter 추가
-implementation project(":appendix:spring-boot-starter-lucy-filter")
-```
-
-#### 3. **설정 파일 업데이트**
-
+### 1. 필터 순서 최적화
 ```yaml
-# 기존 설정을 Spring Boot Properties로 변환
+spring:
+  lucy-filter:
+    order: 1  # 다른 보안 필터보다 먼저 실행
+```
+
+### 2. 제외 패턴 설정
+```yaml
+spring:
+  lucy-filter:
+    exclude-patterns:
+      - "/static/**"    # 정적 리소스 제외
+      - "/actuator/**"  # 모니터링 엔드포인트 제외
+      - "/api/health"   # 헬스체크 제외
+```
+
+### 3. 방어기 선택
+- **XssPreventerDefender**: 빠른 성능, 기본적인 XSS 방어
+- **XssSaxFilterDefender**: 정교한 필터링, 약간의 성능 오버헤드
+
+## 활용 방법
+
+### 1. 개발 환경에서 테스트
+```yaml
+# application-dev.yml
 spring:
   lucy-filter:
     enabled: true
-    name: "lucyXssEscapeServletFilter"
+logging:
+  level:
+    com.genius.primavera.lucy: DEBUG  # 필터 동작 로그 확인
+```
+
+### 2. 운영 환경 최적화
+```yaml
+# application-prod.yml
+spring:
+  lucy-filter:
+    enabled: true
     order: 1
-    add-url-patterns: ["/*"]
+    exclude-patterns:
+      - "/static/**"
+      - "/webjars/**"
+      - "/favicon.ico"
 ```
 
-## 🚀 확장 기능
-
-### 1. **커스텀 Defender 구현**
-
-```java
-@Component
-public class CustomXssDefender implements Defender {
-    
-    @Override
-    public String defend(String dirty, String uri) {
-        // 커스텀 XSS 필터링 로직 구현
-        return customClean(dirty);
-    }
-    
-    private String customClean(String input) {
-        // 비즈니스 요구사항에 맞는 필터링 로직
-        return input.replaceAll("<script[^>]*>.*?</script>", "");
-    }
-}
-```
-
-### 2. **동적 설정 변경**
-
-```java
-@RestController
-@RequestMapping("/admin/security")
-public class SecurityConfigController {
-    
-    @Autowired
-    private LucyFilterDelegatingProperties properties;
-    
-    @PostMapping("/lucy-filter/toggle")
-    public ResponseEntity<String> toggleLucyFilter(@RequestParam boolean enabled) {
-        // 런타임에 Lucy Filter 설정 변경 (재시작 필요)
-        return ResponseEntity.ok("Lucy Filter enabled: " + enabled);
-    }
-}
-```
-
----
-
-**🎓 핵심 포인트**: 이 커스텀 Spring Boot Starter는 Jakarta EE 전환 문제를 해결하면서도 Lucy XSS Filter의 강력한 보안 기능을 그대로 제공합니다. Auto Configuration을 통해 복잡한 설정 없이 XSS 공격을 효과적으로 방어할 수 있습니다.
+이 커스텀 스타터는 Jakarta EE 전환 문제를 해결하면서도 강력한 XSS 방어 기능을 제공하며, Spring Boot 3.x 환경에서 Lucy XSS Filter를 손쉽게 사용할 수 있게 해줍니다.

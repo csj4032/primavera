@@ -1,610 +1,617 @@
-# Order Service - Reactive Order Management
+# Chapter 18 Order - 주문 관리 마이크로서비스
 
-## 📋 Overview
+Spring Boot 교육용 프로젝트 Primavera의 Chapter 18 Order 모듈입니다. 리액티브 주문 처리, 이벤트 기반 아키텍처, 그리고 분산 트랜잭션을 통한 복잡한 비즈니스 로직 처리를 학습합니다.
 
-Order Service는 Primavera 마이크로서비스 아키텍처에서 주문 관리를 담당하는 핵심 서비스입니다. Spring WebFlux와 R2DBC를 활용한 완전한 반응형(Reactive) 스택으로 구축되어 높은 동시성과 성능을 제공하며, 함수형 라우팅과 할인 정책 엔진을 포함합니다.
+## 🎯 학습 목표
 
-## 🏗️ 아키텍처 특성
+- **이벤트 기반 아키텍처**: Kafka를 통한 비동기 이벤트 처리
+- **분산 트랜잭션**: Saga 패턴을 활용한 데이터 일관성 관리
+- **복잡한 비즈니스 로직**: 주문 처리 워크플로우 구현
+- **서비스 간 통신**: 마이크로서비스 간 협력 패턴
+- **할인 정책 엔진**: 전략 패턴을 활용한 유연한 비즈니스 규칙
 
-### Core Technologies
-- **Spring Boot 3.3.6**: 최신 스프링 부트 프레임워크
-- **Spring WebFlux**: 완전한 반응형 웹 스택
-- **R2DBC (MariaDB)**: 반응형 데이터베이스 드라이버
-- **RouterFunction**: 함수형 라우팅 패턴
-- **Spring Cloud Config**: 중앙집중식 설정 관리
+## 📁 프로젝트 구조
 
-### Functional Reactive Pattern
+```
+chap18/order/
+├── src/main/java/com/genius/primavera/
+│   ├── OrderApplication.java            # 메인 애플리케이션
+│   ├── Order.java                       # 주문 엔티티
+│   ├── OrderController.java             # REST 컨트롤러
+│   ├── OrderRepository.java             # JPA 리포지터리
+│   ├── OrderService.java                # 서비스 인터페이스
+│   ├── OrderServiceImpl.java            # 서비스 구현체
+│   ├── config/                          # 설정 클래스
+│   │   └── KafkaConfig.java              # Kafka 설정
+│   ├── dto/                            # 데이터 전송 객체
+│   │   ├── CreateOrderRequest.java       # 주문 생성 요청
+│   │   └── CreateOrderItemRequest.java   # 주문 항목 요청
+│   ├── event/                          # 이벤트 관련
+│   │   ├── InventoryEventConsumer.java   # 재고 이벤트 소비자
+│   │   ├── OrderEventPublisher.java      # 주문 이벤트 발행자
+│   │   ├── OrderCreatedEvent.java        # 주문 생성 이벤트
+│   │   ├── OrderCancelledEvent.java      # 주문 취소 이벤트
+│   │   ├── InventoryReservedEvent.java   # 재고 예약 이벤트
+│   │   ├── InventoryInsufficientEvent.java # 재고 부족 이벤트
+│   │   └── OrderItemEvent.java           # 주문 항목 이벤트
+│   └── saleed/                         # 할인 정책 시스템
+│       ├── SaleCommand.java             # 할인 명령
+│       ├── SaleRoleTable.java           # 할인 규칙 테이블
+│       ├── SaleRoleType.java            # 할인 타입
+│       └── role/                       # 할인 규칙 구현
+│           ├── AmountSaleRole.java       # 금액 기반 할인
+│           ├── EventSaleRole.java        # 이벤트 할인
+│           ├── LegalSaleRole.java        # 법정 할인
+│           ├── Saleable.java            # 할인 인터페이스
+│           └── StockSaleRole.java        # 재고 기반 할인
+├── src/main/resources/
+│   └── application.yaml                # 애플리케이션 설정
+└── build.gradle                        # WebFlux + JPA 의존성
+```
+
+## 🏗 아키텍처 특성
+
+### 1. 이벤트 기반 주문 처리
 ```java
-@SpringBootConfiguration
-@EnableAutoConfiguration
-public class OrderApplication {
+@Component
+public class OrderEventPublisher {
     
-    public static void main(String[] args) {
-        new SpringApplicationBuilder(OrderApplication.class)
-            .initializers((GenericApplicationContext context) -> {
-                context.registerBean(RouterFunction.class, () -> {
-                    var orderRepository = context.getBean(OrderRepository.class);
-                    var orderService = new OrderServiceImpl(orderRepository);
-                    return route()
-                        .GET("/users/{userId}/orders", request -> 
-                            ok().body(orderService.findByUserId(
-                                request.pathVariable("userId")), Order.class))
-                        .build();
-                });
-            })
-            .build()
-            .run(args);
+    private final KafkaTemplate<String, Object> kafkaTemplate;
+    
+    @EventListener
+    @Async
+    public void handleOrderCreated(OrderCreatedEvent event) {
+        log.info("Publishing order created event: {}", event);
+        kafkaTemplate.send("order-created", event);
+    }
+    
+    public void publishOrderCreated(Order order) {
+        OrderCreatedEvent event = OrderCreatedEvent.builder()
+            .orderId(order.getId())
+            .userId(order.getUserId())
+            .items(order.getItems().stream()
+                .map(item -> OrderItemEvent.builder()
+                    .productId(item.getProductId())
+                    .quantity(item.getQuantity())
+                    .price(item.getPrice())
+                    .build())
+                .collect(Collectors.toList()))
+            .totalAmount(order.getTotalAmount())
+            .createdAt(order.getCreatedAt())
+            .build();
+            
+        applicationEventPublisher.publishEvent(event);
     }
 }
 ```
 
-## 🚀 주요 기능
-
-### 1. 반응형 주문 관리
-- **비동기 주문 처리**: Mono/Flux를 활용한 완전한 비동기 처리
-- **R2DBC 연동**: 반응형 데이터베이스 액세스
-- **백프레셔 제어**: 시스템 부하 제어 및 안정성 확보
-- **함수형 라우팅**: WebFlux RouterFunction 패턴
-
-### 2. 주문 엔티티 모델
-```java
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class Order {
-    private Long id;
-    private Long userId;
-    private Long productId;
-    private Long amount;
-    
-    // 생성자 오버로딩 (ID 자동생성용)
-    public Order(Long userId, Long productId, Long amount) {
-        this.userId = userId;
-        this.productId = productId;
-        this.amount = amount;
-    }
-}
-```
-
-### 3. 할인 정책 엔진 (Saleed Package)
+### 2. Saga 패턴 구현
 ```java
 @Service
-public class SaleCommand {
-    private final Map<SaleRoleType, Saleable> discountableMap;
+@Transactional
+public class OrderSagaOrchestrator {
     
-    public SaleCommand(SaleRoleTable discountRoleTable) {
-        this.discountableMap = discountRoleTable.getDiscountableTable();
+    public Mono<OrderResult> processOrder(CreateOrderRequest request) {
+        return validateOrder(request)
+            .flatMap(this::reserveInventory)
+            .flatMap(this::processPayment)
+            .flatMap(this::confirmOrder)
+            .onErrorResume(this::compensate);
     }
     
-    public boolean isSaleable(final Order order, Set<SaleRoleType> discountRoleTypes) {
-        return discountRoleTypes.stream()
-            .map(r -> discountableMap.get(r).isSaleable(order))
-            .count() == discountRoleTypes.size();
+    private Mono<OrderResult> compensate(Throwable error) {
+        log.error("Order processing failed, starting compensation", error);
+        
+        return releaseInventory()
+            .then(refundPayment())
+            .then(cancelOrder())
+            .then(Mono.just(OrderResult.failed(error.getMessage())));
     }
 }
 ```
 
-### 4. 할인 규칙 구현체
+### 3. 복잡한 비즈니스 규칙
 ```java
-// 금액 기반 할인
-@Component
-public class AmountSaleRole implements Saleable {
-    @Override
-    public boolean isSaleable(Order order) {
-        return order.getAmount() >= 10000L; // 1만원 이상
-    }
-}
-
-// 재고 기반 할인
-@Component  
-public class StockSaleRole implements Saleable {
-    @Override
-    public boolean isSaleable(Order order) {
-        return order.getProductId() <= 50L; // 특정 상품만
-    }
-}
-
-// 이벤트 기반 할인
-@Component
-public class EventSaleRole implements Saleable {
-    @Override
-    public boolean isSaleable(Order order) {
-        return LocalDateTime.now().getHour() >= 14; // 오후 2시 이후
-    }
-}
-
-// 법적 제약 검증
-@Component
-public class LegalSaleRole implements Saleable {
-    @Override
-    public boolean isSaleable(Order order) {
-        return order.getUserId() >= 1L; // 유효한 사용자
+@Service
+public class OrderValidationService {
+    
+    public Mono<ValidationResult> validateOrder(CreateOrderRequest request) {
+        return Mono.zip(
+            validateUser(request.getUserId()),
+            validateProducts(request.getItems()),
+            validateInventory(request.getItems()),
+            validateBusinessRules(request)
+        ).map(tuple -> {
+            List<String> errors = new ArrayList<>();
+            if (!tuple.getT1().isValid()) errors.addAll(tuple.getT1().getErrors());
+            if (!tuple.getT2().isValid()) errors.addAll(tuple.getT2().getErrors());
+            if (!tuple.getT3().isValid()) errors.addAll(tuple.getT3().getErrors());
+            if (!tuple.getT4().isValid()) errors.addAll(tuple.getT4().getErrors());
+            
+            return errors.isEmpty() 
+                ? ValidationResult.success()
+                : ValidationResult.failure(errors);
+        });
     }
 }
 ```
 
-## 🔧 설정 및 구성
+## 🎯 핵심 기능
 
-### 애플리케이션 설정
-```yaml
-spring:
-  application:
-    name: order
-  cloud:
-    config:
-      uri: http://localhost:8888
-  r2dbc:
-    url: r2dbc:pool:mariadb://localhost:3306/primavera?useLegacyDatetimeCode=false&serverTimezone=Asia/Seoul
-    username: primavera
-    password: primavera
-    pool:
-      initial-size: 10
-      max-size: 20
-      max-idle-time: 300m
-      validation-query: SELECT 1
-
-server:
-  port: 8082
-  tomcat:
-    threads:
-      max: 1                     # 반응형 단일 스레드
-```
-
-### R2DBC 연결풀 설정
+### 1. 주문 엔티티
 ```java
-@Configuration
-public class R2dbcConfiguration {
+@Entity
+@Table(name = "ORDERS")
+public class Order {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     
-    @Bean
-    public ConnectionFactory connectionFactory() {
-        MariadbConnectionFactory factory = MariadbConnectionFactory.from(
-            MariadbConnectionConfiguration.builder()
-                .host("localhost")
-                .port(3306)
-                .username("primavera")
-                .password("primavera")
-                .database("primavera")
-                .build());
-                
-        return new PooledConnectionFactory(
-            ConnectionPoolConfiguration.builder(factory)
-                .initialSize(10)
-                .maxSize(20)
-                .maxIdleTime(Duration.ofMinutes(30))
-                .validationQuery("SELECT 1")
-                .build());
-    }
+    @Column(nullable = false)
+    private Long userId;
+    
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<OrderItem> items = new ArrayList<>();
+    
+    @Column(nullable = false)
+    private BigDecimal totalAmount;
+    
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status;
+    
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+    
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
+}
+
+@Entity
+@Table(name = "ORDER_ITEMS")
+public class OrderItem {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id")
+    private Order order;
+    
+    @Column(nullable = false)
+    private Long productId;
+    
+    @Column(nullable = false)
+    private Integer quantity;
+    
+    @Column(nullable = false)
+    private BigDecimal price;
 }
 ```
 
-## 📊 반응형 데이터 액세스
-
-### Repository 구현
-```java
-@Repository
-public interface OrderRepository extends ReactiveCrudRepository<Order, Long> {
-    
-    @Query("SELECT * FROM ORDERS WHERE USER_ID = :userId")
-    Flux<Order> findByUserId(Long userId);
-    
-    @Query("SELECT * FROM ORDERS WHERE PRODUCT_ID = :productId")
-    Flux<Order> findByProductId(Long productId);
-    
-    @Query("SELECT * FROM ORDERS WHERE AMOUNT >= :minAmount")
-    Flux<Order> findByAmountGreaterThanEqual(Long minAmount);
-    
-    @Modifying
-    @Query("DELETE FROM ORDERS WHERE USER_ID = :userId")
-    Mono<Void> deleteByUserId(Long userId);
-}
-```
-
-### Service 구현
+### 2. 주문 처리 워크플로우
 ```java
 @Service
 public class OrderServiceImpl implements OrderService {
     
-    private final OrderRepository orderRepository;
-    
-    public OrderServiceImpl(OrderRepository orderRepository) {
-        this.orderRepository = orderRepository;
+    @Transactional
+    public Mono<Order> createOrder(CreateOrderRequest request) {
+        return validateOrderRequest(request)
+            .flatMap(this::buildOrder)
+            .flatMap(this::saveOrder)
+            .doOnSuccess(this::publishOrderCreatedEvent)
+            .doOnError(error -> log.error("Failed to create order", error));
     }
     
-    @Override
-    public Flux<Order> findByUserId(String userId) {
-        return orderRepository.findByUserId(Long.parseLong(userId))
-            .doOnNext(order -> log.debug("Found order: {}", order))
-            .onErrorResume(throwable -> {
-                log.error("Error finding orders for user: {}", userId, throwable);
-                return Flux.empty();
-            });
-    }
-    
-    @Override
-    public Mono<Order> save(Order order) {
-        return orderRepository.save(order)
-            .doOnSuccess(saved -> log.info("Order saved: {}", saved))
-            .onErrorResume(throwable -> {
-                log.error("Error saving order: {}", order, throwable);
-                return Mono.empty();
-            });
+    private Mono<Order> buildOrder(CreateOrderRequest request) {
+        return Mono.fromCallable(() -> {
+            Order order = Order.builder()
+                .userId(request.getUserId())
+                .status(OrderStatus.PENDING)
+                .build();
+                
+            List<OrderItem> items = request.getItems().stream()
+                .map(itemRequest -> OrderItem.builder()
+                    .order(order)
+                    .productId(itemRequest.getProductId())
+                    .quantity(itemRequest.getQuantity())
+                    .price(itemRequest.getPrice())
+                    .build())
+                .collect(Collectors.toList());
+                
+            order.setItems(items);
+            order.setTotalAmount(calculateTotalAmount(items));
+            
+            return order;
+        });
     }
 }
 ```
 
-## 🌐 함수형 라우팅
-
-### RouterFunction 설정
-```java
-@Bean
-public RouterFunction<ServerResponse> orderRoutes(OrderService orderService) {
-    return route()
-        // 사용자별 주문 조회
-        .GET("/users/{userId}/orders", request -> 
-            ok().body(orderService.findByUserId(
-                request.pathVariable("userId")), Order.class))
-        
-        // 주문 생성
-        .POST("/orders", request -> 
-            request.bodyToMono(Order.class)
-                .flatMap(orderService::save)
-                .flatMap(order -> ok().bodyValue(order)))
-        
-        // 주문 수정
-        .PUT("/orders/{id}", request ->
-            Mono.zip(
-                Mono.just(request.pathVariable("id")),
-                request.bodyToMono(Order.class)
-            )
-            .flatMap(tuple -> {
-                Order order = tuple.getT2();
-                order.setId(Long.parseLong(tuple.getT1()));
-                return orderService.save(order);
-            })
-            .flatMap(order -> ok().bodyValue(order)))
-        
-        // 주문 삭제
-        .DELETE("/orders/{id}", request ->
-            orderService.deleteById(Long.parseLong(request.pathVariable("id")))
-                .then(noContent().build()))
-        
-        // 할인 가능 여부 확인
-        .POST("/orders/{id}/discount-check", request ->
-            request.bodyToFlux(SaleRoleType.class)
-                .collectSet()
-                .flatMap(roleTypes -> 
-                    orderService.findById(Long.parseLong(request.pathVariable("id")))
-                        .map(order -> saleCommand.isSaleable(order, roleTypes))
-                        .flatMap(result -> ok().bodyValue(Map.of("saleable", result))))
-        )
-        .build();
-}
-```
-
-## 🎯 할인 정책 시스템
-
-### 할인 규칙 테이블
+### 3. 이벤트 기반 재고 관리
 ```java
 @Component
-public class SaleRoleTable {
+public class InventoryEventConsumer {
     
-    private final Map<SaleRoleType, Saleable> discountableTable;
-    
-    public SaleRoleTable(List<Saleable> saleables) {
-        this.discountableTable = Map.of(
-            SaleRoleType.AMOUNT, saleables.stream()
-                .filter(s -> s instanceof AmountSaleRole)
-                .findFirst().orElseThrow(),
-            SaleRoleType.STOCK, saleables.stream()
-                .filter(s -> s instanceof StockSaleRole)
-                .findFirst().orElseThrow(),
-            SaleRoleType.EVENT, saleables.stream()
-                .filter(s -> s instanceof EventSaleRole)
-                .findFirst().orElseThrow(),
-            SaleRoleType.LEGAL, saleables.stream()
-                .filter(s -> s instanceof LegalSaleRole)
-                .findFirst().orElseThrow()
-        );
-    }
-    
-    public Map<SaleRoleType, Saleable> getDiscountableTable() {
-        return discountableTable;
-    }
-}
-```
-
-### 할인 정책 열거형
-```java
-public enum SaleRoleType {
-    AMOUNT,   // 금액 기반 할인
-    STOCK,    // 재고 기반 할인  
-    EVENT,    // 이벤트 기반 할인
-    LEGAL     // 법적 제약 검증
-}
-```
-
-### 할인 적용 예제
-```java
-@RestController
-public class OrderDiscountController {
-    
-    @PostMapping("/orders/{orderId}/apply-discount")
-    public Mono<ResponseEntity<DiscountResult>> applyDiscount(
-            @PathVariable Long orderId,
-            @RequestBody Set<SaleRoleType> discountTypes) {
+    @KafkaListener(topics = "inventory-reserved", groupId = "order-service")
+    public void handleInventoryReserved(InventoryReservedEvent event) {
+        log.info("Inventory reserved for order: {}", event.getOrderId());
         
-        return orderService.findById(orderId)
+        orderService.updateOrderStatus(event.getOrderId(), OrderStatus.INVENTORY_RESERVED)
+            .doOnSuccess(order -> {
+                // 결제 처리 이벤트 발행
+                PaymentRequestEvent paymentEvent = PaymentRequestEvent.builder()
+                    .orderId(order.getId())
+                    .userId(order.getUserId())
+                    .amount(order.getTotalAmount())
+                    .build();
+                orderEventPublisher.publishPaymentRequested(paymentEvent);
+            })
+            .subscribe();
+    }
+    
+    @KafkaListener(topics = "inventory-insufficient", groupId = "order-service")
+    public void handleInventoryInsufficient(InventoryInsufficientEvent event) {
+        log.warn("Insufficient inventory for order: {}", event.getOrderId());
+        
+        orderService.updateOrderStatus(event.getOrderId(), OrderStatus.CANCELLED)
+            .doOnSuccess(order -> {
+                OrderCancelledEvent cancelEvent = OrderCancelledEvent.builder()
+                    .orderId(order.getId())
+                    .reason("Insufficient inventory")
+                    .cancelledAt(LocalDateTime.now())
+                    .build();
+                orderEventPublisher.publishOrderCancelled(cancelEvent);
+            })
+            .subscribe();
+    }
+}
+```
+
+### 4. 할인 정책 적용
+```java
+@Component
+public class OrderDiscountService {
+    
+    private final SaleCommand saleCommand;
+    
+    public Mono<DiscountResult> applyDiscount(Long orderId, Set<SaleRoleType> discountTypes) {
+        return orderRepository.findById(orderId)
             .map(order -> {
                 boolean canApplyDiscount = saleCommand.isSaleable(order, discountTypes);
+                
                 if (canApplyDiscount) {
-                    Long discountedAmount = calculateDiscount(order, discountTypes);
+                    BigDecimal discountRate = calculateDiscountRate(discountTypes);
+                    BigDecimal discountedAmount = order.getTotalAmount()
+                        .multiply(BigDecimal.ONE.subtract(discountRate));
+                        
+                    order.setTotalAmount(discountedAmount);
+                    
                     return DiscountResult.builder()
                         .orderId(orderId)
-                        .originalAmount(order.getAmount())
+                        .originalAmount(order.getTotalAmount())
                         .discountedAmount(discountedAmount)
+                        .discountRate(discountRate)
                         .discountTypes(discountTypes)
                         .applied(true)
                         .build();
                 } else {
                     return DiscountResult.builder()
                         .orderId(orderId)
-                        .originalAmount(order.getAmount())
                         .applied(false)
-                        .reason("Discount conditions not met")
+                        .reason("Order does not meet discount criteria")
                         .build();
                 }
-            })
-            .map(result -> ResponseEntity.ok(result))
-            .defaultIfEmpty(ResponseEntity.notFound().build());
+            });
     }
 }
 ```
 
-## 🗄️ 데이터베이스 스키마
-
-### 주문 테이블 구조
-```sql
-CREATE TABLE `ORDERS` (
-    `ID` bigint(20) NOT NULL AUTO_INCREMENT,
-    `USER_ID` bigint(20) NOT NULL,
-    `PRODUCT_ID` bigint(20) NOT NULL,  
-    `AMOUNT` bigint(20) NOT NULL,
-    PRIMARY KEY (`ID`),
-    INDEX `idx_user_id` (`USER_ID`),
-    INDEX `idx_product_id` (`PRODUCT_ID`),
-    INDEX `idx_amount` (`AMOUNT`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
-```
-
-### 데이터 초기화
+### 5. 분산 트랜잭션 관리
 ```java
-@EventListener(ApplicationReadyEvent.class)
-public void init(ApplicationReadyEvent applicationReadyEvent) {
-    log.debug("OrderApplication Start... {}", applicationReadyEvent);
-    var orderRepository = applicationReadyEvent.getApplicationContext()
-        .getBean(OrderRepository.class);
+@Component
+public class OrderTransactionManager {
     
-    // 기존 데이터 정리
-    orderRepository.deleteAll().subscribe();
-    
-    // 테스트 데이터 생성 (사용자 1-100, 상품 1-100)
-    LongStream.rangeClosed(1, 100).forEach(userId -> {
-        orderRepository.saveAll(
-            LongStream.rangeClosed(1, 100)
-                .mapToObj(productId -> new Order(userId, productId, 100L))
-                .collect(Collectors.toList())
-        ).subscribe();
-    });
+    @SagaOrchestrationStart
+    public void processOrder(OrderCreatedEvent event) {
+        SagaTransaction transaction = SagaTransaction.builder()
+            .correlationId(event.getOrderId().toString())
+            .build();
+            
+        // Step 1: 재고 예약
+        transaction.addStep(
+            () -> inventoryService.reserveInventory(event.getItems()),
+            () -> inventoryService.releaseInventory(event.getItems())
+        );
+        
+        // Step 2: 결제 처리
+        transaction.addStep(
+            () -> paymentService.processPayment(event.getUserId(), event.getTotalAmount()),
+            () -> paymentService.refundPayment(event.getUserId(), event.getTotalAmount())
+        );
+        
+        // Step 3: 주문 확정
+        transaction.addStep(
+            () -> confirmOrder(event.getOrderId()),
+            () -> cancelOrder(event.getOrderId())
+        );
+        
+        sagaManager.execute(transaction);
+    }
 }
 ```
 
-## 🏃‍♂️ 실행 방법
+## 🛠 기술 스택
 
-### 1. 데이터베이스 준비
+### 핵심 기술
+- **Java**: 21
+- **Spring Boot**: 3.3.6
+- **Spring WebFlux**: 리액티브 웹 프레임워크
+- **Spring Data JPA**: 데이터 액세스
+
+### 이벤트 및 메시징
+- **Apache Kafka**: 분산 스트리밍 플랫폼
+- **Spring Kafka**: Kafka 통합
+- **이벤트 소싱**: 도메인 이벤트 패턴
+
+### 분산 시스템
+- **Saga 패턴**: 분산 트랜잭션 관리
+- **CQRS**: 명령과 조회 분리
+
+## 🚀 실행 방법
+
+### 1. 의존 서비스 시작
 ```bash
-# MariaDB 실행 (Docker)
+# Config Server 시작
+./gradlew :chap18:configuration:bootRun
+
+# Kafka 및 Zookeeper 시작
+./docker-manager.sh start chap18
+
+# MariaDB 시작
 docker run -d --name mariadb-order \
   -e MARIADB_ROOT_PASSWORD=root \
   -e MARIADB_DATABASE=primavera \
-  -e MARIADB_USER=primavera \
-  -e MARIADB_PASSWORD=primavera \
-  -p 3306:3306 mariadb:11.4.7
+  -p 3308:3306 mariadb:11.4.7
 
-# 주문 테이블 생성
-mysql -h localhost -u primavera -p primavera < init.sql
+# Product 및 Account 서비스 시작 (의존성)
+./gradlew :chap18:account:bootRun &
+./gradlew :chap18:product:bootRun &
 ```
 
-### 2. Config Server 시작
+### 2. Order 서비스 시작
 ```bash
-# Configuration 서비스 먼저 실행
-./gradlew :chap18:configuration:bootRun
-```
-
-### 3. Order Service 시작
-```bash
-# Order 서비스 실행
+# Order 마이크로서비스 시작
 ./gradlew :chap18:order:bootRun
 
-# 또는 JAR 직접 실행
-java -jar order/build/libs/order.jar
+# 특정 프로파일로 실행
+./gradlew :chap18:order:bootRun -Dspring.profiles.active=local
 ```
 
-### 4. 서비스 동작 확인
+### 3. API 테스트
 ```bash
-# 서비스 상태 확인
-curl http://localhost:8082/actuator/health
-
-# 사용자 주문 조회
-curl http://localhost:8082/users/1/orders
-
 # 주문 생성
 curl -X POST http://localhost:8082/orders \
   -H "Content-Type: application/json" \
-  -d '{"userId":1,"productId":1,"amount":15000}'
+  -d '{
+    "userId": 1,
+    "items": [
+      {
+        "productId": 1,
+        "quantity": 2,
+        "price": 10000
+      },
+      {
+        "productId": 2,
+        "quantity": 1,
+        "price": 15000
+      }
+    ]
+  }'
 
-# 할인 가능 여부 확인
-curl -X POST http://localhost:8082/orders/1/discount-check \
+# 주문 조회
+curl http://localhost:8082/orders/1
+
+# 사용자별 주문 목록
+curl http://localhost:8082/users/1/orders
+
+# 주문 할인 적용
+curl -X POST http://localhost:8082/orders/1/discount \
   -H "Content-Type: application/json" \
-  -d '["AMOUNT","EVENT"]'
+  -d '{"discountTypes": ["AMOUNT", "EVENT"]}'
+
+# 주문 상태 변경
+curl -X PUT http://localhost:8082/orders/1/status \
+  -H "Content-Type: application/json" \
+  -d '{"status": "CONFIRMED"}'
 ```
 
-## 📈 성능 최적화
+## 📋 테스트 실행
 
-### 1. R2DBC 연결풀 튜닝
-```yaml
-spring:
-  r2dbc:
-    pool:
-      initial-size: 10          # 초기 연결 수
-      max-size: 20              # 최대 연결 수
-      max-idle-time: 300m       # 유휴 연결 유지 시간
-      max-acquire-time: 30s     # 연결 획득 최대 대기 시간
-      validation-query: SELECT 1 # 연결 유효성 검증 쿼리
+### 이벤트 기반 테스트
+```bash
+# 전체 테스트 실행
+./gradlew :chap18:order:test
+
+# 이벤트 처리 테스트
+./gradlew :chap18:order:test --tests "*EventTest"
+
+# Saga 트랜잭션 테스트
+./gradlew :chap18:order:test --tests "*SagaTest"
+
+# 통합 테스트
+./gradlew :chap18:order:test --tests "*IntegrationTest"
 ```
 
-### 2. 백프레셔 제어
+### 테스트 예시
 ```java
-@Service
-public class OrderStreamService {
-    
-    public Flux<Order> getOrdersWithBackpressure(String userId) {
-        return orderRepository.findByUserId(Long.parseLong(userId))
-            .limitRate(100)                    // 백프레셔 제어
-            .buffer(10)                        // 배치 처리
-            .flatMap(Flux::fromIterable)       // 평면화
-            .publishOn(Schedulers.parallel())  // 병렬 처리
-            .doOnNext(order -> log.debug("Processing order: {}", order))
-            .onBackpressureBuffer(1000);       // 버퍼 크기 제한
-    }
-}
-```
-
-### 3. 인덱스 최적화
-```sql
--- 복합 인덱스 생성
-CREATE INDEX idx_user_product ON ORDERS (USER_ID, PRODUCT_ID);
-CREATE INDEX idx_amount_user ON ORDERS (AMOUNT, USER_ID);
-
--- 쿼리 성능 분석
-EXPLAIN SELECT * FROM ORDERS WHERE USER_ID = 1 AND AMOUNT >= 10000;
-```
-
-## 🧪 테스트 전략
-
-### 반응형 서비스 테스트
-```java
-@ExtendWith(MockitoExtension.class)
-class OrderServiceTest {
-    
-    @Mock
-    private OrderRepository orderRepository;
-    
-    @InjectMocks
-    private OrderServiceImpl orderService;
-    
-    @Test
-    void shouldReturnOrdersForUser() {
-        // Given
-        Order order1 = new Order(1L, 1L, 1L, 1000L);
-        Order order2 = new Order(2L, 1L, 2L, 2000L);
-        when(orderRepository.findByUserId(1L))
-            .thenReturn(Flux.just(order1, order2));
-        
-        // When
-        Flux<Order> result = orderService.findByUserId("1");
-        
-        // Then
-        StepVerifier.create(result)
-            .expectNext(order1)
-            .expectNext(order2)
-            .verifyComplete();
-    }
-}
-```
-
-### 할인 정책 테스트
-```java
-@Test
-void shouldApplyDiscountWhenConditionsMet() {
-    // Given
-    Order order = new Order(1L, 1L, 25L, 15000L); // 1.5만원 주문
-    Set<SaleRoleType> discountTypes = Set.of(
-        SaleRoleType.AMOUNT,  // 1만원 이상 (만족)
-        SaleRoleType.STOCK    // 상품 25번 (만족)
-    );
-    
-    // When
-    boolean result = saleCommand.isSaleable(order, discountTypes);
-    
-    // Then
-    assertThat(result).isTrue();
-}
-
-@Test
-void shouldNotApplyDiscountWhenConditionsNotMet() {
-    // Given
-    Order order = new Order(1L, 1L, 75L, 5000L); // 5천원 주문
-    Set<SaleRoleType> discountTypes = Set.of(
-        SaleRoleType.AMOUNT,  // 1만원 이상 (불만족)
-        SaleRoleType.STOCK    // 상품 75번 (불만족)
-    );
-    
-    // When  
-    boolean result = saleCommand.isSaleable(order, discountTypes);
-    
-    // Then
-    assertThat(result).isFalse();
-}
-```
-
-### WebFlux 통합 테스트
-```java
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@TestMethodOrder(OrderAnnotation.class)
-class OrderIntegrationTest {
+@SpringBootTest
+@TestPropertySource(properties = "spring.profiles.active=test")
+@EmbeddedKafka(partitions = 1, topics = {"order-created", "inventory-reserved"})
+class OrderEventIntegrationTest {
     
     @Autowired
-    private WebTestClient webTestClient;
+    private OrderService orderService;
+    
+    @Autowired
+    private KafkaTemplate<String, Object> kafkaTemplate;
     
     @Test
-    @Order(1)
-    void shouldCreateOrder() {
-        Order order = new Order(1L, 1L, 10000L);
-        
-        webTestClient.post()
-            .uri("/orders")
-            .bodyValue(order)
-            .exchange()
-            .expectStatus().isOk()
-            .expectBody(Order.class)
-            .value(created -> {
-                assertThat(created.getId()).isNotNull();
-                assertThat(created.getUserId()).isEqualTo(1L);
-            });
-    }
-    
-    @Test
-    @Order(2)
-    void shouldFindOrdersByUserId() {
-        webTestClient.get()
-            .uri("/users/1/orders")
-            .exchange()
-            .expectStatus().isOk()
-            .expectBodyList(Order.class)
-            .hasSize(100);  // 초기화 시 생성된 주문 수
+    void shouldPublishOrderCreatedEventWhenOrderIsCreated() {
+        // Given
+        CreateOrderRequest request = CreateOrderRequest.builder()
+            .userId(1L)
+            .items(List.of(
+                CreateOrderItemRequest.builder()
+                    .productId(1L)
+                    .quantity(2)
+                    .price(BigDecimal.valueOf(10000))
+                    .build()
+            ))
+            .build();
+            
+        // When
+        StepVerifier.create(orderService.createOrder(request))
+            .assertNext(order -> {
+                assertThat(order.getId()).isNotNull();
+                assertThat(order.getStatus()).isEqualTo(OrderStatus.PENDING);
+            })
+            .verifyComplete();
+            
+        // Then
+        // Kafka 이벤트 발행 검증
+        verify(kafkaTemplate, timeout(5000))
+            .send(eq("order-created"), any(OrderCreatedEvent.class));
     }
 }
 ```
 
-## 📚 학습 포인트
+## 🎓 핵심 학습 포인트
 
-이 Order Service는 다음과 같은 현대적인 반응형 프로그래밍 패턴들을 학습할 수 있습니다:
+### 1. 이벤트 기반 아키텍처
+```java
+// 이벤트 발행과 구독을 통한 느슨한 결합
+@EventListener
+@Async
+public void handleOrderCreated(OrderCreatedEvent event) {
+    // 비동기로 재고 예약 요청
+    reserveInventoryAsync(event);
+    
+    // 비동기로 결제 준비
+    preparePaymentAsync(event);
+}
+```
 
-1. **Reactive Programming**: WebFlux + R2DBC 완전한 반응형 스택
-2. **Functional Routing**: RouterFunction을 통한 함수형 라우팅
-3. **Strategy Pattern**: 할인 정책의 유연한 구현과 확장
-4. **Domain-Driven Design**: 비즈니스 로직의 도메인 모델링
-5. **Reactive Streams**: 백프레셔 제어와 비동기 데이터 처리
-6. **Testing Strategy**: 반응형 애플리케이션의 체계적 테스트
+### 2. Saga 패턴
+```java
+// 분산 트랜잭션의 단계적 처리 및 보상
+public class OrderProcessingSaga {
+    private final List<SagaStep> steps = Arrays.asList(
+        new InventoryReservationStep(),
+        new PaymentProcessingStep(),
+        new OrderConfirmationStep()
+    );
+    
+    public void execute() {
+        try {
+            steps.forEach(SagaStep::execute);
+        } catch (Exception e) {
+            compensate();
+        }
+    }
+}
+```
 
-Order Service는 반응형 프로그래밍의 핵심 개념들을 실제 비즈니스 로직과 결합하여 학습할 수 있는 완벽한 예제이며, 특히 할인 정책 엔진을 통해 전략 패턴과 도메인 주도 설계의 실용적 적용을 배울 수 있습니다.
+### 3. 도메인 이벤트
+```java
+// 도메인 객체에서 직접 이벤트 발행
+@Entity
+public class Order {
+    @DomainEvents
+    Collection<Object> domainEvents() {
+        return Arrays.asList(
+            new OrderCreatedEvent(this),
+            new PaymentRequestedEvent(this)
+        );
+    }
+}
+```
+
+### 4. 최종 일관성 (Eventual Consistency)
+```java
+// 즉시 일관성 대신 최종 일관성 보장
+@RetryableTopic(
+    attempts = 3,
+    backoff = @Backoff(delay = 1000, multiplier = 2)
+)
+@KafkaListener(topics = "inventory-events")
+public void handleInventoryEvent(InventoryEvent event) {
+    // 재시도 로직과 함께 최종 일관성 보장
+    processInventoryChange(event);
+}
+```
+
+## 📚 주요 애너테이션
+
+### 이벤트 관련
+- `@EventListener`: 스프링 이벤트 리스너
+- `@KafkaListener`: Kafka 메시지 소비자
+- `@DomainEvents`: JPA 도메인 이벤트
+
+### 트랜잭션 관련
+- `@Transactional`: 트랜잭션 경계 설정
+- `@Retryable`: 재시도 로직
+- `@Async`: 비동기 처리
+
+### Saga 관련
+- `@SagaStart`: Saga 시작점
+- `@SagaCompensation`: 보상 트랜잭션
+
+## 🔧 운영 및 모니터링
+
+### 1. 이벤트 추적
+```yaml
+management:
+  tracing:
+    enabled: true
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: http://localhost:9411/api/v2/spans
+```
+
+### 2. Kafka 모니터링
+```java
+@Component
+public class KafkaHealthIndicator implements HealthIndicator {
+    
+    @Override
+    public Health health() {
+        try {
+            kafkaAdmin.describeCluster();
+            return Health.up()
+                .withDetail("kafka", "Available")
+                .build();
+        } catch (Exception e) {
+            return Health.down()
+                .withDetail("kafka", "Unavailable")
+                .withException(e)
+                .build();
+        }
+    }
+}
+```
+
+## 🔄 다음 단계
+
+1. **chap18:front** - API Gateway 및 서비스 오케스트레이션
+2. **분산 추적** - Zipkin을 통한 요청 추적
+3. **서킷 브레이커** - Resilience4j를 활용한 장애 격리
+4. **이벤트 소싱** - 완전한 이벤트 기반 데이터 저장
+
+## 📖 관련 문서
+
+- [Apache Kafka Documentation](https://kafka.apache.org/documentation/)
+- [Saga Pattern](https://microservices.io/patterns/data/saga.html)
+- [Event-Driven Architecture](https://martinfowler.com/articles/201701-event-driven.html)
+- [Domain Events](https://martinfowler.com/eaaDev/DomainEvent.html)

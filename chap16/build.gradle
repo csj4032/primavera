@@ -2,22 +2,15 @@
 dependencies {
     implementation "org.springframework.boot:spring-boot-starter-web"
     implementation "org.springframework.boot:spring-boot-starter-actuator"
-    
-    // AWS S3
     implementation "io.awspring.cloud:spring-cloud-aws-starter-s3:${springCloudAwsVersion}"
-    
-    // Excel & File Processing
     implementation "org.apache.poi:poi:${poiVersion}"
     implementation "org.apache.poi:poi-ooxml:${poiVersion}"
     implementation "com.monitorjbl:xlsx-streamer:${xlsxStreamerVersion}"
     implementation "org.apache.tika:tika-core:${tikaVersion}"
     implementation "org.apache.tika:tika-parsers:${tikaVersion}"
     implementation "com.opencsv:opencsv:${openCsvVersion}"
-    
-    // 파일 처리 유틸리티
     implementation "commons-io:commons-io:${commonsIoVersion}"
     implementation "org.apache.commons:commons-lang3:${commonsLang3Version}"
-    
     testImplementation "org.testcontainers:localstack:${testContainersVersion}"
     testImplementation "org.testcontainers:junit-jupiter:${testContainersVersion}"
 }

@@ -1,512 +1,620 @@
-# Chapter 04: 데이터 접근 계층
+# Chapter 04 - 데이터 액세스 기초와 MyBatis
 
-## 개요
-Chapter 04는 Spring Boot의 데이터 접근 계층과 동적 프록시 패턴을 학습하는 모듈입니다. JDBC를 활용한 데이터베이스 연동, Spring AOP의 기반이 되는 동적 프록시 구현, 그리고 다양한 데이터소스 설정 방법을 다룹니다.
+## 학습 목표
 
-## 주요 기능
-- **JDBC 데이터 접근**: Spring JdbcTemplate을 활용한 데이터베이스 CRUD 작업
-- **동적 프록시 패턴**: Java Reflection API를 활용한 동적 프록시 구현
-- **데이터소스 설정**: HikariCP 커넥션 풀 설정 및 최적화
-- **AOP 기초**: 프록시 패턴을 통한 횡단 관심사 분리
-- **보안**: Spring Security를 활용한 비밀번호 암호화
+MyBatis를 활용한 데이터베이스 연동과 동적 프록시 패턴을 학습하며, 실제 데이터베이스와 연동하는 Spring Boot 애플리케이션을 구현합니다.
 
-## 기술 스택
-
-### 핵심 프레임워크
-- Spring Boot 3.x
-- Spring Web
-- Spring JDBC
-- Spring AOP
-- Spring Security
-
-### 데이터베이스
-- MariaDB 11.x
-- MyBatis Spring Boot Starter 3.x
-
-### 테스트
-- TestContainers (MariaDB)
-- JUnit 5
-- Spring Boot Test
-
-### 유틸리티
-- Lombok
-- Commons IO
-- Reflections
+- MyBatis를 통한 SQL 매핑과 동적 쿼리 작성
+- MariaDB 11.4.7 데이터베이스 연동 및 커넥션 풀 관리
+- TestContainers를 활용한 통합 테스트 전략
+- 동적 프록시 패턴(Dynamic Proxy) 구현과 활용
+- 데이터 액세스 계층 아키텍처 설계
+- 프로파일별 데이터베이스 설정 관리
 
 ## 프로젝트 구조
 
 ```
 chap04/
 ├── src/main/java/com/genius/primavera/
-│   ├── DataAccessApplication.java         # 메인 애플리케이션
-│   ├── UserDao.java                      # JDBC를 활용한 사용자 DAO
-│   ├── PrimaveraDao.java                 # 기본 DAO 인터페이스
-│   ├── application/                       # 비즈니스 로직
-│   │   ├── DoSomething.java             # 서비스 인터페이스
-│   │   ├── DoSomethingImpl.java         # 서비스 구현체
-│   │   └── PrimaveraService.java        # 기본 서비스
-│   ├── domain/                           # 도메인 모델
-│   │   └── User.java                    # 사용자 엔티티
-│   ├── interfaces/                       # 웹 계층
-│   │   ├── PrimaveraController.java     # REST 컨트롤러
-│   │   └── PrimaveraResponseAdvice.java # 응답 처리 어드바이스
-│   └── proxy/dynamic/                    # 동적 프록시 구현
-│       ├── ProxyFactory.java            # 프록시 팩토리
-│       ├── DynamicInvocationHandler.java # 동적 호출 핸들러
-│       ├── PrimaveraProxy.java          # 프록시 래퍼
-│       ├── ProxyAnnotation.java         # 프록시 대상 어노테이션
-│       ├── ProxyPointAnnotation.java    # 프록시 포인트 어노테이션
-│       └── ProxyInvocationFailedException.java # 예외 클래스
+│   ├── DataAccessApplication.java               # 메인 애플리케이션
+│   ├── interfaces/                              # Presentation Layer
+│   │   ├── PrimaveraController.java            # REST API 컨트롤러
+│   │   └── PrimaveraResponseAdvice.java        # Response 후처리
+│   ├── application/                             # Application Layer
+│   │   ├── PrimaveraService.java               # 비즈니스 서비스
+│   │   ├── DoSomething.java                    # 서비스 인터페이스
+│   │   └── DoSomethingImpl.java                # 서비스 구현체
+│   ├── dao/                                     # Data Access Layer
+│   │   └── UserDao.java                        # MyBatis Mapper 인터페이스
+│   ├── domain/                                  # Domain Layer
+│   │   ├── User.java                           # User 엔티티
+│   │   └── UserStatus.java                     # 사용자 상태 Enum
+│   └── proxy/                                   # Dynamic Proxy
+│       └── dynamic/                             # 동적 프록시 구현
+│           ├── ProxyFactory.java               # 프록시 팩토리
+│           ├── DynamicInvocationHandler.java    # 인보케이션 핸들러
+│           ├── PrimaveraProxy.java             # 프록시 어노테이션
+│           ├── ProxyAnnotation.java            # 프록시 메타 어노테이션
+│           ├── ProxyPointAnnotation.java       # 프록시 포인트
+│           └── ProxyInvocationFailedException.java # 프록시 예외
 └── src/main/resources/
-    ├── application.yml                   # 애플리케이션 설정
-    └── primavera.txt                    # 배너 파일
+    ├── application.yml                          # 기본 설정
+    ├── application-local.yml                   # 로컬 환경 설정
+    └── sql/                                    # SQL 스크립트
+        └── init.sql                           # 테이블 생성 스크립트
 ```
 
-## 주요 컴포넌트
+## 기술 스택
 
-### 1. 데이터 접근 계층
-- **UserDao**: JdbcTemplate을 사용한 사용자 데이터 CRUD
-  - 사용자 저장, 조회, 삭제 기능
-  - PreparedStatement를 활용한 SQL Injection 방지
+- **MyBatis**: 3.0.4 - SQL 매핑 프레임워크
+- **MariaDB**: 11.4.7 - 관계형 데이터베이스
+- **HikariCP**: 고성능 커넥션 풀
+- **TestContainers**: 통합 테스트용 도커 컨테이너
+- **Jackson**: JSON 데이터 바인딩
+- **Reflections**: 리플렉션 유틸리티
+- **Spring Boot Test**: 통합 테스트 지원
 
-### 2. 동적 프록시 시스템
-- **ProxyFactory**: Reflection을 사용한 프록시 객체 생성
-  - 어노테이션 기반 프록시 대상 선택
-  - 런타임 프록시 객체 생성 및 관리
-- **DynamicInvocationHandler**: 메소드 호출 가로채기
-  - 메소드 실행 전/후 처리
-  - 예외 처리 및 로깅
+## 주요 기능
 
-### 3. 서비스 계층
-- **DoSomething/DoSomethingImpl**: 비즈니스 로직 인터페이스 및 구현
-- **@ProxyAnnotation**: 프록시 적용 대상 표시
+### 1. MyBatis를 통한 데이터 액세스
 
-### 4. 웹 계층
-- **PrimaveraController**: REST API 엔드포인트
-- **PrimaveraResponseAdvice**: 전역 응답 처리
-
-## 데이터베이스 스키마
-
-#### USERS 테이블 (메인 사용자 정보)
-```sql
-CREATE TABLE `USERS` (
-  `ID` BIGINT NOT NULL AUTO_INCREMENT,
-  `EMAIL` VARCHAR(100) NOT NULL UNIQUE,
-  `NICKNAME` VARCHAR(50) NOT NULL,
-  `CREATED_AT` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  `UPDATED_AT` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`ID`),
-  INDEX `idx_email` (`EMAIL`),
-  INDEX `idx_created_at` (`CREATED_AT`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+```java
+@Mapper
+public interface UserDao {
+    
+    @Select("SELECT * FROM USER WHERE id = #{id}")
+    User findById(@Param("id") Long id);
+    
+    @Select("SELECT * FROM USER WHERE status = #{status}")
+    List<User> findByStatus(@Param("status") UserStatus status);
+    
+    @Insert("INSERT INTO USER (name, email, status) VALUES (#{name}, #{email}, #{status})")
+    @Options(useGeneratedKeys = true, keyProperty = "id")
+    int insert(User user);
+    
+    @Update("UPDATE USER SET name = #{name}, email = #{email}, status = #{status} WHERE id = #{id}")
+    int update(User user);
+    
+    @Delete("DELETE FROM USER WHERE id = #{id}")
+    int deleteById(@Param("id") Long id);
+    
+    @Select("SELECT COUNT(*) FROM USER")
+    int count();
+}
 ```
 
-#### 테이블 설계 특징
-- **ID**: BIGINT 타입으로 대용량 지원
-- **EMAIL**: UNIQUE 제약을 통한 중복 방지
-- **인덱스**: 조회 성능 최적화를 위한 인덱스 설정
-- **타임스탬프**: 자동 생성/업데이트 시간 관리
-- **UTF8MB4**: 이모지 등 다국어 문자 지원
+### 2. 동적 프록시 패턴 구현
 
-## 설정
+```java
+@ProxyAnnotation
+public interface DoSomething {
+    @ProxyPointAnnotation
+    String doSomething();
+}
 
-### 데이터소스 설정
+@Component
+@RequiredArgsConstructor
+public class ProxyFactory {
+    
+    @SuppressWarnings("unchecked")
+    public <T> T createProxy(Class<T> interfaceType, Object target) {
+        return (T) Proxy.newProxyInstance(
+            interfaceType.getClassLoader(),
+            new Class[]{interfaceType},
+            new DynamicInvocationHandler(target)
+        );
+    }
+}
+
+public class DynamicInvocationHandler implements InvocationHandler {
+    private final Object target;
+    
+    @Override
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        if (method.isAnnotationPresent(ProxyPointAnnotation.class)) {
+            log.info("Before method execution: {}", method.getName());
+            
+            try {
+                Object result = method.invoke(target, args);
+                log.info("After method execution: {}", method.getName());
+                return result;
+            } catch (Exception e) {
+                log.error("Exception in method execution: {}", method.getName(), e);
+                throw new ProxyInvocationFailedException("Proxy execution failed", e);
+            }
+        }
+        
+        return method.invoke(target, args);
+    }
+}
+```
+
+### 3. 프로파일별 데이터베이스 설정
+
 ```yaml
+# application.yml (기본 설정)
 spring:
+  application:
+    name: primavera-chap04
+
+mybatis:
+  mapper-locations: classpath*:mapper/**/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+    default-fetch-size: 100
+    default-statement-timeout: 30
+
+---
+# Local 환경 설정
+spring:
+  config:
+    activate:
+      on-profile: local
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://localhost:1109/primavera?allowPublicKeyRetrieval=true&useSSL=false
+    url: jdbc:mariadb://localhost:3308/primavera
     username: primavera
     password: primavera
-```
-
-### HikariCP 커넥션 풀 속성
-
-| 속성 | 설명 |
-|---|---|
-| maxActive | 동시에 사용할 수 있는 최대 커넥션 개수 |
-| maxIdle | Connection Pool에 반납할 때 최대로 유지될 수 있는 커넥션 개수 |
-| minIdle | 최소한으로 유지할 커넥션 개수 |
-| initialSize | 최초로 getConnection() Method를 통해 커넥션 풀에 채워 넣을 커넥션 개수 |
-
-## 실행 방법
-
-### 🚀 Spring Boot 애플리케이션 실행
-
-#### 1. 환경 변수 방식 (권장)
-```bash
-# 로컬 환경으로 실행
-SPRING_PROFILES_ACTIVE=local ./gradlew :chap04:bootRun
-
-# 여러 프로파일 동시 적용 (Vault + 로컬)
-SPRING_PROFILES_ACTIVE=vault,local ./gradlew :chap04:bootRun
-```
-
-#### 2. Program Arguments 방식
-```bash
-# 기본 실행
-./gradlew :chap04:bootRun --args='--spring.profiles.active=local'
-
-# Vault 설정과 함께 실행
-./gradlew :chap04:bootRun --args='--spring.profiles.active=vault,local'
-```
-
-#### 3. IDE 설정 방식
-- IntelliJ IDEA: Run Configuration → VM Options 또는 Program Arguments 설정
-- VM Options: `-Dspring.profiles.active=local`
-- Program Arguments: `--spring.profiles.active=local`
-
-### 테스트 실행
-```bash
-# 전체 테스트 실행 (TestContainers 자동 관리)
-./gradlew :chap04:test
-
-# 특정 테스트 클래스 실행
-./gradlew :chap04:test --tests UserDaoTest
-```
-
-## 테스트
-
-### 주요 테스트 클래스
-- **HikariDataSourceTest**: HikariCP 설정 및 동작 검증
-- **SpringDataSourceTest**: Spring Boot 자동 설정 테스트
-- **SpringJdbcTest**: JdbcTemplate 동작 검증
-- **UserDaoTest**: 사용자 CRUD 기능 테스트
-- **ProxyFactoryTest**: 동적 프록시 생성 테스트
-- **EnhancerTest**: CGLIB 프록시 테스트
-
-### 테스트 설정 주의사항
-- `@AutoConfigureTestDatabase`의 기본 설정값인 Replace.Any를 Replace.NONE으로 변경
-- 또는 application.yml에 `spring.test.database.replace: NONE` 설정
-- TestContainers를 활용한 격리된 테스트 환경 구성
-
-## 학습 포인트
-
-1. **JDBC와 Spring JDBC**
-   - 순수 JDBC vs JdbcTemplate의 차이점
-   - 데이터소스 설정 및 커넥션 풀 관리
-   - SQL 실행 및 결과 매핑
-
-2. **동적 프록시 패턴**
-   - Java Reflection API 활용
-   - InvocationHandler를 통한 메소드 가로채기
-   - 프록시 패턴과 AOP의 관계
-
-3. **데이터소스 최적화**
-   - HikariCP 설정 파라미터 이해
-   - 커넥션 풀 크기 조정
-   - 성능 모니터링
-
-4. **테스트 전략**
-   - TestContainers를 활용한 통합 테스트
-   - 데이터베이스 격리 전략
-   - 트랜잭션 롤백 테스트
-
-## 특징
-
-1. **실무 중심 설계**: 실제 프로젝트에서 사용하는 데이터 접근 패턴 구현
-2. **성능 최적화**: HikariCP를 통한 효율적인 커넥션 관리
-3. **보안 고려**: PreparedStatement 사용, 비밀번호 암호화
-4. **테스트 용이성**: TestContainers를 통한 일관된 테스트 환경
-5. **확장 가능성**: 프록시 패턴을 통한 횡단 관심사 처리
-
-## 실행 방법
-
-### 🚀 Spring Boot 애플리케이션 실행
-
-#### 1. 환경 변수 방식 (권장)
-```bash
-# 로컬 환경으로 실행  
-SPRING_PROFILES_ACTIVE=local ./gradlew :chap04:bootRun
-```
-
-#### 2. Program Arguments 방식
-```bash
-# 기본 실행
-./gradlew :chap04:bootRun --args='--spring.profiles.active=local'
-```
-
-#### 3. IDE 설정 방식
-- IntelliJ IDEA: Run Configuration → VM Options 또는 Program Arguments 설정
-- VM Options: `-Dspring.profiles.active=local`
-- Program Arguments: `--spring.profiles.active=local`
-
-## 🐳 인프라 설정
-
-### Docker Compose 환경 설정
-
-이 챕터는 **기초 학습용 인프라**를 사용합니다:
-
-```bash
-# infrastructure 디렉터리로 이동
-cd infrastructure
-
-# 기초 학습용 Docker Compose 실행 (MariaDB)
-docker-compose -f docker-compose.basic.yml up -d
-
-# 서비스 상태 확인
-docker-compose -f docker-compose.basic.yml ps
-
-# 정리 (컨테이너 및 볼륨 삭제)
-docker-compose -f docker-compose.basic.yml down -v
-```
-
-**포함된 서비스:**
-- **MariaDB 11.4.7** (포트: 3308)
-- 기본 데이터베이스 스키마 자동 생성
-
-**애플리케이션 실행:**
-```bash
-# 인프라 시작 후 애플리케이션 실행
-./gradlew :chap04:bootRun -Dspring.profiles.active=local
-```
-
-## 참고 자료
-- [Spring Boot Application Properties](https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html)
-- [HikariCP](https://github.com/brettwooldridge/HikariCP)
-- [Tomcat DataSource](https://tomcat.apache.org/tomcat-9.0-doc/jdbc-pool.html)
-- [DBCP2 DataSource](https://commons.apache.org/proper/commons-dbcp/)
-
-## 민감정보 보안 문제와 해결방안
-
-### 🚨 Chapter 03에서 발견된 보안 취약점
-
-**문제점**: Chapter 03의 테스트 설정에서 민감정보가 평문으로 노출됨
-```yaml
-# chap03/src/test/resources/application-test.yml
-datasource:
-  url: jdbc:mariadb://localhost:1109/primavera?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
-  username: primavera
-  password: primavera  # ❌ 평문 노출
-```
-
-**보안 위험**:
-- 데이터베이스 패스워드 평문 노출
-- 소스코드 저장소에 민감정보 커밋
-- 테스트 환경에서 프로덕션 정보 유출 위험
-
-### ✅ Chapter 04의 해결방안: HashiCorp Vault 통합
-
-#### 1. Vault 설치 및 초기화
-
-Vault는 인프라스트럭처에서 통합 관리됩니다. 자세한 설치 및 설정 방법은 [infrastructure/README.md](../infrastructure/README.md)를 참조하세요.
-
-```bash
-# 인프라스트럭처 시작 (MariaDB + Vault)
-cd ../infrastructure
-docker-compose up -d
-
-# Vault 시크릿 초기화
-./vault-init.sh
-```
-
-#### 2. Spring Cloud Vault 설정
-```yaml
-# application-vault.yml
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      idle-timeout: 300000
+      connection-timeout: 20000
+      validation-query: SELECT 1
+      
+---
+# Test 환경 설정 (TestContainers 자동 설정)
 spring:
-  cloud:
-    vault:
-      host: localhost
-      port: 8200
-      scheme: http
-      authentication: TOKEN
-      token: ${VAULT_TOKEN}  # 환경변수에서 토큰 주입
-      kv:
-        enabled: true
-        backend: secret
-        default-context: primavera/local/basic  # chap04는 basic 데이터베이스 사용
   config:
-    import: vault://
+    activate:
+      on-profile: test
+      
+primavera:
+  testcontainers:
+    mariadb:
+      enabled: true
+      dockerImageName: mariadb:11.4.7
+      databaseName: primavera
+      username: primavera
+      password: primavera
+      initScript: sql/init.sql
 ```
 
-#### 3. 보안 강화된 데이터소스 설정
+### 4. 서비스 계층 구현
+
+```java
+@Service
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
+public class PrimaveraService {
+    private final UserDao userDao;
+    
+    public List<User> getAllUsers() {
+        return userDao.findByStatus(UserStatus.ACTIVE);
+    }
+    
+    public User getUserById(Long id) {
+        return Optional.ofNullable(userDao.findById(id))
+            .orElseThrow(() -> new RuntimeException("User not found: " + id));
+    }
+    
+    @Transactional
+    public User createUser(User user) {
+        user.setStatus(UserStatus.ACTIVE);
+        userDao.insert(user);
+        return user;
+    }
+    
+    @Transactional
+    public User updateUser(User user) {
+        User existing = getUserById(user.getId());
+        existing.setName(user.getName());
+        existing.setEmail(user.getEmail());
+        userDao.update(existing);
+        return existing;
+    }
+    
+    @Transactional
+    public void deleteUser(Long id) {
+        User user = getUserById(id);
+        userDao.deleteById(id);
+    }
+}
+```
+
+### 5. Response 후처리
+
+```java
+@RestControllerAdvice
+public class PrimaveraResponseAdvice implements ResponseBodyAdvice<Object> {
+    
+    @Override
+    public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
+        return true;
+    }
+    
+    @Override
+    public Object beforeBodyWrite(Object body, MethodParameter returnType,
+                                 MediaType selectedContentType, Class<? extends HttpMessageConverter<?>> selectedConverterType,
+                                 ServerHttpRequest request, ServerHttpResponse response) {
+        
+        if (body instanceof String) {
+            return body; // 문자열은 그대로 반환
+        }
+        
+        // API 응답을 표준 형태로 래핑
+        return Map.of(
+            "success", true,
+            "data", body,
+            "timestamp", LocalDateTime.now(),
+            "path", request.getURI().getPath()
+        );
+    }
+}
+```
+
+## 실행 방법
+
+### 데이터베이스 준비
+
+```bash
+# Docker로 MariaDB 시작
+docker run -d --name primavera-mariadb \
+  -e MARIADB_ROOT_PASSWORD=root \
+  -e MARIADB_DATABASE=primavera \
+  -e MARIADB_USER=primavera \
+  -e MARIADB_PASSWORD=primavera \
+  -p 3308:3306 \
+  mariadb:11.4.7
+
+# 또는 Docker Manager 사용
+./docker-manager.sh start chap04
+```
+
+### 애플리케이션 시작
+
+```bash
+# 로컬 프로파일로 실행 (MariaDB 필요)
+./gradlew :chap04:bootRun -Dspring.profiles.active=local
+
+# 테스트용 실행 (TestContainers 자동 관리)
+./gradlew :chap04:test
+```
+
+### API 테스트
+
+```bash
+# 사용자 목록 조회
+curl http://localhost:8080/users
+
+# 특정 사용자 조회
+curl http://localhost:8080/users/1
+
+# 사용자 생성
+curl -X POST http://localhost:8080/users \
+  -H "Content-Type: application/json" \
+  -d '{"name":"김철수","email":"kim@example.com"}'
+
+# 사용자 수정
+curl -X PUT http://localhost:8080/users/1 \
+  -H "Content-Type: application/json" \
+  -d '{"name":"김철수","email":"kim.updated@example.com"}'
+
+# 사용자 삭제
+curl -X DELETE http://localhost:8080/users/1
+
+# 프록시 패턴 테스트
+curl http://localhost:8080/proxy-test
+```
+
+## 핵심 학습 포인트
+
+### 1. MyBatis 설정과 활용
+
+```java
+// Mapper 인터페이스에서 어노테이션 기반 SQL
+@Mapper
+public interface UserDao {
+    
+    // 동적 쿼리 - #{} 파라미터 바인딩
+    @Select("SELECT * FROM USER WHERE id = #{id}")
+    User findById(@Param("id") Long id);
+    
+    // 조건부 쿼리
+    @Select({
+        "<script>",
+        "SELECT * FROM USER",
+        "WHERE 1=1",
+        "<if test='status != null'>",
+        "  AND status = #{status}",
+        "</if>",
+        "<if test='name != null'>",
+        "  AND name LIKE CONCAT('%', #{name}, '%')",
+        "</if>",
+        "</script>"
+    })
+    List<User> findByConditions(@Param("status") UserStatus status, 
+                               @Param("name") String name);
+    
+    // 자동 생성 키 반환
+    @Insert("INSERT INTO USER (name, email, status) VALUES (#{name}, #{email}, #{status})")
+    @Options(useGeneratedKeys = true, keyProperty = "id")
+    int insert(User user);
+}
+```
+
+### 2. HikariCP 커넥션 풀 설정
+
 ```yaml
-# application.yml (민감정보 제거)
 spring:
   datasource:
-    driver-class-name: org.mariadb.jdbc.Driver
-    # URL, username, password는 Vault에서 자동 주입
+    hikari:
+      maximum-pool-size: 10          # 최대 커넥션 수
+      minimum-idle: 5                # 최소 유휴 커넥션 수
+      idle-timeout: 300000           # 유휴 커넥션 타임아웃 (5분)
+      connection-timeout: 20000      # 커넥션 획득 타임아웃 (20초)
+      max-lifetime: 1800000          # 커넥션 최대 수명 (30분)
+      validation-query: SELECT 1     # 커넥션 검증 쿼리
+      leak-detection-threshold: 60000 # 커넥션 누수 감지 임계값 (1분)
+      pool-name: PrimaveraCP         # 풀 이름
 ```
 
-### 보안 모범 사례
+### 3. TestContainers 통합 테스트
 
-#### 애플리케이션 토큰 사용
-```bash
-# 1. vault-init 실행 후 생성된 애플리케이션 토큰 확인
-docker-compose logs vault-init | grep "애플리케이션 토큰"
-
-# 2. 환경변수에 토큰 설정 (실제 토큰으로 교체)
-export VAULT_TOKEN=<your-vault-token-here>
-
-# 3. Spring Boot 애플리케이션 실행
-./gradlew :chap04:bootRun -Dspring.profiles.active=vault,local
-```
-
-#### 토큰 검증 및 권한 확인
-```bash
-# 토큰 정보 확인
-vault token lookup $VAULT_TOKEN
-
-# 시크릿 접근 권한 테스트
-vault kv get secret/primavera/local/basic
-
-# 정책 확인
-vault token capabilities secret/data/primavera/local/basic
-```
-
-#### 환경별 토큰 관리
-- **애플리케이션 토큰**: 읽기 전용, 30일 TTL
-- **개발자 토큰**: 전체 권한, 7일 TTL
-- **자동 갱신**: vault-init 스크립트 재실행으로 새 토큰 생성
-
-### 구현 효과
-
-1. **보안 강화**: 평문 패스워드 완전 제거
-2. **중앙 관리**: 모든 시크릿의 중앙집중식 관리
-3. **감사 추적**: Vault를 통한 접근 로그 및 감사 기능
-4. **자동 로테이션**: 정기적 시크릿 갱신 자동화
-5. **환경 분리**: 개발/테스트/프로덕션 환경별 시크릿 격리
-
-## Primavera TestContainers 사용법
-
-### @EnablePrimaveraTestcontainers 어노테이션
-
-`@EnablePrimaveraTestcontainers`는 테스트에서 필요한 인프라 컨테이너를 자동으로 시작하고 관리하는 어노테이션입니다.
-
-#### 기본 사용법 (MariaDB만 사용)
 ```java
 @SpringBootTest
 @EnablePrimaveraTestcontainers
-class MyTest {
+@ActiveProfiles("test")
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@DisplayName("User 데이터 액세스 통합 테스트")
+class UserDaoIntegrationTest {
+    
     @Autowired
-    private DataSource dataSource;
+    private UserDao userDao;
     
     @Test
-    void testDatabaseConnection() {
-        // MariaDB 컨테이너가 자동으로 시작되고 설정됨
+    @Order(1)
+    @DisplayName("사용자 생성 테스트")
+    void shouldCreateUser() {
+        // Given
+        User user = User.builder()
+            .name("테스트 사용자")
+            .email("test@example.com")
+            .status(UserStatus.ACTIVE)
+            .build();
+        
+        // When
+        int result = userDao.insert(user);
+        
+        // Then
+        assertThat(result).isEqualTo(1);
+        assertThat(user.getId()).isNotNull();
+        
+        User found = userDao.findById(user.getId());
+        assertThat(found.getName()).isEqualTo("테스트 사용자");
+        assertThat(found.getEmail()).isEqualTo("test@example.com");
+        assertThat(found.getStatus()).isEqualTo(UserStatus.ACTIVE);
     }
-}
-```
-
-#### 특정 컨테이너 지정
-```java
-@SpringBootTest
-@EnablePrimaveraTestcontainers({ContainerType.MARIADB, ContainerType.REDIS})
-class MyIntegrationTest {
-    @Autowired
-    private DataSource dataSource;
-    
-    @Autowired
-    private RedisTemplate redisTemplate;
     
     @Test
-    void testWithMultipleContainers() {
-        // MariaDB와 Redis 컨테이너가 모두 시작됨
+    @Order(2)
+    @DisplayName("상태별 사용자 조회 테스트")
+    void shouldFindUsersByStatus() {
+        // Given - 테스트 데이터가 init.sql에 의해 준비됨
+        
+        // When
+        List<User> activeUsers = userDao.findByStatus(UserStatus.ACTIVE);
+        List<User> inactiveUsers = userDao.findByStatus(UserStatus.INACTIVE);
+        
+        // Then
+        assertThat(activeUsers).isNotEmpty();
+        assertThat(inactiveUsers).isEmpty(); // 초기 데이터에 비활성 사용자 없음
     }
 }
 ```
 
-#### 전체 스택 사용
+### 4. 동적 프록시 활용 사례
+
 ```java
-@SpringBootTest
-@EnablePrimaveraTestcontainers({ContainerType.MARIADB, ContainerType.REDIS, ContainerType.KAFKA})
-class FullStackIntegrationTest {
-    // 모든 인프라 컴포넌트 사용 가능
+// 인터페이스 정의
+@ProxyAnnotation
+public interface CacheableService {
+    
+    @ProxyPointAnnotation
+    String getCachedData(String key);
+    
+    @ProxyPointAnnotation
+    void invalidateCache(String key);
 }
-```
 
-### 동작 원리
-
-1. **TestExecutionListener 등록**: `PrimaveraTestcontainersListener`가 테스트 클래스 실행 전에 어노테이션을 읽고 시스템 프로퍼티를 설정합니다.
-
-2. **ApplicationContextInitializer 실행**: `PrimaveraTestcontainersContextInitializer`가 Spring 컨텍스트 초기화 시점에 설정된 컨테이너들을 시작합니다.
-
-3. **자동 프로퍼티 설정**: 각 컨테이너의 연결 정보가 Spring 프로퍼티로 자동 설정됩니다.
-
-### PrimaveraTestcontainersListener 클래스
-
-```java
-@Slf4j
-public class PrimaveraTestcontainersListener implements TestExecutionListener {
-
-    public static final String TESTCONTAINERS_CONFIG_PROPERTY = "primavera.testcontainers.config";
-    private static final ObjectMapper objectMapper = new ObjectMapper();
-
-    @SneakyThrows
+// 구현체
+@Component
+public class CacheableServiceImpl implements CacheableService {
+    
     @Override
-    public void beforeTestClass(TestContext testContext) {
-        EnablePrimaveraTestcontainers annotation = testContext.getTestClass().getAnnotation(EnablePrimaveraTestcontainers.class);
-        if (annotation != null) {
-            String containerTypesJson = objectMapper.writeValueAsString(annotation.value());
-            System.setProperty(TESTCONTAINERS_CONFIG_PROPERTY, containerTypesJson);
-            log.info("PrimaveraTestcontainersListener: @EnablePrimaveraTestcontainers 어노테이션 발견. 컨테이너 타입: {}", containerTypesJson);
-        } else {
-            System.clearProperty(TESTCONTAINERS_CONFIG_PROPERTY);
-            log.info("PrimaveraTestcontainersListener: @EnablePrimaveraTestcontainers 어노테이션 미발견.");
-        }
+    public String getCachedData(String key) {
+        // 실제 데이터 조회 로직
+        return "data-" + key;
     }
-
+    
     @Override
-    public void afterTestClass(TestContext testContext) {
-        System.clearProperty(TESTCONTAINERS_CONFIG_PROPERTY);
-        log.info("PrimaveraTestcontainersListener: 시스템 프로퍼티 '{}' 정리.", TESTCONTAINERS_CONFIG_PROPERTY);
+    public void invalidateCache(String key) {
+        // 캐시 무효화 로직
+        log.info("Cache invalidated for key: {}", key);
+    }
+}
+
+// 프록시 생성 및 사용
+@Service
+@RequiredArgsConstructor
+public class ProxyExampleService {
+    private final ProxyFactory proxyFactory;
+    private final CacheableServiceImpl cacheableService;
+    
+    @PostConstruct
+    public void init() {
+        CacheableService proxy = proxyFactory.createProxy(
+            CacheableService.class, 
+            cacheableService
+        );
+        
+        // 프록시를 통해 메서드 호출 - 로깅이 자동으로 추가됨
+        String data = proxy.getCachedData("user-123");
     }
 }
 ```
 
-## 주의사항
+### 5. 트랜잭션 관리
 
-1. 로컬 환경에서는 포트 1109의 MariaDB, 8200의 Vault 사용
-2. 프로덕션 환경에서는 Vault TLS 활성화 필수
-3. 동적 프록시는 인터페이스 기반으로만 동작
-4. **보안 필수**: 모든 민감정보는 Vault를 통해 관리
-5. **토큰 보안**: Vault 토큰은 환경변수로 관리, 코드에 하드코딩 금지
-6. **정기 로테이션**: 데이터베이스 패스워드 및 API 키 정기 변경
-7. **TestContainers**: 테스트 실행 시 Docker가 실행 중이어야 함
-
-## ✅ 최근 테스트 개선사항
-
-### TestContainers 마이그레이션 (chap04)
-이 챕터의 테스트는 Spring Boot 3.x 모범 사례에 따라 최신 TestContainers 직접 설정 방식으로 업데이트되었습니다.
-
-#### 변경된 테스트 파일들
-1. **PrimaveraServiceTest**: 서비스 계층 통합 테스트
-   - **변경전**: `@EnablePrimaveraTestcontainers` 커스텀 어노테이션 사용
-   - **변경후**: `@Container`와 `@DynamicPropertySource` 직접 사용
-   - **특징**: 비즈니스 로직 및 트랜잭션 처리 검증
-
-2. **UserDaoTest**: DAO 계층 데이터 접근 테스트
-   - **변경전**: `@EnablePrimaveraTestcontainers` 커스텀 어노테이션 사용
-   - **변경후**: `@Container`와 `@DynamicPropertySource` 직접 사용
-   - **특징**: CRUD 작업 및 데이터 무결성 검증
-
-#### 마이그레이션 세부사항
 ```java
-// 새로운 TestContainers 직접 설정 패턴
-@Container
-static MariaDBContainer<?> mariadb = new MariaDBContainer<>("mariadb:11.4")
-        .withDatabaseName("primavera")
-        .withUsername("primavera")  
-        .withPassword("primavera")
-        .withInitScript("sql/init.sql");
-
-@DynamicPropertySource
-static void configureProperties(DynamicPropertyRegistry registry) {
-    registry.add("spring.datasource.url", mariadb::getJdbcUrl);
-    registry.add("spring.datasource.username", mariadb::getUsername);
-    registry.add("spring.datasource.password", mariadb::getPassword);
-    registry.add("spring.datasource.driver-class-name", mariadb::getDriverClassName);
+@Service
+@Transactional(readOnly = true) // 기본적으로 읽기 전용
+public class UserService {
+    
+    // 조회 메서드 - 읽기 전용 트랜잭션 사용
+    public User getUser(Long id) {
+        return userDao.findById(id);
+    }
+    
+    // 생성/수정 메서드 - 읽기/쓰기 트랜잭션 사용
+    @Transactional
+    public User createUser(User user) {
+        validateUser(user);
+        userDao.insert(user);
+        sendWelcomeEmail(user); // 트랜잭션 범위에 포함
+        return user;
+    }
+    
+    // 복합 작업 - 모든 작업이 하나의 트랜잭션으로 처리
+    @Transactional
+    public void transferUserData(Long fromUserId, Long toUserId) {
+        User fromUser = userDao.findById(fromUserId);
+        User toUser = userDao.findById(toUserId);
+        
+        // 복잡한 비즈니스 로직...
+        userDao.update(fromUser);
+        userDao.update(toUser);
+        
+        // 모든 작업이 성공하면 커밋, 하나라도 실패하면 롤백
+    }
 }
 ```
 
-#### 마이그레이션 장점
-- **표준 준수**: Spring Boot 3.x 및 TestContainers 공식 패턴 사용
-- **투명성**: 테스트 설정이 명확하고 이해하기 쉬움
-- **독립성**: 각 테스트 클래스가 독립적인 컨테이너 설정을 가짐
-- **유지보수성**: 커스텀 어노테이션 의존성 제거로 코드 단순화
+## 테스트 실행
 
-#### 테스트 커버리지
-- **PrimaveraServiceTest**: 동적 프록시 패턴, AOP 기반 서비스 로직 검증
-- **UserDaoTest**: JDBC 템플릿 기반 데이터 접근, SQL 매핑 검증
+```bash
+# 전체 테스트 실행 (TestContainers 사용)
+./gradlew :chap04:test
 
-이러한 변경으로 chap04는 현대적이고 표준화된 TestContainers 테스트 환경을 갖추게 되었습니다.
+# 특정 테스트 클래스 실행
+./gradlew :chap04:test --tests "UserDaoIntegrationTest"
+
+# 테스트 커버리지 리포트 생성
+./gradlew :chap04:jacocoTestReport
+
+# 테스트 리포트 확인
+open chap04/build/reports/tests/test/index.html
+```
+
+## 주요 애너테이션
+
+| 애너테이션 | 용도 | 예제 |
+|-----------|------|------|
+| `@Mapper` | MyBatis 매퍼 인터페이스 | `@Mapper public interface UserDao` |
+| `@Select` | SQL SELECT 쿼리 매핑 | `@Select("SELECT * FROM USER WHERE id = #{id}")` |
+| `@Insert` | SQL INSERT 쿼리 매핑 | `@Insert("INSERT INTO USER ...")` |
+| `@Update` | SQL UPDATE 쿼리 매핑 | `@Update("UPDATE USER SET name = #{name}")` |
+| `@Delete` | SQL DELETE 쿼리 매핑 | `@Delete("DELETE FROM USER WHERE id = #{id}")` |
+| `@Options` | SQL 실행 옵션 설정 | `@Options(useGeneratedKeys = true)` |
+| `@Param` | 파라미터 이름 지정 | `User findById(@Param("id") Long id)` |
+| `@Transactional` | 트랜잭션 경계 설정 | `@Transactional(readOnly = true)` |
+
+## 실습 과제
+
+### 1. 동적 쿼리 작성
+
+조건에 따라 다른 쿼리를 실행하는 동적 쿼리를 작성해보세요:
+
+```java
+@Select({
+    "<script>",
+    "SELECT * FROM USER",
+    "WHERE 1=1",
+    "<if test='name != null and name != \"\"'>",
+    "  AND name LIKE CONCAT('%', #{name}, '%')",
+    "</if>",
+    "<if test='status != null'>",
+    "  AND status = #{status}",
+    "</if>",
+    "<if test='startDate != null and endDate != null'>",
+    "  AND created_at BETWEEN #{startDate} AND #{endDate}",
+    "</if>",
+    "ORDER BY created_at DESC",
+    "</script>"
+})
+List<User> searchUsers(@Param("name") String name,
+                       @Param("status") UserStatus status,
+                       @Param("startDate") LocalDateTime startDate,
+                       @Param("endDate") LocalDateTime endDate);
+```
+
+### 2. 배치 처리 구현
+
+여러 데이터를 한 번에 처리하는 배치 작업을 구현해보세요:
+
+```java
+@Insert({
+    "<script>",
+    "INSERT INTO USER (name, email, status) VALUES",
+    "<foreach collection='users' item='user' separator=','>",
+    "  (#{user.name}, #{user.email}, #{user.status})",
+    "</foreach>",
+    "</script>"
+})
+int insertBatch(@Param("users") List<User> users);
+```
+
+### 3. 복합 조회 쿼리
+
+JOIN을 사용한 복합 조회 기능을 구현해보세요:
+
+```java
+@Select({
+    "SELECT u.*, r.name as role_name",
+    "FROM USER u",
+    "LEFT JOIN USER_ROLE ur ON u.id = ur.user_id",
+    "LEFT JOIN ROLE r ON ur.role_id = r.id",
+    "WHERE u.id = #{id}"
+})
+@Results({
+    @Result(property = "id", column = "id"),
+    @Result(property = "name", column = "name"),
+    @Result(property = "email", column = "email"),
+    @Result(property = "roleName", column = "role_name")
+})
+UserWithRole findUserWithRole(@Param("id") Long id);
+```
+
+## 학습 순서
+
+1. **데이터베이스 설정** - MariaDB 연결과 HikariCP 설정 확인
+2. **MyBatis 매퍼** - `UserDao` 인터페이스의 SQL 어노테이션 분석
+3. **서비스 계층** - `PrimaveraService`의 트랜잭션 처리 방식 학습
+4. **동적 프록시** - `ProxyFactory`와 `DynamicInvocationHandler` 구현 분석
+5. **통합 테스트** - TestContainers 기반 테스트 실행과 검증
+6. **API 테스트** - RESTful API를 통한 CRUD 작업 확인
+
+## 다음 단계 안내
+
+**Chapter 05**에서는 로깅과 모니터링을 학습합니다:
+- Logback을 활용한 구조화된 로깅 시스템
+- 파일 기반 로그 관리와 로그 레벨별 분리
+- 애플리케이션 모니터링과 성능 추적
+- HikariCP 커넥션 풀 최적화
+- CSV 파일 처리와 배치 데이터 연동
+
+```bash
+# 다음 챕터로 이동
+cd ../chap05
+./gradlew :chap05:bootRun -Dspring.profiles.active=local
+```

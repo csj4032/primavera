@@ -3,6 +3,10 @@ spring:
     activate:
       on-profile: local
   cloud:
+    config:
+      enabled: false
+      import-check:
+        enabled: false
     vault:
       host: ${VAULT_HOST:localhost}
       port: ${VAULT_PORT:8200}
@@ -13,18 +17,8 @@ spring:
         enabled: true
         backend: secret
         profile-separator: '/'
-        default-context: FileProcessingMonitoringApplication
-        application-name: FileProcessingMonitoringApplication
-    aws:
-      credentials:
-        access-key: ${aws.credentials.access-key:${AWS_ACCESS_KEY_ID:}}
-        secret-key: ${aws.credentials.secret-key:${AWS_SECRET_ACCESS_KEY:}}
-      region:
-        static: ${aws.region:${AWS_REGION:ap-northeast-2}}
-      s3:
-        bucket-name: ${aws.s3.bucket-name:${AWS_S3_BUCKET_NAME:primavera-bucket}}
-        endpoint: ${aws.s3.endpoint:${AWS_S3_ENDPOINT:}}
-        path-style-access: ${aws.s3.path-style-access:${AWS_S3_PATH_STYLE_ACCESS:false}}
+        default-context: ProductBatchApplication
+        application-name: ProductBatchApplication
   datasource:
     hikari:
       minimum-idle: 5
@@ -36,14 +30,6 @@ spring:
       leak-detection-threshold: 60000
       connection-test-query: "SELECT 1"
       validation-timeout: 5000
-  thymeleaf:
-    cache: false
-    enabled: true
-    prefix: classpath:/templates/
-    suffix: .html
-  devtools:
-    livereload:
-      enabled: true
   jpa:
     show-sql: true
     generate-ddl: false
@@ -67,24 +53,3 @@ spring:
       max-request-size: 128KB
   jmx:
     enabled: true
-
-server:
-  tomcat:
-    arp:
-      enabled: false
-  ssl:
-    key-alias: primavera
-    key-store: classpath:certs/primavera.p12
-    key-store-type: PKCS12
-    key-store-password: primavera
-    enabled: true
-  port: 8443
-
-sentry:
-  dns: https://4084f8500752461897ebbfe3a067d36c@sentry.io/5166811
-  environment: local
-  servername: chap16
-  release: 0.0.1-SNAPSHOT
-  stacktrace:
-    app.packages:
-      - "com.primavera.genius"

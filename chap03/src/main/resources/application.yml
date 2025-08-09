@@ -4,7 +4,13 @@ spring:
   jackson:
     time-zone: UTC
   thymeleaf:
-    cache: true
+    cache: false
+    enabled: true
+    prefix: classpath:/templates/
+    suffix: .html
+  devtools:
+    livereload:
+      enabled: true
 
 logging:
   level:

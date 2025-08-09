@@ -1,14 +1,14 @@
   redis-${CHAPTER}:
-    image: redis:7.2-alpine
+    image: redis:7.4.1-alpine
     container_name: redis-primavera-${CHAPTER}
     restart: unless-stopped
     ports:
       - "${REDIS_PORT}:6379"
     volumes:
       - redis-${CHAPTER}-data:/data
-    command: redis-server --appendonly yes
+    command: redis-server --appendonly yes --requirepass primavera
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ["CMD", "redis-cli", "-a", "primavera", "ping"]
       interval: 10s
       timeout: 5s
       retries: 5

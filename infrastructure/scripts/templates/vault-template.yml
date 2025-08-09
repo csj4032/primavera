@@ -18,14 +18,7 @@
              sleep 5 &&
              export VAULT_ADDR='http://0.0.0.0:8200' &&
              export VAULT_TOKEN='primavera-vault-token' &&
-             vault kv put secret/${APP_NAME}/local \\
-               spring.datasource.driver-class-name=org.mariadb.jdbc.Driver \\
-               spring.datasource.url=jdbc:mariadb://localhost:${MARIADB_PORT}/primavera \\
-               spring.datasource.username=primavera \\
-               spring.datasource.password=primavera \\
-               spring.data.mongodb.uri=mongodb://primavera:primavera@localhost:${MONGODB_PORT:-27017}/primavera?authSource=admin \\
-               spring.data.redis.host=localhost \\
-               spring.data.redis.port=${REDIS_PORT:-6379} &&
+             ${VAULT_CONFIGURATIONS} &&
              tail -f /dev/null"
     healthcheck:
       test: ["CMD", "vault", "status"]
@@ -34,7 +27,6 @@
       retries: 5
       start_period: 10s
     depends_on:
-      mariadb-${CHAPTER}:
-        condition: service_healthy
+      ${VAULT_DEPENDS_ON}
     networks:
       - ${CHAPTER}-network

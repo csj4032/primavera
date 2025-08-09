@@ -1,97 +1,139 @@
-## chap10 - OAuth2 Social Login Application
+# Chapter 10: OAuth2 소셜 로그인과 멀티 레벨 캐싱 전략
 
-### 개요
-Spring Boot 3.x와 Spring Security 6.x를 활용한 소셜 로그인(OAuth2) 통합 애플리케이션입니다. Google, Facebook, GitHub, Kakao 4개 소셜 로그인 프로바이더를 지원하며, HTTPS(SSL/TLS) 보안 연결과 XSS 방어를 위한 Lucy Filter가 적용되어 있습니다.
+## 프로젝트 개요
 
-### 주요 기능
-- **OAuth2 소셜 로그인**: Google, Facebook, GitHub, Kakao 계정으로 로그인
-- **통합 사용자 관리**: 소셜 계정을 내부 사용자 시스템과 연동
-- **보안 강화**: HTTPS 필수 적용, Lucy XSS Filter 통합
-- **세션 관리**: 소셜 로그인 토큰 관리 및 자동 갱신
-- **사용자 프로필 동기화**: 소셜 프로필 정보 자동 업데이트
+**OAuth2 Social Login Application**는 Spring Boot 3.x와 Spring Security 6.x를 기반으로 한 소셜 로그인 통합 시스템입니다. Google, Facebook, GitHub, Kakao 4개 소셜 로그인 프로바이더를 지원하며, Redis + Caffeine 하이브리드 캐싱 전략과 Spring Boot Actuator를 통한 실시간 모니터링을 구현합니다.
 
-### 아키텍처 특징
+### 보안 학습 목표
+- OAuth2 인증 플로우 이해 및 구현
+- 소셜 로그인 통합 및 사용자 매핑
+- 다중 프로바이더 토큰 관리
+- 멀티 레벨 캐싱 전략 구현
+- Actuator를 통한 보안 모니터링
 
-#### 1. OAuth2 통합 구조
-- **Spring Security OAuth2 Client**: 표준 OAuth2 클라이언트 구현
-- **커스텀 OAuth2UserService**: 각 프로바이더별 사용자 정보 처리
-- **UserConnection 모델**: 소셜 계정과 내부 사용자 연결 관리
-- **Provider별 UserDetails**: Google, Facebook, GitHub, Kakao 전용 모델
+## 프로젝트 구조
 
-#### 2. 보안 설정
-- **SSL/TLS 필수**: PKCS12 인증서 기반 HTTPS 적용
-- **CSRF 보호**: 상태 변경 요청에 대한 CSRF 토큰 검증
-- **XSS 방어**: Lucy Filter를 통한 악성 스크립트 차단
-- **접근 제어**: URL 패턴 기반 권한 관리
-
-#### 3. 캐싱 전략 아키텍처 🚀 **NEW**
-- **다중 캐시 백엔드**: Redis(분산) + Caffeine(로컬) 하이브리드 구조
-- **OAuth2 토큰 캐싱**: 액세스 토큰 및 리프레시 토큰 관리
-- **사용자 프로필 캐싱**: 소셜 프로필 정보 고속 조회
-- **스마트 무효화**: 토큰 만료 기반 자동 정리
-- **실시간 모니터링**: 캐시 상태 및 성능 대시보드
-
-#### 4. 모듈 구조
 ```
 chap10/
-├── infrastructure/
-│   ├── cache/                                     # 🆕 캐싱 전략
-│   │   ├── CacheConfiguration.java                # Redis + Caffeine 설정
-│   │   ├── OAuth2TokenCacheService.java           # 토큰 캐싱 서비스
-│   │   ├── UserProfileCacheService.java           # 프로필 캐싱 서비스
-│   │   └── CacheEvictionStrategy.java             # 캐시 무효화 전략
-│   ├── security/
-│   │   ├── PrimaveraSecurityConfiguration.java    # Spring Security 설정
-│   │   ├── PrimaveraUserDetailsService.java       # 일반 로그인 처리
-│   │   └── social/
-│   │       ├── PrimaveraSocialConfiguration.java  # OAuth2 설정
-│   │       └── provider별 UserDetails 클래스
-│   └── filter/
-│       └── PrimaveraFilter.java                   # 커스텀 필터
-├── domain/
-│   └── model/
-│       └── UserConnection.java                    # 소셜 연동 정보
-└── interfaces/
-    ├── LoginController.java                       # 로그인 화면 제어
-    └── CacheManagementController.java             # 🆕 캐시 관리 API
+├── src/main/java/com/genius/primavera/
+│   ├── OAuth2SocialLoginApplication.java           # 메인 애플리케이션
+│   ├── domain/
+│   │   ├── model/
+│   │   │   ├── User.java                          # 사용자 도메인 모델
+│   │   │   ├── UserConnection.java                # 소셜 연동 정보
+│   │   │   ├── ProviderType.java                  # 소셜 프로바이더 타입
+│   │   │   ├── RoleType.java                      # 역할 타입
+│   │   │   └── UserStatus.java                    # 사용자 상태
+│   │   └── mapper/
+│   │       ├── UserMapper.java                    # 사용자 매퍼
+│   │       ├── UserRoleMapper.java                # 역할 매퍼
+│   │       └── UserConnectionMapper.java          # 소셜 연동 매퍼
+│   ├── application/
+│   │   ├── UserService.java                       # 사용자 서비스
+│   │   └── UserServiceImpl.java                   # 서비스 구현
+│   ├── infrastructure/
+│   │   ├── cache/                                 # 캐싱 전략
+│   │   │   ├── CacheConfiguration.java            # 캐시 설정
+│   │   │   ├── OAuth2TokenCacheService.java       # 토큰 캐시
+│   │   │   ├── UserProfileCacheService.java       # 프로필 캐시
+│   │   │   └── CacheEvictionStrategy.java         # 무효화 전략
+│   │   ├── security/
+│   │   │   ├── PrimaveraSecurityConfiguration.java # Spring Security 설정
+│   │   │   ├── PrimaveraUserDetailsService.java   # 일반 사용자 인증
+│   │   │   ├── PrimaveraSocialUserDetailsService.java # 소셜 사용자 인증
+│   │   │   ├── PrimaveraUserDetails.java          # 커스텀 UserDetails
+│   │   │   └── social/                            # 소셜 인증 설정
+│   │   │       ├── PrimaveraSocialConfiguration.java
+│   │   │       └── provider/                      # 프로바이더별 설정
+│   │   │           ├── GoogleUserDetails.java
+│   │   │           ├── FacebookUserDetails.java
+│   │   │           ├── GithubUserDetails.java
+│   │   │           └── KakaoUserDetails.java
+│   │   └── filter/
+│   │       └── PrimaveraFilter.java              # 커스텀 필터
+│   └── interfaces/
+│       ├── LoginController.java                   # 로그인 컨트롤러
+│       ├── UserController.java                    # 사용자 컨트롤러
+│       └── CacheManagementController.java         # 캐시 관리 API
+├── src/main/resources/
+│   ├── application.yml                            # 메인 설정
+│   ├── application-local.yml                     # 로컬 개발 설정
+│   └── templates/                                 # Thymeleaf 템플릿
+└── src/test/resources/
+    ├── application-test.yml                      # 테스트 설정
+    └── sql/init.sql                             # 테스트 데이터
 ```
 
-### build.gradle 의존성 추가
+## 보안 기능 및 OAuth2 인증
 
-```gradle
-dependencies {
-    // Spring Security OAuth2 Client
-    implementation "org.springframework.boot:spring-boot-starter-oauth2-client"
-    implementation "org.springframework.security:spring-security-oauth2-client"
-    implementation "org.springframework.security:spring-security-oauth2-jose"
+### 1. OAuth2 소셜 로그인 설정
+
+```java
+@Configuration
+@EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true)
+public class PrimaveraSecurityConfiguration {
     
-    // 🆕 캐싱 전략 의존성
-    implementation "org.springframework.boot:spring-boot-starter-cache"
-    implementation "org.springframework.boot:spring-boot-starter-data-redis"
-    implementation "org.redisson:redisson-spring-boot-starter:${redissonVersion}"
-    implementation "com.github.ben-manes.caffeine:caffeine:${caffeineVersion}"
+    private final OAuth2UserService<OAuth2UserRequest, OAuth2User> oauth2UserService;
     
-    // Thymeleaf Security 통합
-    implementation "org.thymeleaf.extras:thymeleaf-extras-springsecurity6"
-    
-    // XSS 방어
-    implementation project(":appendix:spring-boot-starter-lucy-filter")
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        return http
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/admin/**").hasRole("ADMINISTRATOR")
+                .requestMatchers("/manager/**").hasAnyRole("ADMINISTRATOR", "MANAGER")
+                .requestMatchers("/", "/login/**", "/oauth2/**").permitAll()
+                .anyRequest().authenticated()
+            )
+            .oauth2Login(oauth2 -> oauth2
+                .loginPage("/login")
+                .successHandler(authenticationSuccessHandler())
+                .userInfoEndpoint(userInfo -> 
+                    userInfo.userService(oauth2UserService)
+                )
+            )
+            .logout(logout -> logout
+                .logoutSuccessUrl("/login?logout")
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID")
+            )
+            .build();
+    }
 }
 ```
 
-### application.yml 설정
-```yaml
-# SSL/TLS 설정
-server:
-  ssl:
-    key-alias: primavera
-    key-store: infrastructure/certs/primavera.p12
-    key-store-type: PKCS12
-    key-store-password: primavera
-    enabled: true
-  port: 8443
+### 2. 소셜 프로바이더별 사용자 정보 처리
 
-# Spring Security OAuth2 Client 설정 (Spring Boot 3.x 방식)
+```java
+@Service
+public class PrimaveraSocialUserDetailsService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
+    
+    @Override
+    public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
+        OAuth2User oauth2User = delegateOAuth2UserService.loadUser(userRequest);
+        
+        String registrationId = userRequest.getClientRegistration().getRegistrationId();
+        String userNameAttributeName = userRequest.getClientRegistration()
+            .getProviderDetails().getUserInfoEndpoint().getUserNameAttributeName();
+            
+        return createSocialUser(registrationId, oauth2User, userNameAttributeName);
+    }
+    
+    private OAuth2User createSocialUser(String registrationId, OAuth2User oauth2User, String userNameAttributeName) {
+        return switch (registrationId.toLowerCase()) {
+            case "google" -> new GoogleUserDetails(oauth2User.getAttributes(), userNameAttributeName);
+            case "facebook" -> new FacebookUserDetails(oauth2User.getAttributes(), userNameAttributeName);
+            case "github" -> new GithubUserDetails(oauth2User.getAttributes(), userNameAttributeName);
+            case "kakao" -> new KakaoUserDetails(oauth2User.getAttributes(), userNameAttributeName);
+            default -> throw new OAuth2AuthenticationException("Unsupported provider: " + registrationId);
+        };
+    }
+}
+```
+
+### 3. 소셜 프로바이더 설정 (application.yml)
+
+```yaml
 spring:
   security:
     oauth2:
@@ -110,19 +152,16 @@ spring:
             scope:
               - email
               - public_profile
-            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
           github:
             client-id: ${OAUTH2_GITHUB_CLIENTID}
             client-secret: ${OAUTH2_GITHUB_CLIENTSECRET}
             scope:
               - user:email
               - read:user
-            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
           kakao:
             client-id: ${OAUTH2_KAKAO_CLIENTID}
             client-secret: ${OAUTH2_KAKAO_CLIENTSECRET:}
             authorization-grant-type: authorization_code
-            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
             scope:
               - profile_nickname
               - account_email
@@ -134,53 +173,134 @@ spring:
             user-name-attribute: id
 ```
 
-### OAuth2 인증 흐름
+## 멀티 레벨 캐싱 전략
 
-#### 1. 로그인 프로세스
-1. 사용자가 소셜 로그인 버튼 클릭
-2. OAuth2 프로바이더 인증 페이지로 리다이렉트
-3. 사용자 인증 및 권한 동의
-4. Authorization Code와 함께 콜백 URL로 리다이렉트
-5. Authorization Code를 Access Token으로 교환
-6. Access Token으로 사용자 정보 조회
-7. 내부 사용자 시스템과 연동 및 세션 생성
+### 1. 하이브리드 캐시 설정
 
-#### 2. 핵심 컴포넌트
-- **PrimaveraSocialConfiguration**: OAuth2UserService 빈 정의
-- **OAuth2UserService**: 프로바이더별 사용자 정보 처리
-- **UserConnection**: 소셜 계정 연동 정보 저장
-- **PrimaveraSocialUserDetailsService**: 소셜 사용자 인증 처리
+```java
+@Configuration
+@EnableCaching
+public class CacheConfiguration {
+    
+    @Bean
+    @Primary
+    public CacheManager cacheManager() {
+        CompositeCacheManager compositeCacheManager = new CompositeCacheManager();
+        compositeCacheManager.setCacheManagers(
+            caffeineCacheManager(),
+            redisCacheManager()
+        );
+        compositeCacheManager.setFallbackToNoOpCache(false);
+        return compositeCacheManager;
+    }
+    
+    @Bean
+    public CacheManager caffeineCacheManager() {
+        CaffeineCacheManager cacheManager = new CaffeineCacheManager();
+        cacheManager.setCaffeine(
+            Caffeine.newBuilder()
+                .maximumSize(1000)
+                .expireAfterWrite(Duration.ofMinutes(30))
+                .recordStats()
+        );
+        return cacheManager;
+    }
+    
+    @Bean
+    public CacheManager redisCacheManager() {
+        RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig()
+            .entryTtl(Duration.ofHours(1))
+            .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
+            .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()));
+            
+        return RedisCacheManager.builder(redisConnectionFactory())
+            .cacheDefaults(config)
+            .build();
+    }
+}
+```
 
-#### 3. 프로바이더별 처리
-- **Google**: email, name, picture 정보 수집
-- **Facebook**: id, email, name 정보 수집  
-- **GitHub**: login, email, name, avatar_url 정보 수집
-- **Kakao**: id, kakao_account(email, profile) 정보 수집
+### 2. OAuth2 토큰 캐싱 서비스
 
-### SSL/TLS 설정
+```java
+@Service
+@CacheConfig(cacheNames = "oauth2Tokens")
+public class OAuth2TokenCacheService {
+    
+    @Cacheable(key = "#userId + ':' + #provider")
+    public Optional<TokenCacheEntry> getValidAccessToken(String userId, String provider) {
+        return findToken(userId, provider)
+            .filter(entry -> !isTokenExpired(entry));
+    }
+    
+    @CachePut(key = "#userId + ':' + #provider")
+    public TokenCacheEntry cacheToken(String userId, String provider, 
+                                    String accessToken, Instant expiresAt) {
+        return TokenCacheEntry.builder()
+            .userId(userId)
+            .provider(provider)
+            .accessToken(accessToken)
+            .expiresAt(expiresAt)
+            .cachedAt(Instant.now())
+            .build();
+    }
+    
+    @CacheEvict(key = "#userId + ':' + #provider")
+    public void evictToken(String userId, String provider) {
+        // 토큰 무효화
+    }
+    
+    @Scheduled(fixedRate = 300000) // 5분마다
+    public void cleanupExpiredTokens() {
+        // 만료된 토큰 정리
+    }
+}
+```
 
-#### 인증서 생성
+### 3. 사용자 프로필 캐싱
+
+```java
+@Service
+@CacheConfig(cacheNames = "userProfiles")
+public class UserProfileCacheService {
+    
+    @Cacheable(key = "#userId")
+    public Optional<UserProfile> getUserProfile(Long userId) {
+        return userService.findById(userId)
+            .map(this::mapToUserProfile);
+    }
+    
+    @CachePut(key = "#userProfile.userId")
+    public UserProfile updateUserProfile(UserProfile userProfile) {
+        return userService.updateProfile(userProfile);
+    }
+    
+    @Cacheable(key = "#email + ':social'")
+    public Optional<SocialUserProfile> getSocialUserProfile(String email) {
+        return userConnectionMapper.findByEmail(email)
+            .map(this::buildSocialProfile);
+    }
+}
+```
+
+## 기술 스택
+
+- **Spring Boot**: 3.3.6
+- **Spring Security**: 6.4.4
+- **OAuth2 Client**: 소셜 로그인 통합
+- **Spring Boot Actuator**: 애플리케이션 모니터링
+- **Spring Cache**: 캐싱 추상화
+- **Redis**: 분산 캐시
+- **Caffeine**: 로컬 캐시
+- **MyBatis**: SQL 매핑 프레임워크
+- **MariaDB**: 관계형 데이터베이스
+- **TestContainers**: 통합 테스트 컨테이너
+
+## 실행 방법
+
+### 1. 환경 변수 설정
 ```bash
-# infrastructure/certs 디렉토리에서 실행
-keytool -genkeypair -alias primavera -storetype PKCS12 -keyalg RSA -keysize 2048 -keystore primavera.p12 -validity 3650
-```
-
-#### 로컬 개발 환경 설정
-hosts 파일 수정 (선택사항):
-```
-127.0.0.1       local.primavera.com
-```
-
-#### 소셜 프로바이더 콜백 URL 설정
-각 프로바이더의 개발자 콘솔에서 다음 콜백 URL을 등록해야 합니다:
-- **Google**: `https://localhost:8443/login/oauth2/code/google`
-- **Facebook**: `https://localhost:8443/login/oauth2/code/facebook`
-- **GitHub**: `https://localhost:8443/login/oauth2/code/github`
-- **Kakao**: `https://localhost:8443/login/oauth2/code/kakao`
-
-### 환경 변수 설정
-OAuth2 클라이언트 정보는 환경 변수로 관리합니다:
-```bash
+# OAuth2 클라이언트 정보 설정
 export OAUTH2_GOOGLE_CLIENTID=your-google-client-id
 export OAUTH2_GOOGLE_CLIENTSECRET=your-google-client-secret
 export OAUTH2_FACEBOOK_CLIENTID=your-facebook-client-id
@@ -190,324 +310,208 @@ export OAUTH2_GITHUB_CLIENTSECRET=your-github-client-secret
 export OAUTH2_KAKAO_CLIENTID=your-kakao-client-id
 ```
 
-### 실행 방법
+### 2. Docker 인프라 시작
 ```bash
-# MariaDB 컨테이너 실행 (infrastructure 디렉토리)
-docker-compose up -d mariadb
+# MariaDB + Redis 시작
+./docker-manager.sh start chap10
 
-# 애플리케이션 실행
-./gradlew :chap10:bootRun --args='--spring.profiles.active=local'
-
-# 브라우저에서 접속
-https://localhost:8443
+# 상태 확인
+./docker-manager.sh status chap10
 ```
 
-### 데이터베이스 스키마
-소셜 로그인 정보를 저장하는 USER_CONNECTION 테이블:
-```sql
-CREATE TABLE USER_CONNECTION (
-    ID BIGINT AUTO_INCREMENT PRIMARY KEY,
-    EMAIL VARCHAR(255) NOT NULL,
-    PROVIDER VARCHAR(100) NOT NULL,
-    PROVIDER_USER_ID VARCHAR(255) NOT NULL,
-    DISPLAY_NAME VARCHAR(255),
-    PROFILE_URL VARCHAR(512),
-    IMAGE_URL VARCHAR(512),
-    ACCESS_TOKEN VARCHAR(512) NOT NULL,
-    EXPIRE_TIME BIGINT,
-    CREATED_AT TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    UPDATED_AT TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    UNIQUE KEY UK_USER_CONNECTION (EMAIL, PROVIDER)
-);
+### 3. 애플리케이션 실행
+```bash
+# 로컬 프로파일로 실행
+./gradlew :chap10:bootRun -Dspring.profiles.active=local
+
+# 또는 IDE에서 실행 시
+-Dspring.profiles.active=local
 ```
 
-### 주의사항
-- **HTTPS 필수**: OAuth2 프로바이더는 보안상 HTTPS 콜백 URL만 허용
-- **환경 변수**: 클라이언트 시크릿은 절대 코드에 하드코딩하지 말 것
-- **토큰 관리**: Access Token은 암호화하여 저장 권장
-- **세션 보안**: 소셜 로그인 후 새로운 세션 ID 생성 필요
-
-## 🚀 고성능 캐싱 전략 가이드
-
-### 캐싱 아키텍처 개요
-
-Chapter 10에서는 OAuth2 소셜 로그인 환경에 특화된 **다계층 캐싱 전략**을 구현합니다:
-
-```mermaid
-graph TB
-    subgraph "L1 Cache - Caffeine (로컬)"
-        A[빠른 응답]
-        B[메모리 기반]
-        C[단일 인스턴스]
-    end
-    
-    subgraph "L2 Cache - Redis (분산)"
-        D[세션 공유]
-        E[토큰 저장]
-        F[확장성]
-    end
-    
-    subgraph "Cache Types"
-        G[OAuth2 Token Cache]
-        H[User Profile Cache]
-        I[Social Provider Cache]
-        J[Session Cache]
-    end
-    
-    A --> G
-    D --> G
-    B --> H
-    E --> H
-    C --> I
-    F --> J
+### 4. 웹 접속
+```
+http://localhost:8080
 ```
 
-### 1. OAuth2 토큰 캐싱 전략
+## 보안 테스트 실행 방법
 
-#### 주요 특징
-- **토큰 생명주기 관리**: 액세스 토큰 만료 시간 기반 TTL 설정
-- **자동 갱신**: 리프레시 토큰을 통한 자동 토큰 갱신
-- **프로바이더별 분리**: Google, Facebook, GitHub, Kakao 별도 관리
-- **보안 강화**: 토큰 암호화 저장 및 접근 제어
+### 1. 전체 테스트
+```bash
+./gradlew :chap10:test
+```
 
-#### 구현 예시
+### 2. OAuth2 통합 테스트
+```bash
+./gradlew :chap10:test --tests "*OAuth2*"
+```
+
+### 3. 캐시 성능 테스트
+```bash
+./gradlew :chap10:test --tests "*Cache*"
+```
+
+## 핵심 보안 학습 포인트
+
+### 1. OAuth2 인증 플로우
+
 ```java
-@Service
-public class OAuth2TokenCacheService {
+@Component
+public class PrimaveraAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
     
-    @Cacheable(value = "oauth2Tokens", key = "#userId + ':' + #provider")
-    public Optional<String> getValidAccessToken(String userId, String provider) {
-        // 캐시에서 토큰 조회 + 만료 시간 검증
-        return getToken(userId, provider)
-                .filter(entry -> !isTokenExpired(entry))
-                .map(TokenCacheEntry::getAccessToken);
-    }
-    
-    @CachePut(value = "oauth2Tokens", key = "#userId + ':' + #provider") 
-    public TokenCacheEntry refreshToken(String userId, String provider,
-                                      OAuth2AccessToken newAccessToken) {
-        // 새로운 토큰으로 캐시 갱신
+    @Override
+    public void onAuthenticationSuccess(HttpServletRequest request, 
+                                      HttpServletResponse response, 
+                                      Authentication authentication) throws IOException {
+        
+        OAuth2AuthenticationToken oauth2Token = (OAuth2AuthenticationToken) authentication;
+        String registrationId = oauth2Token.getAuthorizedClientRegistrationId();
+        OAuth2User oauth2User = oauth2Token.getPrincipal();
+        
+        // 사용자 정보 동기화
+        UserConnection userConnection = syncUserConnection(registrationId, oauth2User);
+        
+        // 토큰 캐싱
+        cacheOAuth2Token(userConnection);
+        
+        // 성공 페이지로 리다이렉트
+        response.sendRedirect("/dashboard");
     }
 }
 ```
 
-### 2. 사용자 프로필 캐싱
+### 2. 프로바이더별 사용자 정보 매핑
 
-#### 캐싱 대상
-- **소셜 프로필 정보**: 이름, 이메일, 프로필 이미지
-- **로그인 통계**: 로그인 횟수, 마지막 접속 시간
-- **프로바이더 연동 정보**: 다중 소셜 계정 연결 상태
-
-#### 캐시 무효화 전략
 ```java
-// 사용자 정보 변경 시 자동 갱신
-@CachePut(value = "userProfiles", key = "#userId")
-public UserProfile updateUserProfile(Long userId, User updatedUser) {
-    // 프로필 업데이트 후 캐시 갱신
-}
-
-// 로그인 시마다 접속 정보 업데이트
-@CachePut(value = "userProfiles", key = "#userId")
-public UserProfile updateLastLogin(Long userId, String provider) {
-    // 로그인 시간 및 프로바이더 정보 갱신
+public class GoogleUserDetails implements SocialUserDetails {
+    
+    private final Map<String, Object> attributes;
+    private final String nameAttributeKey;
+    
+    @Override
+    public String getEmail() {
+        return getAttribute("email");
+    }
+    
+    @Override
+    public String getName() {
+        return getAttribute("name");
+    }
+    
+    @Override
+    public String getImageUrl() {
+        return getAttribute("picture");
+    }
+    
+    @Override
+    public ProviderType getProvider() {
+        return ProviderType.GOOGLE;
+    }
 }
 ```
 
-### 3. 스마트 캐시 정리 전략
+### 3. 캐시 무효화 전략
 
-#### 자동 정리 스케줄
 ```java
 @Component
 public class CacheEvictionStrategy {
     
-    @Scheduled(cron = "0 0 * * * *")  // 매시간
+    @Scheduled(cron = "0 0 * * * *") // 매시간
     public void cleanupExpiredTokens() {
-        // 만료된 토큰 자동 정리
+        oauth2TokenCacheService.cleanupExpired();
     }
     
-    @Scheduled(cron = "0 0 0 * * *")  // 매일 자정
-    public void dailyCacheOptimization() {
-        // LRU 기반 오래된 캐시 정리
-        // 캐시 압축 및 최적화
-        // 자주 사용되는 데이터 워밍업
+    @EventListener
+    public void handleUserLogout(LogoutSuccessEvent event) {
+        String userId = event.getAuthentication().getName();
+        userProfileCacheService.evictUserProfile(userId);
+        oauth2TokenCacheService.evictAllUserTokens(userId);
     }
     
-    @Scheduled(fixedRate = 300000)    // 5분마다
-    public void monitorMemoryUsage() {
-        // 메모리 사용률 80% 이상 시 긴급 정리
+    @Scheduled(fixedRate = 300000) // 5분마다
+    public void monitorCacheHealth() {
+        CacheStats stats = caffeineCacheManager.getCache("userProfiles").getNativeCache().stats();
+        if (stats.hitRate() < 0.8) {
+            // 캐시 히트율이 80% 미만일 경우 알림
+            notificationService.sendCacheHealthAlert(stats);
+        }
     }
 }
 ```
 
-### 4. 캐시 모니터링 대시보드
+### 4. Actuator 모니터링
 
-#### 실시간 모니터링 API
-```bash
-# 캐시 전체 상태 조회
-GET /admin/cache/dashboard
-
-# 특정 캐시 상세 정보
-GET /admin/cache/oauth2Tokens/details
-
-# 사용자별 캐시 무효화
-DELETE /admin/cache/users/{userId}
-
-# 캐시 통계 CSV 다운로드
-GET /admin/cache/statistics/export
-```
-
-#### 캐시 통계 예시
-```json
-{
-  "tokenCache": {
-    "totalEntries": 1250,
-    "validEntries": 1180,
-    "expiredEntries": 70,
-    "hitRatio": "87.50%"
-  },
-  "profileCache": {
-    "totalProfiles": 850,
-    "providerDistribution": {
-      "google": 340,
-      "kakao": 280,
-      "github": 150,
-      "facebook": 80
-    },
-    "averageLoginCount": 8.5
-  },
-  "memory": {
-    "used": "245.8 MB",
-    "total": "512.0 MB", 
-    "usagePercentage": "48.01%"
-  }
-}
-```
-
-### 5. 환경별 캐시 설정
-
-#### 개발 환경 (Caffeine)
 ```yaml
-spring:
-  cache:
-    type: caffeine
-    caffeine:
-      spec: maximumSize=1000,expireAfterWrite=30m,recordStats
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, metrics, caches, oauth2tokens
+  endpoint:
+    health:
+      show-details: always
+    caches:
+      enabled: true
+  metrics:
+    cache:
+      instrument: true
 ```
 
-#### 운영 환경 (Redis)
-```yaml
-spring:
-  cache:
-    type: redis
-    redis:
-      time-to-live: 1800000  # 30분
-      cache-null-values: false
-  data:
-    redis:
-      host: redis-cluster.primavera.com
-      port: 6380
-      lettuce:
-        pool:
-          max-active: 8
-          max-idle: 8
-```
+## 학습 순서
 
-### 6. 성능 최적화 팁
+1. **OAuth2 기본 개념**
+   - Authorization Code Grant 플로우
+   - Client Credentials vs Authorization Code
+   - Access Token vs Refresh Token
 
-#### 캐시 키 설계
-```java
-// ✅ 효율적인 키 네이밍
-"oauth2:token:userId:providerId"     // 계층적 구조
-"profile:user:12345"                 // 간결하고 명확
+2. **소셜 로그인 구현**
+   - Spring Security OAuth2 Client 설정
+   - 프로바이더별 사용자 정보 처리
+   - 사용자 매핑 및 동기화
 
-// ❌ 비효율적인 키 네이밍  
-"user_oauth_token_google_user123"    // 너무 장황
-"cache_key_1234"                     // 의미 불명확
-```
+3. **캐싱 전략 구현**
+   - Redis + Caffeine 하이브리드 설정
+   - 토큰 캐싱 및 만료 관리
+   - 캐시 무효화 전략
 
-#### 캐시 TTL 전략
-- **OAuth2 토큰**: 1시간 (토큰 만료 시간과 동기화)
-- **사용자 프로필**: 2시간 (자주 변경되지 않음)
-- **세션 정보**: 30분 (보안상 짧은 주기)
-- **소셜 프로바이더 메타데이터**: 6시간 (거의 변경되지 않음)
+4. **보안 강화**
+   - CSRF 보호 설정
+   - 세션 관리 및 고정 보호
+   - XSS 방어
 
-### 7. 트러블슈팅
+5. **모니터링 및 운영**
+   - Actuator를 통한 상태 모니터링
+   - 캐시 성능 메트릭
+   - 보안 이벤트 로깅
 
-#### 캐시 미스 문제
-```bash
-# Redis 연결 상태 확인
-docker exec redis-primavera redis-cli ping
+## 주요 보안 애너테이션
 
-# 캐시 키 존재 여부 확인
-docker exec redis-primavera redis-cli EXISTS "oauth2Tokens::userId:google"
+### OAuth2 관련 애너테이션
+- `@EnableOAuth2Client`: OAuth2 클라이언트 활성화
+- `@RegisteredOAuth2AuthorizedClient`: 인증된 클라이언트 주입
+- `@AuthenticationPrincipal`: OAuth2 사용자 정보 주입
 
-# 캐시 통계 조회
-curl -X GET "https://localhost:8443/admin/cache/dashboard"
-```
+### 캐싱 애너테이션
+- `@EnableCaching`: 캐싱 활성화
+- `@Cacheable`: 캐시 조회
+- `@CachePut`: 캐시 갱신
+- `@CacheEvict`: 캐시 무효화
+- `@CacheConfig`: 캐시 설정
 
-#### 메모리 누수 방지
-- 정기적 만료된 캐시 정리
-- 메모리 사용률 모니터링
-- 캐시 크기 제한 설정
+### 모니터링 애너테이션
+- `@Timed`: 메트릭 수집
+- `@Counted`: 카운터 메트릭
+- `@EventListener`: 이벤트 처리
 
-## 실행 방법
+## 다음 단계 안내
 
-### 🚀 Spring Boot 애플리케이션 실행
+Chapter 10을 완료한 후에는 **Chapter 11 (게시판 시스템)**으로 진행하여 다음 내용을 학습합니다:
 
-#### 1. 환경 변수 방식 (권장)
-```bash
-# 로컬 환경으로 실행  
-SPRING_PROFILES_ACTIVE=local ./gradlew :chap10:bootRun
-```
+- OAuth2 기반 게시판 시스템
+- 페이징 및 검색 기능
+- 파일 업로드 및 다운로드
+- 권한 기반 컨텐츠 관리
+- Thymeleaf 템플릿 고급 활용
 
-#### 2. Program Arguments 방식
-```bash
-# 기본 실행
-./gradlew :chap10:bootRun --args='--spring.profiles.active=local'
-```
+---
 
-#### 3. IDE 설정 방식
-- IntelliJ IDEA: Run Configuration → VM Options 또는 Program Arguments 설정
-- VM Options: `-Dspring.profiles.active=local`
-- Program Arguments: `--spring.profiles.active=local`
-
-## 🐳 인프라 설정
-
-### Docker Compose 환경 설정
-
-이 챕터는 **MyBatis + 보안 인프라**를 사용합니다:
-
-```bash
-# infrastructure 디렉터리로 이동
-cd infrastructure
-
-# MyBatis + 보안 학습용 Docker Compose 실행 (MariaDB)
-docker-compose -f docker-compose.mybatis.yml up -d
-
-# 서비스 상태 확인
-docker-compose -f docker-compose.mybatis.yml ps
-
-# 정리 (컨테이너 및 볼륨 삭제)
-docker-compose -f docker-compose.mybatis.yml down -v
-```
-
-**포함된 서비스:**
-- **MariaDB 11.4.7** (포트: 3308)
-- MyBatis 전용 데이터베이스 스키마 자동 생성
-
-**애플리케이션 실행:**
-```bash
-# 인프라 시작 후 애플리케이션 실행
-./gradlew :chap10:bootRun -Dspring.profiles.active=local
-```
-
-### 참고 자료
-- [Spring Security OAuth2 공식 문서](https://spring.io/guides/tutorials/spring-boot-oauth2/)
-- [Spring Cache 추상화 가이드](https://spring.io/guides/gs/caching/)
-- [Redis 캐싱 전략 가이드](https://redis.io/docs/manual/patterns/)
-- [Caffeine 캐시 라이브러리](https://github.com/ben-manes/caffeine)
-- [Google OAuth2 개발자 가이드](https://developers.google.com/identity/protocols/oauth2)
-- [Facebook 로그인 구현 가이드](https://developers.facebook.com/docs/facebook-login/manually-build-a-login-flow/)
-- [GitHub OAuth Apps 가이드](https://docs.github.com/en/developers/apps/building-oauth-apps/authorizing-oauth-apps)
-- [Kakao 로그인 API 문서](https://developers.kakao.com/docs/latest/ko/kakaologin/common)
-- [Spring Security 6.x 마이그레이션 가이드](https://github.com/spring-projects/spring-security/wiki/OAuth-2.0-Migration-Guide)
+OAuth2 소셜 로그인과 캐싱 전략을 마스터한 후 실전 웹 애플리케이션 개발로 도전해보세요!

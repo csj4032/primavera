@@ -1,56 +1,61 @@
-# Product Service - Advanced Caching & AOP
+# Chapter 18 Product - 상품 관리 마이크로서비스
 
-## 📋 Overview
+Spring Boot 교육용 프로젝트 Primavera의 Chapter 18 Product 모듈입니다. Spring AOP와 커스텀 애너테이션을 활용한 고급 캐싱 시스템, 재고 관리, 그리고 서비스 간 통신을 학습합니다.
 
-Product Service는 Primavera 마이크로서비스 아키텍처에서 상품 관리를 담당하는 핵심 서비스입니다. Spring Boot와 Spring AOP를 활용한 고급 캐싱 전략, 커스텀 애노테이션 기반 캐시 키 생성, 그리고 할인 정책 엔진을 포함하여 상품 도메인의 복잡한 비즈니스 로직을 효율적으로 처리합니다.
+## 🎯 학습 목표
 
-## 🏗️ 아키텍처 특성
+- **고급 캐싱 시스템**: AOP와 커스텀 애너테이션을 활용한 캐싱 전략
+- **재고 관리**: 분산 환경에서의 재고 동시성 제어
+- **이벤트 기반 아키텍처**: Kafka를 통한 비동기 이벤트 처리
+- **서비스 간 통신**: 마이크로서비스 간 REST 통신 패턴
+- **성능 최적화**: 캐싱과 배치 처리를 통한 성능 향상
 
-### Core Technologies
-- **Spring Boot 3.3.6**: 최신 스프링 부트 프레임워크
-- **Spring AOP**: 관점 지향 프로그래밍 (Aspect-Oriented Programming)
-- **Custom Cache Framework**: 애노테이션 기반 캐싱 시스템
-- **Spring Cloud Config**: 중앙집중식 설정 관리
-- **Strategy Pattern**: 할인 정책 엔진
+## 📁 프로젝트 구조
 
-### Advanced Caching Architecture
-```java
-@SpringBootApplication
-@EnableAspectJAutoProxy
-public class ProductApplication {
-    public static void main(String[] args) {
-        SpringApplication.run(ProductApplication.class, args);
-    }
-}
+```
+chap18/product/
+├── src/main/java/com/genius/primavera/
+│   ├── ProductApplication.java          # 메인 애플리케이션
+│   ├── Product.java                     # 상품 엔티티
+│   ├── ProductController.java           # REST 컨트롤러
+│   ├── ProductService.java              # 서비스 인터페이스
+│   ├── ProductServiceImpl.java          # 서비스 구현체
+│   ├── ProductRepository.java           # JPA 리포지터리
+│   ├── cache/                          # 캐싱 시스템
+│   │   ├── CacheAspect.java               # 캐시 AOP
+│   │   ├── CacheGet.java                  # 캐시 애너테이션
+│   │   ├── CacheKey.java                  # 캐시 키 애너테이션
+│   │   ├── CacheKeyGenerator.java         # 캐시 키 생성기
+│   │   └── CacheKeyPrefixType.java        # 캐시 키 타입
+│   ├── config/                         # 설정 클래스
+│   │   └── KafkaConfig.java              # Kafka 설정
+│   ├── dto/                           # 데이터 전송 객체
+│   │   └── InventoryReservationResult.java # 재고 예약 결과
+│   ├── event/                         # 이벤트 관련
+│   │   ├── InventoryEventConsumer.java    # 재고 이벤트 소비자
+│   │   ├── InventoryEventPublisher.java   # 재고 이벤트 발행자
+│   │   ├── InventoryReservedEvent.java    # 재고 예약 이벤트
+│   │   ├── InventoryInsufficientEvent.java # 재고 부족 이벤트
+│   │   ├── OrderCreatedEvent.java         # 주문 생성 이벤트
+│   │   └── OrderItemEvent.java            # 주문 아이템 이벤트
+│   └── saleed/                        # 할인 정책 시스템
+│       ├── SaleCommand.java              # 할인 명령
+│       ├── SaleRoleTable.java            # 할인 규칙 테이블
+│       ├── SaleRoleType.java             # 할인 타입
+│       └── role/                        # 할인 규칙 구현
+│           ├── AmountSaleRole.java        # 금액 기반 할인
+│           ├── EventSaleRole.java         # 이벤트 할인
+│           ├── LegalSaleRole.java         # 법정 할인
+│           ├── Saleable.java             # 할인 인터페이스
+│           └── StockSaleRole.java         # 재고 기반 할인
+├── src/main/resources/
+│   └── application.yaml                # 애플리케이션 설정
+└── build.gradle                        # WebFlux + JPA 의존성
 ```
 
-## 🚀 주요 기능
+## 🏗 아키텍처 특성
 
 ### 1. 고급 캐싱 시스템
-- **AOP 기반 캐싱**: 애스펙트를 통한 투명한 캐시 적용
-- **커스텀 애노테이션**: `@CacheGet`을 통한 선언적 캐싱
-- **동적 키 생성**: 메서드 파라미터 기반 캐시 키 자동 생성
-- **캐시 키 전략**: 다양한 캐시 키 생성 전략 지원
-
-### 2. 상품 엔티티 모델
-```java
-@Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
-public class Product {
-    private Long id;
-    private String name;
-    private String description;
-    private Long price;
-    private String category;
-    private Integer stock;
-    private Instant createdAt;
-    private Instant updatedAt;
-}
-```
-
-### 3. 커스텀 캐시 애노테이션
 ```java
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
@@ -68,40 +73,11 @@ public @interface CacheKey {
 }
 ```
 
-### 4. 캐시 키 생성 전략
+### 2. AOP 기반 캐시 처리
 ```java
-public enum CacheKeyPrefixType {
-    PRODUCT(new ProductCacheKeyGenerator()),
-    CATEGORY(new CategoryCacheKeyGenerator()),
-    USER_PRODUCT(new UserProductCacheKeyGenerator());
-    
-    private final CacheKeyGenerator cacheGenerator;
-    
-    CacheKeyPrefixType(CacheKeyGenerator cacheGenerator) {
-        this.cacheGenerator = cacheGenerator;
-    }
-    
-    public CacheKeyGenerator getCacheGenerator() {
-        return cacheGenerator;
-    }
-}
-
-// 구체적인 키 생성기 구현
-public class ProductCacheKeyGenerator implements CacheKeyGenerator {
-    @Override
-    public String generator(String rawKey) {
-        return "PRODUCT::" + rawKey + "::" + System.currentTimeMillis() / 1000 / 300 * 300;
-    }
-}
-```
-
-## 🔧 고급 캐싱 구현
-
-### 1. CacheAspect 구현
-```java
-@Slf4j
 @Aspect
 @Component
+@Slf4j
 public class CacheAspect {
     
     private static final String KEY_DELIMITER = "::";
@@ -120,43 +96,73 @@ public class CacheAspect {
         if (!suffix.isEmpty()) {
             String key = cacheGenerator.generator(join(KEY_DELIMITER, base, suffix));
             // 마지막 파라미터를 캐시 키로 설정
-            joinPoint.getArgs()[2] = key;
+            joinPoint.getArgs()[joinPoint.getArgs().length - 1] = key;
             return joinPoint.proceed(joinPoint.getArgs());
         }
         
         return joinPoint.proceed();
     }
+}
+```
+
+### 3. 캐시 키 생성 전략
+```java
+public enum CacheKeyPrefixType {
+    PRODUCT(new ProductCacheKeyGenerator()),
+    CATEGORY(new CategoryCacheKeyGenerator()),
+    USER_PRODUCT(new UserProductCacheKeyGenerator());
     
-    private String getSuffix(Annotation[][] annotations, Object[] arguments) {
-        Map<Long, String> cacheKeyMap = new LinkedHashMap<>();
-        
-        for (int i = 0; i < annotations.length; i++) {
-            CacheKey cacheKey = getCacheKey(annotations[i]);
-            if (cacheKey != null) {
-                cacheKeyMap.put(cacheKey.order(), arguments[i].toString());
-            }
-        }
-        
-        return joiningSuffixes(cacheKeyMap);
+    private final CacheKeyGenerator cacheGenerator;
+    
+    CacheKeyPrefixType(CacheKeyGenerator cacheGenerator) {
+        this.cacheGenerator = cacheGenerator;
     }
     
-    private String joiningSuffixes(Map<Long, String> cacheKeyMap) {
-        return cacheKeyMap.entrySet().stream()
-            .sorted(Comparator.comparing(Map.Entry::getKey))
-            .map(Map.Entry::getValue)
-            .collect(Collectors.joining(KEY_DELIMITER));
+    public CacheKeyGenerator getCacheGenerator() {
+        return cacheGenerator;
     }
+}
+```
+
+## 🎯 핵심 기능
+
+### 1. 상품 관리
+```java
+@Entity
+@Table(name = "PRODUCTS")
+public class Product {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    @Column(nullable = false)
+    private String name;
+    
+    private String description;
+    
+    @Column(nullable = false)
+    private BigDecimal price;
+    
+    @Column(nullable = false)
+    private String category;
+    
+    @Column(nullable = false)
+    private Integer stock;
+    
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+    
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
 }
 ```
 
 ### 2. 캐시 적용 서비스
 ```java
 @Service
+@Transactional(readOnly = true)
 public class ProductServiceImpl implements ProductService {
     
-    private final ProductRepository productRepository;
-    
-    @Override
     @CacheGet(keyPrefixType = CacheKeyPrefixType.PRODUCT, timeoutSeconds = 600)
     public Product findById(@CacheKey(order = 1) Long productId, 
                            @CacheKey(order = 2) String version,
@@ -166,7 +172,6 @@ public class ProductServiceImpl implements ProductService {
             .orElseThrow(() -> new ProductNotFoundException("Product not found: " + productId));
     }
     
-    @Override
     @CacheGet(keyPrefixType = CacheKeyPrefixType.CATEGORY, timeoutSeconds = 300)
     public List<Product> findByCategory(@CacheKey(order = 1) String category,
                                        @CacheKey(order = 2) Integer limit,
@@ -174,301 +179,178 @@ public class ProductServiceImpl implements ProductService {
         log.info("Cache miss for category: {}, fetching from database", category);
         return productRepository.findByCategoryWithLimit(category, limit);
     }
+}
+```
+
+### 3. 재고 관리 및 이벤트 처리
+```java
+@Service
+@Transactional
+public class InventoryService {
     
-    @Override
-    @CacheGet(keyPrefixType = CacheKeyPrefixType.USER_PRODUCT, timeoutSeconds = 180)
-    public List<Product> getRecommendations(@CacheKey(order = 1) Long userId,
-                                          @CacheKey(order = 2) String algorithm,
-                                          String cacheKey) {
-        log.info("Cache miss for user recommendations: {}, algorithm: {}", userId, algorithm);
-        return recommendationEngine.getRecommendations(userId, algorithm);
+    public InventoryReservationResult reserveInventory(Long productId, Integer quantity) {
+        Product product = productRepository.findById(productId)
+            .orElseThrow(() -> new ProductNotFoundException("Product not found: " + productId));
+            
+        if (product.getStock() >= quantity) {
+            product.setStock(product.getStock() - quantity);
+            productRepository.save(product);
+            
+            // 재고 예약 이벤트 발행
+            InventoryReservedEvent event = InventoryReservedEvent.builder()
+                .productId(productId)
+                .reservedQuantity(quantity)
+                .remainingStock(product.getStock())
+                .build();
+                
+            inventoryEventPublisher.publishInventoryReserved(event);
+            
+            return InventoryReservationResult.success(productId, quantity);
+        } else {
+            // 재고 부족 이벤트 발행
+            InventoryInsufficientEvent event = InventoryInsufficientEvent.builder()
+                .productId(productId)
+                .requestedQuantity(quantity)
+                .availableStock(product.getStock())
+                .build();
+                
+            inventoryEventPublisher.publishInventoryInsufficient(event);
+            
+            return InventoryReservationResult.failure(productId, "Insufficient inventory");
+        }
     }
 }
 ```
 
-### 3. 캐시 키 생성 결과 예시
+### 4. 이벤트 기반 통신
 ```java
-// findById(123L, "v1", cacheKey) 호출 시
-// 생성되는 캐시 키: "PRODUCT::ProductServiceImpl::findById::123::v1::1640995200"
-
-// findByCategory("electronics", 10, cacheKey) 호출 시  
-// 생성되는 캐시 키: "CATEGORY::ProductServiceImpl::findByCategory::electronics::10::1640995200"
-
-// getRecommendations(456L, "collaborative", cacheKey) 호출 시
-// 생성되는 캐시 키: "USER_PRODUCT::ProductServiceImpl::getRecommendations::456::collaborative::1640995200"
+@Component
+public class InventoryEventConsumer {
+    
+    @KafkaListener(topics = "order-created", groupId = "product-service")
+    public void handleOrderCreated(OrderCreatedEvent event) {
+        log.info("Processing order created event: {}", event);
+        
+        for (OrderItemEvent item : event.getItems()) {
+            try {
+                InventoryReservationResult result = inventoryService
+                    .reserveInventory(item.getProductId(), item.getQuantity());
+                    
+                if (!result.isSuccess()) {
+                    log.warn("Failed to reserve inventory for product {}: {}", 
+                        item.getProductId(), result.getReason());
+                }
+            } catch (Exception e) {
+                log.error("Error processing inventory reservation", e);
+            }
+        }
+    }
+}
 ```
 
-## 🎯 할인 정책 시스템 (Product Domain)
-
-### 할인 규칙 구현 (상품 도메인)
+### 5. 할인 정책 시스템
 ```java
-// 금액 기반 할인 (상품별)
 @Component
 public class AmountSaleRole implements Saleable {
     @Override
     public boolean isSaleable(Order order) {
         Product product = productService.findById(order.getProductId());
-        return product.getPrice() >= 50000L; // 5만원 이상 상품
+        return product.getPrice().compareTo(BigDecimal.valueOf(50000)) >= 0; // 5만원 이상
     }
 }
 
-// 재고 기반 할인
 @Component
 public class StockSaleRole implements Saleable {
     @Override
     public boolean isSaleable(Order order) {
         Product product = productService.findById(order.getProductId());
-        return product.getStock() > 10; // 재고 10개 초과 시
-    }
-}
-
-// 이벤트 상품 할인
-@Component
-public class EventSaleRole implements Saleable {
-    @Override
-    public boolean isSaleable(Order order) {
-        Product product = productService.findById(order.getProductId());
-        return "EVENT".equals(product.getCategory()); // 이벤트 카테고리
-    }
-}
-
-// 신상품 할인
-@Component
-public class LegalSaleRole implements Saleable {
-    @Override
-    public boolean isSaleable(Order order) {
-        Product product = productService.findById(order.getProductId());
-        return ChronoUnit.DAYS.between(product.getCreatedAt(), Instant.now()) <= 30; // 30일 이내 신상품
+        return product.getStock() > 10; // 재고 10개 초과
     }
 }
 ```
 
-### 상품별 할인 계산기
-```java
-@Service
-public class ProductDiscountService {
-    
-    private final SaleCommand saleCommand;
-    private final ProductService productService;
-    
-    public DiscountResult calculateProductDiscount(Long productId, Set<SaleRoleType> discountTypes) {
-        Product product = productService.findById(productId);
-        Order mockOrder = Order.builder()
-            .productId(productId)
-            .amount(product.getPrice())
-            .build();
-            
-        boolean canApplyDiscount = saleCommand.isSaleable(mockOrder, discountTypes);
-        
-        if (canApplyDiscount) {
-            Long discountRate = calculateDiscountRate(discountTypes);
-            Long discountedPrice = product.getPrice() * (100 - discountRate) / 100;
-            
-            return DiscountResult.builder()
-                .productId(productId)
-                .originalPrice(product.getPrice())
-                .discountedPrice(discountedPrice)
-                .discountRate(discountRate)
-                .discountTypes(discountTypes)
-                .applied(true)
-                .build();
-        }
-        
-        return DiscountResult.builder()
-            .productId(productId)
-            .originalPrice(product.getPrice())
-            .applied(false)
-            .reason("Product does not meet discount criteria")
-            .build();
-    }
-}
-```
+## 🛠 기술 스택
 
-## 🔧 설정 및 구성
+### 핵심 기술
+- **Java**: 21
+- **Spring Boot**: 3.3.6
+- **Spring WebFlux**: 리액티브 웹 프레임워크
+- **Spring Data JPA**: 데이터 액세스
+- **Spring AOP**: 관점 지향 프로그래밍
 
-### 애플리케이션 설정
-```yaml
-spring:
-  application:
-    name: product
-  cloud:
-    config:
-      uri: http://localhost:8888
+### 메시징 및 이벤트
+- **Apache Kafka**: 분산 스트리밍 플랫폼
+- **Spring Kafka**: Kafka 통합
+- **이벤트 소싱**: 도메인 이벤트 패턴
 
-server:
-  port: 8083
-  tomcat:
-    threads:
-      max: 1
+### 캐싱 및 성능
+- **커스텀 캐시 프레임워크**: AOP 기반 캐싱
+- **메트릭 수집**: 캐시 성능 모니터링
 
-logging:
-  level:
-    org.springframework: DEBUG
-    com.genius.primavera.cache: DEBUG
-```
+## 🚀 실행 방법
 
-### AOP 설정
-```java
-@Configuration
-@EnableAspectJAutoProxy
-public class AopConfiguration {
-    
-    @Bean
-    public CacheAspect cacheAspect() {
-        return new CacheAspect();
-    }
-    
-    @Bean
-    public CacheKeyGenerator defaultCacheKeyGenerator() {
-        return new DefaultCacheKeyGenerator();
-    }
-}
-```
-
-## 🌐 API 엔드포인트
-
-### 상품 관리 API
-```http
-# 상품 상세 조회 (캐시 적용)
-GET /products/{id}?version=v1
-
-# 카테고리별 상품 조회 (캐시 적용)  
-GET /products/category/{category}?limit=10
-
-# 사용자 맞춤 추천 (캐시 적용)
-GET /products/recommendations/{userId}?algorithm=collaborative
-
-# 상품 할인 계산
-POST /products/{productId}/discount
-Content-Type: application/json
-{
-  "discountTypes": ["AMOUNT", "STOCK"]
-}
-
-# 신상품 목록
-GET /products/new?days=30
-
-# 재고 부족 상품 목록
-GET /products/low-stock?threshold=5
-```
-
-### 캐시 관리 API
-```http
-# 캐시 통계 조회
-GET /actuator/cache-stats
-
-# 특정 캐시 키 삭제
-DELETE /cache/{cacheKey}
-
-# 상품 캐시 전체 삭제
-DELETE /cache/products
-
-# 캐시 히트율 조회
-GET /cache/hit-ratio
-```
-
-## 📊 성능 모니터링
-
-### 캐시 성능 메트릭
-```java
-@Component
-public class CacheMetrics {
-    
-    private final AtomicLong cacheHits = new AtomicLong(0);
-    private final AtomicLong cacheMisses = new AtomicLong(0);
-    private final AtomicLong cacheEvictions = new AtomicLong(0);
-    
-    public void recordCacheHit() {
-        cacheHits.incrementAndGet();
-    }
-    
-    public void recordCacheMiss() {
-        cacheMisses.incrementAndGet();
-    }
-    
-    public double getHitRatio() {
-        long hits = cacheHits.get();
-        long misses = cacheMisses.get();
-        long total = hits + misses;
-        return total == 0 ? 0.0 : (double) hits / total;
-    }
-    
-    @Scheduled(fixedRate = 60000) // 1분마다
-    public void logCacheStats() {
-        log.info("Cache Stats - Hits: {}, Misses: {}, Hit Ratio: {:.2f}%", 
-            cacheHits.get(), cacheMisses.get(), getHitRatio() * 100);
-    }
-}
-```
-
-### 캐시 워밍업
-```java
-@EventListener(ApplicationReadyEvent.class)
-public void warmUpCache() {
-    log.info("Starting cache warm-up...");
-    
-    // 인기 카테고리 사전 로드
-    List<String> popularCategories = Arrays.asList(
-        "electronics", "books", "clothing", "home"
-    );
-    
-    popularCategories.forEach(category -> {
-        try {
-            productService.findByCategory(category, 20, null);
-            log.debug("Warmed up cache for category: {}", category);
-        } catch (Exception e) {
-            log.warn("Failed to warm up cache for category: {}", category, e);
-        }
-    });
-    
-    log.info("Cache warm-up completed");
-}
-```
-
-## 🏃‍♂️ 실행 방법
-
-### 1. Config Server 시작
+### 1. 의존 서비스 시작
 ```bash
-# Configuration 서비스 먼저 실행
+# Config Server 시작
 ./gradlew :chap18:configuration:bootRun
+
+# Kafka 서버 시작
+./docker-manager.sh start chap18
+
+# MariaDB 시작
+docker run -d --name mariadb-product \
+  -e MARIADB_ROOT_PASSWORD=root \
+  -e MARIADB_DATABASE=primavera \
+  -p 3308:3306 mariadb:11.4.7
 ```
 
-### 2. Product Service 시작
+### 2. Product 서비스 시작
 ```bash
-# Product 서비스 실행
+# Product 마이크로서비스 시작
 ./gradlew :chap18:product:bootRun
 
-# 또는 JAR 직접 실행
-java -jar product/build/libs/product.jar
+# 특정 프로파일로 실행
+./gradlew :chap18:product:bootRun -Dspring.profiles.active=local
 ```
 
-### 3. 서비스 동작 확인
+### 3. API 테스트
 ```bash
-# 서비스 상태 확인
-curl http://localhost:8083/actuator/health
-
-# 상품 조회 (첫 번째 호출 - 캐시 미스)
-curl "http://localhost:8083/products/1?version=v1"
-
-# 동일한 상품 재조회 (캐시 히트)
+# 상품 조회 (캐시 적용)
 curl "http://localhost:8083/products/1?version=v1"
 
 # 카테고리별 상품 조회
 curl "http://localhost:8083/products/category/electronics?limit=10"
 
+# 재고 예약
+curl -X POST http://localhost:8083/products/1/reserve \
+  -H "Content-Type: application/json" \
+  -d '{"quantity": 5}'
+
 # 상품 할인 계산
 curl -X POST http://localhost:8083/products/1/discount \
   -H "Content-Type: application/json" \
-  -d '{"discountTypes":["AMOUNT","STOCK"]}'
+  -d '{"discountTypes": ["AMOUNT", "STOCK"]}'
 ```
 
-## 🧪 테스트 전략
+## 📋 테스트 실행
 
-### 캐싱 동작 테스트
+### 캐시 테스트
+```bash
+# 캐싱 시스템 테스트
+./gradlew :chap18:product:test --tests "*CacheTest"
+
+# AOP 동작 테스트
+./gradlew :chap18:product:test --tests "*AspectTest"
+
+# 성능 벤치마크 테스트
+./gradlew :chap18:product:test --tests "*PerformanceTest"
+```
+
+### 통합 테스트 예시
 ```java
-@SpringBootTest
-@TestMethodOrder(OrderAnnotation.class)
-class ProductCacheTest {
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@TestPropertySource(properties = "spring.profiles.active=test")
+class ProductServiceCacheIntegrationTest {
     
     @Autowired
     private ProductService productService;
@@ -477,118 +359,141 @@ class ProductCacheTest {
     private ProductRepository productRepository;
     
     @Test
-    @Order(1)
-    void shouldCacheMissOnFirstCall() {
+    void shouldCacheProductOnFirstCallAndHitCacheOnSecond() {
         // Given
-        Product product = Product.builder().id(1L).name("Test Product").build();
+        Product product = Product.builder()
+            .id(1L)
+            .name("Test Product")
+            .price(BigDecimal.valueOf(10000))
+            .build();
+            
         when(productRepository.findById(1L)).thenReturn(Optional.of(product));
         
-        // When
-        Product result = productService.findById(1L, "v1", null);
+        // When - 첫 번째 호출 (캐시 미스)
+        Product firstResult = productService.findById(1L, "v1", null);
+        
+        // When - 두 번째 호출 (캐시 히트)
+        Product secondResult = productService.findById(1L, "v1", null);
         
         // Then
-        assertThat(result).isNotNull();
-        verify(productRepository, times(1)).findById(1L);
-    }
-    
-    @Test
-    @Order(2) 
-    void shouldCacheHitOnSecondCall() {
-        // When - 동일한 파라미터로 재호출
-        Product result = productService.findById(1L, "v1", null);
-        
-        // Then - 캐시에서 반환되어 Repository 호출 없음
-        assertThat(result).isNotNull();
-        verify(productRepository, times(1)).findById(1L); // 여전히 1번만 호출
+        assertThat(firstResult).isEqualTo(secondResult);
+        verify(productRepository, times(1)).findById(1L); // DB는 한 번만 호출
     }
 }
 ```
 
-### AOP 동작 테스트
+## 🎓 핵심 학습 포인트
+
+### 1. AOP 패턴
 ```java
-@Test
-void shouldGenerateCorrectCacheKey() {
-    // Given
-    Method method = ProductServiceImpl.class.getMethod("findById", Long.class, String.class, String.class);
-    Object[] args = {123L, "v2", null};
+// 횡단 관심사(Cross-cutting Concerns) 분리
+@Around("@annotation(cacheGet)")
+public Object cacheGet(ProceedingJoinPoint joinPoint, CacheGet cacheGet) throws Throwable {
+    // 캐시 로직은 비즈니스 로직과 분리되어 처리
+    String cacheKey = generateCacheKey(joinPoint);
+    Object cachedResult = getCachedResult(cacheKey);
     
-    // When
-    String cacheKey = cacheAspect.generateCacheKey(method, args);
+    if (cachedResult != null) {
+        return cachedResult;
+    }
     
-    // Then
-    assertThat(cacheKey).contains("ProductServiceImpl");
-    assertThat(cacheKey).contains("findById");
-    assertThat(cacheKey).contains("123");
-    assertThat(cacheKey).contains("v2");
+    Object result = joinPoint.proceed();
+    cacheResult(cacheKey, result);
+    return result;
 }
 ```
 
-### 할인 정책 테스트
+### 2. 이벤트 기반 아키텍처
 ```java
-@Test
-void shouldCalculateProductDiscountCorrectly() {
-    // Given
-    Product expensiveProduct = Product.builder()
-        .id(1L)
-        .price(100000L)  // 10만원
-        .stock(15)       // 재고 15개
-        .category("ELECTRONICS")
-        .build();
-    
-    when(productService.findById(1L)).thenReturn(expensiveProduct);
-    
-    Set<SaleRoleType> discountTypes = Set.of(SaleRoleType.AMOUNT, SaleRoleType.STOCK);
-    
-    // When
-    DiscountResult result = productDiscountService.calculateProductDiscount(1L, discountTypes);
-    
-    // Then
-    assertThat(result.isApplied()).isTrue();
-    assertThat(result.getOriginalPrice()).isEqualTo(100000L);
-    assertThat(result.getDiscountedPrice()).isLessThan(100000L);
+// 비동기 이벤트 처리를 통한 서비스 간 느슨한 결합
+@EventListener
+@Async
+public void handleOrderCreated(OrderCreatedEvent event) {
+    // 주문 생성 이벤트에 반응하여 재고 예약
+    reserveInventoryForOrder(event);
 }
 ```
 
-## 📈 성능 벤치마크
+### 3. 성능 최적화 패턴
+```java
+// 캐시 키 생성 최적화
+public class ProductCacheKeyGenerator implements CacheKeyGenerator {
+    @Override
+    public String generator(String rawKey) {
+        // 시간 기반 버케팅으로 캐시 무효화 주기 조절
+        long timeBucket = System.currentTimeMillis() / 1000 / 300 * 300; // 5분 단위
+        return "PRODUCT::" + rawKey + "::" + timeBucket;
+    }
+}
+```
 
-### 캐시 효과 측정
+### 4. 동시성 제어
+```java
+@Transactional
+@Lock(LockModeType.PESSIMISTIC_WRITE)
+public InventoryReservationResult reserveInventory(Long productId, Integer quantity) {
+    // 비관적 락을 통한 재고 동시성 제어
+    Product product = productRepository.findByIdForUpdate(productId);
+    // ... 재고 처리 로직
+}
+```
+
+## 📚 주요 애너테이션
+
+### AOP 관련
+- `@Aspect`: AspectJ 애스펙트 정의
+- `@Around`: 메서드 실행 전후 처리
+- `@Pointcut`: 조인 포인트 선택
+
+### 캐시 관련
+- `@CacheGet`: 커스텀 캐시 적용 애너테이션
+- `@CacheKey`: 캐시 키 생성을 위한 파라미터 표시
+
+### 이벤트 관련
+- `@EventListener`: 스프링 이벤트 리스너
+- `@KafkaListener`: Kafka 메시지 소비자
+
+## 🔧 성능 모니터링
+
+### 1. 캐시 메트릭
 ```java
 @Component
-public class CachePerformanceBenchmark {
+public class CacheMetrics {
+    private final MeterRegistry meterRegistry;
     
-    @EventListener(ApplicationReadyEvent.class)
-    public void runBenchmark() {
-        // 캐시 없이 1000번 호출
-        long startTime = System.currentTimeMillis();
-        for (int i = 0; i < 1000; i++) {
-            productRepository.findById(1L);
-        }
-        long withoutCache = System.currentTimeMillis() - startTime;
-        
-        // 캐시 있이 1000번 호출 (첫 번째만 DB 액세스)
-        startTime = System.currentTimeMillis();
-        for (int i = 0; i < 1000; i++) {
-            productService.findById(1L, "v1", null);
-        }
-        long withCache = System.currentTimeMillis() - startTime;
-        
-        log.info("Performance Benchmark:");
-        log.info("Without Cache: {}ms", withoutCache);
-        log.info("With Cache: {}ms", withCache);
-        log.info("Performance Improvement: {}x", (double) withoutCache / withCache);
+    public void recordCacheHit(String cacheType) {
+        meterRegistry.counter("cache.hit", "type", cacheType).increment();
+    }
+    
+    public void recordCacheMiss(String cacheType) {
+        meterRegistry.counter("cache.miss", "type", cacheType).increment();
     }
 }
 ```
 
-## 📚 학습 포인트
+### 2. 애플리케이션 메트릭
+```yaml
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+```
 
-이 Product Service는 다음과 같은 고급 Spring 패턴들을 학습할 수 있습니다:
+## 🔄 다음 단계
 
-1. **AOP (Aspect-Oriented Programming)**: 횡단 관심사의 모듈화
-2. **Custom Annotations**: 도메인 특화 애노테이션 설계와 구현
-3. **Cache Strategy**: 효율적인 캐싱 전략과 키 생성 알고리즘
-4. **Strategy Pattern**: 할인 정책의 유연한 구현과 확장
-5. **Performance Optimization**: 캐시를 통한 성능 최적화 기법
-6. **Monitoring & Metrics**: 캐시 성능 모니터링과 메트릭 수집
+1. **chap18:order** - 주문 처리 및 분산 트랜잭션
+2. **chap18:front** - API Gateway 및 서비스 오케스트레이션
+3. **분산 추적** - Zipkin/Jaeger를 활용한 트레이싱
+4. **서비스 메시** - Istio를 통한 마이크로서비스 관리
 
-Product Service는 실제 운영 환경에서 중요한 성능 최적화 기법들을 종합적으로 학습할 수 있는 완벽한 예제이며, 특히 AOP와 커스텀 애노테이션을 활용한 고급 캐싱 시스템의 설계와 구현을 실습할 수 있습니다.
+## 📖 관련 문서
+
+- [Spring AOP Documentation](https://docs.spring.io/spring-framework/reference/core/aop.html)
+- [Apache Kafka Documentation](https://kafka.apache.org/documentation/)
+- [Microservices Caching Patterns](https://microservices.io/patterns/data/cache-aside.html)
+- [Event-Driven Architecture](https://microservices.io/patterns/data/event-sourcing.html)
