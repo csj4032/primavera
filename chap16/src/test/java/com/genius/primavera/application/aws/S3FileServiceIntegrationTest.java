@@ -1,7 +1,8 @@
 package com.genius.primavera.application.aws;
 
 import com.genius.primavera.infrastructure.aws.AwsProperties;
-import com.genius.primavera.infrastructure.aws.S3Properties;
+import com.genius.primavera.testcontainers.ContainerType;
+import com.genius.primavera.testcontainers.EnableTestContainers;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -32,9 +33,10 @@ import static org.testcontainers.containers.localstack.LocalStackContainer.Servi
 @SpringBootTest
 @Testcontainers
 @ActiveProfiles("test")
+@EnableTestContainers(value = {@EnableTestContainers.TestContainer(type = ContainerType.MARIADB, name = "mariadb")})
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @EnableConfigurationProperties(AwsProperties.class)
-class S3FileServiceIntegrationTest {
+public class S3FileServiceIntegrationTest {
 
     @Container
     static LocalStackContainer localstack = new LocalStackContainer(DockerImageName.parse("localstack/localstack:3.0"))
@@ -43,7 +45,7 @@ class S3FileServiceIntegrationTest {
 
     @Autowired
     private S3FileService s3FileService;
-    
+
     @Autowired
     private AwsProperties awsProperties;
 
@@ -90,7 +92,7 @@ class S3FileServiceIntegrationTest {
             System.out.println("⚠️  실제 AWS 환경에서 테스트 중입니다. 비용이 발생할 수 있습니다.");
         }
     }
-    
+
     private String maskSecret(String secret) {
         return secret.length() > 4 ? secret.substring(0, 4) + "****" : "****";
     }

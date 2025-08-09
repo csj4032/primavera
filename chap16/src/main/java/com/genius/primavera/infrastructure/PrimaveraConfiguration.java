@@ -1,31 +1,23 @@
 package com.genius.primavera.infrastructure;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import java.util.Map;
+
+@Getter
+@Setter
 @ConfigurationProperties(prefix = "primavera.config")
 public class PrimaveraConfiguration {
 
-	private String name = "primavera";
-	private boolean enabled;
+    private String name;
+    private boolean enabled;
+    private Map<String, String> logs;
 
-	public PrimaveraConfiguration(String name, boolean enabled) {
-		this.name = name;
-		this.enabled = enabled;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public boolean isEnabled() {
-		return enabled;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public void setEnabled(boolean enabled) {
-		this.enabled = enabled;
-	}
+    public PrimaveraConfiguration(String name, boolean enabled, Map<String, String> logs) {
+        this.name = name;
+        this.enabled = enabled;
+        this.logs = logs;
+    }
 }

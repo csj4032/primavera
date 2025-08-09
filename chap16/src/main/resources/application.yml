@@ -17,12 +17,8 @@ spring:
         - console-appender
   jackson:
     time-zone: UTC
-
-lucy-filter:
-  enabled: true
-  name: lucyXssFilter
-  order: 1
-  addUrlPatterns: /*
+  jmx:
+    enabled: false
 
 logging:
   config: classpath:logback-spring.xml
@@ -31,14 +27,10 @@ primavera:
   config:
     name: primavera
     enabled: true
-  logs:
-    path: ./logs
-
-server:
-  ssl:
-    key-alias: primavera
-    key-store: classpath:certs/primavera.p12
-    key-store-type: PKCS12
-    key-store-password: primavera
-    enabled: true
-  port: 8443
+    logs:
+      path: ./logs
+sentry:
+  dns: ${SENTRY_DSN:}
+  environment: ${SENTRY_ENVIRONMENT:local}
+  release: ${SENTRY_RELEASE:1.0.0}
+  servername: ${SENTRY_SERVER_NAME:FileProcessingMonitoringApplication}

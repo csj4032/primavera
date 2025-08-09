@@ -4,7 +4,7 @@ import com.genius.primavera.application.template.FinancialTemplate;
 import com.genius.primavera.domain.ExcelImportRequest;
 import com.genius.primavera.domain.ExcelImportResponse;
 import com.genius.primavera.domain.Financial;
-import com.genius.primavera.domain.MediaType;
+import com.genius.primavera.domain.FileType;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -18,6 +18,6 @@ public class ExcelTypeFile extends AbstractResponseFactory implements ResponseFa
 
 	public ExcelImportResponse getExcelImportResponse() {
 		List<Financial> financialList = new FinancialTemplate(excelImportRequest.getInputStream()).read(Financial::of);
-		return new ExcelImportResponse(excelImportRequest.getName(), excelImportRequest.getSize(), MediaType.EXCEL_TYPE, "row count : " + financialList.size());
+		return new ExcelImportResponse(excelImportRequest.getName(), excelImportRequest.getSize(), FileType.EXCEL_TYPE, "row count : " + financialList.size());
 	}
 }

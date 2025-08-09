@@ -37,7 +37,6 @@ dependencies {
     testImplementation 'org.mariadb.jdbc:mariadb-java-client'
     testImplementation 'org.postgresql:postgresql'
     testImplementation 'com.mysql:mysql-connector-j'
-    testImplementation 'com.mysql:mysql-connector-j'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
     compileOnly "org.projectlombok:lombok:${lombokVersion}"

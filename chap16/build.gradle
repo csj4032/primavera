@@ -3,6 +3,7 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-web"
     implementation "org.springframework.boot:spring-boot-starter-actuator"
     implementation "io.awspring.cloud:spring-cloud-aws-starter-s3:${springCloudAwsVersion}"
+    implementation "io.sentry:sentry:1.7.30"
     implementation "org.apache.poi:poi:${poiVersion}"
     implementation "org.apache.poi:poi-ooxml:${poiVersion}"
     implementation "com.monitorjbl:xlsx-streamer:${xlsxStreamerVersion}"
@@ -11,6 +12,13 @@ dependencies {
     implementation "com.opencsv:opencsv:${openCsvVersion}"
     implementation "commons-io:commons-io:${commonsIoVersion}"
     implementation "org.apache.commons:commons-lang3:${commonsLang3Version}"
+    implementation "org.javatuples:javatuples:1.2"
+    implementation "org.openkoreantext:open-korean-text:2.1.0"
     testImplementation "org.testcontainers:localstack:${testContainersVersion}"
     testImplementation "org.testcontainers:junit-jupiter:${testContainersVersion}"
+    implementation "org.springframework.cloud:spring-cloud-starter-config"
+    implementation "org.springframework.cloud:spring-cloud-starter-vault-config:${springCloudVaultVersion}"
+    testImplementation(project(':appendix:spring-boot-starter-test-containers')) {
+        exclude group: 'org.mongodb', module: 'mongodb-driver-sync'
+    }
 }

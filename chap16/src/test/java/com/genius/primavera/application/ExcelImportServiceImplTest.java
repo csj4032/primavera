@@ -2,7 +2,7 @@ package com.genius.primavera.application;
 
 import com.genius.primavera.domain.ExcelImportRequest;
 import com.genius.primavera.domain.ExcelImportResponse;
-import com.genius.primavera.domain.MediaType;
+import com.genius.primavera.domain.FileType;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +34,7 @@ public class ExcelImportServiceImplTest {
 		long size = excelImportService.getFileSize(excelImportRequest);
 		Assertions.assertEquals(0, size);
 		ExcelImportResponse excelImportResponse = excelImportService.excelImport(excelImportRequest);
-		Assertions.assertEquals(MediaType.UNKNOWN, excelImportResponse.getMediaType());
+		Assertions.assertEquals(FileType.UNKNOWN, excelImportResponse.getMediaType());
 	}
 
 	@Test
@@ -45,7 +45,7 @@ public class ExcelImportServiceImplTest {
 		MockMultipartFile multipartFile = new MockMultipartFile("file", resource.getInputStream());
 		ExcelImportRequest excelImportRequest = new ExcelImportRequest("20191225.txt", multipartFile);
 		ExcelImportResponse excelImportResponse = excelImportService.excelImport(excelImportRequest);
-		Assertions.assertEquals(MediaType.UNKNOWN, excelImportResponse.getMediaType());
+		Assertions.assertEquals(FileType.UNKNOWN, excelImportResponse.getMediaType());
 	}
 
 	@Test
@@ -56,7 +56,7 @@ public class ExcelImportServiceImplTest {
 		MockMultipartFile multipartFile = new MockMultipartFile("file", resource.getInputStream());
 		ExcelImportRequest excelImportRequest = new ExcelImportRequest("20191225.xlsx", multipartFile);
 		ExcelImportResponse excelImportResponse = excelImportService.excelImport(excelImportRequest);
-		Assertions.assertEquals(MediaType.EXCEL_TYPE, excelImportResponse.getMediaType());
+		Assertions.assertEquals(FileType.EXCEL_TYPE, excelImportResponse.getMediaType());
 	}
 
 	@Test

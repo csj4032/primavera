@@ -7,14 +7,8 @@ spring:
       enabled: false
     vault:
       enabled: false
-  autoconfigure:
-    exclude:
-      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
-      - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
-      - org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration
     aws:
       credentials:
-        # 1순위: Vault에서 로드, 2순위: 환경변수, 3순위: 기본값
         access-key: ${aws.credentials.access-key:${AWS_ACCESS_KEY_ID:test}}
         secret-key: ${aws.credentials.secret-key:${AWS_SECRET_ACCESS_KEY:test}}
       region:
