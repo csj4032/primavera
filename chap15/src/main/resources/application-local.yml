@@ -57,11 +57,3 @@ spring:
           fetch_size: 30
           batch_size: 30
     open-in-view: false
-  flyway:
-    enabled: true
-    encoding: UTF-8
-    fail-on-missing-locations: false
-
-server:
-  tomcat:
-    use-apr: never

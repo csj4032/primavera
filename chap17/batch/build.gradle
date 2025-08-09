@@ -9,32 +9,26 @@ configurations {
     }
 }
 
+// chap17:batch: Spring Batch + Web + JPA + Elasticsearch
 dependencies {
     implementation project(':chap17:common')
-    implementation 'org.springframework.boot:spring-boot-starter-batch'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
-    implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    runtimeOnly "org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}"
+    
+    // Spring Batch + Web + JPA
+    implementation "org.springframework.boot:spring-boot-starter-batch"
+    implementation "org.springframework.boot:spring-boot-starter-web"
+    implementation "org.springframework.boot:spring-boot-starter-data-jpa"
+    
+    // Elasticsearch
     implementation "co.elastic.clients:elasticsearch-java:${elasticsearchVersion}"
-    implementation "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
-    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonVersion}"
-    implementation "org.apache.commons:commons-lang3:${commonsLang3Version}"
-    implementation "org.apache.commons:commons-csv:${commonsCsvVersion}"
-    implementation "io.debezium:debezium-embedded:${debeziumVersion}"
-    implementation "io.debezium:debezium-connector-mysql:${debeziumVersion}"
-    implementation "io.debezium:debezium-api:${debeziumVersion}"
-    implementation "io.debezium:debezium-core:${debeziumVersion}"
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework.batch:spring-batch-test'
+    
+    // Database
+    runtimeOnly "org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}"
+    
+    testImplementation "org.springframework.boot:spring-boot-starter-test"
+    testImplementation "org.springframework.batch:spring-batch-test"
     testImplementation "org.testcontainers:junit-jupiter:${testContainersVersion}"
     testImplementation "org.testcontainers:mariadb:${testContainersVersion}"
     testImplementation "org.testcontainers:elasticsearch:${testContainersVersion}"
-    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
-    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
-    compileOnly "org.projectlombok:lombok:${lombokVersion}"
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     testImplementation project(':appendix:spring-boot-starter-test-containers')
 }
 

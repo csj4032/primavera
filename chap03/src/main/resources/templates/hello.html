@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Users</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+    <h1>Users</h1>
+    <ul>
+        <li th:each="user : ${users}" th:text="${user}">User</li>
+    </ul>
+    <h1>Users with Links</h1>
+    <ul>
+        <li th:each="user : ${users}">
+            <a th:href="@{/world/{id}(id=${user.id})}" th:text="${user.name}">User Name</a>
+        </li>
+    </ul>
+</body>
+</html>

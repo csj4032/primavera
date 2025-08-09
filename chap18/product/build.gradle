@@ -10,26 +10,13 @@ dependencyManagement {
     }
 }
 
+// chap18:product: WebFlux (Reactive) + JPA
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-webflux'
-    implementation 'org.springframework.boot:spring-boot-starter-aop'
-    implementation 'org.springframework.boot:spring-boot-devtools'
-    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb-reactive'
-    implementation 'org.springframework.cloud:spring-cloud-starter-config'
-    implementation 'org.springframework.boot:spring-boot-starter-cache'
-    implementation 'com.github.ben-manes.caffeine:caffeine'
-    implementation "org.modelmapper:modelmapper:${modelMapperVersion}"
-    implementation 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
-    implementation "com.squareup.okhttp3:okhttp:${okhttpVersion}"
-    implementation 'org.springframework.kafka:spring-kafka'
-    implementation "org.apache.kafka:kafka-streams:${kafkaVersion}"
-    implementation "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
-    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonVersion}"
-    testImplementation('org.springframework.boot:spring-boot-starter-test') {
-        exclude module: 'junit'
-        exclude module: 'junit-vintage-engine'
-    }
-    testImplementation 'org.springframework.security:spring-security-test'
+    implementation "org.springframework.boot:spring-boot-starter-webflux"
+    implementation "org.springframework.boot:spring-boot-starter-data-jpa"
+    
+    runtimeOnly "org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}"
+    
+    testImplementation "org.springframework.boot:spring-boot-starter-test"
     testImplementation "io.projectreactor:reactor-test:${reactorTestVersion}"
 }

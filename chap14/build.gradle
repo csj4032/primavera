@@ -1,4 +1,34 @@
 
+// chap14: WebFlux (Reactive) + JPA + Envers + MongoDB + QueryDSL + OAuth2
+dependencies {
+    // WebFlux (Reactive)
+    implementation "org.springframework.boot:spring-boot-starter-webflux"
+    implementation "org.springframework.boot:spring-boot-starter-data-jpa"
+    
+    databaseDependencies.each { dep -> implementation dep }
+    
+    // JPA Envers for auditing
+    implementation "org.springframework.data:spring-data-envers"
+    implementation "org.hibernate:hibernate-envers:${hibernateEnversVersion}"
+    
+    // MongoDB
+    implementation "org.springframework.boot:spring-boot-starter-data-mongodb-reactive"
+    
+    // QueryDSL
+    implementation "com.querydsl:querydsl-jpa"
+    implementation "com.querydsl:querydsl-apt"
+    annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jpa"
+    
+    // OAuth2
+    implementation "org.springframework.boot:spring-boot-starter-security"
+    implementation "org.springframework.boot:spring-boot-starter-oauth2-client"
+    
+    testContainersDependencies.each { dep -> testImplementation dep }
+    testImplementation "org.springframework.security:spring-security-test"
+    testImplementation "io.projectreactor:reactor-test:${reactorTestVersion}"
+    testImplementation project(':appendix:spring-boot-starter-test-containers')
+}
+
 def querydslSrcDir = 'src/main/java'
 
 sourceSets {
@@ -7,59 +37,4 @@ sourceSets {
             srcDirs = ['src/main/java', querydslSrcDir]
         }
     }
-}
-
-dependencies {
-    implementation('org.springframework.boot:spring-boot-starter-web') {
-        exclude module: "spring-boot-starter-tomcat"
-    }
-    implementation 'org.springframework.boot:spring-boot-starter-undertow'
-    implementation 'org.springframework.boot:spring-boot-starter-webflux'
-    implementation 'org.springframework.boot:spring-boot-starter-reactor-netty'
-    aopDependencies.each { dep -> implementation dep }
-    databaseDependencies.each { dep -> implementation dep }
-    validationDependencies.each { dep -> implementation dep }
-    developmentDependencies.each { dep -> implementation dep }
-    thymeleafDependencies.each { dep -> implementation dep }
-    testContainersDependencies.each { dep -> testImplementation dep }
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-json'
-    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
-    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb-reactive'
-    implementation 'org.springframework.boot:spring-boot-starter-security'
-    implementation 'org.springframework.boot:spring-boot-starter-oauth2-authorization-server'
-    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
-    implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
-    implementation "org.springframework.cloud:spring-cloud-starter-config"
-    implementation "org.springframework.cloud:spring-cloud-starter-vault-config:${springCloudVaultVersion}"
-    implementation "org.thymeleaf.extras:thymeleaf-extras-springsecurity6:${thymeleafExtrasSpringSecurity6Version}"
-    implementation 'org.springframework.data:spring-data-envers'
-    implementation "org.modelmapper:modelmapper:${modelMapperVersion}"
-    implementation "org.flywaydb:flyway-core:${flywayVersion}"
-    implementation "org.jctools:jctools-core:${jctoolsCoreVersion}"
-    implementation "com.github.ben-manes.caffeine:caffeine:${caffeineVersion}"
-    implementation "com.esotericsoftware:kryo:${kryoVersion}"
-    implementation "org.xerial.snappy:snappy-java:${snappyJavaVersion}"
-    implementation "org.apache.commons:commons-pool2:${commonsPoolVersion}"
-    implementation 'com.querydsl:querydsl-jpa'
-    implementation 'com.querydsl:querydsl-apt'
-    annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jpa"
-    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-    implementation 'com.squareup.retrofit2:converter-jackson:2.9.0'
-    implementation 'org.jooq:jool:0.9.15'
-    implementation "org.apache.commons:commons-lang3:${commonsLangVersion}"
-    implementation "jakarta.persistence:jakarta.persistence-api"
-    implementation "javax.persistence:javax.persistence-api:2.2"
-    implementation "javax.servlet:javax.servlet-api:4.0.1"
-    annotationProcessor "jakarta.persistence:jakarta.persistence-api"
-    annotationProcessor "jakarta.annotation:jakarta.annotation-api"
-    annotationProcessor "javax.persistence:javax.persistence-api:2.2"
-    testImplementation 'org.springframework.security:spring-security-test'
-    testImplementation "io.rest-assured:rest-assured:${restAssuredVersion}"
-    testImplementation "javax.persistence:javax.persistence-api:2.2"
-    testImplementation "javax.servlet:javax.servlet-api:4.0.1"
-    testImplementation project(':appendix:spring-boot-starter-test-containers')
-    implementation project(":appendix:spring-boot-starter-lucy-filter")
-    testImplementation project(":appendix:spring-boot-starter-lucy-filter")
 }

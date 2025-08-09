@@ -69,7 +69,6 @@ subprojects {
     }
 
     dependencies {
-        implementation "org.springframework.boot:spring-boot-starter-web"
         implementation "org.slf4j:slf4j-api:${slf4jVersion}"
         compileOnly "org.projectlombok:lombok:${lombokVersion}"
         annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
@@ -77,7 +76,6 @@ subprojects {
         testImplementation "org.springframework.boot:spring-boot-starter-test"
         testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
         testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
-        compileOnly "jakarta.validation:jakarta.validation-api:${javaxValidationVersion}"
     }
 
 }

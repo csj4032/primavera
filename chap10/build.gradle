@@ -1,36 +1,17 @@
 
-compileJava {
-    options.compilerArgs += ["-Xlint:deprecation"]
-}
-
+// chap10: Web + OAuth2 Client + Spring Security + MyBatis
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter-web") {
-        exclude module: "spring-boot-starter-tomcat"
-    }
-    implementation "org.springframework.boot:spring-boot-starter-undertow"
-    aopDependencies.each { dep -> implementation dep }
-    databaseDependencies.each { dep -> implementation dep }
-    mybatisDependencies.each { dep -> implementation dep }
-    thymeleafDependencies.each { dep -> implementation dep }
-    validationDependencies.each { dep -> implementation dep }
-    developmentDependencies.each { dep -> implementation dep }
-    loggingDependencies.each { dep -> implementation dep }
-    webUiDependencies.each { dep -> implementation dep }
-    testContainersDependencies.each { dep -> testImplementation dep }
+    implementation "org.springframework.boot:spring-boot-starter-web"
+    implementation "org.springframework.boot:spring-boot-starter-validation"
     implementation "org.springframework.boot:spring-boot-starter-security"
     implementation "org.springframework.boot:spring-boot-starter-oauth2-client"
+    implementation "org.springframework.boot:spring-boot-starter-actuator"
     implementation "org.springframework.boot:spring-boot-starter-cache"
     implementation "org.springframework.boot:spring-boot-starter-data-redis"
-    implementation "org.springframework.cloud:spring-cloud-starter-config"
-    implementation "org.springframework.cloud:spring-cloud-starter-vault-config:${springCloudVaultVersion}"
-    implementation "org.springframework.security:spring-security-oauth2-client:${springSecurityVersion}"
-    implementation "org.springframework.security:spring-security-oauth2-jose:${springSecurityVersion}"
-    implementation "org.thymeleaf.extras:thymeleaf-extras-springsecurity6:${thymeleafExtrasSpringSecurity6Version}"
-    implementation "org.hibernate:hibernate-core:${hibernateVersion}"
-    implementation "org.redisson:redisson-spring-boot-starter:${redissonVersion}"
-    implementation "com.github.ben-manes.caffeine:caffeine:${caffeineVersion}"
-    implementation "commons-codec:commons-codec:${commonsCodecVersion}"
-    testImplementation "org.springframework.security:spring-security-test:${springSecurityVersion}"
-    testImplementation "io.rest-assured:rest-assured:${restAssuredVersion}"
-    implementation project(":appendix:spring-boot-starter-lucy-filter")
+    implementation "com.github.ben-manes.caffeine:caffeine"
+    databaseDependencies.each { dep -> implementation dep }
+    mybatisDependencies.each { dep -> implementation dep }
+    
+    testContainersDependencies.each { dep -> testImplementation dep }
+    testImplementation "org.springframework.security:spring-security-test"
 }

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>User</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+    <h1>User</h1>
+    <ul>
+        <li th:text="'ID: ' + ${user.id}">ID</li>
+        <li th:text="'Name: ' + ${user.name}">Name</li>
+        <li th:text="'Email: ' + ${user.email}">Email</li>
+        <li th:text="'CreatedAt: ' + ${user.createdAt}">CreatedAt</li>
+    </ul>
+</body>
+</html>

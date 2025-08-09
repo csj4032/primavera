@@ -1,38 +1,19 @@
 
-plugins {
-    id 'org.flywaydb.flyway' version "${flywayVersion}"
-}
-
-flyway {
-    url = 'jdbc:mariadb://localhost:3306/primavera'
-    user = 'primavera'
-    password = 'primavera'
-}
-
+// chap12: Web + MyBatis + File Upload + Thymeleaf
 dependencies {
-    implementation('org.springframework.boot:spring-boot-starter-web') {
-        exclude module: "spring-boot-starter-tomcat"
-    }
-    implementation 'org.springframework.boot:spring-boot-starter-undertow'
-    aopDependencies.each { dep -> implementation dep }
+    implementation "org.springframework.boot:spring-boot-starter-web"
+    implementation "org.springframework.boot:spring-boot-starter-validation"
+    implementation "org.springframework.boot:spring-boot-starter-security"
+    implementation "org.springframework.boot:spring-boot-starter-oauth2-client"
+    implementation "org.modelmapper:modelmapper:${modelMapperVersion}"
+    implementation project(":appendix:spring-boot-starter-lucy-filter")
     databaseDependencies.each { dep -> implementation dep }
     mybatisDependencies.each { dep -> implementation dep }
     thymeleafDependencies.each { dep -> implementation dep }
-    validationDependencies.each { dep -> implementation dep }
-    developmentDependencies.each { dep -> implementation dep }
+    
+    // File Upload 지원
+    implementation "commons-io:commons-io:${commonsIoVersion}"
+    implementation "commons-codec:commons-codec:${commonsCodecVersion}"
+    
     testContainersDependencies.each { dep -> testImplementation dep }
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-json'
-    implementation 'org.springframework.boot:spring-boot-starter-security'
-    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
-    implementation "org.springframework.cloud:spring-cloud-starter-config"
-    implementation "org.springframework.cloud:spring-cloud-starter-vault-config:${springCloudVaultVersion}"
-    implementation "org.springframework.security:spring-security-oauth2-client:${springSecurityVersion}"
-    implementation "org.springframework.security:spring-security-oauth2-jose:${springSecurityVersion}"
-    implementation "org.thymeleaf.extras:thymeleaf-extras-springsecurity6:${thymeleafExtrasSpringSecurity6Version}"
-    implementation "org.modelmapper:modelmapper:${modelMapperVersion}"
-    testImplementation 'org.springframework.security:spring-security-test'
-    testImplementation "io.rest-assured:rest-assured:${restAssuredVersion}"
-    implementation project(":appendix:spring-boot-starter-lucy-filter")
-    testImplementation project(":appendix:spring-boot-starter-lucy-filter")
 }

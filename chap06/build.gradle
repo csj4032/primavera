@@ -1,21 +1,13 @@
+// chap06: Web + Validation + Lucy Filter + Thymeleaf + MyBatis
 dependencies {
-    aopDependencies.each { dep -> implementation dep }
+    implementation "org.springframework.boot:spring-boot-starter-web"
+    implementation "org.springframework.boot:spring-boot-starter-security"
     databaseDependencies.each { dep -> implementation dep }
     mybatisDependencies.each { dep -> implementation dep }
     thymeleafDependencies.each { dep -> implementation dep }
-    webUiDependencies.each { dep -> implementation dep }
     validationDependencies.each { dep -> implementation dep }
+    
+    implementation project(":appendix:spring-boot-starter-lucy-filter")
+    
     testContainersDependencies.each { dep -> testImplementation dep }
-    implementation "org.springframework.cloud:spring-cloud-starter-config"
-    implementation "org.springframework.cloud:spring-cloud-starter-vault-config:${springCloudVaultVersion}"
-    implementation "org.springframework.cloud:spring-cloud-vault-config-databases:${springCloudVaultVersion}"
-    compileOnly "org.hibernate:hibernate-validator:${hibernateValidatorVersion}"
-    compileOnly "com.zaxxer:HikariCP:${hikariCPVersion}"
-    implementation "org.hibernate.validator:hibernate-validator-cdi:${hibernateValidatorVersion}"
-    testImplementation "org.springframework.security:spring-security-crypto:${springSecurityVersion}"
-    testImplementation "org.springframework.security:spring-security-test"
-    testImplementation "org.mybatis.spring.boot:mybatis-spring-boot-starter-test:${mybatisSpringBootStarterVersion}"
-    testImplementation "org.apache.groovy:groovy-jsr223:4.0.24"
-    testImplementation "org.mockito:mockito-core:4.+"
-    testImplementation project(":appendix:spring-boot-starter-lucy-filter")
 }

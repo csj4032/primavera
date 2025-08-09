@@ -1,14 +1,15 @@
 
+// chap17:common: JPA Entities only - 공통 엔티티 라이브러리
 plugins {
     id 'java-library'
 }
 
 dependencies {
-    api "org.springframework.boot:spring-boot-starter:${springBootVersion}"
-    api "org.springframework.boot:spring-boot-starter-data-jpa:${springBootVersion}"
+    // JPA Entities only (NO WEB, NO BUSINESS LOGIC)
+    api "org.springframework.boot:spring-boot-starter-data-jpa"
     api "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
     api "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonVersion}"
-    implementation "org.apache.commons:commons-lang3:${commonsLang3Version}"
+    
     compileOnly "org.projectlombok:lombok:${lombokVersion}"
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
     testImplementation "org.junit.jupiter:junit-jupiter:${junitJupiterVersion}"

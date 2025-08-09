@@ -1,24 +1,15 @@
+// chap09: Web + Spring Security + MyBatis + Thymeleaf
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter-web") {
-        exclude module: "spring-boot-starter-tomcat"
-    }
-    implementation "org.springframework.boot:spring-boot-starter-undertow"
-    aopDependencies.each { dep -> implementation dep }
+    implementation "org.springframework.boot:spring-boot-starter-web"
+    implementation "org.springframework.boot:spring-boot-starter-validation"
+    implementation "org.springframework.boot:spring-boot-starter-security"
+    implementation "commons-codec:commons-codec:${commonsCodecVersion}"
     databaseDependencies.each { dep -> implementation dep }
     mybatisDependencies.each { dep -> implementation dep }
     thymeleafDependencies.each { dep -> implementation dep }
-    validationDependencies.each { dep -> implementation dep }
-    developmentDependencies.each { dep -> implementation dep }
-    loggingDependencies.each { dep -> implementation dep }
-    webUiDependencies.each { dep -> implementation dep }
-    testContainersDependencies.each { dep -> testImplementation dep }
-    securityDependencies.each { dep -> implementation dep }
-    implementation "org.springframework.cloud:spring-cloud-starter-vault-config:${springCloudVaultVersion}"
-    implementation "org.springframework.cloud:spring-cloud-vault-config-databases:${springCloudVaultVersion}"
+    
     implementation "org.thymeleaf.extras:thymeleaf-extras-springsecurity6:${thymeleafExtrasSpringSecurity6Version}"
-    implementation "org.hibernate:hibernate-core:${hibernateVersion}"
-    implementation "commons-codec:commons-codec:${commonsCodecVersion}"
-    testImplementation "org.springframework.security:spring-security-test:${springSecurityVersion}"
-    implementation project(":appendix:spring-boot-starter-lucy-filter")
-    testImplementation project(":appendix:spring-boot-starter-lucy-filter")
+    
+    testContainersDependencies.each { dep -> testImplementation dep }
+    testImplementation "org.springframework.security:spring-security-test"
 }

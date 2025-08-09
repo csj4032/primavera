@@ -94,7 +94,7 @@ class PrimaveraInterceptorTest {
         // When
         mockMvc.perform(get("/hello"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("world"))
+                .andExpect(view().name("hello.html"))
                 .andDo(print());
 
         // Then

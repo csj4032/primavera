@@ -8,27 +8,6 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-/**
- * =============================================================================
- * 🚀 실행 가이드 (Chapter 03: MVC & AOP)
- * =============================================================================
- * 
- * ✅ Docker 환경 불필요 - MVC/AOP 학습용
- * 
- * 📋 애플리케이션 실행:
- *    ./gradlew :chap03:bootRun
- * 
- * 🔗 접속:
- *    http://localhost:8080
- * 
- * 📊 기능:
- *    - Spring MVC 기본 구조
- *    - AOP (Aspect Oriented Programming)
- *    - 인터셉터 패턴
- *    - 웹 요청 처리
- * 
- * =============================================================================
- */
 @Slf4j
 @SpringBootApplication
 public class MvcAopApplication {

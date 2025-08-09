@@ -3,16 +3,10 @@ spring:
     name: MvcAopApplication
   jackson:
     time-zone: UTC
-
-server:
-  tomcat:
-    use-apr: never
+  thymeleaf:
+    cache: true
 
 logging:
   level:
     org.springframework: debug
     com.genius.primavera: debug
-
-primavera:
-  logs:
-    path: ./logs

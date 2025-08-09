@@ -46,26 +46,22 @@ public class HelloControllerMvcTest {
     @Order(1)
     @DisplayName("GET /hello - 기본 MVC 매핑 테스트")
     void testHelloWorldMapping() throws Exception {
-        // Given
-        List<User> mockUsers = Arrays.asList(
+        List<User> mockUsers = List.of(
                 User.builder().id(1L).name("User1").email("user1@test.com").build(),
-                User.builder().id(2L).name("User2").email("user2@test.com").build()
-        );
+                User.builder().id(2L).name("User2").email("user2@test.com").build());
         when(helloService.getUsers()).thenReturn(mockUsers);
-
         mockMvc.perform(get("/hello"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("world"))
+                .andExpect(view().name("hello"))
                 .andExpect(model().attributeExists("users"))
                 .andExpect(model().attribute("users", mockUsers))
                 .andDo(print());
-
         log.info("✅ 기본 MVC 매핑 테스트 완료");
     }
 
     @Test
     @Order(2)
-    @DisplayName("GET /hello/{id} - 경로 변수 바인딩 테스트")
+    @DisplayName("GET /world/{id} - 경로 변수 바인딩 테스트")
     void testPathVariableBinding() throws Exception {
         Long userId = 123L;
         User mockUser = User.builder()
@@ -75,11 +71,11 @@ public class HelloControllerMvcTest {
                 .build();
         when(helloService.getUserById(userId)).thenReturn(mockUser);
 
-        mockMvc.perform(get("/hello/{id}", userId))
+        mockMvc.perform(get("/world/{id}", userId))
                 .andExpect(status().isOk())
-                .andExpect(view().name("hello"))
-                .andExpect(model().attributeExists("hello"))
-                .andExpect(model().attribute("hello", mockUser))
+                .andExpect(view().name("world"))
+                .andExpect(model().attributeExists("user"))
+                .andExpect(model().attribute("user", mockUser))
                 .andDo(print());
 
         log.info("✅ 경로 변수 바인딩 테스트 완료");
@@ -128,7 +124,12 @@ public class HelloControllerMvcTest {
         Long userId = 456L;
         User mockUser = User.builder().id(userId).name("Complex User").build();
         when(helloService.getUserById(userId)).thenReturn(mockUser);
-        mockMvc.perform(get("/hello/{id}", userId).param("debug", "true").param("format", "html")).andExpect(status().isOk()).andExpect(view().name("hello")).andDo(print());
+        mockMvc.perform(get("/world/{id}", userId)
+                        .param("debug", "true")
+                        .param("format", "html"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("world"))
+                .andDo(print());
         log.info("✅ 복합 요청 매핑 테스트 완료");
     }
 
@@ -138,10 +139,10 @@ public class HelloControllerMvcTest {
     void testMvcArchitectureComponents() throws Exception {
         when(helloService.getUsers()).thenReturn(Collections.emptyList());
         MvcResult result = mockMvc.perform(get("/hello")).andExpect(status().isOk()).andReturn();
-        assertThat(result.getHandler()).isNotNull(); // Controller
-        assertThat(result.getModelAndView()).isNotNull(); // ModelAndView
-        assertThat(result.getModelAndView().getViewName()).isEqualTo("world"); // View
-        assertThat(result.getModelAndView().getModel()).isNotEmpty(); // Model
+        assertThat(result.getHandler()).isNotNull();
+        assertThat(result.getModelAndView()).isNotNull();
+        assertThat(result.getModelAndView().getViewName()).isEqualTo("hello");
+        assertThat(result.getModelAndView().getModel()).isNotEmpty();
         log.info("✅ MVC 아키텍처 컴포넌트 검증 완료");
     }
 
@@ -152,21 +153,11 @@ public class HelloControllerMvcTest {
         Long userId = 789L;
         User mockUser = User.builder().id(userId).name("Flow Test User").build();
         when(helloService.getUserById(userId)).thenReturn(mockUser);
-
-        // When & Then
-        mockMvc.perform(get("/hello/{id}", userId))
+        mockMvc.perform(get("/world/{id}", userId))
                 .andExpect(status().isOk())
-                .andExpect(view().name("hello"))
-                .andExpect(model().attributeExists("hello"))
+                .andExpect(view().name("world"))
+                .andExpect(model().attributeExists("user"))
                 .andDo(result -> {
-                    // Spring MVC 요청 처리 흐름 검증:
-                    // 1. DispatcherServlet이 요청을 받음
-                    // 2. HandlerMapping이 적절한 Controller 찾음
-                    // 3. HandlerAdapter가 Controller 메서드 실행
-                    // 4. Controller가 ModelAndView 반환
-                    // 5. ViewResolver가 View 해석
-                    // 6. View가 Model 데이터로 렌더링
-
                     log.info("📋 MVC 요청 처리 흐름:");
                     log.info("  1. DispatcherServlet -> 요청 수신");
                     log.info("  2. HandlerMapping -> Controller 매핑");

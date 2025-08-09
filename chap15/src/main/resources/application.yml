@@ -16,12 +16,8 @@ spring:
         - console-appender
   jackson:
     time-zone: UTC
-
-lucy-filter:
-  enabled: true
-  name: lucyXssFilter
-  order: 1
-  addUrlPatterns: /*
+  jmx:
+    enabled: false
 
 logging:
   config: classpath:logback-spring.xml

@@ -1,20 +1,10 @@
 dependencies {
-    aopDependencies.each { dep -> implementation dep }
+    implementation "org.springframework.boot:spring-boot-starter-web"
     databaseDependencies.each { dep -> implementation dep }
     mybatisDependencies.each { dep -> implementation dep }
-    testContainersDependencies.each { dep -> testImplementation dep }
-    implementation "org.springframework.boot:spring-boot-starter-data-redis"
-    implementation "org.springframework.cloud:spring-cloud-starter-config"
-    implementation "org.springframework.cloud:spring-cloud-starter-vault-config:${springCloudVaultVersion}"
-    implementation "org.springframework.cloud:spring-cloud-vault-config-databases:${springCloudVaultVersion}"
     implementation "org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}"
-    implementation "commons-io:commons-io:${commonsIoVersion}"
-    implementation "org.reflections:reflections:${reflectionsVersion}"
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
-    implementation "com.bettercloud:vault-java-driver:${vaultJavaDriverVersion}"
-    testImplementation "org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}"
-    testImplementation "org.springframework.cloud:spring-cloud-starter-config"
-    testImplementation "org.springframework.cloud:spring-cloud-starter-vault-config:${springCloudVaultVersion}"
-    testImplementation "com.bettercloud:vault-java-driver:${vaultJavaDriverVersion}"
+    implementation "org.reflections:reflections:0.10.2"
+    testContainersDependencies.each { dep -> testImplementation dep }
     testImplementation project(':appendix:spring-boot-starter-test-containers')
 }

@@ -40,9 +40,8 @@ public class AspectAdviceTypesTest {
     @Order(1)
     @DisplayName("@Before - 메서드 실행 전 처리 테스트")
     void testBeforeAdvice() {
-        var userId = 100L;
+        var userId = 1L;
         var result = helloService.getUserById(userId);
-        
         assertThat(result).isNotNull();
         assertThat(result.getId()).isEqualTo(userId);
         log.info("🔍 @Before Advice - 메서드 실행 전 로깅 완료");
@@ -52,9 +51,8 @@ public class AspectAdviceTypesTest {
     @Order(2)
     @DisplayName("@After - 메서드 실행 후 항상 처리 테스트")
     void testAfterAdvice() {
-        var userId = 200L;
+        var userId = 2L;
         var result = helloService.getUserById(userId);
-        
         assertThat(result).isNotNull();
         log.info("🔚 @After Advice - 메서드 실행 후 정리 작업 완료");
     }
@@ -63,11 +61,10 @@ public class AspectAdviceTypesTest {
     @Order(3)
     @DisplayName("@AfterReturning - 정상 반환 시에만 처리 테스트")
     void testAfterReturningAdvice() {
-        var userId = 300L;
+        var userId = 3L;
         var result = helloService.getUserById(userId);
-        
         assertThat(result).isNotNull();
-        assertThat(result.getName()).isEqualTo("Test User");
+        assertThat(result.getName()).isEqualTo("Charlie");
         log.info("✅ @AfterReturning Advice - 정상 반환 시 후처리 완료");
     }
 
@@ -75,11 +72,10 @@ public class AspectAdviceTypesTest {
     @Order(4)
     @DisplayName("@Around - 메서드 실행 전후 완전 제어 테스트")
     void testAroundAdvice() {
-        var userId = 400L;
+        var userId = 4L;
         var startTime = System.currentTimeMillis();
         var result = helloService.getUserById(userId);
         var endTime = System.currentTimeMillis();
-        
         assertThat(result).isNotNull();
         log.info("🚀 @Around Advice - 실행 시간 측정: {}ms", endTime - startTime);
     }
@@ -88,9 +84,8 @@ public class AspectAdviceTypesTest {
     @Order(5)
     @DisplayName("복합 Advice 동작 순서 테스트")
     void testMultipleAdviceExecution() {
-        var userId = 500L;
+        var userId = 5L;
         var result = helloService.getUserById(userId);
-        
         assertThat(result).isNotNull();
         log.info("📊 복합 Advice 실행 순서 테스트 완료");
     }
@@ -99,9 +94,8 @@ public class AspectAdviceTypesTest {
     @Order(6)
     @DisplayName("Pointcut 표현식 다양한 패턴 테스트")
     void testPointcutExpressions() {
-        var userId = 600L;
+        var userId = 6L;
         var result = helloService.getUserById(userId);
-        
         assertThat(result).isNotNull();
         log.info("🎯 다양한 Pointcut 표현식 테스트 완료");
     }
@@ -110,13 +104,11 @@ public class AspectAdviceTypesTest {
     @Order(7)
     @DisplayName("AOP Proxy 메커니즘 테스트")
     void testAOPProxyMechanism() {
-        var userId = 700L;
+        var userId = 7L;
         var result = helloService.getUserById(userId);
         var proxyClass = helloService.getClass().getName();
-        
         assertThat(result).isNotNull();
         assertThat(proxyClass.contains("$Proxy") || proxyClass.contains("$$")).isTrue();
-        
         log.info("🔄 AOP Proxy 클래스: {}", proxyClass);
         log.info("✅ AOP Proxy 메커니즘 테스트 완료");
     }
@@ -125,9 +117,8 @@ public class AspectAdviceTypesTest {
     @Order(8)
     @DisplayName("JoinPoint 메타데이터 추출 테스트")
     void testJoinPointMetadata() {
-        var userId = 800L;
+        var userId = 8L;
         var result = helloService.getUserById(userId);
-        
         assertThat(result).isNotNull();
         log.info("📋 JoinPoint 메타데이터 추출 테스트 완료");
     }
@@ -136,13 +127,11 @@ public class AspectAdviceTypesTest {
     @Order(9)
     @DisplayName("AOP를 통한 횡단 관심사 분리 시연")
     void testCrossCuttingConcerns() {
-        var userId = 900L;
-        
+        var userId = 9L;
         for (int i = 0; i < 3; i++) {
             var result = helloService.getUserById(userId + i);
             assertThat(result).isNotNull();
         }
-        
         log.info("🎯 횡단 관심사 분리 시연 완료");
     }
 
@@ -150,7 +139,7 @@ public class AspectAdviceTypesTest {
     @Order(10)
     @DisplayName("AOP 성능 영향도 테스트")
     void testAOPPerformanceImpact() {
-        var userId = 1000L;
+        var userId = 10L;
         var iterations = 1000;
         var startTime = System.nanoTime();
         

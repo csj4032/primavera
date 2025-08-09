@@ -1,9 +1,10 @@
 dependencies {
-    implementation "org.springframework.boot:spring-boot-starter-data-jpa"
-    runtimeOnly "com.h2database:h2:${h2Version}"
+    implementation "org.springframework.boot:spring-boot-starter"
+    implementation "org.springframework.boot:spring-boot-starter-web"
+    implementation "org.springframework.boot:spring-boot-starter-validation"
+    implementation "org.springframework.boot:spring-boot-configuration-processor"
     implementation "com.squareup.retrofit2:retrofit:${retrofitVersion}"
     implementation "com.squareup.retrofit2:converter-gson:${retrofitVersion}"
     implementation "com.google.code.gson:gson:${gsonVersion}"
-    implementation "org.hibernate.validator:hibernate-validator:${hibernateValidatorVersion}"
     implementation "jakarta.annotation:jakarta.annotation-api:${javaxAnnotationVersion}"
 }

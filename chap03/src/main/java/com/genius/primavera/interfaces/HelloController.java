@@ -23,14 +23,14 @@ public class HelloController {
     @PrimaveraLogging(type = "Controller")
     public String helloWorld(Model model) {
         model.addAttribute("users", helloService.getUsers());
-        return "world";
+        return "hello";
     }
 
-    @GetMapping("/hello/{id}")
+    @GetMapping("/world/{id}")
     @PrimaveraLogging(type = "Controller")
     public String helloWorldById(Model model, @PathVariable(name = "id") long id) {
-        model.addAttribute("hello", helloService.getUserById(id));
-        return "hello";
+        model.addAttribute("user", helloService.getUserById(id));
+        return "world";
     }
 
     @GetMapping("/oops")

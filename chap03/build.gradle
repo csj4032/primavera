@@ -1,5 +1,7 @@
 dependencies {
+    implementation "org.springframework.boot:spring-boot-starter-web"
     aopDependencies.each { dep -> implementation dep }
-    testContainersDependencies.each { dep -> testImplementation dep }
+    thymeleafDependencies.each { dep -> implementation dep }
     implementation "commons-io:commons-io:${commonsIoVersion}"
+    testContainersDependencies.each { dep -> testImplementation dep }
 }

@@ -94,11 +94,10 @@ public class SpringMvcArchitectureTest {
                 .build();
         when(helloService.getUserById(userId)).thenReturn(mockUser);
 
-        // When & Then
-        mockMvc.perform(get("/hello/{id}", userId))
+        mockMvc.perform(get("/world/{id}", userId))
                 .andExpect(status().isOk())
-                .andExpect(view().name("hello"))
-                .andExpect(model().attributeExists("hello"))
+                .andExpect(view().name("world"))
+                .andExpect(model().attributeExists("user"))
                 .andDo(result -> {
                     log.info("🏗️ 계층 구조 분석:");
                     log.info("  1. Controller 계층 - HTTP 요청/응답 처리");
@@ -117,30 +116,17 @@ public class SpringMvcArchitectureTest {
     @Order(4)
     @DisplayName("ViewResolver 동작 테스트")
     void testViewResolver() throws Exception {
-        // Given
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
         when(helloService.getUsers()).thenReturn(Arrays.asList());
-
-        // When
-        MvcResult result = mockMvc.perform(get("/hello"))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        // Then
+        MvcResult result = mockMvc.perform(get("/hello")).andExpect(status().isOk()).andReturn();
         String viewName = result.getModelAndView().getViewName();
-        assertThat(viewName).isEqualTo("world");
-
-        // ViewResolver 설정 확인
-        Map<String, ViewResolver> viewResolvers =
-                webApplicationContext.getBeansOfType(ViewResolver.class);
-
+        assertThat(viewName).isEqualTo("hello");
+        Map<String, ViewResolver> viewResolvers = webApplicationContext.getBeansOfType(ViewResolver.class);
         assertThat(viewResolvers).isNotEmpty();
-
         log.info("🎨 ViewResolver 분석:");
         log.info("  - 논리적 뷰 이름: '{}'", viewName);
         log.info("  - 등록된 ViewResolver 수: {}", viewResolvers.size());
         log.info("  - ViewResolver 종류: {}", viewResolvers.keySet());
-
         log.info("📋 ViewResolver 역할:");
         log.info("  - 논리적 뷰 이름을 실제 뷰 구현체로 변환");
         log.info("  - 템플릿 엔진(Thymeleaf, JSP 등)과 연동");
@@ -187,10 +173,10 @@ public class SpringMvcArchitectureTest {
     @DisplayName("HTTP 메서드별 매핑 테스트")
     void testHttpMethodMapping() throws Exception {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
-        when(helloService.getUsers()).thenReturn(Arrays.asList());
+        when(helloService.getUsers()).thenReturn(List.of());
         mockMvc.perform(get("/hello"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("world"))
+                .andExpect(view().name("hello"))
                 .andDo(result -> {
                     log.info("🌐 HTTP 메서드 매핑:");
                     log.info("  - GET /hello -> HelloController.helloWorld()");
@@ -215,13 +201,13 @@ public class SpringMvcArchitectureTest {
         Long userId = 100L;
         User mockUser = User.builder().id(userId).name("MVC Pattern User").email("mvc@test.com").build();
         when(helloService.getUserById(userId)).thenReturn(mockUser);
-        MvcResult result = mockMvc.perform(get("/hello/{id}", userId)).andExpect(status().isOk()).andReturn();
-        Object handler = result.getHandler(); // Controller
-        String viewName = result.getModelAndView().getViewName(); // View
-        Map<String, Object> model = result.getModelAndView().getModel(); // Model
+        MvcResult result = mockMvc.perform(get("/world/{id}", userId)).andExpect(status().isOk()).andReturn();
+        Object handler = result.getHandler();
+        String viewName = result.getModelAndView().getViewName();
+        Map<String, Object> model = result.getModelAndView().getModel();
         assertThat(handler).isNotNull();
-        assertThat(viewName).isEqualTo("hello");
-        assertThat(model).containsKey("hello");
+        assertThat(viewName).isEqualTo("world");
+        assertThat(model).containsKey("user");
         log.info("🎯 MVC 패턴 구성 요소:");
         log.info("  📋 Model (데이터):");
         log.info("    - 비즈니스 데이터: User 객체");
@@ -243,7 +229,6 @@ public class SpringMvcArchitectureTest {
     @DisplayName("Spring MVC 설정 및 구성 검증")
     void testSpringMvcConfiguration() {
         String[] beanNames = webApplicationContext.getBeanDefinitionNames();
-        // Then
         long mvcBeanCount = Arrays.stream(beanNames)
                 .filter(name -> name.toLowerCase().contains("mvc") ||
                         name.toLowerCase().contains("handler") ||
