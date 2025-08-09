@@ -2,6 +2,7 @@
 dependencies {
     implementation "org.springframework.boot:spring-boot-starter-web"
     implementation "org.springframework.boot:spring-boot-starter-actuator"
+    implementation "io.awspring.cloud:spring-cloud-aws-starter:${springCloudAwsVersion}"
     implementation "io.awspring.cloud:spring-cloud-aws-starter-s3:${springCloudAwsVersion}"
     implementation "io.sentry:sentry:1.7.30"
     implementation "org.apache.poi:poi:${poiVersion}"

@@ -15,7 +15,8 @@ public enum ContainerType {
     MONGODB("mongo:7", "com.mongodb.MongoClient", MongoContainerSpec.class, false),
     KAFKA("confluentinc/cp-kafka:7.5.0", null, BaseContainerSpec.class, false),  // TODO: KafkaContainerSpec
     ELASTICSEARCH("docker.elastic.co/elasticsearch/elasticsearch:8.12.0", null, BaseContainerSpec.class, false),  // TODO: ElasticsearchContainerSpec
-    VAULT("hashicorp/vault:1.14.0", null, BaseContainerSpec.class, false);  // TODO: VaultContainerSpec
+    VAULT("hashicorp/vault:1.14.0", null, BaseContainerSpec.class, false),  // TODO: VaultContainerSpec
+    LOCALSTACK("localstack/localstack:3.0", null, LocalStackContainerSpec.class, false);
 
     private final String defaultImage;
     private final String driverClassName;
@@ -81,6 +82,15 @@ public enum ContainerType {
      */
     public boolean isSecretManagement() {
         return this == VAULT;
+    }
+
+    /**
+     * AWS 모킹 서비스 타입인지 확인
+     * 
+     * @return AWS 모킹 서비스 여부 (LocalStack 등)
+     */
+    public boolean isAwsMockService() {
+        return this == LOCALSTACK;
     }
 
     /**

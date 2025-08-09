@@ -86,8 +86,7 @@ class ContainerFactoryTest {
     @Test
     @DisplayName("Create Kafka container with default configuration")
     void testCreateKafkaDefault() {
-        BaseContainerSpec spec = new BaseContainerSpec();
-        spec.setImage("confluentinc/cp-kafka:7.5.0");
+        BaseContainerSpec spec = createKafkaSpec("confluentinc/cp-kafka:7.5.0");
         
         GenericContainer<?> container = ContainerFactory.create(ContainerType.KAFKA, spec);
         
@@ -97,16 +96,27 @@ class ContainerFactoryTest {
         log.info("✅ Kafka container created with default configuration");
     }
     
+    private BaseContainerSpec createKafkaSpec(String image) {
+        return new BaseContainerSpec() {
+            {
+                setImage(image);
+            }
+        };
+    }
+    
     @Test
     @DisplayName("Create Kafka container with custom environment")
     void testCreateKafkaCustom() {
-        BaseContainerSpec spec = new BaseContainerSpec();
-        spec.setImage("confluentinc/cp-kafka:7.5.0");
-        spec.setEnvironment(Map.of(
-            "KAFKA_AUTO_CREATE_TOPICS_ENABLE", "true",
-            "KAFKA_NUM_PARTITIONS", "3"
-        ));
-        spec.setStartupTimeout(180);
+        BaseContainerSpec spec = new BaseContainerSpec() {
+            {
+                setImage("confluentinc/cp-kafka:7.5.0");
+                setEnvironment(Map.of(
+                    "KAFKA_AUTO_CREATE_TOPICS_ENABLE", "true",
+                    "KAFKA_NUM_PARTITIONS", "3"
+                ));
+                setStartupTimeout(180);
+            }
+        };
         
         GenericContainer<?> container = ContainerFactory.create(ContainerType.KAFKA, spec);
         
@@ -174,12 +184,15 @@ class ContainerFactoryTest {
     @Test
     @DisplayName("Create Elasticsearch container")
     void testCreateElasticsearch() {
-        BaseContainerSpec spec = new BaseContainerSpec();
-        spec.setImage("elasticsearch:8.11.0");
-        spec.setEnvironment(Map.of(
-            "discovery.type", "single-node",
-            "xpack.security.enabled", "false"
-        ));
+        BaseContainerSpec spec = new BaseContainerSpec() {
+            {
+                setImage("elasticsearch:8.11.0");
+                setEnvironment(Map.of(
+                    "discovery.type", "single-node",
+                    "xpack.security.enabled", "false"
+                ));
+            }
+        };
         
         GenericContainer<?> container = ContainerFactory.create(ContainerType.ELASTICSEARCH, spec);
         
@@ -247,8 +260,11 @@ class ContainerFactoryTest {
                 yield spec;
             }
             default -> {
-                BaseContainerSpec spec = new BaseContainerSpec();
-                spec.setImage(type.getDefaultImage());
+                BaseContainerSpec spec = new BaseContainerSpec() {
+                    {
+                        setImage(type.getDefaultImage());
+                    }
+                };
                 yield spec;
             }
         };

@@ -37,6 +37,7 @@ public class ContainerCreatorRegistry {
         registerCreator(new KafkaContainerCreator());
         registerCreator(new ElasticsearchContainerCreator());
         registerCreator(new VaultContainerCreator());
+        registerCreator(new LocalStackContainerCreator());
         log.debug("Registered {} built-in container creators", creators.size());
     }
 

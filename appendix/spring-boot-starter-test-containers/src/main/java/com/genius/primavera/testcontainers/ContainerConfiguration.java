@@ -168,6 +168,13 @@ public class ContainerConfiguration {
         private BaseContainerSpec vault;  // TODO: VaultContainerSpec 구현 후 변경
         
         /**
+         * LocalStack 설정 (type이 LOCALSTACK일 때만 사용)
+         * AWS 서비스 모킹 관련 모든 설정을 포함합니다.
+         */
+        @Valid
+        private LocalStackContainerSpec localstack;
+        
+        /**
          * 현재 타입에 해당하는 설정 객체를 반환합니다.
          * 
          * @return 타입별 설정 객체 (설정되지 않았으면 null)
@@ -182,6 +189,7 @@ public class ContainerConfiguration {
                 case KAFKA -> kafka;
                 case ELASTICSEARCH -> elasticsearch;
                 case VAULT -> vault;
+                case LOCALSTACK -> localstack;
                 default -> null;
             };
         }

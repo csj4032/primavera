@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
     @EnableTestContainers.TestContainer(type = ContainerType.MARIADB, name = "lifecycleDb"),
     @EnableTestContainers.TestContainer(type = ContainerType.REDIS, name = "lifecycleCache")
 })
-class ContainerLifecycleTest {
+public class ContainerLifecycleTest {
 
     @Autowired
     @Qualifier("lifecycleDb")

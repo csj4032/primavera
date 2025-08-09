@@ -232,6 +232,13 @@ public class ContainerManager {
                     config.setMongodb(createDefaultMongoSpec());
                 }
             }
+            case LOCALSTACK -> {
+                if (spec instanceof LocalStackContainerSpec localStackSpec) {
+                    config.setLocalstack(localStackSpec);
+                } else {
+                    config.setLocalstack(createDefaultLocalStackSpec());
+                }
+            }
             default -> {
                 // Kafka, Elasticsearch, Vault는 BaseContainerSpec 사용
                 config.setKafka(spec);
@@ -248,6 +255,7 @@ public class ContainerManager {
             case POSTGRESQL -> createDefaultPostgreSqlSpec();
             case REDIS -> createDefaultRedisSpec();
             case MONGODB -> createDefaultMongoSpec();
+            case LOCALSTACK -> createDefaultLocalStackSpec();
             default -> createDefaultBaseSpec(type);
         };
     }
@@ -287,6 +295,12 @@ public class ContainerManager {
     private MongoContainerSpec createDefaultMongoSpec() {
         MongoContainerSpec spec = new MongoContainerSpec();
         spec.setImage(ContainerType.MONGODB.getDefaultImage());
+        return spec;
+    }
+    
+    private LocalStackContainerSpec createDefaultLocalStackSpec() {
+        LocalStackContainerSpec spec = new LocalStackContainerSpec();
+        spec.setImage(ContainerType.LOCALSTACK.getDefaultImage());
         return spec;
     }
     

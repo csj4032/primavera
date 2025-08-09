@@ -3,82 +3,91 @@ package com.genius.primavera.testcontainers.bean;
 import com.genius.primavera.testcontainers.ContainerInfo;
 import com.genius.primavera.testcontainers.ContainerType;
 import com.genius.primavera.testcontainers.config.DatabaseContainerSpec;
-import com.genius.primavera.testcontainers.config.MariaDbContainerSpec;
-import com.genius.primavera.testcontainers.config.MySqlContainerSpec;
-import com.genius.primavera.testcontainers.config.PostgreSqlContainerSpec;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.sql.DataSource;
 
+/**
+ * DataSource 빈 생성을 위한 추상 클래스
+ * 각 데이터베이스 타입별로 구체적인 구현체를 제공합니다.
+ */
+@Slf4j
 public abstract class DataSourceBeanCreator implements BeanCreator {
     
-    @Override
-    public Object createBean(ContainerInfo containerInfo) {
+    /**
+     * 모든 DataSource에 공통적으로 적용되는 기본 HikariConfig 생성
+     */
+    protected HikariConfig createBaseConfig(ContainerInfo containerInfo) {
         HikariConfig config = new HikariConfig();
         config.setJdbcUrl(containerInfo.getJdbcUrl());
         config.setDriverClassName(containerInfo.type().getDriverClassName());
-        
-        // 타입별로 사용자명과 비밀번호 추출
-        String username = "primavera";
-        String password = "primavera";
-        Integer maxConnections = 10;
-        Integer connectionTimeout = 30000;
-        
-        if (containerInfo.spec() instanceof MariaDbContainerSpec mariaDbSpec) {
-            username = mariaDbSpec.getUsername();
-            password = mariaDbSpec.getPassword();
-            maxConnections = mariaDbSpec.getMaxConnections() != null ? mariaDbSpec.getMaxConnections() : 10;
-            connectionTimeout = mariaDbSpec.getConnectionTimeout() != null ? mariaDbSpec.getConnectionTimeout() : 30000;
-        } else if (containerInfo.spec() instanceof MySqlContainerSpec mysqlSpec) {
-            username = mysqlSpec.getUsername();
-            password = mysqlSpec.getPassword();
-            maxConnections = mysqlSpec.getMaxConnections() != null ? mysqlSpec.getMaxConnections() : 10;
-            connectionTimeout = mysqlSpec.getConnectionTimeout() != null ? mysqlSpec.getConnectionTimeout() : 30000;
-        } else if (containerInfo.spec() instanceof PostgreSqlContainerSpec pgSpec) {
-            username = pgSpec.getUsername();
-            password = pgSpec.getPassword();
-            maxConnections = pgSpec.getMaxConnections() != null ? pgSpec.getMaxConnections() : 10;
-            connectionTimeout = pgSpec.getConnectionTimeout() != null ? pgSpec.getConnectionTimeout() : 30000;
-        } else if (containerInfo.spec() instanceof DatabaseContainerSpec dbSpec) {
-            username = dbSpec.getUsername();
-            password = dbSpec.getPassword();
-            maxConnections = dbSpec.getMaxConnections() != null ? dbSpec.getMaxConnections() : 10;
-            connectionTimeout = dbSpec.getConnectionTimeout() != null ? dbSpec.getConnectionTimeout() : 30000;
-        }
-        
-        config.setUsername(username);
-        config.setPassword(password);
-        
         config.setPoolName(containerInfo.name() + "-pool");
-        config.setMaximumPoolSize(maxConnections);
+        
+        // 기본값 설정
         config.setMinimumIdle(2);
-        config.setConnectionTimeout(connectionTimeout);
         config.setIdleTimeout(600000);
         config.setMaxLifetime(1800000);
         config.setLeakDetectionThreshold(60000);
         
-        return new HikariDataSource(config);
+        log.debug("Created base HikariConfig for container: {} with URL: {}", 
+                containerInfo.name(), containerInfo.getJdbcUrl());
+        
+        return config;
     }
     
+    /**
+     * DatabaseContainerSpec에서 공통 설정 추출
+     */
+    protected void applyCommonSettings(HikariConfig config, DatabaseContainerSpec spec) {
+        config.setUsername(spec.getUsername());
+        config.setPassword(spec.getPassword());
+        config.setMaximumPoolSize(spec.getMaxConnections() != null ? spec.getMaxConnections() : 10);
+        config.setConnectionTimeout(spec.getConnectionTimeout() != null ? spec.getConnectionTimeout() : 30000);
+    }
+    
+    // 내부 클래스는 제거되고 독립적인 클래스로 이동됩니다.
+    // @Deprecated 표시로 하위 호환성 유지
+    @Deprecated(since = "2.0", forRemoval = true)
     public static class MariaDBBeanCreator extends DataSourceBeanCreator {
         @Override
         public ContainerType getSupportedType() {
             return ContainerType.MARIADB;
         }
+        
+        @Override
+        public Object createBean(ContainerInfo containerInfo) {
+            log.warn("Using deprecated MariaDBBeanCreator. Please use com.genius.primavera.testcontainers.bean.datasource.MariaDBBeanCreator instead");
+            return new com.genius.primavera.testcontainers.bean.datasource.MariaDBBeanCreator().createBean(containerInfo);
+        }
     }
     
+    @Deprecated(since = "2.0", forRemoval = true)
     public static class MySQLBeanCreator extends DataSourceBeanCreator {
         @Override
         public ContainerType getSupportedType() {
             return ContainerType.MYSQL;
         }
+        
+        @Override
+        public Object createBean(ContainerInfo containerInfo) {
+            log.warn("Using deprecated MySQLBeanCreator. Please use com.genius.primavera.testcontainers.bean.datasource.MySQLBeanCreator instead");
+            return new com.genius.primavera.testcontainers.bean.datasource.MySQLBeanCreator().createBean(containerInfo);
+        }
     }
     
+    @Deprecated(since = "2.0", forRemoval = true)
     public static class PostgreSQLBeanCreator extends DataSourceBeanCreator {
         @Override
         public ContainerType getSupportedType() {
             return ContainerType.POSTGRESQL;
+        }
+        
+        @Override
+        public Object createBean(ContainerInfo containerInfo) {
+            log.warn("Using deprecated PostgreSQLBeanCreator. Please use com.genius.primavera.testcontainers.bean.datasource.PostgreSQLBeanCreator instead");
+            return new com.genius.primavera.testcontainers.bean.datasource.PostgreSQLBeanCreator().createBean(containerInfo);
         }
     }
 }

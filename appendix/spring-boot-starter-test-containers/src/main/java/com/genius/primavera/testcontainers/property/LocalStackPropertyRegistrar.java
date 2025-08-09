@@ -1,0 +1,103 @@
+package com.genius.primavera.testcontainers.property;
+
+import com.genius.primavera.testcontainers.ContainerInfo;
+import com.genius.primavera.testcontainers.ContainerRegistry;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.testcontainers.containers.localstack.LocalStackContainer;
+
+/**
+ * LocalStack 컨테이너의 엔드포인트를 Spring 프로퍼티로 자동 등록하는 클래스
+ */
+@Slf4j
+public class LocalStackPropertyRegistrar {
+    
+    private static final String DEFAULT_CONTAINER_NAME = "localstack";
+    
+    /**
+     * 기본 LocalStack 컨테이너의 엔드포인트를 Spring 프로퍼티로 등록
+     */
+    public static void registerEndpoints(DynamicPropertyRegistry registry) {
+        registerEndpoints(registry, DEFAULT_CONTAINER_NAME);
+    }
+    
+    /**
+     * 지정된 이름의 LocalStack 컨테이너의 엔드포인트를 Spring 프로퍼티로 등록
+     */
+    public static void registerEndpoints(DynamicPropertyRegistry registry, String containerName) {
+        var containerManager = ContainerRegistry.get();
+        var localStackInfo = containerManager.getContainer(containerName);
+        
+        if (localStackInfo == null) {
+            log.warn("LocalStack 컨테이너를 찾을 수 없습니다: {}", containerName);
+            return;
+        }
+        
+        if (!(localStackInfo.container() instanceof LocalStackContainer)) {
+            log.warn("컨테이너가 LocalStackContainer 타입이 아닙니다: {}", containerName);
+            return;
+        }
+        
+        var container = (LocalStackContainer) localStackInfo.container();
+        
+        // 일반적인 AWS Spring Cloud 프로퍼티들 등록
+        registerAwsCloudProperties(registry, container);
+        
+        // 커스텀 프로퍼티들 등록
+        registerCustomProperties(registry, container);
+        
+        log.info("✅ LocalStack 엔드포인트 프로퍼티가 등록되었습니다: {}", container.getEndpoint());
+    }
+    
+    private static void registerAwsCloudProperties(DynamicPropertyRegistry registry, LocalStackContainer container) {
+        String endpoint = container.getEndpoint().toString();
+        
+        // Spring Cloud AWS 프로퍼티들
+        registry.add("spring.cloud.aws.s3.endpoint", () -> endpoint);
+        registry.add("spring.cloud.aws.dynamodb.endpoint", () -> endpoint);
+        registry.add("spring.cloud.aws.sqs.endpoint", () -> endpoint);
+        registry.add("spring.cloud.aws.sns.endpoint", () -> endpoint);
+        
+        // 기본 AWS 설정
+        registry.add("spring.cloud.aws.credentials.access-key", container::getAccessKey);
+        registry.add("spring.cloud.aws.credentials.secret-key", container::getSecretKey);
+        registry.add("spring.cloud.aws.region.static", container::getRegion);
+        
+        // S3 특화 설정
+        registry.add("spring.cloud.aws.s3.path-style-access", () -> "true");
+    }
+    
+    private static void registerCustomProperties(DynamicPropertyRegistry registry, LocalStackContainer container) {
+        // 커스텀 프로퍼티들 (기존 테스트와의 호환성을 위해)
+        registry.add("aws.s3.localstack-endpoint", container::getEndpoint);
+        registry.add("aws.s3.endpoint", container::getEndpoint);
+        registry.add("aws.credentials.access-key", container::getAccessKey);
+        registry.add("aws.credentials.secret-key", container::getSecretKey);
+        registry.add("aws.region", container::getRegion);
+    }
+    
+    /**
+     * LocalStack 컨테이너 정보를 가져오는 헬퍼 메서드
+     */
+    public static LocalStackContainer getContainer() {
+        return getContainer(DEFAULT_CONTAINER_NAME);
+    }
+    
+    /**
+     * 지정된 이름의 LocalStack 컨테이너 정보를 가져오는 헬퍼 메서드
+     */
+    public static LocalStackContainer getContainer(String containerName) {
+        var containerManager = ContainerRegistry.get();
+        var localStackInfo = containerManager.getContainer(containerName);
+        
+        if (localStackInfo == null) {
+            throw new IllegalStateException("LocalStack 컨테이너를 찾을 수 없습니다: " + containerName);
+        }
+        
+        if (!(localStackInfo.container() instanceof LocalStackContainer)) {
+            throw new IllegalStateException("컨테이너가 LocalStackContainer 타입이 아닙니다: " + containerName);
+        }
+        
+        return (LocalStackContainer) localStackInfo.container();
+    }
+}

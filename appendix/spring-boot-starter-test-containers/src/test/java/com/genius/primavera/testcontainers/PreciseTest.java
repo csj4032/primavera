@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
     @EnableTestContainers.TestContainer(type = ContainerType.REDIS, name = "testCache"),
     @EnableTestContainers.TestContainer(type = ContainerType.KAFKA, name = "testMessaging")
 })
-class PreciseTest {
+public class PreciseTest {
     
     @Autowired
     private ApplicationContext applicationContext;

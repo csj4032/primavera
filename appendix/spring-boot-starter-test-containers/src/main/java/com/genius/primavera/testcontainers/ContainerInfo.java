@@ -115,6 +115,7 @@ public record ContainerInfo(
             case KAFKA -> String.format("%s:%d", getHost(), getMappedPort());
             case ELASTICSEARCH -> String.format("http://%s:%d", getHost(), getMappedPort());
             case VAULT -> String.format("http://%s:%d", getHost(), getMappedPort());
+            case LOCALSTACK -> String.format("http://%s:%d", getHost(), getMappedPort());
         };
     }
 

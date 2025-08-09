@@ -167,3 +167,18 @@ testcontainers:
         environment:
           VAULT_DEV_ROOT_TOKEN_ID: "test-token"
           VAULT_DEV_LISTEN_ADDRESS: "0.0.0.0:8200"
+          
+    # LocalStack AWS 모킹 서비스
+    localstack:
+      type: LOCALSTACK
+      localstack:
+        image: "localstack/localstack:3.0"
+        startupTimeout: 120
+        services: [S3, DYNAMODB, SQS, SNS, LAMBDA]
+        debugMode: true
+        edgePort: 4566
+        useLegacyPorts: false
+        lambdaExecutor: DOCKER
+        environment:
+          LAMBDA_RUNTIME_ENVIRONMENT_TIMEOUT: "30"
+          LAMBDA_REMOVE_CONTAINERS: "true"

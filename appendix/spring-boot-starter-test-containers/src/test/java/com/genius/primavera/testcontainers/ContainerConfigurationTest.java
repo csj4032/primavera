@@ -14,203 +14,246 @@ import static org.junit.jupiter.api.Assertions.*;
 class ContainerConfigurationTest {
 
     @Test
-    @DisplayName("ContainerSpec builder works correctly")
-    void testContainerSpecBuilder() {
-        ContainerConfiguration.ContainerSpec spec = ContainerConfiguration.ContainerSpec.builder()
-                .image("test:latest")
-                .database("test_db")
-                .username("test_user")
-                .password("test_pass")
-                .initScript("init.sql")
-                .startupTimeout(120)
-                .environment(Map.of("ENV_VAR", "value"))
-                .networkAliases(new String[]{"alias1", "alias2"})
-                .build();
+    @DisplayName("MariaDB spec works correctly")
+    void testMariaDbSpec() {
+        MariaDbContainerSpec spec = new MariaDbContainerSpec();
+        spec.setImage("mariadb:11.4.7");
+        spec.setDatabase("test_db");
+        spec.setUsername("test_user");
+        spec.setPassword("test_pass");
+        spec.setCharacterSet("utf8mb4");
+        spec.setCollation("utf8mb4_unicode_ci");
+        spec.setStartupTimeout(120);
+        spec.setEnvironment(Map.of("ENV_VAR", "value"));
 
-        assertEquals("test:latest", spec.getImage(), "Image should be set");
+        assertEquals("mariadb:11.4.7", spec.getImage(), "Image should be set");
         assertEquals("test_db", spec.getDatabase(), "Database should be set");
         assertEquals("test_user", spec.getUsername(), "Username should be set");
         assertEquals("test_pass", spec.getPassword(), "Password should be set");
-        assertEquals("init.sql", spec.getInitScript(), "Init script should be set");
+        assertEquals("utf8mb4", spec.getCharacterSet(), "Character set should be set");
+        assertEquals("utf8mb4_unicode_ci", spec.getCollation(), "Collation should be set");
         assertEquals(120, spec.getStartupTimeout(), "Startup timeout should be set");
         assertNotNull(spec.getEnvironment(), "Environment should not be null");
         assertEquals("value", spec.getEnvironment().get("ENV_VAR"), "Environment variable should be set");
-        assertNotNull(spec.getNetworkAliases(), "Network aliases should not be null");
-        assertEquals(2, spec.getNetworkAliases().length, "Should have 2 network aliases");
-        assertEquals("alias1", spec.getNetworkAliases()[0], "First alias should be correct");
 
-        log.info("✅ ContainerSpec builder works correctly");
+        log.info("✅ MariaDB spec works correctly");
     }
 
     @Test
-    @DisplayName("ContainerSpec getImageOrDefault works")
-    void testGetImageOrDefault() {
-        ContainerConfiguration.ContainerSpec specWithImage = ContainerConfiguration.ContainerSpec.builder()
-                .image("custom:1.0")
-                .build();
+    @DisplayName("MySQL spec works correctly")
+    void testMySqlSpec() {
+        MySqlContainerSpec spec = new MySqlContainerSpec();
+        spec.setImage("mysql:8.0");
+        spec.setDatabase("test_db");
+        spec.setUsername("test_user");
+        spec.setPassword("test_pass");
+        spec.setCharacterSet("utf8mb4");
+        spec.setCollation("utf8mb4_unicode_ci");
+        spec.setSqlMode(MySqlContainerSpec.SqlMode.STRICT_TRANS_TABLES);
+        spec.setDefaultStorageEngine(MySqlContainerSpec.StorageEngine.INNODB);
+        spec.setMaxConnections(200);
 
-        ContainerConfiguration.ContainerSpec specWithoutImage = ContainerConfiguration.ContainerSpec.builder()
-                .build();
-
-        assertEquals("custom:1.0", specWithImage.getImageOrDefault(ContainerType.MARIADB),
-                "Should return custom image when set");
-
-        assertEquals("mariadb:11.4.7", specWithoutImage.getImageOrDefault(ContainerType.MARIADB),
-                "Should return default image when not set");
-
-        log.info("✅ getImageOrDefault works correctly");
-    }
-
-    @Test
-    @DisplayName("ContainerSpec getUsernameOrDefault works")
-    void testGetUsernameOrDefault() {
-        ContainerConfiguration.ContainerSpec specWithUsername = ContainerConfiguration.ContainerSpec.builder()
-                .username("custom_user")
-                .build();
-
-        ContainerConfiguration.ContainerSpec specWithoutUsername = ContainerConfiguration.ContainerSpec.builder()
-                .build();
-
-        assertEquals("custom_user", specWithUsername.getUsernameOrDefault(),
-                "Should return custom username when set");
-
-        assertEquals("primavera", specWithoutUsername.getUsernameOrDefault(),
-                "Should return default username when not set");
-
-        log.info("✅ getUsernameOrDefault works correctly");
-    }
-
-    @Test
-    @DisplayName("ContainerSpec getPasswordOrDefault works")
-    void testGetPasswordOrDefault() {
-        ContainerConfiguration.ContainerSpec specWithPassword = ContainerConfiguration.ContainerSpec.builder()
-                .password("custom_pass")
-                .build();
-
-        ContainerConfiguration.ContainerSpec specWithoutPassword = ContainerConfiguration.ContainerSpec.builder()
-                .build();
-
-        assertEquals("custom_pass", specWithPassword.getPasswordOrDefault(),
-                "Should return custom password when set");
-
-        assertEquals("primavera", specWithoutPassword.getPasswordOrDefault(),
-                "Should return default password when not set");
-
-        log.info("✅ getPasswordOrDefault works correctly");
-    }
-
-    @Test
-    @DisplayName("ContainerSpec getDatabaseOrDefault works")
-    void testGetDatabaseOrDefault() {
-        ContainerConfiguration.ContainerSpec specWithDatabase = ContainerConfiguration.ContainerSpec.builder()
-                .database("custom_db")
-                .build();
-
-        ContainerConfiguration.ContainerSpec specWithoutDatabase = ContainerConfiguration.ContainerSpec.builder()
-                .build();
-
-        assertEquals("custom_db", specWithDatabase.getDatabaseOrDefault(),
-                "Should return custom database when set");
-
-        assertEquals("primavera", specWithoutDatabase.getDatabaseOrDefault(),
-                "Should return default database when not set");
-
-        log.info("✅ getDatabaseOrDefault works correctly");
-    }
-
-    @Test
-    @DisplayName("ContainerSpec getStartupTimeoutOrDefault works")
-    void testGetStartupTimeoutOrDefault() {
-        ContainerConfiguration.ContainerSpec specWithTimeout = ContainerConfiguration.ContainerSpec.builder()
-                .startupTimeout(180)
-                .build();
-
-        ContainerConfiguration.ContainerSpec specWithoutTimeout = ContainerConfiguration.ContainerSpec.builder()
-                .build();
-
-        assertEquals(180, specWithTimeout.getStartupTimeoutOrDefault(),
-                "Should return custom timeout when set");
-
-        assertEquals(60, specWithoutTimeout.getStartupTimeoutOrDefault(),
-                "Should return default timeout when not set");
-
-        log.info("✅ getStartupTimeoutOrDefault works correctly");
-    }
-
-    @Test
-    @DisplayName("ContainerConfiguration can hold multiple container specs")
-    void testMultipleContainerSpecs() {
-        ContainerConfiguration config = new ContainerConfiguration();
-
-        ContainerConfiguration.ContainerSpec spec1 = ContainerConfiguration.ContainerSpec.builder()
-                .image("mariadb:11.4.7")
-                .database("db1")
-                .build();
-
-        ContainerConfiguration.ContainerSpec spec2 = ContainerConfiguration.ContainerSpec.builder()
-                .image("redis:7-alpine")
-                .password("redis_pass")
-                .build();
-
-        Map<String, ContainerConfiguration.ContainerSpec> containers = Map.of(
-                "database", spec1,
-                "cache", spec2
-        );
-
-        config.setContainers(containers);
-
-        assertNotNull(config.getContainers(), "Containers map should not be null");
-        assertEquals(2, config.getContainers().size(), "Should have 2 container specs");
-
-        ContainerConfiguration.ContainerSpec retrievedSpec1 = config.getContainers().get("database");
-        ContainerConfiguration.ContainerSpec retrievedSpec2 = config.getContainers().get("cache");
-
-        assertNotNull(retrievedSpec1, "Database spec should be retrievable");
-        assertNotNull(retrievedSpec2, "Cache spec should be retrievable");
-
-        assertEquals("db1", retrievedSpec1.getDatabase(), "Database name should be correct");
-        assertEquals("redis_pass", retrievedSpec2.getPassword(), "Cache password should be correct");
-
-        log.info("✅ Multiple container specs work correctly");
-    }
-
-    @Test
-    @DisplayName("ContainerSpec no-args constructor works")
-    void testNoArgsConstructor() {
-        ContainerConfiguration.ContainerSpec spec = new ContainerConfiguration.ContainerSpec();
-
-        assertNull(spec.getImage(), "Image should be null by default");
-        assertNull(spec.getDatabase(), "Database should be null by default");
-        assertNull(spec.getUsername(), "Username should be null by default");
-        assertNull(spec.getPassword(), "Password should be null by default");
-        assertNull(spec.getStartupTimeout(), "Startup timeout should be null by default");
-
-        assertEquals("primavera", spec.getUsernameOrDefault(), "Should use default username");
-        assertEquals("primavera", spec.getPasswordOrDefault(), "Should use default password");
-        assertEquals("primavera", spec.getDatabaseOrDefault(), "Should use default database");
-        assertEquals(60, spec.getStartupTimeoutOrDefault(), "Should use default timeout");
-
-        log.info("✅ No-args constructor works correctly");
-    }
-
-    @Test
-    @DisplayName("ContainerSpec all-args constructor works")
-    void testAllArgsConstructor() {
-        Map<String, String> env = Map.of("TEST", "value");
-        String[] aliases = {"alias1", "alias2"};
-
-        ContainerConfiguration.ContainerSpec spec = new ContainerConfiguration.ContainerSpec(
-                "test:latest", "test_db", "test_user", "test_pass", "token", "init.sql", 120, env, aliases);
-
-        assertEquals("test:latest", spec.getImage(), "Image should be set");
+        assertEquals("mysql:8.0", spec.getImage(), "Image should be set");
         assertEquals("test_db", spec.getDatabase(), "Database should be set");
         assertEquals("test_user", spec.getUsername(), "Username should be set");
         assertEquals("test_pass", spec.getPassword(), "Password should be set");
-        assertEquals("init.sql", spec.getInitScript(), "Init script should be set");
-        assertEquals(120, spec.getStartupTimeout(), "Startup timeout should be set");
-        assertSame(env, spec.getEnvironment(), "Environment should be same instance");
-        assertSame(aliases, spec.getNetworkAliases(), "Network aliases should be same instance");
+        assertEquals("utf8mb4", spec.getCharacterSet(), "Character set should be set");
+        assertEquals(MySqlContainerSpec.SqlMode.STRICT_TRANS_TABLES, spec.getSqlMode(), "SQL mode should be set");
+        assertEquals(200, spec.getMaxConnections(), "Max connections should be set");
 
-        log.info("✅ All-args constructor works correctly");
+        log.info("✅ MySQL spec works correctly");
+    }
+
+    @Test
+    @DisplayName("PostgreSQL spec works correctly")
+    void testPostgreSqlSpec() {
+        PostgreSqlContainerSpec spec = new PostgreSqlContainerSpec();
+        spec.setImage("postgres:16");
+        spec.setDatabase("test_db");
+        spec.setUsername("test_user");
+        spec.setPassword("test_pass");
+        spec.setLocale("en_US.UTF-8");
+        spec.setEncoding("UTF8");
+        spec.setSharedBuffers("256MB");
+        spec.setWorkMem("8MB");
+        spec.setMaxConnections(150);
+        spec.setSslMode(PostgreSqlContainerSpec.SslMode.PREFER);
+
+        assertEquals("postgres:16", spec.getImage(), "Image should be set");
+        assertEquals("test_db", spec.getDatabase(), "Database should be set");
+        assertEquals("test_user", spec.getUsername(), "Username should be set");
+        assertEquals("test_pass", spec.getPassword(), "Password should be set");
+        assertEquals("en_US.UTF-8", spec.getLocale(), "Locale should be set");
+        assertEquals("UTF8", spec.getEncoding(), "Encoding should be set");
+        assertEquals("256MB", spec.getSharedBuffers(), "Shared buffers should be set");
+        assertEquals("8MB", spec.getWorkMem(), "Work memory should be set");
+        assertEquals(150, spec.getMaxConnections(), "Max connections should be set");
+        assertEquals(PostgreSqlContainerSpec.SslMode.PREFER, spec.getSslMode(), "SSL mode should be set");
+
+        log.info("✅ PostgreSQL spec works correctly");
+    }
+
+    @Test
+    @DisplayName("Redis spec works correctly")
+    void testRedisSpec() {
+        RedisContainerSpec spec = new RedisContainerSpec();
+        spec.setImage("redis:7-alpine");
+        spec.setPassword("redis_pass");
+        spec.setMaxMemory("256mb");
+        spec.setMaxMemoryPolicy(RedisContainerSpec.MaxMemoryPolicy.ALLKEYS_LRU);
+        spec.setPersistenceEnabled(false);
+        spec.setAppendOnlyEnabled(false);
+        spec.setStartupTimeout(45);
+
+        assertEquals("redis:7-alpine", spec.getImage(), "Image should be set");
+        assertEquals("redis_pass", spec.getPassword(), "Password should be set");
+        assertEquals("256mb", spec.getMaxMemory(), "Max memory should be set");
+        assertEquals(RedisContainerSpec.MaxMemoryPolicy.ALLKEYS_LRU, spec.getMaxMemoryPolicy(), "Max memory policy should be set");
+        assertFalse(spec.getPersistenceEnabled(), "Persistence should be disabled");
+        assertFalse(spec.getAppendOnlyEnabled(), "Append only should be disabled");
+        assertEquals(45, spec.getStartupTimeout(), "Startup timeout should be set");
+
+        log.info("✅ Redis spec works correctly");
+    }
+
+    @Test
+    @DisplayName("MongoDB spec works correctly")
+    void testMongoSpec() {
+        MongoContainerSpec spec = new MongoContainerSpec();
+        spec.setImage("mongo:7");
+        spec.setDatabase("test_db");
+        spec.setUsername("test_user");
+        spec.setPassword("test_pass");
+        spec.setAuthDatabase("admin");
+        spec.setReplicaSetName("rs0");
+        spec.setShardingEnabled(false);
+        spec.setWiredTigerCacheSizeMB(1024);
+        spec.setJournalEnabled(true);
+        spec.setStorageEngine(MongoContainerSpec.StorageEngine.WIRED_TIGER);
+
+        assertEquals("mongo:7", spec.getImage(), "Image should be set");
+        assertEquals("test_db", spec.getDatabase(), "Database should be set");
+        assertEquals("test_user", spec.getUsername(), "Username should be set");
+        assertEquals("test_pass", spec.getPassword(), "Password should be set");
+        assertEquals("admin", spec.getAuthDatabase(), "Auth database should be set");
+        assertEquals("rs0", spec.getReplicaSetName(), "Replica set name should be set");
+        assertFalse(spec.getShardingEnabled(), "Sharding should be disabled");
+        assertEquals(1024, spec.getWiredTigerCacheSizeMB(), "Cache size should be set");
+        assertTrue(spec.getJournalEnabled(), "Journal should be enabled");
+        assertEquals(MongoContainerSpec.StorageEngine.WIRED_TIGER, spec.getStorageEngine(), "Storage engine should be set");
+
+        log.info("✅ MongoDB spec works correctly");
+    }
+
+    @Test
+    @DisplayName("Base container spec works correctly")
+    void testBaseContainerSpec() {
+        BaseContainerSpec spec = new BaseContainerSpec() {
+            {
+                setImage("test:latest");
+                setStartupTimeout(120);
+                setEnvironment(Map.of("ENV_VAR", "value"));
+            }
+        };
+
+        assertEquals("test:latest", spec.getImage(), "Image should be set");
+        assertEquals(120, spec.getStartupTimeout(), "Startup timeout should be set");
+        assertNotNull(spec.getEnvironment(), "Environment should not be null");
+        assertEquals("value", spec.getEnvironment().get("ENV_VAR"), "Environment variable should be set");
+
+        log.info("✅ Base container spec works correctly");
+    }
+
+    @Test
+    @DisplayName("Container configuration with instance configs works")
+    void testContainerInstanceConfigs() {
+        ContainerConfiguration config = new ContainerConfiguration();
+        
+        // Create instance configs
+        ContainerConfiguration.ContainerInstanceConfig dbConfig = new ContainerConfiguration.ContainerInstanceConfig();
+        dbConfig.setType(ContainerType.MARIADB);
+        
+        MariaDbContainerSpec mariadbSpec = new MariaDbContainerSpec();
+        mariadbSpec.setImage("mariadb:11.4.7");
+        mariadbSpec.setDatabase("testdb");
+        mariadbSpec.setUsername("testuser");
+        mariadbSpec.setPassword("testpass");
+        dbConfig.setMariadb(mariadbSpec);
+        
+        ContainerConfiguration.ContainerInstanceConfig cacheConfig = new ContainerConfiguration.ContainerInstanceConfig();
+        cacheConfig.setType(ContainerType.REDIS);
+        
+        RedisContainerSpec redisSpec = new RedisContainerSpec();
+        redisSpec.setImage("redis:7-alpine");
+        redisSpec.setPassword("redis_pass");
+        cacheConfig.setRedis(redisSpec);
+        
+        Map<String, ContainerConfiguration.ContainerInstanceConfig> containers = Map.of(
+                "database", dbConfig,
+                "cache", cacheConfig
+        );
+        
+        config.setContainers(containers);
+
+        assertNotNull(config.getContainers(), "Containers map should not be null");
+        assertEquals(2, config.getContainers().size(), "Should have 2 container configs");
+
+        ContainerConfiguration.ContainerInstanceConfig retrievedDbConfig = config.getContainers().get("database");
+        ContainerConfiguration.ContainerInstanceConfig retrievedCacheConfig = config.getContainers().get("cache");
+
+        assertNotNull(retrievedDbConfig, "Database config should be retrievable");
+        assertNotNull(retrievedCacheConfig, "Cache config should be retrievable");
+        
+        assertEquals(ContainerType.MARIADB, retrievedDbConfig.getType(), "Database type should be MARIADB");
+        assertEquals(ContainerType.REDIS, retrievedCacheConfig.getType(), "Cache type should be REDIS");
+        
+        assertEquals("testdb", retrievedDbConfig.getMariadb().getDatabase(), "Database name should be correct");
+        assertEquals("redis_pass", retrievedCacheConfig.getRedis().getPassword(), "Cache password should be correct");
+
+        log.info("✅ Container instance configs work correctly");
+    }
+
+    @Test
+    @DisplayName("Container configuration works correctly")
+    void testContainerConfiguration() {
+        ContainerConfiguration config = new ContainerConfiguration();
+        
+        // Test empty configuration
+        assertNotNull(config.getContainers(), "Containers map should not be null");
+        assertTrue(config.getContainers().isEmpty(), "Containers map should be empty by default");
+        
+        // Add a container configuration
+        ContainerConfiguration.ContainerInstanceConfig instanceConfig = new ContainerConfiguration.ContainerInstanceConfig();
+        instanceConfig.setType(ContainerType.MARIADB);
+        
+        MariaDbContainerSpec spec = new MariaDbContainerSpec();
+        spec.setDatabase("test_db");
+        instanceConfig.setMariadb(spec);
+        
+        config.getContainers().put("test", instanceConfig);
+        
+        assertEquals(1, config.getContainers().size(), "Should have 1 container config");
+        assertTrue(config.getContainers().containsKey("test"), "Should contain test key");
+        
+        log.info("✅ Container configuration works correctly");
+    }
+
+    @Test
+    @DisplayName("Spec for type retrieval works correctly")
+    void testSpecForTypeRetrieval() {
+        ContainerConfiguration.ContainerInstanceConfig config = new ContainerConfiguration.ContainerInstanceConfig();
+        config.setType(ContainerType.MARIADB);
+        
+        MariaDbContainerSpec mariadbSpec = new MariaDbContainerSpec();
+        mariadbSpec.setDatabase("test_mariadb");
+        config.setMariadb(mariadbSpec);
+        
+        BaseContainerSpec retrievedSpec = config.getSpecForType();
+        
+        assertNotNull(retrievedSpec, "Retrieved spec should not be null");
+        assertTrue(retrievedSpec instanceof MariaDbContainerSpec, "Retrieved spec should be MariaDbContainerSpec");
+        assertEquals("test_mariadb", ((MariaDbContainerSpec) retrievedSpec).getDatabase(), "Database should match");
+
+        log.info("✅ Spec for type retrieval works correctly");
     }
 }

@@ -24,6 +24,7 @@ dependencies {
     api "org.testcontainers:kafka:${testContainersVersion}"
     api "org.testcontainers:elasticsearch:${testContainersVersion}"
     api "org.testcontainers:vault:${testContainersVersion}"
+    api "org.testcontainers:localstack:${testContainersVersion}"
 
     
     // 내부에서만 사용 - 외부 전달 안됨
@@ -52,8 +53,8 @@ dependencies {
     testImplementation "org.springframework.boot:spring-boot-starter-data-redis"
     testImplementation "org.springframework.kafka:spring-kafka"
     testImplementation "org.mariadb.jdbc:mariadb-java-client"
-    testImplementation "org.postgresql:postgresql"
     testImplementation "com.mysql:mysql-connector-j"
+    testImplementation "org.postgresql:postgresql"
     testImplementation "redis.clients:jedis"
     testImplementation "com.zaxxer:HikariCP"
 
