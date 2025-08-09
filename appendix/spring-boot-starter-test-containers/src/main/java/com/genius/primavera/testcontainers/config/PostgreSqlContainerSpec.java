@@ -141,9 +141,9 @@ public class PostgreSqlContainerSpec extends DatabaseContainerSpec {
 
     /**
      * 날짜 스타일
-     * 기본값: "ISO, YMD"
+     * 기본값: "ISO"
      */
-    private String dateStyle = "ISO, YMD";
+    private String dateStyle = "ISO";
 
     /**
      * 확장 기능 목록

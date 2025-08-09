@@ -60,16 +60,25 @@ public class MySQLBeanCreator extends DataSourceBeanCreator {
             config.addDataSourceProperty("serverTimezone", "Asia/Seoul");
         }
         
+        // Session Variables 설정 (한번에 처리)
+        StringBuilder sessionVars = new StringBuilder();
+        
         // SQL Mode 설정
         if (spec.getSqlMode() != null) {
-            config.addDataSourceProperty("sessionVariables", "sql_mode='" + spec.getSqlMode().name() + "'");
+            sessionVars.append("sql_mode='").append(spec.getSqlMode().name()).append("'");
         }
         
         // Storage Engine 설정
         if (spec.getDefaultStorageEngine() != null) {
-            config.addDataSourceProperty("sessionVariables", 
-                    config.getDataSourceProperties().getProperty("sessionVariables", "") + 
-                    ",default_storage_engine=" + spec.getDefaultStorageEngine().name());
+            if (sessionVars.length() > 0) {
+                sessionVars.append(",");
+            }
+            sessionVars.append("default_storage_engine=").append(spec.getDefaultStorageEngine().name());
+        }
+        
+        // sessionVariables 한번에 설정
+        if (sessionVars.length() > 0) {
+            config.addDataSourceProperty("sessionVariables", sessionVars.toString());
         }
         
         // MySQL 성능 최적화 옵션 (기본값 사용)

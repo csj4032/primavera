@@ -44,11 +44,6 @@ public class PostgreSQLBeanCreator extends DataSourceBeanCreator {
     private void applyPostgreSQLSpecificSettings(HikariConfig config, PostgreSqlContainerSpec spec) {
         // PostgreSQL 연결 속성 설정
         
-        // 로케일 설정
-        if (spec.getLocale() != null && !spec.getLocale().isEmpty()) {
-            config.addDataSourceProperty("options", "-c lc_messages=" + spec.getLocale());
-        }
-        
         // 인코딩 설정
         if (spec.getEncoding() != null && !spec.getEncoding().isEmpty()) {
             config.addDataSourceProperty("charSet", spec.getEncoding());
@@ -65,39 +60,33 @@ public class PostgreSQLBeanCreator extends DataSourceBeanCreator {
         // 기본 스키마 설정
         config.addDataSourceProperty("currentSchema", "public");
         
-        // 타임존 설정
+        // PostgreSQL options 파라미터 조합 (런타임 변경 가능한 설정만)
+        StringBuilder options = new StringBuilder();
+        
+        // 로케일 설정 (런타임 변경 불가 - 제거)
+        // 타임존 설정 (런타임 변경 가능)
         if (spec.getTimezone() != null && !spec.getTimezone().isEmpty()) {
-            String options = config.getDataSourceProperties().getProperty("options", "");
-            options += " -c timezone=" + spec.getTimezone();
-            config.addDataSourceProperty("options", options.trim());
+            options.append("-c timezone=").append(spec.getTimezone());
         }
         
-        // 날짜 스타일 설정
+        // 날짜 스타일 설정 (런타임 변경 가능)
         if (spec.getDateStyle() != null && !spec.getDateStyle().isEmpty()) {
-            String options = config.getDataSourceProperties().getProperty("options", "");
-            options += " -c datestyle='" + spec.getDateStyle() + "'";
-            config.addDataSourceProperty("options", options.trim());
+            if (options.length() > 0) {
+                options.append(" ");
+            }
+            options.append("-c datestyle=").append(spec.getDateStyle());
         }
         
-        // Shared Buffers 설정
-        if (spec.getSharedBuffers() != null && !spec.getSharedBuffers().isEmpty()) {
-            String options = config.getDataSourceProperties().getProperty("options", "");
-            options += " -c shared_buffers=" + spec.getSharedBuffers();
-            config.addDataSourceProperty("options", options.trim());
-        }
+        // 다음 설정들은 서버 재시작 없이 변경할 수 없으므로 제거:
+        // - shared_buffers (서버 시작 시에만 설정 가능)
+        // - work_mem (세션별 설정 가능하지만 connection string에서는 권장하지 않음)
+        // - maintenance_work_mem (서버 시작 시에만 설정 가능)  
+        // - wal_buffers (서버 시작 시에만 설정 가능)
+        // - max_connections (서버 시작 시에만 설정 가능)
         
-        // Work Memory 설정
-        if (spec.getWorkMem() != null && !spec.getWorkMem().isEmpty()) {
-            String options = config.getDataSourceProperties().getProperty("options", "");
-            options += " -c work_mem=" + spec.getWorkMem();
-            config.addDataSourceProperty("options", options.trim());
-        }
-        
-        // 최대 연결 수 설정
-        if (spec.getMaxConnections() != null) {
-            String options = config.getDataSourceProperties().getProperty("options", "");
-            options += " -c max_connections=" + spec.getMaxConnections();
-            config.addDataSourceProperty("options", options.trim());
+        // options 한번에 설정
+        if (options.length() > 0) {
+            config.addDataSourceProperty("options", options.toString());
         }
         
         // PostgreSQL 성능 최적화 옵션
