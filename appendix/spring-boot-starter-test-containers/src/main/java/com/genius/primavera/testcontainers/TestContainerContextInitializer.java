@@ -1,6 +1,10 @@
 package com.genius.primavera.testcontainers;
 
 import com.genius.primavera.testcontainers.bean.BeanCreatorRegistry;
+import com.genius.primavera.testcontainers.config.BaseContainerSpec;
+import com.genius.primavera.testcontainers.config.DatabaseContainerSpec;
+import com.genius.primavera.testcontainers.config.MongoContainerSpec;
+import com.genius.primavera.testcontainers.config.RedisContainerSpec;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -50,15 +54,27 @@ public class TestContainerContextInitializer implements ApplicationContextInitia
             if (containerInfo.type().isSqlDatabase()) {
                 properties.put(prefix + ".jdbcUrl", containerInfo.getJdbcUrl());
                 properties.put(prefix + ".driver-class-name", containerInfo.type().getDriverClassName());
-                properties.put(prefix + ".username", containerInfo.spec().getUsernameOrDefault());
-                properties.put(prefix + ".password", containerInfo.spec().getPasswordOrDefault());
-                properties.put(prefix + ".database", containerInfo.spec().getDatabaseOrDefault());
+                
+                // 데이터베이스 스펙에서 정보 추출
+                String username = "primavera";
+                String password = "primavera";
+                String database = "primavera";
+                
+                if (containerInfo.spec() instanceof DatabaseContainerSpec dbSpec) {
+                    username = dbSpec.getUsername();
+                    password = dbSpec.getPassword();
+                    database = dbSpec.getDatabase();
+                }
+                
+                properties.put(prefix + ".username", username);
+                properties.put(prefix + ".password", password);
+                properties.put(prefix + ".database", database);
 
                 if (containerInfo.equals(primaryContainer)) {
                     properties.put("spring.datasource.url", containerInfo.getJdbcUrl());
                     properties.put("spring.datasource.driver-class-name", containerInfo.type().getDriverClassName());
-                    properties.put("spring.datasource.username", containerInfo.spec().getUsernameOrDefault());
-                    properties.put("spring.datasource.password", containerInfo.spec().getPasswordOrDefault());
+                    properties.put("spring.datasource.username", username);
+                    properties.put("spring.datasource.password", password);
 
                     log.info("Configured primary DataSource for container: {} ({})", containerInfo.name(), containerInfo.getJdbcUrl());
                 }
@@ -95,9 +111,8 @@ public class TestContainerContextInitializer implements ApplicationContextInitia
         properties.put(redisPrefix + ".host", containerInfo.getHost());
         properties.put(redisPrefix + ".port", containerInfo.getMappedPort());
 
-        String password = containerInfo.spec().getPassword();
-        if (password != null && !password.isEmpty()) {
-            properties.put(redisPrefix + ".password", password);
+        if (containerInfo.spec() instanceof RedisContainerSpec redisSpec && redisSpec.getPassword() != null) {
+            properties.put(redisPrefix + ".password", redisSpec.getPassword());
         }
     }
 

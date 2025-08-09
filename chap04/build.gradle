@@ -2,12 +2,18 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-web"
     implementation "org.springframework.boot:spring-boot-starter-actuator"
     implementation "org.springframework.cloud:spring-cloud-starter-vault-config"
-    databaseDependencies.each { dep -> implementation dep }
-    mybatisDependencies.each { dep -> implementation dep }
+    implementation "org.springframework.boot:spring-boot-starter-jdbc"
+    implementation "org.mybatis.spring.boot:mybatis-spring-boot-starter:${mybatisSpringBootStarterVersion}"
+    implementation "org.mybatis.dynamic-sql:mybatis-dynamic-sql:${mybatisDynamicSqlVersion}"
     implementation "org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}"
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
     implementation "org.reflections:reflections:0.10.2"
-    testContainersDependencies.each { dep -> testImplementation dep }
+    testImplementation "org.testcontainers:junit-jupiter:${testContainersVersion}"
+    testImplementation "org.testcontainers:mariadb:${testContainersVersion}"
     testImplementation "com.bettercloud:vault-java-driver:5.1.0"
     testImplementation project(':appendix:spring-boot-starter-test-containers')
+    
+    // TestContainers 사용을 위해 필요한 의존성 직접 추가
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-jdbc'
 }

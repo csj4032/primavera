@@ -1,7 +1,9 @@
 dependencies {
     implementation "org.springframework.boot:spring-boot-starter-web"
-    aopDependencies.each { dep -> implementation dep }
-    thymeleafDependencies.each { dep -> implementation dep }
+    implementation "org.springframework.boot:spring-boot-starter-aop"
+    implementation "org.springframework.boot:spring-boot-starter-thymeleaf"
+    implementation "nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:${thymeleafLayoutDialectVersion}"
     implementation "commons-io:commons-io:${commonsIoVersion}"
-    testContainersDependencies.each { dep -> testImplementation dep }
+    testImplementation "org.testcontainers:junit-jupiter:${testContainersVersion}"
+    testImplementation "org.testcontainers:mariadb:${testContainersVersion}"
 }

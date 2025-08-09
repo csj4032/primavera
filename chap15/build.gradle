@@ -5,11 +5,14 @@ configurations {
 
 dependencies {
     implementation "org.springframework.boot:spring-boot-starter-actuator"
-    aopDependencies.each { dep -> implementation dep }
-    databaseDependencies.each { dep -> implementation dep }
-    developmentDependencies.each { dep -> implementation dep }
-    loggingDependencies.each { dep -> implementation dep }
-    testContainersDependencies.each { dep -> testImplementation dep }
+    implementation "org.springframework.boot:spring-boot-starter-aop"
+    implementation "org.springframework.boot:spring-boot-starter-jdbc"
+    implementation "org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}"
+    implementation "org.springframework.boot:spring-boot-devtools"
+    implementation "com.github.gavlyukovskiy:p6spy-spring-boot-starter:${p6spySpringBootStarterVersion}"
+    implementation "org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4.1:${log4jdbcLog4j2Version}"
+    testImplementation "org.testcontainers:junit-jupiter:${testContainersVersion}"
+    testImplementation "org.testcontainers:mariadb:${testContainersVersion}"
     implementation "org.springframework.boot:spring-boot-starter-data-jpa"
     implementation "org.springframework.data:spring-data-envers"
     implementation "org.springframework.cloud:spring-cloud-starter-config"

@@ -30,13 +30,18 @@ public class BeanCreatorRegistry {
 
     private static void registerBuiltInCreators() {
         log.debug("Registering built-in bean creators...");
+
+        // 항상 사용 가능한 DataSource 관련 creators
         registerCreator(new DataSourceBeanCreator.MariaDBBeanCreator());
         registerCreator(new DataSourceBeanCreator.MySQLBeanCreator());
         registerCreator(new DataSourceBeanCreator.PostgreSQLBeanCreator());
-        registerCreator(new MongoDBBeanCreator());
-        registerCreator(new RedisBeanCreator());
-        registerCreator(new KafkaBeanCreator());
-        registerCreator(new ElasticsearchBeanCreator());
+
+        // 조건부 등록 - 해당 클래스가 클래스패스에 있을 때만 등록
+        registerCreatorIfClassExists("com.mongodb.client.MongoClient", "com.genius.primavera.testcontainers.bean.MongoDBBeanCreator");
+        registerCreatorIfClassExists("org.springframework.data.redis.connection.RedisConnectionFactory", "com.genius.primavera.testcontainers.bean.RedisBeanCreator");
+        registerCreatorIfClassExists("org.springframework.kafka.core.KafkaTemplate", "com.genius.primavera.testcontainers.bean.KafkaBeanCreator");
+        registerCreatorIfClassExists("org.springframework.data.elasticsearch.core.ElasticsearchOperations", "com.genius.primavera.testcontainers.bean.ElasticsearchBeanCreator");
+
         log.debug("Registered {} built-in bean creators", creators.size());
     }
 

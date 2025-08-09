@@ -14,11 +14,11 @@ dependencies {
     implementation "org.apache.commons:commons-lang3:${commonsLang3Version}"
     implementation "org.javatuples:javatuples:1.2"
     implementation "org.openkoreantext:open-korean-text:2.1.0"
+    implementation "org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}"
+    implementation "com.zaxxer:HikariCP:${hikariCPVersion}"
     testImplementation "org.testcontainers:localstack:${testContainersVersion}"
     testImplementation "org.testcontainers:junit-jupiter:${testContainersVersion}"
     implementation "org.springframework.cloud:spring-cloud-starter-config"
     implementation "org.springframework.cloud:spring-cloud-starter-vault-config:${springCloudVaultVersion}"
-    testImplementation(project(':appendix:spring-boot-starter-test-containers')) {
-        exclude group: 'org.mongodb', module: 'mongodb-driver-sync'
-    }
+    testImplementation(project(':appendix:spring-boot-starter-test-containers'))
 }

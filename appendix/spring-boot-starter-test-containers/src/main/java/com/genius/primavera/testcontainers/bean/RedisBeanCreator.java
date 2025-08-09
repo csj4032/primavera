@@ -2,6 +2,7 @@ package com.genius.primavera.testcontainers.bean;
 
 import com.genius.primavera.testcontainers.ContainerInfo;
 import com.genius.primavera.testcontainers.ContainerType;
+import com.genius.primavera.testcontainers.config.RedisContainerSpec;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -16,9 +17,9 @@ public class RedisBeanCreator implements BeanCreator {
         redisConfig.setHostName(containerInfo.getHost());
         redisConfig.setPort(containerInfo.getMappedPort());
         
-        String password = containerInfo.spec().getPassword();
-        if (password != null && !password.isEmpty()) {
-            redisConfig.setPassword(password);
+        // Redis 비밀번호 처리
+        if (containerInfo.spec() instanceof RedisContainerSpec redisSpec && redisSpec.getPassword() != null) {
+            redisConfig.setPassword(redisSpec.getPassword());
         }
         
         JedisConnectionFactory connectionFactory = new JedisConnectionFactory(redisConfig);

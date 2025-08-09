@@ -15,7 +15,7 @@ import java.lang.annotation.*;
 @ContextConfiguration(initializers = TestContainerContextInitializer.class)
 public @interface EnableTestContainers {
 
-    TestContainer[] value() default {@TestContainer(type = ContainerType.MARIADB, name = "primavera")};
+    TestContainer[] value() default {@TestContainer(type = ContainerType.MARIADB, name = "mariadb")};
 
     @Target({})
     @Retention(RetentionPolicy.RUNTIME)

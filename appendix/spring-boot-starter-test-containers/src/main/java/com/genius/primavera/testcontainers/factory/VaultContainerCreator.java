@@ -1,19 +1,31 @@
 package com.genius.primavera.testcontainers.factory;
 
-import com.genius.primavera.testcontainers.ContainerConfiguration;
+import com.genius.primavera.testcontainers.config.BaseContainerSpec;
 import com.genius.primavera.testcontainers.ContainerCreator;
 import com.genius.primavera.testcontainers.ContainerType;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.utility.DockerImageName;
 import org.testcontainers.vault.VaultContainer;
 
+import java.time.Duration;
+
 public class VaultContainerCreator implements ContainerCreator {
 
     @Override
-    public GenericContainer<?> create(ContainerConfiguration.ContainerSpec spec) {
-        VaultContainer container = new VaultContainer(DockerImageName.parse(spec.getImageOrDefault(ContainerType.VAULT)))
-                .withVaultToken(spec.getToken());
-        ContainerConfigurationHelper.configureContainer(container, spec);
+    public GenericContainer<?> create(BaseContainerSpec spec) {
+        String image = spec.getImage() != null ? spec.getImage() : ContainerType.VAULT.getDefaultImage();
+        Integer timeout = spec.getStartupTimeout() != null ? spec.getStartupTimeout() : 60;
+        
+        VaultContainer container = new VaultContainer(DockerImageName.parse(image))
+                .withVaultToken("primavera-vault-token");
+        
+        container.withStartupTimeout(Duration.ofSeconds(timeout));
+        
+        // 공통 환경 변수 적용
+        if (spec.getEnvironment() != null) {
+            spec.getEnvironment().forEach(container::withEnv);
+        }
+        
         return container;
     }
 

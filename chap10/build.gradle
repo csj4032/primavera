@@ -9,9 +9,12 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-cache"
     implementation "org.springframework.boot:spring-boot-starter-data-redis"
     implementation "com.github.ben-manes.caffeine:caffeine"
-    databaseDependencies.each { dep -> implementation dep }
-    mybatisDependencies.each { dep -> implementation dep }
+    implementation "org.springframework.boot:spring-boot-starter-jdbc"
+    implementation "org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}"
+    implementation "org.mybatis.spring.boot:mybatis-spring-boot-starter:${mybatisSpringBootStarterVersion}"
+    implementation "org.mybatis.dynamic-sql:mybatis-dynamic-sql:${mybatisDynamicSqlVersion}"
     
-    testContainersDependencies.each { dep -> testImplementation dep }
+    testImplementation "org.testcontainers:junit-jupiter:${testContainersVersion}"
+    testImplementation "org.testcontainers:mariadb:${testContainersVersion}"
     testImplementation "org.springframework.security:spring-security-test"
 }

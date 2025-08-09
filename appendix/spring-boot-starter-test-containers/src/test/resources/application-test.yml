@@ -4,93 +4,166 @@ spring:
 
 logging:
   level:
-    com.genius.primavera.testcontainerss: DEBUG
-    org.testcontainerss: INFO
+    com.genius.primavera.testcontainers: DEBUG
+    org.testcontainers: INFO
     org.springframework.test: INFO
 
+# TestContainers 설정 - IDE 자동완성 지원 및 타입별 설정 제공
 testcontainers:
+  # 전역 기본값 (모든 컨테이너에 적용)
+  defaults:
+    startupTimeout: 60
+    imagePullPolicy: IF_NOT_PRESENT
+    networkMode: BRIDGE
+    environment:
+      TZ: "Asia/Seoul"
+      
+  # 개별 컨테이너 설정
   containers:
-    multiTypePrimaryDb:
-      image: "mariadb:11.4.7"
-      database: "primary_db"
-      username: "primary_user"
-      password: "primary_pass"
-      startup-timeout: 120
-      environment:
-        MYSQL_CHARSET: "utf8mb4"
-        MYSQL_COLLATION: "utf8mb4_unicode_ci"
-      network-aliases:
-        - "primary-db"
-        - "main-db"
     
-    primavera:
-      image: "mariadb:11.4.7"
-      database: "primavera"
-      username: "primavera"
-      password: "primavera"
-      startup-timeout: 120
-      init-script: ./sql/init.sql
+    # MariaDB 컨테이너 - 완전한 설정 예시
+    userdb:
+      type: MARIADB
+      mariadb:
+        image: "mariadb:11.4.7"
+        startupTimeout: 120
+        database: "users"
+        username: "user_admin"
+        password: "user_password"
+        rootPassword: "root_password"
+        characterSet: "utf8mb4"
+        collation: "utf8mb4_unicode_ci"
+        binlogEnabled: true
+        slowQueryLogEnabled: true
+        environment:
+          MARIADB_AUTO_UPGRADE: "1"
+          MARIADB_DISABLE_UPGRADE_BACKUP: "1"
     
-    multiPrimaryDb:
-      image: "mariadb:11.4.7"
-      database: "multi_primary_db"
-      username: "multi_primary_user"
-      password: "multi_primary_pass"
-      startup-timeout: 120
-    
-    multiSecondaryDb:
-      image: "mariadb:11.4.7"
-      database: "multi_secondary_db"
-      username: "multi_secondary_user"
-      password: "multi_secondary_pass"
-      startup-timeout: 120
-      network-aliases:
-        - "multi-secondary-db"
-        - "multi-replica-db"
-    
-    multiCache:
-      image: "redis:7-alpine"
-      password: "multi_redis_password"
-      startup-timeout: 60
-      environment:
-        REDIS_MAXMEMORY: "256mb"
-        REDIS_MAXMEMORY_POLICY: "allkeys-lru"
-    
-    multiMessaging:
-      image: "confluentinc/cp-kafka:7.5.0"
-      startup-timeout: 180
-      environment:
-        KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
-        KAFKA_NUM_PARTITIONS: "3"
-        KAFKA_DEFAULT_REPLICATION_FACTOR: "1"
-
-    configPrimaryDb:
-      image: "mariadb:11.4.7"
-      database: "primary_db"
-      username: "primary_user"
-      password: "primary_pass"
-      startup-timeout: 120
-      environment:
-        MYSQL_CHARSET: "utf8mb4"
-        MYSQL_COLLATION: "utf8mb4_unicode_ci"
-      network-aliases:
-        - "primary-db"
-        - "main-db"
-    
-    configSecondaryDb:
-      image: "mariadb:11.4.7"
-      database: "secondary_db"
-      username: "secondary_user"
-      password: "secondary_pass"
-      startup-timeout: 120
-      network-aliases:
-        - "secondary-db"
-        - "replica-db"
-    
-    configCache:
-      image: "redis:7-alpine"
-      password: "redis_password"
-      startup-timeout: 60
-      environment:
-        REDIS_MAXMEMORY: "256mb"
-        REDIS_MAXMEMORY_POLICY: "allkeys-lru"
+    # MariaDB 컨테이너 - 최소 설정 예시
+    logdb:
+      type: MARIADB
+      mariadb:
+        database: "logs"
+        username: "logger"
+        password: "log_pass"
+        
+    # MySQL 컨테이너 - 완전한 설정 예시
+    mysqldb:
+      type: MYSQL
+      mysql:
+        image: "mysql:8.0"
+        startupTimeout: 90
+        database: "testdb"
+        username: "testuser"
+        password: "testpass"
+        rootPassword: "root_password"
+        characterSet: "utf8mb4"
+        collation: "utf8mb4_unicode_ci"
+        sqlMode: STRICT_TRANS_TABLES
+        defaultStorageEngine: INNODB
+        maxConnections: 200
+        binlogEnabled: true
+        slowQueryLogEnabled: true
+        defaultTimeZone: "Asia/Seoul"
+        environment:
+          MYSQL_INNODB_BUFFER_POOL_SIZE: "256M"
+          MYSQL_THREAD_CACHE_SIZE: "16"
+          
+    # PostgreSQL 컨테이너 - 완전한 설정 예시
+    postgresdb:
+      type: POSTGRESQL
+      postgresql:
+        image: "postgres:16"
+        startupTimeout: 80
+        database: "appdb"
+        username: "appuser"
+        password: "apppass"
+        locale: "ko_KR.UTF-8"
+        encoding: "UTF8"
+        sharedBuffers: "256MB"
+        workMem: "8MB"
+        maintenanceWorkMem: "128MB"
+        maxConnections: 150
+        logLevel: INFO
+        autovacuum: true
+        sslMode: PREFER
+        timezone: "Asia/Seoul"
+        dateStyle: "ISO, YMD"
+        extensions: ["pg_stat_statements", "uuid-ossp"]
+        environment:
+          POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=ko_KR.UTF-8"
+        
+    # Redis 캐시 - 완전한 설정 예시
+    cache:
+      type: REDIS
+      redis:
+        image: "redis:7-alpine"
+        password: "cache_password"
+        maxMemory: "512mb"
+        maxMemoryPolicy: ALLKEYS_LRU
+        persistenceEnabled: false
+        appendOnlyEnabled: false
+        startupTimeout: 45
+        environment:
+          REDIS_SAVE_POLICY: '""'
+          
+    # Redis 세션 저장소 - 최소 설정
+    session:
+      type: REDIS
+      redis:
+        password: "session_pass"
+        persistenceEnabled: true
+        
+    # MongoDB 컨테이너 - 완전한 설정 예시
+    mongodb:
+      type: MONGODB
+      mongodb:
+        image: "mongo:7"
+        database: "appdata"
+        username: "mongouser"
+        password: "mongopass"
+        authDatabase: "admin"
+        replicaSetName: "rs0"
+        shardingEnabled: false
+        wiredTigerCacheSizeMB: 1024
+        journalEnabled: true
+        oplogSizeMB: 512
+        indexBuildInBackground: true
+        storageEngine: WIRED_TIGER
+        authMechanism: SCRAM_SHA_256
+        environment:
+          MONGO_INITDB_ROOT_USERNAME: "root"
+          MONGO_INITDB_ROOT_PASSWORD: "rootpass"
+          
+    # Kafka 메시징
+    messaging:
+      type: KAFKA
+      kafka:
+        image: "confluentinc/cp-kafka:7.5.0"
+        startupTimeout: 180
+        environment:
+          KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+          KAFKA_NUM_PARTITIONS: "3"
+          KAFKA_DEFAULT_REPLICATION_FACTOR: "1"
+          
+    # Elasticsearch 검색엔진
+    search:
+      type: ELASTICSEARCH
+      elasticsearch:
+        image: "docker.elastic.co/elasticsearch/elasticsearch:8.12.0"
+        startupTimeout: 120
+        environment:
+          discovery.type: "single-node"
+          xpack.security.enabled: "false"
+          bootstrap.memory_lock: "true"
+          ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+          
+    # Vault 시크릿 관리
+    secrets:
+      type: VAULT
+      vault:
+        image: "hashicorp/vault:1.14.0"
+        startupTimeout: 60
+        environment:
+          VAULT_DEV_ROOT_TOKEN_ID: "test-token"
+          VAULT_DEV_LISTEN_ADDRESS: "0.0.0.0:8200"

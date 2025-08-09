@@ -18,7 +18,7 @@ rootProject.name = 'primavera'
 //include 'chap13'
 //include 'chap14'
 //include 'chap15'
-//include 'chap16'
+include 'chap16'
 
 // ==========================================
 // Multi-Module Architecture (chap17)

@@ -1,6 +1,8 @@
 package com.genius.primavera.testcontainers.factory;
 
-import com.genius.primavera.testcontainers.ContainerConfiguration;
+import com.genius.primavera.testcontainers.config.BaseContainerSpec;
+import com.genius.primavera.testcontainers.config.DatabaseContainerSpec;
+import com.genius.primavera.testcontainers.config.PostgreSqlContainerSpec;
 import com.genius.primavera.testcontainers.ContainerCreator;
 import com.genius.primavera.testcontainers.ContainerType;
 import org.testcontainers.containers.GenericContainer;
@@ -12,14 +14,57 @@ import java.time.Duration;
 public class PostgreSQLContainerCreator implements ContainerCreator {
     
     @Override
-    public GenericContainer<?> create(ContainerConfiguration.ContainerSpec spec) {
-        PostgreSQLContainer<?> container = new PostgreSQLContainer<>(DockerImageName.parse(spec.getImageOrDefault(ContainerType.POSTGRESQL)))
-                .withDatabaseName(spec.getDatabaseOrDefault())
-                .withUsername(spec.getUsernameOrDefault())
-                .withPassword(spec.getPasswordOrDefault())
-                .withStartupTimeout(Duration.ofSeconds(spec.getStartupTimeoutOrDefault()));
+    public GenericContainer<?> create(BaseContainerSpec spec) {
+        String image = spec.getImage() != null ? spec.getImage() : ContainerType.POSTGRESQL.getDefaultImage();
+        Integer timeout = spec.getStartupTimeout() != null ? spec.getStartupTimeout() : 60;
         
-        ContainerConfigurationHelper.configureContainer(container, spec);
+        PostgreSQLContainer<?> container = new PostgreSQLContainer<>(DockerImageName.parse(image))
+                .withStartupTimeout(Duration.ofSeconds(timeout));
+        
+        if (spec instanceof PostgreSqlContainerSpec pgSpec) {
+            container.withDatabaseName(pgSpec.getDatabase())
+                    .withUsername(pgSpec.getUsername())
+                    .withPassword(pgSpec.getPassword());
+                    
+            // PostgreSQL 고유 설정 적용
+            if (pgSpec.getLocale() != null) {
+                container.withEnv("LANG", pgSpec.getLocale())
+                        .withEnv("LC_ALL", pgSpec.getLocale());
+            }
+            if (pgSpec.getEncoding() != null) {
+                container.withEnv("POSTGRES_ENCODING", pgSpec.getEncoding());
+            }
+            if (pgSpec.getSharedBuffers() != null) {
+                container.withCommand("postgres", "-c", "shared_buffers=" + pgSpec.getSharedBuffers());
+            }
+            if (pgSpec.getWorkMem() != null) {
+                container.withEnv("POSTGRES_WORK_MEM", pgSpec.getWorkMem());
+            }
+            if (pgSpec.getMaintenanceWorkMem() != null) {
+                container.withEnv("POSTGRES_MAINTENANCE_WORK_MEM", pgSpec.getMaintenanceWorkMem());
+            }
+            if (pgSpec.getTimezone() != null) {
+                container.withEnv("TZ", pgSpec.getTimezone())
+                        .withEnv("PGTZ", pgSpec.getTimezone());
+            }
+            if (pgSpec.getMaxConnections() != null) {
+                container.withEnv("POSTGRES_MAX_CONNECTIONS", pgSpec.getMaxConnections().toString());
+            }
+        } else if (spec instanceof DatabaseContainerSpec dbSpec) {
+            container.withDatabaseName(dbSpec.getDatabase())
+                    .withUsername(dbSpec.getUsername())
+                    .withPassword(dbSpec.getPassword());
+        } else {
+            container.withDatabaseName("primavera")
+                    .withUsername("primavera")
+                    .withPassword("primavera");
+        }
+        
+        // 공통 환경 변수 적용
+        if (spec.getEnvironment() != null) {
+            spec.getEnvironment().forEach(container::withEnv);
+        }
+        
         return container;
     }
     

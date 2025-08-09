@@ -1,6 +1,6 @@
 package com.genius.primavera.testcontainers.factory;
 
-import com.genius.primavera.testcontainers.ContainerConfiguration;
+import com.genius.primavera.testcontainers.config.BaseContainerSpec;
 import com.genius.primavera.testcontainers.ContainerCreator;
 import com.genius.primavera.testcontainers.ContainerType;
 import org.testcontainers.containers.GenericContainer;
@@ -12,11 +12,18 @@ import java.time.Duration;
 public class KafkaContainerCreator implements ContainerCreator {
     
     @Override
-    public GenericContainer<?> create(ContainerConfiguration.ContainerSpec spec) {
-        KafkaContainer container = new KafkaContainer(DockerImageName.parse(spec.getImageOrDefault(ContainerType.KAFKA)))
-                .withStartupTimeout(Duration.ofSeconds(spec.getStartupTimeoutOrDefault()));
+    public GenericContainer<?> create(BaseContainerSpec spec) {
+        String image = spec.getImage() != null ? spec.getImage() : ContainerType.KAFKA.getDefaultImage();
+        Integer timeout = spec.getStartupTimeout() != null ? spec.getStartupTimeout() : 60;
         
-        ContainerConfigurationHelper.configureContainer(container, spec);
+        KafkaContainer container = new KafkaContainer(DockerImageName.parse(image))
+                .withStartupTimeout(Duration.ofSeconds(timeout));
+        
+        // 공통 환경 변수 적용
+        if (spec.getEnvironment() != null) {
+            spec.getEnvironment().forEach(container::withEnv);
+        }
+        
         return container;
     }
     

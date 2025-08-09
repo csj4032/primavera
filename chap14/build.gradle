@@ -6,7 +6,8 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-actuator"
     implementation "org.springframework.boot:spring-boot-starter-data-jpa"
     
-    databaseDependencies.each { dep -> implementation dep }
+    implementation "org.springframework.boot:spring-boot-starter-jdbc"
+    implementation "org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}"
     
     // JPA Envers for auditing
     implementation "org.springframework.data:spring-data-envers"
@@ -24,7 +25,9 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-security"
     implementation "org.springframework.boot:spring-boot-starter-oauth2-client"
     
-    testContainersDependencies.each { dep -> testImplementation dep }
+    testImplementation "org.testcontainers:junit-jupiter:${testContainersVersion}"
+    testImplementation "org.testcontainers:mariadb:${testContainersVersion}"
+    testImplementation "org.testcontainers:mongodb:${testContainersVersion}"
     testImplementation "org.springframework.security:spring-security-test"
     testImplementation "io.projectreactor:reactor-test:${reactorTestVersion}"
     testImplementation project(':appendix:spring-boot-starter-test-containers')

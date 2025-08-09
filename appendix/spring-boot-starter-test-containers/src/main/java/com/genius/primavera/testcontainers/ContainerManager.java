@@ -1,5 +1,6 @@
 package com.genius.primavera.testcontainers;
 
+import com.genius.primavera.testcontainers.config.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.boot.env.YamlPropertySourceLoader;
@@ -102,10 +103,22 @@ public class ContainerManager {
             try {
                 log.info("Starting {} container: {}", type, name);
 
-                ContainerConfiguration.ContainerSpec spec = Optional
-                        .ofNullable(configuration.getContainers())
-                        .map(containers -> containers.get(name))
-                        .orElse(createDefaultSpec(type));
+                // 새로운 설정 구조로 변경
+                ContainerConfiguration.ContainerInstanceConfig instanceConfig = configuration
+                        .getContainerConfig(name)
+                        .orElse(createDefaultInstanceConfig(name, type));
+                
+                // 타입 일치성 검증
+                if (instanceConfig.getType() != type) {
+                    log.warn("Type mismatch for container '{}': annotation={}, config={}. Using annotation type.", 
+                        name, type, instanceConfig.getType());
+                    instanceConfig.setType(type);
+                }
+                
+                BaseContainerSpec spec = instanceConfig.getSpecForType();
+                if (spec == null) {
+                    spec = createDefaultSpec(type);
+                }
 
                 GenericContainer<?> container = ContainerFactory.create(type, spec);
                 container.start();
@@ -171,9 +184,117 @@ public class ContainerManager {
         }
     }
 
-    private ContainerConfiguration.ContainerSpec createDefaultSpec(ContainerType type) {
-        return ContainerConfiguration.ContainerSpec.builder()
-                .image(type.getDefaultImage())
-                .build();
+    private ContainerConfiguration.ContainerInstanceConfig createDefaultInstanceConfig(String name, ContainerType type) {
+        ContainerConfiguration.ContainerInstanceConfig config = new ContainerConfiguration.ContainerInstanceConfig();
+        config.setType(type);
+        
+        BaseContainerSpec spec = createDefaultSpec(type);
+        setSpecForType(config, type, spec);
+        
+        log.info("Created default instance config for container '{}' of type {}", name, type);
+        return config;
+    }
+    
+    private void setSpecForType(ContainerConfiguration.ContainerInstanceConfig config, ContainerType type, BaseContainerSpec spec) {
+        switch (type) {
+            case MARIADB -> {
+                if (spec instanceof MariaDbContainerSpec mariaDbSpec) {
+                    config.setMariadb(mariaDbSpec);
+                } else {
+                    config.setMariadb(createDefaultMariaDbSpec());
+                }
+            }
+            case MYSQL -> {
+                if (spec instanceof MySqlContainerSpec mysqlSpec) {
+                    config.setMysql(mysqlSpec);
+                } else {
+                    config.setMysql(createDefaultMySqlSpec());
+                }
+            }
+            case POSTGRESQL -> {
+                if (spec instanceof PostgreSqlContainerSpec pgSpec) {
+                    config.setPostgresql(pgSpec);
+                } else {
+                    config.setPostgresql(createDefaultPostgreSqlSpec());
+                }
+            }
+            case REDIS -> {
+                if (spec instanceof RedisContainerSpec redisSpec) {
+                    config.setRedis(redisSpec);
+                } else {
+                    config.setRedis(createDefaultRedisSpec());
+                }
+            }
+            case MONGODB -> {
+                if (spec instanceof MongoContainerSpec mongoSpec) {
+                    config.setMongodb(mongoSpec);
+                } else {
+                    config.setMongodb(createDefaultMongoSpec());
+                }
+            }
+            default -> {
+                // Kafka, Elasticsearch, Vault는 BaseContainerSpec 사용
+                config.setKafka(spec);
+                config.setElasticsearch(spec);
+                config.setVault(spec);
+            }
+        }
+    }
+    
+    private BaseContainerSpec createDefaultSpec(ContainerType type) {
+        return switch (type) {
+            case MARIADB -> createDefaultMariaDbSpec();
+            case MYSQL -> createDefaultMySqlSpec();
+            case POSTGRESQL -> createDefaultPostgreSqlSpec();
+            case REDIS -> createDefaultRedisSpec();
+            case MONGODB -> createDefaultMongoSpec();
+            default -> createDefaultBaseSpec(type);
+        };
+    }
+    
+    private MariaDbContainerSpec createDefaultMariaDbSpec() {
+        MariaDbContainerSpec spec = new MariaDbContainerSpec();
+        spec.setImage(ContainerType.MARIADB.getDefaultImage());
+        return spec;
+    }
+    
+    private DatabaseContainerSpec createDefaultDatabaseSpec() {
+        DatabaseContainerSpec spec = new DatabaseContainerSpec();
+        spec.setDatabase("primavera");
+        spec.setUsername("primavera");
+        spec.setPassword("primavera");
+        return spec;
+    }
+    
+    private RedisContainerSpec createDefaultRedisSpec() {
+        RedisContainerSpec spec = new RedisContainerSpec();
+        spec.setImage(ContainerType.REDIS.getDefaultImage());
+        return spec;
+    }
+    
+    private MySqlContainerSpec createDefaultMySqlSpec() {
+        MySqlContainerSpec spec = new MySqlContainerSpec();
+        spec.setImage(ContainerType.MYSQL.getDefaultImage());
+        return spec;
+    }
+    
+    private PostgreSqlContainerSpec createDefaultPostgreSqlSpec() {
+        PostgreSqlContainerSpec spec = new PostgreSqlContainerSpec();
+        spec.setImage(ContainerType.POSTGRESQL.getDefaultImage());
+        return spec;
+    }
+    
+    private MongoContainerSpec createDefaultMongoSpec() {
+        MongoContainerSpec spec = new MongoContainerSpec();
+        spec.setImage(ContainerType.MONGODB.getDefaultImage());
+        return spec;
+    }
+    
+    private BaseContainerSpec createDefaultBaseSpec(ContainerType type) {
+        return new BaseContainerSpec() {
+            {
+                setImage(type.getDefaultImage());
+            }
+        };
     }
 }

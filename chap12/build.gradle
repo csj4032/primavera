@@ -8,13 +8,17 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-oauth2-client"
     implementation "org.modelmapper:modelmapper:${modelMapperVersion}"
     implementation project(":appendix:spring-boot-starter-lucy-filter")
-    databaseDependencies.each { dep -> implementation dep }
-    mybatisDependencies.each { dep -> implementation dep }
-    thymeleafDependencies.each { dep -> implementation dep }
+    implementation "org.springframework.boot:spring-boot-starter-jdbc"
+    implementation "org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}"
+    implementation "org.mybatis.spring.boot:mybatis-spring-boot-starter:${mybatisSpringBootStarterVersion}"
+    implementation "org.mybatis.dynamic-sql:mybatis-dynamic-sql:${mybatisDynamicSqlVersion}"
+    implementation "org.springframework.boot:spring-boot-starter-thymeleaf"
+    implementation "nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:${thymeleafLayoutDialectVersion}"
     
     // File Upload 지원
     implementation "commons-io:commons-io:${commonsIoVersion}"
     implementation "commons-codec:commons-codec:${commonsCodecVersion}"
     
-    testContainersDependencies.each { dep -> testImplementation dep }
+    testImplementation "org.testcontainers:junit-jupiter:${testContainersVersion}"
+    testImplementation "org.testcontainers:mariadb:${testContainersVersion}"
 }
