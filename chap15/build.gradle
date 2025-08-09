@@ -4,6 +4,7 @@ configurations {
 }
 
 dependencies {
+    implementation "org.springframework.boot:spring-boot-starter-actuator"
     aopDependencies.each { dep -> implementation dep }
     databaseDependencies.each { dep -> implementation dep }
     developmentDependencies.each { dep -> implementation dep }

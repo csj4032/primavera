@@ -62,54 +62,14 @@ declare -A base_ports=(
     ["kibana"]="5601"
 )
 
-# 챕터별 포트 오프셋 계산 함수
+# 기본 포트 반환 함수 (챕터별 구분 없음)
 calculate_port() {
     base_port=$1
     chapter=$2
     service=$3
     
-    # 챕터 번호 추출 (chap17 -> 17)
-    if [[ "$chapter" =~ chap([0-9]+) ]]; then
-        chap_num=${BASH_REMATCH[1]}
-        # Remove leading zero to avoid octal interpretation
-        chap_num=$((10#$chap_num))
-    else
-        chap_num=0
-    fi
-    
-    # 서비스별 포트 계산
-    case $service in
-        mariadb)
-            echo $((base_port + chap_num))
-            ;;
-        vault)
-            echo $((base_port + chap_num * 10))
-            ;;
-        mongodb)
-            echo $((base_port + chap_num * 10))
-            ;;
-        redis)
-            echo $((base_port + chap_num * 10))
-            ;;
-        elasticsearch)
-            echo $((base_port + chap_num * 100))
-            ;;
-        elasticsearch-transport)
-            echo $((base_port + chap_num * 100))
-            ;;
-        kafka)
-            echo $((base_port + chap_num * 10))
-            ;;
-        zookeeper)
-            echo $((base_port + chap_num * 10))
-            ;;
-        kibana)
-            echo $((base_port + chap_num * 10))
-            ;;
-        *)
-            echo $base_port
-            ;;
-    esac
+    # 모든 챕터에서 동일한 기본 포트 사용
+    echo $base_port
 }
 
 # Vault 설정 생성 함수
@@ -145,24 +105,24 @@ generate_vault_configs() {
     if $has_mariadb; then
         mariadb_port=$(calculate_port ${base_ports[mariadb]} $chapter mariadb)
         main_config+=" \\\\\\n               spring.datasource.driver-class-name=org.mariadb.jdbc.Driver"
-        main_config+=" \\\\\\n               spring.datasource.url=jdbc:mariadb://mariadb-$chapter:3306/primavera"
+        main_config+=" \\\\\\n               spring.datasource.url=jdbc:mariadb://localhost:3306/primavera"
         main_config+=" \\\\\\n               spring.datasource.username=primavera"
         main_config+=" \\\\\\n               spring.datasource.password=primavera"
     fi
     
     if $has_mongodb; then
         mongodb_port=$(calculate_port ${base_ports[mongodb]} $chapter mongodb)
-        main_config+=" \\\\\\n               spring.data.mongodb.uri=mongodb://primavera:primavera@mongodb-$chapter:27017/primavera?authSource=admin"
+        main_config+=" \\\\\\n               spring.data.mongodb.uri=mongodb://primavera:primavera@localhost:27017/primavera?authSource=admin"
     fi
     
     if $has_redis; then
-        main_config+=" \\\\\\n               spring.data.redis.host=redis-$chapter"
+        main_config+=" \\\\\\n               spring.data.redis.host=localhost"
         main_config+=" \\\\\\n               spring.data.redis.port=6379"
         main_config+=" \\\\\\n               spring.data.redis.password=primavera"
     fi
     
     if $has_elasticsearch; then
-        main_config+=" \\\\\\n               spring.elasticsearch.uris=http://elasticsearch-$chapter:9200"
+        main_config+=" \\\\\\n               spring.elasticsearch.uris=http://localhost:9200"
     fi
     
     vault_configs="$main_config"
@@ -180,13 +140,13 @@ generate_vault_configs() {
                     # Batch 모듈 설정
                     if $has_mariadb; then
                         sub_config+=" \\\\\\n               spring.datasource.driver-class-name=org.mariadb.jdbc.Driver"
-                        sub_config+=" \\\\\\n               spring.datasource.url=jdbc:mariadb://mariadb-$chapter:3306/primavera"
+                        sub_config+=" \\\\\\n               spring.datasource.url=jdbc:mariadb://localhost:3306/primavera"
                         sub_config+=" \\\\\\n               spring.datasource.username=primavera"
                         sub_config+=" \\\\\\n               spring.datasource.password=primavera"
                         sub_config+=" \\\\\\n               spring.batch.initialize-schema=always"
                     fi
                     if $has_elasticsearch; then
-                        sub_config+=" \\\\\\n               spring.elasticsearch.uris=http://elasticsearch-$chapter:9200"
+                        sub_config+=" \\\\\\n               spring.elasticsearch.uris=http://localhost:9200"
                     fi
                     ;;
                 streaming)
@@ -200,15 +160,15 @@ generate_vault_configs() {
                     sub_config+=" \\\\\\n               server.port=$service_port"
                     if $has_mariadb; then
                         sub_config+=" \\\\\\n               spring.datasource.driver-class-name=org.mariadb.jdbc.Driver"
-                        sub_config+=" \\\\\\n               spring.datasource.url=jdbc:mariadb://mariadb-$chapter:3306/primavera"
+                        sub_config+=" \\\\\\n               spring.datasource.url=jdbc:mariadb://localhost:3306/primavera"
                         sub_config+=" \\\\\\n               spring.datasource.username=primavera"
                         sub_config+=" \\\\\\n               spring.datasource.password=primavera"
                     fi
                     if $has_mongodb; then
-                        sub_config+=" \\\\\\n               spring.data.mongodb.uri=mongodb://primavera:primavera@mongodb-$chapter:27017/primavera?authSource=admin"
+                        sub_config+=" \\\\\\n               spring.data.mongodb.uri=mongodb://primavera:primavera@localhost:27017/primavera?authSource=admin"
                     fi
                     if $has_redis; then
-                        sub_config+=" \\\\\\n               spring.data.redis.host=redis-$chapter"
+                        sub_config+=" \\\\\\n               spring.data.redis.host=localhost"
                         sub_config+=" \\\\\\n               spring.data.redis.port=6379"
                         sub_config+=" \\\\\\n               spring.data.redis.password=primavera"
                     fi

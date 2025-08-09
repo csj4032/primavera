@@ -2,6 +2,7 @@
 dependencies {
     // WebFlux (Reactive) - Web 대신 WebFlux 사용
     implementation "org.springframework.boot:spring-boot-starter-webflux"
+    implementation "org.springframework.boot:spring-boot-starter-actuator"
     implementation "org.springframework.boot:spring-boot-starter-data-jpa"
     
     databaseDependencies.each { dep -> implementation dep }
