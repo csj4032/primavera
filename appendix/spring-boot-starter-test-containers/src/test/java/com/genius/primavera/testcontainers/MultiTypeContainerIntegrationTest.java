@@ -15,15 +15,6 @@ import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * Multi-type Container Integration Tests
- * - MariaDB, PostgreSQL, Redis integration
- * - Cross-database data synchronization
- * - Caching strategy validation
- * - Transaction consistency tests
- * - Inter-container network communication
- * - Complex workflow validation
- */
 @Slf4j
 @SpringBootTest(properties = {
     "spring.test.context.cache.maxSize=0",  // Context 캐싱 비활성화로 격리 강화
@@ -62,7 +53,6 @@ class MultiTypeContainerIntegrationTest {
         analyticsJdbc = new JdbcTemplate(analyticsDataSource);
         containerManager = ContainerRegistry.get();
 
-        // MariaDB schema creation
         primaryJdbc.execute("""
             CREATE TABLE users (
                 id BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -85,7 +75,6 @@ class MultiTypeContainerIntegrationTest {
             )
         """);
 
-        // PostgreSQL analytics schema creation
         analyticsJdbc.execute("""
             CREATE TABLE user_analytics (
                 id BIGSERIAL PRIMARY KEY,
@@ -106,7 +95,6 @@ class MultiTypeContainerIntegrationTest {
             )
         """);
 
-        // Insert initial test data
         primaryJdbc.update("""
             INSERT INTO users (username, email) VALUES 
             ('alice', 'alice@example.com'),
@@ -121,7 +109,6 @@ class MultiTypeContainerIntegrationTest {
     @Order(1)
     @DisplayName("All container types connectivity and status verification")
     void testAllContainerTypesConnectivity() {
-        // MariaDB connection verification
         assertDoesNotThrow(() -> {
             String mariaVersion = primaryJdbc.queryForObject("SELECT VERSION()", String.class);
             assertNotNull(mariaVersion, "MariaDB version info should be available");
@@ -129,7 +116,6 @@ class MultiTypeContainerIntegrationTest {
             log.info("MariaDB version: {}", mariaVersion);
         }, "MariaDB connection should succeed");
 
-        // PostgreSQL connection verification
         assertDoesNotThrow(() -> {
             String pgVersion = analyticsJdbc.queryForObject("SELECT version()", String.class);
             assertNotNull(pgVersion, "PostgreSQL version info should be available");
@@ -137,7 +123,6 @@ class MultiTypeContainerIntegrationTest {
             log.info("PostgreSQL version: {}", pgVersion.substring(0, 50) + "...");
         }, "PostgreSQL connection should succeed");
 
-        // Redis connection verification
         assertDoesNotThrow(() -> {
             redisTemplate.opsForValue().set("connectivity_test", "redis_connected");
             String result = (String) redisTemplate.opsForValue().get("connectivity_test");
@@ -145,7 +130,6 @@ class MultiTypeContainerIntegrationTest {
             log.info("Redis connection verified");
         }, "Redis connection should succeed");
 
-        // Container manager status verification
         ContainerInfo primaryInfo = containerManager.getContainer("multiTypePrimaryDb");
         ContainerInfo analyticsInfo = containerManager.getContainer("analyticsDb");
         ContainerInfo cacheInfo = containerManager.getContainer("cacheStore");
@@ -161,14 +145,12 @@ class MultiTypeContainerIntegrationTest {
     @Order(2)
     @DisplayName("Cross-database data synchronization")
     void testMultiDatabaseSynchronization() {
-        // Insert order data in Primary DB
         Long userId = 1L;
         int orderResult = primaryJdbc.update(
             "INSERT INTO orders (user_id, product_name, amount, status) VALUES (?, ?, ?, ?)",
             userId, "Laptop", 1299.99, "COMPLETED");
         assertEquals(1, orderResult, "Order insertion should succeed");
 
-        // Query order information from Primary DB
         Map<String, Object> orderData = primaryJdbc.queryForMap("""
             SELECT o.id, u.username, u.email, o.product_name, o.amount, o.status
             FROM orders o 
@@ -181,7 +163,6 @@ class MultiTypeContainerIntegrationTest {
         assertNotNull(orderData, "Order data should be retrieved");
         assertEquals("alice", orderData.get("username"), "Username should match");
 
-        // Synchronize event data to Analytics DB
         String eventDataJson = String.format("""
             {"order_id": %s, "product_name": "%s", "amount": %.2f, "status": "%s"}
         """, orderData.get("id"), orderData.get("product_name"), 
@@ -192,13 +173,11 @@ class MultiTypeContainerIntegrationTest {
             userId, "ORDER_COMPLETED", eventDataJson);
         assertEquals(1, analyticsResult, "Analytics data insertion should succeed");
 
-        // Verify data in Analytics DB
         Integer analyticsCount = analyticsJdbc.queryForObject(
             "SELECT COUNT(*) FROM user_analytics WHERE user_id = ? AND event_type = ?",
             Integer.class, userId, "ORDER_COMPLETED");
         assertEquals(1, analyticsCount, "Analytics data should be synchronized");
 
-        // JSON data verification
         String jsonData = analyticsJdbc.queryForObject(
             "SELECT event_data::text FROM user_analytics WHERE user_id = ? AND event_type = ?",
             String.class, userId, "ORDER_COMPLETED");
@@ -214,13 +193,11 @@ class MultiTypeContainerIntegrationTest {
     void testCachingStrategyAndPerformance() {
         String cacheKey = "user_profile_";
         
-        // Cache user information
         List<Map<String, Object>> users = primaryJdbc.queryForList("SELECT * FROM users");
         
         for (Map<String, Object> user : users) {
             String userCacheKey = cacheKey + user.get("id");
             
-            // Cache user info in Redis
             Map<String, Object> userProfile = new HashMap<>();
             userProfile.put("id", user.get("id"));
             userProfile.put("username", user.get("username"));
@@ -231,7 +208,6 @@ class MultiTypeContainerIntegrationTest {
             redisTemplate.expire(userCacheKey, 1, TimeUnit.HOURS);
         }
 
-        // Retrieve and verify data from cache
         for (Map<String, Object> user : users) {
             String userCacheKey = cacheKey + user.get("id");
             
@@ -241,7 +217,6 @@ class MultiTypeContainerIntegrationTest {
             assertEquals(user.get("email"), cachedUser.get("email"), "Cached email should match");
         }
 
-        // Cache performance test
         long startTime = System.currentTimeMillis();
         for (int i = 0; i < 100; i++) {
             String userCacheKey = cacheKey + (i % users.size() + 1);
@@ -249,7 +224,6 @@ class MultiTypeContainerIntegrationTest {
         }
         long cacheTime = System.currentTimeMillis() - startTime;
 
-        // Direct database query performance test
         startTime = System.currentTimeMillis();
         for (int i = 0; i < 100; i++) {
             Long userIdForQuery = (long) (i % users.size() + 1);
@@ -258,17 +232,13 @@ class MultiTypeContainerIntegrationTest {
         long dbTime = System.currentTimeMillis() - startTime;
 
         log.info("Performance comparison - Cache: {}ms, DB: {}ms", cacheTime, dbTime);
-        // 로컬 테스트 환경에서는 성능 차이가 미미할 수 있음 (Docker 오버헤드, 네트워크 지연 없음)
-        // 실제 운영 환경에서는 캐시가 더 빠르지만, 테스트 환경 특성상 관대하게 검증
         assertTrue(cacheTime <= dbTime * 5, "Cache queries should be reasonably fast compared to DB queries");
 
-        // Cache expiration and TTL verification
         String testCacheKey = cacheKey + "ttl_test";
         redisTemplate.opsForValue().set(testCacheKey, "test_value", 1, TimeUnit.SECONDS);
         
         assertTrue(redisTemplate.hasKey(testCacheKey), "Cache key should exist");
         
-        // Wait 1.5 seconds and check expiration
         assertDoesNotThrow(() -> Thread.sleep(1500));
         assertFalse(redisTemplate.hasKey(testCacheKey), "Cache key should be deleted after TTL expiry");
 
@@ -282,24 +252,20 @@ class MultiTypeContainerIntegrationTest {
         String workflowId = "workflow_" + System.currentTimeMillis();
         
         try {
-            // Step 1: Create new user (Primary DB)
             int userResult = primaryJdbc.update(
                 "INSERT INTO users (username, email) VALUES (?, ?)",
                 workflowId, workflowId + "@test.com");
             assertEquals(1, userResult, "User creation should succeed");
 
-            // Get created user ID
             Long newUserId = primaryJdbc.queryForObject(
                 "SELECT id FROM users WHERE username = ?", Long.class, workflowId);
             assertNotNull(newUserId, "New user ID should exist");
 
-            // Step 2: Create order (Primary DB)
             int orderResult = primaryJdbc.update(
                 "INSERT INTO orders (user_id, product_name, amount, status) VALUES (?, ?, ?, ?)",
                 newUserId, "Test Product", 99.99, "PENDING");
             assertEquals(1, orderResult, "Order creation should succeed");
 
-            // Step 3: Record analytics event (Analytics DB)
             String registrationEventJson = String.format("""
                 {"user_id": %d, "username": "%s", "email": "%s", "workflow_id": "%s"}
             """, newUserId, workflowId, workflowId + "@test.com", workflowId);
@@ -309,7 +275,6 @@ class MultiTypeContainerIntegrationTest {
                 newUserId, "USER_REGISTRATION", registrationEventJson);
             assertEquals(1, registrationEvent, "Registration event recording should succeed");
 
-            // Step 4: Cache update (Redis)
             String userCacheKey = "new_user_" + newUserId;
             Map<String, Object> newUserProfile = Map.of(
                 "id", newUserId,
@@ -322,8 +287,6 @@ class MultiTypeContainerIntegrationTest {
             redisTemplate.opsForHash().putAll(userCacheKey, newUserProfile);
             redisTemplate.expire(userCacheKey, 24, TimeUnit.HOURS);
 
-            // Step 5: Workflow verification
-            // Verify user and order info from Primary DB
             Map<String, Object> userOrder = primaryJdbc.queryForMap("""
                 SELECT u.username, u.email, o.product_name, o.amount, o.status
                 FROM users u
@@ -334,22 +297,18 @@ class MultiTypeContainerIntegrationTest {
             assertEquals(workflowId, userOrder.get("username"), "Username should match");
             assertEquals("Test Product", userOrder.get("product_name"), "Product name should match");
 
-            // Verify event in Analytics DB
             Integer eventCount = analyticsJdbc.queryForObject(
                 "SELECT COUNT(*) FROM user_analytics WHERE user_id = ?", 
                 Integer.class, newUserId);
             assertEquals(1, eventCount, "Analytics event should be recorded");
 
-            // Verify cache in Redis
             Map<Object, Object> cachedProfile = redisTemplate.opsForHash().entries(userCacheKey);
             assertEquals(workflowId, cachedProfile.get("username"), "Cached username should match");
 
-            // Step 6: Complete order processing
             int updateResult = primaryJdbc.update(
                 "UPDATE orders SET status = 'COMPLETED' WHERE user_id = ?", newUserId);
             assertEquals(1, updateResult, "Order status update should succeed");
 
-            // Record completion event
             String completionEventJson = String.format("""
                 {"user_id": %d, "order_completed": true, "workflow_id": "%s"}
             """, newUserId, workflowId);
@@ -358,7 +317,6 @@ class MultiTypeContainerIntegrationTest {
                 "INSERT INTO user_analytics (user_id, event_type, event_data) VALUES (?, ?, ?::jsonb)",
                 newUserId, "ORDER_COMPLETION", completionEventJson);
 
-            // Final verification
             String finalOrderStatus = primaryJdbc.queryForObject(
                 "SELECT status FROM orders WHERE user_id = ?", String.class, newUserId);
             assertEquals("COMPLETED", finalOrderStatus, "Order status should be completed");
@@ -383,10 +341,8 @@ class MultiTypeContainerIntegrationTest {
     @Order(5)
     @DisplayName("Daily summary and analytics data generation")
     void testDailySummaryAndAnalytics() {
-        // Generate summary data for current date
         String today = java.time.LocalDate.now().toString();
         
-        // Query aggregate data from Primary DB
         Map<String, Object> primaryStats = primaryJdbc.queryForMap("""
             SELECT 
                 COUNT(DISTINCT u.id) as total_users,
@@ -404,7 +360,6 @@ class MultiTypeContainerIntegrationTest {
         assertTrue(totalOrders >= 0, "Total orders should be 0 or greater");
         assertTrue(totalRevenue >= 0, "Total revenue should be 0 or greater");
 
-        // Insert daily summary data to Analytics DB
         int summaryResult = analyticsJdbc.update("""
             INSERT INTO daily_summary (summary_date, total_users, total_orders, total_revenue) 
             VALUES (?::date, ?, ?, ?) 
@@ -417,7 +372,6 @@ class MultiTypeContainerIntegrationTest {
 
         assertTrue(summaryResult > 0, "Daily summary data insertion/update should succeed");
 
-        // Verify saved summary data
         Map<String, Object> savedSummary = analyticsJdbc.queryForMap(
             "SELECT * FROM daily_summary WHERE summary_date = ?::date", today);
 
@@ -428,7 +382,6 @@ class MultiTypeContainerIntegrationTest {
         assertEquals(totalRevenue, ((Number) savedSummary.get("total_revenue")).doubleValue(), 0.01, 
             "Saved total revenue should match");
 
-        // Cache summary data in Redis
         String summaryKey = "daily_summary_" + today;
         Map<String, Object> summaryCache = Map.of(
             "date", today,
@@ -441,7 +394,6 @@ class MultiTypeContainerIntegrationTest {
         redisTemplate.opsForHash().putAll(summaryKey, summaryCache);
         redisTemplate.expire(summaryKey, 1, TimeUnit.DAYS);
 
-        // Verify cached summary data
         Map<Object, Object> cachedSummary = redisTemplate.opsForHash().entries(summaryKey);
         assertEquals(today, cachedSummary.get("date"), "Cached date should match");
         assertEquals(totalUsers.toString(), cachedSummary.get("total_users").toString(), 
@@ -455,12 +407,10 @@ class MultiTypeContainerIntegrationTest {
     @Order(6)
     @DisplayName("Container networking and isolation verification")
     void testContainerNetworkingAndIsolation() {
-        // Check network information for each container
         ContainerInfo primaryInfo = containerManager.getContainer("multiTypePrimaryDb");
         ContainerInfo analyticsInfo = containerManager.getContainer("analyticsDb");
         ContainerInfo cacheInfo = containerManager.getContainer("cacheStore");
 
-        // Verify network isolation
         String primaryHost = primaryInfo.container().getHost();
         Integer primaryPort = primaryInfo.container().getFirstMappedPort();
         String analyticsHost = analyticsInfo.container().getHost();
@@ -468,12 +418,10 @@ class MultiTypeContainerIntegrationTest {
         String cacheHost = cacheInfo.container().getHost();
         Integer cachePort = cacheInfo.container().getFirstMappedPort();
 
-        // Hosts can be the same, but ports should be different
         assertNotEquals(primaryPort, analyticsPort, "Primary and Analytics DB should use different ports");
         assertNotEquals(primaryPort, cachePort, "Primary DB and Cache should use different ports");
         assertNotEquals(analyticsPort, cachePort, "Analytics DB and Cache should use different ports");
 
-        // Verify all container IDs are different
         String primaryId = primaryInfo.container().getContainerId();
         String analyticsId = analyticsInfo.container().getContainerId();
         String cacheId = cacheInfo.container().getContainerId();
@@ -482,23 +430,18 @@ class MultiTypeContainerIntegrationTest {
         assertNotEquals(primaryId, cacheId, "Primary and Cache container IDs should be different");
         assertNotEquals(analyticsId, cacheId, "Analytics and Cache container IDs should be different");
 
-        // Verify isolation by performing independent operations on each container
         String isolationTest = "isolation_" + System.currentTimeMillis();
 
-        // Work with Primary DB
         primaryJdbc.update(
             "INSERT INTO users (username, email) VALUES (?, ?)",
             isolationTest + "_primary", isolationTest + "@primary.com");
 
-        // Work with Analytics DB
         analyticsJdbc.update(
             "INSERT INTO user_analytics (user_id, event_type, event_data) VALUES (?, ?, ?::jsonb)",
             999L, "ISOLATION_TEST", "{\"test\": \"" + isolationTest + "_analytics\"}");
 
-        // Work with Redis
         redisTemplate.opsForValue().set(isolationTest + "_cache", "cache_isolated_data");
 
-        // Verify data independence in each store
         Integer primaryCount = primaryJdbc.queryForObject(
             "SELECT COUNT(*) FROM users WHERE username = ?", 
             Integer.class, isolationTest + "_primary");
@@ -525,14 +468,12 @@ class MultiTypeContainerIntegrationTest {
         
         long startTime = System.currentTimeMillis();
 
-        // 1. Create large volume user data in Primary DB
         for (int i = 0; i < batchSize; i++) {
             try {
                 primaryJdbc.update(
                     "INSERT INTO users (username, email) VALUES (?, ?)",
                     testPrefix + i, testPrefix + i + "@performance.com");
                 
-                // Create orders every 50 users
                 if (i % 50 == 0) {
                     Long userId = primaryJdbc.queryForObject(
                         "SELECT id FROM users WHERE username = ?", 
@@ -549,7 +490,6 @@ class MultiTypeContainerIntegrationTest {
 
         long primaryDbTime = System.currentTimeMillis() - startTime;
         
-        // 2. Statistics for created data in Primary DB
         Integer actualUsers = primaryJdbc.queryForObject(
             "SELECT COUNT(*) FROM users WHERE username LIKE ?", 
             Integer.class, testPrefix + "%");
@@ -561,7 +501,6 @@ class MultiTypeContainerIntegrationTest {
         log.info("Primary DB processing completed - Users: {}, Orders: {}, Time: {}ms", 
             actualUsers, actualOrders, primaryDbTime);
 
-        // 3. Create event data in Analytics DB (batch processing)
         startTime = System.currentTimeMillis();
         
         List<Map<String, Object>> performanceUsers = primaryJdbc.queryForList(
@@ -583,7 +522,6 @@ class MultiTypeContainerIntegrationTest {
         
         long analyticsDbTime = System.currentTimeMillis() - startTime;
 
-        // 4. Create cache data in Redis (batch processing)
         startTime = System.currentTimeMillis();
         
         for (Map<String, Object> user : performanceUsers) {
@@ -605,10 +543,8 @@ class MultiTypeContainerIntegrationTest {
         
         long redisTime = System.currentTimeMillis() - startTime;
 
-        // 5. Integrated query performance test
         startTime = System.currentTimeMillis();
         
-        // Complex join query
         List<Map<String, Object>> complexResults = primaryJdbc.queryForList("""
             SELECT u.username, u.email, COUNT(o.id) as order_count, 
                    COALESCE(SUM(o.amount), 0) as total_spent
@@ -623,7 +559,6 @@ class MultiTypeContainerIntegrationTest {
 
         long complexQueryTime = System.currentTimeMillis() - startTime;
 
-        // Aggregate query in Analytics DB
         startTime = System.currentTimeMillis();
         
         Integer analyticsEvents = analyticsJdbc.queryForObject(
@@ -632,7 +567,6 @@ class MultiTypeContainerIntegrationTest {
         
         long analyticsQueryTime = System.currentTimeMillis() - startTime;
 
-        // Performance result verification
         assertTrue(primaryDbTime < 20000, "Primary DB processing should complete within 20 seconds");
         assertTrue(analyticsDbTime < 10000, "Analytics DB processing should complete within 10 seconds");
         assertTrue(redisTime < 5000, "Redis processing should complete within 5 seconds");

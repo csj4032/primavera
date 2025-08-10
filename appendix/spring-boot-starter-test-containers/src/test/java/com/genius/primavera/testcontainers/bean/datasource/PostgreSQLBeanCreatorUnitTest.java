@@ -13,9 +13,6 @@ import org.testcontainers.containers.GenericContainer;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-/**
- * PostgreSQL BeanCreator 설정 검증 테스트 (실제 연결 없음)
- */
 @Slf4j
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -58,11 +55,9 @@ class PostgreSQLBeanCreatorUnitTest {
         MockitoAnnotations.openMocks(this);
         beanCreator = new TestablePostgreSQLBeanCreator();
         
-        // Mock 컨테이너 설정
         when(mockContainer.getHost()).thenReturn("localhost");
         when(mockContainer.getFirstMappedPort()).thenReturn(5433);
         
-        // Spec 설정
         spec = new PostgreSqlContainerSpec();
         spec.setLocale("en_US.UTF-8");
         spec.setEncoding("UTF8");

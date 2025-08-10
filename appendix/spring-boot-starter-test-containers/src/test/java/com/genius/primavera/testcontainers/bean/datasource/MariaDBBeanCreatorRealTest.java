@@ -10,9 +10,6 @@ import org.testcontainers.containers.MariaDBContainer;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * MariaDB BeanCreator 실제 연결 테스트 (간단 버전)
- */
 @Slf4j
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -27,7 +24,6 @@ class MariaDBBeanCreatorRealTest {
     void setUp() {
         beanCreator = new MariaDBBeanCreator();
         
-        // MariaDB 컨테이너 생성
         container = new MariaDBContainer<>("mariadb:11.4.7")
                 .withDatabaseName("testdb")
                 .withUsername("testuser")
@@ -35,7 +31,6 @@ class MariaDBBeanCreatorRealTest {
         
         container.start();
         
-        // Spec 설정
         spec = new MariaDbContainerSpec();
         spec.setCharacterSet("utf8mb4");
         spec.setCollation("utf8mb4_unicode_ci");
@@ -68,7 +63,6 @@ class MariaDBBeanCreatorRealTest {
     @Order(2)
     @DisplayName("MariaDB DataSource 빈 생성 및 실제 연결 테스트")
     void testCreateBeanWithRealConnection() {
-        // ContainerInfo 생성
         ContainerInfo containerInfo = new ContainerInfo(
                 "test-mariadb",
                 ContainerType.MARIADB,
@@ -76,13 +70,11 @@ class MariaDBBeanCreatorRealTest {
                 spec
         );
 
-        // 실제 DataSource 생성 및 연결 테스트
         HikariDataSource dataSource = (HikariDataSource) assertDoesNotThrow(() -> beanCreator.createBean(containerInfo));
         
         assertNotNull(dataSource, "생성된 DataSource가 null이 아니어야 합니다");
         assertInstanceOf(HikariDataSource.class, dataSource, "HikariDataSource 인스턴스여야 합니다");
         
-        // 실제 데이터베이스 연결 테스트
         assertDoesNotThrow(() -> {
             try (var connection = dataSource.getConnection()) {
                 assertTrue(connection.isValid(5), "연결이 유효해야 합니다");
@@ -94,7 +86,6 @@ class MariaDBBeanCreatorRealTest {
             }
         }, "MariaDB 연결이 성공해야 합니다");
         
-        // DataSource 종료
         dataSource.close();
         log.info("✅ MariaDB DataSource 생성 및 연결 테스트 성공");
     }
@@ -103,7 +94,6 @@ class MariaDBBeanCreatorRealTest {
     @Order(3)
     @DisplayName("MariaDB 기본값으로 DataSource 생성 테스트")
     void testCreateBeanWithDefaults() {
-        // 기본 spec 사용
         MariaDbContainerSpec defaultSpec = new MariaDbContainerSpec();
         defaultSpec.setUsername("testuser");
         defaultSpec.setPassword("testpass");
@@ -118,7 +108,6 @@ class MariaDBBeanCreatorRealTest {
 
         HikariDataSource dataSource = (HikariDataSource) beanCreator.createBean(containerInfo);
         
-        // 기본값으로 실제 연결 테스트
         assertNotNull(dataSource, "DataSource가 생성되어야 합니다");
         
         assertDoesNotThrow(() -> {

@@ -51,7 +51,6 @@ public class RedisContainerCreator implements ContainerCreator {
             }
         }
         
-        // 공통 환경 변수 적용
         if (spec.getEnvironment() != null) {
             spec.getEnvironment().forEach(container::withEnv);
         }

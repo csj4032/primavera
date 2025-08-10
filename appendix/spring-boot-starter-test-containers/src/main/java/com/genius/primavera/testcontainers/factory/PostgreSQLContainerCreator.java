@@ -26,7 +26,6 @@ public class PostgreSQLContainerCreator implements ContainerCreator {
                     .withUsername(pgSpec.getUsername())
                     .withPassword(pgSpec.getPassword());
                     
-            // PostgreSQL 고유 설정 적용
             if (pgSpec.getLocale() != null) {
                 container.withEnv("LANG", pgSpec.getLocale())
                         .withEnv("LC_ALL", pgSpec.getLocale());
@@ -60,7 +59,6 @@ public class PostgreSQLContainerCreator implements ContainerCreator {
                     .withPassword("primavera");
         }
         
-        // 공통 환경 변수 적용
         if (spec.getEnvironment() != null) {
             spec.getEnvironment().forEach(container::withEnv);
         }

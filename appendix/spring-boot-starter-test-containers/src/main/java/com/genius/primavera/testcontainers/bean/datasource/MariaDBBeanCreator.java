@@ -8,10 +8,6 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * MariaDB 전용 DataSource 빈 생성기
- * MariaDB 특화 설정을 포함한 HikariDataSource를 생성합니다.
- */
 @Slf4j
 public class MariaDBBeanCreator extends DataSourceBeanCreator {
     
@@ -19,12 +15,10 @@ public class MariaDBBeanCreator extends DataSourceBeanCreator {
     public Object createBean(ContainerInfo containerInfo) {
         HikariConfig config = createBaseConfig(containerInfo);
         
-        // MariaDB 특화 설정 적용
         if (containerInfo.spec() instanceof MariaDbContainerSpec spec) {
             applyCommonSettings(config, spec);
             applyMariaDBSpecificSettings(config, spec);
         } else {
-            // 기본값 사용
             config.setUsername("primavera");
             config.setPassword("primavera");
             config.setMaximumPoolSize(10);
@@ -38,21 +32,15 @@ public class MariaDBBeanCreator extends DataSourceBeanCreator {
         return new HikariDataSource(config);
     }
     
-    /**
-     * MariaDB 특화 설정 적용
-     */
     private void applyMariaDBSpecificSettings(HikariConfig config, MariaDbContainerSpec spec) {
-        // 문자셋 설정
         if (spec.getCharacterSet() != null && !spec.getCharacterSet().isEmpty()) {
             config.addDataSourceProperty("characterEncoding", spec.getCharacterSet());
         }
         
-        // Collation 설정
         if (spec.getCollation() != null && !spec.getCollation().isEmpty()) {
             config.addDataSourceProperty("connectionCollation", spec.getCollation());
         }
         
-        // MariaDB 최적화 옵션
         config.addDataSourceProperty("useServerPrepStmts", "true");
         config.addDataSourceProperty("cachePrepStmts", "true");
         config.addDataSourceProperty("prepStmtCacheSize", "256");

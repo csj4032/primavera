@@ -13,9 +13,6 @@ import org.testcontainers.containers.GenericContainer;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-/**
- * MySQL BeanCreator 설정 검증 테스트 (실제 연결 없음)
- */
 @Slf4j
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -58,11 +55,9 @@ class MySQLBeanCreatorUnitTest {
         MockitoAnnotations.openMocks(this);
         beanCreator = new TestableMySQLBeanCreator();
         
-        // Mock 컨테이너 설정
         when(mockContainer.getHost()).thenReturn("localhost");
         when(mockContainer.getFirstMappedPort()).thenReturn(3308);
         
-        // Spec 설정
         spec = new MySqlContainerSpec();
         spec.setCharacterSet("utf8mb4");
         spec.setCollation("utf8mb4_unicode_ci");
@@ -252,7 +247,6 @@ class MySQLBeanCreatorUnitTest {
     void testSslSettings() {
         beanCreator.setReturnConfigOnly(true);
         
-        // SSL 비활성화
         spec.setSslEnabled(false);
         ContainerInfo containerInfo = new ContainerInfo(
                 "test-mysql-ssl-disabled",
@@ -266,7 +260,6 @@ class MySQLBeanCreatorUnitTest {
         
         log.info("✅ SSL 비활성화 설정 검증 완료");
         
-        // SSL 활성화
         spec.setSslEnabled(true);
         containerInfo = new ContainerInfo(
                 "test-mysql-ssl-enabled",

@@ -13,14 +13,6 @@ import javax.sql.DataSource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * 컨테이너 라이프사이클 관리 테스트
- * - 컨테이너 시작/중지 상태 검증
- * - 재시작 시나리오 테스트
- * - 타임아웃 및 건강성 검사
- * - 컨테이너 격리 및 네트워크 검증
- * - 리소스 정리 검증
- */
 @Slf4j
 @SpringBootTest
 @ActiveProfiles("test")
@@ -45,7 +37,6 @@ public class ContainerLifecycleTest {
         jdbcTemplate = new JdbcTemplate(dataSource);
         containerManager = ContainerRegistry.get();
         
-        // 테스트용 테이블 생성
         jdbcTemplate.execute("""
             CREATE TABLE lifecycle_test (
                 id BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -71,12 +62,10 @@ public class ContainerLifecycleTest {
         assertTrue(dbInfo.container().isRunning(), "DB 컨테이너가 실행 중이어야 함");
         assertTrue(cacheInfo.container().isRunning(), "캐시 컨테이너가 실행 중이어야 함");
 
-        // 컨테이너 기본 정보 검증
         assertTrue(dbInfo.container().isHealthy(), "DB 컨테이너가 건강해야 함");
         assertNotNull(dbInfo.container().getContainerId(), "컨테이너 ID가 존재해야 함");
         assertTrue(dbInfo.container().getContainerId().length() > 10, "컨테이너 ID가 유효해야 함");
 
-        // 네트워크 설정 검증
         String dbHost = dbInfo.container().getHost();
         Integer dbPort = dbInfo.container().getFirstMappedPort();
         
@@ -92,7 +81,6 @@ public class ContainerLifecycleTest {
     @Order(2)
     @DisplayName("데이터베이스 연결 및 기본 작업 검증")
     void testDatabaseConnectivityAndOperations() {
-        // 데이터베이스 연결 및 기본 쿼리 테스트
         assertDoesNotThrow(() -> {
             String version = jdbcTemplate.queryForObject("SELECT VERSION()", String.class);
             assertNotNull(version, "데이터베이스 버전 정보를 가져올 수 있어야 함");
@@ -100,26 +88,21 @@ public class ContainerLifecycleTest {
             log.info("데이터베이스 버전: {}", version);
         }, "데이터베이스 연결이 정상적으로 작동해야 함");
 
-        // CRUD 작업 테스트
-        // 삽입
         int insertResult = jdbcTemplate.update(
             "INSERT INTO lifecycle_test (test_name, status) VALUES (?, ?)",
             "connectivity_test", "RUNNING");
         assertEquals(1, insertResult, "데이터 삽입이 성공해야 함");
 
-        // 조회
         Integer count = jdbcTemplate.queryForObject(
             "SELECT COUNT(*) FROM lifecycle_test WHERE test_name = ?", 
             Integer.class, "connectivity_test");
         assertEquals(1, count, "삽입된 데이터를 조회할 수 있어야 함");
 
-        // 수정
         int updateResult = jdbcTemplate.update(
             "UPDATE lifecycle_test SET status = ? WHERE test_name = ?",
             "COMPLETED", "connectivity_test");
         assertEquals(1, updateResult, "데이터 수정이 성공해야 함");
 
-        // 수정 결과 확인
         String updatedStatus = jdbcTemplate.queryForObject(
             "SELECT status FROM lifecycle_test WHERE test_name = ?", 
             String.class, "connectivity_test");
@@ -135,7 +118,6 @@ public class ContainerLifecycleTest {
         ContainerInfo dbInfo = containerManager.getContainer("lifecycleDb");
         ContainerInfo cacheInfo = containerManager.getContainer("lifecycleCache");
 
-        // 컨테이너별 고유 네트워크 설정 확인
         String dbHost = dbInfo.container().getHost();
         Integer dbPort = dbInfo.container().getFirstMappedPort();
         String cacheHost = cacheInfo.container().getHost();
@@ -146,10 +128,8 @@ public class ContainerLifecycleTest {
         assertNotNull(cacheHost, "캐시 호스트가 설정되어야 함");
         assertNotNull(cachePort, "캐시 포트가 설정되어야 함");
 
-        // 포트가 다른지 확인 (다른 서비스이므로 다른 포트를 사용해야 함)
         assertNotEquals(dbPort, cachePort, "DB와 캐시는 다른 포트를 사용해야 함");
 
-        // 컨테이너 ID가 다른지 확인
         String dbContainerId = dbInfo.container().getContainerId();
         String cacheContainerId = cacheInfo.container().getContainerId();
         
@@ -157,7 +137,6 @@ public class ContainerLifecycleTest {
         assertNotNull(cacheContainerId, "캐시 컨테이너 ID가 존재해야 함");
         assertNotEquals(dbContainerId, cacheContainerId, "컨테이너 ID가 달라야 함");
 
-        // 각 컨테이너에서 독립적인 작업 수행
         jdbcTemplate.update(
             "INSERT INTO lifecycle_test (test_name, status) VALUES (?, ?)",
             "isolation_test_db", "ISOLATED");
@@ -179,15 +158,12 @@ public class ContainerLifecycleTest {
         ContainerInfo dbInfo = containerManager.getContainer("lifecycleDb");
         ContainerInfo cacheInfo = containerManager.getContainer("lifecycleCache");
 
-        // 컨테이너 건강성 검사
         assertTrue(dbInfo.container().isHealthy(), "DB 컨테이너가 건강해야 함");
         assertTrue(cacheInfo.container().isHealthy(), "캐시 컨테이너가 건강해야 함");
 
-        // 네트워크 연결 상태 검증
         assertNotNull(dbInfo.container().getHost(), "DB 호스트가 설정되어야 함");
         assertNotNull(dbInfo.container().getFirstMappedPort(), "DB 포트가 매핑되어야 함");
         
-        // 실제 연결 테스트로 건강성 검사
         assertDoesNotThrow(() -> {
             Integer result = jdbcTemplate.queryForObject("SELECT 1", Integer.class);
             assertEquals(1, result, "건강성 검사 쿼리가 정상 실행되어야 함");
@@ -208,19 +184,16 @@ public class ContainerLifecycleTest {
 
         for (int i = 0; i < iterations; i++) {
             try {
-                // 다양한 작업 수행
                 jdbcTemplate.update(
                     "INSERT INTO lifecycle_test (test_name, status) VALUES (?, ?)",
                     "stability_test_" + i, "ITERATION_" + i);
 
-                // 조회 작업
                 Integer count = jdbcTemplate.queryForObject(
                     "SELECT COUNT(*) FROM lifecycle_test WHERE test_name LIKE 'stability_test_%'", 
                     Integer.class);
 
                 assertTrue(count > 0, "데이터 조회가 정상적으로 작동해야 함");
 
-                // 업데이트 작업
                 if (i % 5 == 0) {
                     jdbcTemplate.update(
                         "UPDATE lifecycle_test SET status = 'UPDATED' WHERE test_name = ?",
@@ -229,7 +202,6 @@ public class ContainerLifecycleTest {
 
                 successCount++;
 
-                // 잠시 대기
                 if (i % 5 == 0) {
                     Thread.sleep(50);
                 }
@@ -244,7 +216,6 @@ public class ContainerLifecycleTest {
             }
         }
 
-        // 최종 결과 검증
         assertTrue(successCount >= iterations * 0.9, "90% 이상의 작업이 성공해야 함");
         assertTrue(errorCount < iterations * 0.1, "오류율이 10% 미만이어야 함");
 
@@ -264,25 +235,20 @@ public class ContainerLifecycleTest {
         ContainerInfo dbInfo = containerManager.getContainer("lifecycleDb");
         GenericContainer<?> container = dbInfo.container();
 
-        // 컨테이너 리소스 정보 확인
         assertNotNull(container.getContainerId(), "컨테이너 ID가 존재해야 함");
         assertTrue(container.isRunning(), "컨테이너가 실행 중이어야 함");
 
-        // 메모리 및 CPU 사용량 정보 확인 (가능한 경우)
         String containerId = container.getContainerId();
         assertTrue(containerId.length() > 10, "유효한 컨테이너 ID여야 함");
 
-        // 포트 매핑 정보 확인
         Integer mappedPort = container.getFirstMappedPort();
         assertNotNull(mappedPort, "포트가 매핑되어야 함");
         assertTrue(mappedPort > 1024, "매핑된 포트가 유효한 범위여야 함");
 
-        // 네트워크 연결 확인
         String host = container.getHost();
         assertTrue("localhost".equals(host) || "127.0.0.1".equals(host) || host.matches("\\d+\\.\\d+\\.\\d+\\.\\d+"), 
             "유효한 호스트 주소여야 함");
 
-        // 데이터베이스 연결 풀 리소스 확인
         assertDoesNotThrow(() -> {
             for (int i = 0; i < 5; i++) {
                 jdbcTemplate.queryForObject("SELECT 1", Integer.class);

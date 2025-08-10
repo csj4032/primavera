@@ -103,12 +103,10 @@ public class ContainerManager {
             try {
                 log.info("Starting {} container: {}", type, name);
 
-                // 새로운 설정 구조로 변경
                 ContainerConfiguration.ContainerInstanceConfig instanceConfig = configuration
                         .getContainerConfig(name)
                         .orElse(createDefaultInstanceConfig(name, type));
                 
-                // 타입 일치성 검증
                 if (instanceConfig.getType() != type) {
                     log.warn("Type mismatch for container '{}': annotation={}, config={}. Using annotation type.", 
                         name, type, instanceConfig.getType());
@@ -240,7 +238,6 @@ public class ContainerManager {
                 }
             }
             default -> {
-                // Kafka, Elasticsearch, Vault는 BaseContainerSpec 사용
                 config.setKafka(spec);
                 config.setElasticsearch(spec);
                 config.setVault(spec);

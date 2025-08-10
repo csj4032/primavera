@@ -27,7 +27,6 @@ public class MySQLContainerCreator implements ContainerCreator {
                     .withPassword(mysqlSpec.getPassword())
                     .withEnv("MYSQL_ROOT_PASSWORD", mysqlSpec.getRootPassword());
                     
-            // MySQL 고유 설정 적용
             if (mysqlSpec.getCharacterSet() != null) {
                 container.withEnv("MYSQL_CHARACTER_SET_SERVER", mysqlSpec.getCharacterSet());
             }
@@ -55,7 +54,6 @@ public class MySQLContainerCreator implements ContainerCreator {
                     .withEnv("MYSQL_ROOT_PASSWORD", "primavera");
         }
         
-        // 공통 환경 변수 적용
         if (spec.getEnvironment() != null) {
             spec.getEnvironment().forEach(container::withEnv);
         }

@@ -10,9 +10,6 @@ import org.testcontainers.containers.PostgreSQLContainer;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * PostgreSQL BeanCreator 실제 연결 테스트 (간단 버전)
- */
 @Slf4j
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -27,7 +24,6 @@ class PostgreSQLBeanCreatorRealTest {
     void setUp() {
         beanCreator = new PostgreSQLBeanCreator();
         
-        // PostgreSQL 컨테이너 생성
         container = new PostgreSQLContainer<>("postgres:15-alpine")
                 .withDatabaseName("testdb")
                 .withUsername("testuser")
@@ -35,7 +31,6 @@ class PostgreSQLBeanCreatorRealTest {
         
         container.start();
         
-        // Spec 설정
         spec = new PostgreSqlContainerSpec();
         spec.setLocale("en_US.UTF-8");
         spec.setEncoding("UTF8");
@@ -71,7 +66,6 @@ class PostgreSQLBeanCreatorRealTest {
     @Order(2)
     @DisplayName("PostgreSQL DataSource 빈 생성 및 실제 연결 테스트")
     void testCreateBeanWithRealConnection() {
-        // 실제 컨테이너 정보를 사용하여 ContainerInfo 생성
         ContainerInfo containerInfo = new ContainerInfo(
                 "test-postgresql",
                 ContainerType.POSTGRESQL,
@@ -79,13 +73,11 @@ class PostgreSQLBeanCreatorRealTest {
                 spec
         );
         
-        // 실제 DataSource 생성 및 연결 테스트
         HikariDataSource dataSource = (HikariDataSource) assertDoesNotThrow(() -> beanCreator.createBean(containerInfo));
         
         assertNotNull(dataSource, "생성된 DataSource가 null이 아니어야 합니다");
         assertInstanceOf(HikariDataSource.class, dataSource, "HikariDataSource 인스턴스여야 합니다");
         
-        // 실제 데이터베이스 연결 테스트
         assertDoesNotThrow(() -> {
             try (var connection = dataSource.getConnection()) {
                 assertTrue(connection.isValid(5), "연결이 유효해야 합니다");
@@ -97,7 +89,6 @@ class PostgreSQLBeanCreatorRealTest {
             }
         }, "PostgreSQL 연결이 성공해야 합니다");
         
-        // DataSource 종료
         dataSource.close();
         log.info("✅ PostgreSQL DataSource 생성 및 연결 테스트 성공");
     }
@@ -118,7 +109,6 @@ class PostgreSQLBeanCreatorRealTest {
         HikariDataSource dataSource = (HikariDataSource) beanCreator.createBean(containerInfo);
         assertNotNull(dataSource, "DataSource가 생성되어야 합니다");
         
-        // 실제 연결 테스트
         assertDoesNotThrow(() -> {
             try (var connection = dataSource.getConnection()) {
                 assertTrue(connection.isValid(3), "SSL 비활성화 연결이 유효해야 합니다");

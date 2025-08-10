@@ -10,9 +10,6 @@ import org.testcontainers.containers.MySQLContainer;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * MySQL BeanCreator 실제 연결 테스트 (간단 버전)
- */
 @Slf4j
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -27,7 +24,6 @@ class MySQLBeanCreatorRealTest {
     void setUp() {
         beanCreator = new MySQLBeanCreator();
         
-        // MySQL 컨테이너 생성
         container = new MySQLContainer<>("mysql:8.0")
                 .withDatabaseName("testdb")
                 .withUsername("testuser")
@@ -35,7 +31,6 @@ class MySQLBeanCreatorRealTest {
         
         container.start();
         
-        // Spec 설정
         spec = new MySqlContainerSpec();
         spec.setCharacterSet("UTF-8");
         spec.setCollation("utf8mb4_unicode_ci");
@@ -70,7 +65,6 @@ class MySQLBeanCreatorRealTest {
     @Order(2)
     @DisplayName("MySQL DataSource 빈 생성 및 실제 연결 테스트")
     void testCreateBeanWithRealConnection() {
-        // ContainerInfo 생성
         ContainerInfo containerInfo = new ContainerInfo(
                 "test-mysql",
                 ContainerType.MYSQL,
@@ -78,13 +72,11 @@ class MySQLBeanCreatorRealTest {
                 spec
         );
 
-        // 실제 DataSource 생성 및 연결 테스트
         HikariDataSource dataSource = (HikariDataSource) assertDoesNotThrow(() -> beanCreator.createBean(containerInfo));
         
         assertNotNull(dataSource, "생성된 DataSource가 null이 아니어야 합니다");
         assertInstanceOf(HikariDataSource.class, dataSource, "HikariDataSource 인스턴스여야 합니다");
         
-        // 실제 데이터베이스 연결 테스트
         assertDoesNotThrow(() -> {
             try (var connection = dataSource.getConnection()) {
                 assertTrue(connection.isValid(5), "연결이 유효해야 합니다");
@@ -96,7 +88,6 @@ class MySQLBeanCreatorRealTest {
             }
         }, "MySQL 연결이 성공해야 합니다");
         
-        // DataSource 종료
         dataSource.close();
         log.info("✅ MySQL DataSource 생성 및 연결 테스트 성공");
     }
@@ -105,7 +96,6 @@ class MySQLBeanCreatorRealTest {
     @Order(3)
     @DisplayName("MySQL SSL 비활성화 설정 테스트")
     void testSslDisabledSetting() {
-        // SSL 비활성화 테스트
         spec.setSslEnabled(false);
         
         ContainerInfo containerInfo = new ContainerInfo(
@@ -118,7 +108,6 @@ class MySQLBeanCreatorRealTest {
         HikariDataSource dataSource = (HikariDataSource) beanCreator.createBean(containerInfo);
         assertNotNull(dataSource, "SSL 비활성화 DataSource가 생성되어야 합니다");
         
-        // 실제 연결 테스트
         assertDoesNotThrow(() -> {
             try (var connection = dataSource.getConnection()) {
                 assertTrue(connection.isValid(3), "SSL 비활성화 연결이 유효해야 합니다");

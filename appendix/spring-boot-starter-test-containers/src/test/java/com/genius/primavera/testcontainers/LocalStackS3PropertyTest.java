@@ -12,9 +12,6 @@ import org.testcontainers.containers.localstack.LocalStackContainer;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * LocalStack S3 프로퍼티 자동 등록 및 버킷 생성 테스트
- */
 @Slf4j
 @SpringBootTest(properties = {
     "spring.test.context.cache.maxSize=0",
@@ -29,12 +26,8 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 class LocalStackS3PropertyTest {
 
-    /**
-     * LocalStack 엔드포인트를 자동으로 Spring 프로퍼티에 등록
-     */
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
-        // 이 한 줄로 모든 LocalStack 프로퍼티가 자동 등록됩니다!
         LocalStackPropertyRegistrar.registerEndpoints(registry);
     }
 
@@ -50,7 +43,6 @@ class LocalStackS3PropertyTest {
         
         LocalStackContainer container = (LocalStackContainer) localStackInfo.container();
         
-        // 기본 엔드포인트 확인
         String endpoint = container.getEndpoint().toString();
         assertNotNull(endpoint, "엔드포인트가 존재해야 합니다");
         assertTrue(endpoint.startsWith("http://"), "HTTP 엔드포인트여야 합니다");
@@ -65,7 +57,6 @@ class LocalStackS3PropertyTest {
     @Order(2)
     @DisplayName("LocalStack 컨테이너 정보 가져오기 테스트")
     void testGetLocalStackContainer() {
-        // LocalStackPropertyRegistrar를 통해 컨테이너 정보 가져오기
         LocalStackContainer container = assertDoesNotThrow(() -> {
             return LocalStackPropertyRegistrar.getContainer("localstack");
         }, "LocalStack 컨테이너 정보를 가져오는 데 성공해야 합니다");
@@ -86,12 +77,10 @@ class LocalStackS3PropertyTest {
     void testLocalStackServiceAccess() {
         LocalStackContainer container = LocalStackPropertyRegistrar.getContainer("localstack");
         
-        // 다양한 서비스 엔드포인트 테스트
         String endpoint = container.getEndpoint().toString();
         assertNotNull(endpoint, "기본 엔드포인트가 존재해야 합니다");
         assertTrue(endpoint.startsWith("http://"), "HTTP 엔드포인트여야 합니다");
         
-        // S3 엔드포인트 테스트
         try {
             String s3Endpoint = container.getEndpointOverride(LocalStackContainer.Service.S3).toString();
             assertNotNull(s3Endpoint, "S3 엔드포인트가 존재해야 합니다");
@@ -100,7 +89,6 @@ class LocalStackS3PropertyTest {
             log.warn("S3 엔드포인트 비활성화: {}", e.getMessage());
         }
         
-        // DynamoDB 엔드포인트 테스트
         try {
             String dynamoEndpoint = container.getEndpointOverride(LocalStackContainer.Service.DYNAMODB).toString();
             assertNotNull(dynamoEndpoint, "DynamoDB 엔드포인트가 존재해야 합니다");
@@ -116,10 +104,8 @@ class LocalStackS3PropertyTest {
     @Order(4)
     @DisplayName("LocalStack 프로퍼티 등록 확인")
     void testLocalStackPropertyRegistration() {
-        // LocalStackPropertyRegistrar가 제대로 동작하는지 확인
         LocalStackContainer container = LocalStackPropertyRegistrar.getContainer("localstack");
         
-        // 컨테이너 정보 검증
         assertNotNull(container.getEndpoint(), "엔드포인트가 존재해야 합니다");
         assertNotNull(container.getAccessKey(), "Access Key가 존재해야 합니다");
         assertNotNull(container.getSecretKey(), "Secret Key가 존재해야 합니다");
@@ -131,7 +117,6 @@ class LocalStackS3PropertyTest {
         log.info("  - Secret Key: [****]");
         log.info("  - Region: {}", container.getRegion());
         
-        // LocalStackPropertyRegistrar 기본 컨테이너 가져오기 테스트
         LocalStackContainer defaultContainer = LocalStackPropertyRegistrar.getContainer();
         assertEquals(container.getContainerId(), defaultContainer.getContainerId(), 
                 "기본 컨테이너와 명시적 컨테이너가 동일해야 합니다");

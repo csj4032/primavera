@@ -38,13 +38,11 @@ public class MongoDBContainerCreator implements ContainerCreator {
                 container.withEnv("MONGO_WIRED_TIGER_CACHE_SIZE_GB", String.valueOf(mongoSpec.getWiredTigerCacheSizeMB() / 1024.0));
             }
         } else {
-            // 기본 설정
             container.withEnv("MONGO_INITDB_ROOT_USERNAME", "primavera")
                     .withEnv("MONGO_INITDB_ROOT_PASSWORD", "primavera")
                     .withEnv("MONGO_INITDB_DATABASE", "primavera");
         }
         
-        // 공통 환경 변수 적용
         if (spec.getEnvironment() != null) {
             spec.getEnvironment().forEach(container::withEnv);
         }

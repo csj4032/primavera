@@ -123,11 +123,9 @@ public class ContainerBeanRegistrar {
         if (container instanceof ContainerInfo containerInfo) {
             boolean creatorExists = BeanCreatorRegistry.isSupported(containerInfo.type());
             if (!creatorExists) {
-                log.error("Bean creation returned null: No bean creator registered for container type '{}' (container: '{}')", 
-                    containerInfo.type(), containerName);
+                log.error("Bean creation returned null: No bean creator registered for container type '{}' (container: '{}')", containerInfo.type(), containerName);
             } else {
-                log.warn("Bean creation returned null: Bean creator exists but failed to create bean for container '{}' (type: '{}')", 
-                    containerName, containerInfo.type());
+                log.warn("Bean creation returned null: Bean creator exists but failed to create bean for container '{}' (type: '{}')", containerName, containerInfo.type());
             }
         } else {
             log.warn("Bean creation returned null for container: {}", container);
@@ -146,8 +144,6 @@ public class ContainerBeanRegistrar {
     }
     
     private Object createBean(ContainerInfo containerInfo) {
-        return BeanCreatorRegistry.findCreator(containerInfo.type())
-            .map(creator -> creator.createBean(containerInfo))
-            .orElse(null);
+        return BeanCreatorRegistry.findCreator(containerInfo.type()).map(creator -> creator.createBean(containerInfo)).orElse(null);
     }
 }

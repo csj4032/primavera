@@ -22,16 +22,10 @@ public record AwsProperties(Credentials credentials, Region region, S3 s3) {
         }
     }
 
-    /**
-     * LocalStack 사용 여부 확인
-     */
     public boolean isLocalStack() {
         return "test".equals(credentials.accessKey()) || s3.isLocalStack();
     }
 
-    /**
-     * 실제 AWS 환경 사용 여부 확인
-     */
     public boolean isRealAws() {
         return !isLocalStack();
     }

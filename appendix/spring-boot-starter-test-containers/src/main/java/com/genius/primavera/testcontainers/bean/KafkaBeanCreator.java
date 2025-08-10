@@ -15,21 +15,17 @@ public class KafkaBeanCreator implements BeanCreator {
     public Object createBean(ContainerInfo containerInfo) {
         String bootstrapServers = containerInfo.getConnectionString();
         
-        // Producer 설정
         Map<String, Object> producerProps = createProducerProps(bootstrapServers);
         ProducerFactory<String, Object> producerFactory = new DefaultKafkaProducerFactory<>(producerProps);
         KafkaTemplate<String, Object> kafkaTemplate = new KafkaTemplate<>(producerFactory);
         
-        // Consumer 설정
         Map<String, Object> consumerProps = createConsumerProps(bootstrapServers);
         ConsumerFactory<String, Object> consumerFactory = new DefaultKafkaConsumerFactory<>(consumerProps);
         
-        // Listener Container Factory 설정
         ConcurrentKafkaListenerContainerFactory<String, Object> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory);
         factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL_IMMEDIATE);
         
-        // 복합 설정 객체 반환 (KafkaTemplate이 가장 자주 사용됨)
         return kafkaTemplate;
     }
     

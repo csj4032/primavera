@@ -19,7 +19,6 @@ public class KafkaContainerCreator implements ContainerCreator {
         KafkaContainer container = new KafkaContainer(DockerImageName.parse(image))
                 .withStartupTimeout(Duration.ofSeconds(timeout));
         
-        // 공통 환경 변수 적용
         if (spec.getEnvironment() != null) {
             spec.getEnvironment().forEach(container::withEnv);
         }

@@ -68,7 +68,6 @@ public class TestContainerConfigurationProcessor {
         return enabled.getOrDefault(typeName, true);
     }
     
-    // Getters and setters for configuration properties
     
     public Map<String, Boolean> getEnabled() {
         return enabled;

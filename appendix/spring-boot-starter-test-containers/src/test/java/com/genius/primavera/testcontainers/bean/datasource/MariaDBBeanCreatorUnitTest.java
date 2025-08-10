@@ -14,9 +14,6 @@ import org.testcontainers.containers.GenericContainer;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-/**
- * MariaDB BeanCreator 설정 검증 테스트 (실제 연결 없음)
- */
 @Slf4j
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -33,13 +30,11 @@ class MariaDBBeanCreatorUnitTest {
         @Override
         public Object createBean(ContainerInfo containerInfo) {
             if (shouldReturnConfig) {
-                // 실제 DataSource 생성 대신 간단한 정보만 반환
                 return "MariaDB DataSource Configuration: " + containerInfo.name();
             }
             return super.createBean(containerInfo);
         }
         
-        // protected 메서드를 public으로 노출
         public HikariConfig testCreateBaseConfig(ContainerInfo containerInfo) {
             return createBaseConfig(containerInfo);
         }
@@ -61,11 +56,9 @@ class MariaDBBeanCreatorUnitTest {
         MockitoAnnotations.openMocks(this);
         beanCreator = new TestableMariaDBBeanCreator();
         
-        // Mock 컨테이너 설정
         when(mockContainer.getHost()).thenReturn("localhost");
         when(mockContainer.getFirstMappedPort()).thenReturn(3307);
         
-        // Spec 설정
         spec = new MariaDbContainerSpec();
         spec.setCharacterSet("utf8mb4");
         spec.setCollation("utf8mb4_unicode_ci");
@@ -96,7 +89,6 @@ class MariaDBBeanCreatorUnitTest {
                 spec
         );
 
-        // HikariConfig 생성 (연결 없음)
         HikariConfig config = beanCreator.testCreateBaseConfig(containerInfo);
         
         assertNotNull(config, "HikariConfig가 생성되어야 합니다");
@@ -150,7 +142,6 @@ class MariaDBBeanCreatorUnitTest {
                 spec
         );
 
-        // 연결 없이 설정만 검증
         Object result = beanCreator.createBean(containerInfo);
         
         assertNotNull(result, "결과가 null이 아니어야 합니다");
@@ -168,7 +159,6 @@ class MariaDBBeanCreatorUnitTest {
     void testDefaultSettings() {
         beanCreator.setReturnConfigOnly(true);
         
-        // 기본 spec 사용
         MariaDbContainerSpec defaultSpec = new MariaDbContainerSpec();
         
         ContainerInfo containerInfo = new ContainerInfo(
@@ -178,7 +168,6 @@ class MariaDBBeanCreatorUnitTest {
                 defaultSpec
         );
 
-        // 기본 설정으로 생성 검증
         Object result = beanCreator.createBean(containerInfo);
         
         assertNotNull(result, "결과가 생성되어야 합니다");
@@ -195,7 +184,6 @@ class MariaDBBeanCreatorUnitTest {
     void testAdvancedSettings() {
         beanCreator.setReturnConfigOnly(true);
         
-        // SQL 모드 및 스토리지 엔진 설정
         spec.setSqlMode(MariaDbContainerSpec.SqlMode.STRICT_TRANS_TABLES);
         spec.setDefaultStorageEngine(MariaDbContainerSpec.StorageEngine.INNODB);
         
@@ -209,7 +197,6 @@ class MariaDBBeanCreatorUnitTest {
         Object result = beanCreator.createBean(containerInfo);
         assertNotNull(result, "결과가 생성되어야 합니다");
         
-        // 설정이 올바르게 적용되었는지 확인
         assertTrue(result.toString().contains("test-mariadb-advanced"), "컨테이너 이름이 포함되어야 합니다");
         
         log.info("✅ 고급 설정 검증 완료: {}", result);

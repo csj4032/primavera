@@ -20,14 +20,6 @@ import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * 성능 및 연결 풀 관리 테스트
- * - 연결 풀 설정 검증
- * - 동시성 연결 테스트
- * - 성능 벤치마크
- * - 연결 누수 감지
- * - 부하 테스트
- */
 @Slf4j
 @SpringBootTest
 @ActiveProfiles("test")
@@ -58,7 +50,6 @@ public class PerformanceConnectionPoolTest {
         benchmarkJdbc = new JdbcTemplate(benchmarkDataSource);
         executorService = Executors.newFixedThreadPool(50);
 
-        // 테스트용 테이블 생성
         performanceJdbc.execute("""
                     CREATE TABLE performance_test (
                         id BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -135,7 +126,6 @@ public class PerformanceConnectionPoolTest {
 
                     for (int j = 0; j < operationsPerThread; j++) {
                         try (Connection conn = performanceDataSource.getConnection()) {
-                            // 간단한 쿼리 실행
                             performanceJdbc.update(
                                     "INSERT INTO performance_test (data) VALUES (?)",
                                     "Thread-" + threadId + "-Operation-" + j);
@@ -164,7 +154,6 @@ public class PerformanceConnectionPoolTest {
         assertEquals(expectedOperations, successCount.get(), "모든 연결 작업이 성공해야 함");
         assertEquals(0, errorCount.get(), "연결 오류가 없어야 함");
 
-        // 실제 DB에 저장된 데이터 확인
         Integer recordCount = performanceJdbc.queryForObject("SELECT COUNT(*) FROM performance_test", Integer.class);
         assertEquals(expectedOperations, recordCount, "모든 데이터가 DB에 저장되어야 함");
 
@@ -181,7 +170,6 @@ public class PerformanceConnectionPoolTest {
 
         long startTime = System.currentTimeMillis();
 
-        // 배치 삽입 테스트
         for (int i = 0; i < totalRecords; i += batchSize) {
             List<String> batch = IntStream.range(i, Math.min(i + batchSize, totalRecords))
                     .mapToObj(n -> "Bulk-Insert-Data-" + n + "-" + System.nanoTime())
@@ -197,11 +185,9 @@ public class PerformanceConnectionPoolTest {
         long endTime = System.currentTimeMillis();
         long duration = endTime - startTime;
 
-        // 결과 검증
         Integer finalCount = performanceJdbc.queryForObject("SELECT COUNT(*) FROM performance_test", Integer.class);
         assertTrue(finalCount >= totalRecords, "최소 " + totalRecords + "개의 레코드가 있어야 함");
 
-        // 성능 지표 계산
         double recordsPerSecond = (double) totalRecords / (duration / 1000.0);
         assertTrue(recordsPerSecond > 100, "초당 100개 이상의 레코드가 처리되어야 함");
 
@@ -215,12 +201,10 @@ public class PerformanceConnectionPoolTest {
     void testQueryPerformanceBenchmark() {
         int testDataSize = 1000;
 
-        // 두 DB에 동일한 테스트 데이터 삽입
         List<String> testData = IntStream.range(0, testDataSize)
                 .mapToObj(i -> "Benchmark-Data-" + i + "-" + (i % 100))
                 .toList();
 
-        // MariaDB 데이터 삽입
         long mariaDbInsertStart = System.currentTimeMillis();
         performanceJdbc.batchUpdate(
                 "INSERT INTO performance_test (data) VALUES (?)",
@@ -229,7 +213,6 @@ public class PerformanceConnectionPoolTest {
                 (ps, data) -> ps.setString(1, data));
         long mariaDbInsertTime = System.currentTimeMillis() - mariaDbInsertStart;
 
-        // PostgreSQL 데이터 삽입
         long pgInsertStart = System.currentTimeMillis();
         benchmarkJdbc.batchUpdate(
                 "INSERT INTO performance_test (data) VALUES (?)",
@@ -238,10 +221,8 @@ public class PerformanceConnectionPoolTest {
                 (ps, data) -> ps.setString(1, data));
         long pgInsertTime = System.currentTimeMillis() - pgInsertStart;
 
-        // 조회 성능 테스트
         int queryCount = 100;
 
-        // MariaDB 조회 성능
         long mariaDbQueryStart = System.currentTimeMillis();
         for (int i = 0; i < queryCount; i++) {
             String pattern = "%-Data-" + (i % 100) + "-%";
@@ -252,7 +233,6 @@ public class PerformanceConnectionPoolTest {
         }
         long mariaDbQueryTime = System.currentTimeMillis() - mariaDbQueryStart;
 
-        // PostgreSQL 조회 성능  
         long pgQueryStart = System.currentTimeMillis();
         for (int i = 0; i < queryCount; i++) {
             String pattern = "%-Data-" + (i % 100) + "-%";
@@ -263,7 +243,6 @@ public class PerformanceConnectionPoolTest {
         }
         long pgQueryTime = System.currentTimeMillis() - pgQueryStart;
 
-        // 성능 비교 로깅
         log.info("성능 벤치마크 결과:");
         log.info("MariaDB - 삽입: {}ms, 조회: {}ms", mariaDbInsertTime, mariaDbQueryTime);
         log.info("PostgreSQL - 삽입: {}ms, 조회: {}ms", pgInsertTime, pgQueryTime);
@@ -280,10 +259,8 @@ public class PerformanceConnectionPoolTest {
     void testConnectionLeakDetection() throws InterruptedException, SQLException {
         HikariDataSource hikariDs = (HikariDataSource) performanceDataSource;
 
-        // 현재 활성 연결 수 확인
         int initialActiveConnections = hikariDs.getHikariPoolMXBean().getActiveConnections();
 
-        // 의도적으로 연결을 많이 열고 일부는 닫지 않음
         List<Connection> connections = new ArrayList<>();
 
         try {
@@ -291,18 +268,15 @@ public class PerformanceConnectionPoolTest {
                 Connection conn = performanceDataSource.getConnection();
                 connections.add(conn);
 
-                // 간단한 쿼리 실행
                 try (var stmt = conn.prepareStatement("SELECT 1")) {
                     stmt.execute();
                 }
             }
 
-            // 일부 연결만 닫음
             for (int i = 0; i < 3; i++) {
                 connections.get(i).close();
             }
 
-            // 활성 연결 수가 증가했는지 확인
             int activeConnections = hikariDs.getHikariPoolMXBean().getActiveConnections();
             assertTrue(activeConnections >= initialActiveConnections,
                     "활성 연결 수가 증가해야 함");
@@ -311,19 +285,16 @@ public class PerformanceConnectionPoolTest {
                     initialActiveConnections, activeConnections, hikariDs.getHikariPoolMXBean().getTotalConnections());
 
         } finally {
-            // 남은 연결들 정리
             for (Connection conn : connections) {
                 try {
                     if (!conn.isClosed()) {
                         conn.close();
                     }
                 } catch (SQLException e) {
-                    // 무시
                 }
             }
         }
 
-        // 잠시 대기 후 연결이 정리되었는지 확인
         Thread.sleep(1000);
 
         int finalActiveConnections = hikariDs.getHikariPoolMXBean().getActiveConnections();

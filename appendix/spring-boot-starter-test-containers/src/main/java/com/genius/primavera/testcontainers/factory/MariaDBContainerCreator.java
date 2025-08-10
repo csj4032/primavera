@@ -45,7 +45,6 @@ public class MariaDBContainerCreator implements ContainerCreator {
                     .withEnv("MARIADB_ROOT_PASSWORD", "primavera");
         }
         
-        // 공통 환경 변수 적용
         if (spec.getEnvironment() != null) {
             spec.getEnvironment().forEach(container::withEnv);
         }

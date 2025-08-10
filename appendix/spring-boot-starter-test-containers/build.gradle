@@ -41,7 +41,16 @@ dependencies {
     compileOnly "org.mongodb:mongodb-driver-sync:${mongodbDriverVersion}"
     compileOnly "com.zaxxer:HikariCP"
     compileOnly "redis.clients:jedis"
-
+    
+    // AWS SDK v2 - LocalStackBeanCreator를 위한 선택적 의존성
+    compileOnly "software.amazon.awssdk:core:${awsSdkVersion}"
+    compileOnly "software.amazon.awssdk:auth:${awsSdkVersion}"
+    compileOnly "software.amazon.awssdk:regions:${awsSdkVersion}"
+    compileOnly "software.amazon.awssdk:s3:${awsSdkVersion}"
+    compileOnly "software.amazon.awssdk:dynamodb:${awsSdkVersion}"
+    compileOnly "software.amazon.awssdk:sqs:${awsSdkVersion}"
+    compileOnly "software.amazon.awssdk:sns:${awsSdkVersion}"
+    compileOnly "software.amazon.awssdk:lambda:${awsSdkVersion}"
 
     // 테스트에서만 사용
     testImplementation "com.fasterxml.jackson.core:jackson-databind"
@@ -57,6 +66,16 @@ dependencies {
     testImplementation "org.postgresql:postgresql"
     testImplementation "redis.clients:jedis"
     testImplementation "com.zaxxer:HikariCP"
+
+    // AWS SDK v2 - LocalStackBeanCreator를 위한 선택적 의존성
+    testImplementation "software.amazon.awssdk:core:${awsSdkVersion}"
+    testImplementation "software.amazon.awssdk:auth:${awsSdkVersion}"
+    testImplementation "software.amazon.awssdk:regions:${awsSdkVersion}"
+    testImplementation "software.amazon.awssdk:s3:${awsSdkVersion}"
+    testImplementation "software.amazon.awssdk:dynamodb:${awsSdkVersion}"
+    testImplementation "software.amazon.awssdk:sqs:${awsSdkVersion}"
+    testImplementation "software.amazon.awssdk:sns:${awsSdkVersion}"
+    testImplementation "software.amazon.awssdk:lambda:${awsSdkVersion}"
 
     // 어노테이션 처리
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'

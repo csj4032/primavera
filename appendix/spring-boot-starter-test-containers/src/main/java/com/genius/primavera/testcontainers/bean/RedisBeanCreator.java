@@ -17,7 +17,6 @@ public class RedisBeanCreator implements BeanCreator {
         redisConfig.setHostName(containerInfo.getHost());
         redisConfig.setPort(containerInfo.getMappedPort());
         
-        // Redis 비밀번호 처리
         if (containerInfo.spec() instanceof RedisContainerSpec redisSpec && redisSpec.getPassword() != null) {
             redisConfig.setPassword(redisSpec.getPassword());
         }

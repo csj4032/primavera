@@ -22,7 +22,6 @@ public class ElasticsearchContainerCreator implements ContainerCreator {
                 .withEnv("xpack.security.http.ssl.enabled", "false")
                 .withEnv("xpack.security.transport.ssl.enabled", "false");
         
-        // 공통 환경 변수 적용
         if (spec.getEnvironment() != null) {
             spec.getEnvironment().forEach(container::withEnv);
         }

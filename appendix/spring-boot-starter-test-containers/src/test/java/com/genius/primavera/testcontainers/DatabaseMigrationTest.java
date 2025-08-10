@@ -17,13 +17,6 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * 데이터베이스 마이그레이션 및 스키마 관리 테스트
- * - 초기 스키마 생성
- * - 데이터 마이그레이션
- * - 스키마 변경 및 롤백
- * - 다중 데이터베이스 간 데이터 이동
- */
 @Slf4j
 @SpringBootTest
 @ActiveProfiles("test")
@@ -66,7 +59,6 @@ class DatabaseMigrationTest {
     @Order(1)
     @DisplayName("초기 스키마 생성 및 검증")
     void testInitialSchemaCreation() {
-        // Source DB 스키마 생성
         sourceJdbc.execute("""
             CREATE TABLE users (
                 id BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -88,7 +80,6 @@ class DatabaseMigrationTest {
             )
         """);
 
-        // 초기 데이터 삽입
         sourceJdbc.update("""
             INSERT INTO users (username, email, status) VALUES 
             ('alice', 'alice@test.com', 'ACTIVE'),
@@ -103,12 +94,10 @@ class DatabaseMigrationTest {
             (2, 'Keyboard', 80.00, '2024-01-17')
         """);
 
-        // 스키마 검증
         List<String> tables = getTables(sourceDataSource);
         assertTrue(tables.contains("users"), "users 테이블이 생성되어야 함");
         assertTrue(tables.contains("orders"), "orders 테이블이 생성되어야 함");
 
-        // 데이터 검증
         Integer userCount = sourceJdbc.queryForObject("SELECT COUNT(*) FROM users", Integer.class);
         Integer orderCount = sourceJdbc.queryForObject("SELECT COUNT(*) FROM orders", Integer.class);
         
@@ -122,7 +111,6 @@ class DatabaseMigrationTest {
     @Order(2)
     @DisplayName("데이터베이스 간 데이터 마이그레이션")
     void testCrossDatabaseMigration() {
-        // Target DB에 동일한 스키마 생성
         targetJdbc.execute("""
             CREATE TABLE users (
                 id BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -144,7 +132,6 @@ class DatabaseMigrationTest {
             )
         """);
 
-        // ACTIVE 사용자만 마이그레이션
         List<Object[]> activeUsers = sourceJdbc.query(
             "SELECT username, email, status FROM users WHERE status = 'ACTIVE'",
             (rs, rowNum) -> new Object[]{
@@ -159,7 +146,6 @@ class DatabaseMigrationTest {
                 user[0], user[1], user[2]);
         }
 
-        // 마이그레이션된 사용자의 주문도 복사
         List<Object[]> orders = sourceJdbc.query("""
             SELECT o.user_id, o.product_name, o.amount, o.order_date 
             FROM orders o 
@@ -178,7 +164,6 @@ class DatabaseMigrationTest {
                 order[0], order[1], order[2], order[3]);
         }
 
-        // 마이그레이션 결과 검증
         Integer migratedUsers = targetJdbc.queryForObject("SELECT COUNT(*) FROM users", Integer.class);
         Integer migratedOrders = targetJdbc.queryForObject("SELECT COUNT(*) FROM orders", Integer.class);
 
@@ -192,7 +177,6 @@ class DatabaseMigrationTest {
     @Order(3)
     @DisplayName("PostgreSQL로 스키마 변환 마이그레이션")
     void testPostgreSQLSchemaMigration() {
-        // PostgreSQL용 스키마 생성 (타입 변환 적용)
         migrationJdbc.execute("""
             CREATE TABLE users (
                 id BIGSERIAL PRIMARY KEY,
@@ -215,7 +199,6 @@ class DatabaseMigrationTest {
             )
         """);
 
-        // MySQL에서 PostgreSQL로 데이터 마이그레이션
         List<Object[]> users = sourceJdbc.query(
             "SELECT username, email, status FROM users",
             (rs, rowNum) -> new Object[]{
@@ -230,7 +213,6 @@ class DatabaseMigrationTest {
                 user[0], user[1], user[2]);
         }
 
-        // 주문 데이터 마이그레이션 (사용자 ID 매핑 필요)
         List<Object[]> orders = sourceJdbc.query("""
             SELECT u.username, o.product_name, o.amount, o.order_date
             FROM orders o 
@@ -243,7 +225,6 @@ class DatabaseMigrationTest {
         });
 
         for (Object[] order : orders) {
-            // PostgreSQL에서 사용자 ID 조회
             Long userId = migrationJdbc.queryForObject(
                 "SELECT id FROM users WHERE username = ?", Long.class, order[0]);
             
@@ -252,7 +233,6 @@ class DatabaseMigrationTest {
                 userId, order[1], order[2], order[3]);
         }
 
-        // PostgreSQL 마이그레이션 검증
         Integer pgUsers = migrationJdbc.queryForObject("SELECT COUNT(*) FROM users", Integer.class);
         Integer pgOrders = migrationJdbc.queryForObject("SELECT COUNT(*) FROM orders", Integer.class);
 
@@ -266,15 +246,12 @@ class DatabaseMigrationTest {
     @Order(4)
     @DisplayName("스키마 변경 및 데이터 보존")
     void testSchemaEvolution() {
-        // 새로운 컬럼 추가
         sourceJdbc.execute("ALTER TABLE users ADD COLUMN phone VARCHAR(20)");
         sourceJdbc.execute("ALTER TABLE users ADD COLUMN last_login TIMESTAMP NULL");
 
-        // 기존 데이터에 새 컬럼 값 업데이트
         sourceJdbc.update("UPDATE users SET phone = '010-1234-5678', last_login = NOW() WHERE username = 'alice'");
         sourceJdbc.update("UPDATE users SET phone = '010-9876-5432' WHERE username = 'bob'");
 
-        // 새 컬럼으로 데이터 검증
         String alicePhone = sourceJdbc.queryForObject(
             "SELECT phone FROM users WHERE username = 'alice'", String.class);
         assertEquals("010-1234-5678", alicePhone, "Alice의 전화번호가 설정되어야 함");
@@ -283,7 +260,6 @@ class DatabaseMigrationTest {
             "SELECT COUNT(*) FROM users WHERE last_login IS NOT NULL", Long.class);
         assertEquals(1L, usersWithLogin, "로그인 기록이 있는 사용자가 1명이어야 함");
 
-        // 인덱스 추가
         sourceJdbc.execute("CREATE INDEX idx_users_email ON users(email)");
         sourceJdbc.execute("CREATE INDEX idx_orders_date ON orders(order_date)");
 
@@ -294,7 +270,6 @@ class DatabaseMigrationTest {
     @Order(5)
     @DisplayName("복잡한 조인 쿼리를 통한 데이터 무결성 검증")
     void testComplexQueryDataIntegrity() {
-        // 복잡한 집계 쿼리로 데이터 무결성 검증
         List<Object[]> userOrderStats = sourceJdbc.query("""
             SELECT 
                 u.username,
@@ -318,11 +293,9 @@ class DatabaseMigrationTest {
 
         assertEquals(3, userOrderStats.size(), "3명의 사용자 통계가 있어야 함");
         
-        // Alice가 최고 구매자인지 확인
         Object[] topUser = userOrderStats.get(0);
         assertEquals("alice", topUser[0], "Alice가 최고 구매자여야 함");
 
-        // 비활성 사용자(Charlie)는 주문이 없는지 확인
         Object[] inactiveUser = userOrderStats.stream()
             .filter(stats -> "charlie".equals(stats[0]))
             .findFirst()
@@ -338,18 +311,14 @@ class DatabaseMigrationTest {
     @Order(6)
     @DisplayName("트랜잭션 롤백 및 복구 테스트")
     void testTransactionRollbackAndRecovery() {
-        // 트랜잭션 전 상태 저장
         Integer beforeUserCount = sourceJdbc.queryForObject("SELECT COUNT(*) FROM users", Integer.class);
         Integer beforeOrderCount = sourceJdbc.queryForObject("SELECT COUNT(*) FROM orders", Integer.class);
 
-        // 의도적으로 실패하는 트랜잭션
         assertThrows(Exception.class, () -> {
             sourceJdbc.execute("START TRANSACTION");
             try {
-                // 정상적인 삽입
                 sourceJdbc.update("INSERT INTO users (username, email) VALUES ('david', 'david@test.com')");
                 
-                // 외래키 제약 조건 위반으로 실패하는 삽입
                 sourceJdbc.update("INSERT INTO orders (user_id, product_name, amount, order_date) VALUES (999, 'Invalid Order', 100.00, '2024-01-01')");
                 
                 sourceJdbc.execute("COMMIT");
@@ -359,7 +328,6 @@ class DatabaseMigrationTest {
             }
         }, "외래키 제약 조건 위반으로 트랜잭션이 실패해야 함");
 
-        // 롤백 후 상태 확인
         Integer afterUserCount = sourceJdbc.queryForObject("SELECT COUNT(*) FROM users", Integer.class);
         Integer afterOrderCount = sourceJdbc.queryForObject("SELECT COUNT(*) FROM orders", Integer.class);
 

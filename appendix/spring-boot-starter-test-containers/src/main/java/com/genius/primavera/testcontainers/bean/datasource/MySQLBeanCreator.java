@@ -8,10 +8,6 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * MySQL 전용 DataSource 빈 생성기
- * MySQL 특화 설정을 포함한 HikariDataSource를 생성합니다.
- */
 @Slf4j
 public class MySQLBeanCreator extends DataSourceBeanCreator {
     
@@ -19,12 +15,10 @@ public class MySQLBeanCreator extends DataSourceBeanCreator {
     public Object createBean(ContainerInfo containerInfo) {
         HikariConfig config = createBaseConfig(containerInfo);
         
-        // MySQL 특화 설정 적용
         if (containerInfo.spec() instanceof MySqlContainerSpec spec) {
             applyCommonSettings(config, spec);
             applyMySQLSpecificSettings(config, spec);
         } else {
-            // 기본값 사용
             config.setUsername("primavera");
             config.setPassword("primavera");
             config.setMaximumPoolSize(10);
@@ -38,37 +32,28 @@ public class MySQLBeanCreator extends DataSourceBeanCreator {
         return new HikariDataSource(config);
     }
     
-    /**
-     * MySQL 특화 설정 적용
-     */
     private void applyMySQLSpecificSettings(HikariConfig config, MySqlContainerSpec spec) {
-        // 문자셋 설정
         if (spec.getCharacterSet() != null && !spec.getCharacterSet().isEmpty()) {
             config.addDataSourceProperty("characterEncoding", spec.getCharacterSet());
             config.addDataSourceProperty("useUnicode", "true");
         }
         
-        // Collation 설정
         if (spec.getCollation() != null && !spec.getCollation().isEmpty()) {
             config.addDataSourceProperty("connectionCollation", spec.getCollation());
         }
         
-        // 타임존 설정
         if (spec.getDefaultTimeZone() != null && !spec.getDefaultTimeZone().isEmpty()) {
             config.addDataSourceProperty("serverTimezone", spec.getDefaultTimeZone());
         } else {
             config.addDataSourceProperty("serverTimezone", "Asia/Seoul");
         }
         
-        // Session Variables 설정 (한번에 처리)
         StringBuilder sessionVars = new StringBuilder();
         
-        // SQL Mode 설정
         if (spec.getSqlMode() != null) {
             sessionVars.append("sql_mode='").append(spec.getSqlMode().name()).append("'");
         }
         
-        // Storage Engine 설정
         if (spec.getDefaultStorageEngine() != null) {
             if (sessionVars.length() > 0) {
                 sessionVars.append(",");
@@ -76,12 +61,10 @@ public class MySQLBeanCreator extends DataSourceBeanCreator {
             sessionVars.append("default_storage_engine=").append(spec.getDefaultStorageEngine().name());
         }
         
-        // sessionVariables 한번에 설정
         if (sessionVars.length() > 0) {
             config.addDataSourceProperty("sessionVariables", sessionVars.toString());
         }
         
-        // MySQL 성능 최적화 옵션 (기본값 사용)
         config.addDataSourceProperty("useServerPrepStmts", "true");
         config.addDataSourceProperty("cachePrepStmts", "true");
         config.addDataSourceProperty("prepStmtCacheSize", "256");
@@ -93,16 +76,13 @@ public class MySQLBeanCreator extends DataSourceBeanCreator {
         config.addDataSourceProperty("elideSetAutoCommits", "true");
         config.addDataSourceProperty("maintainTimeStats", "false");
         
-        // Batch 처리 최적화
         config.addDataSourceProperty("rewriteBatchedStatements", "true");
         config.addDataSourceProperty("allowMultiQueries", "true");
         
-        // 연결 설정
         config.addDataSourceProperty("autoReconnect", "true");
         config.addDataSourceProperty("tcpKeepAlive", "true");
         config.addDataSourceProperty("tcpNoDelay", "true");
         
-        // SSL 설정 (기본값: 테스트 환경에서는 비활성화)
         if (!spec.getSslEnabled()) {
             config.addDataSourceProperty("useSSL", "false");
             config.addDataSourceProperty("allowPublicKeyRetrieval", "true");

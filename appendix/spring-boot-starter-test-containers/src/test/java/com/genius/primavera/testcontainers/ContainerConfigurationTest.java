@@ -169,7 +169,6 @@ class ContainerConfigurationTest {
     void testContainerInstanceConfigs() {
         ContainerConfiguration config = new ContainerConfiguration();
         
-        // Create instance configs
         ContainerConfiguration.ContainerInstanceConfig dbConfig = new ContainerConfiguration.ContainerInstanceConfig();
         dbConfig.setType(ContainerType.MARIADB);
         
@@ -218,11 +217,9 @@ class ContainerConfigurationTest {
     void testContainerConfiguration() {
         ContainerConfiguration config = new ContainerConfiguration();
         
-        // Test empty configuration
         assertNotNull(config.getContainers(), "Containers map should not be null");
         assertTrue(config.getContainers().isEmpty(), "Containers map should be empty by default");
         
-        // Add a container configuration
         ContainerConfiguration.ContainerInstanceConfig instanceConfig = new ContainerConfiguration.ContainerInstanceConfig();
         instanceConfig.setType(ContainerType.MARIADB);
         

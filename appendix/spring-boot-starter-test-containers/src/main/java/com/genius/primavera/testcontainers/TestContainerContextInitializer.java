@@ -55,7 +55,6 @@ public class TestContainerContextInitializer implements ApplicationContextInitia
                 properties.put(prefix + ".jdbcUrl", containerInfo.getJdbcUrl());
                 properties.put(prefix + ".driver-class-name", containerInfo.type().getDriverClassName());
                 
-                // 데이터베이스 스펙에서 정보 추출
                 String username = "primavera";
                 String password = "primavera";
                 String database = "primavera";
