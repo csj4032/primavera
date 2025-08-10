@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ActiveProfiles("test")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@DisplayName("오류 처리 및 복구 테스트")
+@DisplayName("error processing translated_text_1 translated_text_2 test")
 @EnableTestContainers({
     @EnableTestContainers.TestContainer(type = ContainerType.MARIADB, name = "resilientDb"),
     @EnableTestContainers.TestContainer(type = ContainerType.REDIS, name = "resilientCache")
@@ -51,45 +51,45 @@ class ErrorHandlingRecoveryTest {
 
         resilientJdbc.update("INSERT INTO error_test (data) VALUES (?)", "Initial test data");
 
-        log.info("오류 처리 테스트 환경 초기화 완료");
+        log.info("error processing test translated_text_2 translated_text_3 completed");
     }
 
     @Test
     @Order(1)
-    @DisplayName("잘못된 SQL 쿼리 오류 처리")
+    @DisplayName("translated_text_3 SQL translated_text_2 error processing")
     void testInvalidSqlErrorHandling() {
         assertThrows(DataAccessException.class, () -> {
-            resilientJdbc.execute("SELCT * FROM error_test"); // 의도적인 오타
-        }, "잘못된 SQL 구문으로 예외가 발생해야 함");
+            resilientJdbc.execute("SELCT * FROM error_test");
+        }, "translated_text_3 SQL translated_text_4 translated_text_10 translated_text_4 translated_text_1");
 
         assertThrows(DataAccessException.class, () -> {
             resilientJdbc.queryForObject("SELECT COUNT(*) FROM non_existent_table", Integer.class);
-        }, "존재하지 않는 테이블 쿼리로 예외가 발생해야 함");
+        }, "translated_text_4 translated_text_2 translated_text_3 translated_text_2 translated_text_10 translated_text_4 translated_text_1");
 
         assertThrows(DataAccessException.class, () -> {
             resilientJdbc.update("INSERT INTO error_test (id, data) VALUES (?, ?)", "invalid_id", "test data");
-        }, "데이터 타입 불일치로 예외가 발생해야 함");
+        }, "data translated_text_2 translated_text_4 translated_text_10 translated_text_4 translated_text_1");
 
         Integer count = resilientJdbc.queryForObject("SELECT COUNT(*) FROM error_test", Integer.class);
-        assertNotNull(count, "정상적인 쿼리는 여전히 작동해야 함");
-        assertTrue(count > 0, "테스트 데이터가 존재해야 함");
+        assertNotNull(count, "translated_text_4 translated_text_2 translated_text_3 translated_text_4 translated_text_1");
+        assertTrue(count > 0, "test data translated_text_4 translated_text_1");
 
-        log.info("잘못된 SQL 쿼리 오류 처리 테스트 완료");
+        log.info("translated_text_3 SQL translated_text_2 error processing test completed");
     }
 
     @Test
     @Order(2)
-    @DisplayName("제약 조건 위반 오류 처리")
+    @DisplayName("translated_text_2 translated_text_2 translated_text_2 error processing")
     void testConstraintViolationErrorHandling() {
         assertThrows(DataAccessException.class, () -> {
             resilientJdbc.update("INSERT INTO error_test (id, data) VALUES (?, ?)", 1, "Duplicate key test");
-        }, "PRIMARY KEY 중복으로 예외가 발생해야 함");
+        }, "PRIMARY KEY translated_text_4 translated_text_10 translated_text_4 translated_text_1");
 
         resilientJdbc.execute("ALTER TABLE error_test MODIFY data VARCHAR(500) NOT NULL");
         
         assertThrows(DataAccessException.class, () -> {
             resilientJdbc.update("INSERT INTO error_test (data) VALUES (NULL)");
-        }, "NOT NULL 제약 조건 위반으로 예외가 발생해야 함");
+        }, "NOT NULL translated_text_2 translated_text_2 translated_text_2 translated_text_10 translated_text_4 translated_text_1");
 
         resilientJdbc.execute("""
             CREATE TABLE parent_table (
@@ -111,38 +111,38 @@ class ErrorHandlingRecoveryTest {
 
         assertThrows(DataAccessException.class, () -> {
             resilientJdbc.update("INSERT INTO child_table (parent_id, data) VALUES (?, ?)", 999, "Invalid FK");
-        }, "외래 키 제약 조건 위반으로 예외가 발생해야 함");
+        }, "translated_text_2 translated_text_1 translated_text_2 translated_text_2 translated_text_2 translated_text_10 translated_text_4 translated_text_1");
 
         int result = resilientJdbc.update("INSERT INTO child_table (parent_id, data) VALUES (?, ?)", 1, "Valid FK");
-        assertEquals(1, result, "정상적인 외래 키로 삽입이 성공해야 함");
+        assertEquals(1, result, "translated_text_4 translated_text_2 translated_text_1 translated_text_3 translated_text_9 translated_text_1");
 
-        log.info("제약 조건 위반 오류 처리 테스트 완료");
+        log.info("translated_text_2 translated_text_2 translated_text_2 error processing test completed");
     }
 
     @Test
     @Order(3)
-    @DisplayName("연결 타임아웃 및 복구 테스트")
+    @DisplayName("translated_text_2 translated_text_4 translated_text_1 translated_text_2 test")
     void testConnectionTimeoutAndRecovery() throws InterruptedException {
         Integer initialCount = resilientJdbc.queryForObject("SELECT COUNT(*) FROM error_test", Integer.class);
-        assertNotNull(initialCount, "초기 연결이 정상적으로 작동해야 함");
+        assertNotNull(initialCount, "translated_text_2 translated_text_2 successfully translated_text_4 translated_text_1");
 
         assertThrows(DataAccessException.class, () -> {
-            resilientJdbc.queryForObject("SELECT SLEEP(31)", Integer.class); // 30초 이상 대기
-        }, "쿼리 타임아웃으로 예외가 발생해야 함");
+            resilientJdbc.queryForObject("SELECT SLEEP(31)", Integer.class);
+        }, "translated_text_2 translated_text_4 translated_text_10 translated_text_4 translated_text_1");
 
         Thread.sleep(1000);
 
         assertDoesNotThrow(() -> {
             Integer count = resilientJdbc.queryForObject("SELECT COUNT(*) FROM error_test", Integer.class);
-            assertNotNull(count, "타임아웃 후에도 새 연결로 쿼리가 가능해야 함");
-        }, "타임아웃 후 연결 복구가 이루어져야 함");
+            assertNotNull(count, "translated_text_4 translated_text_3 translated_text_1 translated_text_2 translated_text_2 translated_text_4 translated_text_1");
+        }, "translated_text_4 translated_text_1 translated_text_2 translated_text_2 translated_text_5 translated_text_1");
 
-        log.info("연결 타임아웃 및 복구 테스트 완료");
+        log.info("translated_text_2 translated_text_4 translated_text_1 translated_text_2 test completed");
     }
 
     @Test
     @Order(4) 
-    @DisplayName("트랜잭션 롤백 중 오류 처리")
+    @DisplayName("translated_text_4 translated_text_2 translated_text_1 error processing")
     void testTransactionRollbackErrorHandling() {
         Integer beforeCount = resilientJdbc.queryForObject("SELECT COUNT(*) FROM error_test", Integer.class);
 
@@ -158,94 +158,94 @@ class ErrorHandlingRecoveryTest {
                 resilientJdbc.execute("ROLLBACK");
                 throw e;
             }
-        }, "트랜잭션 중 제약 조건 위반으로 예외가 발생해야 함");
+        }, "translated_text_4 translated_text_1 translated_text_2 translated_text_2 translated_text_2 translated_text_10 translated_text_4 translated_text_1");
 
         Integer afterCount = resilientJdbc.queryForObject("SELECT COUNT(*) FROM error_test", Integer.class);
-        assertEquals(beforeCount, afterCount, "트랜잭션 롤백으로 데이터가 변경되지 않아야 함");
+        assertEquals(beforeCount, afterCount, "translated_text_4 translated_text_2 data translated_text_4 translated_text_3 translated_text_1");
 
         resilientJdbc.execute("START TRANSACTION");
         resilientJdbc.update("INSERT INTO error_test (data) VALUES (?)", "After rollback test");
         resilientJdbc.execute("COMMIT");
 
         Integer finalCount = resilientJdbc.queryForObject("SELECT COUNT(*) FROM error_test", Integer.class);
-        assertEquals(beforeCount + 1, finalCount, "롤백 후 정상적인 트랜잭션이 작동해야 함");
+        assertEquals(beforeCount + 1, finalCount, "translated_text_2 translated_text_1 translated_text_4 translated_text_4 translated_text_4 translated_text_1");
 
-        log.info("트랜잭션 롤백 오류 처리 테스트 완료");
+        log.info("translated_text_4 translated_text_2 error processing test completed");
     }
 
     @Test
     @Order(5)
-    @DisplayName("데이터베이스 연결 중단 및 자동 복구")
+    @DisplayName("data translated_text_2 translated_text_1 translated_text_1 translated_text_2 translated_text_2")
     void testDatabaseConnectionInterruptionAndRecovery() throws InterruptedException {
         ContainerInfo containerInfo = containerManager.getContainer("resilientDb");
-        assertNotNull(containerInfo, "컨테이너 정보가 존재해야 함");
+        assertNotNull(containerInfo, "translated_text_4 translated_text_12 translated_text_4 translated_text_1");
         
         GenericContainer<?> container = containerInfo.container();
-        assertTrue(container.isRunning(), "컨테이너가 실행 중이어야 함");
+        assertTrue(container.isRunning(), "translated_text_4 execution translated_text_1 translated_text_1");
 
         resilientJdbc.update("INSERT INTO error_test (data) VALUES (?)", "Before container stop");
         
         Integer beforeStopCount = resilientJdbc.queryForObject("SELECT COUNT(*) FROM error_test", Integer.class);
 
-        log.info("컨테이너 일시 중지 시뮬레이션 시작");
+        log.info("translated_text_4 translated_text_2 translated_text_1 translated_text_5 translated_text_2");
         
         container.getDockerClient().pauseContainerCmd(container.getContainerId()).exec();
 
         assertThrows(Exception.class, () -> {
             resilientJdbc.queryForObject("SELECT COUNT(*) FROM error_test", Integer.class);
-        }, "컨테이너 중지 중에는 연결이 실패해야 함");
+        }, "translated_text_4 translated_text_1 translated_text_1 translated_text_2 translated_text_9 translated_text_1");
 
         container.getDockerClient().unpauseContainerCmd(container.getContainerId()).exec();
         
         Thread.sleep(2000);
 
-        log.info("컨테이너 복구 후 연결 재시도");
+        log.info("translated_text_4 translated_text_2 translated_text_1 translated_text_2 translated_text_3");
 
         boolean recovered = false;
         for (int i = 0; i < 10; i++) {
             try {
                 Integer afterResumeCount = resilientJdbc.queryForObject("SELECT COUNT(*) FROM error_test", Integer.class);
-                assertEquals(beforeStopCount, afterResumeCount, "데이터가 보존되어야 함");
+                assertEquals(beforeStopCount, afterResumeCount, "data translated_text_5 translated_text_1");
                 recovered = true;
                 break;
             } catch (Exception e) {
-                log.warn("복구 시도 {}/10 실패: {}", i + 1, e.getMessage());
+                log.warn("translated_text_2 translated_text_2 {}/10 failure: {}", i + 1, e.getMessage());
                 Thread.sleep(1000);
             }
         }
 
-        assertTrue(recovered, "컨테이너 복구 후 연결이 재개되어야 함");
+        assertTrue(recovered, "translated_text_4 translated_text_2 translated_text_1 translated_text_2 translated_text_5 translated_text_1");
 
         resilientJdbc.update("INSERT INTO error_test (data) VALUES (?)", "After container resume");
         
         Integer finalCount = resilientJdbc.queryForObject("SELECT COUNT(*) FROM error_test", Integer.class);
-        assertEquals(beforeStopCount + 1, finalCount, "복구 후 새로운 작업이 가능해야 함");
+        assertEquals(beforeStopCount + 1, finalCount, "translated_text_2 translated_text_1 translated_text_1 translated_text_3 translated_text_4 translated_text_1");
 
-        log.info("데이터베이스 연결 중단 및 자동 복구 테스트 완료");
+        log.info("data translated_text_2 translated_text_1 translated_text_1 translated_text_2 translated_text_2 test completed");
     }
 
     @Test
     @Order(6)
-    @DisplayName("메모리 부족 상황에서의 오류 처리")
+    @DisplayName("translated_text_3 translated_text_2 translated_text_5 error processing")
     void testOutOfMemoryErrorHandling() {
-        String largeData = "X".repeat(1000000); // 1MB 문자열
+        String largeData = "X".repeat(1000000);
 
         assertThrows(DataAccessException.class, () -> {
             for (int i = 0; i < 100; i++) {
                 resilientJdbc.update("INSERT INTO error_test (data) VALUES (?)", largeData + i);
             }
-        }, "대용량 데이터 삽입으로 인한 오류가 발생할 수 있음");
+        }, "translated_text_3 data translated_text_4 translated_text_2 error translated_text_3 translated_text_1 translated_text_2");
 
         assertDoesNotThrow(() -> {
             resilientJdbc.update("INSERT INTO error_test (data) VALUES (?)", "Small data after memory test");
-        }, "메모리 오류 후에도 정상적인 작업이 가능해야 함");
+        }, "translated_text_3 error translated_text_3 translated_text_4 translated_text_3 translated_text_4 translated_text_1");
 
-        log.info("메모리 부족 상황 오류 처리 테스트 완료");
+        log.info("translated_text_3 translated_text_2 translated_text_2 error processing test completed");
     }
 
     @Test
     @Order(7)
-    @DisplayName("동시성 오류 상황 처리")
+    @DisplayName("translated_text_3 error translated_text_2 processing")
     void testConcurrencyErrorHandling() throws InterruptedException {
         resilientJdbc.update("INSERT INTO error_test (id, data) VALUES (?, ?)", 1000, "Concurrency test");
 
@@ -253,7 +253,7 @@ class ErrorHandlingRecoveryTest {
             try {
                 resilientJdbc.execute("START TRANSACTION");
                 resilientJdbc.update("UPDATE error_test SET data = ? WHERE id = ?", "Updated by thread 1", 1000);
-                Thread.sleep(2000); // 2초 대기
+                Thread.sleep(2000);
                 resilientJdbc.execute("COMMIT");
                 log.info("Thread 1 committed successfully");
             } catch (Exception e) {
@@ -268,7 +268,7 @@ class ErrorHandlingRecoveryTest {
 
         Thread thread2 = new Thread(() -> {
             try {
-                Thread.sleep(500); // 0.5초 후 시작
+                Thread.sleep(500);
                 resilientJdbc.execute("START TRANSACTION");
                 resilientJdbc.update("UPDATE error_test SET data = ? WHERE id = ?", "Updated by thread 2", 1000);
                 resilientJdbc.execute("COMMIT");
@@ -292,14 +292,14 @@ class ErrorHandlingRecoveryTest {
         String finalData = resilientJdbc.queryForObject(
             "SELECT data FROM error_test WHERE id = ?", String.class, 1000);
         
-        assertTrue(finalData.contains("Updated by thread"), "동시성 상황에서도 최종 데이터가 업데이트되어야 함");
+        assertTrue(finalData.contains("Updated by thread"), "translated_text_3 translated_text_2 translated_text_2 data translated_text_7 translated_text_1");
 
-        log.info("동시성 오류 상황 처리 테스트 완료: 최종 데이터 = {}", finalData);
+        log.info("translated_text_3 error translated_text_2 processing test completed: translated_text_2 data = {}", finalData);
     }
 
     @Test
     @Order(8)
-    @DisplayName("연결 풀 고갈 상황에서의 복구")
+    @DisplayName("translated_text_2 translated_text_1 translated_text_2 translated_text_5 translated_text_2")
     void testConnectionPoolExhaustionRecovery() throws InterruptedException {
         java.util.List<Connection> connections = new java.util.ArrayList<>();
         
@@ -317,7 +317,7 @@ class ErrorHandlingRecoveryTest {
 
             assertThrows(SQLException.class, () -> {
                 resilientDataSource.getConnection();
-            }, "연결 풀 고갈 시 새 연결이 실패해야 함");
+            }, "translated_text_2 translated_text_1 translated_text_2 translated_text_1 translated_text_1 translated_text_2 translated_text_9 translated_text_1");
 
         } finally {
             for (int i = 0; i < connections.size() / 2; i++) {
@@ -333,9 +333,9 @@ class ErrorHandlingRecoveryTest {
         
         assertDoesNotThrow(() -> {
             try (Connection conn = resilientDataSource.getConnection()) {
-                assertNotNull(conn, "연결 풀 복구 후 새 연결을 얻을 수 있어야 함");
+                assertNotNull(conn, "translated_text_2 translated_text_1 translated_text_2 translated_text_1 translated_text_1 translated_text_2 translated_text_2 translated_text_1 translated_text_3 translated_text_1");
             }
-        }, "연결 풀 복구 후 정상적인 연결이 가능해야 함");
+        }, "translated_text_2 translated_text_1 translated_text_2 translated_text_1 translated_text_4 translated_text_2 translated_text_4 translated_text_1");
 
         for (Connection conn : connections) {
             try {
@@ -346,6 +346,6 @@ class ErrorHandlingRecoveryTest {
             }
         }
 
-        log.info("연결 풀 고갈 및 복구 테스트 완료");
+        log.info("translated_text_2 translated_text_1 translated_text_2 translated_text_1 translated_text_2 test completed");
     }
 }

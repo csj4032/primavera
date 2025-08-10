@@ -25,22 +25,22 @@ public class PasswordEncoderTest {
 
     @Test
     @Order(1)
-    @DisplayName("bcrype 방식")
+    @DisplayName("bcrype translated_text_2")
     public void bcrypeEncoder() {
         String encodedPassword = encoder.encode(rawPassword);
         Assertions.assertNotEquals(bcrype, encodedPassword);
         Assertions.assertTrue(encoder.matches(rawPassword, encodedPassword));
-        // bcrype 해시가 맞지 않으므로 새로운 유효한 해시로 테스트
+
         String validBcrypt = encoder.encode(rawPassword);
         Assertions.assertTrue(encoder.matches(rawPassword, validBcrypt));
     }
 
     @Test
     @Order(2)
-    @DisplayName("noop 방식")
+    @DisplayName("noop translated_text_2")
     public void noopEncoder() {
-        Assertions.assertTrue(encoder.matches("password", noop)); // noop은 password와 매치됨
-        // 새로운 bcrypt 해시 생성 후 테스트
+        Assertions.assertTrue(encoder.matches("password", noop));
+
         String newBcrypt = encoder.encode(rawPassword);
         Assertions.assertTrue(encoder.matches(rawPassword, newBcrypt));
     }

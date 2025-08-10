@@ -78,7 +78,7 @@ public class CompleteValidationTest {
         assertNotNull(dbInfo.spec(), "Database container spec should exist");
         assertNotNull(cacheInfo.spec(), "Cache container spec should exist");
 
-        log.info("✅ Complete container lifecycle and state management validated");
+        log.info(" Complete container lifecycle and state management validated");
     }
 
     @Test
@@ -138,7 +138,7 @@ public class CompleteValidationTest {
             }
         }
 
-        log.info("✅ Comprehensive database operations validated");
+        log.info(" Comprehensive database operations validated");
     }
 
     @Test
@@ -176,7 +176,7 @@ public class CompleteValidationTest {
         assertEquals("value1", completeRedisTemplate.opsForHash().get(baseKey + "hash", "field1"));
         assertEquals(2.0, completeRedisTemplate.opsForZSet().score(baseKey + "zset", "score2"));
 
-        log.info("✅ Advanced Redis operations validated");
+        log.info(" Advanced Redis operations validated");
     }
 
     @Test
@@ -197,14 +197,14 @@ public class CompleteValidationTest {
             assertTrue(dbUrl.contains(dbHost), "JDBC URL should contain host");
             assertTrue(dbUrl.contains(dbPort), "JDBC URL should contain port");
 
-            log.info("✅ Database runtime properties validated: {}:{}", dbHost, dbPort);
+            log.info(" Database runtime properties validated: {}:{}", dbHost, dbPort);
         }
 
         if (cacheHost != null && cachePort != null) {
             assertTrue(cacheHost.length() > 0, "Cache host should not be empty");
             assertTrue(Integer.parseInt(cachePort) > 0, "Cache port should be valid");
 
-            log.info("✅ Cache runtime properties validated: {}:{}", cacheHost, cachePort);
+            log.info(" Cache runtime properties validated: {}:{}", cacheHost, cachePort);
         }
 
         ContainerManager manager = ContainerRegistry.get();
@@ -217,7 +217,7 @@ public class CompleteValidationTest {
         assertNotNull(dbInfo.container().getHost(), "Database container should have host");
         assertNotNull(cacheInfo.container().getHost(), "Cache container should have host");
 
-        log.info("✅ Environment properties and runtime configuration validated");
+        log.info(" Environment properties and runtime configuration validated");
     }
 
     @Test
@@ -248,7 +248,7 @@ public class CompleteValidationTest {
         Object lock3 = ContainerRegistry.getLock(testClassName);
         assertNotSame(lock1, lock3, "New lock should be different after removal");
 
-        log.info("✅ Container registry thread safety validated");
+        log.info(" Container registry thread safety validated");
     }
 
     @Test
@@ -277,7 +277,7 @@ public class CompleteValidationTest {
         Object nonexistentValue = completeRedisTemplate.opsForValue().get("nonexistent-key");
         assertNull(nonexistentValue, "Non-existent Redis key should return null");
 
-        log.info("✅ Error handling and edge cases validated");
+        log.info(" Error handling and edge cases validated");
     }
 
     @Test
@@ -322,7 +322,7 @@ public class CompleteValidationTest {
         assertEquals("1", completeRedisTemplate.opsForHash().get("integration:stats", "cache_records"));
         assertNotNull(completeRedisTemplate.opsForHash().get("integration:stats", "last_sync"));
 
-        log.info("✅ Complete integration and data consistency validated for ID: {}", integrationId);
+        log.info(" Complete integration and data consistency validated for ID: {}", integrationId);
     }
 
     @Test
@@ -379,7 +379,7 @@ public class CompleteValidationTest {
             assertTrue(connection.isValid(5), "Connection should be valid");
         }
 
-        log.info("✅ Resource utilization and performance validated - {} records in {} ms",
+        log.info(" Resource utilization and performance validated - {} records in {} ms",
                 totalRecords, duration);
     }
 }

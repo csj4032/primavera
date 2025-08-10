@@ -9,14 +9,14 @@ import org.springframework.context.ApplicationContext;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-@DisplayName("Bean Scope 테스트")
+@DisplayName("Bean Scope test")
 class BeanScopeExampleTest {
     
     @Autowired
     private ApplicationContext context;
     
     @Test
-    @DisplayName("Singleton Bean은 항상 같은 인스턴스를 반환")
+    @DisplayName("Singleton Beantranslated_text_1 translated_text_2 translated_text_1 translated_text_5 translated_text_2")
     void testSingletonScope() {
         var bean1 = context.getBean(BeanScopeExample.SingletonBean.class);
         var bean2 = context.getBean(BeanScopeExample.SingletonBean.class);
@@ -25,7 +25,7 @@ class BeanScopeExampleTest {
     }
     
     @Test
-    @DisplayName("Prototype Bean은 매번 새로운 인스턴스를 생성")
+    @DisplayName("Prototype Beantranslated_text_1 translated_text_2 translated_text_3 translated_text_5 creation")
     void testPrototypeScope() {
         var bean1 = context.getBean(BeanScopeExample.PrototypeBean.class);
         var bean2 = context.getBean(BeanScopeExample.PrototypeBean.class);

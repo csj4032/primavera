@@ -5,10 +5,6 @@ import org.hibernate.validator.constraints.ScriptAssert;
 
 import jakarta.validation.constraints.*;
 
-/**
- * @ScriptAssert를 사용한 비밀번호 검증 예제 클래스
- * Groovy 스크립트를 사용하여 비밀번호와 비밀번호 확인이 일치하는지 검증합니다.
- */
 @Getter
 @Setter
 @Builder

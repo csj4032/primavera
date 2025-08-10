@@ -115,9 +115,9 @@ public class DebeziumCdcEventHandler {
             log.debug("CDC Event - Operation: {}", operation);
             
             switch (operation) {
-                case "c": // CREATE
-                case "u": // UPDATE
-                case "r": // READ (snapshot)
+                case "c":
+                case "u":
+                case "r":
                     if (after != null) {
                         ProductDocument product = convertToProductDocument(after);
                         productSearchService.indexProduct(product)
@@ -129,7 +129,7 @@ public class DebeziumCdcEventHandler {
                                 .subscribe();
                     }
                     break;
-                case "d": // DELETE
+                case "d":
                     if (before != null) {
                         Long productId = before.getInt64("id");
                         productSearchService.deleteProduct(productId)

@@ -107,16 +107,16 @@ public class DebeziumEngineRunner {
             log.debug("CDC Event - Table: {}, Operation: {}", table, operation);
             
             switch (operation) {
-                case "c": // CREATE
+                case "c":
                     handleInsert(table, after);
                     break;
-                case "u": // UPDATE
+                case "u":
                     handleUpdate(table, before, after);
                     break;
-                case "d": // DELETE
+                case "d":
                     handleDelete(table, before);
                     break;
-                case "r": // READ (snapshot)
+                case "r":
                     handleSnapshot(table, after);
                     break;
             }

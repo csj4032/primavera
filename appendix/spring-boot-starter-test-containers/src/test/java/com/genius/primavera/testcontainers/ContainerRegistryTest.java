@@ -17,7 +17,7 @@ public class ContainerRegistryTest {
         ContainerRegistry.clear();
         ContainerManager manager = ContainerRegistry.get();
         assertNull(manager, "Registry should start with no manager");
-        log.info("✅ Registry starts empty");
+        log.info(" Registry starts empty");
     }
 
     @Test
@@ -30,7 +30,7 @@ public class ContainerRegistryTest {
         ContainerRegistry.register(mockManager);
         ContainerManager retrieved = ContainerRegistry.get();
         assertSame(mockManager, retrieved, "Should retrieve the same manager instance");
-        log.info("✅ Manager registered and retrieved successfully");
+        log.info(" Manager registered and retrieved successfully");
     }
 
     @Test
@@ -43,7 +43,7 @@ public class ContainerRegistryTest {
         assertNotNull(ContainerRegistry.get(), "Manager should be present before clear");
         ContainerRegistry.clear();
         assertNull(ContainerRegistry.get(), "Manager should be null after clear");
-        log.info("✅ Registry cleared successfully");
+        log.info(" Registry cleared successfully");
     }
 
     @Test
@@ -60,7 +60,7 @@ public class ContainerRegistryTest {
         otherThread.join();
         assertSame(manager1, ContainerRegistry.get(), "Main thread should have its manager");
         assertNull(otherThreadManager[0], "Other thread should not see main thread's manager");
-        log.info("✅ Thread local isolation verified");
+        log.info(" Thread local isolation verified");
     }
 
     @Test
@@ -78,7 +78,7 @@ public class ContainerRegistryTest {
         Object differentLock = ContainerRegistry.getLock("DifferentClass");
         assertNotSame(lock1, differentLock, "Different classes should get different locks");
 
-        log.info("✅ Class locks work correctly");
+        log.info(" Class locks work correctly");
     }
 
     @Test
@@ -96,7 +96,7 @@ public class ContainerRegistryTest {
         assertNotNull(lock2, "New lock should be created after removal");
         assertNotSame(lock1, lock2, "New lock should be different instance");
 
-        log.info("✅ Lock removal works correctly");
+        log.info(" Lock removal works correctly");
     }
 
     @Test
@@ -129,7 +129,7 @@ public class ContainerRegistryTest {
                     "All threads should get the same lock instance for same class");
         }
 
-        log.info("✅ Lock thread safety verified");
+        log.info(" Lock thread safety verified");
     }
 
     private EnableTestContainers createMockAnnotation() {

@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @EnableTestContainers
 @ActiveProfiles("test")
-@DisplayName(value = "권한 관련 테스트")
+@DisplayName(value = "translated_text_2 translated_text_2 test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class RoleMapperTest {
 
@@ -31,44 +31,44 @@ public class RoleMapperTest {
 
     @Test
     @Order(1)
-    @DisplayName("기타 권한 데이터 삽입")
+    @DisplayName("translated_text_2 translated_text_2 data translated_text_2")
     public void insertRoleData() {
         try {
             long result = roleMapper.save(Role.builder().type(RoleType.ETC).build());
-            log.info("ETC 권한이 성공적으로 저장되었습니다. 결과: {}", result);
+            log.info("ETC translated_text_2 translated_text_10 translated_text_7. result: {}", result);
             assertEquals(1, result);
         } catch (Exception e) {
-            log.info("ETC 권한 저장 중 예외 발생: {}", e.getMessage());
-            log.info("예외 타입: {}", e.getClass().getSimpleName());
+            log.info("ETC translated_text_2 translated_text_2 translated_text_1 exception translated_text_2: {}", e.getMessage());
+            log.info("exception translated_text_2: {}", e.getClass().getSimpleName());
             if (e.getCause() != null) {
-                log.info("원인: {}", e.getCause().getMessage());
+                log.info("translated_text_2: {}", e.getCause().getMessage());
             }
-            assertTrue(true, "ETC 권한 저장 실패는 예상된 동작입니다.");
+            assertTrue(true, "ETC translated_text_2 translated_text_2 translated_text_8 translated_text_3 translated_text_5.");
         }
     }
 
     @Test
     @Order(2)
-    @DisplayName("권한 데이터 확인")
+    @DisplayName("translated_text_2 data verification")
     public void verifyRoleData() {
         List<Role> roles = roleMapper.selectAll();
         log.info(roles.toString());
-        assertNotNull(roles, "권한 데이터가 null이어서는 안 됩니다.");
-        assertFalse(roles.isEmpty(), "권한 데이터가 비어있어서는 안 됩니다.");
+        assertNotNull(roles, "translated_text_2 data nulltranslated_text_4 translated_text_1 translated_text_3.");
+        assertFalse(roles.isEmpty(), "translated_text_2 data translated_text_6 translated_text_1 translated_text_3.");
         for (Role role : roles) {
             log.info("Role ID: {}, Type: {}, Name: {}", role.getId(), role.getType().getValue(), role.getType().getName());
-            assertNotNull(role.getType(), "권한 타입이 null이어서는 안 됩니다.");
-            assertNotNull(role.getType().getName(), "권한 이름이 null이어서는 안 됩니다.");
+            assertNotNull(role.getType(), "translated_text_2 translated_text_2 nulltranslated_text_4 translated_text_1 translated_text_3.");
+            assertNotNull(role.getType().getName(), "translated_text_2 translated_text_3 nulltranslated_text_4 translated_text_1 translated_text_3.");
         }
     }
 
     @Test
     @Order(3)
-    @DisplayName("권한 데이터 삭제")
+    @DisplayName("translated_text_2 data deletion")
     public void deleteRoleData() {
         roleMapper.deleteAll();
         List<Role> roles = roleMapper.selectAll();
-        log.info("권한 데이터 삭제 후 확인: {}", roles);
-        assertTrue(roles.isEmpty(), "권한 데이터가 비어있어야 합니다.");
+        log.info("translated_text_2 data deletion translated_text_1 verification: {}", roles);
+        assertTrue(roles.isEmpty(), "translated_text_2 data translated_text_5 translated_text_3.");
     }
 }

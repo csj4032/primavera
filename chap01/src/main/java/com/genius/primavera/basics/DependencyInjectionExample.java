@@ -20,7 +20,7 @@ public class DependencyInjectionExample {
     public static class EmailService implements MessageService {
         @Override
         public String getMessage() {
-            return "Email 메시지";
+            return "Email translated_text_3";
         }
     }
 
@@ -28,7 +28,7 @@ public class DependencyInjectionExample {
     public static class SmsService implements MessageService {
         @Override
         public String getMessage() {
-            return "SMS 메시지";
+            return "SMS translated_text_3";
         }
     }
 

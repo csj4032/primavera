@@ -23,7 +23,7 @@ import java.util.Set;
 @SpringBootTest
 @Testcontainers
 @ActiveProfiles("test")
-@DisplayName("Groovy 스크립트 검증 테스트")
+@DisplayName("Groovy translated_text_4 validation test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class UserGroovyScriptValidationTest {
 
@@ -47,7 +47,7 @@ public class UserGroovyScriptValidationTest {
 
     @Test
     @Order(1)
-    @DisplayName("커스텀 @PasswordMatch 어노테이션으로 비밀번호 불일치 검증")
+    @DisplayName("translated_text_3 @PasswordMatch annotationtranslated_text_2 translated_text_4 translated_text_3 validation")
     public void validatePasswordMismatchWithCustomAnnotation() {
         User user = User.builder()
                 .id(1L)
@@ -60,14 +60,14 @@ public class UserGroovyScriptValidationTest {
                 .build();
 
         Set<ConstraintViolation<User>> violations = validator.validate(user, Default.class);
-        Assertions.assertFalse(violations.isEmpty(), "비밀번호 불일치 시 검증 오류가 발생해야 함");
-        boolean hasPasswordMatchError = violations.stream().anyMatch(v -> v.getMessage().contains("비밀번호와 비밀번호 확인이 일치하지 않습니다."));
-        Assertions.assertTrue(hasPasswordMatchError, "비밀번호 불일치 메시지가 포함되어야 함");
+        Assertions.assertFalse(violations.isEmpty(), "translated_text_4 translated_text_3 translated_text_1 validation translated_text_6 translated_text_4 translated_text_1");
+        boolean hasPasswordMatchError = violations.stream().anyMatch(v -> v.getMessage().contains("translated_text_4 translated_text_4 translated_text_13 translated_text_4 translated_text_4."));
+        Assertions.assertTrue(hasPasswordMatchError, "translated_text_4 translated_text_3 translated_text_1translated_text_1 translated_text_1 translated_text_1");
     }
 
     @Test
     @Order(2)
-    @DisplayName("커스텀 @PasswordMatch 어노테이션으로 비밀번호 일치 검증")
+    @DisplayName("translated_text_3 @PasswordMatch annotationtranslated_text_2 translated_text_4 translated_text_2 validation")
     public void validatePasswordMatchWithCustomAnnotation() {
         String password = "Secret0!";
         User user = User.builder()
@@ -82,12 +82,12 @@ public class UserGroovyScriptValidationTest {
 
         Set<ConstraintViolation<User>> violations = validator.validate(user, Default.class);
         boolean hasPasswordMatchError = violations.stream().anyMatch(v -> v.getMessage().contains("Passwords do not match"));
-        Assertions.assertFalse(hasPasswordMatchError, "비밀번호 일치 시 검증 오류가 없어야 함");
+        Assertions.assertFalse(hasPasswordMatchError, "translated_text_4 translated_text_2 translated_text_1 validation translated_text_6 translated_text_3 translated_text_1");
     }
 
     @Test
     @Order(3)
-    @DisplayName("비밀번호 확인이 null인 경우 검증 통과 (기존 호환성)")
+    @DisplayName("translated_text_4 translated_text_13 nulltranslated_text_1 translated_text_2 validation translated_text_2 (translated_text_2 translated_text_3)")
     public void validatePasswordConfirmNullAllowed() {
         User user = User.builder()
                 .id(1L)
@@ -101,12 +101,12 @@ public class UserGroovyScriptValidationTest {
 
         Set<ConstraintViolation<User>> violations = validator.validate(user, Default.class);
         boolean hasPasswordMatchError = violations.stream().anyMatch(v -> v.getMessage().contains("Passwords do not match"));
-        Assertions.assertFalse(hasPasswordMatchError, "passwordConfirm이 null인 경우 검증 통과해야 함");
+        Assertions.assertFalse(hasPasswordMatchError, "passwordConfirmtranslated_text_1 nulltranslated_text_1 translated_text_2 validation translated_text_2 translated_text_1");
     }
 
     @Test
     @Order(4)
-    @DisplayName("비밀번호가 null이고 비밀번호 확인이 있는 경우 검증 실패")
+    @DisplayName("translated_text_4translated_text_1 nulltranslated_text_1 translated_text_4 translated_text_13 translated_text_2 translated_text_2 validation failure")
     public void validatePasswordNullConfirmExists() {
         User user = User.builder()
                 .id(1L)
@@ -119,13 +119,13 @@ public class UserGroovyScriptValidationTest {
                 .build();
 
         Set<ConstraintViolation<User>> violations = validator.validate(user, Default.class);
-        boolean hasPasswordMatchError = violations.stream().anyMatch(v -> v.getMessage().contains("비밀번호와 비밀번호 확인이 일치하지 않습니다."));
-        Assertions.assertTrue(hasPasswordMatchError, "password가 null이고 passwordConfirm이 있으면 검증 실패해야 함");
+        boolean hasPasswordMatchError = violations.stream().anyMatch(v -> v.getMessage().contains("translated_text_4 translated_text_4 translated_text_13 translated_text_4 translated_text_4."));
+        Assertions.assertTrue(hasPasswordMatchError, "passwordtranslated_text_1 nulltranslated_text_1 passwordConfirmtranslated_text_1 translated_text_3 validation failure translated_text_1");
     }
 
     @Test
     @Order(5)
-    @DisplayName("대소문자 구분 비밀번호 불일치 검증")
+    @DisplayName("translated_text_4 translated_text_2 translated_text_4 translated_text_3 validation")
     public void validatePasswordCaseSensitiveMismatch() {
         User user = User.builder()
                 .id(1L)
@@ -138,13 +138,13 @@ public class UserGroovyScriptValidationTest {
                 .build();
 
         Set<ConstraintViolation<User>> violations = validator.validate(user, Default.class);
-        boolean hasPasswordMatchError = violations.stream().anyMatch(v -> v.getMessage().contains("비밀번호와 비밀번호 확인이 일치하지 않습니다."));
-        Assertions.assertTrue(hasPasswordMatchError, "대소문자 다른 비밀번호는 불일치로 검증되어야 함");
+        boolean hasPasswordMatchError = violations.stream().anyMatch(v -> v.getMessage().contains("translated_text_4 translated_text_4 translated_text_13 translated_text_4 translated_text_4."));
+        Assertions.assertTrue(hasPasswordMatchError, "translated_text_4 translated_text_2 translated_text_4 translated_text_3 validation translated_text_1");
     }
 
     @Test
     @Order(6)
-    @DisplayName("공백 포함 비밀번호 불일치 검증")
+    @DisplayName("translated_text_2 translated_text_1 translated_text_4 translated_text_3 validation")
     public void validatePasswordWithSpaceMismatch() {
         User user = User.builder()
                 .id(1L)
@@ -157,13 +157,13 @@ public class UserGroovyScriptValidationTest {
                 .build();
 
         Set<ConstraintViolation<User>> violations = validator.validate(user, Default.class);
-        boolean hasPasswordMatchError = violations.stream().anyMatch(v -> v.getMessage().contains("비밀번호와 비밀번호 확인이 일치하지 않습니다."));
-        Assertions.assertTrue(hasPasswordMatchError, "공백 차이가 있는 비밀번호는 불일치로 검증되어야 함");
+        boolean hasPasswordMatchError = violations.stream().anyMatch(v -> v.getMessage().contains("translated_text_4 translated_text_4 translated_text_13 translated_text_4 translated_text_4."));
+        Assertions.assertTrue(hasPasswordMatchError, "translated_text_2 translated_text_1translated_text_1 translated_text_2 translated_text_4 translated_text_3 validation translated_text_1");
     }
 
     @Test
     @Order(7)
-    @DisplayName("UpdateGroup 검증 그룹에서 비밀번호 매치 검증")
+    @DisplayName("UpdateGroup validation translated_text_4 translated_text_4 translated_text_2 validation")
     public void validatePasswordMatchWithUpdateGroup() {
         User user = User.builder()
                 .id(1L)
@@ -176,13 +176,13 @@ public class UserGroovyScriptValidationTest {
                 .build();
 
         Set<ConstraintViolation<User>> violations = validator.validate(user, User.UpdateGroup.class);
-        boolean hasPasswordMatchError = violations.stream().anyMatch(v -> v.getMessage().contains("비밀번호와 비밀번호 확인이 일치하지 않습니다."));
-        Assertions.assertTrue(hasPasswordMatchError, "UpdateGroup에서도 비밀번호 불일치 검증이 작동해야 함");
+        boolean hasPasswordMatchError = violations.stream().anyMatch(v -> v.getMessage().contains("translated_text_4 translated_text_4 translated_text_13 translated_text_4 translated_text_4."));
+        Assertions.assertTrue(hasPasswordMatchError, "UpdateGrouptranslated_text_3 translated_text_4 translated_text_3 validationtranslated_text_1 translated_text_4 translated_text_1");
     }
 
     @Test
     @Order(8)
-    @DisplayName("SaveGroup 검증 그룹에서 비밀번호 매치 검증")
+    @DisplayName("SaveGroup validation translated_text_4 translated_text_4 translated_text_2 validation")
     public void validatePasswordMatchWithSaveGroup() {
         User user = User.builder()
                 .id(1L)
@@ -195,7 +195,7 @@ public class UserGroovyScriptValidationTest {
                 .build();
 
         Set<ConstraintViolation<User>> violations = validator.validate(user, User.SaveGroup.class);
-        boolean hasPasswordMatchError = violations.stream().anyMatch(v -> v.getMessage().contains("비밀번호와 비밀번호 확인이 일치하지 않습니다."));
-        Assertions.assertTrue(hasPasswordMatchError, "SaveGroup에서도 비밀번호 불일치 검증이 작동해야 함");
+        boolean hasPasswordMatchError = violations.stream().anyMatch(v -> v.getMessage().contains("translated_text_4 translated_text_4 translated_text_13 translated_text_4 translated_text_4."));
+        Assertions.assertTrue(hasPasswordMatchError, "SaveGrouptranslated_text_3 translated_text_4 translated_text_3 validationtranslated_text_1 translated_text_4 translated_text_1");
     }
 }

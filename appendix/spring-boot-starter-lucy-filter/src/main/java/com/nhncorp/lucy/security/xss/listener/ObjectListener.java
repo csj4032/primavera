@@ -1,18 +1,4 @@
-/*
- *	Copyright 2014 Naver Corp.
- *
- *	Licensed under the Apache License, Version 2.0 (the "License");
- *	you may not use this file except in compliance with the License.
- *	You may obtain a copy of the License at
- *
- *		http://www.apache.org/licenses/LICENSE-2.0
- *
- *	Unless required by applicable law or agreed to in writing, software
- *	distributed under the License is distributed on an "AS IS" BASIS,
- *	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *	See the License for the specific language governing permissions and
- *	limitations under the License.
- */
+
 package com.nhncorp.lucy.security.xss.listener;
 
 import java.util.List;
@@ -22,12 +8,6 @@ import com.nhncorp.lucy.security.xss.event.ElementListener;
 import com.nhncorp.lucy.security.xss.markup.Attribute;
 import com.nhncorp.lucy.security.xss.markup.Element;
 
-/**
- * 이 클래스는 Object 태그에 대한 보안 필터링을 수행한다.
- *
- * @author Naver Labs
- *
- */
 public class ObjectListener implements ElementListener {
 	private static final Pattern INVOKEURLS = Pattern.compile("['\"]?\\s*(?i:invokeURLs)\\s*['\"]?");
 	private static final Pattern AUTOSTART = Pattern.compile("['\"]?\\s*(?i:autostart)\\s*['\"]?");
@@ -73,11 +53,10 @@ public class ObjectListener implements ElementListener {
 
 		Attribute dataUrl = element.getAttribute("data");
 
-		if (dataUrl != null) { // data 속성이 존재하면 체크
+		if (dataUrl != null) {
 			String dataUrlStr = dataUrl.getValue();
 			boolean isDataUrlWhite = this.isWhiteUrl(dataUrlStr);
 
-			// URL MIME 체크
 			boolean isVulnerable = SecurityUtils.checkVulnerable(element, dataUrlStr, isDataUrlWhite);
 
 			if (isVulnerable) {
@@ -105,7 +84,6 @@ public class ObjectListener implements ElementListener {
 						isWhiteUrl = true;
 					}
 
-					// URL MIME 체크
 					boolean isVulnerable = SecurityUtils.checkVulnerable(element, srcUrl, isWhiteUrl);
 
 					if (isVulnerable) {
@@ -159,7 +137,6 @@ public class ObjectListener implements ElementListener {
 			}
 		}
 
-		// <param name="invokeURLs" value="false" />
 		if (!invokeURLsExisted) {
 			Element invokeURLs = new Element("param");
 			invokeURLs.putAttribute("name", "\"invokeURLs\"");
@@ -167,7 +144,6 @@ public class ObjectListener implements ElementListener {
 			element.addContent(invokeURLs);
 		}
 
-		// <param name="autostart" value="false" />
 		if (!autostartExisted) {
 			Element autostart = new Element("param");
 			autostart.putAttribute("name", "\"autostart\"");
@@ -175,15 +151,12 @@ public class ObjectListener implements ElementListener {
 			element.addContent(autostart);
 		}
 
-		// <param name="allowScriptAccess" value="never" />
 		if (!allowScriptAccessExisted) {
 			Element allowScriptAccess = new Element("param");
 			allowScriptAccess.putAttribute("name", "\"allowScriptAccess\"");
 			allowScriptAccess.putAttribute("value", "\"never\"");
 			element.addContent(allowScriptAccess);
 		}
-
-		// <param name="allowNetworking" value="all|internal" />
 
 		if (!allowNetworkingExisted) {
 			Element allowNetworking = new Element("param");
@@ -192,7 +165,6 @@ public class ObjectListener implements ElementListener {
 			element.addContent(allowNetworking);
 		}
 
-		// <param name="autoplay" value="false" />
 		if (!autoplayExisted) {
 			Element autoplay = new Element("param");
 			autoplay.putAttribute("name", "\"autoplay\"");
@@ -200,7 +172,6 @@ public class ObjectListener implements ElementListener {
 			element.addContent(autoplay);
 		}
 
-		// <param name="enablehref" value="flase" />
 		if (!enablehrefExisted) {
 			Element enablehref = new Element("param");
 			enablehref.putAttribute("name", "\"enablehref\"");
@@ -208,7 +179,6 @@ public class ObjectListener implements ElementListener {
 			element.addContent(enablehref);
 		}
 
-		// <param name="enablejavascript" value="flase" />
 		if (!enablejavascriptExisted) {
 			Element enablejavascript = new Element("param");
 			enablejavascript.putAttribute("name", "\"enablejavascript\"");
@@ -216,7 +186,6 @@ public class ObjectListener implements ElementListener {
 			element.addContent(enablejavascript);
 		}
 
-		// <param name="nojava" value="true" />
 		if (!nojavaExisted) {
 			Element nojava = new Element("param");
 			nojava.putAttribute("name", "\"nojava\"");
@@ -224,7 +193,6 @@ public class ObjectListener implements ElementListener {
 			element.addContent(nojava);
 		}
 
-		// <param name="AllowHtmlPopupwindow" value="false" />
 		if (!allowHtmlPopupwindowExisted) {
 			Element allowHtmlPopupwindow = new Element("param");
 			allowHtmlPopupwindow.putAttribute("name", "\"AllowHtmlPopupwindow\"");
@@ -232,7 +200,6 @@ public class ObjectListener implements ElementListener {
 			element.addContent(allowHtmlPopupwindow);
 		}
 
-		// <param name="enableHtmlAccess" value="false" />
 		if (!enableHtmlAccessExisted) {
 			Element enableHtmlAccess = new Element("param");
 			enableHtmlAccess.putAttribute("name", "\"enableHtmlAccess\"");

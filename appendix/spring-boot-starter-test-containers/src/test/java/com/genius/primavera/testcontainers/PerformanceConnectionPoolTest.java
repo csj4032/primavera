@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ActiveProfiles("test")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@DisplayName("성능 및 연결 풀 관리 테스트")
+@DisplayName("translated_text_2 translated_text_1 translated_text_2 translated_text_1 translated_text_2 test")
 @EnableTestContainers({
         @EnableTestContainers.TestContainer(type = ContainerType.MARIADB, name = "performanceDb"),
         @EnableTestContainers.TestContainer(type = ContainerType.POSTGRESQL, name = "benchmarkDb")
@@ -69,7 +69,7 @@ public class PerformanceConnectionPoolTest {
 
         benchmarkJdbc.execute("CREATE INDEX idx_created_at ON performance_test(created_at)");
 
-        log.info("성능 테스트 환경 초기화 완료");
+        log.info("translated_text_2 test translated_text_2 translated_text_3 completed");
     }
 
     @AfterAll
@@ -88,26 +88,26 @@ public class PerformanceConnectionPoolTest {
 
     @Test
     @Order(1)
-    @DisplayName("HikariCP 연결 풀 설정 검증")
+    @DisplayName("HikariCP translated_text_2 translated_text_1 translated_text_2 validation")
     void testConnectionPoolConfiguration() {
-        assertTrue(performanceDataSource instanceof HikariDataSource, "HikariCP 데이터소스여야 함");
+        assertTrue(performanceDataSource instanceof HikariDataSource, "HikariCP translated_text_8 translated_text_1");
 
         HikariDataSource hikariDs = (HikariDataSource) performanceDataSource;
 
-        assertTrue(hikariDs.getMaximumPoolSize() > 0, "최대 풀 크기가 설정되어야 함");
-        assertTrue(hikariDs.getMinimumIdle() >= 0, "최소 유휴 연결 수가 설정되어야 함");
-        assertTrue(hikariDs.getConnectionTimeout() > 0, "연결 타임아웃이 설정되어야 함");
-        assertTrue(hikariDs.getIdleTimeout() > 0, "유휴 타임아웃이 설정되어야 함");
-        assertTrue(hikariDs.getMaxLifetime() > 0, "최대 생명주기가 설정되어야 함");
+        assertTrue(hikariDs.getMaximumPoolSize() > 0, "translated_text_2 translated_text_1 translated_text_3 translated_text_2 translated_text_1");
+        assertTrue(hikariDs.getMinimumIdle() >= 0, "translated_text_2 translated_text_2 translated_text_2 translated_text_2 translated_text_2 translated_text_1");
+        assertTrue(hikariDs.getConnectionTimeout() > 0, "translated_text_2 translated_text_5 translated_text_2 translated_text_1");
+        assertTrue(hikariDs.getIdleTimeout() > 0, "translated_text_2 translated_text_5 translated_text_2 translated_text_1");
+        assertTrue(hikariDs.getMaxLifetime() > 0, "translated_text_2 translated_text_5 translated_text_2 translated_text_1");
 
-        log.info("HikariCP 설정 - MaxPool: {}, MinIdle: {}, ConnTimeout: {}ms, IdleTimeout: {}ms",
+        log.info("HikariCP translated_text_2 - MaxPool: {}, MinIdle: {}, ConnTimeout: {}ms, IdleTimeout: {}ms",
                 hikariDs.getMaximumPoolSize(), hikariDs.getMinimumIdle(),
                 hikariDs.getConnectionTimeout(), hikariDs.getIdleTimeout());
     }
 
     @Test
     @Order(2)
-    @DisplayName("동시 연결 처리 테스트")
+    @DisplayName("translated_text_2 translated_text_2 processing test")
     void testConcurrentConnections() throws InterruptedException {
         int threadCount = 20;
         int operationsPerThread = 10;
@@ -145,25 +145,25 @@ public class PerformanceConnectionPoolTest {
         }
 
         long startTime = System.currentTimeMillis();
-        startLatch.countDown(); // 모든 스레드 동시 시작
+        startLatch.countDown();
 
-        assertTrue(completeLatch.await(30, TimeUnit.SECONDS), "모든 작업이 30초 내에 완료되어야 함");
+        assertTrue(completeLatch.await(30, TimeUnit.SECONDS), "all translated_text_3 30translated_text_1 translated_text_2 completed translated_text_1");
         long endTime = System.currentTimeMillis();
 
         int expectedOperations = threadCount * operationsPerThread;
-        assertEquals(expectedOperations, successCount.get(), "모든 연결 작업이 성공해야 함");
-        assertEquals(0, errorCount.get(), "연결 오류가 없어야 함");
+        assertEquals(expectedOperations, successCount.get(), "all translated_text_2 translated_text_3 translated_text_9 translated_text_1");
+        assertEquals(0, errorCount.get(), "translated_text_2 translated_text_6 translated_text_3 translated_text_1");
 
         Integer recordCount = performanceJdbc.queryForObject("SELECT COUNT(*) FROM performance_test", Integer.class);
-        assertEquals(expectedOperations, recordCount, "모든 데이터가 DB에 저장되어야 함");
+        assertEquals(expectedOperations, recordCount, "all translated_text_5 DBtranslated_text_1 translated_text_5 translated_text_1");
 
-        log.info("동시 연결 테스트 완료 - 스레드: {}, 작업/스레드: {}, 총 성공: {}, 소요시간: {}ms",
+        log.info("translated_text_2 translated_text_2 test completed - translated_text_3: {}, translated_text_2/translated_text_3: {}, translated_text_1 success: {}, translated_text_4: {}ms",
                 threadCount, operationsPerThread, successCount.get(), endTime - startTime);
     }
 
     @Test
     @Order(3)
-    @DisplayName("대용량 데이터 삽입 성능 테스트")
+    @DisplayName("translated_text_3 data translated_text_2 translated_text_2 test")
     void testBulkInsertPerformance() {
         int batchSize = 1000;
         int totalRecords = 5000;
@@ -186,18 +186,18 @@ public class PerformanceConnectionPoolTest {
         long duration = endTime - startTime;
 
         Integer finalCount = performanceJdbc.queryForObject("SELECT COUNT(*) FROM performance_test", Integer.class);
-        assertTrue(finalCount >= totalRecords, "최소 " + totalRecords + "개의 레코드가 있어야 함");
+        assertTrue(finalCount >= totalRecords, "translated_text_2 " + totalRecords + "translated_text_2 translated_text_4 translated_text_3 translated_text_1");
 
         double recordsPerSecond = (double) totalRecords / (duration / 1000.0);
-        assertTrue(recordsPerSecond > 100, "초당 100개 이상의 레코드가 처리되어야 함");
+        assertTrue(recordsPerSecond > 100, "translated_text_1 100translated_text_1 translated_text_3 translated_text_4 processing translated_text_1");
 
-        log.info("대용량 삽입 성능 - 총 레코드: {}, 소요시간: {}ms, 처리속도: {:.2f} records/sec",
+        log.info("translated_text_3 translated_text_2 translated_text_2 - translated_text_1 translated_text_3: {}, translated_text_4: {}ms, processing: {:.2f} records/sec",
                 totalRecords, duration, recordsPerSecond);
     }
 
     @Test
     @Order(4)
-    @DisplayName("쿼리 성능 벤치마크 (MariaDB vs PostgreSQL)")
+    @DisplayName("translated_text_2 translated_text_2 translated_text_4 (MariaDB vs PostgreSQL)")
     void testQueryPerformanceBenchmark() {
         int testDataSize = 1000;
 
@@ -229,7 +229,7 @@ public class PerformanceConnectionPoolTest {
             List<String> results = performanceJdbc.queryForList(
                     "SELECT data FROM performance_test WHERE data LIKE ? ORDER BY created_at DESC LIMIT 10",
                     String.class, pattern);
-            assertFalse(results.isEmpty(), "쿼리 결과가 있어야 함");
+            assertFalse(results.isEmpty(), "translated_text_2 translated_text_7 translated_text_3 translated_text_1");
         }
         long mariaDbQueryTime = System.currentTimeMillis() - mariaDbQueryStart;
 
@@ -239,23 +239,23 @@ public class PerformanceConnectionPoolTest {
             List<String> results = benchmarkJdbc.queryForList(
                     "SELECT data FROM performance_test WHERE data LIKE ? ORDER BY created_at DESC LIMIT 10",
                     String.class, pattern);
-            assertFalse(results.isEmpty(), "쿼리 결과가 있어야 함");
+            assertFalse(results.isEmpty(), "translated_text_2 translated_text_7 translated_text_3 translated_text_1");
         }
         long pgQueryTime = System.currentTimeMillis() - pgQueryStart;
 
-        log.info("성능 벤치마크 결과:");
-        log.info("MariaDB - 삽입: {}ms, 조회: {}ms", mariaDbInsertTime, mariaDbQueryTime);
-        log.info("PostgreSQL - 삽입: {}ms, 조회: {}ms", pgInsertTime, pgQueryTime);
+        log.info("translated_text_2 translated_text_4 result:");
+        log.info("MariaDB - translated_text_2: {}ms, inquiry: {}ms", mariaDbInsertTime, mariaDbQueryTime);
+        log.info("PostgreSQL - translated_text_2: {}ms, inquiry: {}ms", pgInsertTime, pgQueryTime);
 
-        assertTrue(mariaDbInsertTime < 10000, "MariaDB 삽입이 10초 내에 완료되어야 함");
-        assertTrue(pgInsertTime < 10000, "PostgreSQL 삽입이 10초 내에 완료되어야 함");
-        assertTrue(mariaDbQueryTime < 5000, "MariaDB 조회가 5초 내에 완료되어야 함");
-        assertTrue(pgQueryTime < 5000, "PostgreSQL 조회가 5초 내에 완료되어야 함");
+        assertTrue(mariaDbInsertTime < 10000, "MariaDB translated_text_2 10translated_text_1 translated_text_2 completed translated_text_1");
+        assertTrue(pgInsertTime < 10000, "PostgreSQL translated_text_2 10translated_text_1 translated_text_2 completed translated_text_1");
+        assertTrue(mariaDbQueryTime < 5000, "MariaDB inquiry 5translated_text_1 translated_text_2 completed translated_text_1");
+        assertTrue(pgQueryTime < 5000, "PostgreSQL inquiry 5translated_text_1 translated_text_2 completed translated_text_1");
     }
 
     @Test
     @Order(5)
-    @DisplayName("연결 누수 감지 테스트")
+    @DisplayName("translated_text_2 translated_text_2 translated_text_2 test")
     void testConnectionLeakDetection() throws InterruptedException, SQLException {
         HikariDataSource hikariDs = (HikariDataSource) performanceDataSource;
 
@@ -279,9 +279,9 @@ public class PerformanceConnectionPoolTest {
 
             int activeConnections = hikariDs.getHikariPoolMXBean().getActiveConnections();
             assertTrue(activeConnections >= initialActiveConnections,
-                    "활성 연결 수가 증가해야 함");
+                    "translated_text_2 translated_text_2 translated_text_2 translated_text_4 translated_text_1");
 
-            log.info("연결 상태 - 초기: {}, 현재: {}, 총풀크기: {}",
+            log.info("translated_text_2 translated_text_2 - translated_text_1: {}, translated_text_2: {}, translated_text_1translated_text_1: {}",
                     initialActiveConnections, activeConnections, hikariDs.getHikariPoolMXBean().getTotalConnections());
 
         } finally {
@@ -299,14 +299,14 @@ public class PerformanceConnectionPoolTest {
 
         int finalActiveConnections = hikariDs.getHikariPoolMXBean().getActiveConnections();
         assertEquals(initialActiveConnections, finalActiveConnections,
-                "모든 연결이 정리되어 초기 상태로 돌아가야 함");
+                "all translated_text_2 translated_text_4 translated_text_1 translated_text_2 translated_text_4 translated_text_1");
 
-        log.info("연결 누수 테스트 완료 - 최종 활성 연결: {}", finalActiveConnections);
+        log.info("translated_text_2 translated_text_2 test completed - translated_text_2 translated_text_2 translated_text_2: {}", finalActiveConnections);
     }
 
     @Test
     @Order(6)
-    @DisplayName("간단한 부하 테스트")
+    @DisplayName("translated_text_3 translated_text_2 test")
     void testSimpleLoadTest() throws InterruptedException {
         int threadCount = 10;
         int operationsPerThread = 50;
@@ -346,7 +346,7 @@ public class PerformanceConnectionPoolTest {
         startLatch.countDown();
 
         assertTrue(completeLatch.await(60, TimeUnit.SECONDS),
-                "모든 작업이 60초 내에 완료되어야 함");
+                "all translated_text_3 60translated_text_1 translated_text_2 completed translated_text_1");
 
         long endTime = System.currentTimeMillis();
         long duration = endTime - startTime;
@@ -355,11 +355,11 @@ public class PerformanceConnectionPoolTest {
         int errors = errorCount.get();
         double operationsPerSecond = (double) operations / (duration / 1000.0);
 
-        assertTrue(operations > threadCount * operationsPerThread * 0.8, "80% 이상의 작업이 성공해야 함");
-        assertTrue(operationsPerSecond > 10, "초당 10개 이상의 작업이 처리되어야 함");
-        assertTrue(errors < operations * 0.1, "오류율이 10% 미만이어야 함");
+        assertTrue(operations > threadCount * operationsPerThread * 0.8, "80% translated_text_3 translated_text_3 translated_text_9 translated_text_1");
+        assertTrue(operationsPerSecond > 10, "translated_text_1 10translated_text_1 translated_text_3 translated_text_3 processing translated_text_1");
+        assertTrue(errors < operations * 0.1, "translated_text_7 10% translated_text_5 translated_text_1");
 
-        log.info("부하 테스트 완료 - 지속시간: {}ms, 총 작업: {}, 오류: {}, 처리속도: {:.2f} ops/sec",
+        log.info("translated_text_2 test completed - translated_text_4: {}ms, translated_text_1 translated_text_2: {}, error: {}, processing: {:.2f} ops/sec",
                 duration, operations, errors, operationsPerSecond);
     }
 }

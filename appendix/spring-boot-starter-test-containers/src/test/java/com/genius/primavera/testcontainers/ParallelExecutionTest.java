@@ -40,7 +40,7 @@ public class ParallelExecutionTest {
         Integer count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM parallel_test1", Integer.class);
         assertTrue(count >= 1, "Should have at least 1 record");
 
-        log.info("✅ Parallel execution test 1 completed on thread: {}", Thread.currentThread().getName());
+        log.info(" Parallel execution test 1 completed on thread: {}", Thread.currentThread().getName());
     }
 
     @Test
@@ -56,7 +56,7 @@ public class ParallelExecutionTest {
         Integer count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM parallel_test2", Integer.class);
         assertTrue(count >= 1, "Should have at least 1 record");
 
-        log.info("✅ Parallel execution test 2 completed on thread: {}", Thread.currentThread().getName());
+        log.info(" Parallel execution test 2 completed on thread: {}", Thread.currentThread().getName());
     }
 
     @Test
@@ -72,6 +72,6 @@ public class ParallelExecutionTest {
         Integer count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM parallel_test3", Integer.class);
         assertTrue(count >= 1, "Should have at least 1 record");
 
-        log.info("✅ Parallel execution test 3 completed on thread: {}", Thread.currentThread().getName());
+        log.info(" Parallel execution test 3 completed on thread: {}", Thread.currentThread().getName());
     }
 }

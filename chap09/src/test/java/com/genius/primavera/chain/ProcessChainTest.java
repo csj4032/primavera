@@ -9,8 +9,6 @@ public class ProcessChainTest {
 	@Test
 	public void chainTest() {
 		final var fromValidationProcess = new FromValidationProcess(new MessageValidationProcess());
-//		final Post post = new Post("to", "from", "message", 1);
-//		final ProcessChain processChain = new ProcessChain(processes, post);
-//		processChain.doProcess();
+
 	}
 }

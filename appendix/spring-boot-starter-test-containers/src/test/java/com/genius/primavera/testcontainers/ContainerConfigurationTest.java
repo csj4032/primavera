@@ -36,7 +36,7 @@ class ContainerConfigurationTest {
         assertNotNull(spec.getEnvironment(), "Environment should not be null");
         assertEquals("value", spec.getEnvironment().get("ENV_VAR"), "Environment variable should be set");
 
-        log.info("✅ MariaDB spec works correctly");
+        log.info(" MariaDB spec works correctly");
     }
 
     @Test
@@ -61,7 +61,7 @@ class ContainerConfigurationTest {
         assertEquals(MySqlContainerSpec.SqlMode.STRICT_TRANS_TABLES, spec.getSqlMode(), "SQL mode should be set");
         assertEquals(200, spec.getMaxConnections(), "Max connections should be set");
 
-        log.info("✅ MySQL spec works correctly");
+        log.info(" MySQL spec works correctly");
     }
 
     @Test
@@ -90,7 +90,7 @@ class ContainerConfigurationTest {
         assertEquals(150, spec.getMaxConnections(), "Max connections should be set");
         assertEquals(PostgreSqlContainerSpec.SslMode.PREFER, spec.getSslMode(), "SSL mode should be set");
 
-        log.info("✅ PostgreSQL spec works correctly");
+        log.info(" PostgreSQL spec works correctly");
     }
 
     @Test
@@ -113,7 +113,7 @@ class ContainerConfigurationTest {
         assertFalse(spec.getAppendOnlyEnabled(), "Append only should be disabled");
         assertEquals(45, spec.getStartupTimeout(), "Startup timeout should be set");
 
-        log.info("✅ Redis spec works correctly");
+        log.info(" Redis spec works correctly");
     }
 
     @Test
@@ -142,7 +142,7 @@ class ContainerConfigurationTest {
         assertTrue(spec.getJournalEnabled(), "Journal should be enabled");
         assertEquals(MongoContainerSpec.StorageEngine.WIRED_TIGER, spec.getStorageEngine(), "Storage engine should be set");
 
-        log.info("✅ MongoDB spec works correctly");
+        log.info(" MongoDB spec works correctly");
     }
 
     @Test
@@ -161,7 +161,7 @@ class ContainerConfigurationTest {
         assertNotNull(spec.getEnvironment(), "Environment should not be null");
         assertEquals("value", spec.getEnvironment().get("ENV_VAR"), "Environment variable should be set");
 
-        log.info("✅ Base container spec works correctly");
+        log.info(" Base container spec works correctly");
     }
 
     @Test
@@ -209,7 +209,7 @@ class ContainerConfigurationTest {
         assertEquals("testdb", retrievedDbConfig.getMariadb().getDatabase(), "Database name should be correct");
         assertEquals("redis_pass", retrievedCacheConfig.getRedis().getPassword(), "Cache password should be correct");
 
-        log.info("✅ Container instance configs work correctly");
+        log.info(" Container instance configs work correctly");
     }
 
     @Test
@@ -232,7 +232,7 @@ class ContainerConfigurationTest {
         assertEquals(1, config.getContainers().size(), "Should have 1 container config");
         assertTrue(config.getContainers().containsKey("test"), "Should contain test key");
         
-        log.info("✅ Container configuration works correctly");
+        log.info(" Container configuration works correctly");
     }
 
     @Test
@@ -251,6 +251,6 @@ class ContainerConfigurationTest {
         assertTrue(retrievedSpec instanceof MariaDbContainerSpec, "Retrieved spec should be MariaDbContainerSpec");
         assertEquals("test_mariadb", ((MariaDbContainerSpec) retrievedSpec).getDatabase(), "Database should match");
 
-        log.info("✅ Spec for type retrieval works correctly");
+        log.info(" Spec for type retrieval works correctly");
     }
 }

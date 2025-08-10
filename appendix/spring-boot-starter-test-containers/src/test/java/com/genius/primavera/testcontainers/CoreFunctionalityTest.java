@@ -45,7 +45,7 @@ class CoreFunctionalityTest {
     @DisplayName("Verify Spring context loads successfully")
     void testSpringContextLoads() {
         assertNotNull(applicationContext, "ApplicationContext should be available");
-        log.info("✅ Spring context loaded successfully");
+        log.info(" Spring context loaded successfully");
     }
     
     @Test
@@ -58,7 +58,7 @@ class CoreFunctionalityTest {
         assertNotNull(coreDataSource, "DataSource should be injected");
         assertNotNull(coreRedisTemplate, "RedisTemplate should be injected");
         
-        log.info("✅ Container beans registered and injected successfully");
+        log.info(" Container beans registered and injected successfully");
     }
     
     @Test
@@ -78,7 +78,7 @@ class CoreFunctionalityTest {
         assertEquals(ContainerType.MARIADB, dbInfo.type(), "Database should be MariaDB");
         assertEquals(ContainerType.REDIS, cacheInfo.type(), "Cache should be Redis");
         
-        log.info("✅ Container manager available with {} containers", manager.getAllContainers().size());
+        log.info(" Container manager available with {} containers", manager.getAllContainers().size());
     }
     
     @Test
@@ -95,7 +95,7 @@ class CoreFunctionalityTest {
                 "Should be MariaDB, got: " + productName);
         }
         
-        log.info("✅ Database connectivity verified");
+        log.info(" Database connectivity verified");
     }
     
     @Test
@@ -121,7 +121,7 @@ class CoreFunctionalityTest {
         Integer count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM core_test", Integer.class);
         assertTrue(count >= 1, "Should have at least one record");
         
-        log.info("✅ Database operations verified with {} records", count);
+        log.info(" Database operations verified with {} records", count);
     }
     
     @Test
@@ -141,7 +141,7 @@ class CoreFunctionalityTest {
         coreRedisTemplate.opsForValue().set(key + "-ttl", "expiring", Duration.ofSeconds(30));
         assertTrue(coreRedisTemplate.hasKey(key + "-ttl"), "TTL operations should work");
         
-        log.info("✅ Redis operations verified");
+        log.info(" Redis operations verified");
     }
     
     @Test
@@ -163,7 +163,7 @@ class CoreFunctionalityTest {
             }
         }
         
-        log.info("✅ All containers are healthy and running");
+        log.info(" All containers are healthy and running");
     }
     
     @Test
@@ -191,7 +191,7 @@ class CoreFunctionalityTest {
         assertEquals(isolationValue, dbValue, "Database isolation should work");
         assertEquals(isolationValue, cacheValue, "Cache isolation should work");
         
-        log.info("✅ Container isolation verified for {}", this.getClass().getSimpleName());
+        log.info(" Container isolation verified for {}", this.getClass().getSimpleName());
     }
     
     @Test
@@ -209,6 +209,6 @@ class CoreFunctionalityTest {
                 "Container ID should be available for cleanup");
         }
         
-        log.info("✅ Resource cleanup readiness verified for {} containers", containerCount);
+        log.info(" Resource cleanup readiness verified for {} containers", containerCount);
     }
 }

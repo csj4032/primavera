@@ -33,7 +33,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 @SpringBootTest
 @EnableTestContainers
 @ActiveProfiles("test")
-@DisplayName("PrimaveraService 테스트")
+@DisplayName("PrimaveraService test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class PrimaveraServiceTest {
 
@@ -66,7 +66,7 @@ public class PrimaveraServiceTest {
 
     @Test
     @Order(1)
-    @DisplayName("사용자 조회 성공 테스트")
+    @DisplayName("user inquiry success test")
     public void getUserTest() throws Exception {
         long userId = 1L;
         User expectedUser = User.builder().id(userId).email("genius@primavera.com").nickname("Genius").createdAt(Instant.now()).updatedAt(Instant.now()).build();
@@ -82,7 +82,7 @@ public class PrimaveraServiceTest {
 
     @Test
     @Order(2)
-    @DisplayName("사용자 조회 실패 테스트 (404 Not Found)")
+    @DisplayName("user inquiry failure test (404 Not Found)")
     public void getUserNotFoundTest() {
         long userId = 999L;
         mockServer.expect(ExpectedCount.once(), requestTo("http://localhost:8080/users/" + userId)).andExpect(method(HttpMethod.GET)).andRespond(withStatus(HttpStatusCode.valueOf(404)).contentType(MediaType.APPLICATION_JSON));
@@ -92,7 +92,7 @@ public class PrimaveraServiceTest {
 
     @Test
     @Order(3)
-    @DisplayName("네트워크 연결 실패 테스트 (ResourceAccessException)")
+    @DisplayName("translated_text_4 translated_text_2 failure test (ResourceAccessException)")
     public void getNetworkErrorTest() {
         long userId = 100L;
         mockServer.expect(ExpectedCount.once(), requestTo("http://localhost:8080/users/" + userId)).andExpect(method(HttpMethod.GET))

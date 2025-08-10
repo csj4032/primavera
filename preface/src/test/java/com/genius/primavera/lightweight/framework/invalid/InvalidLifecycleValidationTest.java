@@ -8,27 +8,22 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-/**
- * 잘못된 라이프사이클 어노테이션 사용에 대한 검증 테스트
- */
 class InvalidLifecycleValidationTest {
 
     @Test
-    @DisplayName("잘못된 @PostConstruct 메서드 (매개변수 있음)가 예외를 발생시키는지 테스트")
+    @DisplayName("translated_text_3 @PostConstruct translated_text_3 (translated_text_4 translated_text_2)translated_text_1 translated_text_10 translated_text_6 test")
     void shouldThrowExceptionForInvalidPostConstructMethod() {
         assertThrows(RuntimeException.class, () -> {
             new PrimaveraApplicationContext("com.genius.primavera.lightweight.framework.invalid");
         });
     }
 
-    // 잘못된 라이프사이클 Bean - 매개변수가 있는 @PostConstruct 메서드
     @PrimaveraComponent
     public static class InvalidLifecycleBean {
-        
-        // 잘못된 @PostConstruct 메서드 (매개변수 있음)
+
         @PrimaveraPostConstruct
         public void invalidInit(String parameter) {
-            // 이 메서드는 예외를 발생시켜야 함
+
         }
     }
 }

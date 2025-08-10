@@ -16,7 +16,7 @@ import java.time.Month;
 import java.util.List;
 
 @Slf4j
-@DisplayName("계좌 파싱 클래스 테스트")
+@DisplayName("translated_text_2 translated_text_2 translated_text_3 test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class AccountCSVParserTest {
 
@@ -24,7 +24,7 @@ public class AccountCSVParserTest {
 
 	@Test
     @Order(1)
-	@DisplayName("계좌 파싱 클래스 구현")
+	@DisplayName("translated_text_2 translated_text_2 translated_text_3 translated_text_2")
 	public void accountCSVParsing() throws IOException {
 		String fileName = "accountInfo.csv";
 		List<String> lines = Files.readAllLines(Path.of(resource + fileName));
@@ -39,7 +39,7 @@ public class AccountCSVParserTest {
 
     @Test
     @Order(2)
-    @DisplayName("계좌 파싱 클래스 구현 실패")
+    @DisplayName("translated_text_2 translated_text_2 translated_text_3 translated_text_2 failure")
     public void accountCSVParsingFail() {
         Assertions.assertThrows(IOException.class, () -> {
             String fileName = "nonExistentFile.csv";
@@ -51,11 +51,11 @@ public class AccountCSVParserTest {
 
     @Test
     @Order(3)
-    @DisplayName("계좌 파싱 클래스 CSV 파싱")
+    @DisplayName("translated_text_2 translated_text_2 translated_text_3 CSV translated_text_2")
     public void accountCSVParserTest() throws IOException {
         AccountCSVParser accountCSVParser = new AccountCSVParser();
         var lines = Files.readAllLines(Path.of(resource + "accountInfo.csv"));
         var accountInfos = accountCSVParser.parseLinesFormCVS(lines);
-        Assertions.assertFalse(accountInfos.isEmpty(), "CSV 파싱 결과가 비어있지 않아야 합니다.");
+        Assertions.assertFalse(accountInfos.isEmpty(), "CSV translated_text_2 translated_text_7 translated_text_4 translated_text_3 translated_text_3.");
     }
 }

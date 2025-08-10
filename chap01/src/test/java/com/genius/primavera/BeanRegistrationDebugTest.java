@@ -21,40 +21,36 @@ public class BeanRegistrationDebugTest {
     private ApplicationContext context;
 
     @Test
-    @DisplayName("모든 등록된 Bean 이름 출력")
+    @DisplayName("all translated_text_13 Bean translated_text_2 translated_text_2")
     void listAllBeans() {
         String[] beanNames = context.getBeanDefinitionNames();
-        log.info("=== 등록된 모든 Bean 이름 ===");
+        log.info("=== translated_text_13 all Bean translated_text_2 ===");
         Arrays.stream(beanNames)
                 .filter(name -> name.contains("world") || name.contains("hello") || name.contains("greeting"))
                 .sorted()
                 .forEach(name -> log.info("Bean: {}", name));
         
-        log.info("=== 전체 Bean 개수: {} ===", beanNames.length);
-        
-        // WorldController 타입으로 Bean 찾기 시도
+        log.info("=== translated_text_2 Bean translated_text_2: {} ===", beanNames.length);
+
         try {
             Object worldController = context.getBean("worldController");
-            log.info("worldController Bean 찾음: {}", worldController.getClass().getName());
+            log.info("worldController Bean translated_text_2: {}", worldController.getClass().getName());
             assertThat(worldController).isNotNull();
         } catch (Exception e) {
-            log.error("worldController Bean 찾을 수 없음: {}", e.getMessage());
+            log.error("worldController Bean translated_text_2 translated_text_1 translated_text_2: {}", e.getMessage());
         }
-        
-        // HelloService 타입으로 Bean 찾기 시도
+
         try {
             Object helloService = context.getBean("helloService");
-            log.info("helloService Bean 찾음: {}", helloService.getClass().getName());
+            log.info("helloService Bean translated_text_2: {}", helloService.getClass().getName());
         } catch (Exception e) {
-            log.error("helloService Bean 찾을 수 없음: {}", e.getMessage());
+            log.error("helloService Bean translated_text_2 translated_text_1 translated_text_2: {}", e.getMessage());
         }
-        
-        // 모든 Controller 관련 Bean 출력
+
         Arrays.stream(beanNames)
                 .filter(name -> name.toLowerCase().contains("controller"))
                 .forEach(name -> log.info("Controller Bean: {}", name));
-                
-        // 모든 Service 관련 Bean 출력
+
         Arrays.stream(beanNames)
                 .filter(name -> name.toLowerCase().contains("service"))
                 .forEach(name -> log.info("Service Bean: {}", name));

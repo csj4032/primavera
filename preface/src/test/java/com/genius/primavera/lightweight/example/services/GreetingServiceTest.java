@@ -6,9 +6,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * GreetingService 테스트
- */
 class GreetingServiceTest {
     
     private GreetingService greetingService;
@@ -19,39 +16,39 @@ class GreetingServiceTest {
     }
     
     @Test
-    @DisplayName("기본 인사말이 올바르게 생성되는지 테스트")
+    @DisplayName("translated_text_2 translated_text_4 translated_text_4 translated_text_11 test")
     void shouldSayHello() {
-        String result = greetingService.sayHello("테스터");
+        String result = greetingService.sayHello("translated_text_3");
         
         assertNotNull(result);
-        assertTrue(result.contains("테스터"));
-        assertTrue(result.contains("환영합니다"));
+        assertTrue(result.contains("translated_text_3"));
+        assertTrue(result.contains("translated_text_5"));
     }
     
     @Test
-    @DisplayName("시간이 포함된 인사말이 올바르게 생성되는지 테스트")
+    @DisplayName("translated_text_3 translated_text_3 translated_text_4 translated_text_4 translated_text_11 test")
     void shouldSayHelloWithTime() {
-        String result = greetingService.sayHelloWithTime("테스터");
+        String result = greetingService.sayHelloWithTime("translated_text_3");
         
         assertNotNull(result);
-        assertTrue(result.contains("테스터"));
-        assertTrue(result.contains("현재 시간"));
+        assertTrue(result.contains("translated_text_3"));
+        assertTrue(result.contains("translated_text_2 translated_text_2"));
     }
     
     @Test
-    @DisplayName("작별 인사가 올바르게 생성되는지 테스트")
+    @DisplayName("translated_text_2 translated_text_3 translated_text_4 translated_text_11 test")
     void shouldSayGoodbye() {
-        String result = greetingService.sayGoodbye("테스터");
+        String result = greetingService.sayGoodbye("translated_text_3");
         
         assertNotNull(result);
-        assertTrue(result.contains("테스터"));
-        assertTrue(result.contains("안녕히 가세요"));
+        assertTrue(result.contains("translated_text_3"));
+        assertTrue(result.contains("translated_text_3 translated_text_3"));
     }
     
     @Test
-    @DisplayName("null 이름으로 인사말 생성 시 예외 처리 테스트")
+    @DisplayName("null translated_text_4 translated_text_3 creation translated_text_1 exception processing test")
     void shouldHandleNullName() {
-        // null 이름도 처리할 수 있어야 함
+
         assertDoesNotThrow(() -> {
             greetingService.sayHello(null);
         });

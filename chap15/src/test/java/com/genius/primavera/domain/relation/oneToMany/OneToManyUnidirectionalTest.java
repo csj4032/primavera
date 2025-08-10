@@ -4,19 +4,14 @@ import com.genius.primavera.domain.relation.JpaTestBase;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 
-/**
- * 단점
- * 1. 외래 키가 다른 테이블에 있는 점 (연관관계 처리를 위한 UPDATE SEQ, 성능이슈)
- * 2. 다대일 양방향을 권장
- */
 @Slf4j
-@DisplayName("1:N 교수와 학생 단방향")
+@DisplayName("1:N translated_text_3 translated_text_2 translated_text_3")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class OneToManyUnidirectionalTest extends JpaTestBase {
 
 	@Test
 	@Order(1)
-	@DisplayName("교수, 학생 저장")
+	@DisplayName("translated_text_2, translated_text_2 translated_text_2")
 	public void save() {
 		var student1 = new Student(null, "student1");
 		var student2 = new Student(null, "student2");
@@ -33,7 +28,7 @@ public class OneToManyUnidirectionalTest extends JpaTestBase {
 
 	@Test
 	@Order(2)
-	@DisplayName("교수, 학생 조회")
+	@DisplayName("translated_text_2, translated_text_2 inquiry")
 	public void find() {
 		var student1 = entityManager.find(Student.class, 1l);
 		var student2 = entityManager.find(Student.class, 2l);

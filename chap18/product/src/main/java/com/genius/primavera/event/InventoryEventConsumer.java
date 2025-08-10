@@ -30,26 +30,25 @@ public class InventoryEventConsumer {
             Acknowledgment ack) {
         
         try {
-            log.info("주문 생성 이벤트 수신: orderId={}, items={}, topic={}, partition={}, offset={}", 
+            log.info("translated_text_2 creation translated_text_3 translated_text_2: orderId={}, items={}, topic={}, partition={}, offset={}", 
                     event.getOrderId(), event.getItems().size(), topic, partition, offset);
-            
-            // 재고 확인 및 차감 처리
+
             productService.processInventoryReservation(event)
                     .doOnSuccess(result -> {
-                        log.info("재고 처리 완료: orderId={}, success={}", 
+                        log.info("translated_text_2 processing completed: orderId={}, success={}", 
                                 event.getOrderId(), result.isSuccess());
-                        ack.acknowledge(); // 수동 커밋
+                        ack.acknowledge();
                     })
                     .doOnError(error -> {
-                        log.error("재고 처리 중 오류: orderId={}, error={}", 
+                        log.error("translated_text_2 processing translated_text_1 error: orderId={}, error={}", 
                                 event.getOrderId(), error.getMessage(), error);
-                        // 에러 발생 시에도 ACK (DLQ 또는 별도 처리 필요)
+
                         ack.acknowledge();
                     })
                     .subscribe();
             
         } catch (Exception e) {
-            log.error("이벤트 처리 중 예외 발생: orderId={}, error={}", 
+            log.error("translated_text_3 processing translated_text_1 exception translated_text_2: orderId={}, error={}", 
                     event.getOrderId(), e.getMessage(), e);
             ack.acknowledge();
         }

@@ -8,6 +8,6 @@ import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROT
 
 @Component
 @Scope(value = SCOPE_PROTOTYPE, proxyMode = ScopedProxyMode.TARGET_CLASS)
-//@Scope(value = SCOPE_PROTOTYPE)
+
 public class Prototype {
 }

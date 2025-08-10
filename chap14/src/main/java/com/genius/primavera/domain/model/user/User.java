@@ -57,7 +57,6 @@ public class User extends BaseEntity {
 	@Convert(converter = UserStatusAttributeConverter.class)
 	private UserStatus status;
 
-	// 단방향
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "CONNECTION_ID", referencedColumnName = "ID")
 	private UserConnection connection;

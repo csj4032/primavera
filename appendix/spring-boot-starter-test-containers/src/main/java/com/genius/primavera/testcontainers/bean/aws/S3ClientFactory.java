@@ -16,7 +16,7 @@ public class S3ClientFactory extends AwsServiceClientFactory {
     @Override
     public Object createClient(LocalStackContainer container) {
         if (!isAvailable()) {
-            throw new IllegalStateException("AWS S3 SDK가 클래스패스에 없습니다. AWS SDK v2 의존성을 추가해주세요.");
+            throw new IllegalStateException("AWS S3 SDKtranslated_text_1 translated_text_6 translated_text_4. AWS SDK v2 dependencytranslated_text_1 translated_text_1.");
         }
 
         try {
@@ -62,12 +62,12 @@ public class S3ClientFactory extends AwsServiceClientFactory {
 
             Object s3Client = builder.getClass().getMethod("build").invoke(builder);
 
-            log.info("✅ S3Client가 성공적으로 생성되었습니다. 엔드포인트: {}", endpointUrl);
+            log.info(" S3Clienttranslated_text_1 translated_text_10 translated_text_13. translated_text_5: {}", endpointUrl);
             return s3Client;
 
         } catch (Exception e) {
-            log.error("S3Client 생성 중 오류 발생", e);
-            throw new RuntimeException("S3Client 생성 실패", e);
+            log.error("S3Client creation translated_text_1 error translated_text_2", e);
+            throw new RuntimeException("S3Client creation failure", e);
         }
     }
 
@@ -94,6 +94,6 @@ public class S3ClientFactory extends AwsServiceClientFactory {
 
     @Override
     public boolean isPrimary() {
-        return true; // S3는 가장 많이 사용되는 서비스이므로 Primary로 설정
+        return true;
     }
 }

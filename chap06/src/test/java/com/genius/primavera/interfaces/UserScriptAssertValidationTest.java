@@ -19,7 +19,7 @@ import java.util.Set;
 @SpringBootTest
 @Testcontainers
 @ActiveProfiles("test")
-@DisplayName("@ScriptAssert Groovy 스크립트 검증 테스트")
+@DisplayName("@ScriptAssert Groovy translated_text_4 validation test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class UserScriptAssertValidationTest {
 
@@ -43,7 +43,7 @@ public class UserScriptAssertValidationTest {
 
     @Test
     @Order(1)
-    @DisplayName("@ScriptAssert로 비밀번호 불일치 검증")
+    @DisplayName("@ScriptAsserttranslated_text_1 translated_text_4 translated_text_3 validation")
     public void validatePasswordMismatchWithScriptAssert() {
         UserWithScriptAssert user = UserWithScriptAssert.builder()
                 .id(1L)
@@ -54,15 +54,15 @@ public class UserScriptAssertValidationTest {
                 .build();
 
         Set<ConstraintViolation<UserWithScriptAssert>> violations = validator.validate(user);
-        Assertions.assertFalse(violations.isEmpty(), "비밀번호 불일치 시 검증 오류가 발생해야 함");
+        Assertions.assertFalse(violations.isEmpty(), "translated_text_4 translated_text_3 translated_text_1 validation translated_text_6 translated_text_4 translated_text_1");
         boolean hasPasswordMatchError = violations.stream().anyMatch(v -> v.getMessage().contains("Passwords do not match"));
-        Assertions.assertTrue(hasPasswordMatchError, "비밀번호 불일치 메시지가 포함되어야 함");
+        Assertions.assertTrue(hasPasswordMatchError, "translated_text_4 translated_text_3 translated_text_1translated_text_1 translated_text_1 translated_text_1");
         violations.forEach(v -> System.out.println("- " + v.getMessage()));
     }
 
     @Test
     @Order(2)
-    @DisplayName("@ScriptAssert로 비밀번호 일치 검증")
+    @DisplayName("@ScriptAsserttranslated_text_1 translated_text_4 translated_text_2 validation")
     public void validatePasswordMatchWithScriptAssert() {
         String password = "Secret0!";
         UserWithScriptAssert user = UserWithScriptAssert.builder()
@@ -76,19 +76,19 @@ public class UserScriptAssertValidationTest {
         Set<ConstraintViolation<UserWithScriptAssert>> violations = validator.validate(user);
 
         boolean hasPasswordMatchError = violations.stream().anyMatch(v -> v.getMessage().contains("Passwords do not match"));
-        Assertions.assertFalse(hasPasswordMatchError, "비밀번호 일치 시 검증 오류가 없어야 함");
+        Assertions.assertFalse(hasPasswordMatchError, "translated_text_4 translated_text_2 translated_text_1 validation translated_text_6 translated_text_3 translated_text_1");
 
         if (!violations.isEmpty()) {
-            System.out.println("검증 오류 메시지들:");
+            System.out.println("validation error translated_text_1:");
             violations.forEach(v -> System.out.println("- " + v.getMessage()));
         } else {
-            System.out.println("검증 통과: 비밀번호 일치");
+            System.out.println("validation translated_text_2: translated_text_4 translated_text_2");
         }
     }
 
     @Test
     @Order(3)
-    @DisplayName("@ScriptAssert로 null 비밀번호 검증")
+    @DisplayName("@ScriptAsserttranslated_text_1 null translated_text_4 validation")
     public void validateNullPasswordWithScriptAssert() {
         UserWithScriptAssert user = UserWithScriptAssert.builder()
                 .id(1L)
@@ -100,13 +100,13 @@ public class UserScriptAssertValidationTest {
 
         Set<ConstraintViolation<UserWithScriptAssert>> violations = validator.validate(user);
         boolean hasPasswordMatchError = violations.stream().anyMatch(v -> v.getMessage().contains("Passwords do not match"));
-        Assertions.assertTrue(hasPasswordMatchError, "password가 null이면 검증 실패해야 함");
+        Assertions.assertTrue(hasPasswordMatchError, "passwordtranslated_text_1 nulltranslated_text_2 validation translated_text_9 translated_text_1");
         violations.forEach(v -> System.out.println("- " + v.getMessage()));
     }
 
     @Test
     @Order(4)
-    @DisplayName("@ScriptAssert로 대소문자 구분 검증")
+    @DisplayName("@ScriptAsserttranslated_text_1 translated_text_4 translated_text_2 validation")
     public void validateCaseSensitiveWithScriptAssert() {
         UserWithScriptAssert user = UserWithScriptAssert.builder()
                 .id(1L)
@@ -118,13 +118,13 @@ public class UserScriptAssertValidationTest {
 
         Set<ConstraintViolation<UserWithScriptAssert>> violations = validator.validate(user);
         boolean hasPasswordMatchError = violations.stream().anyMatch(v -> v.getMessage().contains("Passwords do not match"));
-        Assertions.assertTrue(hasPasswordMatchError, "대소문자 다른 비밀번호는 불일치로 검증되어야 함");
+        Assertions.assertTrue(hasPasswordMatchError, "translated_text_4 translated_text_2 translated_text_4 translated_text_3translated_text_1 validation translated_text_1");
         violations.forEach(v -> System.out.println("- " + v.getMessage()));
     }
 
     @Test
     @Order(5)
-    @DisplayName("@ScriptAssert로 공백 포함 검증")
+    @DisplayName("@ScriptAsserttranslated_text_1 translated_text_2 translated_text_1 validation")
     public void validateSpaceIncludedWithScriptAssert() {
         UserWithScriptAssert user = UserWithScriptAssert.builder()
                 .id(1L)
@@ -136,31 +136,31 @@ public class UserScriptAssertValidationTest {
 
         Set<ConstraintViolation<UserWithScriptAssert>> violations = validator.validate(user);
         boolean hasPasswordMatchError = violations.stream().anyMatch(v -> v.getMessage().contains("Passwords do not match"));
-        Assertions.assertTrue(hasPasswordMatchError, "공백 차이가 있는 비밀번호는 불일치로 검증되어야 함");
+        Assertions.assertTrue(hasPasswordMatchError, "translated_text_2 translated_text_1 translated_text_2 translated_text_4 translated_text_3translated_text_1 validation translated_text_1");
         violations.forEach(v -> System.out.println("- " + v.getMessage()));
     }
 
     @Test
     @Order(6)
-    @DisplayName("@ScriptAssert로 복합 검증 - 여러 필드 오류")
+    @DisplayName("@ScriptAsserttranslated_text_1 translated_text_2 validation - translated_text_2 translated_text_2 error")
     public void validateMultipleErrorsWithScriptAssert() {
         UserWithScriptAssert user = UserWithScriptAssert.builder()
-                .id(-1L)  // Min 어노테이션 위반
-                .email("invalid-email")  // Email 어노테이션 위반
-                .password("weak")  // Pattern 어노테이션 위반
-                .passwordConfirm("different")  // ScriptAssert 위반
-                .nickname("")  // NotBlank 어노테이션 위반
+                .id(-1L)
+                .email("invalid-email")
+                .password("weak")
+                .passwordConfirm("different")
+                .nickname("")
                 .build();
 
         Set<ConstraintViolation<UserWithScriptAssert>> violations = validator.validate(user);
 
-        Assertions.assertFalse(violations.isEmpty(), "여러 검증 오류가 발생해야 함");
-        Assertions.assertTrue(violations.size() >= 4, "최소 4개 이상의 검증 오류가 있어야 함");
+        Assertions.assertFalse(violations.isEmpty(), "translated_text_2 validation translated_text_6 translated_text_4 translated_text_1");
+        Assertions.assertTrue(violations.size() >= 4, "translated_text_2 4translated_text_1 translated_text_3 validation translated_text_6 translated_text_3 translated_text_1");
 
-        System.out.println("검증 오류 메시지들 (" + violations.size() + "개):");
+        System.out.println("validation error translated_text_1 (" + violations.size() + "translated_text_1):");
         violations.forEach(v -> System.out.println("- " + v.getPropertyPath() + ": " + v.getMessage()));
 
         boolean hasPasswordMatchError = violations.stream().anyMatch(v -> v.getMessage().contains("Passwords do not match"));
-        Assertions.assertTrue(hasPasswordMatchError, "비밀번호 불일치 오류도 포함되어야 함");
+        Assertions.assertTrue(hasPasswordMatchError, "translated_text_4 translated_text_3 error translated_text_1 translated_text_1");
     }
 }

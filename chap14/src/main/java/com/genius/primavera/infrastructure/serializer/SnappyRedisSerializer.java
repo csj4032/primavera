@@ -7,9 +7,6 @@ import org.xerial.snappy.Snappy;
 
 import java.io.Serializable;
 
-/**
- * <a href="https://github.com/cboursinos/java-spring-redis-compression-snappy-kryo">...</a>
- */
 public class SnappyRedisSerializer<T> implements RedisSerializer<T> {
 
 	private RedisSerializer<T> innerSerializer;
@@ -18,9 +15,6 @@ public class SnappyRedisSerializer<T> implements RedisSerializer<T> {
 		this.innerSerializer = innerSerializer;
 	}
 
-	/**
-	 * Create a byte array by serialising and Compressing a java graph (object)
-	 */
 	@Override
 	public byte[] serialize(T t) throws SerializationException {
 		if (t == null) {
@@ -34,9 +28,6 @@ public class SnappyRedisSerializer<T> implements RedisSerializer<T> {
 		}
 	}
 
-	/**
-	 * Create a java graph (object) by uncompressing and deserializing a byte array
-	 */
 	@Override
 	public T deserialize(byte[] bytes) throws SerializationException {
 		if (bytes == null || bytes.length == 0) {

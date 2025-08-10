@@ -16,7 +16,7 @@ import java.io.IOException;
 
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
-@DisplayName("ExcelImportService 테스트")
+@DisplayName("ExcelImportService test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ExcelImportServiceImplTest {
 
@@ -28,7 +28,7 @@ public class ExcelImportServiceImplTest {
 
 	@Test
 	@Order(1)
-	@DisplayName("파일 사이즈 테스트")
+	@DisplayName("translated_text_2 translated_text_3 test")
 	public void fileSizeZeroTest() throws IOException {
 		ExcelImportRequest excelImportRequest = new ExcelImportRequest();
 		long size = excelImportService.getFileSize(excelImportRequest);
@@ -39,7 +39,7 @@ public class ExcelImportServiceImplTest {
 
 	@Test
 	@Order(2)
-	@DisplayName("파일 형식 텍스츠 테스트")
+	@DisplayName("translated_text_2 translated_text_2 translated_text_3 test")
 	public void textFileTest() throws IOException {
 		Resource resource = resourceLoader.getResource("classpath:20191225.txt");
 		MockMultipartFile multipartFile = new MockMultipartFile("file", resource.getInputStream());
@@ -50,7 +50,7 @@ public class ExcelImportServiceImplTest {
 
 	@Test
 	@Order(3)
-	@DisplayName("파일 형식 엑셀 테스트")
+	@DisplayName("translated_text_2 translated_text_2 translated_text_2 test")
 	public void excelFileTest() throws IOException {
 		Resource resource = resourceLoader.getResource("classpath:20191225.xlsx");
 		MockMultipartFile multipartFile = new MockMultipartFile("file", resource.getInputStream());
@@ -61,7 +61,7 @@ public class ExcelImportServiceImplTest {
 
 	@Test
 	@Order(4)
-	@DisplayName("엑셀 파일 로우 카운트 테스트")
+	@DisplayName("translated_text_2 translated_text_2 translated_text_2 translated_text_3 test")
 	public void excelFileRowCount() throws IOException {
 		Resource resource = resourceLoader.getResource("classpath:20191225.xlsx");
 		MockMultipartFile multipartFile = new MockMultipartFile("file", resource.getInputStream());

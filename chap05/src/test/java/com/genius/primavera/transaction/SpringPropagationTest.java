@@ -32,7 +32,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @SpringBootTest
 @ActiveProfiles({"test"})
 @EnableTestContainers
-@DisplayName("Spring Transaction Propagation 테스트")
+@DisplayName("Spring Transaction Propagation test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class SpringPropagationTest {
 
@@ -66,18 +66,18 @@ public class SpringPropagationTest {
 
     @Test
     @Order(1)
-    @DisplayName("REQUIRED - 진행 중인 트랜잭션이 있으면 참여, 없으면 새로 시작")
+    @DisplayName("REQUIRED - translated_text_2 translated_text_2 translated_text_5 translated_text_3 translated_text_2, translated_text_3 translated_text_2 translated_text_2")
     public void testRequired() {
-        log.info("=== REQUIRED 테스트 시작 ===");
+        log.info("=== REQUIRED test translated_text_2 ===");
         Long userId = userMapper.save(testUser);
         requiredMethod(userId, "Case1_NoTransaction");
         User user = userMapper.findById(userId);
         assertThat(user.getNickname()).isEqualTo("Case1_NoTransaction");
-        log.info("Case 1 통과 - 트랜잭션 없이 호출 시 새 트랜잭션 시작");
+        log.info("Case 1 translated_text_2 - translated_text_4 translated_text_2 called translated_text_1 translated_text_1 translated_text_4 translated_text_2");
         transactionalMethodWithRequired(userId);
         User updatedUser = userMapper.findById(userId);
         assertThat(updatedUser.getNickname()).isEqualTo("Case2_WithTransaction");
-        log.info("Case 2 통과 - 기존 트랜잭션에 참여");
+        log.info("Case 2 translated_text_2 - translated_text_2 translated_text_4 translated_text_2");
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
@@ -85,19 +85,19 @@ public class SpringPropagationTest {
         User user = userMapper.findById(userId);
         user.setNickname(nickname);
         userMapper.update(user);
-        log.info("REQUIRED 메서드 실행 - {}", nickname);
+        log.info("REQUIRED translated_text_3 execution - {}", nickname);
     }
 
     @Transactional
     public void transactionalMethodWithRequired(Long userId) {
         requiredMethod(userId, "Case2_WithTransaction");
-        log.info("기존 트랜잭션 내에서 REQUIRED 메서드 호출");
+        log.info("translated_text_2 translated_text_4 translated_text_3 REQUIRED translated_text_3 called");
     }
 
     @Test
-    @DisplayName("REQUIRES_NEW - 항상 새 트랜잭션 시작, 기존 트랜잭션은 일시 중단")
+    @DisplayName("REQUIRES_NEW - translated_text_2 translated_text_1 translated_text_4 translated_text_2, translated_text_2 translated_text_4 translated_text_1 translated_text_2")
     public void testRequiresNew() {
-        log.info("=== REQUIRES_NEW 테스트 시작 ===");
+        log.info("=== REQUIRES_NEW test translated_text_2 ===");
         Long userId = userMapper.save(testUser);
         assertThatThrownBy(() -> {
             transactionTemplate.execute(status -> {
@@ -109,24 +109,24 @@ public class SpringPropagationTest {
                         .amount(new BigDecimal("100000.00"))
                         .build();
                 winnerMapper.save(winner);
-                log.info("외부 트랜잭션 - Winner 생성: {}", winner.getId());
+                log.info("translated_text_2 translated_text_4 - Winner creation: {}", winner.getId());
                 TransactionTemplate requiresNewTemplate = new TransactionTemplate(transactionManager);
                 requiresNewTemplate.setPropagationBehavior(Propagation.REQUIRES_NEW.value());
                 requiresNewTemplate.execute(innerStatus -> {
                     User user = userMapper.findById(userId);
                     user.setNickname("REQUIRES_NEW_COMMITTED");
                     userMapper.update(user);
-                    log.info("REQUIRES_NEW 메서드 실행 - 새 트랜잭션에서 {}", "REQUIRES_NEW_COMMITTED");
+                    log.info("REQUIRES_NEW translated_text_3 execution - translated_text_1 translated_text_4 {}", "REQUIRES_NEW_COMMITTED");
                     return null;
                 });
-                throw new RuntimeException("외부 트랜잭션에서 예외 발생");
+                throw new RuntimeException("translated_text_2 translated_text_4 exception translated_text_2");
             });
-        }).isInstanceOf(RuntimeException.class).hasMessage("외부 트랜잭션에서 예외 발생");
+        }).isInstanceOf(RuntimeException.class).hasMessage("translated_text_2 translated_text_4 exception translated_text_2");
         User user = userMapper.findById(userId);
         assertThat(user.getNickname()).isEqualTo("REQUIRES_NEW_COMMITTED");
         long winnerCount = winnerMapper.countByName("REQUIRES_NEW Winner");
         assertThat(winnerCount).isEqualTo(0);
-        log.info("REQUIRES_NEW 테스트 통과 - 내부 트랜잭션은 커밋, 외부 트랜잭션은 롤백");
+        log.info("REQUIRES_NEW test translated_text_2 - translated_text_2 translated_text_4 translated_text_2, translated_text_2 translated_text_4 translated_text_2");
     }
 
     @Transactional
@@ -139,9 +139,9 @@ public class SpringPropagationTest {
                 .amount(new BigDecimal("100000.00"))
                 .build();
         winnerMapper.save(winner);
-        log.info("외부 트랜잭션 - Winner 생성: {}", winner.getId());
+        log.info("translated_text_2 translated_text_4 - Winner creation: {}", winner.getId());
         requiresNewMethod(userId, "REQUIRES_NEW_COMMITTED");
-        throw new RuntimeException("외부 트랜잭션에서 예외 발생");
+        throw new RuntimeException("translated_text_2 translated_text_4 exception translated_text_2");
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -149,22 +149,22 @@ public class SpringPropagationTest {
         User user = userMapper.findById(userId);
         user.setNickname(nickname);
         userMapper.update(user);
-        log.info("REQUIRES_NEW 메서드 실행 - 새 트랜잭션에서 {}", nickname);
+        log.info("REQUIRES_NEW translated_text_3 execution - translated_text_1 translated_text_4 {}", nickname);
     }
 
     @Test
-    @DisplayName("SUPPORTS - 트랜잭션이 있으면 참여, 없으면 트랜잭션 없이 실행")
+    @DisplayName("SUPPORTS - translated_text_5 translated_text_3 translated_text_2, translated_text_3 translated_text_4 translated_text_2 execution")
     public void testSupports() {
-        log.info("=== SUPPORTS 테스트 시작 ===");
+        log.info("=== SUPPORTS test translated_text_2 ===");
         Long userId = userMapper.save(testUser);
         supportsMethod(userId, "SUPPORTS_NO_TX");
         User user = userMapper.findById(userId);
         assertThat(user.getNickname()).isEqualTo("SUPPORTS_NO_TX");
-        log.info("Case 1 통과 - 트랜잭션 없이 실행");
+        log.info("Case 1 translated_text_2 - translated_text_4 translated_text_2 execution");
         transactionalMethodWithSupports(userId);
         User updatedUser = userMapper.findById(userId);
         assertThat(updatedUser.getNickname()).isEqualTo("SUPPORTS_WITH_TX");
-        log.info("Case 2 통과 - 기존 트랜잭션에 참여");
+        log.info("Case 2 translated_text_2 - translated_text_2 translated_text_4 translated_text_2");
     }
 
     @Transactional(propagation = Propagation.SUPPORTS)
@@ -172,19 +172,19 @@ public class SpringPropagationTest {
         User user = userMapper.findById(userId);
         user.setNickname(nickname);
         userMapper.update(user);
-        log.info("SUPPORTS 메서드 실행 - {}", nickname);
+        log.info("SUPPORTS translated_text_3 execution - {}", nickname);
     }
 
     @Transactional
     public void transactionalMethodWithSupports(Long userId) {
         supportsMethod(userId, "SUPPORTS_WITH_TX");
-        log.info("트랜잭션 내에서 SUPPORTS 메서드 호출");
+        log.info("translated_text_4 translated_text_3 SUPPORTS translated_text_3 called");
     }
 
     @Test
-    @DisplayName("NOT_SUPPORTED - 트랜잭션 없이 실행, 기존 트랜잭션은 일시 중단")
+    @DisplayName("NOT_SUPPORTED - translated_text_4 translated_text_2 execution, translated_text_2 translated_text_4 translated_text_1 translated_text_2")
     public void testNotSupported() {
-        log.info("=== NOT_SUPPORTED 테스트 시작 ===");
+        log.info("=== NOT_SUPPORTED test translated_text_2 ===");
         Long userId = userMapper.save(testUser);
         assertThatThrownBy(() -> {
             transactionTemplate.execute(status -> {
@@ -196,24 +196,24 @@ public class SpringPropagationTest {
                         .amount(new BigDecimal("200000.00"))
                         .build();
                 winnerMapper.save(winner);
-                log.info("외부 트랜잭션 - Winner 생성: {}", winner.getId());
+                log.info("translated_text_2 translated_text_4 - Winner creation: {}", winner.getId());
                 TransactionTemplate notSupportedTemplate = new TransactionTemplate(transactionManager);
                 notSupportedTemplate.setPropagationBehavior(Propagation.NOT_SUPPORTED.value());
                 notSupportedTemplate.execute(innerStatus -> {
                     User user = userMapper.findById(userId);
                     user.setNickname("NOT_SUPPORTED_COMMITTED");
                     userMapper.update(user);
-                    log.info("NOT_SUPPORTED 메서드 실행 - 트랜잭션 없이 {}", "NOT_SUPPORTED_COMMITTED");
+                    log.info("NOT_SUPPORTED translated_text_3 execution - translated_text_4 translated_text_2 {}", "NOT_SUPPORTED_COMMITTED");
                     return null;
                 });
-                throw new RuntimeException("외부 트랜잭션에서 예외 발생");
+                throw new RuntimeException("translated_text_2 translated_text_4 exception translated_text_2");
             });
-        }).isInstanceOf(RuntimeException.class).hasMessage("외부 트랜잭션에서 예외 발생");
+        }).isInstanceOf(RuntimeException.class).hasMessage("translated_text_2 translated_text_4 exception translated_text_2");
         User user = userMapper.findById(userId);
         assertThat(user.getNickname()).isEqualTo("NOT_SUPPORTED_COMMITTED");
         long winnerCount = winnerMapper.countByName("NOT_SUPPORTED Winner");
         assertThat(winnerCount).isEqualTo(0);
-        log.info("NOT_SUPPORTED 테스트 통과 - 트랜잭션 없이 실행된 변경사항은 커밋");
+        log.info("NOT_SUPPORTED test translated_text_2 - translated_text_4 translated_text_2 execution translated_text_5 translated_text_2");
     }
 
     @Transactional
@@ -226,9 +226,9 @@ public class SpringPropagationTest {
                 .amount(new BigDecimal("200000.00"))
                 .build();
         winnerMapper.save(winner);
-        log.info("외부 트랜잭션 - Winner 생성: {}", winner.getId());
+        log.info("translated_text_2 translated_text_4 - Winner creation: {}", winner.getId());
         notSupportedMethod(userId, "NOT_SUPPORTED_COMMITTED");
-        throw new RuntimeException("외부 트랜잭션에서 예외 발생");
+        throw new RuntimeException("translated_text_2 translated_text_4 exception translated_text_2");
     }
 
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
@@ -236,13 +236,13 @@ public class SpringPropagationTest {
         User user = userMapper.findById(userId);
         user.setNickname(nickname);
         userMapper.update(user);
-        log.info("NOT_SUPPORTED 메서드 실행 - 트랜잭션 없이 {}", nickname);
+        log.info("NOT_SUPPORTED translated_text_3 execution - translated_text_4 translated_text_2 {}", nickname);
     }
 
     @Test
-    @DisplayName("MANDATORY - 반드시 기존 트랜잭션 내에서 실행, 없으면 예외")
+    @DisplayName("MANDATORY - translated_text_1 translated_text_2 translated_text_4 translated_text_3 execution, translated_text_3 exception")
     public void testMandatory() {
-        log.info("=== MANDATORY 테스트 시작 ===");
+        log.info("=== MANDATORY test translated_text_2 ===");
         Long userId = userMapper.save(testUser);
         assertThatThrownBy(() -> {
             TransactionTemplate mandatoryTemplate = new TransactionTemplate(transactionManager);
@@ -251,11 +251,11 @@ public class SpringPropagationTest {
                 User user = userMapper.findById(userId);
                 user.setNickname("MANDATORY_FAIL");
                 userMapper.update(user);
-                log.info("MANDATORY 메서드 실행 - {}", "MANDATORY_FAIL");
+                log.info("MANDATORY translated_text_3 execution - {}", "MANDATORY_FAIL");
                 return null;
             });
         }).isInstanceOf(IllegalTransactionStateException.class);
-        log.info("Case 1 통과 - 트랜잭션 없이 호출 시 예외 발생");
+        log.info("Case 1 translated_text_2 - translated_text_4 translated_text_2 called translated_text_1 exception translated_text_2");
         transactionTemplate.execute(status -> {
             TransactionTemplate mandatoryTemplate = new TransactionTemplate(transactionManager);
             mandatoryTemplate.setPropagationBehavior(Propagation.MANDATORY.value());
@@ -263,14 +263,14 @@ public class SpringPropagationTest {
                 User user = userMapper.findById(userId);
                 user.setNickname("MANDATORY_SUCCESS");
                 userMapper.update(user);
-                log.info("MANDATORY 메서드 실행 - {}", "MANDATORY_SUCCESS");
-                log.info("트랜잭션 내에서 MANDATORY 메서드 호출");
+                log.info("MANDATORY translated_text_3 execution - {}", "MANDATORY_SUCCESS");
+                log.info("translated_text_4 translated_text_3 MANDATORY translated_text_3 called");
                 return null;
             });
         });
         User user = userMapper.findById(userId);
         assertThat(user.getNickname()).isEqualTo("MANDATORY_SUCCESS");
-        log.info("Case 2 통과 - 트랜잭션 내에서 정상 실행");
+        log.info("Case 2 translated_text_2 - translated_text_4 translated_text_3 translated_text_2 execution");
     }
 
     @Transactional(propagation = Propagation.MANDATORY)
@@ -278,39 +278,39 @@ public class SpringPropagationTest {
         User user = userMapper.findById(userId);
         user.setNickname(nickname);
         userMapper.update(user);
-        log.info("MANDATORY 메서드 실행 - {}", nickname);
+        log.info("MANDATORY translated_text_3 execution - {}", nickname);
     }
 
     @Transactional
     public void transactionalMethodWithMandatory(Long userId) {
         mandatoryMethod(userId, "MANDATORY_SUCCESS");
-        log.info("트랜잭션 내에서 MANDATORY 메서드 호출");
+        log.info("translated_text_4 translated_text_3 MANDATORY translated_text_3 called");
     }
 
     @Test
-    @DisplayName("NEVER - 반드시 트랜잭션 없이 실행, 트랜잭션이 있으면 예외")
+    @DisplayName("NEVER - translated_text_1 translated_text_4 translated_text_2 execution, translated_text_5 translated_text_3 exception")
     public void testNever() {
-        log.info("=== NEVER 테스트 시작 ===");
+        log.info("=== NEVER test translated_text_2 ===");
         Long userId = userMapper.save(testUser);
         neverMethod(userId, "NEVER_SUCCESS");
         User user = userMapper.findById(userId);
         assertThat(user.getNickname()).isEqualTo("NEVER_SUCCESS");
-        log.info("Case 1 통과 - 트랜잭션 없이 정상 실행");
+        log.info("Case 1 translated_text_2 - translated_text_4 translated_text_2 translated_text_2 execution");
         assertThatThrownBy(() -> {
             transactionTemplate.execute(status -> {
-                log.info("외부 트랜잭션 시작됨");
+                log.info("translated_text_2 translated_text_4 translated_text_2");
                 TransactionTemplate neverTransactionTemplate = new TransactionTemplate(transactionManager);
                 neverTransactionTemplate.setPropagationBehavior(Propagation.NEVER.value());
                 return neverTransactionTemplate.execute(neverStatus -> {
                     User neverUser = userMapper.findById(userId);
                     neverUser.setNickname("NEVER_FAIL");
                     userMapper.update(neverUser);
-                    log.info("이 로그는 출력되지 않아야 함");
+                    log.info("translated_text_1 translated_text_3 translated_text_4 translated_text_3 translated_text_1");
                     return null;
                 });
             });
         }).isInstanceOf(IllegalTransactionStateException.class);
-        log.info("Case 2 통과 - 트랜잭션 내에서 NEVER 호출 시 예외 발생");
+        log.info("Case 2 translated_text_2 - translated_text_4 translated_text_3 NEVER called translated_text_1 exception translated_text_2");
     }
 
     @Transactional(propagation = Propagation.NEVER)
@@ -318,21 +318,20 @@ public class SpringPropagationTest {
         User user = userMapper.findById(userId);
         user.setNickname(nickname);
         userMapper.update(user);
-        log.info("NEVER 메서드 실행 - {}", nickname);
+        log.info("NEVER translated_text_3 execution - {}", nickname);
     }
 
-
     @Test
-    @DisplayName("NESTED - 중첩 트랜잭션, 내부 트랜잭션 롤백이 외부에 영향 없음")
+    @DisplayName("NESTED - translated_text_2 translated_text_4, translated_text_2 translated_text_4 translated_text_2translated_text_1 translated_text_2 translated_text_2 translated_text_2")
     public void testNested() {
-        log.info("=== NESTED 테스트 시작 ===");
+        log.info("=== NESTED test translated_text_2 ===");
         Long userId = userMapper.save(testUser);
         transactionTemplate.execute(status -> {
-            // 외부 트랜잭션에서 User 업데이트
+
             User user = userMapper.findById(userId);
             user.setNickname("OUTER_TRANSACTION");
             userMapper.update(user);
-            log.info("외부 트랜잭션 - User 업데이트: {}", user.getNickname());
+            log.info("translated_text_2 translated_text_4 - User translated_text_1: {}", user.getNickname());
             try {
                 TransactionTemplate nestedTemplate = new TransactionTemplate(transactionManager);
                 nestedTemplate.setPropagationBehavior(Propagation.NESTED.value());
@@ -345,20 +344,20 @@ public class SpringPropagationTest {
                             .amount(new BigDecimal("300000.00"))
                             .build();
                     winnerMapper.save(winner);
-                    log.info("중첩 트랜잭션 - Winner 생성: {}", winner.getId());
-                    throw new RuntimeException("중첩 트랜잭션에서 예외 발생");
+                    log.info("translated_text_2 translated_text_4 - Winner creation: {}", winner.getId());
+                    throw new RuntimeException("translated_text_2 translated_text_4 exception translated_text_2");
                 });
             } catch (RuntimeException e) {
-                log.info("중첩 트랜잭션 예외 처리: {}", e.getMessage());
+                log.info("translated_text_2 translated_text_4 exception processing: {}", e.getMessage());
             }
-            log.info("외부 트랜잭션 계속 진행");
+            log.info("translated_text_2 translated_text_4 translated_text_2 translated_text_2");
             return null;
         });
         User user = userMapper.findById(userId);
         assertThat(user.getNickname()).isEqualTo("OUTER_TRANSACTION");
         long winnerCount = winnerMapper.countByName("NESTED Winner");
         assertThat(winnerCount).isEqualTo(0);
-        log.info("NESTED 테스트 통과 - 외부 트랜잭션 커밋, 내부 중첩 트랜잭션 롤백");
+        log.info("NESTED test translated_text_2 - translated_text_2 translated_text_4 translated_text_2, translated_text_2 translated_text_2 translated_text_4 translated_text_2");
     }
 
     @Transactional
@@ -366,13 +365,13 @@ public class SpringPropagationTest {
         User user = userMapper.findById(userId);
         user.setNickname("OUTER_TRANSACTION");
         userMapper.update(user);
-        log.info("외부 트랜잭션 - User 업데이트: {}", user.getNickname());
+        log.info("translated_text_2 translated_text_4 - User translated_text_1: {}", user.getNickname());
         try {
             nestedMethod(userId);
         } catch (RuntimeException e) {
-            log.info("중첩 트랜잭션 예외 처리: {}", e.getMessage());
+            log.info("translated_text_2 translated_text_4 exception processing: {}", e.getMessage());
         }
-        log.info("외부 트랜잭션 계속 진행");
+        log.info("translated_text_2 translated_text_4 translated_text_2 translated_text_2");
     }
 
     @Transactional(propagation = Propagation.NESTED)
@@ -385,7 +384,7 @@ public class SpringPropagationTest {
                 .amount(new BigDecimal("300000.00"))
                 .build();
         winnerMapper.save(winner);
-        log.info("중첩 트랜잭션 - Winner 생성: {}", winner.getId());
-        throw new RuntimeException("중첩 트랜잭션에서 예외 발생");
+        log.info("translated_text_2 translated_text_4 - Winner creation: {}", winner.getId());
+        throw new RuntimeException("translated_text_2 translated_text_4 exception translated_text_2");
     }
 }

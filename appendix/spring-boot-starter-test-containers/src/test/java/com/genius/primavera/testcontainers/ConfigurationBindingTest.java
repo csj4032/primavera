@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
 @SpringBootTest(properties = {
-        "spring.test.context.cache.maxSize=0",  // Context 캐싱 비활성화로 격리 강화
+        "spring.test.context.cache.maxSize=0",
         "spring.main.allow-bean-definition-overriding=true"
 })
 @ActiveProfiles("test")

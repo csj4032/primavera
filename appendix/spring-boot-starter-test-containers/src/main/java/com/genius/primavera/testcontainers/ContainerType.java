@@ -10,9 +10,9 @@ public enum ContainerType {
     POSTGRESQL("postgres:16", "org.postgresql.Driver", PostgreSqlContainerSpec.class, true),
     REDIS("redis:7-alpine", null, RedisContainerSpec.class, false),
     MONGODB("mongo:7", "com.mongodb.MongoClient", MongoContainerSpec.class, false),
-    KAFKA("confluentinc/cp-kafka:7.5.0", null, BaseContainerSpec.class, false),  // TODO: KafkaContainerSpec
-    ELASTICSEARCH("docker.elastic.co/elasticsearch/elasticsearch:8.12.0", null, BaseContainerSpec.class, false),  // TODO: ElasticsearchContainerSpec
-    VAULT("hashicorp/vault:1.14.0", null, BaseContainerSpec.class, false),  // TODO: VaultContainerSpec
+    KAFKA("confluentinc/cp-kafka:7.5.0", null, BaseContainerSpec.class, false),
+    ELASTICSEARCH("docker.elastic.co/elasticsearch/elasticsearch:8.12.0", null, BaseContainerSpec.class, false),
+    VAULT("hashicorp/vault:1.14.0", null, BaseContainerSpec.class, false),
     LOCALSTACK("localstack/localstack:3.0", null, LocalStackContainerSpec.class, false);
 
     private final String defaultImage;
@@ -65,7 +65,6 @@ public enum ContainerType {
             default -> throw new UnsupportedOperationException("Unsupported database type: " + this);
         };
     }
-
 
     public String createMongoUri(String host, Integer port, String database, String username, String password, String authDatabase) {
         if (this != MONGODB) throw new UnsupportedOperationException("MongoDB URI not supported for " + this);

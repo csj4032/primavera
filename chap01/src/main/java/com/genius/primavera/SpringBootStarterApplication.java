@@ -40,7 +40,7 @@ public class SpringBootStarterApplication {
                 genericContext.registerBean("worldController", WorldController.class, () -> {
                     WorldService worldService = genericContext.getBean("worldServiceImpl", WorldService.class);
                     HelloService helloService = genericContext.getBean("helloServiceImpl", HelloService.class);
-                    log.info("[SpringBoot] WorldController 동적 등록 - WorldService: {}, HelloService: {}", worldService.getClass().getSimpleName(), helloService.getClass().getSimpleName());
+                    log.info("[SpringBoot] WorldController dynamic registration - WorldService: {}, HelloService: {}", worldService.getClass().getSimpleName(), helloService.getClass().getSimpleName());
                     return new WorldController(helloService, worldService);
                 });
             }
@@ -66,7 +66,7 @@ public class SpringBootStarterApplication {
 
     @PostConstruct
     private void postConstruct() {
-        log.info("[SpringBoot] @PostConstruct 호출");
+        log.info("[SpringBoot] @PostConstruct called");
     }
 
     @EventListener({ApplicationStartedEvent.class})

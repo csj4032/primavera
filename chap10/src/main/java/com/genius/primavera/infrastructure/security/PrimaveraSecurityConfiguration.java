@@ -62,7 +62,6 @@ public class PrimaveraSecurityConfiguration {
         return new InMemoryUserDetailsManager(genius, marcus, julius);
     }
 
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http

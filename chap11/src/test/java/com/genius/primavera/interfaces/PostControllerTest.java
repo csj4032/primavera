@@ -44,10 +44,10 @@ public class PostControllerTest {
 
     @Test
     @Order(1)
-    @DisplayName("포스팅 상세 화면 접근")
+    @DisplayName("translated_text_3 translated_text_2 translated_text_2 translated_text_2")
     @Disabled("Integration test with authentication - requires complex setup")
     public void postForm() throws Exception {
         String body = restTemplate.getForObject("/posts/1", String.class);
-        Assertions.assertTrue(body.contains("하루아침"));
+        Assertions.assertTrue(body.contains("translated_text_4"));
     }
 }

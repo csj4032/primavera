@@ -31,7 +31,7 @@ import java.util.stream.IntStream;
 @SpringBootTest
 @Testcontainers
 @ActiveProfiles("hikari-minimal")
-@DisplayName("HikariCP 최소 설정 성능 테스트")
+@DisplayName("HikariCP translated_text_2 translated_text_2 translated_text_2 test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class HikariMinimalPoolTest {
 
@@ -69,14 +69,14 @@ public class HikariMinimalPoolTest {
 
     @Test
     @Order(1)
-    @DisplayName("연결 풀 기본 상태 확인")
+    @DisplayName("translated_text_2 translated_text_1 translated_text_2 translated_text_2 verification")
     void verifyPoolConfiguration() {
-        log.info("=== HikariCP 최소 설정 풀 상태 ===");
-        log.info("최대 풀 크기: {}", hikariDataSource.getMaximumPoolSize());
-        log.info("최소 유휴 연결: {}", hikariDataSource.getMinimumIdle());
-        log.info("연결 타임아웃: {}ms", hikariDataSource.getConnectionTimeout());
-        log.info("유휴 타임아웃: {}ms", hikariDataSource.getIdleTimeout());
-        log.info("최대 생존 시간: {}ms", hikariDataSource.getMaxLifetime());
+        log.info("=== HikariCP translated_text_2 translated_text_2 translated_text_1 translated_text_2 ===");
+        log.info("translated_text_2 translated_text_1 translated_text_2: {}", hikariDataSource.getMaximumPoolSize());
+        log.info("translated_text_2 translated_text_2 translated_text_2: {}", hikariDataSource.getMinimumIdle());
+        log.info("translated_text_2 translated_text_4: {}ms", hikariDataSource.getConnectionTimeout());
+        log.info("translated_text_2 translated_text_4: {}ms", hikariDataSource.getIdleTimeout());
+        log.info("translated_text_2 translated_text_2 translated_text_2: {}ms", hikariDataSource.getMaxLifetime());
 
         Assertions.assertEquals(3, hikariDataSource.getMaximumPoolSize());
         Assertions.assertEquals(1, hikariDataSource.getMinimumIdle());
@@ -85,11 +85,10 @@ public class HikariMinimalPoolTest {
 
     @Test
     @Order(2)
-    @DisplayName("단일 연결 성능 측정")
+    @DisplayName("translated_text_2 translated_text_2 translated_text_2 translated_text_2")
     void measureSingleConnectionPerformance() {
         Instant start = Instant.now();
 
-        // 단순 쿼리 100회 실행
         IntStream.rangeClosed(1, 100)
             .forEach(i -> {
                 User user = userMapper.findById(1L);
@@ -97,25 +96,24 @@ public class HikariMinimalPoolTest {
             });
 
         Duration elapsed = Duration.between(start, Instant.now());
-        log.info("단일 연결 100회 쿼리 실행 시간: {}ms", elapsed.toMillis());
+        log.info("translated_text_2 translated_text_2 100translated_text_1 translated_text_2 execution translated_text_2: {}ms", elapsed.toMillis());
 
-        logPoolStatistics("단일 연결 테스트 후");
+        logPoolStatistics("translated_text_2 translated_text_2 test translated_text_1");
     }
 
     @Test
     @Order(3)
-    @DisplayName("동시 연결 경합 테스트")
+    @DisplayName("translated_text_2 translated_text_2 translated_text_2 test")
     void measureConcurrentConnectionContentionTest() {
         ExecutorService executor = Executors.newFixedThreadPool(10);
         Instant start = Instant.now();
 
-        // 10개 쓰레드가 동시에 5개씩 쿼리 실행 (총 50개 쿼리)
         CompletableFuture<Void>[] futures = IntStream.range(0, 10)
             .mapToObj(threadId -> CompletableFuture.runAsync(() -> {
                 for (int i = 0; i < 5; i++) {
                     User user = userMapper.findById(1L);
                     Assertions.assertNotNull(user);
-                    log.debug("Thread-{}: Query-{} 완료", threadId, i + 1);
+                    log.debug("Thread-{}: Query-{} completed", threadId, i + 1);
                 }
             }, executor))
             .toArray(CompletableFuture[]::new);
@@ -123,22 +121,22 @@ public class HikariMinimalPoolTest {
         CompletableFuture.allOf(futures).join();
         Duration elapsed = Duration.between(start, Instant.now());
 
-        log.info("=== 동시 연결 경합 테스트 결과 ===");
-        log.info("10개 쓰레드 × 5개 쿼리 (총 50개) 실행 시간: {}ms", elapsed.toMillis());
-        log.info("평균 쿼리당 시간: {}ms", elapsed.toMillis() / 50.0);
+        log.info("=== translated_text_2 translated_text_2 translated_text_2 test result ===");
+        log.info("10translated_text_1 translated_text_3 × 5translated_text_1 translated_text_2 (translated_text_1 50translated_text_1) execution translated_text_2: {}ms", elapsed.toMillis());
+        log.info("translated_text_2 translated_text_2 translated_text_2: {}ms", elapsed.toMillis() / 50.0);
 
-        logPoolStatistics("동시 연결 경합 테스트 후");
+        logPoolStatistics("translated_text_2 translated_text_2 translated_text_2 test translated_text_1");
         executor.shutdown();
     }
 
     @Test
     @Order(4)
-    @DisplayName("연결 풀 포화 상황 테스트")
+    @DisplayName("translated_text_2 translated_text_1 translated_text_2 translated_text_2 test")
     void measurePoolSaturationBehavior() {
         ExecutorService executor = Executors.newFixedThreadPool(20);
         Instant start = Instant.now();
 
-        log.info("=== 연결 풀 포화 테스트 시작 (20개 쓰레드 vs 3개 최대 연결) ===");
+        log.info("=== translated_text_2 translated_text_1 translated_text_2 test translated_text_2 (20translated_text_1 translated_text_3 vs 3translated_text_1 translated_text_2 translated_text_2) ===");
 
         CompletableFuture<Void>[] futures = IntStream.range(0, 20)
             .mapToObj(threadId -> CompletableFuture.runAsync(() -> {
@@ -147,11 +145,11 @@ public class HikariMinimalPoolTest {
                     User user = userMapper.findById(1L);
                     Duration threadElapsed = Duration.between(threadStart, Instant.now());
 
-                    log.info("Thread-{}: 연결 획득 및 쿼리 완료 시간: {}ms",
+                    log.info("Thread-{}: translated_text_2 translated_text_2 translated_text_1 translated_text_2 completed translated_text_2: {}ms",
                         threadId, threadElapsed.toMillis());
                     Assertions.assertNotNull(user);
                 } catch (Exception e) {
-                    log.error("Thread-{}: 연결 실패 - {}", threadId, e.getMessage());
+                    log.error("Thread-{}: translated_text_2 failure - {}", threadId, e.getMessage());
                 }
             }, executor))
             .toArray(CompletableFuture[]::new);
@@ -159,23 +157,23 @@ public class HikariMinimalPoolTest {
         CompletableFuture.allOf(futures).join();
         Duration totalElapsed = Duration.between(start, Instant.now());
 
-        log.info("=== 연결 풀 포화 테스트 완료 ===");
-        log.info("총 실행 시간: {}ms", totalElapsed.toMillis());
-        log.info("최대 연결 수 제한으로 인한 대기 현상 관찰");
+        log.info("=== translated_text_2 translated_text_1 translated_text_2 test completed ===");
+        log.info("translated_text_1 execution translated_text_2: {}ms", totalElapsed.toMillis());
+        log.info("translated_text_2 translated_text_2 translated_text_1 translated_text_4 translated_text_2 translated_text_2 translated_text_2 translated_text_2");
 
-        logPoolStatistics("풀 포화 테스트 후");
+        logPoolStatistics("translated_text_1 translated_text_2 test translated_text_1");
         executor.shutdown();
     }
 
     private void logPoolStatistics(String phase) {
         try {
-            log.info("=== {} 풀 통계 ===", phase);
-            log.info("활성 연결 수: {}", poolMXBean.getActiveConnections());
-            log.info("유휴 연결 수: {}", poolMXBean.getIdleConnections());
-            log.info("총 연결 수: {}", poolMXBean.getTotalConnections());
-            log.info("대기 중인 쓰레드 수: {}", poolMXBean.getThreadsAwaitingConnection());
+            log.info("=== {} translated_text_1 translated_text_2 ===", phase);
+            log.info("translated_text_2 translated_text_2 translated_text_1: {}", poolMXBean.getActiveConnections());
+            log.info("translated_text_2 translated_text_2 translated_text_1: {}", poolMXBean.getIdleConnections());
+            log.info("translated_text_1 translated_text_2 translated_text_1: {}", poolMXBean.getTotalConnections());
+            log.info("translated_text_2 translated_text_2 translated_text_3 translated_text_1: {}", poolMXBean.getThreadsAwaitingConnection());
         } catch (Exception e) {
-            log.warn("풀 통계 조회 실패: {}", e.getMessage());
+            log.warn("translated_text_1 translated_text_2 translated_text_1 failure: {}", e.getMessage());
         }
     }
 }

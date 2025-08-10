@@ -37,7 +37,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @SpringBootTest
 @EnableTestContainers
 @ActiveProfiles({"test"})
-@DisplayName("ACID 속성 테스트")
+@DisplayName("ACID translated_text_2 test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ACIDPropertiesTest {
 
@@ -68,35 +68,34 @@ public class ACIDPropertiesTest {
 
     @Test
     @Order(1)
-    @DisplayName("원자성(Atomicity) 테스트 - 트랜잭션 롤백 시 모든 변경사항이 취소됨")
+    @DisplayName("translated_text_3(Atomicity) test - translated_text_4 translated_text_2 translated_text_1 all translated_text_5 translated_text_3")
     void testAtomicity() {
         Long userId = userMapper.save(testUser);
         long initialUserCount = userMapper.count();
         long initialWinnerCount = winnerMapper.count();
-        log.info("초기 상태 - User 수: {}, Winner 수: {}", initialUserCount, initialWinnerCount);
+        log.info("translated_text_2 translated_text_2 - User translated_text_1: {}, Winner translated_text_1: {}", initialUserCount, initialWinnerCount);
         assertThatThrownBy(() -> {
             transactionTemplate.execute(status -> {
                 User user = userMapper.findById(userId);
                 user.setStatus(UserStatus.INACTIVE);
                 userMapper.update(user);
-                log.info("User 상태를 INACTIVE로 변경: {}", user.getId());
+                log.info("User translated_text_2 INACTIVEtranslated_text_1 translated_text_2: {}", user.getId());
                 Winner winner = Winner.builder().name("Test Winner").year(2023).sport("Test Sport").prize("Test Prize").amount(new BigDecimal("1000.00")).build();
                 winnerMapper.save(winner);
-                log.info("Winner 데이터 삽입: ID={}, Name={}", winner.getId(), winner.getName());
-                throw new RuntimeException("의도적인 예외 발생 - 원자성 테스트");
+                log.info("Winner data translated_text_2: ID={}, Name={}", winner.getId(), winner.getName());
+                throw new RuntimeException("translated_text_4 exception translated_text_2 - translated_text_3 test");
             });
-        }).isInstanceOf(RuntimeException.class).hasMessage("의도적인 예외 발생 - 원자성 테스트");
+        }).isInstanceOf(RuntimeException.class).hasMessage("translated_text_4 exception translated_text_2 - translated_text_3 test");
         long finalUserCount = userMapper.count();
         long finalWinnerCount = winnerMapper.count();
-        log.info("롤백 후 상태 - User 수: {}, Winner 수: {}", finalUserCount, finalWinnerCount);
+        log.info("translated_text_2 translated_text_1 translated_text_2 - User translated_text_1: {}, Winner translated_text_1: {}", finalUserCount, finalWinnerCount);
         assertThat(finalUserCount).isEqualTo(initialUserCount);
         assertThat(finalWinnerCount).isEqualTo(initialWinnerCount);
     }
 
-
     @Test
     @Order(2)
-    @DisplayName("일관성(Consistency) 테스트 - 비즈니스 규칙 위반 시 트랜잭션 실패")
+    @DisplayName("translated_text_3(Consistency) test - translated_text_4 translated_text_2 translated_text_2 translated_text_1 translated_text_4 failure")
     void testConsistency() {
         User duplicateUser = User.builder()
                 .email(testUser.getEmail())
@@ -114,12 +113,12 @@ public class ACIDPropertiesTest {
         }).isInstanceOf(DataAccessException.class);
         long userCount = userMapper.countByEmail(testUser.getEmail());
         assertThat(userCount).isEqualTo(1);
-        log.info("일관성 테스트 통과 - 중복 이메일 삽입 방지됨");
+        log.info("translated_text_3 test translated_text_2 - translated_text_2 translated_text_3 translated_text_2 translated_text_3");
     }
 
     @Test
     @Order(3)
-    @DisplayName("격리성(Isolation) 테스트 - 동시 트랜잭션 간 격리")
+    @DisplayName("translated_text_3(Isolation) test - translated_text_1 translated_text_4 translated_text_1 translated_text_2")
     void testIsolation() throws InterruptedException {
         Long userId = userMapper.save(testUser);
         CountDownLatch latch = new CountDownLatch(2);
@@ -142,7 +141,7 @@ public class ACIDPropertiesTest {
         }, executor);
         String result1 = future1.join();
         String result2 = future2.join();
-        log.info("격리성 테스트 결과 - Thread1: {}, Thread2: {}", result1, result2);
+        log.info("translated_text_3 test result - Thread1: {}, Thread2: {}", result1, result2);
         assertThat(result1).contains("Transaction1");
         assertThat(result2).contains("Transaction2");
         executor.shutdown();
@@ -150,46 +149,46 @@ public class ACIDPropertiesTest {
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     String isolatedTransaction1(Long userId, CountDownLatch latch) throws InterruptedException {
-        log.info("Transaction1 시작 - User ID: {}", userId);
+        log.info("Transaction1 translated_text_1 - User ID: {}", userId);
         User user = userMapper.findById(userId);
         user.setNickname("TRANSACTION1_USER");
         userMapper.update(user);
         latch.countDown();
         latch.await();
         Thread.sleep(100);
-        log.info("Transaction1 완료");
+        log.info("Transaction1 completed");
         return "Transaction1 completed";
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     String isolatedTransaction2(Long userId, CountDownLatch latch) throws InterruptedException {
-        log.info("Transaction2 시작 - User ID: {}", userId);
+        log.info("Transaction2 translated_text_1 - User ID: {}", userId);
         User user = userMapper.findById(userId);
         user.setStatus(UserStatus.INACTIVE);
         userMapper.update(user);
         latch.countDown();
         latch.await();
         Thread.sleep(100);
-        log.info("Transaction2 완료");
+        log.info("Transaction2 completed");
         return "Transaction2 completed";
     }
 
     @Test
     @Order(4)
-    @DisplayName("지속성(Durability) 테스트 - 커밋된 트랜잭션은 시스템 재시작 후에도 유지")
+    @DisplayName("translated_text_2(Durability) test - translated_text_3 translated_text_4 translated_text_1 translated_text_1 translated_text_1 translated_text_2")
     void testDurability() {
         Long userId = userMapper.save(testUser);
         transactionTemplate.execute(status -> {
             User user = userMapper.findById(userId);
-            log.info("지속성 테스트 - 업데이트 전 User 상태: nickname={}, status={}", user.getNickname(), user.getStatus());
+            log.info("translated_text_2 test - translated_text_4 translated_text_1 User translated_text_2: nickname={}, status={}", user.getNickname(), user.getStatus());
             user.setNickname("DURABLE_USER");
             user.setStatus(UserStatus.INACTIVE);
             userMapper.update(user);
-            log.info("지속성 테스트 - User 업데이트 완료: nickname={}, status={}", user.getNickname(), user.getStatus());
+            log.info("translated_text_2 test - User translated_text_4 completed: nickname={}, status={}", user.getNickname(), user.getStatus());
             return null;
         });
         User updatedUser = userMapper.findById(userId);
-        log.info("지속성 테스트 - 커밋 후 User 상태: nickname={}, status={}", updatedUser.getNickname(), updatedUser.getStatus());
+        log.info("translated_text_2 test - translated_text_2 translated_text_1 User translated_text_2: nickname={}, status={}", updatedUser.getNickname(), updatedUser.getStatus());
         assertThat(updatedUser.getNickname()).isEqualTo("DURABLE_USER");
         assertThat(updatedUser.getStatus()).isEqualTo(UserStatus.INACTIVE);
         TransactionTemplate newTransactionTemplate = new TransactionTemplate(transactionManager);
@@ -198,9 +197,9 @@ public class ACIDPropertiesTest {
             User user = userMapper.findById(userId);
             assertThat(user.getNickname()).isEqualTo("DURABLE_USER");
             assertThat(user.getStatus()).isEqualTo(UserStatus.INACTIVE);
-            log.info("새로운 트랜잭션에서 확인 - 변경사항 지속됨: {}", user.getNickname());
+            log.info("translated_text_1 translated_text_4 verification - translated_text_2 translated_text_3: {}", user.getNickname());
             return null;
         });
-        log.info("지속성 테스트 통과 - 변경사항이 지속됨");
+        log.info("translated_text_2 test translated_text_2 - translated_text_5 translated_text_3");
     }
 }

@@ -13,7 +13,6 @@ import jakarta.annotation.PostConstruct;
 @Configuration
 public class ApplicationConfiguration implements WebMvcConfigurer {
 
-
 	@Bean
 	public ObjectMapper objectMapper() {
 		var mapper = new ObjectMapper();

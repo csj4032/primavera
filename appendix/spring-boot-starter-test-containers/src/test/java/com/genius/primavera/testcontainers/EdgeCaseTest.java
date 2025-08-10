@@ -190,7 +190,7 @@ class EdgeCaseTest {
             "unicode_data VARCHAR(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci" +
             ")");
         
-        String specialChars = "🚀🌟💡🔥🎉 한글테스트 العربية русский 中文 日本語 emoji: 😀😂🤔";
+        String specialChars = " translated_text_6 العربية русский   emoji: 🤔";
         
         assertDoesNotThrow(() -> {
             jdbcTemplate.update("INSERT INTO special_char_test (unicode_data) VALUES (?)", specialChars);

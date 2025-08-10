@@ -6,13 +6,13 @@ import org.junit.jupiter.api.*;
 import java.time.Instant;
 
 @Slf4j
-@DisplayName("N:N 새로운 엔티티 도출")
+@DisplayName("N:N translated_text_3 translated_text_3 translated_text_2")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ManyToManyNewEntityTest extends ManyToManyTestBase {
 
 	@Test
 	@Order(1)
-	@DisplayName("판매자, 구매자 계약 저장")
+	@DisplayName("translated_text_3, translated_text_3 translated_text_2 translated_text_2")
 	public void save() {
 		var buyer1 = Buyer.of("buyer1");
 		var buyer2 = Buyer.of("buyer2");
@@ -38,7 +38,7 @@ public class ManyToManyNewEntityTest extends ManyToManyTestBase {
 
 	@Test
 	@Order(2)
-	@DisplayName("판매자, 구매자 계약 조회")
+	@DisplayName("translated_text_3, translated_text_3 translated_text_2 inquiry")
 	public void find() {
 		Contract contract = entityManager.find(Contract.class, 1l);
 		log.info("contract : {}", contract);

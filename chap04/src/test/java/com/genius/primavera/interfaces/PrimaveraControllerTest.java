@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ActiveProfiles("test")
 @WebMvcTest(PrimaveraController.class)
-@DisplayName("PrimaveraController 테스트")
+@DisplayName("PrimaveraController test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class PrimaveraControllerTest {
 
@@ -50,7 +50,7 @@ public class PrimaveraControllerTest {
 
     @Test
     @Order(1)
-    @DisplayName("루트 및 인덱스 엔드포인트 테스트")
+    @DisplayName("translated_text_2 translated_text_1 translated_text_3 translated_text_5 test")
     public void testIndex() throws Exception {
         given(dataSource.getCatalog()).willReturn("test_catalog");
         mockMvc.perform(get("/")).andDo(print()).andExpect(status().isOk()).andExpect(content().string("test_catalog"));
@@ -59,7 +59,7 @@ public class PrimaveraControllerTest {
 
     @Test
     @Order(2)
-    @DisplayName("사용자 목록 조회 테스트")
+    @DisplayName("user translated_text_2 inquiry test")
     void testGetUsers() throws Exception {
         User user1 = User.builder()
                 .id(1L)
@@ -81,22 +81,21 @@ public class PrimaveraControllerTest {
 
         given(userDao.getUsers()).willReturn(expectedUsers);
 
-        // when & then: "/users" 엔드포인트 호출 시
-        mockMvc.perform(get("/users").contentType(MediaType.APPLICATION_JSON)) // 요청 Content-Type 명시
+        mockMvc.perform(get("/users").contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON)) // 응답 Content-Type이 JSON인지 확인
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].id").value(1L))
                 .andExpect(jsonPath("$[0].email").value("user1@example.com"))
                 .andExpect(jsonPath("$[1].id").value(2L))
                 .andExpect(jsonPath("$[1].nickname").value("UserTwo"))
-                // 전체 JSON 응답이 예상 객체 목록과 일치하는지 검증
+
                 .andExpect(content().json(objectMapper.writeValueAsString(expectedUsers)));
     }
 
     @Test
     @Order(3)
-    @DisplayName("단일 사용자 조회 성공 테스트")
+    @DisplayName("translated_text_2 user inquiry success test")
     void testGetUserByIdSuccess() throws Exception {
         long userId = 1L;
         User expectedUser = User.builder()
@@ -112,7 +111,7 @@ public class PrimaveraControllerTest {
 
         mockMvc.perform(get("/users/{id}", userId).contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
-                .andExpect(status().isOk()) // HTTP 상태 코드 200 OK 예상
+                .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").value(userId))
                 .andExpect(jsonPath("$.email").value("single@example.com"))
@@ -122,7 +121,7 @@ public class PrimaveraControllerTest {
 
     @Test
     @Order(4)
-    @DisplayName("단일 사용자 조회 실패 테스트 (사용자 없음)")
+    @DisplayName("translated_text_2 user inquiry failure test (user translated_text_2)")
     void testGetUserByIdNotFound() throws Exception {
         long userId = 99999L;
         given(userDao.findById(userId)).willReturn(Optional.empty());
@@ -131,13 +130,13 @@ public class PrimaveraControllerTest {
 
     @Test
     @Order(5)
-    @DisplayName("사용자 목록 조회 - 결과 없음 테스트")
+    @DisplayName("user translated_text_2 inquiry - result translated_text_2 test")
     void testGetUsersEmpty() throws Exception {
         given(userDao.getUsers()).willReturn(Collections.emptyList());
         mockMvc.perform(get("/users").contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().json("[]")); // 빈 JSON 배열 예상
+                .andExpect(content().json("[]"));
     }
 }

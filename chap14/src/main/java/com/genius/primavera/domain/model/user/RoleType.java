@@ -7,9 +7,9 @@ import lombok.Getter;
 
 @Getter
 public enum RoleType implements ConvertedEnum<Integer> {
-	ADMINISTRATOR(1, "최고관리자"),
-	MANAGER(2, "관리자"),
-	USER(3, "사용자");
+	ADMINISTRATOR(1, "translated_text_5"),
+	MANAGER(2, "translated_text_3"),
+	USER(3, "user");
 
 	private int value;
 	private String name;

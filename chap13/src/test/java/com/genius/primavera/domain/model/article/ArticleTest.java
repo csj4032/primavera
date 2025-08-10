@@ -18,11 +18,11 @@ public class ArticleTest {
     @BeforeAll
     public static void setUp() {
         root = Article.builder().id(1).level(0).subject("Root").build();
-        first = Article.builder().id(1).parent(root).level(1).subject("Root 직계 첫번째").build();
-        first_first = Article.builder().id(2).parent(first).level(2).subject("Root 직계 첫번째 first 직계 첫번째").build();
-        first_second = Article.builder().id(4).parent(first).level(2).subject("Root 직계 첫번째 first 직계 두번째").build();
-        first_second_first = Article.builder().id(5).parent(first_second).level(3).subject("Root 직계 첫번째 first 직계 두번째 first_second 첫번째").build();
-        second = Article.builder().id(3).parent(root).level(1).subject("Root 직계 두번째").build();
+        first = Article.builder().id(1).parent(root).level(1).subject("Root translated_text_2 translated_text_3").build();
+        first_first = Article.builder().id(2).parent(first).level(2).subject("Root translated_text_2 translated_text_3 first translated_text_2 translated_text_3").build();
+        first_second = Article.builder().id(4).parent(first).level(2).subject("Root translated_text_2 translated_text_3 first translated_text_2 translated_text_3").build();
+        first_second_first = Article.builder().id(5).parent(first_second).level(3).subject("Root translated_text_2 translated_text_3 first translated_text_2 translated_text_3 first_second translated_text_3").build();
+        second = Article.builder().id(3).parent(root).level(1).subject("Root translated_text_2 translated_text_3").build();
         first_second.setChildren(new Article[]{first_second_first});
         first.setChildren(new Article[]{first_first});
         root.setChildren(new Article[]{first, second});
@@ -30,7 +30,7 @@ public class ArticleTest {
     }
 
     @Test
-    @DisplayName("부모 아티클 확인")
+    @DisplayName("translated_text_2 translated_text_3 verification")
     public void hasParentsTest() {
         assertFalse(root.hasParents());
         assertEquals(0, root.getLevel());

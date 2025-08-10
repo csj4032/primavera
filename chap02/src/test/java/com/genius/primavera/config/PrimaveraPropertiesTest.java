@@ -22,7 +22,7 @@ public class PrimaveraPropertiesTest {
     private PrimaveraProperties properties;
 
     @Test
-    @DisplayName("기본 속성이 올바르게 바인딩되는지 검증")
+    @DisplayName("translated_text_2 translated_text_3 translated_text_4 translated_text_6 validation")
     void basicPropertiesBinding() {
         String databaseUsername = properties.getDatabase().getUsername();
         String databaseUrl = properties.getDatabase().getUrl();
@@ -33,7 +33,7 @@ public class PrimaveraPropertiesTest {
     }
 
     @Test
-    @DisplayName("중첩된 객체가 올바르게 바인딩되는지 검증")
+    @DisplayName("translated_text_3 translated_text_3 translated_text_4 translated_text_6 validation")
     void nestedObjectBinding() {
         PrimaveraProperties.Search search = properties.getSearch();
         String keyword = search.getParams().getKeyword();
@@ -45,7 +45,7 @@ public class PrimaveraPropertiesTest {
     }
 
     @Test
-    @DisplayName("리스트 타입 속성이 올바르게 바인딩되는지 검증")
+    @DisplayName("translated_text_3 translated_text_2 translated_text_3 translated_text_4 translated_text_6 validation")
     void listPropertyBinding() {
         List<PrimaveraProperties.User> users = properties.getUsers();
         assertThat(users).hasSize(2);
@@ -60,7 +60,7 @@ public class PrimaveraPropertiesTest {
     }
 
     @Test
-    @DisplayName("프로파일별 속성 오버라이딩이 작동하는지 검증")
+    @DisplayName("translated_text_5 translated_text_2 translated_text_6 translated_text_5 validation")
     void profileSpecificPropertyOverride() {
         PrimaveraProperties.Cache cache = properties.getCache();
         assertThat(cache.isEnabled()).isTrue();
@@ -69,14 +69,14 @@ public class PrimaveraPropertiesTest {
     }
 
     @Test
-    @DisplayName("케밥 케이스(kebab-case) 카멜 케이스(camelCase)로 변환되는지 검증")
+    @DisplayName("translated_text_2 translated_text_3(kebab-case) translated_text_2 translated_text_3(camelCase)translated_text_1 translated_text_5 validation")
     void kebabCaseToCamelCaseConversion() {
         PrimaveraProperties.Search.Params searchParams = properties.getSearch().getParams();
         assertThat(searchParams.getEnableHighlight()).isTrue();
     }
 
     @Test
-    @DisplayName("Map 타입 속성이 올바르게 바인딩되는지 검증")
+    @DisplayName("Map translated_text_2 translated_text_3 translated_text_4 translated_text_6 validation")
     void mapPropertyBinding() {
         Map<String, String> features = properties.getFeatures();
         assertThat(features).containsEntry("darkMode", "enabled");
@@ -85,7 +85,7 @@ public class PrimaveraPropertiesTest {
     }
 
     @Test
-    @DisplayName("Duration 타입 속성이 올바르게 바인딩되는지 검증")
+    @DisplayName("Duration translated_text_2 translated_text_3 translated_text_4 translated_text_6 validation")
     void durationPropertyBinding() {
         Duration timeToLive = properties.getCache().getTimeToLive();
         assertThat(timeToLive).isEqualTo(Duration.ofMinutes(5));

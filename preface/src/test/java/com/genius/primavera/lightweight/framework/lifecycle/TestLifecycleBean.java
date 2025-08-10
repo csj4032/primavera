@@ -15,13 +15,13 @@ public class TestLifecycleBean {
     @PrimaveraPostConstruct
     public void initialize() {
         this.initialized = true;
-        this.message = "초기화 완료!";
+        this.message = "translated_text_3 completed!";
     }
     
     @PrimaveraPreDestroy
     public void cleanup() {
         this.destroyed = true;
-        this.cleanupMessage = "정리 완료!";
+        this.cleanupMessage = "translated_text_2 completed!";
     }
     
     public boolean isInitialized() {

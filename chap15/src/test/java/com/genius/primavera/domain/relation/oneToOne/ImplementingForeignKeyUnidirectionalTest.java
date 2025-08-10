@@ -5,13 +5,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 
 @Slf4j
-@DisplayName("1:1 주 테이블에 외래 키 단방향")
+@DisplayName("1:1 translated_text_1 translated_text_4 translated_text_2 translated_text_1 translated_text_3")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ImplementingForeignKeyUnidirectionalTest extends JpaTestBase {
 
 	@Test
 	@Order(1)
-	@DisplayName("게시물, 내용 저장")
+	@DisplayName("translated_text_3, translated_text_2 translated_text_2")
 	public void save() {
 		var content = Content.of("content1");
 		var article = Article.of("subject1", content);
@@ -21,10 +21,9 @@ public class ImplementingForeignKeyUnidirectionalTest extends JpaTestBase {
 		entityTransaction.commit();
 	}
 
-
 	@Test
 	@Order(2)
-	@DisplayName("게시물, 내용 조회")
+	@DisplayName("translated_text_3, translated_text_2 inquiry")
 	public void find() {
 		var article = entityManager.find(Article.class, 2l);
 		var content = entityManager.find(Content.class, 1l);

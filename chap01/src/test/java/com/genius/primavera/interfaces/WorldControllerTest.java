@@ -21,7 +21,7 @@ public class WorldControllerTest {
     private WorldService worldService;
 
     @Test
-    @DisplayName("world() 메서드는 'World!!! Hello'를 반환해야 한다")
+    @DisplayName("world() translated_text_4 'World!!! Hello'translated_text_1 translated_text_4 translated_text_2")
     void worldTest() {
         when(worldService.world()).thenReturn("World!!!");
         when(helloService.hello()).thenReturn("Hello");
@@ -31,7 +31,7 @@ public class WorldControllerTest {
     }
 
     @Test
-    @DisplayName("WorldController가 정상적으로 생성되어야 한다")
+    @DisplayName("WorldControllertranslated_text_1 successfully translated_text_11 translated_text_2")
     void constructorTest() {
         WorldController worldController = new WorldController(helloService, worldService);
         assertThat(worldController).isNotNull();

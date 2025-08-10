@@ -16,8 +16,8 @@ public class OAuth2SocialLoginApplication {
                 .build();
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            log.info("🛑 Primavera Application Shutting Down...");
-            log.info("👋 Goodbye! Thank you for using Primavera Community Platform!");
+            log.info(" Primavera Application Shutting Down...");
+            log.info(" Goodbye! Thank you for using Primavera Community Platform!");
         }));
         app.run(args);
     }

@@ -21,7 +21,7 @@ public class LocalStackBeanCreator implements BeanCreator {
     }
 
     private void initializeFactories() {
-        log.debug("LocalStack AWS 서비스 클라이언트 팩토리들을 초기화합니다...");
+        log.debug("LocalStack AWS service translated_text_5 translated_text_5 translated_text_6...");
 
         registerFactory(new S3ClientFactory());
         registerFactory(new DynamoDbClientFactory());
@@ -29,59 +29,58 @@ public class LocalStackBeanCreator implements BeanCreator {
         registerFactory(new SnsClientFactory());
         registerFactory(new LambdaClientFactory());
 
-
-        log.info("✅ {}개의 AWS 서비스 클라이언트 팩토리가 등록되었습니다", clientFactories.size());
+        log.info(" {}translated_text_2 AWS service translated_text_5 translated_text_4 translated_text_17", clientFactories.size());
     }
 
     private void registerFactory(AwsServiceClientFactory factory) {
         if (factory.isAvailable()) {
             clientFactories.put(factory.getSupportedService(), factory);
-            log.debug("✅ {} 팩토리가 등록되었습니다 (의존성 사용 가능)", factory.getSupportedService());
+            log.debug(" {} translated_text_4 translated_text_17 (dependency translated_text_2 translated_text_2)", factory.getSupportedService());
         } else {
-            log.debug("⚠️ {} 팩토리를 건너뜁니다 (의존성 없음)", factory.getSupportedService());
+            log.debug(" {} translated_text_4 translated_text_5 (dependency translated_text_2)", factory.getSupportedService());
         }
     }
 
     @Override
     public Object createBean(ContainerInfo containerInfo) {
         if (!(containerInfo.container() instanceof LocalStackContainer)) {
-            throw new IllegalArgumentException("LocalStackContainer가 필요합니다: " + containerInfo.container().getClass());
+            throw new IllegalArgumentException("LocalStackContainertranslated_text_1 translated_text_5: " + containerInfo.container().getClass());
         }
 
         if (!(containerInfo.spec() instanceof LocalStackContainerSpec)) {
-            throw new IllegalArgumentException("LocalStackContainerSpec이 필요합니다: " + containerInfo.spec().getClass());
+            throw new IllegalArgumentException("LocalStackContainerSpectranslated_text_1 translated_text_5: " + containerInfo.spec().getClass());
         }
 
         LocalStackContainer container = (LocalStackContainer) containerInfo.container();
         LocalStackContainerSpec spec = (LocalStackContainerSpec) containerInfo.spec();
 
-        log.info("LocalStack 컨테이너 '{}' 에서 활성화된 AWS 서비스들을 위한 클라이언트 빈들을 생성합니다", 
+        log.info("LocalStack translated_text_1 '{}' translated_text_2 translated_text_4 AWS servicetranslated_text_1 translated_text_2 translated_text_5 translated_text_3 translated_text_11", 
                 containerInfo.name());
 
         Map<String, Object> awsClients = new LinkedHashMap<>();
         Set<LocalStackContainerSpec.AwsService> activeServices = spec.getServices();
 
         if (activeServices == null || activeServices.isEmpty()) {
-            log.warn("활성화된 AWS 서비스가 없습니다. 기본 서비스들을 사용합니다.");
+            log.warn("translated_text_4 AWS servicetranslated_text_1 translated_text_4. translated_text_2 servicetranslated_text_1 translated_text_2.");
             activeServices = getDefaultServices();
         }
 
-        log.debug("활성화된 AWS 서비스들: {}", activeServices);
+        log.debug("translated_text_4 AWS service: {}", activeServices);
 
         for (LocalStackContainerSpec.AwsService service : activeServices) {
             try {
                 createClientForService(service, container, awsClients);
             } catch (Exception e) {
-                log.warn("AWS 서비스 {} 클라이언트 생성 실패: {}", service, e.getMessage(), e);
+                log.warn("AWS service {} translated_text_5 creation failure: {}", service, e.getMessage(), e);
             }
         }
 
         if (awsClients.isEmpty()) {
-            log.warn("생성된 AWS 클라이언트가 없습니다. AWS SDK 의존성을 확인해주세요.");
+            log.warn("creation AWS translated_text_5translated_text_1 translated_text_4. AWS SDK dependencytranslated_text_1 translated_text_16.");
             return Collections.emptyMap();
         }
 
-        log.info("✅ {}개의 AWS 클라이언트가 성공적으로 생성되었습니다: {}", 
+        log.info(" {}translated_text_2 AWS translated_text_5translated_text_1 translated_text_10 creation: {}", 
                 awsClients.size(), awsClients.keySet());
         
         return awsClients;
@@ -94,12 +93,12 @@ public class LocalStackBeanCreator implements BeanCreator {
         AwsServiceClientFactory factory = clientFactories.get(service);
         
         if (factory == null) {
-            log.debug("서비스 {}에 대한 팩토리를 찾을 수 없습니다. 지원되지 않는 서비스이거나 의존성이 없습니다.", service);
+            log.debug("service {}translated_text_1 translated_text_2 translated_text_4 translated_text_1 translated_text_1 translated_text_4. translated_text_4 translated_text_2 servicetranslated_text_1 dependencytranslated_text_1 translated_text_4.", service);
             return;
         }
 
         if (!factory.isAvailable()) {
-            log.debug("서비스 {} 팩토리의 의존성이 사용할 수 없습니다.", service);
+            log.debug("service {} translated_text_4 dependencytranslated_text_1 translated_text_2 translated_text_1 translated_text_4.", service);
             return;
         }
 
@@ -109,12 +108,12 @@ public class LocalStackBeanCreator implements BeanCreator {
             
             awsClients.put(beanName, client);
             
-            log.debug("✅ {}({}) 클라이언트가 생성되어 '{}' 이름으로 등록되었습니다", 
+            log.debug(" {}({}) translated_text_5translated_text_1 creation '{}' translated_text_1 translated_text_17", 
                     service, client.getClass().getSimpleName(), beanName);
                     
         } catch (Exception e) {
-            log.error("서비스 {} 클라이언트 생성 중 예외 발생", service, e);
-            throw new RuntimeException("AWS " + service + " 클라이언트 생성 실패", e);
+            log.error("service {} translated_text_5 creation translated_text_1 exception translated_text_2", service, e);
+            throw new RuntimeException("AWS " + service + " translated_text_5 creation failure", e);
         }
     }
 

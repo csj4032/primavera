@@ -6,7 +6,7 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("XSS Filter Rule 설정 테스트")
+@DisplayName("XSS Filter Rule translated_text_2 test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class XssEscapeServletFilterRuleTest {
 
@@ -17,7 +17,7 @@ class XssEscapeServletFilterRuleTest {
 
     @Test
     @Order(1)
-    @DisplayName("FilterRegistrationBean 설정이 올바르게 적용되는지 확인")
+    @DisplayName("FilterRegistrationBean translated_text_2 translated_text_4 translated_text_5 verification")
     void shouldConfigureFilterRegistrationBean() {
         contextRunner
                 .withPropertyValues(
@@ -36,7 +36,7 @@ class XssEscapeServletFilterRuleTest {
 
     @Test
     @Order(2)
-    @DisplayName("기본 설정이 올바르게 적용되는지 확인")
+    @DisplayName("translated_text_2 translated_text_2 translated_text_4 translated_text_5 verification")
     void shouldApplyDefaultConfiguration() {
         contextRunner
                 .withPropertyValues("spring.lucy-filter.enabled=true")

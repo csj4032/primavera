@@ -70,20 +70,20 @@ class PostgreSQLBeanCreatorUnitTest {
         spec.setMaxConnections(5);
         spec.setConnectionTimeout(10000);
         
-        log.info("PostgreSQL 단위 테스트 설정 완료");
+        log.info("PostgreSQL translated_text_2 test translated_text_2 completed");
     }
 
     @Test
     @Order(1)
-    @DisplayName("PostgreSQL BeanCreator 지원 타입 확인")
+    @DisplayName("PostgreSQL BeanCreator translated_text_2 translated_text_2 verification")
     void testSupportedType() {
         assertEquals(ContainerType.POSTGRESQL, beanCreator.getSupportedType());
-        log.info("✅ PostgreSQL BeanCreator 지원 타입: {}", beanCreator.getSupportedType());
+        log.info(" PostgreSQL BeanCreator translated_text_2 translated_text_2: {}", beanCreator.getSupportedType());
     }
 
     @Test
     @Order(2)
-    @DisplayName("기본 HikariConfig 생성 및 설정 검증")
+    @DisplayName("translated_text_2 HikariConfig creation translated_text_1 translated_text_2 validation")
     void testCreateBaseConfig() {
         ContainerInfo containerInfo = new ContainerInfo(
                 "test-postgresql",
@@ -94,21 +94,21 @@ class PostgreSQLBeanCreatorUnitTest {
 
         HikariConfig config = beanCreator.testCreateBaseConfig(containerInfo);
         
-        assertNotNull(config, "HikariConfig가 생성되어야 합니다");
-        assertTrue(config.getJdbcUrl().contains("postgresql"), "JDBC URL은 postgresql을 포함해야 합니다");
-        assertTrue(config.getJdbcUrl().contains("localhost:5433"), "JDBC URL은 호스트와 포트를 포함해야 합니다");
+        assertNotNull(config, "HikariConfigtranslated_text_1 creation translated_text_3");
+        assertTrue(config.getJdbcUrl().contains("postgresql"), "JDBC URLtranslated_text_1 postgresqltranslated_text_1 translated_text_4 translated_text_3");
+        assertTrue(config.getJdbcUrl().contains("localhost:5433"), "JDBC URLtranslated_text_1 translated_text_4 translated_text_3 translated_text_4 translated_text_3");
         assertEquals("test-postgresql-pool", config.getPoolName());
         assertEquals(2, config.getMinimumIdle());
         assertEquals(600000, config.getIdleTimeout());
         
-        log.info("✅ 기본 HikariConfig 생성 성공");
+        log.info(" translated_text_2 HikariConfig creation success");
         log.info("  - JDBC URL: {}", config.getJdbcUrl());
         log.info("  - Pool Name: {}", config.getPoolName());
     }
 
     @Test
     @Order(3)
-    @DisplayName("공통 설정 적용 검증")
+    @DisplayName("translated_text_2 translated_text_2 translated_text_2 validation")
     void testApplyCommonSettings() {
         ContainerInfo containerInfo = new ContainerInfo(
                 "test-postgresql-common",
@@ -125,14 +125,14 @@ class PostgreSQLBeanCreatorUnitTest {
         assertEquals(5, config.getMaximumPoolSize());
         assertEquals(10000, config.getConnectionTimeout());
         
-        log.info("✅ 공통 설정 적용 성공");
+        log.info(" translated_text_2 translated_text_2 translated_text_2 success");
         log.info("  - Username: {}", config.getUsername());
         log.info("  - Pool Size: {}", config.getMaximumPoolSize());
     }
 
     @Test
     @Order(4)
-    @DisplayName("설정만 검증 (연결 없음)")
+    @DisplayName("translated_text_2 validation (translated_text_2 translated_text_2)")
     void testConfigurationOnly() {
         beanCreator.setReturnConfigOnly(true);
         
@@ -145,18 +145,18 @@ class PostgreSQLBeanCreatorUnitTest {
 
         Object result = beanCreator.createBean(containerInfo);
         
-        assertNotNull(result, "결과가 null이 아니어야 합니다");
-        assertInstanceOf(String.class, result, "String 인스턴스여야 합니다");
-        assertTrue(result.toString().contains("test-postgresql-config-only"), "컨테이너 이름이 포함되어야 합니다");
+        assertNotNull(result, "translated_text_1 nulltranslated_text_1 translated_text_4 translated_text_3");
+        assertInstanceOf(String.class, result, "String translated_text_6 translated_text_3");
+        assertTrue(result.toString().contains("test-postgresql-config-only"), "translated_text_1 translated_text_1translated_text_1 translated_text_5 translated_text_3");
         
-        log.info("✅ 설정 검증 완료 (연결 없음): {}", result);
+        log.info(" translated_text_2 validation completed (translated_text_2 translated_text_2): {}", result);
         
         beanCreator.setReturnConfigOnly(false);
     }
 
     @Test
     @Order(5)
-    @DisplayName("기본값 설정 검증")
+    @DisplayName("translated_text_2 translated_text_2 validation")
     void testDefaultSettings() {
         beanCreator.setReturnConfigOnly(true);
         
@@ -171,17 +171,17 @@ class PostgreSQLBeanCreatorUnitTest {
 
         Object result = beanCreator.createBean(containerInfo);
         
-        assertNotNull(result, "결과가 생성되어야 합니다");
-        assertTrue(result.toString().contains("test-postgresql-defaults"), "컨테이너 이름이 포함되어야 합니다");
+        assertNotNull(result, "translated_text_1 creation translated_text_3");
+        assertTrue(result.toString().contains("test-postgresql-defaults"), "translated_text_1 translated_text_1translated_text_1 translated_text_5 translated_text_3");
         
-        log.info("✅ 기본값 설정 검증 성공: {}", result);
+        log.info(" translated_text_2 translated_text_2 validation success: {}", result);
         
         beanCreator.setReturnConfigOnly(false);
     }
 
     @Test
     @Order(6)
-    @DisplayName("PostgreSQL 고급 설정 검증")
+    @DisplayName("PostgreSQL translated_text_2 translated_text_2 validation")
     void testAdvancedSettings() {
         beanCreator.setReturnConfigOnly(true);
         
@@ -198,11 +198,11 @@ class PostgreSQLBeanCreatorUnitTest {
         );
 
         Object result = beanCreator.createBean(containerInfo);
-        assertNotNull(result, "결과가 생성되어야 합니다");
+        assertNotNull(result, "translated_text_1 creation translated_text_3");
         
-        assertTrue(result.toString().contains("test-postgresql-advanced"), "컨테이너 이름이 포함되어야 합니다");
+        assertTrue(result.toString().contains("test-postgresql-advanced"), "translated_text_1 translated_text_1translated_text_1 translated_text_5 translated_text_3");
         
-        log.info("✅ 고급 설정 검증 완료: {}", result);
+        log.info(" translated_text_2 translated_text_2 validation completed: {}", result);
         log.info("  - SSL Mode: {}", spec.getSslMode());
         log.info("  - Shared Buffers: {}", spec.getSharedBuffers());
         log.info("  - Work Mem: {}", spec.getWorkMem());
@@ -213,7 +213,7 @@ class PostgreSQLBeanCreatorUnitTest {
 
     @Test
     @Order(7)
-    @DisplayName("PostgreSQL SSL 모드 설정 검증")
+    @DisplayName("PostgreSQL SSL translated_text_2 translated_text_2 validation")
     void testSslModeSettings() {
         beanCreator.setReturnConfigOnly(true);
         
@@ -234,9 +234,9 @@ class PostgreSQLBeanCreatorUnitTest {
             );
 
             Object result = beanCreator.createBean(containerInfo);
-            assertNotNull(result, "결과가 생성되어야 합니다: " + sslMode);
+            assertNotNull(result, "translated_text_1 creation translated_text_3: " + sslMode);
             
-            log.info("✅ SSL 모드 {} 설정 검증 완료", sslMode);
+            log.info(" SSL translated_text_2 {} translated_text_2 validation completed", sslMode);
         }
         
         beanCreator.setReturnConfigOnly(false);
@@ -244,7 +244,7 @@ class PostgreSQLBeanCreatorUnitTest {
 
     @Test
     @Order(8)
-    @DisplayName("PostgreSQL 로케일 및 인코딩 설정 검증")
+    @DisplayName("PostgreSQL translated_text_3 translated_text_1 translated_text_3 translated_text_2 validation")
     void testLocaleAndEncodingSettings() {
         beanCreator.setReturnConfigOnly(true);
         
@@ -265,9 +265,9 @@ class PostgreSQLBeanCreatorUnitTest {
             );
 
             Object result = beanCreator.createBean(containerInfo);
-            assertNotNull(result, "결과가 생성되어야 합니다");
+            assertNotNull(result, "translated_text_1 creation translated_text_3");
             
-            log.info("✅ 로케일 {} / 인코딩 {} 설정 검증 완료", 
+            log.info(" translated_text_3 {} / translated_text_3 {} translated_text_2 validation completed", 
                     locales[i], i < encodings.length ? encodings[i] : "default");
         }
         
@@ -276,7 +276,7 @@ class PostgreSQLBeanCreatorUnitTest {
 
     @Test
     @Order(9)
-    @DisplayName("PostgreSQL 메모리 및 성능 설정 검증")
+    @DisplayName("PostgreSQL translated_text_3 translated_text_1 translated_text_2 translated_text_2 validation")
     void testMemoryAndPerformanceSettings() {
         beanCreator.setReturnConfigOnly(true);
         
@@ -294,9 +294,9 @@ class PostgreSQLBeanCreatorUnitTest {
         );
 
         Object result = beanCreator.createBean(containerInfo);
-        assertNotNull(result, "결과가 생성되어야 합니다");
+        assertNotNull(result, "translated_text_1 creation translated_text_3");
         
-        log.info("✅ 메모리 및 성능 설정 검증 완료: {}", result);
+        log.info(" translated_text_3 translated_text_1 translated_text_2 translated_text_2 validation completed: {}", result);
         log.info("  - Shared Buffers: {}", spec.getSharedBuffers());
         log.info("  - Work Mem: {}", spec.getWorkMem());
         log.info("  - Maintenance Work Mem: {}", spec.getMaintenanceWorkMem());
@@ -307,7 +307,7 @@ class PostgreSQLBeanCreatorUnitTest {
 
     @Test
     @Order(10)
-    @DisplayName("PostgreSQL 타임존 및 날짜 스타일 설정 검증")
+    @DisplayName("PostgreSQL translated_text_3 translated_text_1 translated_text_2 translated_text_3 translated_text_2 validation")
     void testTimezoneAndDateStyleSettings() {
         beanCreator.setReturnConfigOnly(true);
         
@@ -328,9 +328,9 @@ class PostgreSQLBeanCreatorUnitTest {
             );
 
             Object result = beanCreator.createBean(containerInfo);
-            assertNotNull(result, "결과가 생성되어야 합니다: " + timezones[i]);
+            assertNotNull(result, "translated_text_1 creation translated_text_3: " + timezones[i]);
             
-            log.info("✅ 타임존 {} / 날짜 스타일 {} 설정 검증 완료", 
+            log.info(" translated_text_3 {} / translated_text_2 translated_text_3 {} translated_text_2 validation completed", 
                     timezones[i], i < dateStyles.length ? dateStyles[i] : "default");
         }
         

@@ -1,9 +1,5 @@
 package com.genius.primavera.domain.model.user;
 
-// import com.genius.primavera.infrastructure.security.social.facebook.FacebookUserDetails;
-// import com.genius.primavera.infrastructure.security.social.github.GithubUserDetails;
-// import com.genius.primavera.infrastructure.security.social.google.GoogleUserDetails;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -28,45 +24,4 @@ public class UserConnection {
 	private String accessToken;
 	private long expireTime;
 
-	// OAuth2 Social login methods disabled - enable when OAuth2 dependencies are restored
-	/*
-	public static UserConnection valueOf(FacebookUserDetails userDetails) {
-		return UserConnection.builder()
-				.expireTime(userDetails.getExpiration())
-				.accessToken(userDetails.getAccessToken())
-				.providerId(userDetails.getId())
-				.provider(ProviderType.FACEBOOK)
-				.email(userDetails.getEmail())
-				.displayName(userDetails.getName())
-				.imageUrl("https://graph.facebook.com/" + userDetails.getId() + "/picture?type=large&redirect=true")
-				.profileUrl("")
-				.build();
-	}
-
-	public static UserConnection valueOf(GithubUserDetails userDetails) {
-		return UserConnection.builder()
-				.expireTime(userDetails.getExpiration())
-				.accessToken(userDetails.getAccessToken())
-				.providerId(userDetails.getId())
-				.email(userDetails.getEmail())
-				.displayName(userDetails.getName())
-				.imageUrl(userDetails.getAvatarUrl())
-				.provider(ProviderType.GITHUB)
-				.profileUrl("")
-				.build();
-	}
-
-	public static UserConnection valueOf(GoogleUserDetails userDetails) {
-		return UserConnection.builder()
-				.expireTime(userDetails.getExpiration())
-				.accessToken(userDetails.getAccessToken())
-				.providerId(userDetails.getSub())
-				.email(userDetails.getEmail())
-				.displayName(userDetails.getName())
-				.imageUrl(userDetails.getPicture())
-				.provider(ProviderType.GOOGLE)
-				.profileUrl(userDetails.getProfile())
-				.build();
-	}
-	*/
 }

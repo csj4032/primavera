@@ -36,9 +36,9 @@ public class ProductIndexingService {
             var response = elasticsearchClient.indices()
                 .create(c -> c.index(PRODUCTS_INDEX).mappings(m -> m.properties(properties)));
 
-            log.info("Products 인덱스 생성 완료: acknowledged={}", response.acknowledged());
+            log.info("Products translated_text_3 creation completed: acknowledged={}", response.acknowledged());
         } else {
-            log.info("Products 인덱스가 이미 존재합니다");
+            log.info("Products translated_text_3 translated_text_2 translated_text_5");
         }
     }
     
@@ -63,7 +63,7 @@ public class ProductIndexingService {
             .id(product.getId().toString())
             .document(document));
 
-        log.info("상품 인덱싱 완료 - ID: {}, Result: {}", response.id(), response.result());
+        log.info("translated_text_2 translated_text_3 completed - ID: {}, Result: {}", response.id(), response.result());
     }
 
     public SearchResponse<ProductDocument> searchProducts(String query) throws IOException {

@@ -1,18 +1,4 @@
-/*
- *	Copyright 2014 Naver Corp.
- *
- *	Licensed under the Apache License, Version 2.0 (the "License");
- *	you may not use this file except in compliance with the License.
- *	You may obtain a copy of the License at
- *
- *		http://www.apache.org/licenses/LICENSE-2.0
- *
- *	Unless required by applicable law or agreed to in writing, software
- *	distributed under the License is distributed on an "AS IS" BASIS,
- *	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *	See the License for the specific language governing permissions and
- *	limitations under the License.
- */
+
 package com.nhncorp.lucy.security.xss.config;
 
 import java.io.IOException;
@@ -30,19 +16,12 @@ import org.xml.sax.SAXException;
 import com.nhncorp.lucy.security.xss.event.AttributeListener;
 import com.nhncorp.lucy.security.xss.event.ElementListener;
 
-/**
- * 이 클래스는 XSS Filter 설정 내용을 나타낸다. <br/>
- * 만약, 설정 내용을 담고 있는 파일이 존재 하지 않거나 예상치 못한 포멧을 가지고 있다면, Exception을 발생 시킨다.
- *
- * @author Naver Labs
- *
- */
 public final class XssSaxConfiguration {
 	private static final String DEFAULT_CONFIG = "/lucy-xss-default-sax.xml";
 
 	private Map<String, ElementRule> tags;
 	private Map<String, AttributeRule> atts;
-//	private boolean neloAsyncLog;
+
 	private String service = "UnknownService";
 	private boolean blockingPrefixEnabled;
 	private String blockingPrefix = "diabled_";
@@ -54,20 +33,8 @@ public final class XssSaxConfiguration {
 		this.atts = new HashMap<String, AttributeRule>();
 	}
 
-	/**
-	 * 이 메소드는 특정 파일로부터 XSS Filter 설정 내용을 로딩하여, 새로운 인스턴스를 리턴한다.
-	 *
-	 * @param file	XSS Filter 설정파일.
-	 * @return	XssConfiguration 인스턴스.
-	 * @throws Exception	설정 내용을 담고 있는 파일이 예상치 못한 포멧을 가지고 있을 경우 발생.
-	 */
 	public static XssSaxConfiguration newInstance(String file) throws Exception {
 		XssSaxConfiguration config = null;
-
-		//		InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(file);
-		//		if (is == null) {
-		//			is = XssConfiguration.class.getResourceAsStream(DEFAULT_CONFIG);
-		//		}
 
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -97,7 +64,7 @@ public final class XssSaxConfiguration {
 			Element root = builder.parse(is).getDocumentElement();
 			String extend = root.getAttribute("extends");
 			if (extend != null && !"".equals(extend)) {
-				//InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream(extend);
+
 				config = create(builder, extend);
 			}
 
@@ -115,11 +82,6 @@ public final class XssSaxConfiguration {
 			for (int i = 0; list.getLength() > 0 && i < list.getLength(); i++) {
 				config.addAttributeRule(Element.class.cast(list.item(i)));
 			}
-
-/*			list = root.getElementsByTagName("neloAsyncLog");
-			for (int i = 0; list.getLength() > 0 && i < list.getLength(); i++) {
-				config.enableNeloAsyncLog(Element.class.cast(list.item(i)));
-			}*/
 
 			list = root.getElementsByTagName("blockingPrefix");
 			for (int i = 0; list.getLength() > 0 && i < list.getLength(); i++) {
@@ -176,19 +138,6 @@ public final class XssSaxConfiguration {
 		return rule;
 	}
 
-	/*private void enableNeloAsyncLog(Element element) {
-		String enable = element.getAttribute("enable");
-		String serviceName = element.getAttribute("service");
-
-		if (enable != null && ("true".equalsIgnoreCase(enable) || "false".equalsIgnoreCase(enable))) {
-			this.setNeloAsyncLog("true".equalsIgnoreCase(enable) ? true : false);
-		}
-
-		if (serviceName != null && !serviceName.isEmpty()) {
-			this.setService(serviceName);
-		}
-	}*/
-
 	private void addElementRule(Element element) {
 		String name = element.getAttribute("name");
 		boolean override = !"false".equalsIgnoreCase(element.getAttribute("override"));
@@ -227,7 +176,7 @@ public final class XssSaxConfiguration {
 					Object obj = Class.forName(className.trim()).newInstance();
 					rule.addListener(ElementListener.class.cast(obj));
 				} catch (Exception ex) {
-					// ignore
+
 				}
 			}
 		}
@@ -237,7 +186,7 @@ public final class XssSaxConfiguration {
 		String name = element.getAttribute("name");
 		boolean override = !"false".equalsIgnoreCase(element.getAttribute("override"));
 		String disable = element.getAttribute("disable");
-		//Base64Decoding
+
 		String base64Decoding = element.getAttribute("base64Decoding");
 		String exceptionTagList = element.getAttribute("exceptionTagList");
 
@@ -271,7 +220,6 @@ public final class XssSaxConfiguration {
 			}
 		}
 
-		//Base64Decoding
 		if (base64Decoding != null && ("true".equalsIgnoreCase(base64Decoding) || "false".equalsIgnoreCase(base64Decoding))) {
 			rule.setBase64Decoding("true".equalsIgnoreCase(base64Decoding) ? true : false);
 		}
@@ -294,20 +242,12 @@ public final class XssSaxConfiguration {
 					Object obj = Class.forName(className.trim()).newInstance();
 					rule.addListener(AttributeListener.class.cast(obj));
 				} catch (Exception ex) {
-					// ignore
+
 				}
 			}
 		}
 	}
 
-/*	public void setNeloAsyncLog(boolean neloAsyncLog) {
-		this.neloAsyncLog = neloAsyncLog;
-	}
-
-	public boolean enableNeloAsyncLog() {
-		return neloAsyncLog;
-	}
-*/
 	public void setService(String service) {
 		this.service = service;
 	}
@@ -349,7 +289,7 @@ public final class XssSaxConfiguration {
 
 	private void setFilteringTagInCommentType(String type) {
 		this.filteringTagInCommentType = type;
-		//strict or config
+
 	}
 
 	private void setFilteringTagInCommentEnabled(boolean enabled) {

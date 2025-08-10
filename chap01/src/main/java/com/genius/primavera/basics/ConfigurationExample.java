@@ -10,15 +10,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Spring Boot 설정 관리 예제
- * @Value와 @ConfigurationProperties 사용법을 보여줍니다.
- */
 public class ConfigurationExample {
 
-    /**
-     * @Value 어노테이션을 사용한 설정값 주입 예제
-     */
     @Component
     @Slf4j
     public static class ValueAnnotationExample {
@@ -39,12 +32,12 @@ public class ConfigurationExample {
         private String featuresString;
         
         public void printConfiguration() {
-            log.info("=== @Value 어노테이션 설정 ===");
-            log.info("앱 이름: {}", appName);
-            log.info("버전: {}", appVersion);
-            log.info("디버그 모드: {}", debug);
-            log.info("최대 사용자: {}", maxUsers);
-            log.info("기능 목록: {}", getFeatures());
+            log.info("=== @Value annotation translated_text_2 ===");
+            log.info("translated_text_1 translated_text_2: {}", appName);
+            log.info("translated_text_2: {}", appVersion);
+            log.info("translated_text_3 translated_text_2: {}", debug);
+            log.info("translated_text_2 user: {}", maxUsers);
+            log.info("translated_text_2 translated_text_2: {}", getFeatures());
         }
         
         public String getAppName() { return appName; }
@@ -56,9 +49,6 @@ public class ConfigurationExample {
         }
     }
 
-    /**
-     * @ConfigurationProperties를 사용한 타입 안전한 설정 예제
-     */
     @Component
     @ConfigurationProperties(prefix = "app")
     @Data

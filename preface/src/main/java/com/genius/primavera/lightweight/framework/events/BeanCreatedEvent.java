@@ -1,8 +1,5 @@
 package com.genius.primavera.lightweight.framework.events;
 
-/**
- * Bean이 생성되었을 때 발생하는 이벤트
- */
 public class BeanCreatedEvent extends PrimaveraApplicationEvent {
     
     private final String beanName;

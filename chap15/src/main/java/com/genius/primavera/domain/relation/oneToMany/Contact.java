@@ -1,6 +1,5 @@
 package com.genius.primavera.domain.relation.oneToMany;
 
-
 import lombok.*;
 
 import jakarta.persistence.*;
@@ -34,7 +33,7 @@ public class Contact {
 	private String value;
 
 	@ManyToOne
-	//@JoinColumn(name = "CUSTOMER_ID", insertable = false, updatable = false)
+
 	@JoinColumn(name = "CUSTOMER_ID")
 	private Customer customer;
 

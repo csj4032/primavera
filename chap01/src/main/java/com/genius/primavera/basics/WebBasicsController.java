@@ -31,11 +31,11 @@ public class WebBasicsController {
     @Data
     public static class User {
         private Long id;
-        @NotBlank(message = "이름은 필수입니다")
+        @NotBlank(message = "translated_text_3 translated_text_5")
         private String name;
-        @Email(message = "유효한 이메일 주소를 입력하세요")
+        @Email(message = "translated_text_3 translated_text_3 translated_text_3 translated_text_5")
         private String email;
-        @Size(min = 10, max = 200, message = "소개는 10-200자 사이여야 합니다")
+        @Size(min = 10, max = 200, message = "translated_text_3 10-200translated_text_1 translated_text_4 translated_text_3")
         private String bio;
         private LocalDateTime createdAt;
         private LocalDateTime updatedAt;
@@ -52,7 +52,7 @@ public class WebBasicsController {
     public ResponseEntity<User> getUser(@PathVariable Long id) {
         User user = userRepository.get(id);
         if (user == null) {
-            throw new UserNotFoundException("사용자를 찾을 수 없습니다: " + id);
+            throw new UserNotFoundException("translated_text_1 translated_text_2 translated_text_1 translated_text_4: " + id);
         }
         return ResponseEntity.ok(user);
     }
@@ -63,7 +63,7 @@ public class WebBasicsController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String name) {
         
-        log.info("사용자 목록 조회 - page: {}, size: {}, name: {}", page, size, name);
+        log.info("translated_text_1 translated_text_2 inquiry - page: {}, size: {}, name: {}", page, size, name);
         
         List<User> users = new ArrayList<>(userRepository.values());
         if (name != null) {
@@ -84,7 +84,7 @@ public class WebBasicsController {
         user.setUpdatedAt(LocalDateTime.now());
         
         userRepository.put(user.getId(), user);
-        log.info("새 사용자 생성: {}", user);
+        log.info("translated_text_1 translated_text_1 creation: {}", user);
         
         return ResponseEntity
             .created(URI.create("/api/v1/basics/users/" + user.getId()))
@@ -98,7 +98,7 @@ public class WebBasicsController {
         
         User existingUser = userRepository.get(id);
         if (existingUser == null) {
-            throw new UserNotFoundException("사용자를 찾을 수 없습니다: " + id);
+            throw new UserNotFoundException("translated_text_1 translated_text_2 translated_text_1 translated_text_4: " + id);
         }
         
         existingUser.setName(updatedUser.getName());
@@ -106,7 +106,7 @@ public class WebBasicsController {
         existingUser.setBio(updatedUser.getBio());
         existingUser.setUpdatedAt(LocalDateTime.now());
         
-        log.info("사용자 수정: {}", existingUser);
+        log.info("translated_text_1 translated_text_1: {}", existingUser);
         
         return ResponseEntity.ok(existingUser);
     }
@@ -115,10 +115,10 @@ public class WebBasicsController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteUser(@PathVariable Long id) {
         if (!userRepository.containsKey(id)) {
-            throw new UserNotFoundException("사용자를 찾을 수 없습니다: " + id);
+            throw new UserNotFoundException("translated_text_1 translated_text_2 translated_text_1 translated_text_4: " + id);
         }
         userRepository.remove(id);
-        log.info("사용자 삭제: {}", id);
+        log.info("translated_text_1 deletion: {}", id);
     }
     
     @GetMapping("/headers")
@@ -140,8 +140,8 @@ public class WebBasicsController {
     
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGenericException(Exception e) {
-        log.error("예상치 못한 오류 발생", e);
-        ErrorResponse error = new ErrorResponse("서버 오류가 발생했습니다", 500);
+        log.error("translated_text_3 translated_text_2 error translated_text_2", e);
+        ErrorResponse error = new ErrorResponse("translated_text_2 error translated_text_2", 500);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
     

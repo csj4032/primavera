@@ -11,9 +11,9 @@ import lombok.Getter;
 @Getter
 public enum ArticleStatus implements ConvertedEnum<Integer> {
 
-    PUBLIC(1, "발행"),
-    DELETE(2, "삭제"),
-    BLOCK(3, "재제");
+    PUBLIC(1, "translated_text_2"),
+    DELETE(2, "deletion"),
+    BLOCK(3, "translated_text_2");
 
     private int value;
     private String name;

@@ -21,7 +21,7 @@ public class SpringBootConfigurationTest {
     private ApplicationContext applicationContext;
 
     @Test
-    @DisplayName("@SpringBootConfiguration이 적용된 클래스가 정확히 하나 존재해야 한다")
+    @DisplayName("@SpringBootConfigurationtranslated_text_1 translated_text_3 translated_text_4 translated_text_3 translated_text_2 translated_text_4 translated_text_2")
     void shouldHaveExactlyOneSpringBootConfiguration() {
         String[] configBeanNames = applicationContext.getBeanNamesForAnnotation(SpringBootConfiguration.class);
         assertThat(configBeanNames).hasSize(1);
@@ -29,7 +29,7 @@ public class SpringBootConfigurationTest {
     }
 
     @Test
-    @DisplayName("@SpringBootConfiguration이 적용된 클래스는 @Configuration 특성을 가져야 한다")
+    @DisplayName("@SpringBootConfigurationtranslated_text_1 translated_text_3 translated_text_4 @Configuration translated_text_3 translated_text_3 translated_text_2")
     void shouldHaveConfigurationCharacteristics() {
         String[] configBeanNames = applicationContext.getBeanNamesForAnnotation(Configuration.class);
         String[] springBootConfigBeanNames = applicationContext.getBeanNamesForAnnotation(SpringBootConfiguration.class);
@@ -37,7 +37,7 @@ public class SpringBootConfigurationTest {
     }
 
     @Test
-    @DisplayName("@SpringBootConfiguration의 proxyBeanMethods 속성이 정상 동작해야 한다")
+    @DisplayName("@SpringBootConfigurationtranslated_text_1 proxyBeanMethods translated_text_1 translated_text_2 translated_text_4 translated_text_2")
     void shouldRespectProxyBeanMethodsAttribute() {
         String configClassName = applicationContext.getBeanNamesForAnnotation(SpringBootConfiguration.class)[0];
         Object configBean = applicationContext.getBean(configClassName);
@@ -45,7 +45,7 @@ public class SpringBootConfigurationTest {
     }
 
     @Test
-    @DisplayName("메인 애플리케이션 클래스에 정의된 빈들이 등록되어야 한다")
+    @DisplayName("translated_text_2 translated_text_1 translated_text_4 translated_text_1 translated_text_1 registeredtranslated_text_1 translated_text_2")
     void shouldRegisterBeansDefinedInConfiguration() {
         boolean hasApplicationRunner = applicationContext.containsBean("applicationRunner");
         boolean hasCommandLineRunner = applicationContext.containsBean("commandLineRunner");
@@ -62,14 +62,14 @@ public class SpringBootConfigurationTest {
     }
 
     @Test
-    @DisplayName("내부 @Configuration 클래스가 @SpringBootConfiguration과 함께 동작해야 한다")
+    @DisplayName("translated_text_2 @Configuration translated_text_4 @SpringBootConfigurationtranslated_text_1 translated_text_2 translated_text_4 translated_text_2")
     void shouldWorkWithNestedConfigurations() {
         boolean hasInnerConfigBean = applicationContext.containsBean("innerConfigBean");
         assertThat(hasInnerConfigBean).isTrue();
     }
 
     @Test
-    @DisplayName("@SpringBootConfiguration은 컴포넌트 스캔의 시작점이 되어야 한다")
+    @DisplayName("@SpringBootConfigurationtranslated_text_1 translated_text_4 translated_text_1 translated_text_1 translated_text_1 translated_text_2")
     void shouldBeComponentScanningStartingPoint() {
         boolean hasWorldServiceImpl = applicationContext.containsBean("worldServiceImpl");
         boolean hasHelloServiceImpl = applicationContext.containsBean("helloServiceImpl");
@@ -78,7 +78,7 @@ public class SpringBootConfigurationTest {
     }
 
     @Test
-    @DisplayName("@SpringBootConfiguration은 @Configuration을 메타 어노테이션으로 포함해야 한다")
+    @DisplayName("@SpringBootConfigurationtranslated_text_1 @Configurationtranslated_text_1 translated_text_2 annotationtranslated_text_2 translated_text_1 translated_text_2")
     void shouldHaveConfigurationAsMetaAnnotation() {
         Class<SpringBootConfiguration> annotationClass = SpringBootConfiguration.class;
         boolean hasConfigurationAnnotation = annotationClass.isAnnotationPresent(Configuration.class);
@@ -86,7 +86,7 @@ public class SpringBootConfigurationTest {
     }
 
     @Test
-    @DisplayName("@SpringBootConfiguration이 적용된 클래스는 내부에 정의된 @Bean 메서드를 캐싱해야 한다")
+    @DisplayName("@SpringBootConfigurationtranslated_text_1 translated_text_3 translated_text_4 translated_text_2 translated_text_1 @Bean translated_text_4 translated_text_1 translated_text_2")
     void shouldCacheBeanMethods() {
         String configClassName = applicationContext.getBeanNamesForAnnotation(SpringBootConfiguration.class)[0];
         Object configBean = applicationContext.getBean(configClassName);

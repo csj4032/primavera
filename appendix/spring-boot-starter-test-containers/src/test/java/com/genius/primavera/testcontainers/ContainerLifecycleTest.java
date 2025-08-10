@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ActiveProfiles("test")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@DisplayName("컨테이너 라이프사이클 관리 테스트")
+@DisplayName("translated_text_4 translated_text_6 translated_text_2 test")
 @EnableTestContainers({
     @EnableTestContainers.TestContainer(type = ContainerType.MARIADB, name = "lifecycleDb"),
     @EnableTestContainers.TestContainer(type = ContainerType.REDIS, name = "lifecycleCache")
@@ -46,74 +46,74 @@ public class ContainerLifecycleTest {
             )
         """);
 
-        log.info("컨테이너 라이프사이클 테스트 환경 초기화 완료");
+        log.info("translated_text_4 translated_text_6 test translated_text_2 translated_text_3 completed");
     }
 
     @Test
     @Order(1)
-    @DisplayName("컨테이너 시작 상태 및 기본 설정 검증")
+    @DisplayName("translated_text_4 translated_text_2 translated_text_2 translated_text_1 translated_text_2 translated_text_2 validation")
     void testContainerInitialState() {
         ContainerInfo dbInfo = containerManager.getContainer("lifecycleDb");
         ContainerInfo cacheInfo = containerManager.getContainer("lifecycleCache");
 
-        assertNotNull(dbInfo, "DB 컨테이너 정보가 존재해야 함");
-        assertNotNull(cacheInfo, "캐시 컨테이너 정보가 존재해야 함");
+        assertNotNull(dbInfo, "DB translated_text_4 translated_text_12 translated_text_4 translated_text_1");
+        assertNotNull(cacheInfo, "translated_text_2 translated_text_4 translated_text_12 translated_text_4 translated_text_1");
 
-        assertTrue(dbInfo.container().isRunning(), "DB 컨테이너가 실행 중이어야 함");
-        assertTrue(cacheInfo.container().isRunning(), "캐시 컨테이너가 실행 중이어야 함");
+        assertTrue(dbInfo.container().isRunning(), "DB translated_text_4translated_text_1 execution translated_text_4 translated_text_1");
+        assertTrue(cacheInfo.container().isRunning(), "translated_text_2 translated_text_4translated_text_1 execution translated_text_4 translated_text_1");
 
-        assertTrue(dbInfo.container().isHealthy(), "DB 컨테이너가 건강해야 함");
-        assertNotNull(dbInfo.container().getContainerId(), "컨테이너 ID가 존재해야 함");
-        assertTrue(dbInfo.container().getContainerId().length() > 10, "컨테이너 ID가 유효해야 함");
+        assertTrue(dbInfo.container().isHealthy(), "DB translated_text_4translated_text_1 translated_text_4 translated_text_1");
+        assertNotNull(dbInfo.container().getContainerId(), "translated_text_4 IDtranslated_text_1 translated_text_4 translated_text_1");
+        assertTrue(dbInfo.container().getContainerId().length() > 10, "translated_text_4 IDtranslated_text_1 translated_text_4 translated_text_1");
 
         String dbHost = dbInfo.container().getHost();
         Integer dbPort = dbInfo.container().getFirstMappedPort();
         
-        assertNotNull(dbHost, "DB 호스트가 설정되어야 함");
-        assertNotNull(dbPort, "DB 포트가 매핑되어야 함");
-        assertTrue(dbPort > 0, "DB 포트가 유효해야 함");
+        assertNotNull(dbHost, "DB translated_text_3translated_text_1 translated_text_2 translated_text_1");
+        assertNotNull(dbPort, "DB translated_text_1 translated_text_5 translated_text_1");
+        assertTrue(dbPort > 0, "DB translated_text_1 translated_text_4 translated_text_1");
 
-        log.info("컨테이너 기본 상태 검증 완료 - DB: {}:{}, Cache: {}:{}", 
+        log.info("translated_text_4 translated_text_2 translated_text_2 validation completed - DB: {}:{}, Cache: {}:{}", 
             dbHost, dbPort, cacheInfo.container().getHost(), cacheInfo.container().getFirstMappedPort());
     }
 
     @Test
     @Order(2)
-    @DisplayName("데이터베이스 연결 및 기본 작업 검증")
+    @DisplayName("translated_text_7 translated_text_2 translated_text_1 translated_text_2 translated_text_2 validation")
     void testDatabaseConnectivityAndOperations() {
         assertDoesNotThrow(() -> {
             String version = jdbcTemplate.queryForObject("SELECT VERSION()", String.class);
-            assertNotNull(version, "데이터베이스 버전 정보를 가져올 수 있어야 함");
-            assertTrue(version.toLowerCase().contains("mariadb"), "MariaDB 버전 정보여야 함");
-            log.info("데이터베이스 버전: {}", version);
-        }, "데이터베이스 연결이 정상적으로 작동해야 함");
+            assertNotNull(version, "translated_text_7 translated_text_2 translated_text_12 translated_text_1 translated_text_1 translated_text_3 translated_text_1");
+            assertTrue(version.toLowerCase().contains("mariadb"), "MariaDB translated_text_2 translated_text_13 translated_text_1");
+            log.info("translated_text_7 translated_text_2: {}", version);
+        }, "translated_text_7 translated_text_2 successfully translated_text_4 translated_text_1");
 
         int insertResult = jdbcTemplate.update(
             "INSERT INTO lifecycle_test (test_name, status) VALUES (?, ?)",
             "connectivity_test", "RUNNING");
-        assertEquals(1, insertResult, "데이터 삽입이 성공해야 함");
+        assertEquals(1, insertResult, "data translated_text_3 translated_text_9 translated_text_1");
 
         Integer count = jdbcTemplate.queryForObject(
             "SELECT COUNT(*) FROM lifecycle_test WHERE test_name = ?", 
             Integer.class, "connectivity_test");
-        assertEquals(1, count, "삽입된 데이터를 조회할 수 있어야 함");
+        assertEquals(1, count, "translated_text_3 datatranslated_text_1 translated_text_8 translated_text_1 translated_text_3 translated_text_1");
 
         int updateResult = jdbcTemplate.update(
             "UPDATE lifecycle_test SET status = ? WHERE test_name = ?",
             "COMPLETED", "connectivity_test");
-        assertEquals(1, updateResult, "데이터 수정이 성공해야 함");
+        assertEquals(1, updateResult, "data translated_text_1 translated_text_9 translated_text_1");
 
         String updatedStatus = jdbcTemplate.queryForObject(
             "SELECT status FROM lifecycle_test WHERE test_name = ?", 
             String.class, "connectivity_test");
-        assertEquals("COMPLETED", updatedStatus, "데이터가 올바르게 수정되어야 함");
+        assertEquals("COMPLETED", updatedStatus, "datatranslated_text_1 translated_text_4 translated_text_1 translated_text_1");
 
-        log.info("데이터베이스 기본 작업 검증 완료");
+        log.info("translated_text_7 translated_text_2 translated_text_2 validation completed");
     }
 
     @Test
     @Order(3)
-    @DisplayName("컨테이너 격리 및 네트워크 검증")
+    @DisplayName("translated_text_4 translated_text_2 translated_text_1 translated_text_4 validation")
     void testContainerIsolationAndNetwork() {
         ContainerInfo dbInfo = containerManager.getContainer("lifecycleDb");
         ContainerInfo cacheInfo = containerManager.getContainer("lifecycleCache");
@@ -123,19 +123,19 @@ public class ContainerLifecycleTest {
         String cacheHost = cacheInfo.container().getHost();
         Integer cachePort = cacheInfo.container().getFirstMappedPort();
 
-        assertNotNull(dbHost, "DB 호스트가 설정되어야 함");
-        assertNotNull(dbPort, "DB 포트가 설정되어야 함");
-        assertNotNull(cacheHost, "캐시 호스트가 설정되어야 함");
-        assertNotNull(cachePort, "캐시 포트가 설정되어야 함");
+        assertNotNull(dbHost, "DB translated_text_3translated_text_1 translated_text_2 translated_text_1");
+        assertNotNull(dbPort, "DB translated_text_1 translated_text_2 translated_text_1");
+        assertNotNull(cacheHost, "translated_text_2 translated_text_3translated_text_1 translated_text_2 translated_text_1");
+        assertNotNull(cachePort, "translated_text_2 translated_text_1 translated_text_2 translated_text_1");
 
-        assertNotEquals(dbPort, cachePort, "DB와 캐시는 다른 포트를 사용해야 함");
+        assertNotEquals(dbPort, cachePort, "DBtranslated_text_1 translated_text_2 translated_text_2 translated_text_3 translated_text_4 translated_text_1");
 
         String dbContainerId = dbInfo.container().getContainerId();
         String cacheContainerId = cacheInfo.container().getContainerId();
         
-        assertNotNull(dbContainerId, "DB 컨테이너 ID가 존재해야 함");
-        assertNotNull(cacheContainerId, "캐시 컨테이너 ID가 존재해야 함");
-        assertNotEquals(dbContainerId, cacheContainerId, "컨테이너 ID가 달라야 함");
+        assertNotNull(dbContainerId, "DB translated_text_4 IDtranslated_text_1 translated_text_4 translated_text_1");
+        assertNotNull(cacheContainerId, "translated_text_2 translated_text_4 IDtranslated_text_1 translated_text_4 translated_text_1");
+        assertNotEquals(dbContainerId, cacheContainerId, "translated_text_4 IDtranslated_text_1 translated_text_3 translated_text_1");
 
         jdbcTemplate.update(
             "INSERT INTO lifecycle_test (test_name, status) VALUES (?, ?)",
@@ -144,43 +144,43 @@ public class ContainerLifecycleTest {
         Integer dbTestCount = jdbcTemplate.queryForObject(
             "SELECT COUNT(*) FROM lifecycle_test WHERE test_name LIKE 'isolation_test_%'", 
             Integer.class);
-        assertEquals(1, dbTestCount, "DB 컨테이너에서 독립적인 작업이 수행되어야 함");
+        assertEquals(1, dbTestCount, "DB translated_text_4 translated_text_4 translated_text_2 translated_text_1 translated_text_1");
 
-        log.info("컨테이너 격리 검증 완료 - DB: {} ({}), Cache: {} ({})", 
+        log.info("translated_text_4 translated_text_2 validation completed - DB: {} ({}), Cache: {} ({})", 
             dbHost + ":" + dbPort, dbContainerId.substring(0, 12),
             cacheHost + ":" + cachePort, cacheContainerId.substring(0, 12));
     }
 
     @Test
     @Order(4)
-    @DisplayName("컨테이너 건강성 검사 및 상태 검증")
+    @DisplayName("translated_text_4 translated_text_3 translated_text_2 translated_text_1 translated_text_2 validation")
     void testContainerHealthAndStatus() {
         ContainerInfo dbInfo = containerManager.getContainer("lifecycleDb");
         ContainerInfo cacheInfo = containerManager.getContainer("lifecycleCache");
 
-        assertTrue(dbInfo.container().isHealthy(), "DB 컨테이너가 건강해야 함");
-        assertTrue(cacheInfo.container().isHealthy(), "캐시 컨테이너가 건강해야 함");
+        assertTrue(dbInfo.container().isHealthy(), "DB translated_text_4translated_text_1 translated_text_4 translated_text_1");
+        assertTrue(cacheInfo.container().isHealthy(), "translated_text_2 translated_text_4translated_text_1 translated_text_4 translated_text_1");
 
-        assertNotNull(dbInfo.container().getHost(), "DB 호스트가 설정되어야 함");
-        assertNotNull(dbInfo.container().getFirstMappedPort(), "DB 포트가 매핑되어야 함");
+        assertNotNull(dbInfo.container().getHost(), "DB translated_text_3translated_text_1 translated_text_2 translated_text_1");
+        assertNotNull(dbInfo.container().getFirstMappedPort(), "DB translated_text_1 translated_text_5 translated_text_1");
         
         assertDoesNotThrow(() -> {
             Integer result = jdbcTemplate.queryForObject("SELECT 1", Integer.class);
-            assertEquals(1, result, "건강성 검사 쿼리가 정상 실행되어야 함");
-        }, "데이터베이스 건강성 검사가 성공해야 함");
+            assertEquals(1, result, "translated_text_3 translated_text_2 translated_text_1 translated_text_2 execution translated_text_1");
+        }, "translated_text_7 translated_text_3 translated_text_2translated_text_1 translated_text_9 translated_text_1");
 
-        log.info("컨테이너 건강성 검사 완료");
+        log.info("translated_text_4 translated_text_3 translated_text_2 completed");
     }
 
     @Test
     @Order(5)
-    @DisplayName("안정성 및 지속성 테스트")
+    @DisplayName("translated_text_3 translated_text_1 translated_text_3 test")
     void testStabilityAndPersistence() throws InterruptedException {
         int iterations = 20;
         int successCount = 0;
         int errorCount = 0;
 
-        log.info("안정성 테스트 시작 - {}회 반복", iterations);
+        log.info("translated_text_3 test translated_text_2 - {}translated_text_1 translated_text_2", iterations);
 
         for (int i = 0; i < iterations; i++) {
             try {
@@ -192,7 +192,7 @@ public class ContainerLifecycleTest {
                     "SELECT COUNT(*) FROM lifecycle_test WHERE test_name LIKE 'stability_test_%'", 
                     Integer.class);
 
-                assertTrue(count > 0, "데이터 조회가 정상적으로 작동해야 함");
+                assertTrue(count > 0, "data translated_text_1translated_text_1 successfully translated_text_4 translated_text_1");
 
                 if (i % 5 == 0) {
                     jdbcTemplate.update(
@@ -208,54 +208,54 @@ public class ContainerLifecycleTest {
 
             } catch (Exception e) {
                 errorCount++;
-                log.warn("반복 {} 중 오류 발생: {}", i, e.getMessage());
+                log.warn("translated_text_2 {} translated_text_1 error translated_text_2: {}", i, e.getMessage());
                 
                 if (errorCount > iterations * 0.1) {
-                    fail("오류율이 10%를 초과했습니다: " + errorCount + "/" + (i + 1));
+                    fail("error 10%translated_text_1 translated_text_6: " + errorCount + "/" + (i + 1));
                 }
             }
         }
 
-        assertTrue(successCount >= iterations * 0.9, "90% 이상의 작업이 성공해야 함");
-        assertTrue(errorCount < iterations * 0.1, "오류율이 10% 미만이어야 함");
+        assertTrue(successCount >= iterations * 0.9, "90% translated_text_3 translated_text_2 translated_text_9 translated_text_1");
+        assertTrue(errorCount < iterations * 0.1, "error 10% translated_text_5 translated_text_1");
 
         Integer finalCount = jdbcTemplate.queryForObject(
             "SELECT COUNT(*) FROM lifecycle_test WHERE test_name LIKE 'stability_test_%'", 
             Integer.class);
-        assertTrue(finalCount >= successCount * 0.9, "대부분의 데이터가 정상적으로 저장되어야 함");
+        assertTrue(finalCount >= successCount * 0.9, "translated_text_4 datatranslated_text_1 successfully translated_text_5 translated_text_1");
 
-        log.info("안정성 테스트 완료 - 성공: {}, 실패: {}, 저장된 데이터: {}", 
+        log.info("translated_text_3 test completed - success: {}, failure: {}, translated_text_3 data: {}", 
             successCount, errorCount, finalCount);
     }
 
     @Test
     @Order(6)
-    @DisplayName("리소스 사용량 및 정리 검증")
+    @DisplayName("translated_text_3 translated_text_3 translated_text_1 translated_text_2 validation")
     void testResourceUsageAndCleanup() {
         ContainerInfo dbInfo = containerManager.getContainer("lifecycleDb");
         GenericContainer<?> container = dbInfo.container();
 
-        assertNotNull(container.getContainerId(), "컨테이너 ID가 존재해야 함");
-        assertTrue(container.isRunning(), "컨테이너가 실행 중이어야 함");
+        assertNotNull(container.getContainerId(), "translated_text_4 IDtranslated_text_1 translated_text_4 translated_text_1");
+        assertTrue(container.isRunning(), "translated_text_4translated_text_1 execution translated_text_4 translated_text_1");
 
         String containerId = container.getContainerId();
-        assertTrue(containerId.length() > 10, "유효한 컨테이너 ID여야 함");
+        assertTrue(containerId.length() > 10, "translated_text_3 translated_text_4 IDtranslated_text_2 translated_text_1");
 
         Integer mappedPort = container.getFirstMappedPort();
-        assertNotNull(mappedPort, "포트가 매핑되어야 함");
-        assertTrue(mappedPort > 1024, "매핑된 포트가 유효한 범위여야 함");
+        assertNotNull(mappedPort, "translated_text_1 translated_text_5 translated_text_1");
+        assertTrue(mappedPort > 1024, "translated_text_3 translated_text_1 translated_text_3 translated_text_2 translated_text_1");
 
         String host = container.getHost();
         assertTrue("localhost".equals(host) || "127.0.0.1".equals(host) || host.matches("\\d+\\.\\d+\\.\\d+\\.\\d+"), 
-            "유효한 호스트 주소여야 함");
+            "translated_text_3 translated_text_3 translated_text_2 translated_text_1");
 
         assertDoesNotThrow(() -> {
             for (int i = 0; i < 5; i++) {
                 jdbcTemplate.queryForObject("SELECT 1", Integer.class);
             }
-        }, "다중 연결이 정상적으로 작동해야 함");
+        }, "translated_text_1 translated_text_2 successfully translated_text_4 translated_text_1");
 
-        log.info("리소스 사용량 검증 완료 - Container: {}, Host: {}, Port: {}", 
+        log.info("translated_text_3 translated_text_3 validation completed - Container: {}, Host: {}, Port: {}", 
             containerId.substring(0, 12), host, mappedPort);
     }
 }

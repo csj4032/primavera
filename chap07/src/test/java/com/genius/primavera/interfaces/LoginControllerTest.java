@@ -22,7 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 @Testcontainers
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@DisplayName("로그인 컨트롤러 통합 테스트")
+@DisplayName("translated_text_3 controller translated_text_2 test")
 public class LoginControllerTest {
 
 	@Container
@@ -45,7 +45,7 @@ public class LoginControllerTest {
 
 	@Test
 	@Order(1)
-	@DisplayName("로그인 화면 접근")
+	@DisplayName("translated_text_3 translated_text_2 translated_text_2")
 	public void loginView() throws Exception {
 		mockMvc.perform(get("/login"))
 				.andDo(print())
@@ -55,7 +55,7 @@ public class LoginControllerTest {
 
 	@Test
 	@Order(2)
-	@DisplayName("로그인 시도 : 성공")
+	@DisplayName("translated_text_3 translated_text_2 : success")
 	public void loginIn() throws Exception {
 		mockMvc.perform(post("/login").param("email", "genius@primavera.com").param("password", "password123"))
 				.andExpect(status().isOk())
@@ -64,7 +64,7 @@ public class LoginControllerTest {
 
 	@Test
 	@Order(3)
-	@DisplayName("로그인 시도 : 실패")
+	@DisplayName("translated_text_3 translated_text_2 : failure")
 	public void loginInFalse() throws Exception {
 		mockMvc.perform(post("/login").param("email", "genius@primavera.com").param("password", "wrongpassword"))
 				.andExpect(status().isOk())
@@ -74,7 +74,7 @@ public class LoginControllerTest {
 
 	@Test
 	@Order(4)
-	@DisplayName("로그아웃 시도")
+	@DisplayName("translated_text_4 translated_text_2")
 	public void loginOut() throws Exception {
 		mockMvc.perform(get("/logout"))
 				.andExpect(status().is3xxRedirection())

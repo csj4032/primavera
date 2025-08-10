@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Slf4j
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@DisplayName("LocalStack AWS 서비스 빈 통합 테스트")
+@DisplayName("LocalStack AWS service translated_text_1 translated_text_2 test")
 class LocalStackBeanCreatorIntegrationTest {
 
     private LocalStackBeanCreator beanCreator;
@@ -35,7 +35,7 @@ class LocalStackBeanCreatorIntegrationTest {
                 LocalStackContainer.Service.SNS
         );
         
-        log.info("LocalStack 컨테이너를 시작합니다... (시간이 걸릴 수 있습니다)");
+        log.info("LocalStack translated_text_5 translated_text_5... (translated_text_3 translated_text_2 translated_text_1 translated_text_4)");
         container.start();
         
         spec = new LocalStackContainerSpec();
@@ -48,23 +48,23 @@ class LocalStackBeanCreatorIntegrationTest {
         spec.setDebugMode(false);
         spec.setEdgePort(4566);
         
-        log.info("✅ LocalStack 컨테이너가 시작되었습니다. 엔드포인트: {}", container.getEndpoint());
-        log.info("- 액세스 키: {}", container.getAccessKey());
-        log.info("- 시크릿 키: {}", container.getSecretKey());
-        log.info("- 리전: {}", container.getRegion());
+        log.info(" LocalStack translated_text_5 translated_text_7. translated_text_5: {}", container.getEndpoint());
+        log.info("- translated_text_3 translated_text_1: {}", container.getAccessKey());
+        log.info("- translated_text_3 translated_text_1: {}", container.getSecretKey());
+        log.info("- translated_text_2: {}", container.getRegion());
     }
 
     @AfterAll
     void tearDown() {
         if (container != null && container.isRunning()) {
             container.stop();
-            log.info("LocalStack 컨테이너가 중지되었습니다");
+            log.info("LocalStack translated_text_5 translated_text_7");
         }
     }
 
     @Test
     @Order(1)
-    @DisplayName("실제 LocalStack 컨테이너에서 AWS 클라이언트 빈 생성")
+    @DisplayName("translated_text_2 LocalStack translated_text_6 AWS translated_text_5 translated_text_1 creation")
     void testRealAwsClientCreation() {
         ContainerInfo containerInfo = new ContainerInfo(
                 "integration-test-localstack",
@@ -73,34 +73,34 @@ class LocalStackBeanCreatorIntegrationTest {
                 spec
         );
 
-        log.info("LocalStack 컨테이너에서 AWS 클라이언트들을 생성합니다...");
+        log.info("LocalStack translated_text_6 AWS translated_text_5 creationtranslated_text_3...");
         
         Object result = assertDoesNotThrow(() -> beanCreator.createBean(containerInfo));
-        assertNotNull(result, "생성된 결과가 null이면 안됩니다");
+        assertNotNull(result, "creation translated_text_7 nulltranslated_text_2 translated_text_4");
         
         if (result instanceof Map) {
             @SuppressWarnings("unchecked")
             Map<String, Object> clientMap = (Map<String, Object>) result;
             
             if (clientMap.isEmpty()) {
-                log.info("⚠️ AWS SDK 의존성이 없어서 클라이언트가 생성되지 않았습니다");
+                log.info(" AWS SDK dependencytranslated_text_1 translated_text_3 translated_text_5 creation translated_text_5");
             } else {
-                log.info("✅ 생성된 AWS 클라이언트들: {}", clientMap.keySet());
+                log.info(" creation AWS translated_text_5: {}", clientMap.keySet());
                 
                 clientMap.forEach((beanName, client) -> {
-                    assertNotNull(client, "클라이언트 " + beanName + "이 null이면 안됩니다");
+                    assertNotNull(client, "translated_text_5 " + beanName + "translated_text_1 nulltranslated_text_2 translated_text_4");
                     log.info("  - {}: {}", beanName, client.getClass().getName());
                 });
             }
             
         } else {
-            log.info("✅ AWS 클라이언트 생성 결과: {} (Map이 아닌 형태)", result.getClass().getSimpleName());
+            log.info(" AWS translated_text_5 creation result: {} (Maptranslated_text_1 translated_text_2 translated_text_2)", result.getClass().getSimpleName());
         }
     }
 
     @Test
     @Order(2) 
-    @DisplayName("개별 AWS 서비스별 클라이언트 생성 테스트")
+    @DisplayName("translated_text_2 AWS service translated_text_5 creation test")
     void testIndividualServiceClients() {
         LocalStackContainerSpec.AwsService[] testServices = {
                 LocalStackContainerSpec.AwsService.S3,
@@ -111,7 +111,7 @@ class LocalStackBeanCreatorIntegrationTest {
 
         for (LocalStackContainerSpec.AwsService service : testServices) {
             if (!beanCreator.isServiceSupported(service)) {
-                log.info("⚠️ {} 서비스를 건너뜁니다 (AWS SDK 의존성 없음)", service);
+                log.info(" {} service translated_text_5 (AWS SDK dependency translated_text_2)", service);
                 continue;
             }
 
@@ -126,19 +126,19 @@ class LocalStackBeanCreatorIntegrationTest {
             );
 
             Object result = assertDoesNotThrow(() -> beanCreator.createBean(containerInfo),
-                    service + " 서비스 클라이언트 생성 중 예외가 발생하면 안됩니다");
+                    service + " service translated_text_5 creation translated_text_1 translated_text_10 translated_text_4 translated_text_4");
             
-            assertNotNull(result, service + " 서비스 결과가 null이면 안됩니다");
+            assertNotNull(result, service + " service translated_text_7 nulltranslated_text_2 translated_text_4");
             
             if (result instanceof Map) {
                 @SuppressWarnings("unchecked")
                 Map<String, Object> clientMap = (Map<String, Object>) result;
                 
                 if (!clientMap.isEmpty()) {
-                    assertEquals(1, clientMap.size(), service + " 서비스만 요청했으므로 1개 클라이언트만 생성되어야 합니다");
-                    log.info("✅ {} 서비스 클라이언트 생성 성공: {}", service, clientMap.keySet().iterator().next());
+                    assertEquals(1, clientMap.size(), service + " service translated_text_6 1translated_text_1 translated_text_5 creation translated_text_3");
+                    log.info(" {} service translated_text_5 creation success: {}", service, clientMap.keySet().iterator().next());
                 } else {
-                    log.info("⚠️ {} 서비스 클라이언트가 생성되지 않았습니다 (AWS SDK 없음)", service);
+                    log.info(" {} service translated_text_5 creation translated_text_5 (AWS SDK translated_text_2)", service);
                 }
             }
         }
@@ -146,24 +146,24 @@ class LocalStackBeanCreatorIntegrationTest {
 
     @Test
     @Order(3)
-    @DisplayName("LocalStack 연결성 확인")
+    @DisplayName("LocalStack translated_text_3 verification")
     void testLocalStackConnectivity() {
-        assertTrue(container.isRunning(), "LocalStack 컨테이너가 실행 중이어야 합니다");
+        assertTrue(container.isRunning(), "LocalStack translated_text_5 execution translated_text_1translated_text_1 translated_text_3");
         
         String endpoint = container.getEndpoint().toString();
-        assertNotNull(endpoint, "엔드포인트가 null이면 안됩니다");
-        assertTrue(endpoint.startsWith("http"), "엔드포인트가 HTTP URL이어야 합니다");
+        assertNotNull(endpoint, "translated_text_5 nulltranslated_text_2 translated_text_4");
+        assertTrue(endpoint.startsWith("http"), "translated_text_5 HTTP URLtranslated_text_1 translated_text_3");
         
-        log.info("✅ LocalStack 연결성 확인 완료:");
-        log.info("  - 컨테이너 실행 상태: {}", container.isRunning());
-        log.info("  - 엔드포인트: {}", endpoint);
-        log.info("  - 액세스 키: {}", container.getAccessKey());
-        log.info("  - 리전: {}", container.getRegion());
+        log.info(" LocalStack translated_text_3 verification completed:");
+        log.info("  - translated_text_1 execution translated_text_2: {}", container.isRunning());
+        log.info("  - translated_text_5: {}", endpoint);
+        log.info("  - translated_text_3 translated_text_1: {}", container.getAccessKey());
+        log.info("  - translated_text_2: {}", container.getRegion());
     }
 
     @Test
     @Order(4)
-    @DisplayName("AWS 서비스별 엔드포인트 확인")
+    @DisplayName("AWS service translated_text_5 verification")
     void testServiceEndpoints() {
         LocalStackContainer.Service[] services = {
                 LocalStackContainer.Service.S3,
@@ -174,16 +174,16 @@ class LocalStackBeanCreatorIntegrationTest {
 
         for (LocalStackContainer.Service service : services) {
             String serviceEndpoint = container.getEndpointOverride(service).toString();
-            assertNotNull(serviceEndpoint, service + " 엔드포인트가 null이면 안됩니다");
-            assertTrue(serviceEndpoint.startsWith("http"), service + " 엔드포인트가 HTTP URL이어야 합니다");
+            assertNotNull(serviceEndpoint, service + " translated_text_5 nulltranslated_text_2 translated_text_4");
+            assertTrue(serviceEndpoint.startsWith("http"), service + " translated_text_5 HTTP URLtranslated_text_1 translated_text_3");
             
-            log.info("✅ {} 서비스 엔드포인트: {}", service, serviceEndpoint);
+            log.info(" {} service translated_text_5: {}", service, serviceEndpoint);
         }
     }
 
     @Test
     @Order(5)
-    @DisplayName("다중 서비스 동시 생성 성능 테스트")
+    @DisplayName("translated_text_1 service translated_text_2 creation translated_text_2 test")
     void testMultipleServicePerformance() {
         LocalStackContainerSpec multiServiceSpec = new LocalStackContainerSpec();
         multiServiceSpec.addServices(
@@ -207,15 +207,15 @@ class LocalStackBeanCreatorIntegrationTest {
         long endTime = System.currentTimeMillis();
         long duration = endTime - startTime;
         
-        assertNotNull(result, "결과가 null이면 안됩니다");
-        assertTrue(duration < 30000, "다중 서비스 생성이 30초 이내에 완료되어야 합니다"); // 30초 제한
+        assertNotNull(result, "translated_text_7 nulltranslated_text_2 translated_text_4");
+        assertTrue(duration < 30000, "translated_text_1 service creationtranslated_text_1 30translated_text_1 translated_text_1translated_text_1 completed translated_text_3");
         
         if (result instanceof Map) {
             @SuppressWarnings("unchecked")
             Map<String, Object> clientMap = (Map<String, Object>) result;
-            log.info("✅ 다중 서비스 생성 성능: {}개 클라이언트를 {}ms에 생성", clientMap.size(), duration);
+            log.info(" translated_text_1 service creation translated_text_2: {}translated_text_1 translated_text_5 {}mstranslated_text_1 creation", clientMap.size(), duration);
         } else {
-            log.info("✅ 다중 서비스 생성 완료: {}ms", duration);
+            log.info(" translated_text_1 service creation completed: {}ms", duration);
         }
     }
 }

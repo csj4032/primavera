@@ -28,7 +28,7 @@ class ContainerFactoryTest {
         assertNotNull(container, "Container should be created");
         assertEquals("mariadb:11.4.7", container.getDockerImageName(), "Image should match spec");
         
-        log.info("✅ MariaDB container created with default configuration");
+        log.info(" MariaDB container created with default configuration");
     }
     
     @Test
@@ -49,7 +49,7 @@ class ContainerFactoryTest {
         assertNotNull(container, "Container should be created");
         assertEquals("mariadb:11.4.7", container.getDockerImageName(), "Image should match spec");
         
-        log.info("✅ MariaDB container created with custom configuration");
+        log.info(" MariaDB container created with custom configuration");
     }
     
     @Test
@@ -63,7 +63,7 @@ class ContainerFactoryTest {
         assertNotNull(container, "Container should be created");
         assertEquals("redis:7-alpine", container.getDockerImageName(), "Image should match spec");
         
-        log.info("✅ Redis container created with default configuration");
+        log.info(" Redis container created with default configuration");
     }
     
     @Test
@@ -80,7 +80,7 @@ class ContainerFactoryTest {
         assertNotNull(container, "Container should be created");
         assertEquals("redis:7-alpine", container.getDockerImageName(), "Image should match spec");
         
-        log.info("✅ Redis container created with password configuration");
+        log.info(" Redis container created with password configuration");
     }
     
     @Test
@@ -93,7 +93,7 @@ class ContainerFactoryTest {
         assertNotNull(container, "Container should be created");
         assertEquals("confluentinc/cp-kafka:7.5.0", container.getDockerImageName(), "Image should match spec");
         
-        log.info("✅ Kafka container created with default configuration");
+        log.info(" Kafka container created with default configuration");
     }
     
     private BaseContainerSpec createKafkaSpec(String image) {
@@ -123,7 +123,7 @@ class ContainerFactoryTest {
         assertNotNull(container, "Container should be created");
         assertEquals("confluentinc/cp-kafka:7.5.0", container.getDockerImageName(), "Image should match spec");
         
-        log.info("✅ Kafka container created with custom environment");
+        log.info(" Kafka container created with custom environment");
     }
     
     @Test
@@ -140,7 +140,7 @@ class ContainerFactoryTest {
         assertNotNull(container, "Container should be created");
         assertEquals("mongo:7", container.getDockerImageName(), "Image should match spec");
         
-        log.info("✅ MongoDB container created");
+        log.info(" MongoDB container created");
     }
     
     @Test
@@ -159,7 +159,7 @@ class ContainerFactoryTest {
         assertNotNull(container, "Container should be created");
         assertEquals("postgres:16", container.getDockerImageName(), "Image should match spec");
         
-        log.info("✅ PostgreSQL container created");
+        log.info(" PostgreSQL container created");
     }
     
     @Test
@@ -178,7 +178,7 @@ class ContainerFactoryTest {
         assertNotNull(container, "Container should be created");
         assertEquals("mysql:8.0", container.getDockerImageName(), "Image should match spec");
         
-        log.info("✅ MySQL container created");
+        log.info(" MySQL container created");
     }
     
     @Test
@@ -199,7 +199,7 @@ class ContainerFactoryTest {
         assertNotNull(container, "Container should be created");
         assertEquals("elasticsearch:8.11.0", container.getDockerImageName(), "Image should match spec");
         
-        log.info("✅ Elasticsearch container created");
+        log.info(" Elasticsearch container created");
     }
     
     @Test
@@ -217,7 +217,7 @@ class ContainerFactoryTest {
             }, "Should handle all defined container types without error");
         }
         
-        log.info("✅ All {} container types supported: {}", allTypes.length, (Object) allTypes);
+        log.info(" All {} container types supported: {}", allTypes.length, (Object) allTypes);
     }
     
     private BaseContainerSpec createSpecForType(ContainerType type) {
@@ -283,7 +283,7 @@ class ContainerFactoryTest {
         
         assertNotNull(container, "Container should be created");
         
-        log.info("✅ Network aliases applied to container");
+        log.info(" Network aliases applied to container");
     }
     
     @Test
@@ -300,7 +300,7 @@ class ContainerFactoryTest {
         
         assertNotNull(container, "Container should be created");
         
-        log.info("✅ Startup timeout applied to container");
+        log.info(" Startup timeout applied to container");
     }
     
     @Test
@@ -315,7 +315,7 @@ class ContainerFactoryTest {
             assertNotNull(container, "Container should be created even with null environment");
         }, "Should handle null environment gracefully");
         
-        log.info("✅ Null environment handled gracefully");
+        log.info(" Null environment handled gracefully");
     }
     
     @Test
@@ -329,6 +329,6 @@ class ContainerFactoryTest {
             assertNotNull(container, "Container should be created even with null network aliases");
         }, "Should handle null network aliases gracefully");
         
-        log.info("✅ Null network aliases handled gracefully");
+        log.info(" Null network aliases handled gracefully");
     }
 }

@@ -1,6 +1,5 @@
 package com.genius.primavera.domain.hierarchy;
 
-
 import lombok.*;
 
 import jakarta.persistence.*;

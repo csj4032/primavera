@@ -67,13 +67,13 @@ public class ContainerConfiguration {
         private MongoContainerSpec mongodb;
         
         @Valid
-        private BaseContainerSpec kafka;  // TODO: KafkaContainerSpec 구현 후 변경
+        private BaseContainerSpec kafka;
         
         @Valid
-        private BaseContainerSpec elasticsearch;  // TODO: ElasticsearchContainerSpec 구현 후 변경
+        private BaseContainerSpec elasticsearch;
         
         @Valid
-        private BaseContainerSpec vault;  // TODO: VaultContainerSpec 구현 후 변경
+        private BaseContainerSpec vault;
         
         @Valid
         private LocalStackContainerSpec localstack;

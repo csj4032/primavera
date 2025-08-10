@@ -33,7 +33,7 @@ public class SpringBootStarterApplicationTest {
     }
 
     @Test
-    @DisplayName("WorldService 빈이 정상적으로 등록되고 hello()가 'Hello'를 반환한다.")
+    @DisplayName("WorldService bean is successfully registered and hello()translated_text_1 'Hello'translated_text_1 returns.")
     void worldServiceBeanIsRegistered() {
         WorldService worldService = context.getBean(WorldService.class);
         String helloResult = worldService.hello();
@@ -42,7 +42,7 @@ public class SpringBootStarterApplicationTest {
     }
 
     @Test
-    @DisplayName("HelloController 빈이 정상적으로 등록되고 hello(), world()가 각각 'Hello World!!!', 'World!!!'를 반환한다.")
+    @DisplayName("HelloController bean is successfully registered and hello(), world()translated_text_1 translated_text_2 'Hello World!!!', 'World!!!'translated_text_1 returns.")
     void helloControllerBeanIsRegistered() {
         HelloController helloController = context.getBean(HelloController.class);
         String helloResult = helloController.hello();
@@ -53,7 +53,7 @@ public class SpringBootStarterApplicationTest {
     }
 
     @Test
-    @DisplayName("ApplicationContext가 정상적으로 생성되고 모든 필요한 빈이 등록되어 있다.")
+    @DisplayName("ApplicationContext is successfully created and all necessary bean is registered exists.")
     void applicationContextEventsArePublished() {
         assertThat(context).isNotNull();
         assertThat(context.getBean(WorldService.class)).isNotNull();
@@ -64,7 +64,7 @@ public class SpringBootStarterApplicationTest {
     }
 
     @Test
-    @DisplayName("WorldService의 world()가 'World!!!'를 반환한다.")
+    @DisplayName("WorldService's world() method 'World!!!'translated_text_1 returns.")
     void worldServiceWorldMethodReturnsExpectedValue() {
         WorldService worldService = context.getBean(WorldService.class);
         String worldResult = worldService.world();
@@ -72,14 +72,14 @@ public class SpringBootStarterApplicationTest {
     }
 
     @Test
-    @DisplayName("HelloController가 어노테이션 기반으로 정상적으로 등록된다.")
+    @DisplayName("HelloControllertranslated_text_1 annotation based successfully translated_text_14.")
     void helloControllerConstructorInjection() {
         HelloController helloController = context.getBean(HelloController.class);
         assertThat(helloController).isNotNull();
     }
 
     @Test
-    @DisplayName("WorldController가 프로그래매틱 방식으로 정상적으로 등록되고 의존성 주입이 동작한다.")
+    @DisplayName("WorldControllertranslated_text_1 programmatic method successfully registered and dependency injection works.")
     void worldControllerConstructorInjection() {
         WorldController worldController = context.getBean(WorldController.class);
         assertThat(worldController).isNotNull();
@@ -88,7 +88,7 @@ public class SpringBootStarterApplicationTest {
     }
 
     @Test
-    @DisplayName("ApplicationContext에 HelloService 빈이 정상적으로 등록되어 있다.")
+    @DisplayName("ApplicationContext has HelloService bean is successfully registered exists.")
     void helloServiceBeanIsRegistered() {
         HelloService helloService = context.getBean(HelloService.class);
         assertThat(helloService).isNotNull();

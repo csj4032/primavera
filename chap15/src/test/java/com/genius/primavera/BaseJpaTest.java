@@ -14,10 +14,6 @@ import jakarta.persistence.Persistence;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Chapter 13 - JPA Advanced Mapping 테스트를 위한 TestContainers 기반 클래스
- * MySQL 컨테이너를 사용하여 raw JPA EntityManagerFactory를 생성합니다.
- */
 @Slf4j
 @Testcontainers
 public abstract class BaseJpaTest {
@@ -35,7 +31,7 @@ public abstract class BaseJpaTest {
 
     @BeforeAll
     public static void setUpEntityManager() {
-        // TestContainers에서 동적으로 얻은 DB 연결 정보로 EntityManagerFactory 생성
+
         Map<String, String> properties = new HashMap<>();
         properties.put("jakarta.persistence.jdbc.driver", "org.mariadb.jdbc.Driver");
         properties.put("jakarta.persistence.jdbc.url", mysqlContainer.getJdbcUrl());
@@ -49,7 +45,7 @@ public abstract class BaseJpaTest {
         properties.put("hibernate.connection.characterEncoding", "utf8");
         properties.put("hibernate.connection.useUnicode", "true");
         properties.put("hibernate.globally_quoted_identifiers", "true");
-        // 엔티티 패키지 자동 스캔 설정
+
         properties.put("hibernate.archive.autodetection", "class");
         properties.put("hibernate.implicit_naming_strategy", "org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy");
         properties.put("hibernate.physical_naming_strategy", "org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl");

@@ -17,7 +17,7 @@ public class BeanScopeExample {
         private final String id = UUID.randomUUID().toString();
 
         public SingletonBean() {
-            log.info("SingletonBean 생성: {}", id);
+            log.info("SingletonBean creation: {}", id);
         }
     }
 
@@ -28,7 +28,7 @@ public class BeanScopeExample {
         private final String id = UUID.randomUUID().toString();
 
         public PrototypeBean() {
-            log.info("PrototypeBean 생성: {}", id);
+            log.info("PrototypeBean creation: {}", id);
         }
     }
 }

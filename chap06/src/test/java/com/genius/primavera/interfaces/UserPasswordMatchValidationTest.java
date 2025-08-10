@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @Order(3)
 @Testcontainers
 @ActiveProfiles("test")
-@DisplayName("비밀번호 매치 검증 테스트")
+@DisplayName("translated_text_4 translated_text_2 validation test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class UserPasswordMatchValidationTest {
@@ -54,7 +54,7 @@ public class UserPasswordMatchValidationTest {
 
     @Test
     @Order(1)
-    @DisplayName("사용자 등록 시 비밀번호와 비밀번호 확인이 일치하지 않을 때 400 Bad Request 반환")
+    @DisplayName("user registration translated_text_1 translated_text_4 translated_text_4 translated_text_13 translated_text_4 translated_text_2 translated_text_1 400 Bad Request translated_text_2")
     public void saveAndUserPasswordMismatch() {
         User source = User.builder()
                 .id(1L)
@@ -70,7 +70,7 @@ public class UserPasswordMatchValidationTest {
 
     @Test
     @Order(2)
-    @DisplayName("사용자 등록 시 비밀번호는 있지만 비밀번호 확인이 빈 문자열일 때 400 Bad Request 반환")
+    @DisplayName("user registration translated_text_1 translated_text_4 translated_text_3 translated_text_4 translated_text_13 translated_text_1 translated_text_4 translated_text_1 400 Bad Request translated_text_2")
     public void saveAndUserPasswordConfirmEmpty() {
         User source = User.builder()
                 .id(1L)
@@ -86,7 +86,7 @@ public class UserPasswordMatchValidationTest {
 
     @Test
     @Order(3)
-    @DisplayName("사용자 등록 시 비밀번호는 null이고 비밀번호 확인이 있을 때 400 Bad Request 반환")
+    @DisplayName("user registration translated_text_1 translated_text_4 nulltranslated_text_2 translated_text_4 translated_text_13 translated_text_2 translated_text_1 400 Bad Request translated_text_2")
     public void saveAndUserPasswordNullConfirmExists() {
         User source = User.builder()
                 .id(1L)
@@ -102,7 +102,7 @@ public class UserPasswordMatchValidationTest {
 
     @Test
     @Order(4)
-    @DisplayName("사용자 등록 시 대소문자가 다른 비밀번호 불일치 400 Bad Request 반환")
+    @DisplayName("user registration translated_text_1 translated_text_5 translated_text_2 translated_text_4 translated_text_3 400 Bad Request translated_text_2")
     public void saveAndUserPasswordCaseMismatch() {
         User source = User.builder()
                 .id(1L)
@@ -118,7 +118,7 @@ public class UserPasswordMatchValidationTest {
 
     @Test
     @Order(5)
-    @DisplayName("사용자 등록 시 공백 포함된 비밀번호 불일치 400 Bad Request 반환")
+    @DisplayName("user registration translated_text_1 translated_text_2 translated_text_3 translated_text_4 translated_text_3 400 Bad Request translated_text_2")
     public void saveAndUserPasswordSpaceMismatch() {
         User source = User.builder()
                 .id(1L)
@@ -134,7 +134,7 @@ public class UserPasswordMatchValidationTest {
 
     @Test
     @Order(6)
-    @DisplayName("사용자 등록 시 특수문자 다른 비밀번호 불일치 400 Bad Request 반환")
+    @DisplayName("user registration translated_text_1 translated_text_4 translated_text_2 translated_text_4 translated_text_3 400 Bad Request translated_text_2")
     public void saveAndUserPasswordSpecialCharMismatch() {
         User source = User.builder()
                 .id(1L)
@@ -150,7 +150,7 @@ public class UserPasswordMatchValidationTest {
 
     @Test
     @Order(7)
-    @DisplayName("사용자 등록 시 비밀번호와 비밀번호 확인이 일치할 때 정상 처리")
+    @DisplayName("user registration translated_text_1 translated_text_4 translated_text_4 translated_text_13 translated_text_3 translated_text_1 translated_text_2 processing")
     public void saveAndReturnUserValidWithMatchingPasswords() {
         String password = "ValidPass1!";
         User source = User.builder()
@@ -167,12 +167,12 @@ public class UserPasswordMatchValidationTest {
         HttpEntity<User> httpEntity = new HttpEntity<>(source, headers);
         ResponseEntity<String> destination = restTemplate.exchange("/users/save", HttpMethod.POST, httpEntity, String.class, source);
         int actualStatus = destination.getStatusCode().value();
-        assertTrue(actualStatus == 200 || actualStatus == 201, "비밀번호 일치 시 정상 등록되어야 함");
+        assertTrue(actualStatus == 200 || actualStatus == 201, "translated_text_4 translated_text_2 translated_text_1 translated_text_2 registeredtranslated_text_1 translated_text_1");
     }
 
     @Test
     @Order(8)
-    @DisplayName("사용자 수정 시 비밀번호와 비밀번호 확인이 일치하지 않을 때 400 Bad Request 반환")
+    @DisplayName("user modification translated_text_1 translated_text_4 translated_text_4 translated_text_13 translated_text_4 translated_text_2 translated_text_1 400 Bad Request translated_text_2")
     public void updateAndUserPasswordMismatch() {
         User source = User.builder()
                 .id(1L)
@@ -188,7 +188,7 @@ public class UserPasswordMatchValidationTest {
 
     @Test
     @Order(9)
-    @DisplayName("사용자 수정 시 비밀번호와 비밀번호 확인이 일치할 때 정상 처리")
+    @DisplayName("user modification translated_text_1 translated_text_4 translated_text_4 translated_text_13 translated_text_3 translated_text_1 translated_text_2 processing")
     public void updateAndReturnUserValidWithMatchingPasswords() {
         String password = "UpdatePass1!";
         User source = User.builder()
@@ -205,7 +205,7 @@ public class UserPasswordMatchValidationTest {
         HttpEntity<User> httpEntity = new HttpEntity<>(source, headers);
         ResponseEntity<String> destination = restTemplate.exchange("/users/update", HttpMethod.POST, httpEntity, String.class, source);
         int actualStatus = destination.getStatusCode().value();
-        assertTrue(actualStatus == 200 || actualStatus == 201, "비밀번호 일치 시 정상 수정되어야 함");
+        assertTrue(actualStatus == 200 || actualStatus == 201, "translated_text_4 translated_text_2 translated_text_1 translated_text_2 modificationtranslated_text_1 translated_text_1");
     }
 
     private void saveUser(User source) {
@@ -214,7 +214,7 @@ public class UserPasswordMatchValidationTest {
         HttpEntity<User> httpEntity = new HttpEntity<>(source, headers);
         ResponseEntity<String> destination = restTemplate.exchange("/users/save", HttpMethod.POST, httpEntity, String.class, source);
         int actualStatus = destination.getStatusCode().value();
-        assertEquals(400, actualStatus, "비밀번호 불일치 시 400 Bad Request 반환");
+        assertEquals(400, actualStatus, "translated_text_4 translated_text_3 translated_text_1 400 Bad Request translated_text_2");
     }
 
     private void updateUser(User source) {
@@ -223,6 +223,6 @@ public class UserPasswordMatchValidationTest {
         HttpEntity<User> httpEntity = new HttpEntity<>(source, headers);
         ResponseEntity<String> destination = restTemplate.exchange("/users/update", HttpMethod.POST, httpEntity, String.class, source);
         int actualStatus = destination.getStatusCode().value();
-        assertEquals(400, actualStatus, "비밀번호 불일치 시 400 Bad Request 반환");
+        assertEquals(400, actualStatus, "translated_text_4 translated_text_3 translated_text_1 400 Bad Request translated_text_2");
     }
 }

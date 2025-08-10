@@ -19,7 +19,7 @@ import java.util.Map;
 @Order(1)
 @Testcontainers
 @ActiveProfiles("test")
-@DisplayName("Ajax 컨트롤러 테스트 - REST API 응답 검증")
+@DisplayName("Ajax controller test - REST API translated_text_2 validation")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class AjaxControllerTest {
@@ -44,7 +44,7 @@ public class AjaxControllerTest {
 
     @Test
     @Order(1)
-    @DisplayName("Ajax HTML 페이지 요청 테스트")
+    @DisplayName("Ajax HTML translated_text_3 translated_text_2 test")
     public void ajaxTest() {
         String ajaxHtml = testRestTemplate.getForObject("/ajax", String.class);
         org.assertj.core.api.Assertions.assertThat(ajaxHtml).contains("ajax");
@@ -52,14 +52,14 @@ public class AjaxControllerTest {
 
     @Test
     @Order(2)
-    @DisplayName("HTML 문자열 응답 테스트")
+    @DisplayName("HTML translated_text_3 translated_text_2 test")
     public void htmlTest() {
         Assertions.assertEquals(testRestTemplate.getForObject("/ajax/html", String.class), "<div>html</div>");
     }
 
     @Test
     @Order(3)
-    @DisplayName("JSON 객체 응답 테스트")
+    @DisplayName("JSON translated_text_2 translated_text_2 test")
     public void htmlFormTest() {
         User user = testRestTemplate.getForObject("/ajax/form", User.class);
         Assertions.assertEquals(1, user.getId());
@@ -67,7 +67,7 @@ public class AjaxControllerTest {
 
     @Test
     @Order(4)
-    @DisplayName("파라미터를 통한 데이터 전달 테스트")
+    @DisplayName("translated_text_5 translated_text_2 data translated_text_2 test")
     public void formDataTest() {
         Map<String, Object> params = new HashMap<>();
         params.put("id", 1);
@@ -77,5 +77,4 @@ public class AjaxControllerTest {
         Assertions.assertEquals("email", user.getEmail());
     }
 }
-
 

@@ -20,7 +20,7 @@ import java.util.List;
 
 @Testcontainers
 @ActiveProfiles("test")
-@DisplayName("사용자 수정 유효성 검증 테스트")
+@DisplayName("user modification translated_text_3 validation test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class UserUpdateValidationTest {
@@ -45,7 +45,7 @@ public class UserUpdateValidationTest {
 
     @Test
     @Order(1)
-    @DisplayName("사용자 ID 누락 검증")
+    @DisplayName("user ID translated_text_2 validation")
     public void updateAndUserIllegalId() {
         User source = User.builder().email("genius@gmail.com").password("Secret0!").passwordConfirm("Secret0!").nickname("genius").status(UserStatus.INACTIVE).roles(List.of(new Role(1, RoleType.USER))).build();
         updateUser(source);
@@ -53,7 +53,7 @@ public class UserUpdateValidationTest {
 
     @Test
     @Order(2)
-    @DisplayName("사용자 상태 누락 검증")
+    @DisplayName("user translated_text_2 translated_text_2 validation")
     public void saveAndReturnUserIllegalStatus() {
         User source = User.builder().id(1L).email("genius@gmail.com").password("Secret0!").nickname("genius").status(null).roles(List.of(new Role(1, RoleType.USER))).build();
         updateUser(source);
@@ -61,7 +61,7 @@ public class UserUpdateValidationTest {
 
     @Test
     @Order(3)
-    @DisplayName("닉네임 최소 길이 미달 검증")
+    @DisplayName("translated_text_3 translated_text_2 translated_text_2 translated_text_2 validation")
     public void saveAndReturnUserIllegalNickname() {
         User source = User.builder().id(1L).email("genius@gmail.com").password("Secret0!").nickname("g").status(UserStatus.INACTIVE).roles(List.of(new Role(1, RoleType.USER))).build();
         updateUser(source);
@@ -69,7 +69,7 @@ public class UserUpdateValidationTest {
 
     @Test
     @Order(4)
-    @DisplayName("사용자 ID가 0일 때 400 Bad Request 반환")
+    @DisplayName("user IDtranslated_text_1 0translated_text_1 translated_text_1 400 Bad Request translated_text_2")
     public void updateAndUserIdZero() {
         User source = User.builder().id(0L).email("idZero@gmail.com").password("Secret0!").nickname("idZero").status(UserStatus.ACTIVE).roles(List.of(new Role(1, RoleType.USER))).build();
         updateUser(source);
@@ -77,7 +77,7 @@ public class UserUpdateValidationTest {
 
     @Test
     @Order(5)
-    @DisplayName("사용자 ID가 음수일 때 400 Bad Request 반환")
+    @DisplayName("user IDtranslated_text_1 translated_text_1 translated_text_1 400 Bad Request translated_text_2")
     public void updateAndUserIdNegative() {
         User source = User.builder().id(-1L).email("idNegative@gmail.com").password("Secret0!").nickname("idNegative").status(UserStatus.ACTIVE).roles(List.of(new Role(1, RoleType.USER))).build();
         updateUser(source);
@@ -85,7 +85,7 @@ public class UserUpdateValidationTest {
 
     @Test
     @Order(6)
-    @DisplayName("이메일 형식 오류 검증")
+    @DisplayName("translated_text_1 translated_text_2 error validation")
     public void updateAndUserInvalidEmail() {
         User source = User.builder().id(1L).email("invalid-email").password("Secret0!").nickname("invalidemail").status(UserStatus.ACTIVE).roles(List.of(new Role(1, RoleType.USER))).build();
         updateUser(source);
@@ -93,7 +93,7 @@ public class UserUpdateValidationTest {
 
     @Test
     @Order(7)
-    @DisplayName("비밀번호 복잡성 규칙 위반 검증")
+    @DisplayName("translated_text_4 translated_text_3 translated_text_2 translated_text_2 validation")
     public void updateAndUserInvalidPassword() {
         User source = User.builder().id(1L).email("invalidpw@gmail.com").password("simple").nickname("invalidpw").status(UserStatus.ACTIVE).roles(List.of(new Role(1, RoleType.USER))).build();
         updateUser(source);
@@ -101,15 +101,15 @@ public class UserUpdateValidationTest {
 
     @Test
     @Order(8)
-    @DisplayName("닉네임 최대 길이 초과 검증")
+    @DisplayName("translated_text_3 translated_text_2 translated_text_2 translated_text_2 validation")
     public void updateAndUserNicknameTooLong() {
-        User source = User.builder().id(1L).email("toolong@gmail.com").password("Secret0!").nickname("가".repeat(21)).status(UserStatus.ACTIVE).roles(List.of(new Role(1, RoleType.USER))).build();
+        User source = User.builder().id(1L).email("toolong@gmail.com").password("Secret0!").nickname("translated_text_1".repeat(21)).status(UserStatus.ACTIVE).roles(List.of(new Role(1, RoleType.USER))).build();
         updateUser(source);
     }
 
     @Test
     @Order(9)
-    @DisplayName("권한 리스트가 비어있을 때 400 Bad Request 반환")
+    @DisplayName("translated_text_2 translated_text_1 translated_text_4 translated_text_1 400 Bad Request translated_text_2")
     public void updateAndUserEmptyRoles() {
         User source = User.builder().id(1L).email("emptyroles@gmail.com").password("Secret0!").nickname("emptyroles").status(UserStatus.ACTIVE).roles(List.of()).build();
         updateUser(source);
@@ -117,7 +117,7 @@ public class UserUpdateValidationTest {
 
     @Test
     @Order(10)
-    @DisplayName("권한이 null일 때 400 Bad Request 반환")
+    @DisplayName("translated_text_2 nulltranslated_text_1 translated_text_1 400 Bad Request translated_text_2")
     public void updateAndUserNullRoles() {
         User source = User.builder().id(1L).email("nullroles@gmail.com").password("Secret0!").nickname("nullroles").status(UserStatus.ACTIVE).roles(null).build();
         updateUser(source);
@@ -125,7 +125,7 @@ public class UserUpdateValidationTest {
 
     @Test
     @Order(12)
-    @DisplayName("이메일이 빈 문자열일 때 400 Bad Request 반환")
+    @DisplayName("translated_text_1 translated_text_1 translated_text_1 translated_text_1 400 Bad Request translated_text_2")
     public void updateAndUserEmptyEmail() {
         User source = User.builder().id(1L).email("").password("Secret0!").nickname("emptyemail").status(UserStatus.ACTIVE).roles(List.of(new Role(1, RoleType.USER))).build();
         updateUser(source);
@@ -133,7 +133,7 @@ public class UserUpdateValidationTest {
 
     @Test
     @Order(13)
-    @DisplayName("비밀번호가 빈 문자열일 때 400 Bad Request 반환")
+    @DisplayName("translated_text_4translated_text_1 translated_text_1 translated_text_1 translated_text_1 400 Bad Request translated_text_2")
     public void updateAndUserEmptyPassword() {
         User source = User.builder().id(1L).email("emptypass@gmail.com").password("").nickname("emptypass").status(UserStatus.ACTIVE).roles(List.of(new Role(1, RoleType.USER))).build();
         updateUser(source);
@@ -141,7 +141,7 @@ public class UserUpdateValidationTest {
 
     @Test
     @Order(14)
-    @DisplayName("닉네임이 빈 문자열일 때 400 Bad Request 반환")
+    @DisplayName("translated_text_3 translated_text_1 translated_text_1 translated_text_1 400 Bad Request translated_text_2")
     public void updateAndUserEmptyNickname() {
         User source = User.builder().id(1L).email("emptynick@gmail.com").password("Secret0!").nickname("").status(UserStatus.ACTIVE).roles(List.of(new Role(1, RoleType.USER))).build();
         updateUser(source);
@@ -149,7 +149,7 @@ public class UserUpdateValidationTest {
 
     @Test
     @Order(15)
-    @DisplayName("닉네임이 한글만 포함된 경우 정상 처리")
+    @DisplayName("translated_text_3 translated_text_3 translated_text_3 translated_text_2 translated_text_2 processing")
     public void updateAndUserKoreanOnlyNickname() {
         String password = "Secret0!";
         User source = User.builder()
@@ -157,7 +157,7 @@ public class UserUpdateValidationTest {
                 .email("korean" + System.currentTimeMillis() + "@gmail.com")
                 .password(password)
                 .passwordConfirm(password)
-                .nickname("한글닉네임")
+                .nickname("translated_text_2translated_text_3")
                 .status(UserStatus.ACTIVE)
                 .roles(List.of(new Role(1, RoleType.USER)))
                 .build();
@@ -166,12 +166,12 @@ public class UserUpdateValidationTest {
         HttpEntity<User> httpEntity = new HttpEntity<>(source, headers);
         ResponseEntity<String> destination = restTemplate.exchange("/users/update", HttpMethod.POST, httpEntity, String.class, source);
         int actualStatus = destination.getStatusCode().value();
-        Assertions.assertTrue(actualStatus == 200 || actualStatus == 201, "한글 닉네임은 정상 처리되어야 함");
+        Assertions.assertTrue(actualStatus == 200 || actualStatus == 201, "translated_text_2 translated_text_3 translated_text_2 processing translated_text_1");
     }
 
     @Test
     @Order(16)
-    @DisplayName("닉네임이 숫자만 포함된 경우 정상 처리")
+    @DisplayName("translated_text_3 translated_text_3 translated_text_3 translated_text_2 translated_text_2 processing")
     public void updateAndUserNumberOnlyNickname() {
         String password = "Secret0!";
         User source = User.builder()
@@ -188,12 +188,12 @@ public class UserUpdateValidationTest {
         HttpEntity<User> httpEntity = new HttpEntity<>(source, headers);
         ResponseEntity<String> destination = restTemplate.exchange("/users/update", HttpMethod.POST, httpEntity, String.class, source);
         int actualStatus = destination.getStatusCode().value();
-        Assertions.assertTrue(actualStatus == 200 || actualStatus == 201, "숫자 닉네임은 정상 처리되어야 함");
+        Assertions.assertTrue(actualStatus == 200 || actualStatus == 201, "translated_text_2 translated_text_3 translated_text_2 processing translated_text_1");
     }
 
     @Test
     @Order(17)
-    @DisplayName("닉네임이 영어만 포함된 경우 정상 처리")
+    @DisplayName("translated_text_3 translated_text_3 translated_text_3 translated_text_2 translated_text_2 processing")
     public void updateAndUserEnglishOnlyNickname() {
         String password = "Secret0!";
         User source = User.builder()
@@ -210,12 +210,12 @@ public class UserUpdateValidationTest {
         HttpEntity<User> httpEntity = new HttpEntity<>(source, headers);
         ResponseEntity<String> destination = restTemplate.exchange("/users/update", HttpMethod.POST, httpEntity, String.class, source);
         int actualStatus = destination.getStatusCode().value();
-        Assertions.assertTrue(actualStatus == 200 || actualStatus == 201, "영어 닉네임은 정상 처리되어야 함");
+        Assertions.assertTrue(actualStatus == 200 || actualStatus == 201, "translated_text_2 translated_text_3 translated_text_2 processing translated_text_1");
     }
 
     @Test
     @Order(18)
-    @DisplayName("사용자 상태를 DORMANT로 변경 시 정상 처리")
+    @DisplayName("user translated_text_2 DORMANTtranslated_text_1 translated_text_2 translated_text_1 translated_text_2 processing")
     public void updateAndUserStatusDormant() {
         String password = "Secret0!";
         User source = User.builder()
@@ -232,12 +232,12 @@ public class UserUpdateValidationTest {
         HttpEntity<User> httpEntity = new HttpEntity<>(source, headers);
         ResponseEntity<String> destination = restTemplate.exchange("/users/update", HttpMethod.POST, httpEntity, String.class, source);
         int actualStatus = destination.getStatusCode().value();
-        Assertions.assertTrue(actualStatus == 200 || actualStatus == 201, "DORMANT 상태 변경은 정상 처리되어야 함");
+        Assertions.assertTrue(actualStatus == 200 || actualStatus == 201, "DORMANT translated_text_2 translated_text_2 translated_text_2 processing translated_text_1");
     }
 
     @Test
     @Order(19)
-    @DisplayName("사용자 상태를 INACTIVE로 변경 시 정상 처리")
+    @DisplayName("user translated_text_2 INACTIVEtranslated_text_1 translated_text_2 translated_text_1 translated_text_2 processing")
     public void updateAndUserStatusInactive() {
         String password = "Secret0!";
         User source = User.builder()
@@ -254,12 +254,12 @@ public class UserUpdateValidationTest {
         HttpEntity<User> httpEntity = new HttpEntity<>(source, headers);
         ResponseEntity<String> destination = restTemplate.exchange("/users/update", HttpMethod.POST, httpEntity, String.class, source);
         int actualStatus = destination.getStatusCode().value();
-        Assertions.assertTrue(actualStatus == 200 || actualStatus == 201, "INACTIVE 상태 변경은 정상 처리되어야 함");
+        Assertions.assertTrue(actualStatus == 200 || actualStatus == 201, "INACTIVE translated_text_2 translated_text_2 translated_text_2 processing translated_text_1");
     }
 
     @Test
     @Order(20)
-    @DisplayName("다중 권한을 가진 사용자 수정 시 정상 처리")
+    @DisplayName("translated_text_2 translated_text_2 translated_text_1 user modification translated_text_1 translated_text_2 processing")
     public void updateAndUserMultipleRoles() {
         String password = "Secret0!";
         User source = User.builder()
@@ -279,12 +279,12 @@ public class UserUpdateValidationTest {
         HttpEntity<User> httpEntity = new HttpEntity<>(source, headers);
         ResponseEntity<String> destination = restTemplate.exchange("/users/update", HttpMethod.POST, httpEntity, String.class, source);
         int actualStatus = destination.getStatusCode().value();
-        Assertions.assertTrue(actualStatus == 200 || actualStatus == 201, "다중 권한은 정상 처리되어야 함");
+        Assertions.assertTrue(actualStatus == 200 || actualStatus == 201, "translated_text_2 translated_text_2 translated_text_2 processing translated_text_1");
     }
 
     @Test
     @Order(21)
-    @DisplayName("권한에 null 타입이 포함된 경우 400 Bad Request 반환")
+    @DisplayName("translated_text_2 null translated_text_3 translated_text_3 translated_text_2 400 Bad Request translated_text_2")
     public void updateAndUserRoleWithNullType() {
         User source = User.builder().id(1L).email("nullroletype@gmail.com").password("Secret0!").nickname("nullroletype").status(UserStatus.ACTIVE).roles(List.of(new Role(1, null))).build();
         updateUser(source);
@@ -292,7 +292,7 @@ public class UserUpdateValidationTest {
 
     @Test
     @Order(22)
-    @DisplayName("권한 ID가 음수인 경우 400 Bad Request 반환")
+    @DisplayName("translated_text_2 IDtranslated_text_1 translated_text_3 translated_text_2 400 Bad Request translated_text_2")
     public void updateAndUserRoleNegativeId() {
         User source = User.builder().id(1L).email("negroleid@gmail.com").password("Secret0!").nickname("negroleid").status(UserStatus.ACTIVE).roles(List.of(new Role(-5, RoleType.USER))).build();
         updateUser(source);
@@ -300,22 +300,22 @@ public class UserUpdateValidationTest {
 
     @Test
     @Order(23)
-    @DisplayName("여러 유효성 검증 오류가 동시에 발생한 경우 400 Bad Request 반환")
+    @DisplayName("translated_text_2 translated_text_3 validation errortranslated_text_1 translated_text_1 translated_text_3 translated_text_2 400 Bad Request translated_text_2")
     public void updateAndUserMultipleValidationErrors() {
         User source = User.builder()
-                .id(-1L)  // 음수 ID
-                .email("invalid-email")  // 잘못된 이메일 형식
-                .password("simple")  // 약한 비밀번호
-                .nickname("a")  // 너무 짧은 닉네임
-                .status(null)  // null 상태
-                .roles(List.of())  // 빈 권한 리스트
+                .id(-1L)
+                .email("invalid-email")
+                .password("simple")
+                .nickname("a")
+                .status(null)
+                .roles(List.of())
                 .build();
         updateUser(source);
     }
 
     @Test
     @Order(24)
-    @DisplayName("비밀번호와 비밀번호 확인이 일치하지 않을 때 400 Bad Request 반환")
+    @DisplayName("translated_text_4 translated_text_4 translated_text_13 translated_text_1 translated_text_2 translated_text_1 400 Bad Request translated_text_2")
     public void updateAndUserPasswordMismatch() {
         User source = User.builder()
                 .id(1L)
@@ -331,7 +331,7 @@ public class UserUpdateValidationTest {
 
     @Test
     @Order(25)
-    @DisplayName("비밀번호 확인이 null일 때 400 Bad Request 반환")
+    @DisplayName("translated_text_4 translated_text_13 nulltranslated_text_1 translated_text_1 400 Bad Request translated_text_2")
     public void updateAndUserPasswordConfirmNull() {
         User source = User.builder()
                 .id(1L)
@@ -347,7 +347,7 @@ public class UserUpdateValidationTest {
 
     @Test
     @Order(26)
-    @DisplayName("비밀번호 확인이 빈 문자열일 때 400 Bad Request 반환")
+    @DisplayName("translated_text_4 translated_text_13 translated_text_1 translated_text_1 translated_text_1 400 Bad Request translated_text_2")
     public void updateAndUserPasswordConfirmEmpty() {
         User source = User.builder()
                 .id(1L)
@@ -363,7 +363,7 @@ public class UserUpdateValidationTest {
 
     @Test
     @Order(27)
-    @DisplayName("비밀번호가 null이고 비밀번호 확인이 있을 때 400 Bad Request 반환")
+    @DisplayName("translated_text_4translated_text_1 nulltranslated_text_2 translated_text_4 translated_text_13 translated_text_2 translated_text_1 400 Bad Request translated_text_2")
     public void updateAndUserPasswordNullConfirmExists() {
         User source = User.builder()
                 .id(1L)
@@ -379,7 +379,7 @@ public class UserUpdateValidationTest {
 
     @Test
     @Order(28)
-    @DisplayName("비밀번호와 비밀번호 확인이 모두 null일 때 400 Bad Request 반환")
+    @DisplayName("translated_text_4 translated_text_4 translated_text_13 translated_text_2 nulltranslated_text_1 translated_text_1 400 Bad Request translated_text_2")
     public void updateAndUserBothPasswordsNull() {
         User source = User.builder()
                 .id(1L)
@@ -395,7 +395,7 @@ public class UserUpdateValidationTest {
 
     @Test
     @Order(29)
-    @DisplayName("정상 사용자 수정 요청 - 비밀번호 일치하고 모든 값 유효할 때 200 OK 반환")
+    @DisplayName("translated_text_2 user modification translated_text_2 - translated_text_4 translated_text_1 all translated_text_1 translated_text_3 translated_text_1 200 OK translated_text_2")
     public void updateAndReturnUserValidWithMatchingPasswords() {
         String password = "ValidPass1!";
         User source = User.builder()
@@ -412,12 +412,12 @@ public class UserUpdateValidationTest {
         HttpEntity<User> httpEntity = new HttpEntity<>(source, headers);
         ResponseEntity<String> destination = restTemplate.exchange("/users/update", HttpMethod.POST, httpEntity, String.class, source);
         int actualStatus = destination.getStatusCode().value();
-        Assertions.assertTrue(actualStatus == 200 || actualStatus == 201, "비밀번호 일치 시 정상 수정되어야 함");
+        Assertions.assertTrue(actualStatus == 200 || actualStatus == 201, "translated_text_4 translated_text_1 translated_text_1 translated_text_2 modification translated_text_1");
     }
 
     @Test
     @Order(30)
-    @DisplayName("정상 사용자 수정 요청 - 모든 값이 유효할 때 200 OK 반환")
+    @DisplayName("translated_text_2 user modification translated_text_2 - all translated_text_1 translated_text_3 translated_text_1 200 OK translated_text_2")
     public void updateAndReturnUserValid() {
         String password = "ValidPass1!";
         User source = User.builder()
@@ -434,7 +434,7 @@ public class UserUpdateValidationTest {
         HttpEntity<User> httpEntity = new HttpEntity<>(source, headers);
         ResponseEntity<String> destination = restTemplate.exchange("/users/update", HttpMethod.POST, httpEntity, String.class, source);
         int actualStatus = destination.getStatusCode().value();
-        Assertions.assertTrue(actualStatus == 200 || actualStatus == 201, "정상 수정 시 200 또는 201 반환");
+        Assertions.assertTrue(actualStatus == 200 || actualStatus == 201, "translated_text_2 modification translated_text_1 200 translated_text_2 201 translated_text_2");
     }
 
     private void updateUser(User source) {

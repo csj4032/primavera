@@ -24,7 +24,7 @@ import java.util.stream.IntStream;
 @SpringBootTest
 @ActiveProfiles("test")
 @Testcontainers
-@DisplayName(value = "벌크 인서트 테스트")
+@DisplayName(value = "translated_text_2 translated_text_3 test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class WinnerMapperTest {
 
@@ -48,9 +48,9 @@ public class WinnerMapperTest {
 
     @Test
     @Order(1)
-    @DisplayName("반복문에서 단건으로 Winner 객체를 만들고 Insert 하는 테스트 (모던 스타일)")
+    @DisplayName("translated_text_5 translated_text_4 Winner translated_text_3 translated_text_3 Insert translated_text_2 test (translated_text_2 translated_text_3)")
     void testInsertSingleWinner() {
-        // given
+
         var winners = java.util.stream.IntStream.range(0, 10)
                 .mapToObj(i -> Winner.builder()
                         .name("Winner " + i)
@@ -61,17 +61,16 @@ public class WinnerMapperTest {
                         .build())
                 .toList();
 
-        // when & then
         winners.forEach(winner -> {
             int result = winnerMapper.save(winner);
             log.info("Inserted Winner: {}, Result: {}", winner, result);
-            Assertions.assertEquals(1, result, "각 Winner는 1건씩 저장되어야 합니다.");
+            Assertions.assertEquals(1, result, "translated_text_1 Winnertranslated_text_1 1translated_text_2 translated_text_5 translated_text_3.");
         });
     }
 
     @Test
     @Order(2)
-    @DisplayName("벌크 인서트 테스트 (모던 스타일)")
+    @DisplayName("translated_text_2 translated_text_3 test (translated_text_2 translated_text_3)")
     void testBulkInsertWinners() {
         List<Winner> winners = IntStream.range(0, 10)
                 .mapToObj(i -> Winner.builder()
@@ -84,6 +83,6 @@ public class WinnerMapperTest {
                 .toList();
         int result = winnerMapper.bulkInsert(winners);
         log.info("Bulk Insert Result: {}", result);
-        Assertions.assertEquals(10, result, "10개의 Winner가 벌크 인서트되어야 합니다.");
+        Assertions.assertEquals(10, result, "10translated_text_2 Winnertranslated_text_1 translated_text_2 translated_text_3 translated_text_3.");
     }
 }

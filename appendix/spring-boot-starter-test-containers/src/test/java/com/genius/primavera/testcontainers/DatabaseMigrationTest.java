@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ActiveProfiles("test")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@DisplayName("데이터베이스 마이그레이션 및 스키마 테스트")
+@DisplayName("translated_text_7 translated_text_6 translated_text_1 translated_text_3 test")
 @EnableTestContainers({
     @EnableTestContainers.TestContainer(type = ContainerType.MARIADB, name = "sourceDb"),
     @EnableTestContainers.TestContainer(type = ContainerType.MARIADB, name = "targetDb"),
@@ -52,12 +52,12 @@ class DatabaseMigrationTest {
         targetJdbc = new JdbcTemplate(targetDataSource);
         migrationJdbc = new JdbcTemplate(migrationDataSource);
         
-        log.info("데이터베이스 마이그레이션 테스트 환경 초기화 완료");
+        log.info("translated_text_7 translated_text_6 test translated_text_2 translated_text_3 completed");
     }
 
     @Test
     @Order(1)
-    @DisplayName("초기 스키마 생성 및 검증")
+    @DisplayName("translated_text_2 translated_text_3 creation translated_text_1 validation")
     void testInitialSchemaCreation() {
         sourceJdbc.execute("""
             CREATE TABLE users (
@@ -95,21 +95,21 @@ class DatabaseMigrationTest {
         """);
 
         List<String> tables = getTables(sourceDataSource);
-        assertTrue(tables.contains("users"), "users 테이블이 생성되어야 함");
-        assertTrue(tables.contains("orders"), "orders 테이블이 생성되어야 함");
+        assertTrue(tables.contains("users"), "users translated_text_4 creation translated_text_1");
+        assertTrue(tables.contains("orders"), "orders translated_text_4 creation translated_text_1");
 
         Integer userCount = sourceJdbc.queryForObject("SELECT COUNT(*) FROM users", Integer.class);
         Integer orderCount = sourceJdbc.queryForObject("SELECT COUNT(*) FROM orders", Integer.class);
         
-        assertEquals(3, userCount, "3명의 사용자가 있어야 함");
-        assertEquals(3, orderCount, "3개의 주문이 있어야 함");
+        assertEquals(3, userCount, "3translated_text_2 translated_text_5 translated_text_3 translated_text_1");
+        assertEquals(3, orderCount, "3translated_text_2 translated_text_3 translated_text_3 translated_text_1");
 
-        log.info("초기 스키마 생성 완료: users={}, orders={}", userCount, orderCount);
+        log.info("translated_text_2 translated_text_3 creation completed: users={}, orders={}", userCount, orderCount);
     }
 
     @Test
     @Order(2)
-    @DisplayName("데이터베이스 간 데이터 마이그레이션")
+    @DisplayName("translated_text_7 translated_text_1 data translated_text_6")
     void testCrossDatabaseMigration() {
         targetJdbc.execute("""
             CREATE TABLE users (
@@ -167,15 +167,15 @@ class DatabaseMigrationTest {
         Integer migratedUsers = targetJdbc.queryForObject("SELECT COUNT(*) FROM users", Integer.class);
         Integer migratedOrders = targetJdbc.queryForObject("SELECT COUNT(*) FROM orders", Integer.class);
 
-        assertEquals(2, migratedUsers, "ACTIVE 사용자 2명이 마이그레이션되어야 함");
-        assertEquals(3, migratedOrders, "ACTIVE 사용자의 주문 3개가 마이그레이션되어야 함");
+        assertEquals(2, migratedUsers, "ACTIVE user 2translated_text_2 translated_text_6 translated_text_1");
+        assertEquals(3, migratedOrders, "ACTIVE usertranslated_text_1 translated_text_2 3translated_text_2 translated_text_6 translated_text_1");
 
-        log.info("크로스 데이터베이스 마이그레이션 완료: users={}, orders={}", migratedUsers, migratedOrders);
+        log.info("translated_text_3 translated_text_7 translated_text_6 completed: users={}, orders={}", migratedUsers, migratedOrders);
     }
 
     @Test
     @Order(3)
-    @DisplayName("PostgreSQL로 스키마 변환 마이그레이션")
+    @DisplayName("PostgreSQLtranslated_text_1 translated_text_3 translated_text_2 translated_text_6")
     void testPostgreSQLSchemaMigration() {
         migrationJdbc.execute("""
             CREATE TABLE users (
@@ -236,15 +236,15 @@ class DatabaseMigrationTest {
         Integer pgUsers = migrationJdbc.queryForObject("SELECT COUNT(*) FROM users", Integer.class);
         Integer pgOrders = migrationJdbc.queryForObject("SELECT COUNT(*) FROM orders", Integer.class);
 
-        assertEquals(3, pgUsers, "PostgreSQL에 3명의 사용자가 마이그레이션되어야 함");
-        assertEquals(3, pgOrders, "PostgreSQL에 3개의 주문이 마이그레이션되어야 함");
+        assertEquals(3, pgUsers, "PostgreSQLtranslated_text_1 3translated_text_2 translated_text_5 translated_text_6 translated_text_1");
+        assertEquals(3, pgOrders, "PostgreSQLtranslated_text_1 3translated_text_2 translated_text_3 translated_text_6 translated_text_1");
 
-        log.info("PostgreSQL 마이그레이션 완료: users={}, orders={}", pgUsers, pgOrders);
+        log.info("PostgreSQL translated_text_6 completed: users={}, orders={}", pgUsers, pgOrders);
     }
 
     @Test
     @Order(4)
-    @DisplayName("스키마 변경 및 데이터 보존")
+    @DisplayName("translated_text_3 translated_text_2 translated_text_1 data translated_text_2")
     void testSchemaEvolution() {
         sourceJdbc.execute("ALTER TABLE users ADD COLUMN phone VARCHAR(20)");
         sourceJdbc.execute("ALTER TABLE users ADD COLUMN last_login TIMESTAMP NULL");
@@ -254,21 +254,21 @@ class DatabaseMigrationTest {
 
         String alicePhone = sourceJdbc.queryForObject(
             "SELECT phone FROM users WHERE username = 'alice'", String.class);
-        assertEquals("010-1234-5678", alicePhone, "Alice의 전화번호가 설정되어야 함");
+        assertEquals("010-1234-5678", alicePhone, "Alicetranslated_text_1 translated_text_5 translated_text_5 translated_text_1");
 
         Long usersWithLogin = sourceJdbc.queryForObject(
             "SELECT COUNT(*) FROM users WHERE last_login IS NOT NULL", Long.class);
-        assertEquals(1L, usersWithLogin, "로그인 기록이 있는 사용자가 1명이어야 함");
+        assertEquals(1L, usersWithLogin, "translated_text_1 translated_text_3 translated_text_2 translated_text_5 1translated_text_2 translated_text_1");
 
         sourceJdbc.execute("CREATE INDEX idx_users_email ON users(email)");
         sourceJdbc.execute("CREATE INDEX idx_orders_date ON orders(order_date)");
 
-        log.info("스키마 진화 테스트 완료: 새 컬럼 및 인덱스 추가");
+        log.info("translated_text_3 translated_text_2 test completed: translated_text_1 translated_text_2 translated_text_1 translated_text_3 translated_text_2");
     }
 
     @Test
     @Order(5)
-    @DisplayName("복잡한 조인 쿼리를 통한 데이터 무결성 검증")
+    @DisplayName("translated_text_3 translated_text_2 translated_text_3 translated_text_2 data translated_text_3 validation")
     void testComplexQueryDataIntegrity() {
         List<Object[]> userOrderStats = sourceJdbc.query("""
             SELECT 
@@ -291,25 +291,25 @@ class DatabaseMigrationTest {
             rs.getDate("last_order_date")
         });
 
-        assertEquals(3, userOrderStats.size(), "3명의 사용자 통계가 있어야 함");
+        assertEquals(3, userOrderStats.size(), "3translated_text_2 user translated_text_3 translated_text_3 translated_text_1");
         
         Object[] topUser = userOrderStats.get(0);
-        assertEquals("alice", topUser[0], "Alice가 최고 구매자여야 함");
+        assertEquals("alice", topUser[0], "Alicetranslated_text_1 translated_text_2 translated_text_5 translated_text_1");
 
         Object[] inactiveUser = userOrderStats.stream()
             .filter(stats -> "charlie".equals(stats[0]))
             .findFirst()
             .orElse(null);
         
-        assertNotNull(inactiveUser, "Charlie 통계가 있어야 함");
-        assertEquals(0, inactiveUser[3], "Charlie는 주문이 없어야 함");
+        assertNotNull(inactiveUser, "Charlie translated_text_3 translated_text_3 translated_text_1");
+        assertEquals(0, inactiveUser[3], "Charlietranslated_text_1 translated_text_3 translated_text_3 translated_text_1");
 
-        log.info("복잡한 쿼리 데이터 무결성 검증 완료");
+        log.info("translated_text_3 translated_text_2 data translated_text_3 validation completed");
     }
 
     @Test
     @Order(6)
-    @DisplayName("트랜잭션 롤백 및 복구 테스트")
+    @DisplayName("translated_text_4 translated_text_2 translated_text_1 translated_text_2 test")
     void testTransactionRollbackAndRecovery() {
         Integer beforeUserCount = sourceJdbc.queryForObject("SELECT COUNT(*) FROM users", Integer.class);
         Integer beforeOrderCount = sourceJdbc.queryForObject("SELECT COUNT(*) FROM orders", Integer.class);
@@ -326,15 +326,15 @@ class DatabaseMigrationTest {
                 sourceJdbc.execute("ROLLBACK");
                 throw e;
             }
-        }, "외래키 제약 조건 위반으로 트랜잭션이 실패해야 함");
+        }, "translated_text_3 translated_text_2 translated_text_2 translated_text_1 translated_text_4 translated_text_9 translated_text_1");
 
         Integer afterUserCount = sourceJdbc.queryForObject("SELECT COUNT(*) FROM users", Integer.class);
         Integer afterOrderCount = sourceJdbc.queryForObject("SELECT COUNT(*) FROM orders", Integer.class);
 
-        assertEquals(beforeUserCount, afterUserCount, "사용자 수가 롤백으로 인해 변경되지 않아야 함");
-        assertEquals(beforeOrderCount, afterOrderCount, "주문 수가 롤백으로 인해 변경되지 않아야 함");
+        assertEquals(beforeUserCount, afterUserCount, "user translated_text_1 translated_text_2translated_text_1 translated_text_2 translated_text_2 translated_text_3 translated_text_1");
+        assertEquals(beforeOrderCount, afterOrderCount, "translated_text_2 translated_text_1 translated_text_2translated_text_1 translated_text_2 translated_text_2 translated_text_3 translated_text_1");
 
-        log.info("트랜잭션 롤백 테스트 완료: users={}, orders={}", afterUserCount, afterOrderCount);
+        log.info("translated_text_4 translated_text_2 test completed: users={}, orders={}", afterUserCount, afterOrderCount);
     }
 
     private List<String> getTables(DataSource dataSource) {
@@ -347,7 +347,7 @@ class DatabaseMigrationTest {
                 }
             }
         } catch (Exception e) {
-            log.error("테이블 목록 조회 실패", e);
+            log.error("translated_text_3 translated_text_2 inquiry failure", e);
         }
         return tables;
     }

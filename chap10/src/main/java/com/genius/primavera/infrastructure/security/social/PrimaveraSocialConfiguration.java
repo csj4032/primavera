@@ -46,7 +46,7 @@ public class PrimaveraSocialConfiguration {
 						String accessToken = userRequest.getAccessToken().getTokenValue();
 						long expiration = userRequest.getAccessToken().getExpiresAt() != null 
 							? userRequest.getAccessToken().getExpiresAt().toEpochMilli() 
-							: System.currentTimeMillis() + 3600000; // Default 1 hour
+							: System.currentTimeMillis() + 3600000;
 						
 						userDetails.setAccessToken(accessToken);
 						userDetails.setExpiration(expiration);

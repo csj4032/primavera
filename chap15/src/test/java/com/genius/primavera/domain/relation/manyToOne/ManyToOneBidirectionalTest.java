@@ -4,19 +4,14 @@ import com.genius.primavera.domain.relation.JpaTestBase;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 
-/**
- * 양방향은 외래 키가 있는 쪽이 연관관계의 주인
- * 양방향 연관관계는 항상 서로를 참조
- * 무한루프에 빠지므로 주의
- */
 @Slf4j
-@DisplayName("N:1 사원과 부서 양방향  : 부서는 사원을 참조하는 필드가 있음")
+@DisplayName("N:1 translated_text_3 translated_text_2 translated_text_3  : translated_text_2 translated_text_3 translated_text_4 translated_text_3 translated_text_2")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ManyToOneBidirectionalTest extends JpaTestBase {
 
 	@Test
 	@Order(1)
-	@DisplayName("부서, 사원 저장")
+	@DisplayName("translated_text_2, translated_text_2 translated_text_2")
 	public void save() {
 		var department = Department.of("Department1");
 
@@ -38,7 +33,7 @@ public class ManyToOneBidirectionalTest extends JpaTestBase {
 
 	@Test
 	@Order(2)
-	@DisplayName("부서, 사원 조회")
+	@DisplayName("translated_text_2, translated_text_2 inquiry")
 	public void find() {
 		var employee1 = entityManager.find(Employee.class, 1l);
 		var employee2 = entityManager.find(Employee.class, 2l);
@@ -52,7 +47,7 @@ public class ManyToOneBidirectionalTest extends JpaTestBase {
 
 	@Test
 	@Order(3)
-	@DisplayName("사원의 부서 정보 수정")
+	@DisplayName("translated_text_2 translated_text_2 information modification")
 	public void employeeUpdate() {
 		var employee1 = entityManager.find(Employee.class, 1l);
 		var department = Department.of("department2");

@@ -14,10 +14,6 @@ import jakarta.persistence.Persistence;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Chapter 13 - OneToMany 관계 매핑 테스트를 위한 TestContainers 기반 클래스
- * MySQL 컨테이너를 사용하여 oneToMany 패키지 엔티티만 로드합니다.
- */
 @Slf4j
 @Testcontainers
 public abstract class BaseOneToManyJpaTest {

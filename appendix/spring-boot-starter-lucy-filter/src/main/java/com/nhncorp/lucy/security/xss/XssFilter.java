@@ -1,18 +1,4 @@
-/*
- *	Copyright 2014 Naver Corp.
- *
- *	Licensed under the Apache License, Version 2.0 (the "License");
- *	you may not use this file except in compliance with the License.
- *	You may obtain a copy of the License at
- *
- *		http://www.apache.org/licenses/LICENSE-2.0
- *
- *	Unless required by applicable law or agreed to in writing, software
- *	distributed under the License is distributed on an "AS IS" BASIS,
- *	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *	See the License for the specific language governing permissions and
- *	limitations under the License.
- */
+
 package com.nhncorp.lucy.security.xss;
 
 import java.io.IOException;
@@ -38,24 +24,6 @@ import com.nhncorp.lucy.security.xss.markup.IEHackExtensionElement;
 import com.nhncorp.lucy.security.xss.markup.MarkupParser;
 import com.nhncorp.lucy.security.xss.markup.Text;
 
-/**
- * 이 클래스는 {@code Cross Site Scripting} 코드가 삽입된 {@code String} 데이터를 신뢰할 수 있는 코드로
- * 변환 시키거나, 삭제하는 기능을 제공한다. <br/><br/> 이 클래스를 사용하는 방법은 다음과 같다.
- *
- * <pre>
- * ...
- *
- * // XSS 설정파일(&quot;lucy-xss.xml&quot;)이 잘못된 포멧을 가지고 있다면 RuntimeException을 발생 시킨다.
- * XssFilter filter = XssFilter.getInstance();
- *
- * String clean = filter.doFilter(String dirty);
- *
- * ...
- * </pre>
- *
- * @author Naver Labs
- *
- */
 public final class XssFilter implements LucyXssFilter {
 	private static final Log LOG = LogFactory.getLog(XssFilter.class);
 
@@ -81,13 +49,6 @@ public final class XssFilter implements LucyXssFilter {
 		this.config = config;
 	}
 
-	/**
-	 * 이 메소드는 XssFilter 객체를 리턴한다.
-	 *
-	 * @return XssFilter 객체
-	 * @throws XssFilterException
-	 *             {@code "lucy-xss.xml"} 로딩 실패 시 발생(malformed인 경우).
-	 */
 	public static XssFilter getInstance() throws XssFilterException {
 		return getInstance(CONFIG, false);
 	}
@@ -100,15 +61,6 @@ public final class XssFilter implements LucyXssFilter {
 		return getInstance(fileName, false);
 	}
 
-	/**
-	 * 이 메소드는 XssFilter 객체를 리턴한다.
-	 *
-	 * @param fileName
-	 *            XSS Filter 설정파일
-	 * @return XssFilter 객체
-	 * @throws XssFilterException
-	 *             설정파일 로딩 실패 시 발생(malformed인 경우).
-	 */
 	public static XssFilter getInstance(String fileName, boolean withoutComment) throws XssFilterException {
 		try {
 			synchronized (XssFilter.class) {
@@ -143,13 +95,6 @@ public final class XssFilter implements LucyXssFilter {
 		}
 	}
 
-	/**
-	 * 이 메소드는 주석 내 태그 필터링을 위한 XssFilter 객체를 리턴한다.
-	 *
-	 * @param config
-	 *            XSS Filter Configuration
-	 * @return XssFilter 객체
-	 */
 	public static XssFilter getCommentFilterInstance(XssConfiguration config) {
 		XssFilter filter = new XssFilter(config);
 		filter.service = filter.config.getService();
@@ -161,40 +106,16 @@ public final class XssFilter implements LucyXssFilter {
 		return filter;
 	}
 
-	/**
-	 * 이 메소드는 XSS Filter 설정 내용을 담고 있는 {@link XssConfiguration} 객체를 반환한다.
-	 *
-	 * @return {@link XssConfiguration} 객체
-	 */
 	public XssConfiguration getConfig() {
 		return this.config;
 	}
 
-	/**
-	 * 이 메소드는 XSS({@code Cross Site Scripting})이 포함된 위험한 코드에 대하여 신뢰할 수 있는 코드로
-	 * 변환하거나, 삭제하는 기능을 제공한다. <br/> {@code "lucy-xss.xml"} 설정(사용자 설정 파일)에 따라 필터링을 수행한다.
-	 * 사용자 설정 파일을 명시적으로 지정하지 않는 getInstance() 로 필터 객체를 생성했을 경우, lucy-xss-superset.xml 설정을 사용한다.
-	 *
-	 * @param dirty
-	 *            XSS({@code Cross Site Scripting})이 포함된 위험한 코드.
-	 * @return 신뢰할 수 있는 코드.
-	 */
 	public String doFilter(String dirty) {
 		StringWriter writer = new StringWriter();
 		doFilter(dirty, writer);
 		return writer.toString();
 	}
 
-	/**
-	 * 이 메소드는 XSS({@code Cross Site Scripting})이 포함된 위험한 코드에 대하여 신뢰할 수 있는 코드로
-	 * 변환하거나, 삭제하는 기능을 제공한다. <br/> {@code "lucy-xss.xml"} 설정(사용자 설정 파일)에 따라 필터링을 수행한다.
-	 * 사용자 설정 파일을 명시적으로 지정하지 않는 getInstance() 로 필터 객체를 생성했을 경우, lucy-xss-superset.xml 설정을 사용한다.
-	 *
-	 * @param dirty
-	 *            XSS({@code Cross Site Scripting})이 포함된 위험한 코드.
-	 * @param writer
-	 * @return 신뢰할 수 있는 코드.
-	 */
 	public void doFilter(String dirty, Writer writer) {
 		StringWriter logWriter = new StringWriter();
 
@@ -212,24 +133,10 @@ public final class XssFilter implements LucyXssFilter {
 		try {
 			this.serialize(writer, contents);
 		} catch (IOException ioe) {
-			// ignore
+
 		}
 	}
 
-	/**
-	 * 이 메소드는 특정 Tag 내 특정 Attribute의 값에 삽입되는 XSS({@code Cross Site Scripting})이
-	 * 포함된 위험한 코드를 신뢰할 수 있는 코드로 변환하거나, 삭제하는 기능을 제공한다. <br/>
-	 * {@code "lucy-xss.xml"} 설정(사용자 설정 파일)에 따라 필터링을 수행한다.
-	 * 사용자 설정 파일을 명시적으로 지정하지 않는 getInstance() 로 필터 객체를 생성했을 경우, lucy-xss-superset.xml 설정을 사용한다.
-	 *
-	 * @param tagName
-	 *            특정 Tag 이름.
-	 * @param attName
-	 *            특정 Attribute 이름.
-	 * @param dirtyAttValue
-	 *            XSS({@code Cross Site Scripting})이 포함된 위험한 Attribute 값.
-	 * @return
-	 */
 	public String doFilter(String tagName, String attName, String dirtyAttValue) {
 		if (tagName == null || tagName.length() == 0 || attName == null || attName.length() == 0 || dirtyAttValue == null || dirtyAttValue.length() == 0) {
 			return "";
@@ -303,7 +210,7 @@ public final class XssFilter implements LucyXssFilter {
 			return;
 		}
 
-		if (ie.isDisabled()) { // IE Hack 태그가 비활성화 되어 있으면, 태그 삭제.
+		if (ie.isDisabled()) {
 			if (!this.withoutComment) {
 				writer.write(REMOVE_TAG_INFO_START);
 				writer.write(ie.getName().replaceAll("<", "&lt;").replaceFirst(">", "&gt;"));
@@ -314,8 +221,7 @@ public final class XssFilter implements LucyXssFilter {
 				this.serialize(writer, ie.getContents());
 			}
 		} else {
-			// \s : A whitespace character, short for [ \t\n\x0b\r\f]
-			// * : Occurs zero or more times, is short for {0,}
+
 			ie.serialize(writer);
 
 			if (!ie.isEmpty()) {
@@ -323,8 +229,7 @@ public final class XssFilter implements LucyXssFilter {
 			}
 
 			if (ie.isClosed()) {
-				// 중첩 IE Hack 태그 처리 로직(메일서비스개발랩 요구사항)
-				// IE Hack 시작 태그의 종류 판별 및 태그맞춤 cf) 시작 스트링이 <!-- 인지 <! 인지에 따라 IE Hack 닫는 태그 달라짐.
+
 				String stdName = ie.getName().replaceAll("-->", ">").replaceFirst("<!--\\s*", "<!--").replaceAll("]\\s*>", "]>");
 
 				if(stdName.indexOf("<!--") != -1) {
@@ -351,17 +256,16 @@ public final class XssFilter implements LucyXssFilter {
 				this.serialize(writer, element.getContents());
 			}
 		} else {
-			//TODO 코드 리뷰 필요
-			// v1.3.3 & v1.5.1 BEFORE if (!element.isDisabled()) {
+
 			if ((!element.isDisabled() || this.blockingPrefixEnabled)) {
 				checkRule(element);
 			}
 
 			if (element.isDisabled()) {
-				if (this.blockingPrefixEnabled) { //BlockingPrefix를 사용하는 설정인 경우, <, > 에 대한 Escape 대신에 Element 이름을 조작하여 동작을 막는다.
+				if (this.blockingPrefixEnabled) {
 					element.setName(this.blockingPrefix + element.getName());
-					element.setEnabled(true); // 아래 close 태그 만드는 부분에서 escape 처리를 안하기 위한 꽁수. isBlockingPrefixEnabled 검사하도록 로직 수정.
-				} else { //BlockingPrefix를 사용하지 않는 설정인 경우, <, > 에 대한 Escape 처리.
+					element.setEnabled(true);
+				} else {
 					if (!this.withoutComment) {
 						writer.write(BAD_TAG_INFO);
 					}
@@ -456,10 +360,7 @@ public final class XssFilter implements LucyXssFilter {
 
 		ElementRule tagRule = this.config.getElementRule(element.getName());
 		if (tagRule == null) {
-			// v1.3.3 & v1.5.2 BEFORE
-			//element.setEnabled(false);
-			//return;
-			//TODO 코드 리뷰 필요
+
 			tagRule = new ElementRule(element.getName());
 		}
 
@@ -479,12 +380,10 @@ public final class XssFilter implements LucyXssFilter {
 					att.setEnabled(false);
 				} else {
 					if (!attRule.getExceptionTagList().contains(element.getName().toLowerCase())) {
-						//Exception 리스트에 포함이 안되면,
-						//attribute Rule에 따라 disable 값을 설정한다.
+
 						attRule.checkDisabled(att);
 					} else {
-						//Exception 리스트에 포함이 되면,
-						//Rule과 반대로 disable 값을 설정한다.
+
 						attRule.checkDisabled(att);
 						att.setEnabled(att.isDisabled());
 					}

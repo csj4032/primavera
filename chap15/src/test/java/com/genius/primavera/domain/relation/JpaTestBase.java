@@ -12,10 +12,6 @@ import jakarta.persistence.Persistence;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * JPA 관계 매핑 테스트를 위한 기본 클래스
- * MySQL 8.4.0 TestContainers를 사용하여 테스트 환경 제공
- */
 @Testcontainers
 public abstract class JpaTestBase {
 
@@ -35,8 +31,7 @@ public abstract class JpaTestBase {
         if (!mysqlContainer.isRunning()) {
             mysqlContainer.start();
         }
-        
-        // 컸테이너 시작 대기
+
         while (!mysqlContainer.isRunning()) {
             try {
                 Thread.sleep(1000);

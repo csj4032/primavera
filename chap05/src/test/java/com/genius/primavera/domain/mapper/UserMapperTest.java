@@ -24,16 +24,11 @@ import static java.util.stream.Collectors.toList;
 import static org.mybatis.dynamic.sql.SqlBuilder.isIn;
 import static org.mybatis.dynamic.sql.SqlBuilder.select;
 
-/**
- * UserMapper 통합 테스트
- * 
- * AbstractIntegrationTest를 상속받아 MariaDB 컨테이너를 자동으로 사용합니다.
- */
 @Slf4j
 @SpringBootTest
 @ActiveProfiles("test")
 @Testcontainers
-@DisplayName(value = "유저 관련 테스트")
+@DisplayName(value = "translated_text_2 translated_text_2 test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class UserMapperTest {
 
@@ -94,14 +89,14 @@ public class UserMapperTest {
 
     @Test
     @Order(1)
-    @DisplayName(value = "유저 등록")
+    @DisplayName(value = "translated_text_2 registration")
     public void save() {
         users.forEach(e -> userMapper.save(e));
     }
 
     @Test
     @Order(2)
-    @DisplayName(value = "유저 등록 후 ID 값 반환")
+    @DisplayName(value = "translated_text_2 registration translated_text_1 ID translated_text_1 translated_text_2")
     public void saveSelectKey() {
         userMapper.save(source);
         User destination = userMapper.findById(source.getId());
@@ -110,7 +105,7 @@ public class UserMapperTest {
 
     @Test
     @Order(3)
-    @DisplayName(value = "특정 아이디 유저 검색")
+    @DisplayName(value = "translated_text_2 translated_text_3 translated_text_2 translated_text_2")
     public void findById() {
         User user = userMapper.findById(source.getId());
         Assertions.assertEquals(source.getId(), user.getId());
@@ -118,7 +113,7 @@ public class UserMapperTest {
 
     @Test
     @Order(4)
-    @DisplayName(value = "특정 아이디 유저 수정")
+    @DisplayName(value = "translated_text_2 translated_text_3 translated_text_2 modification")
     public void update() {
         source.setNickname("spring");
         source.setUpdatedAt(Instant.now());
@@ -130,7 +125,7 @@ public class UserMapperTest {
 
     @Test
     @Order(5)
-    @DisplayName(value = "특정 아이디 유저 삭제")
+    @DisplayName(value = "translated_text_2 translated_text_3 translated_text_2 deletion")
     public void deleteById() {
         int count = userMapper.deleteById(source.getId());
         Assertions.assertEquals(1, count);
@@ -138,7 +133,7 @@ public class UserMapperTest {
 
     @Test
     @Order(6)
-    @DisplayName(value = "특정 유저 권한 저장")
+    @DisplayName(value = "translated_text_2 translated_text_2 translated_text_2 translated_text_2")
     public void saveRoles() {
         for (User user : users)
             userRoleMapper.save(new UserRole(user.getId(), 1L));
@@ -146,35 +141,33 @@ public class UserMapperTest {
 
     @Test
     @Order(7)
-    @DisplayName(value = "모든 유저 권한 포함 검색")
+    @DisplayName(value = "all translated_text_2 translated_text_2 translated_text_2 translated_text_2")
     public void findAllWithRoles() {
         List<User> destination = userMapper.findAll();
-        // 데이터베이스에 다른 테스트에서 생성된 추가 유저가 있을 수 있으므로
-        // 정확한 매치 대신 우리가 생성한 유저들이 포함되어 있는지 확인
-        Assertions.assertTrue(destination.size() >= users.size(),
-                "검색된 유저 수가 예상보다 적습니다. 예상: " + users.size() + ", 실제: " + destination.size());
 
-        // 우리가 생성한 각 유저가 결과에 포함되어 있는지 확인 (이메일로 비교)
+        Assertions.assertTrue(destination.size() >= users.size(),
+                "translated_text_2 translated_text_2 translated_text_2 translated_text_4 translated_text_4. translated_text_2: " + users.size() + ", translated_text_2: " + destination.size());
+
         for (User expectedUser : users) {
             boolean found = destination.stream()
                     .anyMatch(user -> user.getEmail().equals(expectedUser.getEmail()));
             Assertions.assertTrue(found,
-                    "생성한 유저를 찾을 수 없습니다: " + expectedUser.getEmail());
+                    "translated_text_9 translated_text_2 translated_text_2 translated_text_1 translated_text_4: " + expectedUser.getEmail());
         }
     }
 
     @Test
     @Order(8)
-    @DisplayName(value = "검색 조건에 따른 결과 반환")
+    @DisplayName(value = "translated_text_2 translated_text_3 translated_text_2 result translated_text_2")
     public void findUserByRequestUser() {
-        // user ID가 0이 아닌 유저들만 필터링 (primitive long이므로 0 체크)
+
         List<Long> validUserIds = users.stream()
                 .filter(user -> user.getId() > 0)
                 .map(User::getId)
                 .collect(toList());
 
         if (validUserIds.isEmpty()) {
-            log.warn("유효한 사용자 ID가 없습니다. 테스트를 건너뜁니다.");
+            log.warn("translated_text_3 user IDtranslated_text_1 translated_text_4. test translated_text_5.");
             return;
         }
 
@@ -186,23 +179,21 @@ public class UserMapperTest {
                         .render(RenderingStrategies.MYBATIS3);
         List<User> destination = userMapper.findByRequestUser(selectStatement);
 
-        // 요청한 ID들에 해당하는 유저들이 모두 반환되었는지 확인
         Assertions.assertEquals(validUserIds.size(), destination.size(),
-                "요청한 유저 수와 반환된 유저 수가 다릅니다. 요청: " + validUserIds.size() + ", 반환: " + destination.size());
+                "translated_text_3 translated_text_2 translated_text_1 translated_text_2 translated_text_2 translated_text_2 translated_text_4. translated_text_2: " + validUserIds.size() + ", translated_text_2: " + destination.size());
 
-        // 반환된 모든 유저가 우리가 요청한 유저들 중 하나인지 확인
         for (User returnedUser : destination) {
             boolean found = validUserIds.contains(returnedUser.getId());
             Assertions.assertTrue(found,
-                    "예상하지 않은 유저가 반환되었습니다: " + returnedUser.getEmail() + " (ID: " + returnedUser.getId() + ")");
+                    "translated_text_2 translated_text_2 translated_text_2translated_text_1 translated_text_2: " + returnedUser.getEmail() + " (ID: " + returnedUser.getId() + ")");
         }
 
-        log.info("조건 검색 결과: {}", destination);
+        log.info("translated_text_2 translated_text_2 result: {}", destination);
     }
 
     @Test
     @Order(9)
-    @DisplayName(value = "유저 벌크 등록")
+    @DisplayName(value = "translated_text_2 translated_text_2 registration")
     public void bulkSave() {
         userMapper.saveAll(bulkUsers);
         bulkUsers.stream().forEach(System.out::println);

@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Slf4j
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@DisplayName("LocalStack AWS 서비스 빈 생성 테스트")
+@DisplayName("LocalStack AWS service translated_text_1 creation test")
 class LocalStackBeanCreatorTest {
 
     private LocalStackBeanCreator beanCreator;
@@ -45,29 +45,29 @@ class LocalStackBeanCreatorTest {
         spec.setDebugMode(false);
         spec.setEdgePort(4566);
         
-        log.info("LocalStackBeanCreator 테스트 환경이 설정되었습니다");
+        log.info("LocalStackBeanCreator test translated_text_3 translated_text_7");
     }
 
     @Test
     @Order(1)
-    @DisplayName("LocalStackBeanCreator 지원 타입 확인")
+    @DisplayName("LocalStackBeanCreator translated_text_2 translated_text_2 verification")
     void testSupportedType() {
         assertEquals(ContainerType.LOCALSTACK, beanCreator.getSupportedType());
-        log.info("✅ LocalStackBeanCreator 지원 타입: {}", beanCreator.getSupportedType());
+        log.info(" LocalStackBeanCreator translated_text_2 translated_text_2: {}", beanCreator.getSupportedType());
     }
 
     @Test
     @Order(2)
-    @DisplayName("지원되는 AWS 서비스 목록 확인")
+    @DisplayName("translated_text_2 AWS service translated_text_2 verification")
     void testSupportedServices() {
         Set<LocalStackContainerSpec.AwsService> supportedServices = beanCreator.getSupportedServices();
         
-        assertNotNull(supportedServices, "지원되는 서비스 목록이 null이면 안됩니다");
+        assertNotNull(supportedServices, "translated_text_2 service translated_text_2translated_text_1 nulltranslated_text_2 translated_text_4");
         
         if (supportedServices.isEmpty()) {
-            log.info("⚠️ AWS SDK 의존성이 없어서 지원되는 서비스가 없습니다");
+            log.info(" AWS SDK dependencytranslated_text_1 translated_text_3 translated_text_2 servicetranslated_text_1 translated_text_4");
         } else {
-            log.info("✅ 지원되는 AWS 서비스들: {}", supportedServices);
+            log.info(" translated_text_2 AWS service: {}", supportedServices);
         }
         
         for (LocalStackContainerSpec.AwsService service : Set.of(
@@ -78,16 +78,16 @@ class LocalStackBeanCreatorTest {
                 LocalStackContainerSpec.AwsService.LAMBDA
         )) {
             if (beanCreator.isServiceSupported(service)) {
-                log.info("✅ {} 서비스가 지원됩니다 (AWS SDK 사용 가능)", service);
+                log.info(" {} servicetranslated_text_1 translated_text_2 (AWS SDK translated_text_2 translated_text_2)", service);
             } else {
-                log.info("⚠️ {} 서비스를 건너뜁니다 (AWS SDK 의존성 없음)", service);
+                log.info(" {} service translated_text_5 (AWS SDK dependency translated_text_2)", service);
             }
         }
     }
 
     @Test
     @Order(3)
-    @DisplayName("AWS 서비스별 팩토리 가져오기 테스트")
+    @DisplayName("AWS service translated_text_3 translated_text_4 test")
     void testGetFactory() {
         for (LocalStackContainerSpec.AwsService service : LocalStackContainerSpec.AwsService.values()) {
             var factoryOpt = beanCreator.getFactory(service);
@@ -95,26 +95,26 @@ class LocalStackBeanCreatorTest {
             if (factoryOpt.isPresent()) {
                 var factory = factoryOpt.get();
                 assertEquals(service, factory.getSupportedService(), 
-                    "팩토리의 지원 서비스가 일치해야 합니다");
-                assertNotNull(factory.getBeanName(), "빈 이름이 null이면 안됩니다");
-                assertFalse(factory.getBeanName().trim().isEmpty(), "빈 이름이 비어있으면 안됩니다");
+                    "translated_text_3 translated_text_2 servicetranslated_text_1 translated_text_4 translated_text_3");
+                assertNotNull(factory.getBeanName(), "translated_text_1 translated_text_1translated_text_1 nulltranslated_text_2 translated_text_4");
+                assertFalse(factory.getBeanName().trim().isEmpty(), "translated_text_1 translated_text_1translated_text_1 translated_text_5 translated_text_4");
                 
-                log.debug("✅ {} 서비스 팩토리: {} -> 빈 이름: '{}'", 
+                log.debug(" {} service translated_text_3: {} -> translated_text_1 translated_text_1: '{}'", 
                     service, factory.getClass().getSimpleName(), factory.getBeanName());
             } else {
-                log.debug("⚠️ {} 서비스 팩토리를 찾을 수 없습니다 (의존성 없음)", service);
+                log.debug(" {} service translated_text_3 translated_text_2 translated_text_1 translated_text_4 (dependency translated_text_2)", service);
             }
         }
     }
 
     @Test
     @Order(4)
-    @DisplayName("잘못된 컨테이너 타입에 대한 예외 처리")
+    @DisplayName("translated_text_3 translated_text_1 translated_text_2translated_text_1 translated_text_2 exception processing")
     void testInvalidContainerType() {
         var mockContainer = new org.testcontainers.containers.GenericContainer<>("redis:7-alpine");
         ContainerInfo invalidContainerInfo = new ContainerInfo(
                 "invalid-container",
-                ContainerType.REDIS, // 잘못된 타입
+                ContainerType.REDIS,
                 mockContainer,
                 spec
         );
@@ -122,39 +122,39 @@ class LocalStackBeanCreatorTest {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, 
                 () -> beanCreator.createBean(invalidContainerInfo));
         
-        assertTrue(exception.getMessage().contains("LocalStackContainer가 필요합니다"), 
-                "예외 메시지가 적절해야 합니다");
+        assertTrue(exception.getMessage().contains("LocalStackContainertranslated_text_1 translated_text_3"), 
+                "exception translated_text_1translated_text_1 translated_text_4 translated_text_3");
         
-        log.info("✅ 잘못된 컨테이너 타입에 대한 예외 처리 확인: {}", exception.getMessage());
+        log.info(" translated_text_3 translated_text_1 translated_text_2translated_text_1 translated_text_2 exception processing verification: {}", exception.getMessage());
     }
 
     @Test
     @Order(5)
-    @DisplayName("잘못된 스펙 타입에 대한 예외 처리")
+    @DisplayName("translated_text_3 translated_text_2 translated_text_2translated_text_1 translated_text_2 exception processing")
     void testInvalidSpecType() {
         var invalidSpec = new com.genius.primavera.testcontainers.config.RedisContainerSpec();
         ContainerInfo invalidSpecInfo = new ContainerInfo(
                 "invalid-spec",
                 ContainerType.LOCALSTACK,
                 container,
-                invalidSpec // 잘못된 스펙
+                invalidSpec
         );
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, 
                 () -> beanCreator.createBean(invalidSpecInfo));
         
-        assertTrue(exception.getMessage().contains("LocalStackContainerSpec이 필요합니다"), 
-                "예외 메시지가 적절해야 합니다");
+        assertTrue(exception.getMessage().contains("LocalStackContainerSpectranslated_text_1 translated_text_3"), 
+                "exception translated_text_1translated_text_1 translated_text_4 translated_text_3");
         
-        log.info("✅ 잘못된 스펙 타입에 대한 예외 처리 확인: {}", exception.getMessage());
+        log.info(" translated_text_3 translated_text_2 translated_text_2translated_text_1 translated_text_2 exception processing verification: {}", exception.getMessage());
     }
 
     @Test
     @Order(6)
-    @DisplayName("AWS 서비스가 없을 때 기본 서비스 사용")
+    @DisplayName("AWS servicetranslated_text_1 translated_text_2 translated_text_1 translated_text_2 service translated_text_2")
     void testDefaultServicesWhenEmpty() {
         LocalStackContainerSpec emptySpec = new LocalStackContainerSpec();
-        emptySpec.setServices(Set.of()); // 빈 서비스 목록
+        emptySpec.setServices(Set.of());
         
         ContainerInfo containerInfo = new ContainerInfo(
                 "empty-services",
@@ -165,34 +165,34 @@ class LocalStackBeanCreatorTest {
 
         Object result = assertDoesNotThrow(() -> beanCreator.createBean(containerInfo));
         
-        assertNotNull(result, "결과가 null이면 안됩니다");
+        assertNotNull(result, "resulttranslated_text_1 nulltranslated_text_2 translated_text_4");
         
         if (result instanceof Map) {
             @SuppressWarnings("unchecked")
             Map<String, Object> clientMap = (Map<String, Object>) result;
-            log.info("✅ 기본 서비스 사용 시 생성된 클라이언트들: {}", clientMap.keySet());
+            log.info(" translated_text_2 service translated_text_2 translated_text_1 creation translated_text_1: {}", clientMap.keySet());
         } else {
-            log.info("✅ 기본 서비스 사용 결과: {}", result.getClass().getSimpleName());
+            log.info(" translated_text_2 service translated_text_2 result: {}", result.getClass().getSimpleName());
         }
     }
 
     @Test
     @Order(7)
-    @DisplayName("빈 생성기가 올바르게 등록되었는지 확인")
+    @DisplayName("translated_text_1 creationtranslated_text_1 translated_text_4 translated_text_16 verification")
     void testBeanCreatorRegistration() {
         var creatorOpt = com.genius.primavera.testcontainers.bean.BeanCreatorRegistry
                 .findCreator(ContainerType.LOCALSTACK);
         
-        assertTrue(creatorOpt.isPresent(), "LocalStackBeanCreator가 등록되어야 합니다");
+        assertTrue(creatorOpt.isPresent(), "LocalStackBeanCreatortranslated_text_1 registeredtranslated_text_1 translated_text_3");
         assertInstanceOf(LocalStackBeanCreator.class, creatorOpt.get(), 
-                "등록된 creator가 LocalStackBeanCreator 인스턴스여야 합니다");
+                "translated_text_13 creatortranslated_text_1 LocalStackBeanCreator translated_text_1 translated_text_3");
         
-        log.info("✅ LocalStackBeanCreator가 BeanCreatorRegistry에 올바르게 등록되었습니다");
+        log.info(" LocalStackBeanCreatortranslated_text_1 BeanCreatorRegistrytranslated_text_1 translated_text_4 translated_text_17");
     }
 
     @Test
     @Order(8)
-    @DisplayName("여러 AWS 서비스 조합 테스트")
+    @DisplayName("translated_text_2 AWS service translated_text_2 test")
     void testMultipleServiceCombination() {
         Set<LocalStackContainerSpec.AwsService>[] serviceCombinations = new Set[]{
                 Set.of(LocalStackContainerSpec.AwsService.S3),
@@ -217,14 +217,14 @@ class LocalStackBeanCreatorTest {
             );
 
             Object result = assertDoesNotThrow(() -> beanCreator.createBean(containerInfo), 
-                    "서비스 조합 " + services + " 처리 중 예외가 발생하면 안됩니다");
+                    "service translated_text_2 " + services + " processing translated_text_1 exceptiontranslated_text_1 translated_text_4 translated_text_4");
             
-            assertNotNull(result, "결과가 null이면 안됩니다");
+            assertNotNull(result, "resulttranslated_text_1 nulltranslated_text_2 translated_text_4");
             
             if (result instanceof Map) {
                 @SuppressWarnings("unchecked")
                 Map<String, Object> clientMap = (Map<String, Object>) result;
-                log.info("✅ 서비스 조합 {} -> 생성된 클라이언트들: {}", 
+                log.info(" service translated_text_2 {} -> creation translated_text_1: {}", 
                         services, clientMap.keySet());
             }
         }
@@ -232,6 +232,6 @@ class LocalStackBeanCreatorTest {
 
     @AfterAll
     void tearDown() {
-        log.info("LocalStackBeanCreator 테스트가 완료되었습니다");
+        log.info("LocalStackBeanCreator testtranslated_text_1 translated_text_14");
     }
 }

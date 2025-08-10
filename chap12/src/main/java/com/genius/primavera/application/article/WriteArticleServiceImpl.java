@@ -47,7 +47,7 @@ public class WriteArticleServiceImpl implements WriteArticleService {
 	public Article save(ArticleDto.WriteArticle writeArticle) {
 		Article origin = getOriginArticle(writeArticle);
 		Article article = getArticle(origin, writeArticle, getUser());
-		// 답글인 경우에만 Step 업데이트 실행
+
 		if (writeArticle.getWriteType().equals(WriteType.REPLY)) {
 			articleMapper.updateStep(origin.getReference(), origin.getStep());
 		}
@@ -135,15 +135,15 @@ public class WriteArticleServiceImpl implements WriteArticleService {
 		var article = new Article();
 		
 		if (writeArticle.getWriteType().equals(WriteType.REPLY)) {
-			// 답글인 경우
+
 			article.setPId(origin.getId());
 			article.setReference(origin.getReference());
 			article.setStep(origin.getStep() + 1);
 			article.setLevel(origin.getLevel() + 1);
 		} else {
-			// 원글인 경우
+
 			article.setPId(0L);
-			article.setReference(0L); // ArticleProvider에서 LAST_INSERT_ID()로 설정됨
+			article.setReference(0L);
 			article.setStep(1);
 			article.setLevel(1);
 		}

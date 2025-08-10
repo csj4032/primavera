@@ -8,13 +8,13 @@ import java.math.BigDecimal;
 @Data
 public class CreateOrderItemRequest {
     
-    @NotBlank(message = "상품 ID는 필수입니다")
+    @NotBlank(message = "translated_text_2 IDtranslated_text_1 translated_text_5")
     private String productId;
     
-    @Positive(message = "수량은 1개 이상이어야 합니다")
+    @Positive(message = "translated_text_3 1translated_text_1 translated_text_5 translated_text_3")
     private int quantity;
     
-    @Positive(message = "단가는 0보다 커야 합니다")
+    @Positive(message = "translated_text_1 0translated_text_2 translated_text_2 translated_text_3")
     private BigDecimal unitPrice;
     
     private String productName;

@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @SpringBootTest
 @EnableTestContainers
 @ActiveProfiles("test")
-@DisplayName("UserDao 통합 테스트")
+@DisplayName("UserDao translated_text_2 test")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class UserDaoTest {
@@ -30,47 +30,47 @@ public class UserDaoTest {
 
     @Test
     @Order(1)
-    @DisplayName("사용자 저장 테스트")
+    @DisplayName("user translated_text_2 test")
     public void saveUser() {
         User newUser = User.builder().email("email").password("password").nickname("nickname").createdAt(Instant.now()).updatedAt(Instant.now()).build();
         User savedUSer = userDao.save(newUser);
-        assertNotNull(savedUSer, "저장된 사용자가 null입니다.");
+        assertNotNull(savedUSer, "translated_text_2 usertranslated_text_1 nulltranslated_text_3.");
     }
 
     @Test
     @Order(2)
-    @DisplayName("사용자 저장 후 ID가 할당되었는지 확인")
+    @DisplayName("user translated_text_2 translated_text_1 IDtranslated_text_1 translated_text_6 verification")
     public void saveUserIdCheck() {
         User newUser = User.builder().email("email2").password("password2").nickname("nickname2").createdAt(Instant.now()).updatedAt(Instant.now()).build();
         User savedUser = userDao.save(newUser);
-        assertNotNull(savedUser, "저장된 사용자가 null입니다.");
-        assertEquals(8, savedUser.getId(), "저장된 사용자 ID가 예상과 일치하지 않습니다.");
+        assertNotNull(savedUser, "translated_text_2 usertranslated_text_1 nulltranslated_text_3.");
+        assertEquals(8, savedUser.getId(), "translated_text_2 user IDtranslated_text_1 translated_text_3 translated_text_4 translated_text_4.");
     }
 
     @Test
     @Order(3)
-    @DisplayName("사용자 모두 조회 테스트")
+    @DisplayName("user translated_text_2 inquiry test")
     public void getAllUser() {
         List<User> users = userDao.getUsers();
-        assertEquals(8, users.size(), "사용자 수가 일치하지 않습니다.");
+        assertEquals(8, users.size(), "user translated_text_1 translated_text_4 translated_text_4.");
     }
 
     @Test
     @Order(4)
-    @DisplayName("사용자 조회 테스트")
+    @DisplayName("user inquiry test")
     public void findById() {
         long userId = 1L;
         Optional<User> optionalUser = userDao.findById(userId);
         Assertions.assertTrue(optionalUser.isPresent());
         User user = optionalUser.get();
-        assertEquals(userId, user.getId(), "조회된 사용자 ID가 일치하지 않습니다.");
+        assertEquals(userId, user.getId(), "inquiry user IDtranslated_text_1 translated_text_4 translated_text_4.");
     }
 
     @Test
     @Order(5)
-    @DisplayName("사용자 삭제 테스트")
+    @DisplayName("user deletion test")
     public void deleteAll() {
         int deletedCount = userDao.deleteAll();
-        assertEquals(8, deletedCount, "삭제된 사용자 수가 일치하지 않습니다.");
+        assertEquals(8, deletedCount, "deletion user translated_text_1 translated_text_4 translated_text_4.");
     }
 }

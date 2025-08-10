@@ -4,9 +4,9 @@ import lombok.Getter;
 
 @Getter
 public enum PostStatus {
-    PUBLIC(1, "발행"),
-    DELETE(2, "삭제"),
-    BLOCK(3, "파리채블락");
+    PUBLIC(1, "translated_text_2"),
+    DELETE(2, "deletion"),
+    BLOCK(3, "translated_text_5");
 
     private int value;
     private String name;

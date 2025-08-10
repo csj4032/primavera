@@ -40,14 +40,14 @@ public class CommentRepositoryTest {
 	@Order(1)
 	@Rollback(false)
 	@Transactional
-	@DisplayName("게시글 1번 댓글 작성 테스트")
+	@DisplayName("translated_text_3 1translated_text_1 translated_text_2 translated_text_2 test")
 	public void writeComment() {
 		Article article = articleRepository.findById(1).orElseThrow();
 		Comment comment = new Comment();
 		comment.setArticleId(article.getId());
 		comment.setLevel(0);
 		comment.setStep(0);
-		comment.setComment("댓글입니다.");
+		comment.setComment("translated_text_2.");
 		comment.setAuthor(userRepository.findById(1l).get());
 		comment.setStatus(ArticleStatus.PUBLIC);
 		commentRepository.save(comment);

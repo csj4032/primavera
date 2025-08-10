@@ -20,12 +20,12 @@ public class LocalStackPropertyRegistrar {
         var localStackInfo = containerManager.getContainer(containerName);
         
         if (localStackInfo == null) {
-            log.warn("LocalStack 컨테이너를 찾을 수 없습니다: {}", containerName);
+            log.warn("LocalStack translated_text_5 translated_text_2 translated_text_1 translated_text_4: {}", containerName);
             return;
         }
         
         if (!(localStackInfo.container() instanceof LocalStackContainer)) {
-            log.warn("컨테이너가 LocalStackContainer 타입이 아닙니다: {}", containerName);
+            log.warn("translated_text_5 LocalStackContainer translated_text_3 translated_text_4: {}", containerName);
             return;
         }
         
@@ -35,7 +35,7 @@ public class LocalStackPropertyRegistrar {
         
         registerCustomProperties(registry, container);
         
-        log.info("✅ LocalStack 엔드포인트 프로퍼티가 등록되었습니다: {}", container.getEndpoint());
+        log.info(" LocalStack translated_text_5 translated_text_5 translated_text_17: {}", container.getEndpoint());
     }
     
     private static void registerAwsCloudProperties(DynamicPropertyRegistry registry, LocalStackContainer container) {
@@ -70,11 +70,11 @@ public class LocalStackPropertyRegistrar {
         var localStackInfo = containerManager.getContainer(containerName);
         
         if (localStackInfo == null) {
-            throw new IllegalStateException("LocalStack 컨테이너를 찾을 수 없습니다: " + containerName);
+            throw new IllegalStateException("LocalStack translated_text_5 translated_text_2 translated_text_1 translated_text_4: " + containerName);
         }
         
         if (!(localStackInfo.container() instanceof LocalStackContainer)) {
-            throw new IllegalStateException("컨테이너가 LocalStackContainer 타입이 아닙니다: " + containerName);
+            throw new IllegalStateException("translated_text_5 LocalStackContainer translated_text_3 translated_text_4: " + containerName);
         }
         
         return (LocalStackContainer) localStackInfo.container();

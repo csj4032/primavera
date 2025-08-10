@@ -58,8 +58,7 @@ public class PostgreSQLBeanCreator extends DataSourceBeanCreator {
             }
             options.append("-c datestyle=").append(spec.getDateStyle());
         }
-        
-        
+
         if (options.length() > 0) {
             config.addDataSourceProperty("options", options.toString());
         }

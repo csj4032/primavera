@@ -59,11 +59,6 @@ public class XssEscapeServletFilterWrapper extends HttpServletRequestWrapper {
         return newFilteredParamMap;
     }
 
-    /**
-     * @param paramName String
-     * @param value     String
-     * @return String
-     */
     private String doFilter(String paramName, String value) {
         return xssEscapeFilter.doFilter(path, paramName, value);
 

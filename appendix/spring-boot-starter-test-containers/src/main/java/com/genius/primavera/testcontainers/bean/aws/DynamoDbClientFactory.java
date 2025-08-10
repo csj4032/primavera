@@ -16,7 +16,7 @@ public class DynamoDbClientFactory extends AwsServiceClientFactory {
     @Override
     public Object createClient(LocalStackContainer container) {
         if (!isAvailable()) {
-            throw new IllegalStateException("AWS DynamoDB SDK가 클래스패스에 없습니다. AWS SDK v2 의존성을 추가해주세요.");
+            throw new IllegalStateException("AWS DynamoDB SDKtranslated_text_1 translated_text_6 translated_text_4. AWS SDK v2 dependencytranslated_text_1 translated_text_1.");
         }
 
         try {
@@ -47,12 +47,12 @@ public class DynamoDbClientFactory extends AwsServiceClientFactory {
 
             Object dynamoDbClient = builder.getClass().getMethod("build").invoke(builder);
 
-            log.info("✅ DynamoDbClient가 성공적으로 생성되었습니다. 엔드포인트: {}", endpointUrl);
+            log.info(" DynamoDbClienttranslated_text_1 translated_text_10 translated_text_13. translated_text_5: {}", endpointUrl);
             return dynamoDbClient;
 
         } catch (Exception e) {
-            log.error("DynamoDbClient 생성 중 오류 발생", e);
-            throw new RuntimeException("DynamoDbClient 생성 실패", e);
+            log.error("DynamoDbClient creation translated_text_1 error translated_text_2", e);
+            throw new RuntimeException("DynamoDbClient creation failure", e);
         }
     }
 
@@ -78,6 +78,6 @@ public class DynamoDbClientFactory extends AwsServiceClientFactory {
 
     @Override
     public boolean isPrimary() {
-        return true; // DynamoDB는 NoSQL 데이터베이스로 자주 사용되므로 Primary로 설정
+        return true;
     }
 }

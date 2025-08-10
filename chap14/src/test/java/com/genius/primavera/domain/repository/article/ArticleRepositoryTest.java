@@ -52,7 +52,7 @@ public class ArticleRepositoryTest {
 
 	@Test
 	@Order(1)
-	@DisplayName("게시글 관련 테이블 Truncate")
+	@DisplayName("translated_text_3 translated_text_2 translated_text_3 Truncate")
 	public void cleanUp() {
 		entityManager.createNativeQuery("TRUNCATE ARTICLE").executeUpdate();
 		entityManager.createNativeQuery("TRUNCATE ARTICLE_ATTACHMENT").executeUpdate();
@@ -61,7 +61,7 @@ public class ArticleRepositoryTest {
 
 	@Test
 	@Order(2)
-	@DisplayName("게시글 작성 테스트")
+	@DisplayName("translated_text_3 translated_text_2 test")
 	@Rollback(false)
 	@Transactional
 	public void writeArticleTest() {
@@ -70,21 +70,21 @@ public class ArticleRepositoryTest {
 		article.setReference(0);
 		article.setStep(0);
 		article.setAuthor(userRepository.findById(1l).orElse(null));
-		article.setSubject("게시글 제목입니다. 1");
+		article.setSubject("translated_text_3 translated_text_5. 1");
 		article.setStatus(ArticleStatus.PUBLIC);
-		article.setContent(Content.builder().contents("게시글 내용입니다. 1").build());
+		article.setContent(Content.builder().contents("translated_text_3 translated_text_5. 1").build());
 		article.setAttachments(List.of(Attachment.builder().name("file1.txt").path("/path").size(100).build()));
 		articleRepository.save(article);
 	}
 
 	@Test
 	@Order(3)
-	@DisplayName("게시글 조회 테스트 [1번 글]")
+	@DisplayName("translated_text_3 inquiry test [1translated_text_1 translated_text_1]")
 	public void findByIdTest() {
 		Article article = articleRepository.findById(1l).orElse(null);
 
 		assertNotNull(article);
-		assertEquals("게시글 제목입니다. 1", article.getSubject());
+		assertEquals("translated_text_3 translated_text_5. 1", article.getSubject());
 		assertEquals("Genius", article.getAuthorName());
 
 		assertNotNull(article.getComments());
@@ -97,26 +97,26 @@ public class ArticleRepositoryTest {
 
 	@Test
 	@Order(4)
-	@DisplayName("게시글 수정 테스트 [1번 글]")
+	@DisplayName("translated_text_3 modification test [1translated_text_1 translated_text_1]")
 	@Rollback(false)
 	@Transactional
 	public void updateArticleTest() {
 		Article article = articleRepository.findById(1).orElse(null);
-		article.setSubject("게시글 제목입니다.(수정) 1");
+		article.setSubject("translated_text_3 translated_text_5.(modification) 1");
 		Content content = article.getContent();
-		content.setContents("게시글 내용입니다.(수정) 1");
+		content.setContents("translated_text_3 translated_text_5.(modification) 1");
 		article.getAttachments().add(Attachment.builder().name("file2.txt").path("/path").size(100).build());
 		articleRepository.save(article);
 	}
 
 	@Test
 	@Order(5)
-	@DisplayName("게시글 수정 후 조회 테스트 [1번 글]")
+	@DisplayName("translated_text_3 modification translated_text_1 inquiry test [1translated_text_1 translated_text_1]")
 	public void updateAfterFindByIdTest() {
 		Article article = articleRepository.findById(1l).orElse(null);
 		assertNotNull(article);
-		assertEquals("게시글 제목입니다.(수정) 1", article.getSubject());
-		assertEquals("게시글 내용입니다.(수정) 1", article.getContents());
+		assertEquals("translated_text_3 translated_text_5.(modification) 1", article.getSubject());
+		assertEquals("translated_text_3 translated_text_5.(modification) 1", article.getContents());
 
 		assertNotNull(article.getAttachments());
 		assertTrue(article.getAttachments().size() == 2);

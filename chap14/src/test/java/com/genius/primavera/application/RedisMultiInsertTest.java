@@ -17,14 +17,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 @Slf4j
 @SpringBootTest
 @ActiveProfiles("test")
 @Execution(value = ExecutionMode.CONCURRENT)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@DisplayName("Redis 멀티 삽입 성능 테스트")
+@DisplayName("Redis translated_text_2 translated_text_2 translated_text_2 test")
 public class RedisMultiInsertTest implements MariaDBAndRedisIntegrationTest {
 
     static {

@@ -98,7 +98,8 @@
       "Bash(SPRING_PROFILES_ACTIVE=local timeout 15 ./gradlew :chap04:bootRun)",
       "Bash(SPRING_PROFILES_ACTIVE=local ./gradlew :chap04:bootRun --info)",
       "Bash(VAULT_TOKEN=primavera-vault-token SPRING_PROFILES_ACTIVE=local ./gradlew :chap04:bootRun)",
-      "Bash(VAULT_TOKEN=primavera-vault-token SPRING_PROFILES_ACTIVE=local timeout 30 ./gradlew :chap04:bootRun)"
+      "Bash(VAULT_TOKEN=primavera-vault-token SPRING_PROFILES_ACTIVE=local timeout 30 ./gradlew :chap04:bootRun)",
+      "Bash(python3:*)"
     ],
     "deny": []
   }

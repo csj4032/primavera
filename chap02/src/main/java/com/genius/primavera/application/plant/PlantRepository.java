@@ -18,7 +18,7 @@ public class PlantRepository implements IPlantRepository {
 
 	@Override
 	public List<Plant> getPlant(String combinedName) throws IOException {
-		//Retrofit retrofit = RetrofitClient.getInstance();
+
 		IPlantRetrofitRepository plantRetrofitRepository = retrofit.create(IPlantRetrofitRepository.class);
 		Call<List<Plant>> allPlants = plantRetrofitRepository.getPlants(combinedName);
 		Response<List<Plant>> execute = allPlants.execute();

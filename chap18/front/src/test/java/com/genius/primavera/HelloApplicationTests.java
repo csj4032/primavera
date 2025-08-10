@@ -20,8 +20,8 @@ public class HelloApplicationTests {
 	public void yamlTest() {
 		Config config = new Config();
 		config.setCategories(List.of(
-				new Category(1L, List.of(new Info(1L, "가"), new Info(2L, "나"))),
-				new Category(2L, List.of(new Info(3L, "가"), new Info(4L, "나")))
+				new Category(1L, List.of(new Info(1L, "translated_text_1"), new Info(2L, "translated_text_1"))),
+				new Category(2L, List.of(new Info(3L, "translated_text_1"), new Info(4L, "translated_text_1")))
 		));
 		Yaml yaml = new Yaml();
 		String out = yaml.dump(config);

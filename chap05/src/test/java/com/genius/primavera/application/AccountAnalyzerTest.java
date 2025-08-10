@@ -6,13 +6,13 @@ import org.junit.jupiter.api.*;
 
 import java.io.IOException;
 
-@DisplayName("계좌 분석 클래스 테스트")
+@DisplayName("translated_text_2 translated_text_2 translated_text_3 test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class AccountAnalyzerTest {
 
     @Test
     @Order(1)
-    @DisplayName("계좌 분석 클래스 구현")
+    @DisplayName("translated_text_2 translated_text_2 translated_text_3 translated_text_2")
     public void accountAnalyzerTest() throws IOException {
         AccountAnalyzer accountAnalyzer = new AccountAnalyzer("accountInfo.csv", new AccountCSVParser());
         Assertions.assertNotNull(accountAnalyzer);
@@ -20,7 +20,7 @@ public class AccountAnalyzerTest {
 
     @Test
     @Order(2)
-    @DisplayName("계좌 분석 클래스 구현 실패")
+    @DisplayName("translated_text_2 translated_text_2 translated_text_3 translated_text_2 failure")
     public void accountAnalyzerTestFail() {
         Assertions.assertThrows(IOException.class, () -> {
             new AccountAnalyzer("nonExistentFile.csv", new AccountCSVParser());
@@ -29,17 +29,17 @@ public class AccountAnalyzerTest {
 
     @Test
     @Order(3)
-    @DisplayName("계좌 분석 클래스 CSV 파싱")
+    @DisplayName("translated_text_2 translated_text_2 translated_text_3 CSV translated_text_2")
     public void accountCSVParserTest() throws IOException {
         AccountCSVParser accountCSVParser = new AccountCSVParser();
         var lines = java.nio.file.Files.readAllLines(java.nio.file.Paths.get("src/main/resources/accountInfo.csv"));
         var accountInfos = accountCSVParser.parseLinesFormCVS(lines);
-        Assertions.assertFalse(accountInfos.isEmpty(), "CSV 파싱 결과가 비어있지 않아야 합니다.");
+        Assertions.assertFalse(accountInfos.isEmpty(), "CSV translated_text_2 translated_text_7 translated_text_4 translated_text_3 translated_text_3.");
     }
 
     @Test
     @Order(4)
-    @DisplayName("계좌 분석 클래스 CSV 파싱 실패")
+    @DisplayName("translated_text_2 translated_text_2 translated_text_3 CSV translated_text_2 failure")
     public void accountCSVParserTestFail() {
         Assertions.assertThrows(IOException.class, () -> {
             AccountCSVParser accountCSVParser = new AccountCSVParser();

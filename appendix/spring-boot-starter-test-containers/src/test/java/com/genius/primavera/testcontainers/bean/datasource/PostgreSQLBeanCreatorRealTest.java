@@ -43,28 +43,28 @@ class PostgreSQLBeanCreatorRealTest {
         spec.setMaxConnections(5);
         spec.setConnectionTimeout(10000);
         
-        log.info("PostgreSQL 테스트 컨테이너 시작됨: {}", container.getJdbcUrl());
+        log.info("PostgreSQL test translated_text_4 translated_text_3: {}", container.getJdbcUrl());
     }
 
     @AfterAll
     void tearDown() {
         if (container != null) {
             container.stop();
-            log.info("PostgreSQL 테스트 컨테이너 중지됨");
+            log.info("PostgreSQL test translated_text_4 translated_text_3");
         }
     }
 
     @Test
     @Order(1)
-    @DisplayName("PostgreSQL BeanCreator 지원 타입 확인")
+    @DisplayName("PostgreSQL BeanCreator translated_text_2 translated_text_2 verification")
     void testSupportedType() {
         assertEquals(ContainerType.POSTGRESQL, beanCreator.getSupportedType());
-        log.info("✅ PostgreSQL BeanCreator 지원 타입: {}", beanCreator.getSupportedType());
+        log.info(" PostgreSQL BeanCreator translated_text_2 translated_text_2: {}", beanCreator.getSupportedType());
     }
 
     @Test
     @Order(2)
-    @DisplayName("PostgreSQL DataSource 빈 생성 및 실제 연결 테스트")
+    @DisplayName("PostgreSQL DataSource translated_text_1 creation translated_text_1 translated_text_2 translated_text_2 test")
     void testCreateBeanWithRealConnection() {
         ContainerInfo containerInfo = new ContainerInfo(
                 "test-postgresql",
@@ -75,27 +75,27 @@ class PostgreSQLBeanCreatorRealTest {
         
         HikariDataSource dataSource = (HikariDataSource) assertDoesNotThrow(() -> beanCreator.createBean(containerInfo));
         
-        assertNotNull(dataSource, "생성된 DataSource가 null이 아니어야 합니다");
-        assertInstanceOf(HikariDataSource.class, dataSource, "HikariDataSource 인스턴스여야 합니다");
+        assertNotNull(dataSource, "creation DataSourcetranslated_text_1 nulltranslated_text_1 translated_text_4 translated_text_3");
+        assertInstanceOf(HikariDataSource.class, dataSource, "HikariDataSource translated_text_6 translated_text_3");
         
         assertDoesNotThrow(() -> {
             try (var connection = dataSource.getConnection()) {
-                assertTrue(connection.isValid(5), "연결이 유효해야 합니다");
+                assertTrue(connection.isValid(5), "translated_text_2translated_text_1 translated_text_4 translated_text_3");
                 var statement = connection.createStatement();
                 var resultSet = statement.executeQuery("SELECT 1");
-                assertTrue(resultSet.next(), "쿼리 결과가 있어야 합니다");
-                assertEquals(1, resultSet.getInt(1), "결과값이 1이어야 합니다");
-                log.info("✅ PostgreSQL 연결 테스트 성공");
+                assertTrue(resultSet.next(), "translated_text_2 translated_text_1 translated_text_3 translated_text_3");
+                assertEquals(1, resultSet.getInt(1), "translated_text_1 1translated_text_1 translated_text_3");
+                log.info(" PostgreSQL translated_text_2 test success");
             }
-        }, "PostgreSQL 연결이 성공해야 합니다");
+        }, "PostgreSQL translated_text_2translated_text_1 success translated_text_3");
         
         dataSource.close();
-        log.info("✅ PostgreSQL DataSource 생성 및 연결 테스트 성공");
+        log.info(" PostgreSQL DataSource creation translated_text_1 translated_text_2 test success");
     }
 
     @Test
     @Order(3)
-    @DisplayName("PostgreSQL SSL 비활성화 설정 테스트")
+    @DisplayName("PostgreSQL SSL translated_text_4 translated_text_2 test")
     void testSslDisabledSetting() {
         spec.setSslMode(PostgreSqlContainerSpec.SslMode.DISABLE);
         
@@ -107,15 +107,15 @@ class PostgreSQLBeanCreatorRealTest {
         );
 
         HikariDataSource dataSource = (HikariDataSource) beanCreator.createBean(containerInfo);
-        assertNotNull(dataSource, "DataSource가 생성되어야 합니다");
+        assertNotNull(dataSource, "DataSourcetranslated_text_1 creation translated_text_3");
         
         assertDoesNotThrow(() -> {
             try (var connection = dataSource.getConnection()) {
-                assertTrue(connection.isValid(3), "SSL 비활성화 연결이 유효해야 합니다");
+                assertTrue(connection.isValid(3), "SSL translated_text_4 translated_text_2translated_text_1 translated_text_4 translated_text_3");
             }
         });
         
         dataSource.close();
-        log.info("✅ SSL 비활성화 설정 및 연결 검증 완료");
+        log.info(" SSL translated_text_4 translated_text_2 translated_text_1 translated_text_2 validation completed");
     }
 }

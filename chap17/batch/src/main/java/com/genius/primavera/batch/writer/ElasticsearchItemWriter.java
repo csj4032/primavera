@@ -45,8 +45,7 @@ public class ElasticsearchItemWriter implements ItemWriter<ProductDocument> {
                     .count();
             
             log.warn("Bulk indexing completed with {} errors out of {} documents", errorCount, itemCount);
-            
-            // Log first few errors for debugging
+
             response.items().stream()
                     .filter(item -> item.error() != null)
                     .limit(5)

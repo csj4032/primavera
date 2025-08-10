@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("Lucy Filter 자동 설정 테스트")
+@DisplayName("Lucy Filter translated_text_2 translated_text_2 test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class LucyFilterAutoConfigurationTest {
 
@@ -20,7 +20,7 @@ public class LucyFilterAutoConfigurationTest {
 
 	@Test
 	@Order(1)
-	@DisplayName("자동 설정이 활성화되면 XssEscapeServletFilter Bean이 생성된다")
+	@DisplayName("translated_text_2 translated_text_2translated_text_1 translated_text_5 XssEscapeServletFilter Beantranslated_text_1 translated_text_10")
 	void shouldCreateXssEscapeServletFilterBean() {
 		contextRunner.run(context -> {
 			assertThat(context).hasSingleBean(XssEscapeServletFilter.class);
@@ -30,7 +30,7 @@ public class LucyFilterAutoConfigurationTest {
 
 	@Test
 	@Order(2)
-	@DisplayName("spring.lucy-filter.enabled=false일 때 자동 설정이 비활성화된다")
+	@DisplayName("spring.lucy-filter.enabled=falsetranslated_text_1 translated_text_1 translated_text_2 translated_text_2translated_text_1 translated_text_6")
 	void shouldNotCreateBeansWhenDisabled() {
 		contextRunner
 				.withPropertyValues("spring.lucy-filter.enabled=false")
@@ -42,7 +42,7 @@ public class LucyFilterAutoConfigurationTest {
 
 	@Test
 	@Order(3)
-	@DisplayName("커스텀 프로퍼티 설정이 적용된다")
+	@DisplayName("translated_text_3 translated_text_4 translated_text_2translated_text_1 translated_text_4")
 	void shouldApplyCustomProperties() {
 		contextRunner
 				.withPropertyValues(
@@ -61,7 +61,7 @@ public class LucyFilterAutoConfigurationTest {
 
 	@Test
 	@Order(4)
-	@DisplayName("기본 프로퍼티 값이 적용된다")
+	@DisplayName("translated_text_2 translated_text_4 translated_text_1 translated_text_4")
 	void shouldApplyDefaultProperties() {
 		contextRunner.run(context -> {
 			assertThat(context).hasSingleBean(FilterRegistrationBean.class);
@@ -74,7 +74,7 @@ public class LucyFilterAutoConfigurationTest {
 
 	@Test
 	@Order(5)
-	@DisplayName("사용자가 직접 XssEscapeServletFilter Bean을 정의하면 자동 설정이 동작하지 않는다")
+	@DisplayName("translated_text_5 translated_text_2 XssEscapeServletFilter Beantranslated_text_1 translated_text_4 translated_text_2 translated_text_2translated_text_1 translated_text_4 translated_text_3")
 	void shouldBackOffWhenUserDefinesBean() {
 		contextRunner
 				.withUserConfiguration(CustomFilterConfiguration.class)

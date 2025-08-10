@@ -5,13 +5,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 
 @Slf4j
-@DisplayName("1:1 대상 테이블에 외래 키 양방향")
+@DisplayName("1:1 translated_text_2 translated_text_4 translated_text_2 translated_text_1 translated_text_3")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class SharedPrimaryKeyBidirectionalTest extends JpaTestBase {
 
 	@Test
 	@Order(1)
-	@DisplayName("서적, ISBN 저장")
+	@DisplayName("translated_text_2, ISBN translated_text_2")
 	public void save() {
 		var book = Book.of("book1");
 		var isbn = ISBN.of("isbn1", book);
@@ -24,13 +24,13 @@ public class SharedPrimaryKeyBidirectionalTest extends JpaTestBase {
 
 	@Test
 	@Order(2)
-	@DisplayName("서적, ISBN 조회")
+	@DisplayName("translated_text_2, ISBN inquiry")
 	public void find() {
 		var book = entityManager.find(Book.class, 1l);
 		var isbn = entityManager.find(ISBN.class, 1l);
-		//Lazy X
+
 		log.info("book : {}", book);
-		//Lazy O
+
 		log.info("isbn : {}", isbn);
 	}
 }

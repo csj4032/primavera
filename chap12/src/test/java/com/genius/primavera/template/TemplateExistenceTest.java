@@ -13,7 +13,7 @@ public class TemplateExistenceTest {
 
     @Test
     @Order(1)
-    @DisplayName("게시글 관련 템플릿 파일들이 존재하는지 확인")
+    @DisplayName("translated_text_3 translated_text_2 translated_text_3 translated_text_4 translated_text_5 verification")
     public void articleTemplatesExist() {
         assertTemplateExists("templates/article/list.html");
         assertTemplateExists("templates/article/detail.html");
@@ -22,7 +22,7 @@ public class TemplateExistenceTest {
 
     @Test
     @Order(2)
-    @DisplayName("공통 템플릿 파일들이 존재하는지 확인")
+    @DisplayName("translated_text_2 translated_text_3 translated_text_4 translated_text_5 verification")
     public void commonTemplatesExist() {
         assertTemplateExists("templates/fragments/header.html");
         assertTemplateExists("templates/fragments/footer.html");
@@ -32,7 +32,7 @@ public class TemplateExistenceTest {
 
     @Test
     @Order(3)
-    @DisplayName("기본 페이지 템플릿이 존재하는지 확인")
+    @DisplayName("translated_text_2 translated_text_3 translated_text_3 translated_text_5 verification")
     public void basicTemplatesExist() {
         assertTemplateExists("templates/index.html");
         assertTemplateExists("templates/login.html");

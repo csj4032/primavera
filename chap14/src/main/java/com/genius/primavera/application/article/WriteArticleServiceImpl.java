@@ -36,7 +36,7 @@ public class WriteArticleServiceImpl implements WriteArticleService {
 		Article article = getArticle(getParentArticle(writeArticle), writeArticle, getUser());
 		articleRepository.save(article);
 		article.setContent(getContent(writeArticle, article));
-		//if (Objects.nonNull(writeArticle.getFile())) article.setSaveAttachment(getAttachment(writeArticle, article));
+
 		saveArticle(article);
 		return article;
 	}

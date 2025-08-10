@@ -26,10 +26,6 @@ public class KryoSerializer<T> {
 
 	private static final KryoPool pool = new KryoPool.Builder(factory).softReferences().build();
 
-	/**
-	 * @param obj
-	 * @return
-	 */
 	public static byte[] serialize(final Object obj) {
 		return pool.run(kryo -> {
 			ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -40,11 +36,6 @@ public class KryoSerializer<T> {
 		});
 	}
 
-	/**
-	 * @param objectData
-	 * @param <V>
-	 * @return
-	 */
 	public static <V> V deserialize(final byte[] objectData) {
 		return (V) pool.run(kryo -> {
 			Input input = new Input(objectData);
@@ -52,13 +43,6 @@ public class KryoSerializer<T> {
 		});
 	}
 
-	/**
-	 * Deep copy
-	 *
-	 * @param obj
-	 * @param <V>
-	 * @return
-	 */
 	public static <V> V deepCopy(final V obj) {
 		return (V) pool.run(kryo -> (V) kryo.copy(obj));
 	}

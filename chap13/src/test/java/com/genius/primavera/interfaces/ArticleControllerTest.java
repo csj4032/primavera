@@ -52,7 +52,7 @@ public class ArticleControllerTest {
 
     @Test
     @Order(1)
-    @DisplayName("게시판 리스트 화면 접근")
+    @DisplayName("translated_text_3 translated_text_3 translated_text_2 translated_text_2")
     @WithUserDetails(value = "genius@primavera.com", userDetailsServiceBeanName = "primaveraUserDetailsService")
     public void articles() throws Exception {
         mockMvc.perform(get("/articles").accept(MediaType.TEXT_HTML))
@@ -63,13 +63,13 @@ public class ArticleControllerTest {
 
     @Test
     @Order(2)
-    @DisplayName("게시글 작성 접근")
+    @DisplayName("translated_text_3 translated_text_2 translated_text_2")
     @WithUserDetails(value = "genius@primavera.com", userDetailsServiceBeanName = "primaveraUserDetailsService")
     public void save() throws Exception {
         MultiValueMap<String, String> param = new LinkedMultiValueMap();
         param.set("pId", "0");
-        param.set("subject", "제목");
-        param.set("contents", "내용");
+        param.set("subject", "translated_text_2");
+        param.set("contents", "translated_text_2");
         mockMvc.perform(post("/articles/save").params(param).contentType(MediaType.APPLICATION_FORM_URLENCODED).with(csrf()))
                 .andDo(print())
                 .andExpect(status().is3xxRedirection());
@@ -77,14 +77,14 @@ public class ArticleControllerTest {
 
     @Test
     @Order(3)
-    @DisplayName("게시글 첨부 작성 접근")
+    @DisplayName("translated_text_3 translated_text_2 translated_text_2 translated_text_2")
     @WithUserDetails(value = "genius@primavera.com", userDetailsServiceBeanName = "primaveraUserDetailsService")
     public void saveAndAttachment() throws Exception {
         mockMvc.perform(multipart("/articles/save")
                         .file(new MockMultipartFile("file", "genius.txt", "text/plain", "Hello Wrold".getBytes()))
                         .param("pId", "0")
-                        .param("subject", "첨부파일 제목")
-                        .param("contents", "첨부파일 내영")
+                        .param("subject", "translated_text_2 translated_text_2")
+                        .param("contents", "translated_text_2 translated_text_2")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED).with(csrf()))
                 .andDo(print())
                 .andExpect(status().is3xxRedirection());
@@ -92,7 +92,7 @@ public class ArticleControllerTest {
 
     @Test
     @Order(4)
-    @DisplayName("1번 게시글 상세 접근")
+    @DisplayName("1translated_text_1 translated_text_3 translated_text_2 translated_text_2")
     @WithUserDetails(value = "genius@primavera.com", userDetailsServiceBeanName = "primaveraUserDetailsService")
     public void detail() throws Exception {
         mockMvc.perform(get("/articles/1").accept(MediaType.TEXT_HTML))
@@ -103,12 +103,12 @@ public class ArticleControllerTest {
 
     @Test
     @Order(5)
-    @DisplayName("1번 게시글 댓글 등록")
+    @DisplayName("1translated_text_1 translated_text_3 translated_text_2 registration")
     @WithUserDetails(value = "genius@primavera.com", userDetailsServiceBeanName = "primaveraUserDetailsService")
     public void comment() throws Exception {
         MultiValueMap<String, String> param = new LinkedMultiValueMap();
         param.set("article", "1");
-        param.set("comment", "댓글");
+        param.set("comment", "translated_text_2");
         mockMvc.perform(post("/articles/comment").params(param).contentType(MediaType.APPLICATION_FORM_URLENCODED).with(csrf()))
                 .andDo(print())
                 .andExpect(status().is3xxRedirection());

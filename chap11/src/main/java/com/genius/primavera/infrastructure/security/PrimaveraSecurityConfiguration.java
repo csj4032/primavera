@@ -76,8 +76,7 @@ public class PrimaveraSecurityConfiguration {
 						.failureHandler(failureHandler)
 						.failureUrl("/login?error=true")
 				);
-		
-		// Only configure OAuth2 if the necessary beans are available
+
 		if (oauth2UserService != null && clientRegistrationRepository != null) {
 			httpConfig.oauth2Login(oauth2 -> oauth2
 					.loginPage("/login")

@@ -35,15 +35,13 @@ public class OrderServiceImpl implements OrderService {
 	
 	public Mono<Order> createOrder(CreateOrderRequest request) {
 		return Mono.fromCallable(() -> {
-			// 주문 ID 생성
+
 			String orderId = "ORD-" + System.currentTimeMillis();
-			
-			// 총액 계산
+
 			BigDecimal totalAmount = request.getItems().stream()
 					.map(item -> item.getUnitPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
 					.reduce(BigDecimal.ZERO, BigDecimal::add);
-			
-			// 주문 엔티티 생성
+
 			Order order = Order.builder()
 					.orderId(orderId)
 					.customerId(request.getCustomerId())
@@ -57,48 +55,48 @@ public class OrderServiceImpl implements OrderService {
 		})
 		.flatMap(orderRepository::save)
 		.flatMap(savedOrder -> {
-			// Kafka 이벤트 발행
+
 			OrderCreatedEvent event = createOrderCreatedEvent(savedOrder, request);
 			return eventPublisher.publishOrderCreatedEvent(event)
 					.thenReturn(savedOrder);
 		})
-		.doOnSuccess(order -> log.info("주문 생성 완료: orderId={}, customerId={}, totalAmount={}", 
+		.doOnSuccess(order -> log.info("translated_text_2 creation completed: orderId={}, customerId={}, totalAmount={}", 
 				order.getOrderId(), order.getCustomerId(), order.getTotalAmount()))
-		.doOnError(error -> log.error("주문 생성 실패: customerId={}, error={}", 
+		.doOnError(error -> log.error("translated_text_2 creation failure: customerId={}, error={}", 
 				request.getCustomerId(), error.getMessage()));
 	}
 	
 	public Mono<Order> cancelOrder(String orderId, String reason) {
 		return orderRepository.findByOrderId(orderId)
-				.switchIfEmpty(Mono.error(new RuntimeException("주문을 찾을 수 없습니다: " + orderId)))
+				.switchIfEmpty(Mono.error(new RuntimeException("translated_text_2 translated_text_2 translated_text_1 translated_text_4: " + orderId)))
 				.flatMap(order -> {
 					order.setStatus(Order.OrderStatus.CANCELLED);
 					order.setUpdatedAt(LocalDateTime.now());
 					return orderRepository.save(order);
 				})
 				.flatMap(cancelledOrder -> {
-					// 주문 취소 이벤트 발행
+
 					return eventPublisher.publishOrderCancelledEvent(orderId, reason)
 							.thenReturn(cancelledOrder);
 				})
-				.doOnSuccess(order -> log.info("주문 취소 완료: orderId={}, reason={}", orderId, reason))
-				.doOnError(error -> log.error("주문 취소 실패: orderId={}, error={}", orderId, error.getMessage()));
+				.doOnSuccess(order -> log.info("translated_text_2 translated_text_2 completed: orderId={}, reason={}", orderId, reason))
+				.doOnError(error -> log.error("translated_text_2 translated_text_2 failure: orderId={}, error={}", orderId, error.getMessage()));
 	}
 	
 	public Mono<Order> confirmInventory(String orderId) {
 		return orderRepository.findByOrderId(orderId)
-				.switchIfEmpty(Mono.error(new RuntimeException("주문을 찾을 수 없습니다: " + orderId)))
+				.switchIfEmpty(Mono.error(new RuntimeException("translated_text_2 translated_text_2 translated_text_1 translated_text_4: " + orderId)))
 				.flatMap(order -> {
 					order.setStatus(Order.OrderStatus.INVENTORY_CONFIRMED);
 					order.setUpdatedAt(LocalDateTime.now());
 					return orderRepository.save(order);
 				})
-				.doOnSuccess(order -> log.info("재고 확인 완료: orderId={}", orderId));
+				.doOnSuccess(order -> log.info("translated_text_2 verification completed: orderId={}", orderId));
 	}
 	
 	public Mono<Order> getOrderById(String orderId) {
 		return orderRepository.findByOrderId(orderId)
-				.switchIfEmpty(Mono.error(new RuntimeException("주문을 찾을 수 없습니다: " + orderId)));
+				.switchIfEmpty(Mono.error(new RuntimeException("translated_text_2 translated_text_2 translated_text_1 translated_text_4: " + orderId)));
 	}
 	
 	private OrderCreatedEvent createOrderCreatedEvent(Order order, CreateOrderRequest request) {

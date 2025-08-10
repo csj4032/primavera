@@ -29,7 +29,6 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
 
-
 @Slf4j
 @SpringBootTest
 @ActiveProfiles("test")
@@ -75,20 +74,19 @@ public class WriteArticleServiceTest {
     public static void setUp() {
         writeRequestArticle = new ArticleDto.WriteArticle();
         writeRequestArticle.setPId(0);
-        writeRequestArticle.setSubject("제목_1");
-        writeRequestArticle.setContents("원글");
+        writeRequestArticle.setSubject("translated_text_2_1");
+        writeRequestArticle.setContents("translated_text_2");
         writeRequestArticle.setWriteType(WriteType.FORM);
     }
 
     @BeforeEach
     public void setUpSecurityContext() {
-        // Create test role
+
         Role userRole = Role.builder()
                 .id(3L)
                 .type(RoleType.USER)
                 .build();
 
-        // Create test user
         User testUser = User.builder()
                 .id(1L)
                 .email("Genius Choi")
@@ -96,20 +94,18 @@ public class WriteArticleServiceTest {
                 .roles(List.of(userRole))
                 .build();
 
-        // Create PrimaveraUserDetails
         PrimaveraUserDetails userDetails = PrimaveraUserDetails.of(testUser);
 
-        // Set up SecurityContext
         UsernamePasswordAuthenticationToken authentication =
                 new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        log.info("🔐 Security context set up for user: {}", testUser.getNickname());
+        log.info(" Security context set up for user: {}", testUser.getNickname());
     }
 
     @Test
     @Order(1)
-    @DisplayName("Mock 글 쓰기")
+    @DisplayName("Mock translated_text_1 translated_text_2")
     public void mockWriteTest() {
         mockWriteArticleService = Mockito.mock(WriteArticleService.class);
         given(this.mockWriteArticleService.save(writeRequestArticle)).willReturn(new Article());
@@ -118,7 +114,7 @@ public class WriteArticleServiceTest {
 
     @Test
     @Order(2)
-    @DisplayName("원글 첫번째 쓰기")
+    @DisplayName("translated_text_2 translated_text_3 translated_text_2")
     public void writeTest() {
         article_1 = writeArticleService.save(writeRequestArticle);
         article_1 = writeArticleService.findById(article_1.getId());
@@ -128,12 +124,12 @@ public class WriteArticleServiceTest {
 
     @Test
     @Order(3)
-    @DisplayName("원글 첫번째 답글 쓰기")
+    @DisplayName("translated_text_2 translated_text_3 translated_text_1 translated_text_2")
     public void writeFirstReplyTest() {
         Article origin = writeArticleService.findById(article_1.getId());
         writeRequestArticle.setPId(origin.getId());
         writeRequestArticle.setSubject(origin.getSubject() + "_1");
-        writeRequestArticle.setContents("원글 첫번째 답글 쓰기");
+        writeRequestArticle.setContents("translated_text_2 translated_text_3 translated_text_1 translated_text_2");
         writeRequestArticle.setWriteType(WriteType.REPLY);
         article_1_1 = writeArticleService.save(writeRequestArticle);
         assertEquals(article_1.getReference(), article_1_1.getReference());
@@ -143,12 +139,12 @@ public class WriteArticleServiceTest {
 
     @Test
     @Order(4)
-    @DisplayName("원글 두번째 답글 쓰기")
+    @DisplayName("translated_text_2 translated_text_3 translated_text_1 translated_text_2")
     public void writeSecondReplyTest() {
         Article origin = writeArticleService.findById(article_1.getId());
         writeRequestArticle.setPId(origin.getId());
         writeRequestArticle.setSubject(origin.getSubject() + "_2");
-        writeRequestArticle.setContents("원글 첫번째 두번째 답글 쓰기");
+        writeRequestArticle.setContents("translated_text_2 translated_text_3 translated_text_3 translated_text_1 translated_text_2");
         writeRequestArticle.setWriteType(WriteType.REPLY);
         article_1_2 = writeArticleService.save(writeRequestArticle);
         assertEquals(article_1.getReference(), article_1_2.getReference());
@@ -158,12 +154,12 @@ public class WriteArticleServiceTest {
 
     @Test
     @Order(5)
-    @DisplayName("원글 첫번째 답글 첫번째 답글 쓰기")
+    @DisplayName("translated_text_2 translated_text_3 translated_text_1 translated_text_3 translated_text_1 translated_text_2")
     public void writeFirst_FirstReplyTest() {
         Article origin = writeArticleService.findById(article_1_1.getId());
         writeRequestArticle.setPId(origin.getId());
         writeRequestArticle.setSubject(origin.getSubject() + "_1");
-        writeRequestArticle.setContents("원글 첫번째 답글 첫번째 답글 쓰기");
+        writeRequestArticle.setContents("translated_text_2 translated_text_3 translated_text_1 translated_text_3 translated_text_1 translated_text_2");
         writeRequestArticle.setWriteType(WriteType.REPLY);
         article_1_1_1 = writeArticleService.save(writeRequestArticle);
         assertEquals(article_1.getReference(), article_1_1_1.getReference());
@@ -173,11 +169,11 @@ public class WriteArticleServiceTest {
 
     @Test
     @Order(6)
-    @DisplayName("원글 두번째 쓰기")
+    @DisplayName("translated_text_2 translated_text_3 translated_text_2")
     public void writeSecondTest() {
         writeRequestArticle.setPId(0);
-        writeRequestArticle.setSubject("제목_2");
-        writeRequestArticle.setContents("원글");
+        writeRequestArticle.setSubject("translated_text_2_2");
+        writeRequestArticle.setContents("translated_text_2");
         writeRequestArticle.setWriteType(WriteType.FORM);
         article_2 = writeArticleService.save(writeRequestArticle);
         article_2 = writeArticleService.findById(article_2.getId());
@@ -187,12 +183,12 @@ public class WriteArticleServiceTest {
 
     @Test
     @Order(7)
-    @DisplayName("원글 첫번째 답글 첫번째 답글 첫번째 답글 쓰기")
+    @DisplayName("translated_text_2 translated_text_3 translated_text_1 translated_text_3 translated_text_1 translated_text_3 translated_text_1 translated_text_2")
     public void writeFirst_FirstReply_FirstReplyTest() {
         Article origin = writeArticleService.findById(article_1_1_1.getId());
         writeRequestArticle.setPId(origin.getId());
         writeRequestArticle.setSubject(origin.getSubject() + "_1");
-        writeRequestArticle.setContents("원글 첫번째 답글 첫번째 답글 첫번째 답글 쓰기");
+        writeRequestArticle.setContents("translated_text_2 translated_text_3 translated_text_1 translated_text_3 translated_text_1 translated_text_3 translated_text_1 translated_text_2");
         writeRequestArticle.setWriteType(WriteType.REPLY);
         article_1_1_1_1 = writeArticleService.save(writeRequestArticle);
         assertEquals(4, article_1_1_1_1.getLevel());
@@ -201,12 +197,12 @@ public class WriteArticleServiceTest {
 
     @Test
     @Order(8)
-    @DisplayName("원글 첫번째 답글 첫번째 답글 두번째 답글 쓰기")
+    @DisplayName("translated_text_2 translated_text_3 translated_text_1 translated_text_3 translated_text_1 translated_text_3 translated_text_1 translated_text_2")
     public void writeFirst_FirstReply_SecondReplyTest() {
         Article origin = writeArticleService.findById(article_1_1.getId());
         writeRequestArticle.setPId(origin.getId());
         writeRequestArticle.setSubject(origin.getSubject() + "_2");
-        writeRequestArticle.setContents("원글 첫번째 답글 첫번째 답글 쓰기");
+        writeRequestArticle.setContents("translated_text_2 translated_text_3 translated_text_1 translated_text_3 translated_text_1 translated_text_2");
         writeRequestArticle.setWriteType(WriteType.REPLY);
         article_1_1_2 = writeArticleService.save(writeRequestArticle);
         assertEquals(article_1.getReference(), article_1_1_2.getReference());
@@ -216,12 +212,12 @@ public class WriteArticleServiceTest {
 
     @Test
     @Order(9)
-    @DisplayName("원글 두번째 답글 첫번째 쓰기")
+    @DisplayName("translated_text_2 translated_text_3 translated_text_1 translated_text_3 translated_text_2")
     public void writeSecond_FirstReply_Test() {
         Article origin = writeArticleService.findById(article_2.getId());
         writeRequestArticle.setPId(origin.getId());
         writeRequestArticle.setSubject(origin.getSubject() + "_1");
-        writeRequestArticle.setContents("원글 두번째 답글 첫번째 쓰기");
+        writeRequestArticle.setContents("translated_text_2 translated_text_3 translated_text_1 translated_text_3 translated_text_2");
         article_2_1 = writeArticleService.save(writeRequestArticle);
         assertEquals(article_2.getReference(), article_2_1.getReference());
         assertEquals(2, article_2_1.getLevel());
@@ -230,12 +226,12 @@ public class WriteArticleServiceTest {
 
     @Test
     @Order(10)
-    @DisplayName("원글 두번째 답글 두번째 쓰기")
+    @DisplayName("translated_text_2 translated_text_3 translated_text_1 translated_text_3 translated_text_2")
     public void writeSecond_SecondReply_Test() {
         Article origin = writeArticleService.findById(article_2.getId());
         writeRequestArticle.setPId(origin.getId());
         writeRequestArticle.setSubject(origin.getSubject() + "_2");
-        writeRequestArticle.setContents("원글 두번째 답글 두번째 쓰기");
+        writeRequestArticle.setContents("translated_text_2 translated_text_3 translated_text_1 translated_text_3 translated_text_2");
         writeRequestArticle.setWriteType(WriteType.REPLY);
         article_2_2 = writeArticleService.save(writeRequestArticle);
 
@@ -246,13 +242,13 @@ public class WriteArticleServiceTest {
 
     @Test
     @Order(11)
-    @DisplayName("원글 두번째 답글 세번째 쓰기")
+    @DisplayName("translated_text_2 translated_text_3 translated_text_1 translated_text_3 translated_text_2")
     public void writeSecond_ThirdReply_Test() {
         Article origin = writeArticleService.findById(article_2.getId());
         writeRequestArticle.setPId(origin.getId());
         writeRequestArticle.setSubject(origin.getSubject() + "_3");
         writeRequestArticle.setWriteType(WriteType.REPLY);
-        writeRequestArticle.setContents("원글 두번째 답글 세번째 쓰기");
+        writeRequestArticle.setContents("translated_text_2 translated_text_3 translated_text_1 translated_text_3 translated_text_2");
         article_2_3 = writeArticleService.save(writeRequestArticle);
         assertEquals(article_2.getReference(), article_2_3.getReference());
         assertEquals(2, article_2_3.getLevel());

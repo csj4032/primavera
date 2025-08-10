@@ -22,18 +22,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
-/**
- * ArticleService 단위 테스트
- * 
- * 특징:
- * - Mock을 사용한 순수 단위 테스트
- * - 실제 데이터베이스 연결 없음
- * - application-test.yml 설정 사용
- * - 빠른 실행 속도
- */
 @ExtendWith(MockitoExtension.class)
-@ActiveProfiles("test")  // application-test.yml 사용
-@DisplayName("ArticleService 단위 테스트")
+@ActiveProfiles("test")
+@DisplayName("ArticleService translated_text_2 test")
 class ArticleServiceUnitTest {
 
     @Mock
@@ -52,20 +43,20 @@ class ArticleServiceUnitTest {
         testArticle = Article.builder()
                 .id(1L)
                 .author(testUser)
-                .subject("테스트 게시글")
+                .subject("test translated_text_3")
                 .status(ArticleStatus.PUBLIC)
                 .createdAt(Instant.now())
                 .build();
     }
 
     @Test
-    @DisplayName("게시글 저장 - Mock을 사용한 단위 테스트")
+    @DisplayName("translated_text_3 translated_text_2 - Mocktranslated_text_1 translated_text_3 translated_text_2 test")
     void shouldSaveArticleSuccessfully() {
         given(articleMapper.save(any(Article.class))).willReturn(1);
 
         var newArticle = Article.builder()
                 .author(testUser)
-                .subject("새로운 게시글")
+                .subject("translated_text_3 translated_text_3")
                 .status(ArticleStatus.PUBLIC)
                 .createdAt(Instant.now())
                 .build();
@@ -76,15 +67,15 @@ class ArticleServiceUnitTest {
     }
 
     @Test
-    @DisplayName("게시글 목록 조회 - Mock 데이터 반환")
+    @DisplayName("translated_text_3 translated_text_2 inquiry - Mock data translated_text_2")
     void shouldReturnArticleList() {
-        // Given
+
         List<Article> mockArticles = Arrays.asList(
                 testArticle,
                 Article.builder()
                         .id(2L)
                         .author(testUser)
-                        .subject("두 번째 게시글")
+                        .subject("translated_text_1 translated_text_2 translated_text_3")
                         .status(ArticleStatus.PUBLIC)
                         .createdAt(Instant.now())
                         .build()
@@ -92,24 +83,22 @@ class ArticleServiceUnitTest {
         
         given(articleMapper.findAll()).willReturn(mockArticles);
 
-        // When
         List<Article> articles = articleMapper.findAll();
 
-        // Then
         assertEquals(2, articles.size());
-        assertEquals("테스트 게시글", articles.get(0).getSubject());
-        assertEquals("두 번째 게시글", articles.get(1).getSubject());
+        assertEquals("test translated_text_3", articles.get(0).getSubject());
+        assertEquals("translated_text_1 translated_text_2 translated_text_3", articles.get(1).getSubject());
         verify(articleMapper).findAll();
     }
 
     @Test
-    @DisplayName("계층형 댓글 구조 검증 - 비즈니스 로직 테스트")
+    @DisplayName("translated_text_3 translated_text_2 translated_text_2 validation - translated_text_4 translated_text_2 test")
     void shouldValidateHierarchicalStructure() {
-        // Given
+
         Article parentArticle = Article.builder()
                 .id(1L)
                 .author(testUser)
-                .subject("원글")
+                .subject("translated_text_2")
                 .level(0)
                 .step(0)
                 .status(ArticleStatus.PUBLIC)
@@ -122,65 +111,57 @@ class ArticleServiceUnitTest {
                 .pId(parentArticle.getId())
                 .reference(parentArticle.getId())
                 .author(testUser)
-                .subject("댓글")
+                .subject("translated_text_2")
                 .level(1)
                 .step(1)
                 .status(ArticleStatus.PUBLIC)
                 .createdAt(Instant.now())
                 .build();
 
-        // When & Then - 비즈니스 로직 검증
         assertTrue(isValidReply(replyArticle, parentArticle));
         assertEquals(parentArticle.getId(), replyArticle.getReference());
         assertEquals(parentArticle.getLevel() + 1, replyArticle.getLevel());
     }
 
     @Test
-    @DisplayName("게시글 상태 변경 검증")
+    @DisplayName("translated_text_3 translated_text_2 translated_text_2 validation")
     void shouldChangeArticleStatus() {
-        // Given
+
         Article article = Article.builder()
                 .id(1L)
                 .author(testUser)
-                .subject("상태 변경 테스트")
+                .subject("translated_text_2 translated_text_2 test")
                 .status(ArticleStatus.PUBLIC)
                 .build();
 
-        // When - 새로운 Article 객체로 상태 변경
         Article updatedArticle = Article.builder()
                 .id(article.getId())
                 .author(article.getAuthor())
                 .subject(article.getSubject())
-                .status(ArticleStatus.DELETE)  // PUBLIC -> DELETE
+                .status(ArticleStatus.DELETE)
                 .build();
 
-        // Then
         assertEquals(ArticleStatus.DELETE, updatedArticle.getStatus());
         assertNotEquals(article.getStatus(), updatedArticle.getStatus());
     }
 
     @Test
-    @DisplayName("게시글 차단 상태 검증")
+    @DisplayName("translated_text_3 translated_text_2 translated_text_2 validation")
     void shouldBlockArticle() {
-        // Given
+
         Article article = Article.builder()
                 .id(1L)
                 .author(testUser)
-                .subject("차단될 게시글")
+                .subject("translated_text_2 translated_text_3")
                 .status(ArticleStatus.PUBLIC)
                 .build();
 
-        // When
         article.setStatus(ArticleStatus.BLOCK);
 
-        // Then
         assertEquals(ArticleStatus.BLOCK, article.getStatus());
-        assertEquals(3, article.getStatus().getValue());  // BLOCK의 값은 3
+        assertEquals(3, article.getStatus().getValue());
     }
 
-    /**
-     * 댓글 유효성 검증을 위한 헬퍼 메서드
-     */
     private boolean isValidReply(Article reply, Article parent) {
         return reply.getReference() == parent.getId() &&
                reply.getLevel() > parent.getLevel() &&

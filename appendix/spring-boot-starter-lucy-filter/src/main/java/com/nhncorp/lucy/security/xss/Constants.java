@@ -1,30 +1,11 @@
-/*
- *	Copyright 2014 Naver Corp.
- *
- *	Licensed under the Apache License, Version 2.0 (the "License");
- *	you may not use this file except in compliance with the License.
- *	You may obtain a copy of the License at
- *
- *		http://www.apache.org/licenses/LICENSE-2.0
- *
- *	Unless required by applicable law or agreed to in writing, software
- *	distributed under the License is distributed on an "AS IS" BASIS,
- *	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *	See the License for the specific language governing permissions and
- *	limitations under the License.
- */
+
 package com.nhncorp.lucy.security.xss;
 
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @author Naver Labs
- */
 public class Constants {
 	public static final Map<String, String> mimeTypes = new HashMap<String, String>();
-	// apache 에서 지원하는 Internet media types(MIME type) to unique file extension
-	// http://svn.apache.org/repos/asf/httpd/httpd/trunk/docs/conf/mime.types
 
 	static {
 		mimeTypes.put("ez", "application/andrew-inset");
@@ -882,38 +863,7 @@ public class Constants {
 		mimeTypes.put("x3dvz", "model/x3d+vrml");
 		mimeTypes.put("x3d", "model/x3d+xml");
 		mimeTypes.put("x3dz", "model/x3d+xml");
-		/*
-		 * mimeTypes.put("appcache", "text/cache-manifest");
-		 * mimeTypes.put("ics ifb", "text/calendar"); mimeTypes.put("css",
-		 * "text/css"); mimeTypes.put("csv", "text/csv");
-		 * mimeTypes.put("html htm", "text/html"); mimeTypes.put("n3",
-		 * "text/n3"); mimeTypes.put("txt text conf def list log in",
-		 * "text/plain"); mimeTypes.put("dsc", "text/prs.lines.tag");
-		 * mimeTypes.put("rtx", "text/richtext"); mimeTypes.put("sgml sgm",
-		 * "text/sgml"); mimeTypes.put("tsv", "text/tab-separated-values");
-		 * mimeTypes.put("t tr roff man me ms", "text/troff");
-		 * mimeTypes.put("ttl", "text/turtle"); mimeTypes.put("uri uris urls",
-		 * "text/uri-list"); mimeTypes.put("vcard", "text/vcard");
-		 * mimeTypes.put("curl", "text/vnd.curl"); mimeTypes.put("dcurl",
-		 * "text/vnd.curl.dcurl"); mimeTypes.put("scurl",
-		 * "text/vnd.curl.scurl"); mimeTypes.put("mcurl",
-		 * "text/vnd.curl.mcurl"); mimeTypes.put("sub",
-		 * "text/vnd.dvb.subtitle"); mimeTypes.put("fly", "text/vnd.fly");
-		 * mimeTypes.put("flx", "text/vnd.fmi.flexstor"); mimeTypes.put("gv",
-		 * "text/vnd.graphviz"); mimeTypes.put("3dml", "text/vnd.in3d.3dml");
-		 * mimeTypes.put("spot", "text/vnd.in3d.spot"); mimeTypes.put("jad",
-		 * "text/vnd.sun.j2me.app-descriptor"); mimeTypes.put("wml",
-		 * "text/vnd.wap.wml"); mimeTypes.put("wmls", "text/vnd.wap.wmlscript");
-		 * mimeTypes.put("s asm", "text/x-asm");
-		 * mimeTypes.put("c cc cxx cpp h hh dic", "text/x-c");
-		 * mimeTypes.put("f for f77 f90", "text/x-fortran");
-		 * mimeTypes.put("java", "text/x-java-source"); mimeTypes.put("opml",
-		 * "text/x-opml"); mimeTypes.put("p pas", "text/x-pascal");
-		 * mimeTypes.put("nfo", "text/x-nfo"); mimeTypes.put("etx",
-		 * "text/x-setext"); mimeTypes.put("sfv", "text/x-sfv");
-		 * mimeTypes.put("uu", "text/x-uuencode"); mimeTypes.put("vcs",
-		 * "text/x-vcalendar"); mimeTypes.put("vcf", "text/x-vcard");
-		 */
+		
 		mimeTypes.put("3gp", "video/3gpp");
 		mimeTypes.put("3g2", "video/3gpp2");
 		mimeTypes.put("h261", "video/h261");

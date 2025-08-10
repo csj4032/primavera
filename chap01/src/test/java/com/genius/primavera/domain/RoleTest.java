@@ -8,47 +8,43 @@ import org.junit.jupiter.api.Test;
 class RoleTest {
 
     @Test
-    @DisplayName("Role 객체가 정상적으로 생성되어야 한다")
+    @DisplayName("Role translated_text_3 successfully translated_text_11 translated_text_2")
     void roleCreationTest() {
-        // given
+
         long id = 1L;
         String name = "ADMIN";
-        String description = "시스템 관리자";
+        String description = "translated_text_3 translated_text_3";
 
-        // when
         Role role = new Role(id, name, description);
 
-        // then
         assertThat(role.getId()).isEqualTo(id);
         assertThat(role.getName()).isEqualTo(name);
         assertThat(role.getDescription()).isEqualTo(description);
     }
 
     @Test
-    @DisplayName("Role Builder를 사용하여 객체를 정상적으로 생성해야 한다")
+    @DisplayName("Role Buildertranslated_text_1 translated_text_4 translated_text_1 successfully translated_text_10 translated_text_2")
     void roleBuilderTest() {
-        // given
+
         long id = 1L;
         String name = "ADMIN";
-        String description = "시스템 관리자";
+        String description = "translated_text_3 translated_text_3";
 
-        // when
         Role role = Role.builder()
                 .id(id)
                 .name(name)
                 .description(description)
                 .build();
 
-        // then
         assertThat(role.getId()).isEqualTo(id);
         assertThat(role.getName()).isEqualTo(name);
         assertThat(role.getDescription()).isEqualTo(description);
     }
 
     @Test
-    @DisplayName("동일한 id와 name을 가진 Role 객체는 equals 비교에서 true를 반환해야 한다")
+    @DisplayName("translated_text_3 idtranslated_text_1 nametranslated_text_1 translated_text_2 Role translated_text_3 equals translated_text_4 truetranslated_text_1 translated_text_4 translated_text_2")
     void roleEqualsTest() {
-        // given
+
         Role role1 = Role.builder()
                 .id(1L)
                 .name("ADMIN")
@@ -57,17 +53,16 @@ class RoleTest {
         Role role2 = Role.builder()
                 .id(1L)
                 .name("ADMIN")
-                .description("다른 설명")
+                .description("translated_text_2 translated_text_2")
                 .build();
 
-        // when & then
         assertThat(role1).isEqualTo(role2);
     }
 
     @Test
-    @DisplayName("다른 id나 name을 가진 Role 객체는 equals 비교에서 false를 반환해야 한다")
+    @DisplayName("translated_text_2 idtranslated_text_1 nametranslated_text_1 translated_text_2 Role translated_text_3 equals translated_text_4 falsetranslated_text_1 translated_text_4 translated_text_2")
     void roleNotEqualsTest() {
-        // given
+
         Role role1 = Role.builder()
                 .id(1L)
                 .name("ADMIN")
@@ -83,19 +78,17 @@ class RoleTest {
                 .name("USER")
                 .build();
 
-        // when & then
         assertThat(role1).isNotEqualTo(role2);
         assertThat(role1).isNotEqualTo(role3);
     }
 
     @Test
-    @DisplayName("Role 기본 생성자로 생성된 객체가 정상적으로 동작해야 한다")
+    @DisplayName("Role translated_text_2 translated_text_10 translated_text_9 translated_text_3 successfully translated_text_4 translated_text_2")
     void roleDefaultConstructorTest() {
-        // given & when
+
         Role role = new Role();
 
-        // then
-        assertThat(role.getId()).isEqualTo(0L); // primitive long default value
+        assertThat(role.getId()).isEqualTo(0L);
         assertThat(role.getName()).isNull();
         assertThat(role.getDescription()).isNull();
     }

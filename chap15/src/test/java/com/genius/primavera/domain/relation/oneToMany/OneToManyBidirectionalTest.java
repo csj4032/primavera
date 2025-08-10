@@ -4,18 +4,14 @@ import com.genius.primavera.domain.relation.JpaTestBase;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 
-/**
- * 일대다 단방향 매핑 반대편에 다대일 단뱡향 매핑을 읽기 전용으로 추가해서 일대다 양방향 처럼 보임
- * 다대일 양방향 권장
- */
 @Slf4j
-@DisplayName("1:N 고객와 연락처 양방향")
+@DisplayName("1:N translated_text_3 translated_text_3 translated_text_3")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class OneToManyBidirectionalTest extends JpaTestBase {
 
 	@Test
 	@Order(1)
-	@DisplayName("고객, 연락처 저장")
+	@DisplayName("translated_text_2, translated_text_3 translated_text_2")
 	public void save() {
 		var customer = Customer.of("customer1");
 		var contact1 = new Contact(null, Contact.Type.EMAIL, "csj4032", customer);
@@ -32,7 +28,7 @@ public class OneToManyBidirectionalTest extends JpaTestBase {
 
 	@Test
 	@Order(2)
-	@DisplayName("고객, 연락처 조회")
+	@DisplayName("translated_text_2, translated_text_3 inquiry")
 	public void find() {
 		var contact1 = entityManager.find(Contact.class, 1l);
 		var contact2 = entityManager.find(Contact.class, 2l);
@@ -44,7 +40,7 @@ public class OneToManyBidirectionalTest extends JpaTestBase {
 
 	@Test
 	@Order(3)
-	@DisplayName("고객 연락처 추가")
+	@DisplayName("translated_text_2 translated_text_3 translated_text_2")
 	public void update() {
 		var customer = entityManager.find(Customer.class, 1l);
 		var contact3 = new Contact(null, Contact.Type.PHONE, "csj4032", customer);
@@ -57,7 +53,7 @@ public class OneToManyBidirectionalTest extends JpaTestBase {
 
 	@Test
 	@Order(4)
-	@DisplayName("고객 연락처 중 일부 수정 후 고객 조회")
+	@DisplayName("translated_text_2 translated_text_3 translated_text_1 translated_text_2 modification translated_text_1 translated_text_2 inquiry")
 	public void updateContact() {
 		var contact1 = entityManager.find(Contact.class, 1l);
 		contact1.setType(Contact.Type.PHONE);
@@ -70,7 +66,7 @@ public class OneToManyBidirectionalTest extends JpaTestBase {
 
 	@Test
 	@Order(5)
-	@DisplayName("연락처의 고객정보 수정 조회")
+	@DisplayName("translated_text_3 translated_text_2 modification inquiry")
 	public void updateCustomByContact() {
 		var contact1 = entityManager.find(Contact.class, 1l);
 		var customer2 = Customer.of("custom2");

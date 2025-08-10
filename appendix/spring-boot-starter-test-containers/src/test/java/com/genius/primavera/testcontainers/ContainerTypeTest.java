@@ -16,14 +16,14 @@ class ContainerTypeTest {
         assertEquals("mariadb:11.4.7", ContainerType.MARIADB.getDefaultImage(),
                 "MariaDB should have correct default image");
 
-        log.info("✅ MariaDB default image: {}", ContainerType.MARIADB.getDefaultImage());
+        log.info(" MariaDB default image: {}", ContainerType.MARIADB.getDefaultImage());
     }
 
     @Test
     @DisplayName("Redis type has correct default image")
     void testRedisDefaultImage() {
         assertEquals("redis:7-alpine", ContainerType.REDIS.getDefaultImage(), "Redis should have correct default image");
-        log.info("✅ Redis default image: {}", ContainerType.REDIS.getDefaultImage());
+        log.info(" Redis default image: {}", ContainerType.REDIS.getDefaultImage());
     }
 
     @Test
@@ -32,7 +32,7 @@ class ContainerTypeTest {
         assertEquals("confluentinc/cp-kafka:7.5.0", ContainerType.KAFKA.getDefaultImage(),
                 "Kafka should have correct default image");
 
-        log.info("✅ Kafka default image: {}", ContainerType.KAFKA.getDefaultImage());
+        log.info(" Kafka default image: {}", ContainerType.KAFKA.getDefaultImage());
     }
 
     @Test
@@ -41,7 +41,7 @@ class ContainerTypeTest {
         assertEquals("mongo:7", ContainerType.MONGODB.getDefaultImage(),
                 "MongoDB should have correct default image");
 
-        log.info("✅ MongoDB default image: {}", ContainerType.MONGODB.getDefaultImage());
+        log.info(" MongoDB default image: {}", ContainerType.MONGODB.getDefaultImage());
     }
 
     @Test
@@ -50,21 +50,21 @@ class ContainerTypeTest {
         assertEquals("postgres:16", ContainerType.POSTGRESQL.getDefaultImage(),
                 "PostgreSQL should have correct default image");
 
-        log.info("✅ PostgreSQL default image: {}", ContainerType.POSTGRESQL.getDefaultImage());
+        log.info(" PostgreSQL default image: {}", ContainerType.POSTGRESQL.getDefaultImage());
     }
 
     @Test
     @DisplayName("MySQL type has correct default image")
     void testMySqlDefaultImage() {
         assertEquals("mysql:8.0", ContainerType.MYSQL.getDefaultImage(), "MySQL should have correct default image");
-        log.info("✅ MySQL default image: {}", ContainerType.MYSQL.getDefaultImage());
+        log.info(" MySQL default image: {}", ContainerType.MYSQL.getDefaultImage());
     }
 
     @Test
     @DisplayName("Elasticsearch type has correct default image")
     void testElasticsearchDefaultImage() {
         assertEquals("docker.elastic.co/elasticsearch/elasticsearch:8.12.0", ContainerType.ELASTICSEARCH.getDefaultImage(), "Elasticsearch should have correct default image");
-        log.info("✅ Elasticsearch default image: {}", ContainerType.ELASTICSEARCH.getDefaultImage());
+        log.info(" Elasticsearch default image: {}", ContainerType.ELASTICSEARCH.getDefaultImage());
     }
 
     @Test
@@ -78,7 +78,7 @@ class ContainerTypeTest {
             assertFalse(type.getDefaultImage().isEmpty(), "Container type " + type + " default image should not be empty");
         }
 
-        log.info("✅ All {} container types have default images", types.length);
+        log.info(" All {} container types have default images", types.length);
     }
 
     @Test
@@ -94,7 +94,7 @@ class ContainerTypeTest {
                     "Container type name should be uppercase: " + name);
         }
 
-        log.info("✅ All container type names are properly formatted");
+        log.info(" All container type names are properly formatted");
     }
 
     @Test
@@ -111,7 +111,7 @@ class ContainerTypeTest {
             ContainerType.valueOf("NONEXISTENT");
         }, "valueOf should throw exception for non-existent type");
 
-        log.info("✅ valueOf method works correctly");
+        log.info(" valueOf method works correctly");
     }
 
     @Test
@@ -124,6 +124,6 @@ class ContainerTypeTest {
                     "Ordinal value should match array index for " + types[i]);
         }
 
-        log.info("✅ Ordinal values are stable and consistent");
+        log.info(" Ordinal values are stable and consistent");
     }
 }

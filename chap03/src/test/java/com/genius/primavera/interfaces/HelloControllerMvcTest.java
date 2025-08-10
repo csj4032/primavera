@@ -33,7 +33,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @WebMvcTest(HelloController.class)
 @ActiveProfiles("test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@DisplayName("Spring MVC HelloController 테스트")
+@DisplayName("Spring MVC HelloController test")
 public class HelloControllerMvcTest {
 
     @Autowired
@@ -44,7 +44,7 @@ public class HelloControllerMvcTest {
 
     @Test
     @Order(1)
-    @DisplayName("GET /hello - 기본 MVC 매핑 테스트")
+    @DisplayName("GET /hello - translated_text_2 MVC translated_text_2 test")
     void testHelloWorldMapping() throws Exception {
         List<User> mockUsers = List.of(
                 User.builder().id(1L).name("User1").email("user1@test.com").build(),
@@ -56,12 +56,12 @@ public class HelloControllerMvcTest {
                 .andExpect(model().attributeExists("users"))
                 .andExpect(model().attribute("users", mockUsers))
                 .andDo(print());
-        log.info("✅ 기본 MVC 매핑 테스트 완료");
+        log.info(" translated_text_2 MVC translated_text_2 test completed");
     }
 
     @Test
     @Order(2)
-    @DisplayName("GET /world/{id} - 경로 변수 바인딩 테스트")
+    @DisplayName("GET /world/{id} - translated_text_2 translated_text_2 translated_text_3 test")
     void testPathVariableBinding() throws Exception {
         Long userId = 123L;
         User mockUser = User.builder()
@@ -78,29 +78,28 @@ public class HelloControllerMvcTest {
                 .andExpect(model().attribute("user", mockUser))
                 .andDo(print());
 
-        log.info("✅ 경로 변수 바인딩 테스트 완료");
+        log.info(" translated_text_2 translated_text_2 translated_text_3 test completed");
     }
 
     @Test
     @Order(3)
-    @DisplayName("GET /oops - 예외 처리 테스트")
+    @DisplayName("GET /oops - exception processing test")
     void testExceptionHandling() throws Exception {
         mockMvc.perform(get("/oops")).andExpect(status().isInternalServerError()).andDo(print());
-        log.info("✅ 예외 처리 테스트 완료");
+        log.info(" exception processing test completed");
     }
 
     @Test
     @Order(4)
-    @DisplayName("GET /order - 일반 뷰 반환 테스트")
+    @DisplayName("GET /order - translated_text_2 translated_text_1 translated_text_2 test")
     void testSimpleViewReturn() throws Exception {
         mockMvc.perform(get("/order")).andExpect(status().isOk()).andExpect(view().name("hello")).andDo(print());
-        log.info("✅ 일반 뷰 반환 테스트 완료");
+        log.info(" translated_text_2 translated_text_1 translated_text_2 test completed");
     }
-
 
     @Test
     @Order(5)
-    @DisplayName("Model 데이터 검증 테스트")
+    @DisplayName("Model data validation test")
     void testModelDataValidation() throws Exception {
         List<User> mockUsers = Arrays.asList(
                 User.builder().id(1L).name("Alice").email("alice@test.com").build(),
@@ -114,12 +113,12 @@ public class HelloControllerMvcTest {
         List<User> users = (List<User>) modelAttribute;
         assertThat(users).hasSize(2);
         assertThat(users.get(0).getName()).isEqualTo("Alice");
-        log.info("✅ Model 데이터 검증 테스트 완료");
+        log.info(" Model data validation test completed");
     }
 
     @Test
     @Order(6)
-    @DisplayName("요청 파라미터와 경로 변수 복합 테스트")
+    @DisplayName("translated_text_2 translated_text_5 translated_text_2 translated_text_2 translated_text_2 test")
     void testComplexRequestMapping() throws Exception {
         Long userId = 456L;
         User mockUser = User.builder().id(userId).name("Complex User").build();
@@ -130,12 +129,12 @@ public class HelloControllerMvcTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("world"))
                 .andDo(print());
-        log.info("✅ 복합 요청 매핑 테스트 완료");
+        log.info(" translated_text_2 translated_text_2 translated_text_2 test completed");
     }
 
     @Test
     @Order(7)
-    @DisplayName("MVC 아키텍처 컴포넌트 검증")
+    @DisplayName("MVC translated_text_4 translated_text_4 validation")
     void testMvcArchitectureComponents() throws Exception {
         when(helloService.getUsers()).thenReturn(Collections.emptyList());
         MvcResult result = mockMvc.perform(get("/hello")).andExpect(status().isOk()).andReturn();
@@ -143,12 +142,12 @@ public class HelloControllerMvcTest {
         assertThat(result.getModelAndView()).isNotNull();
         assertThat(result.getModelAndView().getViewName()).isEqualTo("hello");
         assertThat(result.getModelAndView().getModel()).isNotEmpty();
-        log.info("✅ MVC 아키텍처 컴포넌트 검증 완료");
+        log.info(" MVC translated_text_4 translated_text_4 validation completed");
     }
 
     @Test
     @Order(8)
-    @DisplayName("Spring MVC 요청 처리 흐름 테스트")
+    @DisplayName("Spring MVC translated_text_2 processing translated_text_2 test")
     void testMvcRequestProcessingFlow() throws Exception {
         Long userId = 789L;
         User mockUser = User.builder().id(userId).name("Flow Test User").build();
@@ -158,16 +157,16 @@ public class HelloControllerMvcTest {
                 .andExpect(view().name("world"))
                 .andExpect(model().attributeExists("user"))
                 .andDo(result -> {
-                    log.info("📋 MVC 요청 처리 흐름:");
-                    log.info("  1. DispatcherServlet -> 요청 수신");
-                    log.info("  2. HandlerMapping -> Controller 매핑");
-                    log.info("  3. Controller -> 비즈니스 로직 처리");
-                    log.info("  4. ModelAndView -> 뷰와 모델 데이터 생성");
-                    log.info("  5. ViewResolver -> 뷰 해석");
-                    log.info("  6. View -> 최종 응답 렌더링");
+                    log.info(" MVC translated_text_2 processing translated_text_2:");
+                    log.info("  1. DispatcherServlet -> translated_text_2 translated_text_2");
+                    log.info("  2. HandlerMapping -> Controller translated_text_2");
+                    log.info("  3. Controller -> translated_text_4 translated_text_2 processing");
+                    log.info("  4. ModelAndView -> translated_text_1 translated_text_2 data creation");
+                    log.info("  5. ViewResolver -> translated_text_1 translated_text_2");
+                    log.info("  6. View -> translated_text_2 translated_text_2 translated_text_3");
                 })
                 .andDo(print());
 
-        log.info("✅ Spring MVC 요청 처리 흐름 테스트 완료");
+        log.info(" Spring MVC translated_text_2 processing translated_text_2 test completed");
     }
 }

@@ -1,6 +1,5 @@
 package com.genius.primavera.domain.hierarchy;
 
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;

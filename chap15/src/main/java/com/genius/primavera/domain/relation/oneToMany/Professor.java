@@ -29,7 +29,7 @@ public class Professor {
 	private String name;
 
 	@OneToMany
-	// STUDENT 테이블의 PROFESSOR_ID
+
 	@JoinColumn(name = "PROFESSOR_ID")
 	private List<Student> students = new ArrayList<>();
 }

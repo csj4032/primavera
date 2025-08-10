@@ -37,10 +37,10 @@ public class InventoryEventPublisher {
             
             future.whenComplete((result, throwable) -> {
                 if (throwable != null) {
-                    log.error("재고 예약 이벤트 발행 실패: orderId={}, error={}", 
+                    log.error("translated_text_2 translated_text_2 translated_text_3 translated_text_2 failure: orderId={}, error={}", 
                             orderId, throwable.getMessage());
                 } else {
-                    log.info("재고 예약 이벤트 발행 성공: orderId={}", orderId);
+                    log.info("translated_text_2 translated_text_2 translated_text_3 translated_text_2 success: orderId={}", orderId);
                 }
             });
             
@@ -64,10 +64,10 @@ public class InventoryEventPublisher {
             
             future.whenComplete((result, throwable) -> {
                 if (throwable != null) {
-                    log.error("재고 부족 이벤트 발행 실패: orderId={}, error={}", 
+                    log.error("translated_text_2 translated_text_2 translated_text_3 translated_text_2 failure: orderId={}, error={}", 
                             orderId, throwable.getMessage());
                 } else {
-                    log.info("재고 부족 이벤트 발행 성공: orderId={}, reason={}", orderId, reason);
+                    log.info("translated_text_2 translated_text_2 translated_text_3 translated_text_2 success: orderId={}, reason={}", orderId, reason);
                 }
             });
             

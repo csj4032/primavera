@@ -17,31 +17,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Spring Boot Configuration Properties 학습용 클래스
- * 
- * 이 클래스는 @ConfigurationProperties와 Bean Validation을 활용한
- * 타입 안전한 설정 관리 방법을 학습하기 위한 예제입니다.
- * 
- * 학습 포인트:
- * - @ConfigurationProperties(prefix = "com.genius.primavera") 사용법
- * - @ConfigurationPropertiesScan으로 자동 스캔 및 Bean 등록
- * - 중첩된 Configuration Properties 구조 (Static Inner Class)
- * - Bean Validation (@NotBlank, @Min, @Pattern 등) 통합
- * - @Validated 어노테이션으로 유효성 검증 활성화
- * - 복합 타입 바인딩 (List, Map, Duration, Boolean)
- * - 프로파일별 설정 오버라이드 (application.yml의 test 프로파일)
- * 
- * application.yml 설정 구조:
- * com.genius.primavera:
- *   database: 데이터베이스 연결 정보 (validation 포함)
- *   search: 검색 엔진 설정 (중첩 구조)
- *   users: 사용자 정보 리스트
- *   features: 기능 플래그 맵
- *   cache: 캐시 설정 (Duration 타입 활용)
- * 
- * @author Genius
- */
 @Data
 @Component
 @Validated
@@ -64,18 +39,18 @@ public class PrimaveraProperties {
 
     @Data
     public static class Database {
-        @NotBlank(message = "데이터베이스 사용자명은 필수입니다")
+        @NotBlank(message = "translated_text_7 translated_text_6 translated_text_5")
         private String username;
 
-        @NotBlank(message = "데이터베이스 비밀번호는 필수입니다")
-        @Size(min = 8, message = "비밀번호는 최소 8자 이상이어야 합니다")
+        @NotBlank(message = "translated_text_7 translated_text_5 translated_text_5")
+        @Size(min = 8, message = "translated_text_5 translated_text_2 8translated_text_1 translated_text_5 translated_text_3")
         private String password;
 
-        @NotBlank(message = "데이터베이스 URL은 필수입니다")
-        @Pattern(regexp = "^jdbc:.*", message = "올바른 JDBC URL 형식이 아닙니다")
+        @NotBlank(message = "translated_text_7 URLtranslated_text_1 translated_text_5")
+        @Pattern(regexp = "^jdbc:.*", message = "translated_text_3 JDBC URL translated_text_3 translated_text_4")
         private String url;
 
-        @NotEmpty(message = "최소 하나의 테이블 설정이 필요합니다")
+        @NotEmpty(message = "translated_text_2 translated_text_3 translated_text_3 translated_text_3 translated_text_3")
         private List<String> tables = new ArrayList<>();
     }
 
@@ -87,7 +62,7 @@ public class PrimaveraProperties {
         public static class Params {
             private String keyword;
 
-            @Min(value = 1, message = "페이지 번호는 1 이상이어야 합니다")
+            @Min(value = 1, message = "translated_text_3 translated_text_3 1 translated_text_5 translated_text_3")
             private Integer page = 1;
 
             private String sort = "asc";
@@ -102,8 +77,8 @@ public class PrimaveraProperties {
     public static class User {
         private Long id;
 
-        @NotBlank(message = "이메일은 필수입니다")
-        @Pattern(regexp = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$", message = "올바른 이메일 형식이 아닙니다")
+        @NotBlank(message = "translated_text_3translated_text_1 translated_text_5")
+        @Pattern(regexp = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$", message = "translated_text_3 translated_text_3 translated_text_3 translated_text_4")
         private String email;
 
         private String role = "USER";
@@ -117,7 +92,7 @@ public class PrimaveraProperties {
         private Duration timeToLive = Duration.ofMinutes(5);
         private String type = "local";
 
-        @Min(value = 1, message = "최대 항목 수는 1 이상이어야 합니다")
+        @Min(value = 1, message = "translated_text_2 translated_text_2 translated_text_2 1 translated_text_5 translated_text_3")
         private int maxEntries = 1000;
     }
 }

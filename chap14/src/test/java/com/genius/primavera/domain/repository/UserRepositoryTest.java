@@ -54,7 +54,7 @@ public class UserRepositoryTest {
 	@Order(1)
 	@Rollback(false)
 	@Transactional
-	@DisplayName("사용자 등록")
+	@DisplayName("user registration")
 	public void addUser() {
 		var connection = UserConnection.builder()
 				.email(EMAIL)
@@ -83,7 +83,7 @@ public class UserRepositoryTest {
 
 	@Test
 	@Order(2)
-	@DisplayName("사용자 이메일을 이용한 조회 테스트")
+	@DisplayName("user translated_text_4 translated_text_3 inquiry test")
 	public void findByEmail() {
 		var user = userRepository.findByEmail(EMAIL).get();
 		assertEquals(user.getNickname(), "Genius");
@@ -95,7 +95,7 @@ public class UserRepositoryTest {
 
 	@Test
 	@Order(3)
-	@DisplayName("사용자 닉네임을 이용한 조회 테스트 [Projections]")
+	@DisplayName("user translated_text_4 translated_text_3 inquiry test [Projections]")
 	public void findByNickname() {
 		List<UserDto> users = userRepository.findByNickname("Genius", UserDto.class);
 		users.stream().forEach(e -> log.info("user : {}", e));
@@ -106,7 +106,7 @@ public class UserRepositoryTest {
 	@Order(4)
 	@Rollback(false)
 	@Transactional
-	@DisplayName("사용자 정보 변경 테스트")
+	@DisplayName("user information translated_text_2 test")
 	public void userUpdate() {
 		var user = userRepository.findByEmail(EMAIL).get();
 		user.setStatus(UserStatus.BLOCK);
@@ -120,7 +120,7 @@ public class UserRepositoryTest {
 
 	@Test
 	@Order(5)
-	@DisplayName("사용자 관련 테이블 Truncate")
+	@DisplayName("user translated_text_2 translated_text_3 Truncate")
 	public void cleanUp() {
 		entityManager.createNativeQuery("TRUNCATE USER").executeUpdate();
 		entityManager.createNativeQuery("TRUNCATE USER_CONNECTION").executeUpdate();

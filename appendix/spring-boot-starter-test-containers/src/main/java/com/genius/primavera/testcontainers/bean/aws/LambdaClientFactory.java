@@ -16,7 +16,7 @@ public class LambdaClientFactory extends AwsServiceClientFactory {
     @Override
     public Object createClient(LocalStackContainer container) {
         if (!isAvailable()) {
-            throw new IllegalStateException("AWS Lambda SDK가 클래스패스에 없습니다. AWS SDK v2 의존성을 추가해주세요.");
+            throw new IllegalStateException("AWS Lambda SDKtranslated_text_1 translated_text_6 translated_text_4. AWS SDK v2 dependencytranslated_text_1 translated_text_1.");
         }
 
         try {
@@ -47,12 +47,12 @@ public class LambdaClientFactory extends AwsServiceClientFactory {
 
             Object lambdaClient = builder.getClass().getMethod("build").invoke(builder);
 
-            log.info("✅ LambdaClient가 성공적으로 생성되었습니다. 엔드포인트: {}", endpointUrl);
+            log.info(" LambdaClienttranslated_text_1 translated_text_10 translated_text_13. translated_text_5: {}", endpointUrl);
             return lambdaClient;
 
         } catch (Exception e) {
-            log.error("LambdaClient 생성 중 오류 발생", e);
-            throw new RuntimeException("LambdaClient 생성 실패", e);
+            log.error("LambdaClient creation translated_text_1 error translated_text_2", e);
+            throw new RuntimeException("LambdaClient creation failure", e);
         }
     }
 
@@ -78,6 +78,6 @@ public class LambdaClientFactory extends AwsServiceClientFactory {
 
     @Override
     public boolean isPrimary() {
-        return true; // Lambda는 서버리스 컴퓨팅으로 자주 사용되므로 Primary로 설정
+        return true;
     }
 }

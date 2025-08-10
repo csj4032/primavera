@@ -16,7 +16,7 @@ public class SnsClientFactory extends AwsServiceClientFactory {
     @Override
     public Object createClient(LocalStackContainer container) {
         if (!isAvailable()) {
-            throw new IllegalStateException("AWS SNS SDK가 클래스패스에 없습니다. AWS SDK v2 의존성을 추가해주세요.");
+            throw new IllegalStateException("AWS SNS SDKtranslated_text_1 translated_text_6 translated_text_4. AWS SDK v2 dependencytranslated_text_1 translated_text_1.");
         }
 
         try {
@@ -47,12 +47,12 @@ public class SnsClientFactory extends AwsServiceClientFactory {
 
             Object snsClient = builder.getClass().getMethod("build").invoke(builder);
 
-            log.info("✅ SnsClient가 성공적으로 생성되었습니다. 엔드포인트: {}", endpointUrl);
+            log.info(" SnsClienttranslated_text_1 translated_text_10 translated_text_13. translated_text_5: {}", endpointUrl);
             return snsClient;
 
         } catch (Exception e) {
-            log.error("SnsClient 생성 중 오류 발생", e);
-            throw new RuntimeException("SnsClient 생성 실패", e);
+            log.error("SnsClient creation translated_text_1 error translated_text_2", e);
+            throw new RuntimeException("SnsClient creation failure", e);
         }
     }
 
@@ -78,6 +78,6 @@ public class SnsClientFactory extends AwsServiceClientFactory {
 
     @Override
     public boolean isPrimary() {
-        return true; // SNS는 알림 서비스로 자주 사용되므로 Primary로 설정
+        return true;
     }
 }

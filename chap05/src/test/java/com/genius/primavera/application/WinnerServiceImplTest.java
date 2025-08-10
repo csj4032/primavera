@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @EnableTestContainers
 @ActiveProfiles("test")
-@DisplayName("WinnerServiceImpl 테스트")
+@DisplayName("WinnerServiceImpl test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class WinnerServiceImplTest {
 
@@ -23,7 +23,7 @@ public class WinnerServiceImplTest {
 
     @Test
     @Order(1)
-    @DisplayName("save 메소드 테스트")
+    @DisplayName("save translated_text_3 test")
     public void save() {
         Winner winner = Winner.builder().name("John Doe").year(2023).sport("Basketball").prize("Gold Medal").amount(new BigDecimal("10000.00")).build();
         int result = winnerService.save(winner);
@@ -32,7 +32,7 @@ public class WinnerServiceImplTest {
 
     @Test
     @Order(2)
-    @DisplayName("saveAndNew 메소드 테스트")
+    @DisplayName("saveAndNew translated_text_3 test")
     public void saveAndNew() {
         Winner winner1 = Winner.builder().name("Alice Smith").year(2023).sport("Tennis").prize("Silver Medal").amount(new BigDecimal("5000.00")).build();
         Winner winner2 = Winner.builder().name("Bob Johnson").year(2023).sport("Football").prize("Bronze Medal").amount(new BigDecimal("3000.00")).build();
@@ -43,7 +43,7 @@ public class WinnerServiceImplTest {
 
     @Test
     @Order(3)
-    @DisplayName("saveAndNested 메소드 테스트 - REQUIRES_NEW로 변경")
+    @DisplayName("saveAndNested translated_text_3 test - REQUIRES_NEWtranslated_text_1 translated_text_2")
     public void saveAndNested() {
         Winner winner1 = Winner.builder().name("David Wilson").year(2023).sport("Athletics").prize("Gold Medal").amount(new BigDecimal("12000.00")).build();
         Winner winner2 = Winner.builder().name("Eva Green").year(2023).sport("Cycling").prize("Silver Medal").amount(new BigDecimal("8000.00")).build();
@@ -54,7 +54,7 @@ public class WinnerServiceImplTest {
 
     @Test
     @Order(4)
-    @DisplayName("saveAndNotSupported 메소드 테스트")
+    @DisplayName("saveAndNotSupported translated_text_3 test")
     public void saveAndNotSupported() {
         Winner winner1 = Winner.builder().name("Grace Lee").year(2023).sport("Volleyball").prize("Gold Medal").amount(new BigDecimal("11000.00")).build();
         Winner winner2 = Winner.builder().name("Hank Kim").year(2023).sport("Baseball").prize("Silver Medal").amount(new BigDecimal("6000.00")).build();
@@ -65,7 +65,7 @@ public class WinnerServiceImplTest {
 
     @Test
     @Order(5)
-    @DisplayName("saveNotSupported 메소드 테스트 - NOT_SUPPORTED 트랜잭션")
+    @DisplayName("saveNotSupported translated_text_3 test - NOT_SUPPORTED translated_text_4")
     public void saveNotSupported() {
         Winner winner = Winner.builder()
                 .name("Test Not Supported Winner")
@@ -80,7 +80,7 @@ public class WinnerServiceImplTest {
 
     @Test
     @Order(6)
-    @DisplayName("saveNested 메소드 테스트 - REQUIRES_NEW 트랜잭션")
+    @DisplayName("saveNested translated_text_3 test - REQUIRES_NEW translated_text_4")
     public void saveNested() {
         Winner winner = Winner.builder()
                 .name("Test Nested Winner")
@@ -95,7 +95,7 @@ public class WinnerServiceImplTest {
 
     @Test
     @Order(7)
-    @DisplayName("saveRequiresNew 메소드 테스트 - REQUIRES_NEW 트랜잭션")
+    @DisplayName("saveRequiresNew translated_text_3 test - REQUIRES_NEW translated_text_4")
     public void saveRequiresNew() {
         Winner winner = Winner.builder()
                 .name("Test Requires New Winner")
@@ -110,7 +110,7 @@ public class WinnerServiceImplTest {
 
     @Test
     @Order(8)
-    @DisplayName("saveAll 메소드 테스트 - REQUIRES_NEW 트랜잭션")
+    @DisplayName("saveAll translated_text_3 test - REQUIRES_NEW translated_text_4")
     public void saveAll() {
         var winners = java.util.List.of(
                 Winner.builder().name("Winner 1").year(2023).sport("Sport 1").prize("Prize 1").amount(new BigDecimal("1000.00")).build(),
@@ -122,7 +122,7 @@ public class WinnerServiceImplTest {
 
     @Test
     @Order(9)
-    @DisplayName("saveAllNested 메소드 테스트 - REQUIRES_NEW로 변경")
+    @DisplayName("saveAllNested translated_text_3 test - REQUIRES_NEWtranslated_text_1 translated_text_2")
     void saveAllNested() {
         var winners = java.util.List.of(
                 Winner.builder().name("Winner 1").year(2023).sport("Sport 1").prize("Prize 1").amount(new BigDecimal("1000.00")).build(),
@@ -134,7 +134,7 @@ public class WinnerServiceImplTest {
 
     @Test
     @Order(10)
-    @DisplayName("innerSave 메소드 테스트 - REQUIRES_NEW 트랜잭션")
+    @DisplayName("innerSave translated_text_3 test - REQUIRES_NEW translated_text_4")
     public void innerSave() {
         var winners = java.util.List.of(
                 Winner.builder().name("Inner Winner 1").year(2023).sport("Sport 1").prize("Prize 1").amount(new BigDecimal("1000.00")).build(),
@@ -146,7 +146,7 @@ public class WinnerServiceImplTest {
 
     @Test
     @Order(11)
-    @DisplayName("innerSaveNew 메소드 테스트 - REQUIRES_NEW 트랜잭션")
+    @DisplayName("innerSaveNew translated_text_3 test - REQUIRES_NEW translated_text_4")
     public void innerSaveNew() {
         var winners = java.util.List.of(
                 Winner.builder().name("Inner New Winner 1").year(2023).sport("Sport 1").prize("Prize 1").amount(new BigDecimal("1000.00")).build(),
@@ -158,7 +158,7 @@ public class WinnerServiceImplTest {
 
     @Test
     @Order(12)
-    @DisplayName("innerNotSupported 메소드 테스트 - NOT_SUPPORTED 트랜잭션")
+    @DisplayName("innerNotSupported translated_text_3 test - NOT_SUPPORTED translated_text_4")
     public void innerNotSupported() {
         var winners = java.util.List.of(
                 Winner.builder().name("Inner Not Supported Winner 1").year(2023).sport("Sport 1").prize("Prize 1").amount(new BigDecimal("1000.00")).build(),
@@ -170,7 +170,7 @@ public class WinnerServiceImplTest {
 
     @Test
     @Order(13)
-    @DisplayName("findAllUncommitted 메소드 테스트")
+    @DisplayName("findAllUncommitted translated_text_3 test")
     public void findAllUncommitted() {
         var winners = winnerService.findAllUncommitted();
         assertNotNull(winners, "Winners should be found with uncommitted isolation level");
@@ -185,7 +185,7 @@ public class WinnerServiceImplTest {
 
     @Test
     @Order(14)
-    @DisplayName("findAllCommitted 메소드 테스트")
+    @DisplayName("findAllCommitted translated_text_3 test")
     public void findAllCommitted() {
         var winners = winnerService.findAllCommitted();
         assertNotNull(winners, "Winners should be found with committed isolation level");
@@ -200,9 +200,9 @@ public class WinnerServiceImplTest {
 
     @Test
     @Order(15)
-    @DisplayName("findAllByIdReadCommitted 메소드 테스트")
+    @DisplayName("findAllByIdReadCommitted translated_text_3 test")
     public void findAllByIdReadCommitted() {
-        Long id = 1L; // 예시 ID, 실제 테스트에서는 적절한 ID로 변경 필요
+        Long id = 1L;
         Winner winner = winnerService.findAllByIdReadCommitted(id);
         assertNotNull(winner, "Winner should be found by ID with Read Committed isolation level");
         assertEquals(id, winner.getId(), "Winner ID should match the requested ID");
@@ -213,9 +213,9 @@ public class WinnerServiceImplTest {
 
     @Test
     @Order(16)
-    @DisplayName("findAllByIdRepeatableRead 메소드 테스트")
+    @DisplayName("findAllByIdRepeatableRead translated_text_3 test")
     public void findAllByIdRepeatableRead() {
-        Long id = 1L; // 예시 ID, 실제 테스트에서는 적절한 ID로 변경 필요
+        Long id = 1L;
         Winner winner = winnerService.findAllByIdRepeatableRead(id);
         assertNotNull(winner, "Winner should be found by ID with Repeatable Read isolation level");
         assertEquals(id, winner.getId(), "Winner ID should match the requested ID");

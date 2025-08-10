@@ -37,7 +37,7 @@ class LocalStackContainerTest {
         assertTrue(localStackInfo.container() instanceof LocalStackContainer, 
             "Container should be LocalStackContainer instance");
 
-        log.info("✅ LocalStack container started successfully");
+        log.info(" LocalStack container started successfully");
     }
 
     @Test
@@ -61,7 +61,7 @@ class LocalStackContainerTest {
         assertTrue(spec.isSqsEnabled(), "SQS should be enabled by default");
         assertTrue(spec.isSnsEnabled(), "SNS should be enabled by default");
 
-        log.info("✅ LocalStack configuration validated - Services: {}", spec.getServices());
+        log.info(" LocalStack configuration validated - Services: {}", spec.getServices());
     }
 
     @Test
@@ -85,7 +85,7 @@ class LocalStackContainerTest {
 
         log.info("LocalStack edge port mapped to: {}", mappedPort);
 
-        log.info("✅ LocalStack endpoint is accessible");
+        log.info(" LocalStack endpoint is accessible");
     }
 
     @Test
@@ -118,7 +118,7 @@ class LocalStackContainerTest {
             log.warn("DynamoDB endpoint not available: {}", e.getMessage());
         }
 
-        log.info("✅ Service-specific endpoints checked");
+        log.info(" Service-specific endpoints checked");
     }
 
     @Test
@@ -143,7 +143,7 @@ class LocalStackContainerTest {
 
         log.info("LocalStack container ID: {}", containerId.substring(0, 12));
 
-        log.info("✅ LocalStack networking validated");
+        log.info(" LocalStack networking validated");
     }
 
     @Test
@@ -163,7 +163,7 @@ class LocalStackContainerTest {
 
         log.info("LocalStack container logs available: {} characters", logs.length());
 
-        log.info("✅ LocalStack environment variables properly set");
+        log.info(" LocalStack environment variables properly set");
     }
 
     @Test
@@ -185,6 +185,6 @@ class LocalStackContainerTest {
         log.info("  - Type: {}", localStackInfo.type());
         log.info("  - Name: {}", localStackInfo.name());
 
-        log.info("✅ LocalStack container lifecycle is healthy");
+        log.info(" LocalStack container lifecycle is healthy");
     }
 }

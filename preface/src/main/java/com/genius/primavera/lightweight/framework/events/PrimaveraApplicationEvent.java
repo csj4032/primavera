@@ -2,10 +2,6 @@ package com.genius.primavera.lightweight.framework.events;
 
 import java.time.LocalDateTime;
 
-/**
- * Primavera 애플리케이션에서 발생하는 이벤트의 기본 클래스
- * Spring의 ApplicationEvent와 유사한 역할을 합니다.
- */
 public abstract class PrimaveraApplicationEvent {
     
     private final Object source;

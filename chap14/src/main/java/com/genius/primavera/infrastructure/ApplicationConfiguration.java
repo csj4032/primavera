@@ -36,7 +36,6 @@ import java.time.Duration;
 @EnableJpaAuditing
 public class ApplicationConfiguration implements WebMvcConfigurer {
 
-
     @Bean
     public ObjectMapper objectMapper() {
         return new ObjectMapper()

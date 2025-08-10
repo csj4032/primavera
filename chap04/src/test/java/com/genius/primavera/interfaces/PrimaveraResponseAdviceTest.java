@@ -8,7 +8,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class PrimaveraResponseAdviceTest {
 
-
     @Test
     @Order(1)
     @DisplayName("Response Body Logging Test")

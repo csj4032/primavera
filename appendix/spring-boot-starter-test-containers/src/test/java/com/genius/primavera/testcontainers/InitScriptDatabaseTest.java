@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
 @SpringBootTest(properties = {
-    "spring.test.context.cache.maxSize=0",  // Context 캐싱 비활성화로 격리 강화
+    "spring.test.context.cache.maxSize=0",
     "spring.main.allow-bean-definition-overriding=true"
 })
 @ActiveProfiles("test")
@@ -45,67 +45,67 @@ class InitScriptDatabaseTest {
 
     @Test
     @Order(1)
-    @DisplayName("데이터베이스 컨테이너 시작 및 연결 확인")
+    @DisplayName("translated_text_7 translated_text_4 translated_text_2 translated_text_1 translated_text_2 verification")
     void testDatabaseContainerStartup() {
         ContainerInfo containerInfo = containerManager.getContainer("primavera");
         
-        assertNotNull(containerInfo, "Primavera 컨테이너 정보가 존재해야 함");
-        assertTrue(containerInfo.container().isRunning(), "컨테이너가 실행 중이어야 함");
+        assertNotNull(containerInfo, "Primavera translated_text_4 translated_text_12 translated_text_4 translated_text_1");
+        assertTrue(containerInfo.container().isRunning(), "translated_text_4translated_text_1 execution translated_text_4 translated_text_1");
         
         assertDoesNotThrow(() -> {
             String version = jdbcTemplate.queryForObject("SELECT VERSION()", String.class);
-            assertNotNull(version, "데이터베이스 버전 정보를 가져올 수 있어야 함");
-            assertTrue(version.toLowerCase().contains("mariadb"), "MariaDB 버전 정보여야 함");
-            log.info("데이터베이스 버전: {}", version);
-        }, "데이터베이스 연결이 정상적으로 작동해야 함");
+            assertNotNull(version, "translated_text_7 translated_text_2 translated_text_12 translated_text_3 translated_text_1 translated_text_3 translated_text_1");
+            assertTrue(version.toLowerCase().contains("mariadb"), "MariaDB translated_text_2 translated_text_13 translated_text_1");
+            log.info("translated_text_7 translated_text_2: {}", version);
+        }, "translated_text_7 translated_text_2translated_text_1 successfully translated_text_4 translated_text_1");
         
-        log.info("데이터베이스 컨테이너 시작 및 연결 확인 완료");
+        log.info("translated_text_7 translated_text_4 translated_text_2 translated_text_1 translated_text_2 verification completed");
     }
 
     @Test
     @Order(2)
-    @DisplayName("초기화 스크립트로 생성된 USERS 테이블 구조 확인")
+    @DisplayName("translated_text_3 translated_text_5 translated_text_9 USERS translated_text_3 translated_text_2 verification")
     void testInitScriptTableStructure() {
         assertDoesNotThrow(() -> {
             Integer tableCount = jdbcTemplate.queryForObject(
                 "SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'USERS'",
                 Integer.class);
-            assertEquals(1, tableCount, "USERS 테이블이 존재해야 함");
-        }, "USERS 테이블 존재 확인이 성공해야 함");
+            assertEquals(1, tableCount, "USERS translated_text_3translated_text_1 translated_text_4 translated_text_1");
+        }, "USERS translated_text_3 translated_text_2 verificationtranslated_text_1 translated_text_9 translated_text_1");
 
         List<Map<String, Object>> columns = jdbcTemplate.queryForList(
             "SELECT COLUMN_NAME, DATA_TYPE, IS_NULLABLE, COLUMN_DEFAULT FROM INFORMATION_SCHEMA.COLUMNS " +
             "WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'USERS' ORDER BY ORDINAL_POSITION"
         );
 
-        assertFalse(columns.isEmpty(), "USERS 테이블에 컬럼이 존재해야 함");
+        assertFalse(columns.isEmpty(), "USERS translated_text_3 translated_text_3 translated_text_4 translated_text_1");
         
         List<String> columnNames = columns.stream()
             .map(col -> (String) col.get("COLUMN_NAME"))
             .toList();
         
-        assertTrue(columnNames.contains("ID"), "ID 컬럼이 존재해야 함");
-        assertTrue(columnNames.contains("EMAIL"), "EMAIL 컬럼이 존재해야 함");
-        assertTrue(columnNames.contains("PASSWORD"), "PASSWORD 컬럼이 존재해야 함");
-        assertTrue(columnNames.contains("NICKNAME"), "NICKNAME 컬럼이 존재해야 함");
-        assertTrue(columnNames.contains("STATUS"), "STATUS 컬럼이 존재해야 함");
-        assertTrue(columnNames.contains("CREATED_AT"), "CREATED_AT 컬럼이 존재해야 함");
-        assertTrue(columnNames.contains("UPDATED_AT"), "UPDATED_AT 컬럼이 존재해야 함");
+        assertTrue(columnNames.contains("ID"), "ID translated_text_3 translated_text_4 translated_text_1");
+        assertTrue(columnNames.contains("EMAIL"), "EMAIL translated_text_3 translated_text_4 translated_text_1");
+        assertTrue(columnNames.contains("PASSWORD"), "PASSWORD translated_text_3 translated_text_4 translated_text_1");
+        assertTrue(columnNames.contains("NICKNAME"), "NICKNAME translated_text_3 translated_text_4 translated_text_1");
+        assertTrue(columnNames.contains("STATUS"), "STATUS translated_text_3 translated_text_4 translated_text_1");
+        assertTrue(columnNames.contains("CREATED_AT"), "CREATED_AT translated_text_3 translated_text_4 translated_text_1");
+        assertTrue(columnNames.contains("UPDATED_AT"), "UPDATED_AT translated_text_3 translated_text_4 translated_text_1");
 
-        log.info("USERS 테이블 구조 확인 완료 - 컬럼 수: {}", columns.size());
+        log.info("USERS translated_text_3 translated_text_2 verification completed - translated_text_2 translated_text_1: {}", columns.size());
         columns.forEach(col -> 
-            log.debug("컬럼: {} - 타입: {}, Nullable: {}", 
+            log.debug("translated_text_2: {} - translated_text_2: {}, Nullable: {}", 
                 col.get("COLUMN_NAME"), col.get("DATA_TYPE"), col.get("IS_NULLABLE"))
         );
     }
 
     @Test
     @Order(3)
-    @DisplayName("초기화 스크립트로 삽입된 기본 사용자 데이터 확인")
+    @DisplayName("translated_text_3 translated_text_5 translated_text_3 translated_text_2 user data verification")
     void testInitScriptUserData() {
         Integer totalUsers = jdbcTemplate.queryForObject(
             "SELECT COUNT(*) FROM USERS", Integer.class);
-        assertEquals(6, totalUsers, "초기화 스크립트에서 6명의 사용자가 삽입되어야 함");
+        assertEquals(6, totalUsers, "translated_text_3 translated_text_6 6translated_text_2 usertranslated_text_1 translated_text_5 translated_text_1");
 
         String[] expectedEmails = {
             "genius@primavera.com", "admin@primavera.com", "user@primavera.com", 
@@ -115,114 +115,114 @@ class InitScriptDatabaseTest {
         for (String email : expectedEmails) {
             Integer userCount = jdbcTemplate.queryForObject(
                 "SELECT COUNT(*) FROM USERS WHERE EMAIL = ?", Integer.class, email);
-            assertEquals(1, userCount, email + " 사용자가 존재해야 함");
+            assertEquals(1, userCount, email + " usertranslated_text_1 translated_text_4 translated_text_1");
         }
 
         List<Map<String, Object>> users = jdbcTemplate.queryForList(
             "SELECT ID, EMAIL, NICKNAME, STATUS FROM USERS ORDER BY ID");
 
-        assertEquals(6, users.size(), "6명의 사용자 데이터가 조회되어야 함");
+        assertEquals(6, users.size(), "6translated_text_2 user datatranslated_text_1 translated_text_10 translated_text_1");
 
         Map<String, Object> geniusUser = users.get(0);
-        assertEquals(1L, ((Number) geniusUser.get("ID")).longValue(), "첫 번째 사용자의 ID는 1이어야 함");
-        assertEquals("genius@primavera.com", geniusUser.get("EMAIL"), "첫 번째 사용자의 이메일이 일치해야 함");
-        assertEquals("Genius", geniusUser.get("NICKNAME"), "첫 번째 사용자의 닉네임이 일치해야 함");
-        assertEquals(1, ((Number) geniusUser.get("STATUS")).intValue(), "첫 번째 사용자의 상태가 1이어야 함");
+        assertEquals(1L, ((Number) geniusUser.get("ID")).longValue(), "translated_text_1 translated_text_2 user IDtranslated_text_1 1translated_text_3 translated_text_1");
+        assertEquals("genius@primavera.com", geniusUser.get("EMAIL"), "translated_text_1 translated_text_2 user translated_text_4 translated_text_4 translated_text_1");
+        assertEquals("Genius", geniusUser.get("NICKNAME"), "translated_text_1 translated_text_2 user translated_text_4 translated_text_4 translated_text_1");
+        assertEquals(1, ((Number) geniusUser.get("STATUS")).intValue(), "translated_text_1 translated_text_2 user translated_text_3 1translated_text_3 translated_text_1");
 
-        log.info("초기화된 사용자 데이터 확인 완료 - 총 {} 명", totalUsers);
+        log.info("translated_text_3 user data verification completed - translated_text_1 {} translated_text_1", totalUsers);
         users.forEach(user -> 
-            log.debug("사용자: ID={}, EMAIL={}, NICKNAME={}, STATUS={}", 
+            log.debug("user: ID={}, EMAIL={}, NICKNAME={}, STATUS={}", 
                 user.get("ID"), user.get("EMAIL"), user.get("NICKNAME"), user.get("STATUS"))
         );
     }
 
     @Test
     @Order(4)
-    @DisplayName("초기화된 데이터에 대한 CRUD 작업 수행")
+    @DisplayName("translated_text_3 data translated_text_2 CRUD translated_text_2 translated_text_1")
     void testCrudOperationsOnInitializedData() {
         Map<String, Object> existingUser = jdbcTemplate.queryForMap(
             "SELECT * FROM USERS WHERE EMAIL = ?", "genius@primavera.com");
         
-        assertNotNull(existingUser, "기존 사용자 조회가 성공해야 함");
-        assertEquals("Genius", existingUser.get("NICKNAME"), "기존 사용자의 닉네임이 일치해야 함");
+        assertNotNull(existingUser, "translated_text_2 user translated_text_8 translated_text_9 translated_text_1");
+        assertEquals("Genius", existingUser.get("NICKNAME"), "translated_text_2 user translated_text_4 translated_text_4 translated_text_1");
 
         int updateResult = jdbcTemplate.update(
             "UPDATE USERS SET NICKNAME = ?, STATUS = ? WHERE EMAIL = ?",
             "Updated Genius", 2, "genius@primavera.com");
-        assertEquals(1, updateResult, "사용자 업데이트가 성공해야 함");
+        assertEquals(1, updateResult, "user translated_text_5 translated_text_9 translated_text_1");
 
         Map<String, Object> updatedUser = jdbcTemplate.queryForMap(
             "SELECT NICKNAME, STATUS FROM USERS WHERE EMAIL = ?", "genius@primavera.com");
-        assertEquals("Updated Genius", updatedUser.get("NICKNAME"), "닉네임이 업데이트되어야 함");
-        assertEquals(2, ((Number) updatedUser.get("STATUS")).intValue(), "상태가 업데이트되어야 함");
+        assertEquals("Updated Genius", updatedUser.get("NICKNAME"), "translated_text_4 translated_text_7 translated_text_1");
+        assertEquals(2, ((Number) updatedUser.get("STATUS")).intValue(), "translated_text_3 translated_text_7 translated_text_1");
 
         int insertResult = jdbcTemplate.update(
             "INSERT INTO USERS (EMAIL, PASSWORD, NICKNAME, STATUS) VALUES (?, ?, ?, ?)",
             "newuser@test.com", "{noop}newpass", "NewUser", 1);
-        assertEquals(1, insertResult, "새 사용자 삽입이 성공해야 함");
+        assertEquals(1, insertResult, "translated_text_1 user translated_text_3 translated_text_9 translated_text_1");
 
         Integer totalUsers = jdbcTemplate.queryForObject(
             "SELECT COUNT(*) FROM USERS", Integer.class);
-        assertEquals(7, totalUsers, "총 사용자 수가 7명이 되어야 함");
+        assertEquals(7, totalUsers, "translated_text_1 user translated_text_1translated_text_1 7translated_text_1translated_text_1 translated_text_3 translated_text_1");
 
         Map<String, Object> newUser = jdbcTemplate.queryForMap(
             "SELECT EMAIL, NICKNAME, STATUS FROM USERS WHERE EMAIL = ?", "newuser@test.com");
-        assertEquals("NewUser", newUser.get("NICKNAME"), "새 사용자의 닉네임이 일치해야 함");
-        assertEquals(1, ((Number) newUser.get("STATUS")).intValue(), "새 사용자의 상태가 1이어야 함");
+        assertEquals("NewUser", newUser.get("NICKNAME"), "translated_text_1 user translated_text_4 translated_text_4 translated_text_1");
+        assertEquals(1, ((Number) newUser.get("STATUS")).intValue(), "translated_text_1 user translated_text_3 1translated_text_3 translated_text_1");
 
-        log.info("초기화된 데이터에 대한 CRUD 작업 완료 - 총 사용자: {}", totalUsers);
+        log.info("translated_text_3 data translated_text_2 CRUD translated_text_2 completed - translated_text_1 user: {}", totalUsers);
     }
 
     @Test
     @Order(5)
-    @DisplayName("데이터베이스 인덱스 및 제약조건 확인")
+    @DisplayName("translated_text_7 translated_text_3 translated_text_1 translated_text_4 verification")
     void testDatabaseConstraintsAndIndexes() {
         assertThrows(Exception.class, () -> {
             jdbcTemplate.update(
                 "INSERT INTO USERS (EMAIL, PASSWORD, NICKNAME, STATUS) VALUES (?, ?, ?, ?)",
                 "genius@primavera.com", "{noop}duplicate", "Duplicate", 1);
-        }, "중복 이메일로 인해 삽입이 실패해야 함");
+        }, "translated_text_2 translated_text_4 translated_text_2 translated_text_3 translated_text_9 translated_text_1");
 
         List<Map<String, Object>> indexes = jdbcTemplate.queryForList(
             "SELECT INDEX_NAME, COLUMN_NAME FROM INFORMATION_SCHEMA.STATISTICS " +
             "WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'USERS' AND INDEX_NAME = 'IDX_USERS_EMAIL'"
         );
 
-        assertFalse(indexes.isEmpty(), "IDX_USERS_EMAIL 인덱스가 존재해야 함");
-        assertEquals("EMAIL", indexes.get(0).get("COLUMN_NAME"), "인덱스가 EMAIL 컬럼에 설정되어야 함");
+        assertFalse(indexes.isEmpty(), "IDX_USERS_EMAIL translated_text_3translated_text_1 translated_text_4 translated_text_1");
+        assertEquals("EMAIL", indexes.get(0).get("COLUMN_NAME"), "translated_text_3translated_text_1 EMAIL translated_text_2 translated_text_3 translated_text_1");
 
         List<Map<String, Object>> primaryKey = jdbcTemplate.queryForList(
             "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE " +
             "WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'USERS' AND CONSTRAINT_NAME = 'PRIMARY'"
         );
 
-        assertFalse(primaryKey.isEmpty(), "PRIMARY KEY가 존재해야 함");
-        assertEquals("ID", primaryKey.get(0).get("COLUMN_NAME"), "PRIMARY KEY가 ID 컬럼에 설정되어야 함");
+        assertFalse(primaryKey.isEmpty(), "PRIMARY KEYtranslated_text_1 translated_text_4 translated_text_1");
+        assertEquals("ID", primaryKey.get(0).get("COLUMN_NAME"), "PRIMARY KEYtranslated_text_1 ID translated_text_2 translated_text_3 translated_text_1");
 
-        log.info("데이터베이스 제약조건 및 인덱스 확인 완료");
+        log.info("translated_text_7 translated_text_4 translated_text_1 translated_text_3 verification completed");
     }
 
     @Test
     @Order(6)
-    @DisplayName("날짜 컬럼의 기본값 및 자동 업데이트 확인")
+    @DisplayName("translated_text_2 translated_text_2 translated_text_2 translated_text_1 translated_text_2 translated_text_4 verification")
     void testDateColumnDefaultsAndAutoUpdate() throws InterruptedException {
-        long beforeInsert = System.currentTimeMillis() / 1000; // 초 단위로 변환
+        long beforeInsert = System.currentTimeMillis() / 1000;
 
         int insertResult = jdbcTemplate.update(
             "INSERT INTO USERS (EMAIL, PASSWORD, NICKNAME, STATUS) VALUES (?, ?, ?, ?)",
             "datetime@test.com", "{noop}test", "DateTimeTest", 1);
-        assertEquals(1, insertResult, "사용자 삽입이 성공해야 함");
+        assertEquals(1, insertResult, "user translated_text_3 translated_text_9 translated_text_1");
 
         long afterInsert = System.currentTimeMillis() / 1000;
 
         Map<String, Object> dateUser = jdbcTemplate.queryForMap(
             "SELECT ID, CREATED_AT, UPDATED_AT FROM USERS WHERE EMAIL = ?", "datetime@test.com");
 
-        assertNotNull(dateUser.get("CREATED_AT"), "CREATED_AT이 설정되어야 함");
-        assertNotNull(dateUser.get("UPDATED_AT"), "UPDATED_AT이 설정되어야 함");
+        assertNotNull(dateUser.get("CREATED_AT"), "CREATED_ATtranslated_text_1 translated_text_3 translated_text_1");
+        assertNotNull(dateUser.get("UPDATED_AT"), "UPDATED_ATtranslated_text_1 translated_text_3 translated_text_1");
 
         assertEquals(dateUser.get("CREATED_AT"), dateUser.get("UPDATED_AT"), 
-            "초기 생성 시 CREATED_AT과 UPDATED_AT이 동일해야 함");
+            "translated_text_2 creation translated_text_1 CREATED_ATtranslated_text_1 UPDATED_ATtranslated_text_1 translated_text_4 translated_text_1");
 
         Long userId = ((Number) dateUser.get("ID")).longValue();
 
@@ -230,22 +230,22 @@ class InitScriptDatabaseTest {
 
         int updateResult = jdbcTemplate.update(
             "UPDATE USERS SET NICKNAME = ? WHERE ID = ?", "UpdatedDateTimeTest", userId);
-        assertEquals(1, updateResult, "데이터 업데이트가 성공해야 함");
+        assertEquals(1, updateResult, "data translated_text_5 translated_text_9 translated_text_1");
 
         Map<String, Object> updatedDateUser = jdbcTemplate.queryForMap(
             "SELECT CREATED_AT, UPDATED_AT FROM USERS WHERE ID = ?", userId);
 
         assertEquals(dateUser.get("CREATED_AT"), updatedDateUser.get("CREATED_AT"), 
-            "CREATED_AT은 변경되지 않아야 함");
+            "CREATED_ATtranslated_text_1 translated_text_4 translated_text_3 translated_text_1");
         assertNotEquals(dateUser.get("UPDATED_AT"), updatedDateUser.get("UPDATED_AT"), 
-            "UPDATED_AT은 업데이트 시 변경되어야 함");
+            "UPDATED_ATtranslated_text_1 translated_text_4 translated_text_1 translated_text_3 translated_text_1");
 
-        log.info("날짜 컬럼의 기본값 및 자동 업데이트 확인 완료");
+        log.info("translated_text_2 translated_text_2 translated_text_2 translated_text_1 translated_text_2 translated_text_4 verification completed");
     }
 
     @Test
     @Order(7)
-    @DisplayName("데이터베이스 성능 및 대용량 데이터 처리 테스트")
+    @DisplayName("translated_text_7 translated_text_2 translated_text_1 translated_text_3 data processing test")
     void testDatabasePerformanceAndLargeDataHandling() {
         int batchSize = 100;
         String testPrefix = "performance_";
@@ -258,7 +258,7 @@ class InitScriptDatabaseTest {
                     "INSERT INTO USERS (EMAIL, PASSWORD, NICKNAME, STATUS) VALUES (?, ?, ?, ?)",
                     testPrefix + i + "@perf.com", "{noop}test", "PerfUser" + i, 1);
             } catch (Exception e) {
-                log.warn("중복으로 인한 삽입 실패 (예상됨): {}", e.getMessage());
+                log.warn("translated_text_2 translated_text_2 translated_text_2 failure (translated_text_3): {}", e.getMessage());
             }
         }
 
@@ -267,8 +267,8 @@ class InitScriptDatabaseTest {
         Integer perfUserCount = jdbcTemplate.queryForObject(
             "SELECT COUNT(*) FROM USERS WHERE EMAIL LIKE ?", Integer.class, testPrefix + "%@perf.com");
         
-        assertTrue(perfUserCount > 0, "성능 테스트 사용자가 삽입되어야 함");
-        log.info("성능 테스트 데이터 삽입 완료 - {} 건, 소요시간: {}ms", perfUserCount, insertTime);
+        assertTrue(perfUserCount > 0, "translated_text_2 test usertranslated_text_1 translated_text_5 translated_text_1");
+        log.info("translated_text_2 test data translated_text_2 completed - {} translated_text_1, translated_text_1: {}ms", perfUserCount, insertTime);
 
         startTime = System.currentTimeMillis();
         
@@ -278,8 +278,8 @@ class InitScriptDatabaseTest {
         
         long queryTime = System.currentTimeMillis() - startTime;
 
-        assertFalse(perfUsers.isEmpty(), "성능 테스트 데이터 조회 결과가 존재해야 함");
-        assertTrue(queryTime < 5000, "대량 조회가 5초 이내에 완료되어야 함");
+        assertFalse(perfUsers.isEmpty(), "translated_text_2 test data inquiry translated_text_1translated_text_1 translated_text_4 translated_text_1");
+        assertTrue(queryTime < 5000, "translated_text_2 translated_text_8 5translated_text_1 translated_text_1 completedtranslated_text_3 translated_text_1");
 
         startTime = System.currentTimeMillis();
         
@@ -289,10 +289,10 @@ class InitScriptDatabaseTest {
         long aggregateTime = System.currentTimeMillis() - startTime;
 
         assertTrue(((Number) aggregateResult.get("user_count")).intValue() > 6, 
-            "총 사용자 수가 초기 데이터보다 많아야 함");
-        assertTrue(aggregateTime < 2000, "집계 쿼리가 2초 이내에 완료되어야 함");
+            "translated_text_1 user translated_text_1translated_text_1 translated_text_2 data translated_text_3 translated_text_1");
+        assertTrue(aggregateTime < 2000, "translated_text_2 translated_text_1 2translated_text_1 translated_text_1 completedtranslated_text_3 translated_text_1");
 
-        log.info("데이터베이스 성능 테스트 완료 - 조회: {}ms, 집계: {}ms, 총 사용자: {}", 
+        log.info("translated_text_7 translated_text_2 test completed - inquiry: {}ms, translated_text_2: {}ms, translated_text_1 user: {}", 
             queryTime, aggregateTime, aggregateResult.get("user_count"));
     }
 }

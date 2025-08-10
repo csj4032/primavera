@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Slf4j
 @ActiveProfiles("test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@DisplayName("ProductIndexingService 테스트")
+@DisplayName("ProductIndexingService test")
 @SpringBootTest(classes = {
     com.genius.primavera.batch.config.ElasticsearchConfiguration.class,
     com.genius.primavera.batch.service.ProductIndexingService.class
@@ -40,14 +40,14 @@ public class ProductIndexingServiceTest {
     void setUp() {
         Category category = Category.builder()
                 .id(1L)
-                .name("전자제품")
+                .name("translated_text_4")
                 .level(1)
                 .createdAt(LocalDateTime.now())
                 .build();
 
         Seller seller = Seller.builder()
                 .id(1L)
-                .name("테스트 판매자")
+                .name("test translated_text_3")
                 .email("seller@test.com")
                 .rating(4.5)
                 .createdAt(LocalDateTime.now())
@@ -55,8 +55,8 @@ public class ProductIndexingServiceTest {
 
         testProduct = Product.builder()
                 .id(1L)
-                .name("테스트 스마트폰")
-                .description("최신 기술이 적용된 스마트폰입니다")
+                .name("test translated_text_4")
+                .description("translated_text_2 translated_text_3 translated_text_3 translated_text_4")
                 .price(899000)
                 .status(ProductStatus.ACTIVE)
                 .category(category)
@@ -68,24 +68,24 @@ public class ProductIndexingServiceTest {
 
     @Test
     @Order(1)
-    @DisplayName("Products 인덱스를 생성할 수 있다")
+    @DisplayName("Products translated_text_4 translated_text_9 translated_text_1 exists")
     void shouldCreateProductsIndex() throws IOException {
         productIndexingService.createProductsIndexIfNotExists();
-        log.info("Products 인덱스 생성 테스트 완료");
+        log.info("Products translated_text_3 creation test completed");
     }
 
     @Test
     @Order(2) 
-    @DisplayName("Product를 Elasticsearch에 인덱싱할 수 있다")
+    @DisplayName("Producttranslated_text_1 Elasticsearchtranslated_text_1 translated_text_4 translated_text_1 exists")
     void shouldIndexProduct() throws IOException {
         productIndexingService.createProductsIndexIfNotExists();
         productIndexingService.indexProduct(testProduct);
-        log.info("상품 인덱싱 테스트 완료 - Product ID: {}", testProduct.getId());
+        log.info("translated_text_2 translated_text_3 test completed - Product ID: {}", testProduct.getId());
     }
 
     @Test
     @Order(3)
-    @DisplayName("인덱싱된 Product를 검색할 수 있다") 
+    @DisplayName("translated_text_3 Producttranslated_text_1 translated_text_3 translated_text_1 exists") 
     void shouldSearchProducts() throws IOException {
         productIndexingService.createProductsIndexIfNotExists();
         productIndexingService.indexProduct(testProduct);
@@ -96,28 +96,28 @@ public class ProductIndexingServiceTest {
             Thread.currentThread().interrupt();
         }
 
-        SearchResponse<ProductDocument> response = productIndexingService.searchProducts("스마트폰");
-        assertNotNull(response, "검색 응답이 null이 아니어야 한다");
-        assertNotNull(response.hits(), "검색 결과가 있어야 한다");
-        assertTrue(response.hits().total().value() > 0, "검색된 문서가 있어야 한다");
+        SearchResponse<ProductDocument> response = productIndexingService.searchProducts("translated_text_4");
+        assertNotNull(response, "translated_text_2 translated_text_3 nulltranslated_text_1 translated_text_4 translated_text_2");
+        assertNotNull(response.hits(), "translated_text_2 translated_text_7 translated_text_3 translated_text_2");
+        assertTrue(response.hits().total().value() > 0, "translated_text_2 translated_text_3 translated_text_3 translated_text_2");
         Hit<ProductDocument> hit = response.hits().hits().get(0);
         ProductDocument document = hit.source();
-        assertNotNull(document, "문서 소스가 있어야 한다");
+        assertNotNull(document, "translated_text_2 translated_text_3 translated_text_3 translated_text_2");
 
-        assertEquals(testProduct.getName(), document.getName(), "상품명이 일치해야 한다");
-        assertEquals(testProduct.getDescription(), document.getDescription(), "상품 설명이 일치해야 한다");
-        assertEquals(testProduct.getPrice(), document.getPrice(), "상품 가격이 일치해야 한다");
-        assertEquals(testProduct.getStatus().name(), document.getStatus(), "상품 상태가 일치해야 한다");
-        assertEquals(testProduct.getSeller().getName(), document.getSellerName(), "판매자명이 일치해야 한다");
-        assertEquals(testProduct.getCategory().getName(), document.getCategoryName(), "카테고리명이 일치해야 한다");
+        assertEquals(testProduct.getName(), document.getName(), "translated_text_2translated_text_1 translated_text_4 translated_text_2");
+        assertEquals(testProduct.getDescription(), document.getDescription(), "translated_text_2 translated_text_2translated_text_1 translated_text_4 translated_text_2");
+        assertEquals(testProduct.getPrice(), document.getPrice(), "translated_text_2 translated_text_1 translated_text_4 translated_text_2");
+        assertEquals(testProduct.getStatus().name(), document.getStatus(), "translated_text_2 translated_text_3 translated_text_4 translated_text_2");
+        assertEquals(testProduct.getSeller().getName(), document.getSellerName(), "translated_text_3translated_text_1 translated_text_4 translated_text_2");
+        assertEquals(testProduct.getCategory().getName(), document.getCategoryName(), "translated_text_5translated_text_1 translated_text_4 translated_text_2");
 
-        log.info("상품 검색 테스트 완료 - 검색된 문서 수: {}", response.hits().total().value());
-        log.info("검색된 상품: {}", document.getName());
+        log.info("translated_text_2 translated_text_2 test completed - translated_text_2 translated_text_2 translated_text_1: {}", response.hits().total().value());
+        log.info("translated_text_2 translated_text_2: {}", document.getName());
     }
 
     @Test
     @Order(4)
-    @DisplayName("다양한 필드로 Product를 검색할 수 있다")
+    @DisplayName("translated_text_3 translated_text_3 Producttranslated_text_1 translated_text_3 translated_text_1 exists")
     void shouldSearchProductsByDifferentFields() throws IOException {
         productIndexingService.createProductsIndexIfNotExists();
         productIndexingService.indexProduct(testProduct);
@@ -128,16 +128,16 @@ public class ProductIndexingServiceTest {
             Thread.currentThread().interrupt();
         }
 
-        SearchResponse<ProductDocument> sellerResponse = productIndexingService.searchProducts("테스트 판매자");
-        assertTrue(sellerResponse.hits().total().value() > 0, "판매자명으로 검색이 가능해야 한다");
-        SearchResponse<ProductDocument> categoryResponse = productIndexingService.searchProducts("전자제품");
-        assertTrue(categoryResponse.hits().total().value() > 0, "카테고리명으로 검색이 가능해야 한다");
-        SearchResponse<ProductDocument> descriptionResponse = productIndexingService.searchProducts("최신 기술");
-        assertTrue(descriptionResponse.hits().total().value() > 0, "설명으로 검색이 가능해야 한다");
+        SearchResponse<ProductDocument> sellerResponse = productIndexingService.searchProducts("test translated_text_3");
+        assertTrue(sellerResponse.hits().total().value() > 0, "translated_text_3 translated_text_2translated_text_1 translated_text_4 translated_text_2");
+        SearchResponse<ProductDocument> categoryResponse = productIndexingService.searchProducts("translated_text_4");
+        assertTrue(categoryResponse.hits().total().value() > 0, "translated_text_7 translated_text_2translated_text_1 translated_text_4 translated_text_2");
+        SearchResponse<ProductDocument> descriptionResponse = productIndexingService.searchProducts("translated_text_2 translated_text_2");
+        assertTrue(descriptionResponse.hits().total().value() > 0, "translated_text_4 translated_text_2translated_text_1 translated_text_4 translated_text_2");
         
-        log.info("다중 필드 검색 테스트 완료");
-        log.info("- 판매자명 검색: {}개", sellerResponse.hits().total().value());
-        log.info("- 카테고리명 검색: {}개", categoryResponse.hits().total().value());
-        log.info("- 설명 검색: {}개", descriptionResponse.hits().total().value());
+        log.info("translated_text_2 translated_text_2 translated_text_2 test completed");
+        log.info("- translated_text_3 translated_text_2: {}translated_text_1", sellerResponse.hits().total().value());
+        log.info("- translated_text_5 translated_text_2: {}translated_text_1", categoryResponse.hits().total().value());
+        log.info("- translated_text_2 translated_text_2: {}translated_text_1", descriptionResponse.hits().total().value());
     }
 }

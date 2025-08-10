@@ -22,31 +22,31 @@ public class LoggingDemoController {
 
     @GetMapping("/demo")
     public Map<String, Object> demonstrateLogging() {
-        log.trace("TRACE 레벨 - 가장 상세한 정보");
-        log.debug("DEBUG 레벨 - 디버깅 정보");
-        log.info("INFO 레벨 - 일반 정보 메시지");
-        log.warn("WARN 레벨 - 경고 메시지");
-        log.error("ERROR 레벨 - 에러 메시지");
-        String user = "사용자";
+        log.trace("TRACE translated_text_2 - translated_text_2 translated_text_3 information");
+        log.debug("DEBUG translated_text_2 - translated_text_3 information");
+        log.info("INFO translated_text_2 - translated_text_2 information translated_text_3");
+        log.warn("WARN translated_text_2 - translated_text_2 translated_text_3");
+        log.error("ERROR translated_text_2 - translated_text_2 translated_text_3");
+        String user = "user";
         LocalDateTime now = LocalDateTime.now();
-        log.info("사용자 [{}]가 {}에 로깅 데모를 실행했습니다", user, now);
+        log.info("user [{}]translated_text_1 {}translated_text_1 translated_text_2 translated_text_3 translated_text_13", user, now);
         try {
-            throw new RuntimeException("의도적인 예외 발생");
+            throw new RuntimeException("translated_text_4 exception translated_text_2");
         } catch (Exception e) {
-            log.error("예외가 발생했습니다", e);
+            log.error("exceptiontranslated_text_1 translated_text_2", e);
         }
-        return Map.of("activeProfile", activeProfile, "logPath", logPath, "timestamp", now, "message", "로그 파일을 확인하세요: " + logPath);
+        return Map.of("activeProfile", activeProfile, "logPath", logPath, "timestamp", now, "message", "translated_text_2 translated_text_3 translated_text_15: " + logPath);
     }
 
     @GetMapping("/profile-info")
     public Map<String, Object> getProfileInfo() {
-        log.info("현재 활성 프로파일: {}", activeProfile);
-        log.info("로그 경로: {}", logPath);
+        log.info("translated_text_2 translated_text_2 translated_text_4: {}", activeProfile);
+        log.info("translated_text_2 translated_text_2: {}", logPath);
         if ("local".equals(activeProfile)) {
-            log.debug("로컬 환경에서 실행 중 - 상세 디버그 정보 출력");
-            log.debug("파일 기반 로그 appender가 모두 활성화됨");
+            log.debug("translated_text_2 translated_text_1 execution translated_text_1 - translated_text_2 translated_text_3 information translated_text_2");
+            log.debug("translated_text_2 translated_text_2 translated_text_2 appendertranslated_text_1 translated_text_2 translated_text_2");
         } else if ("test".equals(activeProfile)) {
-            log.info("테스트 환경에서 실행 중 - 콘솔 로그만 활성화");
+            log.info("test translated_text_1 execution translated_text_1 - translated_text_2 translated_text_2 translated_text_2");
         }
         return Map.of("profile", activeProfile, "logPath", logPath, "fileLoggingEnabled", "local".equals(activeProfile));
     }

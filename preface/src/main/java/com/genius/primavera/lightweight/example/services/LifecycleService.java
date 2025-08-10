@@ -14,10 +14,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-/**
- * Bean 라이프사이클을 시연하는 서비스 예제
- * @PostConstruct와 @PreDestroy 어노테이션의 동작을 보여줍니다.
- */
 @Slf4j
 @PrimaveraComponent
 public class LifecycleService {
@@ -29,152 +25,118 @@ public class LifecycleService {
     private List<String> processedMessages;
     private LocalDateTime startTime;
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-    
-    /**
-     * Bean 생성 및 의존성 주입 완료 후 호출되는 초기화 메서드
-     */
+
     @PrimaveraPostConstruct
     public void initialize() {
-        log.info("🌱 LifecycleService 초기화 시작...");
-        
-        // 시작 시간 기록
+        log.info(" LifecycleService translated_text_3 translated_text_2...");
+
         startTime = LocalDateTime.now();
-        
-        // 메시지 저장소 초기화
+
         processedMessages = new ArrayList<>();
-        
-        // 스케줄러 초기화
+
         scheduler = Executors.newScheduledThreadPool(1);
-        
-        // 정기적인 상태 체크 작업 시작
+
         startPeriodicHealthCheck();
-        
-        // 의존성 주입된 서비스 활용
+
         String welcomeMessage = greetingService.sayHello("LifecycleService");
-        processedMessages.add("초기화: " + welcomeMessage);
+        processedMessages.add("translated_text_3: " + welcomeMessage);
         
-        log.info("🌱 LifecycleService 초기화 완료! 시작 시간: {}", startTime.format(formatter));
-        
-        // 초기화 완료 메시지 출력
-        log.info("=== LifecycleService 초기화 완료 ===");
-        log.info("시작 시간: {}", startTime.format(formatter));
-        log.info("초기 메시지 수: {}", processedMessages.size());
+        log.info(" LifecycleService translated_text_3 completed! translated_text_2 translated_text_2: {}", startTime.format(formatter));
+
+        log.info("=== LifecycleService translated_text_3 completed ===");
+        log.info("translated_text_2 translated_text_2: {}", startTime.format(formatter));
+        log.info("translated_text_2 translated_text_3 translated_text_1: {}", processedMessages.size());
         log.info("================================");
     }
-    
-    /**
-     * Bean 소멸 전에 호출되는 정리 메서드
-     */
+
     @PrimaveraPreDestroy
     public void cleanup() {
-        log.info("🧹 LifecycleService 정리 시작...");
+        log.info("🧹 LifecycleService translated_text_2 translated_text_2...");
         
         LocalDateTime endTime = LocalDateTime.now();
         long uptime = java.time.Duration.between(startTime, endTime).toSeconds();
-        
-        // 스케줄러 종료
+
         if (scheduler != null && !scheduler.isShutdown()) {
             scheduler.shutdown();
             try {
                 if (!scheduler.awaitTermination(5, TimeUnit.SECONDS)) {
                     scheduler.shutdownNow();
                 }
-                log.info("🧹 스케줄러 정상 종료");
+                log.info("🧹 translated_text_4 translated_text_2 translated_text_2");
             } catch (InterruptedException e) {
                 scheduler.shutdownNow();
                 Thread.currentThread().interrupt();
-                log.warn("🧹 스케줄러 강제 종료");
+                log.warn("🧹 translated_text_4 translated_text_2 translated_text_2");
             }
         }
-        
-        // 작별 메시지 생성
+
         String farewellMessage = greetingService.sayGoodbye("LifecycleService");
-        processedMessages.add("종료: " + farewellMessage);
-        
-        // 정리 완료 메시지 출력
-        log.info("=== LifecycleService 정리 완료 ===");
-        log.info("종료 시간: {}", endTime.format(formatter));
-        log.info("총 실행 시간: {}초", uptime);
-        log.info("처리된 메시지 수: {}", processedMessages.size());
-        log.info("마지막 메시지: {}", getLastMessage());
+        processedMessages.add("translated_text_2: " + farewellMessage);
+
+        log.info("=== LifecycleService translated_text_2 completed ===");
+        log.info("translated_text_2 translated_text_2: {}", endTime.format(formatter));
+        log.info("translated_text_1 execution translated_text_2: {}translated_text_1", uptime);
+        log.info("translated_text_11 translated_text_3 translated_text_1: {}", processedMessages.size());
+        log.info("translated_text_3 translated_text_3: {}", getLastMessage());
         log.info("===============================");
         
-        log.info("🧹 LifecycleService 정리 완료! 총 실행 시간: {}초, 처리된 메시지: {}개", 
+        log.info("🧹 LifecycleService translated_text_2 completed! translated_text_1 execution translated_text_2: {}translated_text_1, translated_text_11 translated_text_3: {}translated_text_1", 
                 uptime, processedMessages.size());
     }
-    
-    /**
-     * 정기적인 상태 체크 작업을 시작합니다.
-     */
+
     private void startPeriodicHealthCheck() {
         scheduler.scheduleAtFixedRate(() -> {
             try {
-                String statusMessage = String.format("상태 체크 - 현재 시간: %s, 메시지 수: %d", 
+                String statusMessage = String.format("translated_text_2 translated_text_2 - translated_text_2 translated_text_2: %s, translated_text_3 translated_text_1: %d", 
                         LocalDateTime.now().format(formatter), 
                         processedMessages.size());
                 
                 processedMessages.add(statusMessage);
-                log.debug("💚 {}", statusMessage);
-                
-                // 너무 많은 메시지가 쌓이면 정리
+                log.debug(" {}", statusMessage);
+
                 if (processedMessages.size() > 50) {
                     int removed = processedMessages.size() - 25;
                     processedMessages = processedMessages.subList(processedMessages.size() - 25, processedMessages.size());
-                    log.debug("🧹 오래된 메시지 {}개 정리", removed);
+                    log.debug("🧹 translated_text_3 translated_text_3 {}translated_text_1 translated_text_2", removed);
                 }
                 
             } catch (Exception e) {
-                log.error("💔 상태 체크 중 오류 발생", e);
+                log.error(" translated_text_2 translated_text_2 translated_text_1 error translated_text_2", e);
             }
         }, 10, 30, TimeUnit.SECONDS);
         
-        log.info("💚 정기 상태 체크 작업 시작 (30초 간격)");
+        log.info(" translated_text_2 translated_text_2 translated_text_2 translated_text_2 translated_text_2 (30translated_text_1 translated_text_2)");
     }
-    
-    /**
-     * 현재 서비스 상태를 반환합니다.
-     */
+
     public String getServiceStatus() {
         if (startTime == null) {
-            return "서비스가 아직 초기화되지 않았습니다.";
+            return "translated_text_8 translated_text_2 translated_text_3 translated_text_5.";
         }
         
         long uptime = java.time.Duration.between(startTime, LocalDateTime.now()).toSeconds();
-        return String.format("서비스 실행 중 - 실행 시간: %d초, 처리된 메시지: %d개", 
+        return String.format("service execution translated_text_1 - execution translated_text_2: %dtranslated_text_1, translated_text_11 translated_text_3: %dtranslated_text_1", 
                 uptime, processedMessages.size());
     }
-    
-    /**
-     * 메시지를 처리합니다.
-     */
+
     public void processMessage(String message) {
         String processedMessage = String.format("[%s] %s", 
                 LocalDateTime.now().format(formatter), message);
         
         processedMessages.add(processedMessage);
-        log.info("📝 메시지 처리: {}", processedMessage);
+        log.info(" translated_text_3 processing: {}", processedMessage);
         
-        log.debug("💬 {}", processedMessage);
+        log.debug(" {}", processedMessage);
     }
-    
-    /**
-     * 처리된 메시지 목록을 반환합니다.
-     */
+
     public List<String> getProcessedMessages() {
         return new ArrayList<>(processedMessages);
     }
-    
-    /**
-     * 마지막 처리된 메시지를 반환합니다.
-     */
+
     public String getLastMessage() {
-        return processedMessages.isEmpty() ? "처리된 메시지가 없습니다." : 
+        return processedMessages.isEmpty() ? "translated_text_11 translated_text_3 translated_text_4." : 
                processedMessages.get(processedMessages.size() - 1);
     }
-    
-    /**
-     * 현재 시간까지의 서비스 실행 시간을 반환합니다.
-     */
+
     public long getUptimeSeconds() {
         if (startTime == null) {
             return 0;

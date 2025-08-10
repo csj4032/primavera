@@ -2,10 +2,6 @@ package com.genius.primavera.infrastructure.security;
 
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
-/**
- * Spring Boot 3.x OAuth2 Client Resources
- * Legacy OAuth2 클래스들은 더 이상 사용되지 않으므로 현대적인 방식으로 변경
- */
 public class ClientResources {
 
     @NestedConfigurationProperty
@@ -29,7 +25,6 @@ public class ClientResources {
         private String userAuthorizationUri;
         private String scope;
 
-        // getters and setters
         public String getClientId() { return clientId; }
         public void setClientId(String clientId) { this.clientId = clientId; }
         
@@ -50,7 +45,6 @@ public class ClientResources {
         private String userInfoUri;
         private String tokenInfoUri;
 
-        // getters and setters
         public String getUserInfoUri() { return userInfoUri; }
         public void setUserInfoUri(String userInfoUri) { this.userInfoUri = userInfoUri; }
         

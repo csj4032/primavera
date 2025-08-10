@@ -28,7 +28,7 @@ public class PasswordEncoderTest {
 
 	@Test
 	@Order(1)
-	@DisplayName("bcrype 방식")
+	@DisplayName("bcrype translated_text_2")
 	public void bcrypeEncoder() {
 		String encodedPassword = encoder.encode(rawPassword);
 		log.info(encodedPassword);
@@ -39,7 +39,7 @@ public class PasswordEncoderTest {
 
 	@Test
 	@Order(2)
-	@DisplayName("noop 방식")
+	@DisplayName("noop translated_text_2")
 	public void noopEncoder() {
 		Assertions.assertTrue(encoder.matches(rawPassword, noop));
 	}

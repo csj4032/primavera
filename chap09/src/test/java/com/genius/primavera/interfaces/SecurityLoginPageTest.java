@@ -64,7 +64,7 @@ public class SecurityLoginPageTest {
 
     @Test
     @Order(1)
-    @DisplayName("권한이 없는 경우 로그인 화면으로 이동")
+    @DisplayName("translated_text_3 translated_text_2 translated_text_2 translated_text_3 translated_text_4 translated_text_2")
     public void loginPage() throws Exception {
         mockMvc.perform(get("/"))
                 .andDo(print())
@@ -74,7 +74,7 @@ public class SecurityLoginPageTest {
 
     @Test
     @Order(2)
-    @DisplayName("로그인 시도 성공 후 메인 페이지 이동")
+    @DisplayName("translated_text_3 translated_text_2 success translated_text_1 translated_text_2 translated_text_3 translated_text_2")
     public void signInFail() throws Exception {
         mockMvc.perform(post("/signin")
                         .with(csrf())
@@ -87,7 +87,7 @@ public class SecurityLoginPageTest {
 
     @Test
     @Order(3)
-    @DisplayName("USER 권한으로 메인 페이지 접근")
+    @DisplayName("USER translated_text_4 translated_text_2 translated_text_3 translated_text_2")
     @WithMockUser(username = "Genius")
     public void index() throws Exception {
         mockMvc.perform(get("/index"))
@@ -97,7 +97,7 @@ public class SecurityLoginPageTest {
 
     @Test
     @Order(4)
-    @DisplayName("USER 권한으로  Manager 페이지 접근")
+    @DisplayName("USER translated_text_4  Manager translated_text_3 translated_text_2")
     @WithMockUser(username = "Genius", roles = "USER")
     public void manager() throws Exception {
         mockMvc.perform(get("/manager"))

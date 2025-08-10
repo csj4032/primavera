@@ -1,6 +1,5 @@
 package com.genius.primavera.domain;
 
-
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;

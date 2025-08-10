@@ -1,18 +1,4 @@
-/*
- *	Copyright 2014 Naver Corp.
- *
- *	Licensed under the Apache License, Version 2.0 (the "License");
- *	you may not use this file except in compliance with the License.
- *	You may obtain a copy of the License at
- *
- *		http://www.apache.org/licenses/LICENSE-2.0
- *
- *	Unless required by applicable law or agreed to in writing, software
- *	distributed under the License is distributed on an "AS IS" BASIS,
- *	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *	See the License for the specific language governing permissions and
- *	limitations under the License.
- */
+
 package com.nhncorp.lucy.security.xss.config;
 
 import java.io.IOException;
@@ -35,13 +21,6 @@ import org.xml.sax.SAXException;
 import com.nhncorp.lucy.security.xss.event.AttributeListener;
 import com.nhncorp.lucy.security.xss.event.ElementListener;
 
-/**
- * 이 클래스는 XSS Filter 설정 내용을 나타낸다. <br/>
- * 만약, 설정 내용을 담고 있는 파일이 존재 하지 않거나 예상치 못한 포멧을 가지고 있다면, Exception을 발생 시킨다.
- *
- * @author Naver Labs
- *
- */
 public final class XssConfiguration {
 	private static final String DEFAULT_CONFIG = "/lucy-xss-default.xml";
 
@@ -49,20 +28,20 @@ public final class XssConfiguration {
 	private Map<String, AttributeRule> atts;
 	private Map<String, Set<String>> tagGroups;
 	private Map<String, Set<String>> attGroups;
-	//private boolean neloAsyncLog;
+
 	private String service = "UnknownService";
 	private boolean blockingPrefixEnabled;
 	private String blockingPrefix = "diabled_";
 	private boolean filteringTagInCommentEnabled = true;
 	private String filteringTagInCommentType = "strict";
 
-	private Map<String, Set<String>> childElementRef; //elementGroup - key Element Group을 하위에 포함할 수 있는 Element
-	private Map<String, Set<String>> childElementGroupRef; // elementGroup - key Group에 포함되는 ChildGroup
-	private Map<String, Set<String>> parentElementGroupRef; // elementGroup - key Group을 포함하는 ParentGroup
+	private Map<String, Set<String>> childElementRef;
+	private Map<String, Set<String>> childElementGroupRef;
+	private Map<String, Set<String>> parentElementGroupRef;
 
-	private Map<String, Set<String>> childAttrRef; // attrGroup - key Attribute Group을 포함할 수 있는 Element
-	private Map<String, Set<String>> childAttrGroupRef; // attrGroup - key Group에 포함되는 ChildGroup
-	private Map<String, Set<String>> parentAttrGroupRef; // attrGroup - key Group을 포함하는 ParentGroup
+	private Map<String, Set<String>> childAttrRef;
+	private Map<String, Set<String>> childAttrGroupRef;
+	private Map<String, Set<String>> parentAttrGroupRef;
 
 	private XssConfiguration() {
 		this.tags = new HashMap<String, ElementRule>();
@@ -79,20 +58,8 @@ public final class XssConfiguration {
 		this.parentAttrGroupRef = new HashMap<String, Set<String>>();
 	}
 
-	/**
-	 * 이 메소드는 특정 파일로부터 XSS Filter 설정 내용을 로딩하여, 새로운 인스턴스를 리턴한다.
-	 *
-	 * @param file	XSS Filter 설정파일.
-	 * @return	XssConfiguration 인스턴스.
-	 * @throws Exception	설정 내용을 담고 있는 파일이 예상치 못한 포멧을 가지고 있을 경우 발생.
-	 */
 	public static XssConfiguration newInstance(String file) throws Exception {
 		XssConfiguration config = null;
-
-		//		InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(file);
-		//		if (is == null) {
-		//			is = XssConfiguration.class.getResourceAsStream(DEFAULT_CONFIG);
-		//		}
 
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -123,7 +90,7 @@ public final class XssConfiguration {
 			Element root = builder.parse(is).getDocumentElement();
 			String extend = root.getAttribute("extends");
 			if (extend != null && !"".equals(extend)) {
-				//InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream(extend);
+
 				config = create(builder, extend);
 			}
 
@@ -131,8 +98,6 @@ public final class XssConfiguration {
 				config = new XssConfiguration();
 			}
 
-			// 항상 element rule 이전에 Group을 먼저 정의한다.
-			// 정의된 Group이 rule에 영향을 주기 때문이다.
 			NodeList list = root.getElementsByTagName("elementGroup");
 			for (int i = 0; list.getLength() > 0 && i < list.getLength(); i++) {
 				config.addElementGroup(Element.class.cast(list.item(i)));
@@ -153,11 +118,6 @@ public final class XssConfiguration {
 			for (int i = 0; list.getLength() > 0 && i < list.getLength(); i++) {
 				config.addAttributeRule(Element.class.cast(list.item(i)));
 			}
-
-/*			list = root.getElementsByTagName("neloAsyncLog");
-			for (int i = 0; list.getLength() > 0 && i < list.getLength(); i++) {
-				config.enableNeloAsyncLog(Element.class.cast(list.item(i)));
-			}*/
 
 			list = root.getElementsByTagName("blockingPrefix");
 			for (int i = 0; list.getLength() > 0 && i < list.getLength(); i++) {
@@ -213,19 +173,6 @@ public final class XssConfiguration {
 
 		return rule;
 	}
-
-	/*private void enableNeloAsyncLog(Element element) {
-		String enable = element.getAttribute("enable");
-		String serviceName = element.getAttribute("service");
-
-		if (enable != null && ("true".equalsIgnoreCase(enable) || "false".equalsIgnoreCase(enable))) {
-			this.setNeloAsyncLog("true".equalsIgnoreCase(enable) ? true : false);
-		}
-
-		if (serviceName != null && !serviceName.isEmpty()) {
-			this.setService(serviceName);
-		}
-	}*/
 
 	private void addElementRule(Element element) {
 		String name = element.getAttribute("name");
@@ -286,8 +233,8 @@ public final class XssConfiguration {
 					Object obj = Class.forName(className.trim()).newInstance();
 					rule.addListener(ElementListener.class.cast(obj));
 				} catch (Exception ex) {
-					System.out.println(name + "태그의 " + className + "(ElementListener) 설정 중 오류 발생. xml 설정을 확인하세요. " + ex.toString());
-					// ignore
+					System.out.println(name + "translated_text_3 " + className + "(ElementListener) translated_text_2 translated_text_1 error translated_text_2. xml translated_text_2 translated_text_15. " + ex.toString());
+
 				}
 			}
 		}
@@ -297,7 +244,7 @@ public final class XssConfiguration {
 		String name = element.getAttribute("name");
 		boolean override = !"false".equalsIgnoreCase(element.getAttribute("override"));
 		String disable = element.getAttribute("disable");
-		//Base64Decoding
+
 		String base64Decoding = element.getAttribute("base64Decoding");
 		String exceptionTagList = element.getAttribute("exceptionTagList");
 
@@ -331,7 +278,6 @@ public final class XssConfiguration {
 			}
 		}
 
-		//Base64Decoding
 		if (base64Decoding != null && ("true".equalsIgnoreCase(base64Decoding) || "false".equalsIgnoreCase(base64Decoding))) {
 			rule.setBase64Decoding("true".equalsIgnoreCase(base64Decoding) ? true : false);
 		}
@@ -354,8 +300,8 @@ public final class XssConfiguration {
 					Object obj = Class.forName(className.trim()).newInstance();
 					rule.addListener(AttributeListener.class.cast(obj));
 				} catch (Exception ex) {
-					System.out.println(name + "속성의 " + className + "(AttributeListener) 설정 중 오류 발생. xml 설정을 확인하세요. " + ex.toString());
-					// ignore
+					System.out.println(name + "translated_text_3 " + className + "(AttributeListener) translated_text_2 translated_text_1 error translated_text_2. xml translated_text_2 translated_text_15. " + ex.toString());
+
 				}
 			}
 		}
@@ -419,9 +365,6 @@ public final class XssConfiguration {
 
 		if (override) {
 
-			/**
-			 * TO-DO :
-			 */
 			Set<String> elementSet = this.childElementRef.get(name);
 
 			if (elementSet != null) {
@@ -490,9 +433,7 @@ public final class XssConfiguration {
 		}
 
 		if (override) {
-			/**
-			 * TO-DO :
-			 */
+			
 			Set<String> elementSet = this.childAttrRef.get(name);
 
 			if (elementSet != null) {
@@ -517,7 +458,7 @@ public final class XssConfiguration {
 			String tagGroupName = ref.getAttribute("name");
 			Set<String> nestedGroupNames = new HashSet<String>();
 
-			if (this.tagGroups.containsKey(tagGroupName)) { //elementGroup name 이면,
+			if (this.tagGroups.containsKey(tagGroupName)) {
 				nestedGroupNames.add(tagGroupName);
 				Set<String> tagGroupSet = this.childElementGroupRef.get(tagGroupName);
 
@@ -553,18 +494,18 @@ public final class XssConfiguration {
 			String attGroupName = ref.getAttribute("name");
 			Set<String> nestedAttNames = new HashSet<String>();
 
-			if (this.attGroups.containsKey(attGroupName)) { //att ref가 앞서 선언된 AttGroup 이면,
+			if (this.attGroups.containsKey(attGroupName)) {
 				nestedAttNames.add(attGroupName);
-				Set<String> attGroupSet = this.childAttrGroupRef.get(attGroupName); // 이 attGroup이 또다른 attGroup을 child로 가지고 있는지 확
+				Set<String> attGroupSet = this.childAttrGroupRef.get(attGroupName);
 
-				if (attGroupSet != null) { // childGroup을 가지고 있다면,
-					nestedAttNames.addAll(attGroupSet); // 추가
+				if (attGroupSet != null) {
+					nestedAttNames.addAll(attGroupSet);
 				}
 
-				for (String groupName : nestedAttNames) { // 모든 attGroup에 대해
-					if (this.childAttrRef.containsKey(groupName)) { // 해당 attGroup을 가질 수 있는 Element를 추출 하여
+				for (String groupName : nestedAttNames) {
+					if (this.childAttrRef.containsKey(groupName)) {
 						Set<String> elementList = this.childAttrRef.get(groupName);
-						elementList.add(tagName); // 모든 attGroup에 현재 tagName을 연결
+						elementList.add(tagName);
 					} else {
 						Set<String> newElementSet = new HashSet<String>();
 						newElementSet.add(tagName);
@@ -611,14 +552,6 @@ public final class XssConfiguration {
 
 		return result;
 	}
-
-/*	public void setNeloAsyncLog(boolean neloAsyncLog) {
-		this.neloAsyncLog = neloAsyncLog;
-	}
-
-	public boolean enableNeloAsyncLog() {
-		return neloAsyncLog;
-	}*/
 
 	public void setService(String service) {
 		this.service = service;
@@ -672,7 +605,7 @@ public final class XssConfiguration {
 
 	private void setFilteringTagInCommentType(String type) {
 		this.filteringTagInCommentType = type;
-		//strict or config
+
 	}
 
 	private void setFilteringTagInCommentEnabled(boolean enabled) {

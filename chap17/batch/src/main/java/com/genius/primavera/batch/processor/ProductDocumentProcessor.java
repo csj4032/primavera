@@ -22,7 +22,7 @@ public class ProductDocumentProcessor implements ItemProcessor<Product, ProductD
         var categoryDoc = new ProductDocument.CategoryInfo(
                 product.getCategory().getId(),
                 product.getCategory().getName(),
-                "전자제품 > 컴퓨터 > " + product.getCategory().getName(),
+                "translated_text_4 > translated_text_3 > " + product.getCategory().getName(),
                 product.getCategory().getLevel()
         );
 

@@ -4,11 +4,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-@DisplayName("AnnotationClass 라이프사이클 테스트")
+@DisplayName("AnnotationClass translated_text_6 test")
 class AnnotationClassTest {
 
     @Test
-    @DisplayName("Bean 생성 시 @PostConstruct가 정상적으로 호출된다 (Given-When-Then)")
+    @DisplayName("Bean creation translated_text_1 @PostConstructtranslated_text_1 successfully calledtranslated_text_2 (Given-When-Then)")
     void givenBeanCreated_whenContextRefresh_thenPostConstructCalled() {
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
         context.register(AnnotationClass.class);

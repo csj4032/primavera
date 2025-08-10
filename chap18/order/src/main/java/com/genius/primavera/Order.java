@@ -56,9 +56,9 @@ public class Order {
 	private LocalDateTime updatedAt;
 	
 	public enum OrderStatus {
-		PENDING,           // 대기중
-		INVENTORY_CONFIRMED, // 재고 확인됨
-		CANCELLED,         // 취소됨
-		COMPLETED          // 완료됨
+		PENDING,
+		INVENTORY_CONFIRMED,
+		CANCELLED,
+		COMPLETED
 	}
 }

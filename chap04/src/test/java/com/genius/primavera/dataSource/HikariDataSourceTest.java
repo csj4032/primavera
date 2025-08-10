@@ -11,12 +11,11 @@ import org.springframework.test.context.ActiveProfiles;
 import javax.sql.DataSource;
 import java.sql.SQLException;
 
-
 @Slf4j
 @SpringBootTest
 @EnableTestContainers
 @ActiveProfiles("test")
-@DisplayName("HikariDataSource 통합 테스트")
+@DisplayName("HikariDataSource translated_text_2 test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class HikariDataSourceTest {
 
@@ -28,7 +27,7 @@ public class HikariDataSourceTest {
 
     @Test
     @Order(1)
-    @DisplayName("DataSource 테스트")
+    @DisplayName("DataSource test")
     public void testDataSource() throws SQLException {
         log.info("DataSource class: {}", dataSource.getClass().getName());
         log.info("Database Catalog: {}", dataSource.getConnection().getCatalog());
@@ -36,7 +35,7 @@ public class HikariDataSourceTest {
 
     @Test
     @Order(2)
-    @DisplayName("HikariDataSource 테스트")
+    @DisplayName("HikariDataSource test")
     public void testJdbcTemplate() throws SQLException {
         log.info("HikariDataSource class: {}", jdbcTemplate.getClass().getName());
         log.info("Database Product Name: {}", jdbcTemplate.getDataSource().getConnection().getMetaData().getDatabaseProductName());
@@ -47,14 +46,14 @@ public class HikariDataSourceTest {
 
     @Test
     @Order(3)
-    @DisplayName("HikariDataSource 커넥션 테스트")
+    @DisplayName("HikariDataSource translated_text_3 test")
     public void testConnection() throws SQLException {
         try (var connection = dataSource.getConnection()) {
-            log.info("커넥션이 성공적으로 생성되었습니다.");
-            log.info("커넥션 URL: {}", connection.getMetaData().getURL());
-            log.info("커넥션 사용자 이름: {}", connection.getMetaData().getUserName());
+            log.info("translated_text_3 translated_text_10 translated_text_13.");
+            log.info("translated_text_3 URL: {}", connection.getMetaData().getURL());
+            log.info("translated_text_3 user translated_text_2: {}", connection.getMetaData().getUserName());
         } catch (SQLException e) {
-            log.error("커넥션 생성 중 오류 발생: {}", e.getMessage());
+            log.error("translated_text_3 creation translated_text_1 error translated_text_2: {}", e.getMessage());
             throw e;
         }
     }

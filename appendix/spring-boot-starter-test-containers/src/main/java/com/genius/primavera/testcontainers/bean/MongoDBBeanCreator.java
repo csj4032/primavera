@@ -28,6 +28,6 @@ public class MongoDBBeanCreator implements BeanCreator {
             String lastPart = parts[parts.length - 1];
             return lastPart.contains("?") ? lastPart.split("\\?")[0] : lastPart;
         }
-        return "test"; // 기본 데이터베이스명
+        return "test";
     }
 }

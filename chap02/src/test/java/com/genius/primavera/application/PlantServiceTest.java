@@ -28,7 +28,7 @@ class PlantServiceTest {
 
     @Test
     @Order(1)
-    @DisplayName("정상적인 파라미터 요청 테스트")
+    @DisplayName("translated_text_4 translated_text_4 translated_text_2 test")
     public void getPlants() throws IOException {
         Plant mockPlant = new Plant();
         given(plantRepository.getPlant("Oak")).willReturn(Collections.singletonList(mockPlant));
@@ -39,7 +39,7 @@ class PlantServiceTest {
 
     @Test
     @Order(2)
-    @DisplayName("비정상적인 파라미터 요청 테스트 : MalformedJsonException 발생")
+    @DisplayName("translated_text_4 translated_text_4 translated_text_2 test : MalformedJsonException translated_text_2")
     public void getEmptyResultPlants() throws IOException {
         given(plantRepository.getPlant("abc")).willThrow(new MalformedJsonException("Invalid JSON"));
         Assertions.assertThrows(MalformedJsonException.class, () -> plantService.fetchPlants("abc"));

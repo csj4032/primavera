@@ -18,7 +18,7 @@ class TestContainerAutoConfigurationTest {
             assertNotNull(config, "AutoConfiguration should be instantiable");
         }, "AutoConfiguration should be instantiable without errors");
         
-        log.info("✅ TestContainerAutoConfiguration instantiated successfully");
+        log.info(" TestContainerAutoConfiguration instantiated successfully");
     }
     
     @Test
@@ -29,7 +29,7 @@ class TestContainerAutoConfigurationTest {
         assertTrue(configClass.isAnnotationPresent(org.springframework.boot.autoconfigure.AutoConfiguration.class),
             "Should have @AutoConfiguration annotation");
         
-        log.info("✅ TestContainerAutoConfiguration has required annotations");
+        log.info(" TestContainerAutoConfiguration has required annotations");
     }
     
     @Test
@@ -39,6 +39,6 @@ class TestContainerAutoConfigurationTest {
         assertEquals("com.genius.primavera.testcontainers", packageName,
             "Should be in correct package for auto-detection");
         
-        log.info("✅ TestContainerAutoConfiguration in correct package: {}", packageName);
+        log.info(" TestContainerAutoConfiguration in correct package: {}", packageName);
     }
 }

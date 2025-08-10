@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
 @SpringBootTest(properties = {
-    "spring.test.context.cache.maxSize=0",  // Context 캐싱 비활성화로 격리 강화
+    "spring.test.context.cache.maxSize=0",
     "spring.main.allow-bean-definition-overriding=true"
 })
 @ActiveProfiles("test")
@@ -61,7 +61,7 @@ class MultiContainerTest {
         Integer count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM test_users", Integer.class);
         assertEquals(1, count, "Should have 1 user in primary database");
         
-        log.info("✅ Primary database test completed");
+        log.info(" Primary database test completed");
     }
     
     @Test
@@ -76,7 +76,7 @@ class MultiContainerTest {
         Integer count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM test_products", Integer.class);
         assertEquals(1, count, "Should have 1 product in secondary database");
         
-        log.info("✅ Secondary database test completed");
+        log.info(" Secondary database test completed");
     }
     
     @Test
@@ -91,7 +91,7 @@ class MultiContainerTest {
         Object cachedValue = redisTemplate.opsForValue().get(key);
         assertEquals(value, cachedValue, "Cached value should match");
         
-        log.info("✅ Redis cache test completed with value: {}", cachedValue);
+        log.info(" Redis cache test completed with value: {}", cachedValue);
     }
     
     @Test
@@ -103,7 +103,7 @@ class MultiContainerTest {
         
         try {
             kafkaTemplate.send(topic, message);
-            log.info("✅ Kafka message sent to topic '{}': {}", topic, message);
+            log.info(" Kafka message sent to topic '{}': {}", topic, message);
         } catch (Exception e) {
             log.warn("Kafka message sending failed (expected in test environment): {}", e.getMessage());
         }
@@ -121,7 +121,7 @@ class MultiContainerTest {
         
         assertEquals(isolationValue, retrievedValue, "Data should be isolated per test class");
         
-        log.info("✅ Container isolation test completed");
+        log.info(" Container isolation test completed");
     }
     
     @Test
@@ -140,6 +140,6 @@ class MultiContainerTest {
             redisTemplate.opsForValue().set("config-test", "success");
         }, "Redis should be accessible with configured password");
         
-        log.info("✅ Configuration values test completed");
+        log.info(" Configuration values test completed");
     }
 }

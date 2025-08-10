@@ -70,7 +70,7 @@ public class PreciseTest {
         assertNotNull(testRedisTemplate, "RedisTemplate should be injected");
         assertNotNull(testKafkaTemplate, "KafkaTemplate should be injected");
         
-        log.info("✅ All beans properly registered and injected");
+        log.info(" All beans properly registered and injected");
     }
     
     @Test
@@ -97,7 +97,7 @@ public class PreciseTest {
         assertTrue(cacheInfo.container().isRunning(), "Cache container should be running");
         assertTrue(messagingInfo.container().isRunning(), "Messaging container should be running");
         
-        log.info("✅ Container manager state and lifecycle validated");
+        log.info(" Container manager state and lifecycle validated");
     }
     
     @Test
@@ -136,7 +136,7 @@ public class PreciseTest {
         Integer count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM precise_test", Integer.class);
         assertTrue(count >= 1, "Should have at least 1 record in database");
         
-        log.info("✅ Database connectivity and operations validated with {} records", count);
+        log.info(" Database connectivity and operations validated with {} records", count);
     }
     
     @Test
@@ -162,7 +162,7 @@ public class PreciseTest {
         Object hashValue = testRedisTemplate.opsForHash().get("hash-test", "field1");
         assertEquals("value1", hashValue, "Redis hash operations should work correctly");
         
-        log.info("✅ Redis cache operations validated");
+        log.info(" Redis cache operations validated");
     }
     
     @Test
@@ -179,7 +179,7 @@ public class PreciseTest {
         
         assertNotNull(testKafkaTemplate, "Kafka template should be configured");
         
-        log.info("✅ Kafka messaging operations validated");
+        log.info(" Kafka messaging operations validated");
     }
     
     @Test
@@ -194,18 +194,18 @@ public class PreciseTest {
             assertTrue(dbHost.length() > 0, "Database host should not be empty");
             assertTrue(Integer.parseInt(dbPort) > 0, "Database port should be valid");
             assertTrue(dbUrl.startsWith("jdbc:mariadb://"), "Database URL should be valid MariaDB URL");
-            log.info("✅ Environment properties validated - DB: {}:{}", dbHost, dbPort);
+            log.info(" Environment properties validated - DB: {}:{}", dbHost, dbPort);
         } else {
-            log.info("⚠️  Environment properties not fully exposed (container runtime properties may not be set)");
+            log.info("  Environment properties not fully exposed (container runtime properties may not be set)");
         }
         
         String cacheHost = environment.getProperty("testcontainer.runtime.testCache.host");
         String cachePort = environment.getProperty("testcontainer.runtime.testCache.port");
         
         if (cacheHost != null && cachePort != null) {
-            log.info("✅ Cache environment properties validated - Cache: {}:{}", cacheHost, cachePort);
+            log.info(" Cache environment properties validated - Cache: {}:{}", cacheHost, cachePort);
         } else {
-            log.info("⚠️  Cache environment properties not fully exposed");
+            log.info("  Cache environment properties not fully exposed");
         }
     }
     
@@ -268,7 +268,7 @@ public class PreciseTest {
             String.format("At least 90%% operations should succeed, got %.1f%%", 
                 (double) successCount.get() / expectedOperations * 100));
         
-        log.info("✅ Concurrent operations safety validated - {} success, {} errors out of {} total",
+        log.info(" Concurrent operations safety validated - {} success, {} errors out of {} total",
             successCount.get(), errorCount.get(), expectedOperations);
     }
     
@@ -314,7 +314,7 @@ public class PreciseTest {
             log.debug("Kafka operation failed (expected in test environment): {}", e.getMessage());
         }
         
-        log.info("✅ Cross-container data flow validated for flow ID: {}", flowId);
+        log.info(" Cross-container data flow validated for flow ID: {}", flowId);
     }
     
     @Test
@@ -346,7 +346,7 @@ public class PreciseTest {
         assertTrue(manager.isStarted(), "Container manager should still be running");
         assertEquals(3, manager.getAllContainers().size(), "Should have exactly 3 containers running");
         
-        log.info("✅ Resource cleanup and isolation validated for test class: {}", 
+        log.info(" Resource cleanup and isolation validated for test class: {}", 
             this.getClass().getSimpleName());
     }
 }

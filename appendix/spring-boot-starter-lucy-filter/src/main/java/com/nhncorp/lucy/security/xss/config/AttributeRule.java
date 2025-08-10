@@ -1,18 +1,4 @@
-/*
- *	Copyright 2014 Naver Corp.
- *
- *	Licensed under the Apache License, Version 2.0 (the "License");
- *	you may not use this file except in compliance with the License.
- *	You may obtain a copy of the License at
- *
- *		http://www.apache.org/licenses/LICENSE-2.0
- *
- *	Unless required by applicable law or agreed to in writing, software
- *	distributed under the License is distributed on an "AS IS" BASIS,
- *	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *	See the License for the specific language governing permissions and
- *	limitations under the License.
- */
+
 package com.nhncorp.lucy.security.xss.config;
 
 import java.util.ArrayList;
@@ -26,12 +12,6 @@ import org.apache.commons.codec.binary.Base64;
 import com.nhncorp.lucy.security.xss.event.AttributeListener;
 import com.nhncorp.lucy.security.xss.markup.Attribute;
 
-/**
- * 이 클래스는 패키지 외부에서 참조 되지 않는다.
- *
- * @author Naver Labs
- *
- */
 public final class AttributeRule {
 	private String name;
 	private boolean disabled;
@@ -39,7 +19,6 @@ public final class AttributeRule {
 	private List<Pattern> npatterns;
 	private List<String> exceptionTagList = new ArrayList<String>();
 
-	//Base64Decoding on the browser supporting HTML5
 	private boolean base64Decoding;
 
 	private List<AttributeListener> listeners;
@@ -61,7 +40,6 @@ public final class AttributeRule {
 		return this.disabled;
 	}
 
-	//Base64Decoding
 	public boolean isBase64Decoding() {
 		return this.base64Decoding;
 	}
@@ -91,11 +69,6 @@ public final class AttributeRule {
 		return originalValue;
 	}
 
-	/**
-	 * attribute value가 whitelist를 위반하는지 검사한다.
-	 *
-	 * @param att {@link Attribute}
-	 */
 	public void checkAttributeValue(Attribute att) {
 		if (att != null && !att.isMinimized()) {
 			String value = att.getValue();
@@ -109,10 +82,6 @@ public final class AttributeRule {
 		}
 	}
 
-	/**
-	 * @param att
-	 * @param value
-	 */
 	private boolean checkAttributeValueCore(Attribute att, String value) {
 		boolean result = true;
 		boolean isPatternsExist = this.patterns != null && !this.patterns.isEmpty();
@@ -167,16 +136,10 @@ public final class AttributeRule {
 		this.disabled = disabled;
 	}
 
-	//Base64Decoding
 	void setBase64Decoding(boolean base64Decoding) {
 		this.base64Decoding = base64Decoding;
 	}
 
-	/**
-	 * WhiteList에 AllowedPatterns으로 정의된 regex를 compile해patterns에추가한다.
-	 *
-	 * @param regex {@link String}
-	 */
 	void addAllowedPattern(String regex) {
 		if (regex != null) {
 			if (this.patterns == null) {
@@ -195,11 +158,6 @@ public final class AttributeRule {
 		}
 	}
 
-	/**
-	 * WhiteList에 NotAllowedPatterns으로 정의된 regex를 compile해서 npatterns에 추가한다.
-	 *
-	 * @param regex {@link String}
-	 */
 	void addNotAllowedPattern(String regex) {
 		if (regex != null) {
 			if (this.npatterns == null) {

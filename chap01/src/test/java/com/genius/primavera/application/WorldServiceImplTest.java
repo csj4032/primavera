@@ -9,7 +9,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class WorldServiceImplTest {
 
     @Test
-    @DisplayName("hello() 메서드는 'Hello'를 반환해야 한다")
+    @DisplayName("hello() translated_text_4 'Hello'translated_text_1 translated_text_4 translated_text_2")
     public void hello() {
         WorldService worldService = new WorldServiceImpl();
         String result = worldService.hello();
@@ -17,7 +17,7 @@ public class WorldServiceImplTest {
     }
 
     @Test
-    @DisplayName("world() 메서드는 'World'를 반환해야 한다")
+    @DisplayName("world() translated_text_4 'World'translated_text_1 translated_text_4 translated_text_2")
     public void world() {
         WorldService worldService = new WorldServiceImpl();
         String result = worldService.world();
@@ -25,7 +25,7 @@ public class WorldServiceImplTest {
     }
 
     @Test
-    @DisplayName("hello()와 world() 메서드는 각각 'Hello'와 'World'를 반환해야 한다")
+    @DisplayName("hello()translated_text_1 world() translated_text_4 translated_text_2 'Hello'translated_text_1 'World'translated_text_1 translated_text_4 translated_text_2")
     public void helloAndWorld() {
         WorldService worldService = new WorldServiceImpl();
         String hello = worldService.hello();

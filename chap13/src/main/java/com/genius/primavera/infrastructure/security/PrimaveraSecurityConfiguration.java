@@ -76,9 +76,7 @@ public class PrimaveraSecurityConfiguration {
 			.logout(logout -> logout.permitAll())
 			.authenticationProvider(authenticationProvider())
 			.addFilterBefore(new PrimaveraFilter(), BasicAuthenticationFilter.class);
-			// Removed SSO filter temporarily as it uses deprecated OAuth2 classes
-			// .addFilterBefore(ssoFilter, BasicAuthenticationFilter.class);
-		
+
 		return http.build();
 	}
 

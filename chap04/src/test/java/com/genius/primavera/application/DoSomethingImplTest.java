@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class DoSomethingImplTest {
 
     @Test
-    @DisplayName("DoSomethingImpl 테스트")
+    @DisplayName("DoSomethingImpl test")
     public void testDoSomething() {
         DoSomething doSomething = new DoSomethingImpl();
         String result1 = doSomething.doSomething("Hello");

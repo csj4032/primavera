@@ -79,7 +79,6 @@ public class TestContainerContextInitializer implements ApplicationContextInitia
                 }
             }
 
-
             configureSpecificContainerProperties(containerInfo, properties);
         });
 

@@ -1,18 +1,4 @@
-/*
- *	Copyright 2014 Naver Corp.
- *
- *	Licensed under the Apache License, Version 2.0 (the "License");
- *	you may not use this file except in compliance with the License.
- *	You may obtain a copy of the License at
- *
- *		http://www.apache.org/licenses/LICENSE-2.0
- *
- *	Unless required by applicable law or agreed to in writing, software
- *	distributed under the License is distributed on an "AS IS" BASIS,
- *	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *	See the License for the specific language governing permissions and
- *	limitations under the License.
- */
+
 package com.nhncorp.lucy.security.xss;
 
 import java.io.IOException;
@@ -46,24 +32,6 @@ import com.nhncorp.lucy.security.xss.markup.Text;
 import com.nhncorp.lucy.security.xss.markup.rule.CharArraySegment;
 import com.nhncorp.lucy.security.xss.markup.rule.Token;
 
-/**
- * 이 클래스는 {@code Cross Site Scripting} 코드가 삽입된 {@code String} 데이터를 신뢰할 수 있는 코드로
- * 변환 시키거나, 삭제하는 기능을 제공한다. <br/><br/> 이 클래스를 사용하는 방법은 다음과 같다.
- *
- * <pre>
- * ...
- *
- * // XSS 설정파일(&quot;lucy-xss.xml&quot;)이 잘못된 포멧을 가지고 있다면 RuntimeException을 발생 시킨다.
- * XssFilter filter = XssFilter.getInstance();
- *
- * String clean = filter.doFilter(String dirty);
- *
- * ...
- * </pre>
- *
- * @author Naver Labs
- *
- */
 public final class XssSaxFilter implements LucyXssFilter {
 	private static final Log LOG = LogFactory.getLog(XssSaxFilter.class);
 
@@ -72,17 +40,13 @@ public final class XssSaxFilter implements LucyXssFilter {
 	private static final String BAD_ATT_INFO_END = ") -->";
 	private static final String REMOVE_TAG_INFO_START = "<!-- Removed Tag Filtered (";
 	private static final String REMOVE_TAG_INFO_END = ") -->";
-	/*private static final String ELELMENT_NELO_MSG = " (Disabled Element)";
-	private static final String ATTRIBUTE_NELO_MSG = " (Disabled Attribute)";
-	private static final String ELELMENT_REMOVE_NELO_MSG = " (Removed Element)";*/
+	
 	private static final String CONFIG = "lucy-xss-superset-sax.xml";
 	private static final String IE_HACK_EXTENSION = "IEHackExtension";
 	private boolean withoutComment;
-	//private boolean isNeloLogEnabled;
+
 	private String service;
-	/*private String neloElementMSG;
-	private String neloAttrMSG;
-	private String neloElementRemoveMSG;*/
+	
 	private String blockingPrefix;
 	private boolean blockingPrefixEnabled;
 	private boolean filteringTagInCommentEnabled;
@@ -119,13 +83,6 @@ public final class XssSaxFilter implements LucyXssFilter {
 		this.config = config;
 	}
 
-	/**
-	 * 이 메소드는 XssFilter 객체를 리턴한다.
-	 *
-	 * @return XssFilter 객체
-	 * @throws XssFilterException
-	 *             {@code "lucy-xss.xml"} 로딩 실패 시 발생(malformed인 경우).
-	 */
 	public static XssSaxFilter getInstance() throws XssFilterException {
 		return getInstance(CONFIG, false);
 	}
@@ -138,23 +95,8 @@ public final class XssSaxFilter implements LucyXssFilter {
 		return getInstance(fileName, false);
 	}
 
-	/**
-	 * 이 메소드는 XssFilter 객체를 리턴한다.
-	 *
-	 * @param fileName
-	 *            XSS Filter 설정파일
-	 * @return XssFilter 객체
-	 * @throws XssFilterException
-	 *             설정파일 로딩 실패 시 발생(malformed인 경우).
-	 */
 	public static XssSaxFilter getInstance(String fileName, boolean withoutComment) throws XssFilterException {
-		/**
-		XssFilter filter = instanceMap.get(fileName);
-		if (filter != null) {
-			filter.withoutComment = withoutComment;
-			return filter;
-		}
-		 **/
+		
 		try {
 			synchronized (XssSaxFilter.class) {
 				FilterRepositoryKey key = new FilterRepositoryKey(fileName, withoutComment);
@@ -166,14 +108,10 @@ public final class XssSaxFilter implements LucyXssFilter {
 
 				filter = new XssSaxFilter(XssSaxConfiguration.newInstance(fileName));
 				filter.withoutComment = withoutComment;
-//				filter.isNeloLogEnabled = filter.config.enableNeloAsyncLog();
+
 				filter.service = filter.config.getService();
 				filter.blockingPrefixEnabled = filter.config.isEnableBlockingPrefix();
 				filter.blockingPrefix = filter.config.getBlockingPrefix();
-
-			/*	filter.neloElementMSG = ELELMENT_NELO_MSG;
-				filter.neloAttrMSG = ATTRIBUTE_NELO_MSG;
-				filter.neloElementRemoveMSG = ELELMENT_REMOVE_NELO_MSG;*/
 
 				filter.filteringTagInCommentEnabled = filter.config.isFilteringTagInCommentEnabled();
 
@@ -191,64 +129,31 @@ public final class XssSaxFilter implements LucyXssFilter {
 		}
 	}
 
-	/**
-	 * 이 메소드는 주석 내 태그 필터링을 위한 XssSaxFilter 객체를 리턴한다.
-	 *
-	 * @param config
-	 *            XssSax Filter Configuration
-	 * @return XssSaxFilter 객체
-	 */
 	public static XssSaxFilter getCommentFilterInstance(XssSaxConfiguration config) {
 
 		XssSaxFilter filter = new XssSaxFilter(config);
-//		filter.isNeloLogEnabled = filter.config.enableNeloAsyncLog();
+
 		filter.service = filter.config.getService();
 		filter.blockingPrefixEnabled = filter.config.isEnableBlockingPrefix();
 		filter.blockingPrefix = filter.config.getBlockingPrefix();
 
 		filter.withoutComment = true;
-	/*	filter.neloElementMSG = ELELMENT_NELO_MSG;
-		filter.neloAttrMSG = ATTRIBUTE_NELO_MSG;
-		filter.neloElementRemoveMSG = ELELMENT_REMOVE_NELO_MSG;*/
 
 		filter.filteringTagInCommentEnabled = true;
 
 		return filter;
 	}
 
-	/**
-	 * 이 메소드는 XSS Filter 설정 내용을 담고 있는 {@link XssConfiguration} 객체를 반환한다.
-	 *
-	 * @return {@link XssConfiguration} 객체
-	 */
 	public XssSaxConfiguration getConfig() {
 		return this.config;
 	}
 
-	/**
-	 * 이 메소드는 XSS({@code Cross Site Scripting})이 포함된 위험한 코드에 대하여 신뢰할 수 있는 코드로
-	 * 변환하거나, 삭제하는 기능을 제공한다. <br/> {@code "lucy-xss-sax.xml"} 설정(사용자 설정 파일)에 따라 필터링을 수행한다.
-	 * 사용자 설정 파일을 명시적으로 지정하지 않는 getInstance() 로 필터 객체를 생성했을 경우, lucy-xss-superset-sax.xml 설정을 사용한다.
-	 *
-	 * @param dirty
-	 *            XSS({@code Cross Site Scripting})이 포함된 위험한 코드.
-	 * @return 신뢰할 수 있는 코드.
-	 */
 	public String doFilter(String dirty) {
 		StringWriter writer = new StringWriter();
 		doFilter(dirty, writer);
 		return writer.toString();
 	}
 
-	/**
-	 * 이 메소드는 XSS({@code Cross Site Scripting})이 포함된 위험한 코드에 대하여 신뢰할 수 있는 코드로
-	 * 변환하거나, 삭제하는 기능을 제공한다. <br/> {@code "lucy-xss-sax.xml"} 설정(사용자 설정 파일)에 따라 필터링을 수행한다.
-	 * 사용자 설정 파일을 명시적으로 지정하지 않는 getInstance() 로 필터 객체를 생성했을 경우, lucy-xss-superset-sax.xml 설정을 사용한다.
-	 *
-	 * @param dirty
-	 *            XSS({@code Cross Site Scripting})이 포함된 위험한 코드.
-	 * @param writer 필터링 결과를 write 할 writer 객체. 이 메소드가 종료되면 writer 객체에 신뢰할 수 있는 코드가 담겨진다.
-	 */
 	public void doFilter(String dirty, Writer writer) {
 		StringWriter neloLogWriter = new StringWriter();
 
@@ -263,24 +168,8 @@ public final class XssSaxFilter implements LucyXssFilter {
 			LOG.error(ioe.getMessage(), ioe);
 		}
 
-		/*if (this.isNeloLogEnabled) {
-			String neloStr = neloLogWriter.toString();
-			if (neloStr != null && neloStr.length() > 0) {
-				LOG.error("@[" + this.service + "]" + neloStr);
-			}
-		}*/
 	}
 
-	/**
-	 * 이 메소드는 XSS({@code Cross Site Scripting})이 포함된 위험한 코드에 대하여 신뢰할 수 있는 코드로
-	 * 변환하거나, 삭제하는 기능을 제공한다. <br/> {@code "lucy-xss-sax.xml"} 설정(사용자 설정 파일)에 따라 필터링을 수행한다.
-	 * 사용자 설정 파일을 명시적으로 지정하지 않는 getInstance() 로 필터 객체를 생성했을 경우, lucy-xss-superset-sax.xml 설정을 사용한다.
-	 *
-	 * @param dirty XSS({@code Cross Site Scripting})이 포함된 위험한 코드 char[].
-	 * @param offset char[] dirty 의 필터링 대상 시작위치
-	 * @param count char[]의 dirty 의 필터링 대상 문자개수
-	 * @param writer 필터링 결과를 write 할 writer 객체. 이 메소드가 종료되면 writer 객체에 신뢰할 수 있는 코드가 담겨진다.
-	 */
 	public void doFilter(char[] dirty, int offset, int count, Writer writer) {
 		StringWriter neloLogWriter = new StringWriter();
 
@@ -295,19 +184,8 @@ public final class XssSaxFilter implements LucyXssFilter {
 			LOG.error(ioe.getMessage(), ioe);
 		}
 
-		/*if (this.isNeloLogEnabled) {
-			String neloStr = neloLogWriter.toString();
-			if (neloStr != null && neloStr.length() > 0) {
-				LOG.error("@[" + this.service + "]" + neloStr);
-			}
-		}*/
 	}
 
-	/**
-	 * @param writer
-	 * @param neloLogWriter
-	 * @throws IOException
-	 */
 	private void parseAndFilter(String dirty, Writer writer, StringWriter neloLogWriter) throws IOException {
 		if (dirty != null && dirty.length() > 0) {
 			LinkedList<Element> stackForObjectTag = new LinkedList<Element>();
@@ -318,13 +196,6 @@ public final class XssSaxFilter implements LucyXssFilter {
 		}
 	}
 
-	/**
-	 * @param dirty
-	 * @param offset
-	 * @param writer
-	 * @param count
-	 * @param neloLogWriter
-	 */
 	private void parseAndFilter(char[] dirty, int offset, int count, Writer writer, StringWriter neloLogWriter) throws IOException{
 		if (dirty != null && dirty.length > 0 && count >0) {
 			LinkedList<Element> stackForObjectTag = new LinkedList<Element>();
@@ -335,14 +206,6 @@ public final class XssSaxFilter implements LucyXssFilter {
 		}
 	}
 
-	/**
-	 * @param writer
-	 * @param neloLogWriter
-	 * @param stackForObjectTag
-	 * @param stackForAllowNetworkingValue
-	 * @param charArraySegment
-	 * @throws IOException
-	 */
 	private void doParseAndFilter(Writer writer, StringWriter neloLogWriter, LinkedList<Element> stackForObjectTag, LinkedList<String> stackForAllowNetworkingValue, CharArraySegment charArraySegment) throws IOException {
 		Token token;
 		while ((token = MarkupSaxParser.parse(charArraySegment)) != null) {
@@ -363,17 +226,12 @@ public final class XssSaxFilter implements LucyXssFilter {
 				Comment content = new Comment(comment);
 				content.serializeFilteringTagInComment(writer, this.filteringTagInCommentEnabled, this.commentFilter);
 
-				//content.serialize(writer);
-
 			} else if ("iEHExStartTag".endsWith(tokenName)) {
 				IEHackExtensionElement iehackElement = new IEHackExtensionElement(token.getText());
 				checkIEHackRule(iehackElement);
 
-				if (iehackElement.isDisabled()) { // IE Hack 태그가 비활성화 되어 있으면, 태그 삭제.
-				/*	if (this.isNeloLogEnabled) {
-						neloLogWriter.write(this.neloElementRemoveMSG);
-						neloLogWriter.write(iehackElement.getName() + "\n");
-					}*/
+				if (iehackElement.isDisabled()) {
+				
 					if (!this.withoutComment) {
 						writer.write(REMOVE_TAG_INFO_START);
 						writer.write(iehackElement.getName().replaceAll("<", "&lt;").replaceFirst(">", "&gt;"));
@@ -423,13 +281,13 @@ public final class XssSaxFilter implements LucyXssFilter {
 				IEHackExtensionElement ie = new IEHackExtensionElement(token.getText());
 				checkIEHackRule(ie);
 
-				if (!ie.isDisabled()) { // IE Hack 태그가 비활성화 되어 있으면, end 태그 삭제.
-					// 중첩 IE Hack 태그 처리 로직(메일서비스개발랩 요구사항)
+				if (!ie.isDisabled()) {
+
 					String stdName = ie.getName();
 					if (stdName != null) {
 						stdName = stdName.replaceFirst("<!--", "<!");
 					}
-					writer.write(stdName); // <!--[endif]--> 일 경우 IE에서 핵이 그데로 노출되는 문제 방지하기 위해 변환.
+					writer.write(stdName);
 				}
 			} else if ("endTag".equals(tokenName)) {
 				Token tagNameToken = token.getChild("tagName");
@@ -455,20 +313,18 @@ public final class XssSaxFilter implements LucyXssFilter {
 						element.setEnabled(false);
 					}
 
-					//TODO 코드 리뷰 필요
-					// v1.3.3 & v1.5.2 BEFORE if (!element.isDisabled()) {
 					if (!element.isDisabled() || this.blockingPrefixEnabled) {
 						checkRule(element);
 					}
 
 					if (element.isDisabled()) {
-						if (this.blockingPrefixEnabled) { //BlockingPrefix를 사용하는 설정인 경우, <, > 에 대한 Escape 대신에 Element 이름을 조작하여 동작을 막는다.
+						if (this.blockingPrefixEnabled) {
 							element.setName(this.blockingPrefix + element.getName());
 							element.setEnabled(true);
 							writer.write("</");
 							writer.write(element.getName());
 							writer.write('>');
-						} else { //BlockingPrefix를 사용하지 않는 설정인 경우, <, > 에 대한 Escape 처리.
+						} else {
 							writer.write("&lt;/");
 							writer.write(element.getName());
 							writer.write("&gt;");
@@ -486,11 +342,6 @@ public final class XssSaxFilter implements LucyXssFilter {
 		}
 	}
 
-	/**
-	 * @param stackForObjectTag
-	 * @param stackForAllowNetworkingValue
-	 * @param element
-	 */
 	private void doObjectParamStartTagProcess(LinkedList<Element> stackForObjectTag, LinkedList<String> stackForAllowNetworkingValue, Element element) {
 
 		if ("object".equalsIgnoreCase(element.getName())) {
@@ -499,11 +350,10 @@ public final class XssSaxFilter implements LucyXssFilter {
 
 			Attribute dataUrl = element.getAttribute("data");
 
-			if (dataUrl != null) { // data 속성이 존재하면 체크
+			if (dataUrl != null) {
 				String dataUrlStr = dataUrl.getValue();
 				isDataWhiteUrl = this.isWhiteUrl(dataUrlStr);
 
-				// URL MIME 체크
 				boolean isVulnerable = SecurityUtils.checkVulnerable(element, dataUrlStr, isDataWhiteUrl);
 
 				if (isVulnerable) {
@@ -513,9 +363,9 @@ public final class XssSaxFilter implements LucyXssFilter {
 			}
 
 			if (isDataWhiteUrl) {
-				stackForAllowNetworkingValue.push("\"all\""); // data속성의 url 값이 white url이면 allowNetworking 디폴트는 설정은 all
+				stackForAllowNetworkingValue.push("\"all\"");
 			} else {
-				stackForAllowNetworkingValue.push("\"internal\""); // allowNetworking 디폴트는 설정은 internal
+				stackForAllowNetworkingValue.push("\"internal\"");
 			}
 		} else if (stackForObjectTag.size() > 0 && "param".equalsIgnoreCase(element.getName())) {
 			Attribute nameAttr = element.getAttribute("name");
@@ -528,22 +378,15 @@ public final class XssSaxFilter implements LucyXssFilter {
 					boolean whiteUrl = isWhiteUrl(valueAttr.getValue());
 
 					if (whiteUrl) {
-						stackForAllowNetworkingValue.push("\"all\""); // whiteUrl 일 경우 allowNetworking 설정은 all 로 변경
+						stackForAllowNetworkingValue.push("\"all\"");
 					} else {
-						stackForAllowNetworkingValue.push("\"internal\""); // whiteUrl 이 아닐 경우 allowNetworking 설정은 internal 로 변경
+						stackForAllowNetworkingValue.push("\"internal\"");
 					}
 				}
 			}
 		}
 	}
 
-	/**
-	 * @param writer
-	 * @param neloLogWriter
-	 * @param stackForObjectTag
-	 * @param stackForAllowNetworkingValue
-	 * @throws IOException
-	 */
 	private boolean doObjectEndTagProcess(Writer writer, StringWriter neloLogWriter, LinkedList<Element> stackForObjectTag, LinkedList<String> stackForAllowNetworkingValue) throws IOException {
 		List<String> paramNameList = new ArrayList<String>();
 
@@ -568,7 +411,6 @@ public final class XssSaxFilter implements LucyXssFilter {
 			return true;
 		}
 
-		// PARAMLIST (보안 파라미터(param) 설정)에 없는 param(paramNameList)을 확인해서 object 태그를 닫기 전에 추가해준다.
 		for (int index = 0; index < PARAMLIST.length; index++) {
 			Pattern pattern = PARAMLIST[index];
 
@@ -581,9 +423,9 @@ public final class XssSaxFilter implements LucyXssFilter {
 			}
 
 			if (!exist) {
-				// 해당 패턴의 param 추가
+
 				switch (index) {
-					// <param name="invokeURLs" value="false" />
+
 					case 0:
 						Element invokeURLs = new Element("param");
 						invokeURLs.putAttribute("name", "\"invokeURLs\"");
@@ -591,7 +433,6 @@ public final class XssSaxFilter implements LucyXssFilter {
 						this.serialize(writer, invokeURLs, neloLogWriter);
 						break;
 
-						// <param name="autostart" value="false" />
 					case 1:
 						Element autostart = new Element("param");
 						autostart.putAttribute("name", "\"autostart\"");
@@ -599,15 +440,12 @@ public final class XssSaxFilter implements LucyXssFilter {
 						this.serialize(writer, autostart, neloLogWriter);
 						break;
 
-						// <param name="allowScriptAccess" value="never" />
 					case 2:
 						Element allowScriptAccess = new Element("param");
 						allowScriptAccess.putAttribute("name", "\"allowScriptAccess\"");
 						allowScriptAccess.putAttribute("value", "\"never\"");
 						this.serialize(writer, allowScriptAccess, neloLogWriter);
 						break;
-
-						// <param name="allowNetworking" value="all|internal" />
 
 					case 3:
 						Element allowNetworking = new Element("param");
@@ -616,7 +454,6 @@ public final class XssSaxFilter implements LucyXssFilter {
 						this.serialize(writer, allowNetworking, neloLogWriter);
 						break;
 
-						// <param name="autoplay" value="false" />
 					case 4:
 						Element autoplay = new Element("param");
 						autoplay.putAttribute("name", "\"autoplay\"");
@@ -624,7 +461,6 @@ public final class XssSaxFilter implements LucyXssFilter {
 						this.serialize(writer, autoplay, neloLogWriter);
 						break;
 
-						// <param name="enablehref" value="flase" />
 					case 5:
 						Element enablehref = new Element("param");
 						enablehref.putAttribute("name", "\"enablehref\"");
@@ -632,7 +468,6 @@ public final class XssSaxFilter implements LucyXssFilter {
 						this.serialize(writer, enablehref, neloLogWriter);
 						break;
 
-						// <param name="enablejavascript" value="flase" />
 					case 6:
 						Element enablejavascript = new Element("param");
 						enablejavascript.putAttribute("name", "\"enablejavascript\"");
@@ -640,7 +475,6 @@ public final class XssSaxFilter implements LucyXssFilter {
 						this.serialize(writer, enablejavascript, neloLogWriter);
 						break;
 
-						// <param name="nojava" value="true" />
 					case 7:
 						Element nojava = new Element("param");
 						nojava.putAttribute("name", "\"nojava\"");
@@ -648,7 +482,6 @@ public final class XssSaxFilter implements LucyXssFilter {
 						this.serialize(writer, nojava, neloLogWriter);
 						break;
 
-						// <param name="AllowHtmlPopupwindow" value="false" />
 					case 8:
 						Element allowHtmlPopupwindow = new Element("param");
 						allowHtmlPopupwindow.putAttribute("name", "\"AllowHtmlPopupwindow\"");
@@ -656,7 +489,6 @@ public final class XssSaxFilter implements LucyXssFilter {
 						this.serialize(writer, allowHtmlPopupwindow, neloLogWriter);
 						break;
 
-						// <param name="enableHtmlAccess" value="false" />
 					case 9:
 						Element enableHtmlAccess = new Element("param");
 						enableHtmlAccess.putAttribute("name", "\"enableHtmlAccess\"");
@@ -664,7 +496,7 @@ public final class XssSaxFilter implements LucyXssFilter {
 						this.serialize(writer, enableHtmlAccess, neloLogWriter);
 						break;
 					default:
-						System.out.println("발생 할 수 없는 로직입니다.");
+						System.out.println("translated_text_2 translated_text_1 translated_text_1 translated_text_2 translated_text_5.");
 				}
 			}
 		}
@@ -675,20 +507,16 @@ public final class XssSaxFilter implements LucyXssFilter {
 	private void serialize(Writer writer, IEHackExtensionElement ie, StringWriter neloLogWriter) throws IOException {
 		checkIEHackRule(ie);
 
-		if (ie.isDisabled()) { // IE Hack 태그가 비활성화 되어 있으면, 태그 삭제.
-			/*if (this.isNeloLogEnabled) {
-				neloLogWriter.write(this.neloElementRemoveMSG);
-				neloLogWriter.write(ie.getName() + "\n");
-			}*/
+		if (ie.isDisabled()) {
+			
 			if (!this.withoutComment) {
 				writer.write(REMOVE_TAG_INFO_START);
 				writer.write(ie.getName().replaceAll("<", "&lt;").replaceFirst(">", "&gt;"));
 				writer.write(REMOVE_TAG_INFO_END);
 			}
 		} else {
-			// \s : A whitespace character, short for [ \t\n\x0b\r\f]
-			// * : Occurs zero or more times, is short for {0,}
-			String stdName = ie.getName().replaceAll("-->", ">").replaceFirst("<!--\\s*", "<!--").replaceAll("]\\s*>", "]>"); // IE에서 핵이 그데로 노출되는 문제 방지 및 공백제거처리
+
+			String stdName = ie.getName().replaceAll("-->", ">").replaceFirst("<!--\\s*", "<!--").replaceAll("]\\s*>", "]>");
 
 			int startIndex = stdName.indexOf("<!") + 1;
 			int lastIntndex = stdName.lastIndexOf(">");
@@ -701,20 +529,14 @@ public final class XssSaxFilter implements LucyXssFilter {
 
 			writer.write(stdName);
 
-			//			if (ie.isClosed()) {
-			//				writer.write("<![endif]-->");
-			//			}
 		}
 	}
 
-	/**
-	 * @param ie
-	 */
 	private void checkIEHackRule(IEHackExtensionElement ie) {
 		ElementRule iEHExRule = this.config.getElementRule(IE_HACK_EXTENSION);
 
 		if (iEHExRule != null) {
-			//iEHExRule.checkEndTag(ie);
+
 			iEHExRule.checkDisabled(ie);
 			iEHExRule.excuteListener(ie);
 		} else {
@@ -727,10 +549,6 @@ public final class XssSaxFilter implements LucyXssFilter {
 		checkRuleRemove(element);
 
 		if (element.isRemoved()) {
-		/*	if (this.isNeloLogEnabled) {
-				neloLogWriter.write(this.neloElementRemoveMSG);
-				neloLogWriter.write(element.getName() + "\n");
-			}*/
 
 			if (!this.withoutComment) {
 				writer.write(REMOVE_TAG_INFO_START);
@@ -738,24 +556,18 @@ public final class XssSaxFilter implements LucyXssFilter {
 				writer.write(REMOVE_TAG_INFO_END);
 			}
 		} else {
-			//TODO 코드 리뷰 필요
-			// v1.3.3 & v1.5.2 BEFORE if (!element.isDisabled()) {
+
 			if (!element.isDisabled() || this.blockingPrefixEnabled) {
 				checkRule(element);
 			}
 
 			if (element.isDisabled()) {
-			/*	if (this.isNeloLogEnabled) {
-					neloLogWriter.write(this.neloElementMSG);
-					neloLogWriter.write(element.getName() + "\n");
-				}*/
 
-				if (this.blockingPrefixEnabled) { //BlockingPrefix를 사용하는 설정인 경우, <, > 에 대한 Escape 대신에 Element 이름을 조작하여 동작을 막는다.
+				if (this.blockingPrefixEnabled) {
 					element.setName(this.blockingPrefix + element.getName());
-					element.setEnabled(true); // 아래 close 태그 만드는 부분에서 escape 처리를 안하기 위한 꽁수. isBlockingPrefixEnabled 검사하도록 로직 수정.
-					//					writer.write('<');
-					//					writer.write(element.getName());
-				} else { //BlockingPrefix를 사용하지 않는 설정인 경우, <, > 에 대한 Escape 처리.
+					element.setEnabled(true);
+
+				} else {
 					if (!this.withoutComment) {
 
 						writer.write(BAD_TAG_INFO);
@@ -795,11 +607,6 @@ public final class XssSaxFilter implements LucyXssFilter {
 
 			if (hasAttrXss) {
 				String attrXssString = attrXssSw.toString();
-				/*if (this.isNeloLogEnabled) {
-					neloLogWriter.write(this.neloAttrMSG);
-					neloLogWriter.write(element.getName());
-					neloLogWriter.write(attrXssString + "\n");
-				}*/
 
 				if (!this.withoutComment) {
 					writer.write(attrXssString);
@@ -823,17 +630,6 @@ public final class XssSaxFilter implements LucyXssFilter {
 				writer.write(element.isDisabled() ? "&gt;" : ">");
 			}
 
-			//			if (e.isClosed()) {
-			//				if (e.isDisabled() && !this.isBlockingPrefixEnabled) {
-			//					writer.write("&lt;/");
-			//					writer.write(e.getName());
-			//					writer.write("&gt;");
-			//				} else {
-			//					writer.write("</");
-			//					writer.write(e.getName());
-			//					writer.write('>');
-			//				}
-			//			}
 		}
 	}
 
@@ -854,17 +650,11 @@ public final class XssSaxFilter implements LucyXssFilter {
 
 		ElementRule tagRule = this.config.getElementRule(element.getName());
 		if (tagRule == null) {
-			// v1.3.3 & v1.5.2 BEFORE
-			//element.setEnabled(false);
-			//return;
-			//TODO 코드 리뷰 필요
+
 			tagRule = new ElementRule(element.getName());
 		}
 
-		//tagRule.checkEndTag(e);
 		tagRule.checkDisabled(element);
-		//tagRule.disableNotAllowedAttributes(e);
-		//tagRule.disableNotAllowedChildElements(e);
 
 		Collection<Attribute> atts = element.getAttributes();
 		if (atts != null && !atts.isEmpty()) {
@@ -877,12 +667,10 @@ public final class XssSaxFilter implements LucyXssFilter {
 					att.setEnabled(false);
 				} else {
 					if (!attRule.getExceptionTagList().contains(element.getName().toLowerCase())) {
-						//Exception 리스트에 포함이 안되면,
-						//attribute Rule에 따라 disable 값을 설정한다.
+
 						attRule.checkDisabled(att);
 					} else {
-						//Exception 리스트에 포함이 되면,
-						//Rule과 반대로 disable 값을 설정한다.
+
 						attRule.checkDisabled(att);
 						att.setEnabled(att.isDisabled());
 					}

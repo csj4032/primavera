@@ -10,14 +10,6 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-/**
- * 국제화 메시지 기능을 테스트하고 시연하는 컨트롤러입니다.
- * 
- * 주요 기능:
- * - 현재 로케일에 따른 메시지 반환
- * - 언어 변경 기능 테스트
- * - AJAX를 통한 동적 메시지 조회
- */
 @RestController
 @RequestMapping("/api/messages")
 public class MessageController {
@@ -29,11 +21,6 @@ public class MessageController {
         this.messageSource = messageSource;
     }
 
-    /**
-     * 현재 로케일 정보와 샘플 메시지를 반환합니다.
-     * 
-     * @return 현재 로케일과 다국어 메시지 정보
-     */
     @GetMapping("/current")
     public ResponseEntity<Map<String, Object>> getCurrentLocaleInfo() {
         Locale currentLocale = LocaleContextHolder.getLocale();
@@ -43,8 +30,7 @@ public class MessageController {
         response.put("language", currentLocale.getLanguage());
         response.put("country", currentLocale.getCountry());
         response.put("displayName", currentLocale.getDisplayName());
-        
-        // 샘플 메시지들
+
         Map<String, String> messages = new HashMap<>();
         messages.put("userRegistrationSuccess", messageSource.getMessage("user.registration.success", null, currentLocale));
         messages.put("userUpdateSuccess", messageSource.getMessage("user.update.success", null, currentLocale));
@@ -58,12 +44,6 @@ public class MessageController {
         return ResponseEntity.ok(response);
     }
 
-    /**
-     * 특정 메시지 키에 대한 현재 로케일의 메시지를 반환합니다.
-     * 
-     * @param key 메시지 키
-     * @return 현재 로케일에 해당하는 메시지
-     */
     @GetMapping("/get")
     public ResponseEntity<Map<String, String>> getMessage(@RequestParam String key) {
         Locale currentLocale = LocaleContextHolder.getLocale();
@@ -85,13 +65,6 @@ public class MessageController {
         return ResponseEntity.ok(response);
     }
 
-    /**
-     * 파라미터가 있는 메시지를 반환합니다.
-     * 
-     * @param key 메시지 키
-     * @param args 메시지 파라미터들 (쉼표로 구분)
-     * @return 파라미터가 적용된 메시지
-     */
     @GetMapping("/get-with-params")
     public ResponseEntity<Map<String, String>> getMessageWithParams(
             @RequestParam String key, 
@@ -123,18 +96,11 @@ public class MessageController {
         return ResponseEntity.ok(response);
     }
 
-    /**
-     * 지원되는 모든 언어의 특정 메시지를 반환합니다.
-     * 
-     * @param key 메시지 키
-     * @return 모든 지원 언어의 메시지
-     */
     @GetMapping("/all-languages")
     public ResponseEntity<Map<String, Object>> getMessageInAllLanguages(@RequestParam String key) {
         Map<String, Object> response = new HashMap<>();
         Map<String, String> messages = new HashMap<>();
-        
-        // 지원하는 로케일들
+
         Locale[] supportedLocales = {
             Locale.KOREAN,
             Locale.ENGLISH,
@@ -157,18 +123,12 @@ public class MessageController {
         return ResponseEntity.ok(response);
     }
 
-    /**
-     * 사용자 검증 관련 메시지들을 모두 반환합니다.
-     * 
-     * @return 현재 로케일의 모든 검증 메시지
-     */
     @GetMapping("/validation-messages")
     public ResponseEntity<Map<String, String>> getValidationMessages() {
         Locale currentLocale = LocaleContextHolder.getLocale();
         
         Map<String, String> messages = new HashMap<>();
-        
-        // 검증 관련 메시지 키들
+
         String[] validationKeys = {
             "com.genius.primavera.validate.nickname.message",
             "com.genius.primavera.validate.password.match.message",

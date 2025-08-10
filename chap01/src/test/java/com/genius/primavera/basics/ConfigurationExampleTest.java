@@ -8,7 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-@DisplayName("설정 관리 테스트")
+@DisplayName("translated_text_2 translated_text_2 test")
 public class ConfigurationExampleTest {
     
     @Autowired
@@ -18,14 +18,14 @@ public class ConfigurationExampleTest {
     private ConfigurationExample.AppProperties appProperties;
     
     @Test
-    @DisplayName("@Value 어노테이션으로 설정값 주입")
+    @DisplayName("@Value annotationtranslated_text_2 translated_text_2 translated_text_2")
     void testValueAnnotation() {
         assertThat(valueExample).isNotNull();
         valueExample.printConfiguration();
     }
     
     @Test
-    @DisplayName("@ConfigurationProperties로 타입 안전한 설정")
+    @DisplayName("@ConfigurationPropertiestranslated_text_1 translated_text_2 translated_text_3 translated_text_2")
     void testConfigurationProperties() {
         assertThat(appProperties).isNotNull();
         assertThat(appProperties.getName()).isEqualTo("Primavera Tutorial");

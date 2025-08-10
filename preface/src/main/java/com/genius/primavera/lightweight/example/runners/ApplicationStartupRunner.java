@@ -8,9 +8,6 @@ import com.genius.primavera.lightweight.framework.PrimaveraApplication;
 import com.genius.primavera.lightweight.interfaces.PrimaveraApplicationRunner;
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * 애플리케이션 시작 시 실행되는 Runner 예제
- */
 @Slf4j
 @PrimaveraComponent
 public class ApplicationStartupRunner implements PrimaveraApplicationRunner {
@@ -23,99 +20,80 @@ public class ApplicationStartupRunner implements PrimaveraApplicationRunner {
     
     @Override
     public void run() throws Exception {
-        log.info("🌸 ApplicationStartupRunner 실행 시작");
-        
-        // 애플리케이션 정보 출력
+        log.info(" ApplicationStartupRunner execution translated_text_2");
+
         printApplicationInfo();
-        
-        // 환영 메시지 처리
-        messageService.processWelcomeMessage("Primavera 사용자");
-        
-        // 커스텀 메시지 처리
-        messageService.processCustomMessage("경량 프레임워크가 성공적으로 시작되었습니다!");
-        
-        // 환경 변수 정보 출력
+
+        messageService.processWelcomeMessage("Primavera user");
+
+        messageService.processCustomMessage("translated_text_2 translated_text_6 translated_text_10 translated_text_2!");
+
         printEnvironmentInfo();
-        
-        // 라이프사이클 서비스 테스트
+
         testLifecycleService();
         
-        log.info("🌸 ApplicationStartupRunner 실행 완료");
+        log.info(" ApplicationStartupRunner execution completed");
     }
-    
-    /**
-     * 애플리케이션 정보를 출력합니다.
-     */
+
     private void printApplicationInfo() {
         var context = PrimaveraApplication.getApplicationContext();
         
-        log.info("\n=== 🌸 Primavera 애플리케이션 정보 ===");
-        
-        // Configuration에서 생성된 Bean 정보
+        log.info("\n===  Primavera translated_text_6 information ===");
+
         if (context.containsBean("applicationName")) {
             String appName = context.getBean("applicationName");
-            log.info("애플리케이션명: {}", appName);
+            log.info("translated_text_6: {}", appName);
         }
         
         if (context.containsBean("applicationVersion")) {
             String appVersion = context.getBean("applicationVersion");
-            log.info("버전: {}", appVersion);
+            log.info("translated_text_2: {}", appVersion);
         }
         
         if (context.containsBean("maxUsers")) {
             Integer maxUsers = context.getBean("maxUsers");
-            log.info("최대 사용자 수: {}", maxUsers);
+            log.info("translated_text_2 user translated_text_1: {}", maxUsers);
         }
         
-        log.info("등록된 Bean 수: {}", context.getBeanNames().size());
+        log.info("translated_text_13 Bean translated_text_1: {}", context.getBeanNames().size());
         log.info("=====================================\n");
     }
-    
-    /**
-     * 환경 변수 정보를 출력합니다.
-     */
+
     private void printEnvironmentInfo() {
-        log.info("\n=== 🌸 환경 정보 ===");
+        log.info("\n===  translated_text_2 information ===");
         
         String javaVersion = PrimaveraApplication.getProperty("java.version", "Unknown");
         String osName = PrimaveraApplication.getProperty("os.name", "Unknown");
         String userName = PrimaveraApplication.getProperty("user.name", "Unknown");
         
-        log.info("Java 버전: {}", javaVersion);
-        log.info("운영체제: {}", osName);
-        log.info("사용자: {}", userName);
-        
-        // application.properties에서 커스텀 속성 읽기
-        String customMessage = PrimaveraApplication.getProperty("app.welcome.message", "기본 환영 메시지");
-        log.info("환영 메시지: {}", customMessage);
+        log.info("Java translated_text_2: {}", javaVersion);
+        log.info("translated_text_4: {}", osName);
+        log.info("user: {}", userName);
+
+        String customMessage = PrimaveraApplication.getProperty("app.welcome.message", "translated_text_2 translated_text_2 translated_text_3");
+        log.info("translated_text_2 translated_text_3: {}", customMessage);
         
         log.info("====================\n");
     }
-    
-    /**
-     * 라이프사이클 서비스를 테스트합니다.
-     */
+
     private void testLifecycleService() {
-        log.info("\n=== 🌸 라이프사이클 서비스 테스트 ===");
-        
-        // 서비스 상태 확인
+        log.info("\n===  translated_text_6 service test ===");
+
         String status = lifecycleService.getServiceStatus();
-        log.info("현재 상태: {}", status);
-        
-        // 메시지 처리 테스트
-        lifecycleService.processMessage("ApplicationRunner에서 보낸 테스트 메시지");
-        lifecycleService.processMessage("@PostConstruct와 @PreDestroy 테스트 중...");
-        lifecycleService.processMessage("Bean 라이프사이클 후킹이 정상 작동합니다!");
-        
-        // 처리된 메시지 확인
-        log.info("마지막 처리된 메시지: {}", lifecycleService.getLastMessage());
-        log.info("총 처리된 메시지 수: {}", lifecycleService.getProcessedMessages().size());
-        log.info("서비스 실행 시간: {}초", lifecycleService.getUptimeSeconds());
+        log.info("translated_text_2 translated_text_2: {}", status);
+
+        lifecycleService.processMessage("ApplicationRunnertranslated_text_2 translated_text_2 test translated_text_3");
+        lifecycleService.processMessage("@PostConstructtranslated_text_1 @PreDestroy test translated_text_1...");
+        lifecycleService.processMessage("Bean translated_text_6 translated_text_3 translated_text_2 translated_text_5!");
+
+        log.info("translated_text_3 translated_text_11 translated_text_3: {}", lifecycleService.getLastMessage());
+        log.info("translated_text_1 translated_text_11 translated_text_3 translated_text_1: {}", lifecycleService.getProcessedMessages().size());
+        log.info("service execution translated_text_2: {}translated_text_1", lifecycleService.getUptimeSeconds());
         
         log.info("=====================================\n");
         
-        log.info("💡 LifecycleService는 @PostConstruct로 초기화되었고,");
-        log.info("   애플리케이션 종료 시 @PreDestroy로 정리됩니다.");
-        log.info("   Ctrl+C로 종료하여 @PreDestroy 메서드 동작을 확인해보세요!\n");
+        log.info(" LifecycleServicetranslated_text_1 @PostConstructtranslated_text_1 translated_text_1,");
+        log.info("   translated_text_6 translated_text_2 translated_text_1 @PreDestroytranslated_text_1 translated_text_5.");
+        log.info("   Ctrl+Ctranslated_text_1 translated_text_2 @PreDestroy translated_text_3 translated_text_3 translated_text_16!\n");
     }
 }

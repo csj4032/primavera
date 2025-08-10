@@ -21,14 +21,9 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import java.time.Instant;
 import java.util.List;
 
-/**
- * 사용자 등록 유효성 검증 통합 테스트
- * 
- * AbstractIntegrationTest를 상속받아 MariaDB 컨테이너를 자동으로 사용합니다.
- */
 @Testcontainers
 @ActiveProfiles("test")
-@DisplayName("사용자 등록 유효성 검증 테스트")
+@DisplayName("user registration translated_text_3 validation test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class UserSaveValidationTest {
@@ -56,7 +51,7 @@ public class UserSaveValidationTest {
 
     @Test
     @Order(1)
-    @DisplayName("사용자 ID로 조회 테스트")
+    @DisplayName("user IDtranslated_text_1 inquiry test")
     public void getUserById() {
         long body = restTemplate.getForObject("/users/1", long.class);
         Assertions.assertEquals(1L, body);
@@ -64,7 +59,7 @@ public class UserSaveValidationTest {
 
     @Test
     @Order(2)
-    @DisplayName("잘못된 이메일 형식 유효성 검증")
+    @DisplayName("translated_text_3 translated_text_3 translated_text_2 translated_text_3 validation")
     public void saveAndReturnUserIllegalEmail() {
         User source = User.builder().id(1L).email("genius@").password("Secret0!").nickname("genius").roles(List.of(new Role(1, RoleType.USER))).build();
         saveUser(source);
@@ -72,7 +67,7 @@ public class UserSaveValidationTest {
 
     @Test
     @Order(3)
-    @DisplayName("비밀번호 복잡성 규칙 위반 검증")
+    @DisplayName("translated_text_4 translated_text_3 translated_text_2 translated_text_2 validation")
     public void saveAndReturnUserIllegalPassword() {
         User source = User.builder().id(1L).email("genius@gmail.com").password("Secret0").nickname("genius").roles(List.of(new Role(1, RoleType.USER))).build();
         saveUser(source);
@@ -80,7 +75,7 @@ public class UserSaveValidationTest {
 
     @Test
     @Order(4)
-    @DisplayName("닉네임 최대 길이 초과 검증")
+    @DisplayName("translated_text_3 translated_text_2 translated_text_2 translated_text_2 validation")
     public void saveAndReturnUserIllegalLongNickname() {
         String nickname = "1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111";
         User source = User.builder().id(1L).email("genius@gmail.com").password("Secret0!").nickname(nickname).roles(List.of(new Role(1, RoleType.USER))).build();
@@ -89,7 +84,7 @@ public class UserSaveValidationTest {
 
     @Test
     @Order(5)
-    @DisplayName("닉네임 최소 길이 미달 검증")
+    @DisplayName("translated_text_3 translated_text_2 translated_text_2 translated_text_2 validation")
     public void saveAndReturnUserIllegalShortNickname() {
         String nickname = "1";
         User source = User.builder().id(1L).email("genius@gmail.com").password("Secret0!").nickname(nickname).roles(List.of(new Role(1, RoleType.USER))).build();
@@ -98,7 +93,7 @@ public class UserSaveValidationTest {
 
     @Test
     @Order(6)
-    @DisplayName("사용자 권한 누락 검증")
+    @DisplayName("user translated_text_2 translated_text_2 validation")
     public void saveAndReturnUserNotRole() {
         User source = User.builder().id(1L).email("genius@gmail.com").password("Secret0!").nickname("genius").roles(null).build();
         saveUser(source);
@@ -106,7 +101,7 @@ public class UserSaveValidationTest {
 
     @Test
     @Order(7)
-    @DisplayName("잘못된 권한 ID 검증")
+    @DisplayName("translated_text_3 translated_text_2 ID validation")
     public void saveAndReturnUserIllegalRoleId() {
         User source = User.builder().id(1L).email("genius@gmail.com").password("Secret0!").nickname("genius").roles(List.of(new Role(0, RoleType.USER))).build();
         saveUser(source);
@@ -114,13 +109,13 @@ public class UserSaveValidationTest {
 
     @Test
     @Order(8)
-    @DisplayName("권한 타입 누락 검증")
+    @DisplayName("translated_text_2 translated_text_2 translated_text_2 validation")
     public void saveAndReturnUserNullRoleType() {
         User source = User.builder()
                 .id(1L)
                 .email("genius@gmail.com")
                 .password("Secret0!")
-                .createdAt(Instant.now().plusSeconds(60 * 60 * 24)) // 1일 후
+                .createdAt(Instant.now().plusSeconds(60 * 60 * 24))
                 .updatedAt(Instant.now())
                 .nickname("genius")
                 .roles(List.of(new Role(1, null)))
@@ -130,7 +125,7 @@ public class UserSaveValidationTest {
 
     @Test
     @Order(10)
-    @DisplayName("정상 사용자 등록 요청 - 모든 값이 유효할 때 200 OK 반환")
+    @DisplayName("translated_text_2 user registration translated_text_2 - all translated_text_2 translated_text_3 translated_text_1 200 OK translated_text_2")
     public void saveAndReturnUserValid() {
         String password = "ValidPass1!";
         User source = User.builder()
@@ -149,12 +144,12 @@ public class UserSaveValidationTest {
         HttpEntity<User> httpEntity = new HttpEntity<>(source, headers);
         ResponseEntity<String> destination = restTemplate.exchange("/users/save", HttpMethod.POST, httpEntity, String.class, source);
         int actualStatus = destination.getStatusCode().value();
-        Assertions.assertTrue(actualStatus == 200 || actualStatus == 201, "정상 등록 시 200 또는 201 반환");
+        Assertions.assertTrue(actualStatus == 200 || actualStatus == 201, "translated_text_2 registration translated_text_1 200 translated_text_2 201 translated_text_2");
     }
 
     @Test
     @Order(12)
-    @DisplayName("권한 리스트가 비어있을 때 400 Bad Request 반환")
+    @DisplayName("translated_text_2 translated_text_4 translated_text_4 translated_text_1 400 Bad Request translated_text_2")
     public void saveAndReturnUserEmptyRoles() {
         User source = User.builder()
                 .id(4L)
@@ -168,7 +163,7 @@ public class UserSaveValidationTest {
 
     @Test
     @Order(13)
-    @DisplayName("권한이 null일 때 400 Bad Request 반환")
+    @DisplayName("translated_text_2 nulltranslated_text_1 translated_text_1 400 Bad Request translated_text_2")
     public void saveAndReturnUserNullRoles() {
         User source = User.builder()
                 .id(5L)
@@ -182,7 +177,7 @@ public class UserSaveValidationTest {
 
     @Test
     @Order(14)
-    @DisplayName("이메일이 null일 때 400 Bad Request 반환")
+    @DisplayName("translated_text_3 nulltranslated_text_1 translated_text_1 400 Bad Request translated_text_2")
     public void saveAndReturnUserNullEmail() {
         User source = User.builder()
                 .id(6L)
@@ -196,7 +191,7 @@ public class UserSaveValidationTest {
 
     @Test
     @Order(15)
-    @DisplayName("비밀번호가 null일 때 400 Bad Request 반환")
+    @DisplayName("translated_text_4translated_text_1 nulltranslated_text_1 translated_text_1 400 Bad Request translated_text_2")
     public void saveAndReturnUserNullPassword() {
         User source = User.builder()
                 .id(7L)
@@ -210,7 +205,7 @@ public class UserSaveValidationTest {
 
     @Test
     @Order(16)
-    @DisplayName("닉네임이 null일 때 400 Bad Request 반환")
+    @DisplayName("translated_text_3 nulltranslated_text_1 translated_text_1 400 Bad Request translated_text_2")
     public void saveAndReturnUserNullNickname() {
         User source = User.builder()
                 .id(8L)
@@ -224,7 +219,7 @@ public class UserSaveValidationTest {
 
     @Test
     @Order(17)
-    @DisplayName("닉네임에 특수문자 포함 시 400 Bad Request 반환")
+    @DisplayName("translated_text_3 translated_text_4 translated_text_2 translated_text_1 400 Bad Request translated_text_2")
     public void saveAndReturnUserNicknameWithSpecialChars() {
         User source = User.builder()
                 .id(9L)
@@ -238,7 +233,7 @@ public class UserSaveValidationTest {
 
     @Test
     @Order(18)
-    @DisplayName("닉네임에 공백 포함 시 400 Bad Request 반환")
+    @DisplayName("translated_text_3 translated_text_2 translated_text_2 translated_text_1 400 Bad Request translated_text_2")
     public void saveAndReturnUserNicknameWithSpaces() {
         User source = User.builder()
                 .id(10L)
@@ -252,7 +247,7 @@ public class UserSaveValidationTest {
 
     @Test
     @Order(19)
-    @DisplayName("비밀번호가 짧을 때 (7자) 400 Bad Request 반환")
+    @DisplayName("translated_text_4translated_text_1 translated_text_2 translated_text_1 (7translated_text_1) 400 Bad Request translated_text_2")
     public void saveAndReturnUserPasswordTooShort() {
         User source = User.builder()
                 .id(11L)
@@ -266,7 +261,7 @@ public class UserSaveValidationTest {
 
     @Test
     @Order(20)
-    @DisplayName("비밀번호가 길 때 (21자) 400 Bad Request 반환")
+    @DisplayName("translated_text_4translated_text_1 translated_text_1 translated_text_1 (21translated_text_1) 400 Bad Request translated_text_2")
     public void saveAndReturnUserPasswordTooLong() {
         User source = User.builder()
                 .id(12L)
@@ -280,7 +275,7 @@ public class UserSaveValidationTest {
 
     @Test
     @Order(21)
-    @DisplayName("비밀번호에 숫자 누락 시 400 Bad Request 반환")
+    @DisplayName("translated_text_4 translated_text_1 translated_text_2 translated_text_1 400 Bad Request translated_text_2")
     public void saveAndReturnUserPasswordNoDigit() {
         User source = User.builder()
                 .id(13L)
@@ -294,7 +289,7 @@ public class UserSaveValidationTest {
 
     @Test
     @Order(22)
-    @DisplayName("비밀번호에 소문자 누락 시 400 Bad Request 반환")
+    @DisplayName("translated_text_4 translated_text_1 translated_text_2 translated_text_1 400 Bad Request translated_text_2")
     public void saveAndReturnUserPasswordNoLowercase() {
         User source = User.builder()
                 .id(14L)
@@ -308,7 +303,7 @@ public class UserSaveValidationTest {
 
     @Test
     @Order(23)
-    @DisplayName("비밀번호에 대문자 누락 시 400 Bad Request 반환")
+    @DisplayName("translated_text_4 translated_text_1 translated_text_2 translated_text_1 400 Bad Request translated_text_2")
     public void saveAndReturnUserPasswordNoUppercase() {
         User source = User.builder()
                 .id(15L)
@@ -322,7 +317,7 @@ public class UserSaveValidationTest {
 
     @Test
     @Order(24)
-    @DisplayName("비밀번호에 특수문자 누락 시 400 Bad Request 반환")
+    @DisplayName("translated_text_4 translated_text_4 translated_text_2 translated_text_1 400 Bad Request translated_text_2")
     public void saveAndReturnUserPasswordNoSpecialChar() {
         User source = User.builder()
                 .id(16L)
@@ -336,7 +331,7 @@ public class UserSaveValidationTest {
 
     @Test
     @Order(25)
-    @DisplayName("비밀번호에 공백 포함 시 400 Bad Request 반환")
+    @DisplayName("translated_text_4 translated_text_2 translated_text_2 translated_text_1 400 Bad Request translated_text_2")
     public void saveAndReturnUserPasswordWithSpaces() {
         User source = User.builder()
                 .id(17L)
@@ -350,7 +345,7 @@ public class UserSaveValidationTest {
 
     @Test
     @Order(26)
-    @DisplayName("권한의 ID가 0일 때 400 Bad Request 반환")
+    @DisplayName("translated_text_2 IDtranslated_text_1 0translated_text_1 translated_text_1 400 Bad Request translated_text_2")
     public void saveAndReturnUserRoleIdZero() {
         User source = User.builder()
                 .id(18L)
@@ -364,7 +359,7 @@ public class UserSaveValidationTest {
 
     @Test
     @Order(27)
-    @DisplayName("권한의 ID가 음수일 때 400 Bad Request 반환")
+    @DisplayName("translated_text_2 IDtranslated_text_1 translated_text_1 translated_text_1 400 Bad Request translated_text_2")
     public void saveAndReturnUserRoleIdNegative() {
         User source = User.builder()
                 .id(19L)
@@ -378,7 +373,7 @@ public class UserSaveValidationTest {
 
     @Test
     @Order(28)
-    @DisplayName("한글 닉네임 정상 처리")
+    @DisplayName("translated_text_2 translated_text_3 translated_text_2 processing")
     public void saveAndReturnUserKoreanNickname() {
         String password = "Secret0!";
         User source = User.builder()
@@ -386,7 +381,7 @@ public class UserSaveValidationTest {
                 .email("korean" + System.currentTimeMillis() + "@gmail.com")
                 .password(password)
                 .passwordConfirm(password)
-                .nickname("한글닉네임")
+                .nickname("translated_text_2translated_text_3")
                 .roles(List.of(new Role(1, RoleType.USER)))
                 .build();
         HttpHeaders headers = new HttpHeaders();
@@ -394,7 +389,7 @@ public class UserSaveValidationTest {
         HttpEntity<User> httpEntity = new HttpEntity<>(source, headers);
         ResponseEntity<String> destination = restTemplate.exchange("/users/save", HttpMethod.POST, httpEntity, String.class, source);
         int actualStatus = destination.getStatusCode().value();
-        Assertions.assertTrue(actualStatus == 200 || actualStatus == 201, "한글 닉네임은 정상 처리되어야 함");
+        Assertions.assertTrue(actualStatus == 200 || actualStatus == 201, "translated_text_2 translated_text_3 translated_text_2 processing translated_text_1");
     }
 
     private void saveUser(User source) {
@@ -403,7 +398,7 @@ public class UserSaveValidationTest {
         HttpEntity<User> httpEntity = new HttpEntity<>(source, headers);
         ResponseEntity<String> destination = restTemplate.exchange("/users/save", HttpMethod.POST, httpEntity, String.class, source);
         int actualStatus = destination.getStatusCode().value();
-        // @ScriptAssert 제거 후 유효성 검증이 제대로 작동하여 400 Bad Request 반환
+
         Assertions.assertEquals(400, actualStatus, "Expected 400 Bad Request for invalid email");
     }
 }

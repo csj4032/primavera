@@ -10,7 +10,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-@DisplayName("Bean 생명주기 테스트")
+@DisplayName("Bean translated_text_4 test")
 class BeanLifecycleExampleTest {
 
     @Autowired
@@ -20,7 +20,7 @@ class BeanLifecycleExampleTest {
     private BeanLifecycleExample beanLifecycleExample;
 
     @Test
-    @DisplayName("Bean이 정상적으로 생성되고 초기화되었는지 확인")
+    @DisplayName("Beantranslated_text_1 successfully created and translated_text_7 verification")
     void testBeanLifecycle() {
         assertThat(beanLifecycleExample).isNotNull();
         assertThat(beanLifecycleExample.getStatus()).isEqualTo("POST_CONSTRUCT");
@@ -29,7 +29,7 @@ class BeanLifecycleExampleTest {
     }
 
     @Test
-    @DisplayName("Bean의 생명주기 상태와 컨텍스트 내 존재 여부 확인")
+    @DisplayName("Beantranslated_text_1 translated_text_4 translated_text_3 translated_text_4 translated_text_1 translated_text_2 translated_text_2 verification")
     public void testBeanDestruction() {
         assertThat(beanLifecycleExample.getStatus()).isEqualTo("POST_CONSTRUCT");
         assertThat(context.containsBean("beanLifecycleExample")).isTrue();

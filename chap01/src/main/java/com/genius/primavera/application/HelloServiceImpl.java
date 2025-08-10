@@ -10,4 +10,3 @@ public class HelloServiceImpl implements HelloService {
         return "Hello";
     }
 }
-

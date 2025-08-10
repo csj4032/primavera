@@ -35,10 +35,10 @@ public class OrderEventPublisher {
             
             future.whenComplete((result, throwable) -> {
                 if (throwable != null) {
-                    log.error("주문 생성 이벤트 발행 실패: orderId={}, error={}", 
+                    log.error("translated_text_2 creation translated_text_3 translated_text_2 failure: orderId={}, error={}", 
                             event.getOrderId(), throwable.getMessage());
                 } else {
-                    log.info("주문 생성 이벤트 발행 성공: orderId={}, partition={}, offset={}", 
+                    log.info("translated_text_2 creation translated_text_3 translated_text_2 success: orderId={}, partition={}, offset={}", 
                             event.getOrderId(),
                             result.getRecordMetadata().partition(),
                             result.getRecordMetadata().offset());
@@ -64,10 +64,10 @@ public class OrderEventPublisher {
             
             future.whenComplete((result, throwable) -> {
                 if (throwable != null) {
-                    log.error("주문 취소 이벤트 발행 실패: orderId={}, error={}", 
+                    log.error("translated_text_2 translated_text_2 translated_text_3 translated_text_2 failure: orderId={}, error={}", 
                             orderId, throwable.getMessage());
                 } else {
-                    log.info("주문 취소 이벤트 발행 성공: orderId={}, reason={}", 
+                    log.info("translated_text_2 translated_text_2 translated_text_3 translated_text_2 success: orderId={}, reason={}", 
                             orderId, reason);
                 }
             });

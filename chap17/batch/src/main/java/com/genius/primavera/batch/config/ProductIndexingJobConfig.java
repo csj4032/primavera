@@ -46,7 +46,7 @@ public class ProductIndexingJobConfig {
 
     @Bean
     public JpaPagingItemReader<Product> productItemReader() {
-        // N+1 문제를 피하기 위해 JOIN FETCH 사용
+
         String jpqlQuery = "SELECT p FROM Product p " +
                 "JOIN FETCH p.seller " +
                 "JOIN FETCH p.category";

@@ -10,10 +10,10 @@ public class PrimaveraLightweightDemo {
     public static void main(String[] args) {
         try {
             PrimaveraApplicationContext context = PrimaveraApplication.run(PrimaveraLightweightDemo.class, args);
-            log.info("🌸 애플리케이션이 실행 중입니다. 종료하려면 Ctrl+C를 누르세요.");
+            log.info(" translated_text_7 execution translated_text_4. translated_text_5 Ctrl+Ctranslated_text_1 translated_text_4.");
             Thread.currentThread().join();
         } catch (Exception e) {
-            log.error("애플리케이션 실행 중 오류 발생", e);
+            log.error("translated_text_6 execution translated_text_1 error translated_text_2", e);
             System.exit(1);
         }
     }

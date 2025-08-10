@@ -4,7 +4,7 @@ import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@DisplayName("Article 도메인 테스트")
+@DisplayName("Article translated_text_3 test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ArticleTest {
 
@@ -19,12 +19,12 @@ public class ArticleTest {
     public static void setUp() {
         root = Article.builder().id(0).pId(0).subject("Root").level(0).build();
 
-        first = Article.builder().id(1).pId(0).parent(root).subject("Root 직계 첫번째").level(1).build();
-        first_first = Article.builder().id(2).pId(1).parent(first).subject("Root 직계 첫번째 first 직계 첫번째").level(2).build();
-        first_second = Article.builder().id(4).pId(1).parent(first).subject("Root 직계 첫번째 first 직계 두번째").level(2).build();
-        first_second_first = Article.builder().id(5).pId(4).parent(first_second).subject("Root 직계 첫번째 first 직계 두번째 first_second 첫번째").level(3).build();
+        first = Article.builder().id(1).pId(0).parent(root).subject("Root translated_text_2 translated_text_3").level(1).build();
+        first_first = Article.builder().id(2).pId(1).parent(first).subject("Root translated_text_2 translated_text_3 first translated_text_2 translated_text_3").level(2).build();
+        first_second = Article.builder().id(4).pId(1).parent(first).subject("Root translated_text_2 translated_text_3 first translated_text_2 translated_text_3").level(2).build();
+        first_second_first = Article.builder().id(5).pId(4).parent(first_second).subject("Root translated_text_2 translated_text_3 first translated_text_2 translated_text_3 first_second translated_text_3").level(3).build();
 
-        second = Article.builder().id(3).pId(0).parent(root).subject("Root 직계 두번째").level(1).build();
+        second = Article.builder().id(3).pId(0).parent(root).subject("Root translated_text_2 translated_text_3").level(1).build();
         first_second.setChildren(new Article[]{first_second_first});
         first.setChildren(new Article[]{first_first, first_second});
         root.setChildren(new Article[]{first, second});
@@ -32,7 +32,7 @@ public class ArticleTest {
 
     @Test
     @Order(1)
-    @DisplayName("부모 아티클 확인")
+    @DisplayName("translated_text_2 translated_text_3 verification")
     public void hasParentsTest() {
         assertFalse(root.hasParents());
         assertEquals(0, root.getLevel());

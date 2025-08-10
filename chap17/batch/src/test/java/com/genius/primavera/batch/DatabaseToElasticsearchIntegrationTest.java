@@ -44,7 +44,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Slf4j
 @ActiveProfiles("test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@DisplayName("Database to Elasticsearch 통합 테스트")
+@DisplayName("Database to Elasticsearch translated_text_2 test")
 @SpringBootTest(classes = {com.genius.primavera.ProductBatchApplication.class, com.genius.primavera.batch.TestConfig.class})
 @EnableTestContainers(value = {@EnableTestContainers.TestContainer(type = ContainerType.MARIADB, name = "primavera"), @EnableTestContainers.TestContainer(type = ContainerType.ELASTICSEARCH, name = "elasticsearch")})
 public class DatabaseToElasticsearchIntegrationTest {
@@ -80,7 +80,7 @@ public class DatabaseToElasticsearchIntegrationTest {
         boolean exists = elasticsearchClient.indices().exists(ExistsRequest.of(e -> e.index(INDEX_NAME))).value();
         if (exists) {
             DeleteIndexResponse deleteResponse = elasticsearchClient.indices().delete(d -> d.index(INDEX_NAME));
-            log.info("기존 인덱스 삭제: {}", deleteResponse.acknowledged());
+            log.info("translated_text_2 translated_text_3 deletion: {}", deleteResponse.acknowledged());
         }
 
         Map<String, Property> properties = new HashMap<>();
@@ -90,47 +90,47 @@ public class DatabaseToElasticsearchIntegrationTest {
         properties.put("status", Property.of(p -> p.keyword(k -> k)));
 
         CreateIndexResponse createResponse = elasticsearchClient.indices().create(c -> c.index(INDEX_NAME).mappings(m -> m.properties(properties)));
-        log.info("인덱스 생성: {}", createResponse.acknowledged());
+        log.info("translated_text_3 creation: {}", createResponse.acknowledged());
     }
 
     @Test
     @Order(1)
-    @DisplayName("데이터베이스에 테스트 데이터를 생성할 수 있다")
+    @DisplayName("translated_text_8 test translated_text_5 creation translated_text_1 exists")
     void shouldCreateTestDataInDatabase() {
         List<Category> categories = createTestCategories();
         List<Category> savedCategories = categoryRepository.saveAll(categories);
-        assertEquals(3, savedCategories.size(), "3개의 카테고리가 저장되어야 한다");
+        assertEquals(3, savedCategories.size(), "3translated_text_2 translated_text_5 translated_text_5 translated_text_2");
         List<Seller> sellers = createTestSellers();
         List<Seller> savedSellers = sellerRepository.saveAll(sellers);
-        assertEquals(3, savedSellers.size(), "3개의 판매자가 저장되어야 한다");
+        assertEquals(3, savedSellers.size(), "3translated_text_2 translated_text_4 translated_text_5 translated_text_2");
         List<Product> products = createTestProducts(savedCategories, savedSellers);
         List<Product> savedProducts = productRepository.saveAll(products);
-        assertEquals(TEST_DATA_COUNT, savedProducts.size(), TEST_DATA_COUNT + "개의 상품이 저장되어야 한다");
-        log.info("테스트 데이터 생성 완료:");
-        log.info("- 카테고리: {}개", savedCategories.size());
-        log.info("- 판매자: {}개", savedSellers.size());
-        log.info("- 상품: {}개", savedProducts.size());
+        assertEquals(TEST_DATA_COUNT, savedProducts.size(), TEST_DATA_COUNT + "translated_text_2 translated_text_3 translated_text_5 translated_text_2");
+        log.info("test data creation completed:");
+        log.info("- translated_text_4: {}translated_text_1", savedCategories.size());
+        log.info("- translated_text_3: {}translated_text_1", savedSellers.size());
+        log.info("- translated_text_2: {}translated_text_1", savedProducts.size());
     }
 
     @Test
     @Order(2)
-    @DisplayName("Spring Batch Job으로 데이터를 Elasticsearch에 인덱싱할 수 있다")
+    @DisplayName("Spring Batch Jobtranslated_text_2 translated_text_5 Elasticsearchtranslated_text_1 translated_text_4 translated_text_1 exists")
     void shouldIndexDataToElasticsearchUsingBatchJob() throws Exception {
         prepareTestData();
         JobParameters jobParameters = new JobParametersBuilder().addLong("time", System.currentTimeMillis()).toJobParameters();
         JobExecution jobExecution = jobLauncher.run(productIndexingJob, jobParameters);
-        assertEquals("COMPLETED", jobExecution.getStatus().toString(), "Job이 성공적으로 완료되어야 한다");
-        log.info("Job 실행 상태: {}", jobExecution.getStatus());
-        log.info("Job 종료 시간: {}", jobExecution.getEndTime());
+        assertEquals("COMPLETED", jobExecution.getStatus().toString(), "Jobtranslated_text_1 translated_text_2 completed translated_text_2");
+        log.info("Job execution translated_text_2: {}", jobExecution.getStatus());
+        log.info("Job translated_text_2 translated_text_2: {}", jobExecution.getEndTime());
         Thread.sleep(2000);
         CountResponse countResponse = elasticsearchClient.count(c -> c.index(INDEX_NAME));
-        assertEquals(TEST_DATA_COUNT, countResponse.count(), TEST_DATA_COUNT + "개의 문서가 인덱싱되어야 한다");
-        log.info("인덱싱된 문서 수: {}", countResponse.count());
+        assertEquals(TEST_DATA_COUNT, countResponse.count(), TEST_DATA_COUNT + "translated_text_2 translated_text_3 translated_text_6 translated_text_2");
+        log.info("translated_text_4 translated_text_2 translated_text_1: {}", countResponse.count());
     }
 
     @Test
     @Order(3)
-    @DisplayName("인덱싱된 데이터를 Elasticsearch에서 검색할 수 있다")
+    @DisplayName("translated_text_4 translated_text_5 Elasticsearchtranslated_text_1 translated_text_3 translated_text_1 exists")
     void shouldSearchIndexedDataFromElasticsearch() throws Exception {
         prepareTestData();
         runBatchJob();
@@ -140,13 +140,13 @@ public class DatabaseToElasticsearchIntegrationTest {
                 .query(q -> q
                         .multiMatch(m -> m
                                 .fields("name", "description")
-                                .query("노트북")
+                                .query("translated_text_3")
                         )
                 ), ProductDocument.class
         );
 
-        assertTrue(laptopSearch.hits().total().value() > 0, "노트북 관련 상품이 검색되어야 한다");
-        log.info("'노트북' 검색 결과: {}개", laptopSearch.hits().total().value());
+        assertTrue(laptopSearch.hits().total().value() > 0, "translated_text_3 translated_text_2 translated_text_3 translated_text_5 translated_text_2");
+        log.info("'translated_text_3' translated_text_2 result: {}translated_text_1", laptopSearch.hits().total().value());
 
         SearchResponse<ProductDocument> priceSearch = elasticsearchClient.search(s -> s
                 .index(INDEX_NAME)
@@ -159,25 +159,25 @@ public class DatabaseToElasticsearchIntegrationTest {
                 ), ProductDocument.class
         );
 
-        assertTrue(priceSearch.hits().total().value() > 0, "가격 범위 내 상품이 검색되어야 한다");
-        log.info("가격 범위(50만원~100만원) 검색 결과: {}개", priceSearch.hits().total().value());
+        assertTrue(priceSearch.hits().total().value() > 0, "translated_text_2 translated_text_2 translated_text_1 translated_text_3 translated_text_5 translated_text_2");
+        log.info("translated_text_2 translated_text_2(50translated_text_2~100translated_text_2) translated_text_2 result: {}translated_text_1", priceSearch.hits().total().value());
         SearchResponse<ProductDocument> sellerSearch = elasticsearchClient.search(s -> s.index(INDEX_NAME).query(q -> q.match(m -> m.field("seller.name").query("Tech Store"))), ProductDocument.class);
-        log.info("'Tech Store' 판매자 검색 결과: {}개", sellerSearch.hits().total().value());
+        log.info("'Tech Store' translated_text_3 translated_text_2 result: {}translated_text_1", sellerSearch.hits().total().value());
     }
 
     @Test
     @Order(4)
-    @DisplayName("데이터베이스와 Elasticsearch의 데이터 일관성을 확인할 수 있다")
+    @DisplayName("datatranslated_text_1 Elasticsearchtranslated_text_1 data translated_text_4 translated_text_13 translated_text_1 exists")
     void shouldVerifyDataConsistency() throws Exception {
         prepareTestData();
         runBatchJob();
         Thread.sleep(2000);
         long dbCount = productRepository.count();
         CountResponse esCount = elasticsearchClient.count(c -> c.index(INDEX_NAME));
-        assertEquals(dbCount, esCount.count(), "데이터베이스와 Elasticsearch의 데이터 수가 일치해야 한다");
-        log.info("데이터 일관성 확인:");
-        log.info("- 데이터베이스 상품 수: {}", dbCount);
-        log.info("- Elasticsearch 문서 수: {}", esCount.count());
+        assertEquals(dbCount, esCount.count(), "datatranslated_text_1 Elasticsearchtranslated_text_1 data translated_text_1 translated_text_4 translated_text_2");
+        log.info("data translated_text_3 verification:");
+        log.info("- datatranslated_text_1 translated_text_2 translated_text_1: {}", dbCount);
+        log.info("- Elasticsearch translated_text_2 translated_text_1: {}", esCount.count());
         Product firstProduct = productRepository.findAll().get(0);
         SearchResponse<ProductDocument> productSearch = elasticsearchClient.search(s -> s
                 .index(INDEX_NAME)
@@ -188,13 +188,13 @@ public class DatabaseToElasticsearchIntegrationTest {
                         )
                 ), ProductDocument.class
         );
-        assertEquals(1, productSearch.hits().total().value(), "특정 상품이 정확히 1개 검색되어야 한다");
+        assertEquals(1, productSearch.hits().total().value(), "translated_text_2 translated_text_3 translated_text_3 1translated_text_1 translated_text_5 translated_text_2");
         ProductDocument document = productSearch.hits().hits().get(0).source();
-        assertNotNull(document, "문서가 존재해야 한다");
-        assertEquals(firstProduct.getName(), document.getName(), "상품명이 일치해야 한다");
-        assertEquals(firstProduct.getPrice(), document.getPrice(), "가격이 일치해야 한다");
-        assertEquals(firstProduct.getStatus().name(), document.getStatus(), "상태가 일치해야 한다");
-        log.info("개별 상품 검증 완료 - ID: {}, Name: {}", firstProduct.getId(), firstProduct.getName());
+        assertNotNull(document, "translated_text_3 translated_text_4 translated_text_2");
+        assertEquals(firstProduct.getName(), document.getName(), "translated_text_2translated_text_1 translated_text_4 translated_text_2");
+        assertEquals(firstProduct.getPrice(), document.getPrice(), "translated_text_2translated_text_1 translated_text_4 translated_text_2");
+        assertEquals(firstProduct.getStatus().name(), document.getStatus(), "translated_text_2 translated_text_4 translated_text_2");
+        log.info("translated_text_1 translated_text_2 validation completed - ID: {}, Name: {}", firstProduct.getId(), firstProduct.getName());
     }
 
     private void prepareTestData() {
@@ -215,17 +215,17 @@ public class DatabaseToElasticsearchIntegrationTest {
         long timestamp = System.currentTimeMillis();
         List<Category> categories = new ArrayList<>();
         categories.add(Category.builder()
-                .name("노트북-" + timestamp)
+                .name("translated_text_3-" + timestamp)
                 .level(1)
                 .createdAt(LocalDateTime.now())
                 .build());
         categories.add(Category.builder()
-                .name("스마트폰-" + timestamp)
+                .name("translated_text_4-" + timestamp)
                 .level(1)
                 .createdAt(LocalDateTime.now())
                 .build());
         categories.add(Category.builder()
-                .name("태블릿-" + timestamp)
+                .name("translated_text_3-" + timestamp)
                 .level(1)
                 .createdAt(LocalDateTime.now())
                 .build());
@@ -258,22 +258,22 @@ public class DatabaseToElasticsearchIntegrationTest {
 
     private List<Product> createTestProducts(List<Category> categories, List<Seller> sellers) {
         var laptopTemplates = List.of(
-            new ProductTemplate("MacBook Pro 최신형", "고성능 노트북 MacBook Pro 최신 모델입니다", 1500000, ProductStatus.ACTIVE),
-            new ProductTemplate("Dell XPS 최신형", "고성능 노트북 Dell XPS 최신 모델입니다", 1700000, ProductStatus.ACTIVE),
-            new ProductTemplate("ThinkPad 최신형", "고성능 노트북 ThinkPad 최신 모델입니다", 1900000, ProductStatus.ACTIVE)
+            new ProductTemplate("MacBook Pro translated_text_3", "translated_text_3 translated_text_3 MacBook Pro translated_text_2 translated_text_5", 1500000, ProductStatus.ACTIVE),
+            new ProductTemplate("Dell XPS translated_text_3", "translated_text_3 translated_text_3 Dell XPS translated_text_2 translated_text_5", 1700000, ProductStatus.ACTIVE),
+            new ProductTemplate("ThinkPad translated_text_3", "translated_text_3 translated_text_3 ThinkPad translated_text_2 translated_text_5", 1900000, ProductStatus.ACTIVE)
         );
         
         var phoneTemplates = List.of(
-            new ProductTemplate("iPhone 15 Pro Max", "최신 스마트폰 iPhone 15 프로 모델입니다", 1200000, ProductStatus.ACTIVE),
-            new ProductTemplate("Galaxy S24 Pro Max", "최신 스마트폰 Galaxy S24 프로 모델입니다", 1300000, ProductStatus.ACTIVE),
-            new ProductTemplate("Pixel 8 Pro Max", "최신 스마트폰 Pixel 8 프로 모델입니다", 1400000, ProductStatus.ACTIVE)
+            new ProductTemplate("iPhone 15 Pro Max", "translated_text_2 translated_text_4 iPhone 15 translated_text_2 translated_text_5", 1200000, ProductStatus.ACTIVE),
+            new ProductTemplate("Galaxy S24 Pro Max", "translated_text_2 translated_text_4 Galaxy S24 translated_text_2 translated_text_5", 1300000, ProductStatus.ACTIVE),
+            new ProductTemplate("Pixel 8 Pro Max", "translated_text_2 translated_text_4 Pixel 8 translated_text_2 translated_text_5", 1400000, ProductStatus.ACTIVE)
         );
         
         var tabletTemplates = List.of(
-            new ProductTemplate("iPad Pro 2024", "프리미엄 태블릿 iPad Pro 최신 버전입니다", 800000, ProductStatus.ACTIVE),
-            new ProductTemplate("Galaxy Tab 2024", "프리미엄 태블릿 Galaxy Tab 최신 버전입니다", 950000, ProductStatus.ACTIVE),
-            new ProductTemplate("Surface Pro 2024", "프리미엄 태블릿 Surface Pro 최신 버전입니다", 1100000, ProductStatus.ACTIVE),
-            new ProductTemplate("Android Tablet 2024", "프리미엄 태블릿 Android Tablet 최신 버전입니다", 1250000, ProductStatus.INACTIVE)
+            new ProductTemplate("iPad Pro 2024", "translated_text_4 translated_text_3 iPad Pro translated_text_2 translated_text_5", 800000, ProductStatus.ACTIVE),
+            new ProductTemplate("Galaxy Tab 2024", "translated_text_4 translated_text_3 Galaxy Tab translated_text_2 translated_text_5", 950000, ProductStatus.ACTIVE),
+            new ProductTemplate("Surface Pro 2024", "translated_text_4 translated_text_3 Surface Pro translated_text_2 translated_text_5", 1100000, ProductStatus.ACTIVE),
+            new ProductTemplate("Android Tablet 2024", "translated_text_4 translated_text_3 Android Tablet translated_text_2 translated_text_5", 1250000, ProductStatus.INACTIVE)
         );
         
         var allTemplates = List.of(

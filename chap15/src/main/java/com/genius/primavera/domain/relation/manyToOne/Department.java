@@ -31,7 +31,7 @@ public class Department {
 
 	public void addEmployee(Employee employee) {
 		this.employees.add(employee);
-		// 무한루프 주의
+
 		if (employee.getDepartment() != this) {
 			employee.setDepartment(this);
 		}

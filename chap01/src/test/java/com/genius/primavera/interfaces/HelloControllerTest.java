@@ -25,7 +25,7 @@ public class HelloControllerTest {
     private HelloController helloController;
 
     @Test
-    @DisplayName("greeting() 메서드는 'Hello World!!!'를 반환해야 한다")
+    @DisplayName("greeting() translated_text_4 'Hello World!!!'translated_text_1 translated_text_4 translated_text_2")
     void greetingTest() {
         when(greetingService.hello()).thenReturn("Hello");
         when(worldService.world()).thenReturn("World");
@@ -34,7 +34,7 @@ public class HelloControllerTest {
     }
 
     @Test
-    @DisplayName("hello() 메서드는 GreetingService의 hello() 메서드 결과를 반환해야 한다")
+    @DisplayName("hello() translated_text_4 GreetingServicetranslated_text_1 hello() translated_text_3 translated_text_1 translated_text_4 translated_text_2")
     void helloTest() {
         when(greetingService.hello()).thenReturn("Hello");
         when(worldService.world()).thenReturn("World");
@@ -43,7 +43,7 @@ public class HelloControllerTest {
     }
 
     @Test
-    @DisplayName("world() 메서드는 WorldService의 world() 메서드 결과를 반환해야 한다")
+    @DisplayName("world() translated_text_4 WorldServicetranslated_text_1 world() translated_text_3 translated_text_1 translated_text_4 translated_text_2")
     void worldTest() {
         when(worldService.world()).thenReturn("World");
         String result = helloController.world();

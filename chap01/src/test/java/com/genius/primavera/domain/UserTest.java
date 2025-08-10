@@ -14,9 +14,9 @@ import java.util.List;
 class UserTest {
 
     @Test
-    @DisplayName("User 객체가 정상적으로 생성되어야 한다")
+    @DisplayName("User translated_text_3 successfully translated_text_11 translated_text_2")
     void userCreationTest() {
-        // given
+
         long id = 1L;
         String email = "test@example.com";
         String password = "password123";
@@ -24,10 +24,8 @@ class UserTest {
         List<Role> roles = Arrays.asList(new Role(), new Role());
         Instant now = Instant.now();
 
-        // when
         User user = new User(id, email, password, nickname, roles, now, now);
 
-        // then
         assertThat(user.getId()).isEqualTo(id);
         assertThat(user.getEmail()).isEqualTo(email);
         assertThat(user.getPassword()).isEqualTo(password);
@@ -38,9 +36,9 @@ class UserTest {
     }
 
     @Test
-    @DisplayName("User Builder를 사용하여 객체를 정상적으로 생성해야 한다")
+    @DisplayName("User Buildertranslated_text_1 translated_text_4 translated_text_1 successfully translated_text_10 translated_text_2")
     void userBuilderTest() {
-        // given
+
         long id = 1L;
         String email = "test@example.com";
         String password = "password123";
@@ -48,7 +46,6 @@ class UserTest {
         List<Role> roles = Arrays.asList(new Role(), new Role());
         Instant now = Instant.now();
 
-        // when
         User user = User.builder()
                 .id(id)
                 .email(email)
@@ -59,7 +56,6 @@ class UserTest {
                 .updatedAt(now)
                 .build();
 
-        // then
         assertThat(user.getId()).isEqualTo(id);
         assertThat(user.getEmail()).isEqualTo(email);
         assertThat(user.getPassword()).isEqualTo(password);
@@ -70,9 +66,9 @@ class UserTest {
     }
 
     @Test
-    @DisplayName("동일한 id와 email을 가진 User 객체는 equals 비교에서 true를 반환해야 한다")
+    @DisplayName("translated_text_3 idtranslated_text_1 emailtranslated_text_1 translated_text_2 User translated_text_3 equals translated_text_4 truetranslated_text_1 translated_text_4 translated_text_2")
     void userEqualsTest() {
-        // given
+
         User user1 = User.builder()
                 .id(1L)
                 .email("test@example.com")
@@ -85,14 +81,13 @@ class UserTest {
                 .nickname("differentNickname")
                 .build();
 
-        // when & then
         assertThat(user1).isEqualTo(user2);
     }
 
     @Test
-    @DisplayName("다른 id나 email을 가진 User 객체는 equals 비교에서 false를 반환해야 한다")
+    @DisplayName("translated_text_2 idtranslated_text_1 emailtranslated_text_1 translated_text_2 User translated_text_3 equals translated_text_4 falsetranslated_text_1 translated_text_4 translated_text_2")
     void userNotEqualsTest() {
-        // given
+
         User user1 = User.builder()
                 .id(1L)
                 .email("test@example.com")
@@ -108,15 +103,14 @@ class UserTest {
                 .email("different@example.com")
                 .build();
 
-        // when & then
         assertThat(user1).isNotEqualTo(user2);
         assertThat(user1).isNotEqualTo(user3);
     }
 
     @Test
-    @DisplayName("User 기본 생성자로 생성된 객체의 setter 메서드가 정상적으로 동작해야 한다")
+    @DisplayName("User translated_text_2 translated_text_10 translated_text_9 translated_text_3 setter translated_text_4 successfully translated_text_4 translated_text_2")
     void userSetterMethodsTest() {
-        // given
+
         User user = new User();
         long id = 100L;
         String email = "setter.test@example.com";
@@ -129,7 +123,6 @@ class UserTest {
         Instant createdAt = LocalDateTime.of(2023, 1, 1, 10, 0).toInstant(ZoneOffset.UTC);
         Instant updatedAt = LocalDateTime.of(2023, 12, 31, 15, 30).toInstant(ZoneOffset.UTC);
 
-        // when
         user.setId(id);
         user.setEmail(email);
         user.setPassword(password);
@@ -138,7 +131,6 @@ class UserTest {
         user.setCreatedAt(createdAt);
         user.setUpdatedAt(updatedAt);
 
-        // then
         assertThat(user.getId()).isEqualTo(id);
         assertThat(user.getEmail()).isEqualTo(email);
         assertThat(user.getPassword()).isEqualTo(password);
@@ -150,23 +142,21 @@ class UserTest {
     }
 
     @Test
-    @DisplayName("User 단일 id 생성자로 생성된 객체의 setter 메서드가 정상적으로 동작해야 한다")
+    @DisplayName("User translated_text_2 id translated_text_10 translated_text_9 translated_text_3 setter translated_text_4 successfully translated_text_4 translated_text_2")
     void userSingleIdConstructorSetterTest() {
-        // given
+
         User user = new User(1L);
         String email = "id.constructor@example.com";
         String password = "idPassword123";
         String nickname = "idUser";
         Instant now = Instant.now();
 
-        // when
         user.setEmail(email);
         user.setPassword(password);
         user.setNickname(nickname);
         user.setCreatedAt(now);
         user.setUpdatedAt(now);
 
-        // then
         assertThat(user.getId()).isEqualTo(1L);
         assertThat(user.getEmail()).isEqualTo(email);
         assertThat(user.getPassword()).isEqualTo(password);
@@ -176,12 +166,11 @@ class UserTest {
     }
 
     @Test
-    @DisplayName("User 기본 생성자로 생성하고 null 값 설정이 정상적으로 동작해야 한다")
+    @DisplayName("User translated_text_2 translated_text_10 translated_text_10 null translated_text_1 translated_text_3 successfully translated_text_4 translated_text_2")
     void userSetterWithNullValuesTest() {
-        // given
+
         User user = new User();
 
-        // when
         user.setId(0L);
         user.setEmail(null);
         user.setPassword(null);
@@ -190,7 +179,6 @@ class UserTest {
         user.setCreatedAt(null);
         user.setUpdatedAt(null);
 
-        // then
         assertThat(user.getId()).isEqualTo(0L);
         assertThat(user.getEmail()).isNull();
         assertThat(user.getPassword()).isNull();
@@ -201,14 +189,13 @@ class UserTest {
     }
 
     @Test
-    @DisplayName("User 기본 생성자와 단일 id 생성자가 정상적으로 동작해야 한다")
+    @DisplayName("User translated_text_2 translated_text_1 translated_text_2 id translated_text_10 successfully translated_text_4 translated_text_2")
     void userConstructorTest() {
-        // given & when
+
         User defaultUser = new User();
         User idUser = new User(42L);
 
-        // then
-        assertThat(defaultUser.getId()).isEqualTo(0L); // primitive long default value
+        assertThat(defaultUser.getId()).isEqualTo(0L);
         assertThat(defaultUser.getEmail()).isNull();
         assertThat(defaultUser.getPassword()).isNull();
         assertThat(defaultUser.getNickname()).isNull();

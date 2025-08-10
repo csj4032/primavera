@@ -18,11 +18,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.LongStream;
 
-
 @Slf4j
 @SpringBootTest
 @ActiveProfiles("test")
-@DisplayName("캐시 체인 테스트 - 로컬캐시 → Redis → MongoDB")
+@DisplayName("translated_text_2 translated_text_2 test - translated_text_2 → Redis → MongoDB")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class CacheChainTest implements FullStackIntegrationTest {
 

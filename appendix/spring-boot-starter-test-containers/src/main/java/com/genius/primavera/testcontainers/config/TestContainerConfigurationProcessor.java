@@ -41,7 +41,7 @@ public class TestContainerConfigurationProcessor {
     private void configureEnabledTypes() {
         for (ContainerType type : ContainerType.values()) {
             String typeName = type.name().toLowerCase();
-            boolean isEnabled = enabled.getOrDefault(typeName, true); // Default to enabled
+            boolean isEnabled = enabled.getOrDefault(typeName, true);
             
             if (!isEnabled) {
                 log.info("Container type {} is disabled by configuration", type);
@@ -67,8 +67,7 @@ public class TestContainerConfigurationProcessor {
         String typeName = type.name().toLowerCase();
         return enabled.getOrDefault(typeName, true);
     }
-    
-    
+
     public Map<String, Boolean> getEnabled() {
         return enabled;
     }

@@ -40,28 +40,28 @@ class MariaDBBeanCreatorRealTest {
         spec.setMaxConnections(5);
         spec.setConnectionTimeout(10000);
         
-        log.info("MariaDB 테스트 컨테이너 시작됨: {}", container.getJdbcUrl());
+        log.info("MariaDB test translated_text_4 translated_text_3: {}", container.getJdbcUrl());
     }
 
     @AfterAll
     void tearDown() {
         if (container != null) {
             container.stop();
-            log.info("MariaDB 테스트 컨테이너 중지됨");
+            log.info("MariaDB test translated_text_4 translated_text_3");
         }
     }
 
     @Test
     @Order(1)
-    @DisplayName("MariaDB BeanCreator 지원 타입 확인")
+    @DisplayName("MariaDB BeanCreator translated_text_2 translated_text_2 verification")
     void testSupportedType() {
         assertEquals(ContainerType.MARIADB, beanCreator.getSupportedType());
-        log.info("✅ MariaDB BeanCreator 지원 타입: {}", beanCreator.getSupportedType());
+        log.info(" MariaDB BeanCreator translated_text_2 translated_text_2: {}", beanCreator.getSupportedType());
     }
 
     @Test
     @Order(2)
-    @DisplayName("MariaDB DataSource 빈 생성 및 실제 연결 테스트")
+    @DisplayName("MariaDB DataSource translated_text_1 creation translated_text_1 translated_text_2 translated_text_2 test")
     void testCreateBeanWithRealConnection() {
         ContainerInfo containerInfo = new ContainerInfo(
                 "test-mariadb",
@@ -72,27 +72,27 @@ class MariaDBBeanCreatorRealTest {
 
         HikariDataSource dataSource = (HikariDataSource) assertDoesNotThrow(() -> beanCreator.createBean(containerInfo));
         
-        assertNotNull(dataSource, "생성된 DataSource가 null이 아니어야 합니다");
-        assertInstanceOf(HikariDataSource.class, dataSource, "HikariDataSource 인스턴스여야 합니다");
+        assertNotNull(dataSource, "creation DataSourcetranslated_text_1 nulltranslated_text_1 translated_text_4 translated_text_3");
+        assertInstanceOf(HikariDataSource.class, dataSource, "HikariDataSource translated_text_6 translated_text_3");
         
         assertDoesNotThrow(() -> {
             try (var connection = dataSource.getConnection()) {
-                assertTrue(connection.isValid(5), "연결이 유효해야 합니다");
+                assertTrue(connection.isValid(5), "translated_text_2translated_text_1 translated_text_4 translated_text_3");
                 var statement = connection.createStatement();
                 var resultSet = statement.executeQuery("SELECT 1");
-                assertTrue(resultSet.next(), "쿼리 결과가 있어야 합니다");
-                assertEquals(1, resultSet.getInt(1), "결과값이 1이어야 합니다");
-                log.info("✅ MariaDB 연결 테스트 성공");
+                assertTrue(resultSet.next(), "translated_text_2 translated_text_1 translated_text_3 translated_text_3");
+                assertEquals(1, resultSet.getInt(1), "translated_text_1 1translated_text_1 translated_text_3");
+                log.info(" MariaDB translated_text_2 test success");
             }
-        }, "MariaDB 연결이 성공해야 합니다");
+        }, "MariaDB translated_text_2translated_text_1 success translated_text_3");
         
         dataSource.close();
-        log.info("✅ MariaDB DataSource 생성 및 연결 테스트 성공");
+        log.info(" MariaDB DataSource creation translated_text_1 translated_text_2 test success");
     }
 
     @Test
     @Order(3)
-    @DisplayName("MariaDB 기본값으로 DataSource 생성 테스트")
+    @DisplayName("MariaDB translated_text_5 DataSource creation test")
     void testCreateBeanWithDefaults() {
         MariaDbContainerSpec defaultSpec = new MariaDbContainerSpec();
         defaultSpec.setUsername("testuser");
@@ -108,16 +108,16 @@ class MariaDBBeanCreatorRealTest {
 
         HikariDataSource dataSource = (HikariDataSource) beanCreator.createBean(containerInfo);
         
-        assertNotNull(dataSource, "DataSource가 생성되어야 합니다");
+        assertNotNull(dataSource, "DataSourcetranslated_text_1 creation translated_text_3");
         
         assertDoesNotThrow(() -> {
             try (var connection = dataSource.getConnection()) {
-                assertTrue(connection.isValid(5), "기본값으로 연결이 유효해야 합니다");
-                log.info("✅ 기본값으로 MariaDB 연결 테스트 성공");
+                assertTrue(connection.isValid(5), "translated_text_5 translated_text_2translated_text_1 translated_text_4 translated_text_3");
+                log.info(" translated_text_5 MariaDB translated_text_2 test success");
             }
         });
         
         dataSource.close();
-        log.info("✅ 기본값으로 MariaDB DataSource 생성 및 연결 테스트 성공");
+        log.info(" translated_text_5 MariaDB DataSource creation translated_text_1 translated_text_2 test success");
     }
 }

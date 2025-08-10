@@ -26,12 +26,11 @@ import java.util.List;
 
 import lombok.extern.slf4j.Slf4j;
 
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 @Slf4j
 @SpringBootTest
 @ActiveProfiles("test")
-@DisplayName("ArticleMapper 통합 테스트")
+@DisplayName("ArticleMapper translated_text_2 test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @Testcontainers
 public class ArticleMapperTest {
@@ -69,14 +68,14 @@ public class ArticleMapperTest {
 
     @Test
     @Order(1)
-    @DisplayName("원글을 성공적으로 저장한다")
+    @DisplayName("translated_text_3 translated_text_10 translated_text_4")
     void shouldSaveMainArticleSuccessfully() {
         article1 = Article.builder()
                 .pId(0L)
                 .step(1)
                 .level(1)
                 .author(user)
-                .subject("게시글 1번")
+                .subject("translated_text_3 1translated_text_1")
                 .status(ArticleStatus.PUBLIC)
                 .createdAt(Instant.now())
                 .build();
@@ -86,7 +85,7 @@ public class ArticleMapperTest {
 
     @Test
     @Order(2)
-    @DisplayName("답글을 성공적으로 저장한다")
+    @DisplayName("translated_text_3 translated_text_10 translated_text_4")
     void shouldSaveReplyArticleSuccessfully() {
         article1_1 = Article.builder()
                 .parent(article1)
@@ -95,7 +94,7 @@ public class ArticleMapperTest {
                 .step(2)
                 .level(2)
                 .author(user)
-                .subject("게시글 1번_1번")
+                .subject("translated_text_3 1translated_text_1_1translated_text_1")
                 .status(ArticleStatus.PUBLIC)
                 .createdAt(Instant.now())
                 .build();
@@ -105,7 +104,7 @@ public class ArticleMapperTest {
 
     @Test
     @Order(3)
-    @DisplayName("계층형 답글을 성공적으로 저장한다")
+    @DisplayName("translated_text_3 translated_text_3 translated_text_10 translated_text_4")
     void shouldSaveNestedRepliesSuccessfully() {
         article1_1_1 = Article.builder()
                 .parent(article1_1)
@@ -114,7 +113,7 @@ public class ArticleMapperTest {
                 .step(3)
                 .level(3)
                 .author(user)
-                .subject("게시글 1번_1번_1번")
+                .subject("translated_text_3 1translated_text_1_1translated_text_1_1translated_text_1")
                 .status(ArticleStatus.PUBLIC)
                 .createdAt(Instant.now())
                 .build();
@@ -125,7 +124,7 @@ public class ArticleMapperTest {
                 .step(4)
                 .level(3)
                 .author(user)
-                .subject("게시글 1번_1번_2번")
+                .subject("translated_text_3 1translated_text_1_1translated_text_1_2translated_text_1")
                 .status(ArticleStatus.PUBLIC)
                 .createdAt(Instant.now())
                 .build();
@@ -137,14 +136,14 @@ public class ArticleMapperTest {
 
     @Test
     @Order(4)
-    @DisplayName("두 번째 원글을 성공적으로 저장한다")
+    @DisplayName("translated_text_1 translated_text_1 translated_text_3 translated_text_10 translated_text_4")
     void shouldSaveSecondMainArticleSuccessfully() {
         article2 = Article.builder()
                 .pId(0L)
                 .step(1)
                 .level(1)
                 .author(user)
-                .subject("게시글 2번")
+                .subject("translated_text_3 2translated_text_1")
                 .status(ArticleStatus.PUBLIC)
                 .createdAt(Instant.now())
                 .build();
@@ -154,7 +153,7 @@ public class ArticleMapperTest {
 
     @Test
     @Order(5)
-    @DisplayName("두 번째 원글의 답글을 성공적으로 저장한다")
+    @DisplayName("translated_text_1 translated_text_1 translated_text_3 translated_text_3 translated_text_10 translated_text_4")
     void shouldSaveSecondArticleReplySuccessfully() {
         article2_1 = Article.builder()
                 .parent(article2)
@@ -163,7 +162,7 @@ public class ArticleMapperTest {
                 .step(2)
                 .level(2)
                 .author(user)
-                .subject("게시글 2번_1번")
+                .subject("translated_text_3 2translated_text_1_1translated_text_1")
                 .status(ArticleStatus.PUBLIC)
                 .createdAt(Instant.now())
                 .build();
@@ -173,7 +172,7 @@ public class ArticleMapperTest {
 
     @Test
     @Order(6)
-    @DisplayName("모든 게시글을 성공적으로 조회한다")
+    @DisplayName("all translated_text_3 translated_text_10 translated_text_9")
     void shouldFindAllArticlesSuccessfully() {
         List<Article> articles = articleMapper.findAll();
         assertEquals(30, articles.size());

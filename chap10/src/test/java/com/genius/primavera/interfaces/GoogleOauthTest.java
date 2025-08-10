@@ -11,7 +11,7 @@ public class GoogleOauthTest {
 
 	@Test
 	@Order(1)
-	@DisplayName("OAuth2 클라이언트 등록 설정 테스트")
+	@DisplayName("OAuth2 translated_text_5 registration translated_text_2 test")
 	public void oauthClientRegistrationTest() {
 		ClientRegistration.Builder builder = ClientRegistration.withRegistrationId("google")
 				.clientId("test-client-id")
@@ -34,7 +34,7 @@ public class GoogleOauthTest {
 
 	@Test
 	@Order(2)
-	@DisplayName("OAuth2 URL 구성 테스트")
+	@DisplayName("OAuth2 URL translated_text_2 test")
 	public void oauthUrlConfigurationTest() {
 		String authorizationUri = "https://accounts.google.com/o/oauth2/v2/auth";
 		String tokenUri = "https://www.googleapis.com/oauth2/v4/token";

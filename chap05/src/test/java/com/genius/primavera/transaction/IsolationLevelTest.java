@@ -32,7 +32,7 @@ import static org.assertj.core.api.Assertions.*;
 @EnableTestContainers
 @ActiveProfiles({"test"})
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@DisplayName("Spring Transaction Isolation Level 테스트")
+@DisplayName("Spring Transaction Isolation Level test")
 public class IsolationLevelTest {
 
     @Autowired
@@ -53,9 +53,9 @@ public class IsolationLevelTest {
     }
 
     @Test
-    @DisplayName("DEFAULT - 데이터베이스 기본 격리 수준 사용 (일반적으로 READ_COMMITTED)")
+    @DisplayName("DEFAULT - translated_text_7 translated_text_2 translated_text_2 translated_text_2 translated_text_2 (translated_text_5 READ_COMMITTED)")
     void testDefaultIsolation() throws InterruptedException {
-        log.info("=== DEFAULT Isolation 테스트 시작 ===");
+        log.info("=== DEFAULT Isolation test translated_text_2 ===");
         Long userId = userMapper.save(testUser);
         CountDownLatch latch = new CountDownLatch(2);
         ExecutorService executor = Executors.newFixedThreadPool(2);
@@ -78,7 +78,7 @@ public class IsolationLevelTest {
         }, executor);
         String result1 = future1.join();
         String result2 = future2.join();
-        log.info("DEFAULT 격리 수준 테스트 결과 - T1: {}, T2: {}", result1, result2);
+        log.info("DEFAULT translated_text_2 translated_text_2 test result - T1: {}, T2: {}", result1, result2);
         assertThat(result1).contains("DEFAULT_T1");
         assertThat(result2).contains("DEFAULT_T2");
         executor.shutdown();
@@ -86,34 +86,34 @@ public class IsolationLevelTest {
 
     @Transactional(isolation = Isolation.DEFAULT)
     String defaultIsolationTransaction1(Long userId, CountDownLatch latch) throws InterruptedException {
-        log.info("DEFAULT T1 시작 - User ID: {}", userId);
+        log.info("DEFAULT T1 translated_text_2 - User ID: {}", userId);
         User user = userMapper.findById(userId);
         user.setNickname("DEFAULT_T1_USER");
         userMapper.update(user);
         latch.countDown();
         latch.await();
         Thread.sleep(50);
-        log.info("DEFAULT T1 완료");
+        log.info("DEFAULT T1 completed");
         return "DEFAULT_T1 completed";
     }
 
     @Transactional(isolation = Isolation.DEFAULT)
     String defaultIsolationTransaction2(Long userId, CountDownLatch latch) throws InterruptedException {
-        log.info("DEFAULT T2 시작 - User ID: {}", userId);
+        log.info("DEFAULT T2 translated_text_2 - User ID: {}", userId);
         User user = userMapper.findById(userId);
         user.setStatus(UserStatus.INACTIVE);
         userMapper.update(user);
         latch.countDown();
         latch.await();
         Thread.sleep(50);
-        log.info("DEFAULT T2 완료");
+        log.info("DEFAULT T2 completed");
         return "DEFAULT_T2 completed";
     }
 
     @Test
-    @DisplayName("READ_UNCOMMITTED - 다른 트랜잭션의 커밋되지 않은 변경사항도 읽을 수 있음 (Dirty Read 발생 가능)")
+    @DisplayName("READ_UNCOMMITTED - translated_text_2 translated_text_5 translated_text_4 translated_text_2 translated_text_5 translated_text_2 translated_text_1 translated_text_2 (Dirty Read translated_text_2 translated_text_2)")
     void testReadUncommittedIsolation() throws InterruptedException {
-        log.info("=== READ_UNCOMMITTED Isolation 테스트 시작 ===");
+        log.info("=== READ_UNCOMMITTED Isolation test translated_text_2 ===");
         Long userId = userMapper.save(testUser);
         CountDownLatch startLatch = new CountDownLatch(1);
         CountDownLatch readLatch = new CountDownLatch(1);
@@ -136,7 +136,7 @@ public class IsolationLevelTest {
         }, executor);
         String writerResult = writerFuture.join();
         String readerResult = readerFuture.join();
-        log.info("READ_UNCOMMITTED 테스트 결과 - Writer: {}, Reader: {}", writerResult, readerResult);
+        log.info("READ_UNCOMMITTED test result - Writer: {}, Reader: {}", writerResult, readerResult);
         assertThat(writerResult).contains("WRITER");
         assertThat(readerResult).contains("READER");
         executor.shutdown();
@@ -144,34 +144,34 @@ public class IsolationLevelTest {
 
     @Transactional(isolation = Isolation.READ_UNCOMMITTED)
     String readUncommittedWriter(Long userId, CountDownLatch startLatch, CountDownLatch readLatch) throws InterruptedException {
-        log.info("READ_UNCOMMITTED Writer 시작");
+        log.info("READ_UNCOMMITTED Writer translated_text_2");
         User user = userMapper.findById(userId);
         user.setNickname("UNCOMMITTED_CHANGE");
         userMapper.update(user);
-        log.info("데이터 변경 완료, Reader에게 신호 전송");
+        log.info("data translated_text_2 completed, Readertranslated_text_2 translated_text_2 translated_text_2");
         startLatch.countDown();
         readLatch.await();
         Thread.sleep(100);
-        log.info("READ_UNCOMMITTED Writer 완료");
+        log.info("READ_UNCOMMITTED Writer completed");
         return "WRITER completed";
     }
 
     @Transactional(isolation = Isolation.READ_UNCOMMITTED)
     String readUncommittedReader(Long userId, CountDownLatch startLatch, CountDownLatch readLatch) throws InterruptedException {
-        log.info("READ_UNCOMMITTED Reader 대기 중");
+        log.info("READ_UNCOMMITTED Reader translated_text_2 translated_text_1");
         startLatch.await();
-        log.info("READ_UNCOMMITTED Reader 시작");
+        log.info("READ_UNCOMMITTED Reader translated_text_2");
         User user = userMapper.findById(userId);
-        log.info("읽은 데이터: nickname = {}", user.getNickname());
+        log.info("translated_text_2 data: nickname = {}", user.getNickname());
         readLatch.countDown();
-        log.info("READ_UNCOMMITTED Reader 완료");
+        log.info("READ_UNCOMMITTED Reader completed");
         return "READER completed - read: " + user.getNickname();
     }
 
     @Test
-    @DisplayName("READ_COMMITTED - 커밋된 데이터만 읽을 수 있음 (Dirty Read 방지)")
+    @DisplayName("READ_COMMITTED - translated_text_3 data translated_text_2 translated_text_1 translated_text_2 (Dirty Read translated_text_2)")
     void testReadCommittedIsolation() throws InterruptedException {
-        log.info("=== READ_COMMITTED Isolation 테스트 시작 ===");
+        log.info("=== READ_COMMITTED Isolation test translated_text_2 ===");
         Long userId = userMapper.save(testUser);
         CountDownLatch writerStartLatch = new CountDownLatch(1);
         CountDownLatch readerDoneLatch = new CountDownLatch(1);
@@ -194,7 +194,7 @@ public class IsolationLevelTest {
         }, executor);
         String writerResult = writerFuture.join();
         String readerResult = readerFuture.join();
-        log.info("READ_COMMITTED 테스트 결과 - Writer: {}, Reader: {}", writerResult, readerResult);
+        log.info("READ_COMMITTED test result - Writer: {}, Reader: {}", writerResult, readerResult);
         assertThat(writerResult).contains("COMMITTED_WRITER");
         assertThat(readerResult).contains("COMMITTED_READER");
         executor.shutdown();
@@ -202,33 +202,33 @@ public class IsolationLevelTest {
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     String readCommittedWriter(Long userId, CountDownLatch writerStartLatch, CountDownLatch readerDoneLatch) throws InterruptedException {
-        log.info("READ_COMMITTED Writer 시작");
+        log.info("READ_COMMITTED Writer translated_text_2");
         User user = userMapper.findById(userId);
         user.setNickname("WILL_BE_COMMITTED");
         userMapper.update(user);
-        log.info("데이터 변경 완료, Reader 시작 허용");
+        log.info("data translated_text_2 completed, Reader translated_text_2 translated_text_2");
         writerStartLatch.countDown();
         Thread.sleep(200);
-        log.info("READ_COMMITTED Writer 커밋 예정");
+        log.info("READ_COMMITTED Writer translated_text_2 translated_text_2");
         return "COMMITTED_WRITER completed";
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     String readCommittedReader(Long userId, CountDownLatch writerStartLatch, CountDownLatch readerDoneLatch) throws InterruptedException {
         writerStartLatch.await();
-        log.info("READ_COMMITTED Reader 시작");
+        log.info("READ_COMMITTED Reader translated_text_2");
         Thread.sleep(50);
         User user = userMapper.findById(userId);
-        log.info("READ_COMMITTED로 읽은 데이터: nickname = {}", user.getNickname());
+        log.info("READ_COMMITTEDtranslated_text_1 translated_text_2 data: nickname = {}", user.getNickname());
         readerDoneLatch.countDown();
-        log.info("READ_COMMITTED Reader 완료");
+        log.info("READ_COMMITTED Reader completed");
         return "COMMITTED_READER completed - read: " + user.getNickname();
     }
 
     @Test
-    @DisplayName("REPEATABLE_READ - 트랜잭션 동안 같은 데이터를 반복 읽을 때 동일한 값 보장")
+    @DisplayName("REPEATABLE_READ - translated_text_4 translated_text_2 translated_text_2 data translated_text_2 translated_text_2 translated_text_1 translated_text_3 translated_text_1 translated_text_2")
     void testRepeatableReadIsolation() throws InterruptedException {
-        log.info("=== REPEATABLE_READ Isolation 테스트 시작 ===");
+        log.info("=== REPEATABLE_READ Isolation test translated_text_2 ===");
         Long userId = userMapper.save(testUser);
         CountDownLatch readerStartLatch = new CountDownLatch(1);
         CountDownLatch writerDoneLatch = new CountDownLatch(1);
@@ -251,7 +251,7 @@ public class IsolationLevelTest {
         }, executor);
         String readerResult = readerFuture.join();
         String writerResult = writerFuture.join();
-        log.info("REPEATABLE_READ 테스트 결과 - Reader: {}, Writer: {}", readerResult, writerResult);
+        log.info("REPEATABLE_READ test result - Reader: {}, Writer: {}", readerResult, writerResult);
         assertThat(readerResult).contains("REPEATABLE_READER");
         assertThat(writerResult).contains("REPEATABLE_WRITER");
         executor.shutdown();
@@ -259,34 +259,34 @@ public class IsolationLevelTest {
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     String repeatableReadReader(Long userId, CountDownLatch readerStartLatch, CountDownLatch writerDoneLatch) throws InterruptedException {
-        log.info("REPEATABLE_READ Reader 시작");
+        log.info("REPEATABLE_READ Reader translated_text_2");
         User user1 = userMapper.findById(userId);
-        log.info("첫 번째 읽기: nickname = {}", user1.getNickname());
+        log.info("translated_text_1 translated_text_2 translated_text_2: nickname = {}", user1.getNickname());
         readerStartLatch.countDown();
         writerDoneLatch.await();
         User user2 = userMapper.findById(userId);
-        log.info("두 번째 읽기: nickname = {}", user2.getNickname());
-        log.info("REPEATABLE_READ Reader 완료 - 첫번째: {}, 두번째: {}", user1.getNickname(), user2.getNickname());
+        log.info("translated_text_1 translated_text_2 translated_text_2: nickname = {}", user2.getNickname());
+        log.info("REPEATABLE_READ Reader completed - translated_text_1translated_text_2: {}, translated_text_1translated_text_2: {}", user1.getNickname(), user2.getNickname());
         return String.format("REPEATABLE_READER completed - first: %s, second: %s", user1.getNickname(), user2.getNickname());
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     String repeatableReadWriter(Long userId, CountDownLatch readerStartLatch, CountDownLatch writerDoneLatch) throws InterruptedException {
         readerStartLatch.await();
-        log.info("REPEATABLE_READ Writer 시작");
+        log.info("REPEATABLE_READ Writer translated_text_2");
         User user = userMapper.findById(userId);
         user.setNickname("CHANGED_BY_WRITER");
         userMapper.update(user);
-        log.info("REPEATABLE_READ Writer 데이터 변경 완료");
+        log.info("REPEATABLE_READ Writer data translated_text_2 completed");
         writerDoneLatch.countDown();
-        log.info("REPEATABLE_READ Writer 완료");
+        log.info("REPEATABLE_READ Writer completed");
         return "REPEATABLE_WRITER completed";
     }
 
     @Test
-    @DisplayName("SERIALIZABLE - 가장 높은 격리 수준, 모든 동시성 문제 해결하지만 성능 저하")
+    @DisplayName("SERIALIZABLE - translated_text_2 translated_text_2 translated_text_2 translated_text_2, all translated_text_3 translated_text_2 translated_text_5 translated_text_2 translated_text_2")
     void testSerializableIsolation() throws InterruptedException {
-        log.info("=== SERIALIZABLE Isolation 테스트 시작 ===");
+        log.info("=== SERIALIZABLE Isolation test translated_text_2 ===");
         Long userId = userMapper.save(testUser);
         CountDownLatch startLatch = new CountDownLatch(2);
         ExecutorService executor = Executors.newFixedThreadPool(2);
@@ -308,7 +308,7 @@ public class IsolationLevelTest {
         }, executor);
         String result1 = future1.join();
         String result2 = future2.join();
-        log.info("SERIALIZABLE 테스트 결과 - T1: {}, T2: {}", result1, result2);
+        log.info("SERIALIZABLE test result - T1: {}, T2: {}", result1, result2);
         assertThat(result1).contains("SERIALIZABLE_T1");
         assertThat(result2).contains("SERIALIZABLE_T2");
         executor.shutdown();
@@ -316,27 +316,27 @@ public class IsolationLevelTest {
 
     @Transactional(isolation = Isolation.SERIALIZABLE)
     String serializableTransaction1(Long userId, CountDownLatch startLatch) throws InterruptedException {
-        log.info("SERIALIZABLE T1 시작");
+        log.info("SERIALIZABLE T1 translated_text_2");
         startLatch.countDown();
         startLatch.await();
         User user = userMapper.findById(userId);
         user.setNickname("SERIALIZABLE_T1_USER");
         userMapper.update(user);
         Thread.sleep(100);
-        log.info("SERIALIZABLE T1 완료");
+        log.info("SERIALIZABLE T1 completed");
         return "SERIALIZABLE_T1 completed";
     }
 
     @Transactional(isolation = Isolation.SERIALIZABLE)
     String serializableTransaction2(Long userId, CountDownLatch startLatch) throws InterruptedException {
-        log.info("SERIALIZABLE T2 시작");
+        log.info("SERIALIZABLE T2 translated_text_2");
         startLatch.countDown();
         startLatch.await();
         User user = userMapper.findById(userId);
         user.setStatus(UserStatus.INACTIVE);
         userMapper.update(user);
         Thread.sleep(100);
-        log.info("SERIALIZABLE T2 완료");
+        log.info("SERIALIZABLE T2 completed");
         return "SERIALIZABLE_T2 completed";
     }
 }

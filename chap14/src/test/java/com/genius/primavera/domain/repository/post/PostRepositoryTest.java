@@ -36,12 +36,12 @@ public class PostRepositoryTest {
 	@Order(1)
 	@Rollback(false)
 	@Transactional
-	@DisplayName("포스트 작성 테스트")
+	@DisplayName("translated_text_3 translated_text_2 test")
 	public void writePostTest() {
 		Post post = new Post();
 		post.setWriter(userRepository.findById(1).orElseThrow());
-		post.setSubject("안녕하세요");
-		post.setContents("안녕하세요");
+		post.setSubject("translated_text_5");
+		post.setContents("translated_text_5");
 		post.setStatus(PostStatus.PUBLIC);
 		postRepository.save(post);
 	}

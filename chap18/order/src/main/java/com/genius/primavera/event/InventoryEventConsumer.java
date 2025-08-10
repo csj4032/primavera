@@ -29,7 +29,7 @@ public class InventoryEventConsumer {
             Acknowledgment ack) {
         
         try {
-            log.info("재고 이벤트 수신: eventType={}, topic={}", eventType, topic);
+            log.info("translated_text_2 translated_text_3 translated_text_2: eventType={}, topic={}", eventType, topic);
             
             switch (eventType) {
                 case "INVENTORY_RESERVED" -> {
@@ -40,39 +40,37 @@ public class InventoryEventConsumer {
                     InventoryInsufficientEvent insufficientEvent = (InventoryInsufficientEvent) event;
                     handleInventoryInsufficientEvent(insufficientEvent);
                 }
-                default -> log.warn("알 수 없는 이벤트 타입: {}", eventType);
+                default -> log.warn("translated_text_1 translated_text_1 translated_text_2 translated_text_3 translated_text_2: {}", eventType);
             }
             
             ack.acknowledge();
             
         } catch (Exception e) {
-            log.error("재고 이벤트 처리 중 오류: eventType={}, error={}", eventType, e.getMessage(), e);
+            log.error("translated_text_2 translated_text_3 processing translated_text_1 error: eventType={}, error={}", eventType, e.getMessage(), e);
             ack.acknowledge();
         }
     }
     
     private void handleInventoryReservedEvent(InventoryReservedEvent event) {
-        log.info("재고 예약 완료: orderId={}, items={}", 
+        log.info("translated_text_2 translated_text_2 completed: orderId={}, items={}", 
                 event.getOrderId(), event.getReservedItems().size());
-        
-        // 주문 상태를 재고 확인됨으로 변경
+
         orderService.confirmInventory(event.getOrderId())
-                .doOnSuccess(order -> log.info("주문 상태 업데이트 완료: orderId={}, status={}", 
+                .doOnSuccess(order -> log.info("translated_text_2 translated_text_2 translated_text_4 completed: orderId={}, status={}", 
                         order.getOrderId(), order.getStatus()))
-                .doOnError(error -> log.error("주문 상태 업데이트 실패: orderId={}, error={}", 
+                .doOnError(error -> log.error("translated_text_2 translated_text_2 translated_text_4 failure: orderId={}, error={}", 
                         event.getOrderId(), error.getMessage()))
                 .subscribe();
     }
     
     private void handleInventoryInsufficientEvent(InventoryInsufficientEvent event) {
-        log.warn("재고 부족으로 주문 취소: orderId={}, reason={}, insufficientItems={}", 
+        log.warn("translated_text_2 translated_text_4 translated_text_2 translated_text_2: orderId={}, reason={}, insufficientItems={}", 
                 event.getOrderId(), event.getReason(), event.getInsufficientItems().size());
-        
-        // 주문 취소
+
         orderService.cancelOrder(event.getOrderId(), event.getReason())
-                .doOnSuccess(order -> log.info("주문 취소 완료: orderId={}, status={}", 
+                .doOnSuccess(order -> log.info("translated_text_2 translated_text_2 completed: orderId={}, status={}", 
                         order.getOrderId(), order.getStatus()))
-                .doOnError(error -> log.error("주문 취소 실패: orderId={}, error={}", 
+                .doOnError(error -> log.error("translated_text_2 translated_text_2 failure: orderId={}, error={}", 
                         event.getOrderId(), error.getMessage()))
                 .subscribe();
     }
