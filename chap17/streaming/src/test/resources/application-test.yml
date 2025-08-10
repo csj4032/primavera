@@ -17,6 +17,12 @@ spring:
   elasticsearch:
     uris: http://localhost:9200
 
+logging:
+  level:
+    io.debezium: DEBUG
+    com.genius.primavera.streaming: DEBUG
+    org.apache.kafka.connect: DEBUG
+
 
 testcontainers:
   defaults:
@@ -33,14 +39,13 @@ testcontainers:
         database: "primavera"
         username: "primavera"
         password: "primavera"
-        rootPassword: "primavera"
         initScript: "classpath:sql/init.sql"
         characterSet: "utf8mb4"
         collation: "utf8mb4_unicode_ci"
         command:
           - "--server-id=1"
           - "--log-bin=mysql-bin"
-          - "--binlog-format=ROW"  
+          - "--binlog-format=ROW"
           - "--binlog-row-image=FULL"
     elasticsearch:
       type: ELASTICSEARCH
@@ -49,12 +54,15 @@ testcontainers:
         environment:
           discovery.type: "single-node"
           xpack.security.enabled: "false"
+          xpack.security.enrollment.enabled: "false"
+          xpack.security.http.ssl.enabled: "false"
+          xpack.security.transport.ssl.enabled: "false"
 
 debezium:
   enabled: true
   database:
-    hostname: localhost
-    port: 3306
-    user: primavera
-    password: primavera
-    name: primavera
+    hostname: ${testcontainer.runtime.mariadb.host:localhost}
+    port: ${testcontainer.runtime.mariadb.port:3306}
+    user: root
+    password: root
+    name: ${testcontainer.runtime.mariadb.database:primavera}

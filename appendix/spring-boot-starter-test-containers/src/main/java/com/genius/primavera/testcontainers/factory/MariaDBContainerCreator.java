@@ -18,7 +18,7 @@ public class MariaDBContainerCreator implements ContainerCreator {
     @Override
     public GenericContainer<?> create(BaseContainerSpec spec) {
         log.info("Received spec type: {}", spec.getClass().getSimpleName());
-        
+
         String image = spec.getImage() != null ? spec.getImage() : ContainerType.MARIADB.getDefaultImage();
         Integer timeout = spec.getStartupTimeout() != null ? spec.getStartupTimeout() : 60;
 
@@ -26,7 +26,7 @@ public class MariaDBContainerCreator implements ContainerCreator {
                 .withStartupTimeout(Duration.ofSeconds(timeout));
 
         if (spec instanceof MariaDbContainerSpec mariaDbSpec) {
-            log.info("Using MariaDbContainerSpec");
+            log.info("Using MariaDbContainerSpec {} ", mariaDbSpec.getRootPassword());
             container.withDatabaseName(mariaDbSpec.getDatabase())
                     .withUsername(mariaDbSpec.getUsername())
                     .withPassword(mariaDbSpec.getPassword())
@@ -41,17 +41,17 @@ public class MariaDBContainerCreator implements ContainerCreator {
 
             log.info("MariaDbContainerSpec details:");
             log.info("  - database: {}", mariaDbSpec.getDatabase());
-            log.info("  - username: {}", mariaDbSpec.getUsername());  
+            log.info("  - username: {}", mariaDbSpec.getUsername());
             log.info("  - initScript: {}", mariaDbSpec.getInitScript());
             log.info("  - image: {}", mariaDbSpec.getImage());
             log.info("  - command: {}", mariaDbSpec.getCommand());
-            
+
             // Apply custom command if specified
             if (mariaDbSpec.getCommand() != null && !mariaDbSpec.getCommand().isEmpty()) {
                 log.info("Applying custom command: {}", mariaDbSpec.getCommand());
                 container.withCommand(mariaDbSpec.getCommand().toArray(new String[0]));
             }
-            
+
             if (mariaDbSpec.getInitScript() != null) {
                 log.info("Processing initScript: {}", mariaDbSpec.getInitScript());
                 String scriptPath = mariaDbSpec.getInitScript();

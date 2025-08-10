@@ -1,6 +1,7 @@
 dependencies {
     implementation "co.elastic.clients:elasticsearch-java:${elasticsearchVersion}"
     implementation "io.debezium:debezium-embedded:${debeziumVersion}"
+    implementation "io.debezium:debezium-connector-mariadb:${debeziumVersion}"
     implementation "org.apache.kafka:connect-api:${kafkaConnectVersion}"
     implementation "org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}"
     implementation "org.springframework.boot:spring-boot-starter-webflux"

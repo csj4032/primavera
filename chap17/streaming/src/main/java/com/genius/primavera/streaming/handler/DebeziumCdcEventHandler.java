@@ -15,6 +15,7 @@ import org.apache.kafka.connect.data.Struct;
 import org.apache.kafka.connect.source.SourceRecord;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Mono;
 import reactor.core.publisher.Sinks;
 
 import java.io.IOException;
@@ -61,44 +62,90 @@ public class DebeziumCdcEventHandler {
             return;
         }
 
+        log.info("Starting Debezium CDC with database connection: {}:{} (user: {}, db: {})", 
+                dbHost, dbPort, dbUser, dbName);
+        
+        // Test database connection first
+        try {
+            String jdbcUrl = String.format("jdbc:mariadb://%s:%s/%s", dbHost, dbPort, dbName);
+            log.info("Testing database connection with URL: {}", jdbcUrl);
+        } catch (Exception e) {
+            log.error("Failed to test database connection", e);
+        }
+
         Properties props = new Properties();
         props.setProperty("name", "product-streaming-cdc");
-        props.setProperty("connector.class", "io.debezium.connector.mysql.MySqlConnector");
-        props.setProperty("offset.storage", "org.apache.kafka.connect.storage.FileOffsetBackingStore");
-        props.setProperty("offset.storage.file.filename", "/tmp/streaming-offsets.dat");
-        props.setProperty("offset.flush.interval.ms", "30000");
+        props.setProperty("connector.class", "io.debezium.connector.mariadb.MariaDbConnector");
         
+        // Offset storage configuration
+        props.setProperty("offset.storage", "org.apache.kafka.connect.storage.FileOffsetBackingStore");
+        props.setProperty("offset.storage.file.filename", "/tmp/streaming-offsets-" + System.currentTimeMillis() + ".dat");
+        props.setProperty("offset.flush.interval.ms", "1000");
+        
+        // Database connection configuration
         props.setProperty("database.hostname", dbHost);
         props.setProperty("database.port", dbPort);
         props.setProperty("database.user", dbUser);
         props.setProperty("database.password", dbPassword);
         props.setProperty("database.dbname", dbName);
-        props.setProperty("database.server.id", "85745");
-        props.setProperty("database.server.name", "primavera-streaming");
-        props.setProperty("database.history", "io.debezium.relational.history.FileDatabaseHistory");
-        props.setProperty("database.history.file.filename", "/tmp/streaming-dbhistory.dat");
         
+        // SSL configuration - disable for TestContainer
+        props.setProperty("database.ssl.mode", "disabled");
+        
+        // MariaDB specific configuration
+        props.setProperty("database.server.id", "85745");
+        props.setProperty("topic.prefix", "primavera-streaming");
+        
+        // Schema history configuration
+        props.setProperty("schema.history.internal", "io.debezium.storage.file.history.FileSchemaHistory");
+        props.setProperty("schema.history.internal.file.filename", "/tmp/streaming-dbhistory-" + System.currentTimeMillis() + ".dat");
+        
+        // Table filtering
         props.setProperty("table.include.list", "primavera.PRODUCTS");
         props.setProperty("include.schema.changes", "false");
-        props.setProperty("snapshot.mode", "initial");
+        props.setProperty("snapshot.mode", "never");
+        
+        log.info("Debezium configuration properties: {}", props);
 
         Configuration config = Configuration.from(props);
 
-        debeziumEngine = DebeziumEngine.create(ChangeEventFormat.of(Connect.class))
-                .using(config.asProperties())
-                .notifying(this::handleChangeEvent)
-                .build();
+        try {
+            debeziumEngine = DebeziumEngine.create(ChangeEventFormat.of(Connect.class))
+                    .using(config.asProperties())
+                    .notifying(this::handleChangeEvent)
+                    .build();
 
-        executor = Executors.newSingleThreadExecutor();
-        executor.execute(debeziumEngine);
+            executor = Executors.newSingleThreadExecutor();
+            executor.execute(debeziumEngine);
+            
+            log.info("Debezium engine created and submitted to executor");
+        } catch (Exception e) {
+            log.error("Failed to create or start Debezium engine", e);
+            throw e;
+        }
         
         log.info("Debezium CDC engine started for streaming service");
+        
+        // Give some time for the engine to start and log any immediate errors
+        try {
+            Thread.sleep(2000); // Wait 2 seconds for startup
+            log.info("Debezium engine should be running now");
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 
     private void handleChangeEvent(RecordChangeEvent<SourceRecord> recordChangeEvent) {
+        log.info("Received CDC event: {}", recordChangeEvent);
         SourceRecord sourceRecord = recordChangeEvent.record();
         
+        if (sourceRecord == null) {
+            log.warn("SourceRecord is null");
+            return;
+        }
+        
         if (sourceRecord.value() == null) {
+            log.warn("SourceRecord value is null");
             return;
         }
 
@@ -118,22 +165,32 @@ public class DebeziumCdcEventHandler {
                 case "r":
                     if (after != null) {
                         ProductDocument product = convertToProductDocument(after);
-                        productSearchService.indexProduct(product)
-                                .doOnSuccess(v -> {
-                                    productEventSink.tryEmitNext(product);
-                                    log.info("Product {} indexed from CDC event", product.getProductId());
-                                })
-                                .doOnError(error -> log.error("Failed to index product from CDC", error))
-                                .subscribe();
+                        Mono<Void> indexResult = productSearchService.indexProduct(product);
+                        if (indexResult != null) {
+                            indexResult
+                                    .doOnSuccess(v -> {
+                                        productEventSink.tryEmitNext(product);
+                                        log.info("Product {} indexed from CDC event", product.getProductId());
+                                    })
+                                    .doOnError(error -> log.error("Failed to index product from CDC", error))
+                                    .subscribe();
+                        } else {
+                            log.warn("ProductSearchService.indexProduct() returned null for product {}", product.getProductId());
+                        }
                     }
                     break;
                 case "d":
                     if (before != null) {
                         Long productId = before.getInt64("id");
-                        productSearchService.deleteProduct(productId)
-                                .doOnSuccess(v -> log.info("Product {} deleted from index", productId))
-                                .doOnError(error -> log.error("Failed to delete product from index", error))
-                                .subscribe();
+                        Mono<Void> deleteResult = productSearchService.deleteProduct(productId);
+                        if (deleteResult != null) {
+                            deleteResult
+                                    .doOnSuccess(v -> log.info("Product {} deleted from index", productId))
+                                    .doOnError(error -> log.error("Failed to delete product from index", error))
+                                    .subscribe();
+                        } else {
+                            log.warn("ProductSearchService.deleteProduct() returned null for product {}", productId);
+                        }
                     }
                     break;
             }

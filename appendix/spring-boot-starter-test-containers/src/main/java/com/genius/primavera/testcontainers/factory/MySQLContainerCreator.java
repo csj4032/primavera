@@ -45,6 +45,12 @@ public class MySQLContainerCreator implements ContainerCreator {
                 container.withEnv("MYSQL_LOG_BIN", "1");
             }
             
+            // Apply custom command if specified
+            if (mysqlSpec.getCommand() != null && !mysqlSpec.getCommand().isEmpty()) {
+                log.info("Applying custom command: {}", mysqlSpec.getCommand());
+                container.withCommand(mysqlSpec.getCommand().toArray(new String[0]));
+            }
+            
             if (mysqlSpec.getInitScript() != null) {
                 String scriptPath = mysqlSpec.getInitScript();
                 if (scriptPath.startsWith("classpath:")) {

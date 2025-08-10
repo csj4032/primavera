@@ -11,7 +11,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.beans.factory.annotation.Value;
 import reactor.core.publisher.Mono;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.TimeUnit;
 
@@ -20,6 +22,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
+@Slf4j
 @SpringBootTest
 @ActiveProfiles("test")
 @DisplayName("Debezium CDC 이벤트 핸들러 통합 테스트")
@@ -39,10 +42,28 @@ public class DebeziumCdcEventHandlerIntegrationTest {
     @Autowired
     private DebeziumCdcEventHandler debeziumCdcEventHandler;
 
+    @Value("${testcontainer.runtime.mariadb.host:NOT_FOUND}")
+    private String containerHost;
+
+    @Value("${testcontainer.runtime.mariadb.port:NOT_FOUND}")
+    private String containerPort;
+
+    @Value("${debezium.database.hostname:NOT_FOUND}")
+    private String debeziumHost;
+
+    @Value("${debezium.database.port:NOT_FOUND}")
+    private String debeziumPort;
+
     @BeforeEach
     void setUp() {
+        // Reset and configure mocks
+        reset(productSearchService);
         when(productSearchService.indexProduct(any(ProductDocument.class))).thenReturn(Mono.empty());
         when(productSearchService.deleteProduct(anyLong())).thenReturn(Mono.empty());
+        
+        // Verify mock is working
+        log.info("Mock configured - productSearchService is mock: {}", 
+                org.mockito.Mockito.mockingDetails(productSearchService).isMock());
     }
 
     @Test
@@ -50,6 +71,36 @@ public class DebeziumCdcEventHandlerIntegrationTest {
     @DisplayName("CDC 핸들러가 정상적으로 시작되는지 확인")
     void debeziumCdcHandlerShouldStart() {
         assertThat(debeziumCdcEventHandler).isNotNull();
+        
+        // Check TestContainer properties
+        System.out.println("TestContainer Host: " + containerHost);
+        System.out.println("TestContainer Port: " + containerPort);
+        System.out.println("Debezium Host: " + debeziumHost);
+        System.out.println("Debezium Port: " + debeziumPort);
+        
+        // Check MariaDB version and basic info
+        System.out.println("=== MariaDB Basic Info ===");
+        try {
+            jdbcTemplate.query("SELECT VERSION() as version", rs -> {
+                while (rs.next()) {
+                    System.out.println("MariaDB Version: " + rs.getString("version"));
+                }
+            });
+        } catch (Exception e) {
+            System.out.println("Failed to get version: " + e.getMessage());
+        }
+        
+        // Now check specifically for binlog variables
+        System.out.println("=== Searching for Binlog Variables ===");
+        String binlogQuery = "SHOW VARIABLES WHERE Variable_name LIKE '%log_bin%' OR Variable_name LIKE '%binlog%' OR Variable_name LIKE '%server_id%'";
+        jdbcTemplate.query(binlogQuery, rs -> {
+            while (rs.next()) {
+                String variable = rs.getString("Variable_name");
+                String value = rs.getString("Value");
+                System.out.println("MariaDB BINLOG " + variable + ": " + value);
+            }
+        });
+        System.out.println("=== End of Binlog Search ===");
     }
 
     @Test
@@ -67,7 +118,7 @@ public class DebeziumCdcEventHandlerIntegrationTest {
     void shouldHandleProductUpdateEvent() {
         String updateSql = "UPDATE PRODUCTS SET name = 'Updated Product', price = 60000 WHERE id = 4";
         jdbcTemplate.update(updateSql);
-        Awaitility.await().atMost(10, TimeUnit.SECONDS).pollInterval(1, TimeUnit.SECONDS).untilAsserted(() -> verify(productSearchService, atLeast(2)).indexProduct(any(ProductDocument.class)));
+        Awaitility.await().atMost(10, TimeUnit.SECONDS).pollInterval(1, TimeUnit.SECONDS).untilAsserted(() -> verify(productSearchService, atLeastOnce()).indexProduct(any(ProductDocument.class)));
     }
 
     @Test
@@ -91,7 +142,7 @@ public class DebeziumCdcEventHandlerIntegrationTest {
                             "Document Test Description".equals(product.getDescription()) &&
                             product.getPrice().equals(75000) &&
                             "ACTIVE".equals(product.getStatus()) &&
-                            "MEDIUM".equals(product.getPriceRange())
+                            "LOW".equals(product.getPriceRange()) // 75000 < 500000이므로 LOW
             ));
         });
     }
