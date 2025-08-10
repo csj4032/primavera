@@ -16,7 +16,7 @@ class ContainerConfigurationTest {
     @Test
     @DisplayName("MariaDB spec works correctly")
     void testMariaDbSpec() {
-        MariaDbContainerSpec spec = new MariaDbContainerSpec();
+        MariaDBContainerSpec spec = new MariaDBContainerSpec();
         spec.setImage("mariadb:11.4.7");
         spec.setDatabase("test_db");
         spec.setUsername("test_user");
@@ -172,7 +172,7 @@ class ContainerConfigurationTest {
         ContainerConfiguration.ContainerInstanceConfig dbConfig = new ContainerConfiguration.ContainerInstanceConfig();
         dbConfig.setType(ContainerType.MARIADB);
         
-        MariaDbContainerSpec mariadbSpec = new MariaDbContainerSpec();
+        MariaDBContainerSpec mariadbSpec = new MariaDBContainerSpec();
         mariadbSpec.setImage("mariadb:11.4.7");
         mariadbSpec.setDatabase("testdb");
         mariadbSpec.setUsername("testuser");
@@ -223,7 +223,7 @@ class ContainerConfigurationTest {
         ContainerConfiguration.ContainerInstanceConfig instanceConfig = new ContainerConfiguration.ContainerInstanceConfig();
         instanceConfig.setType(ContainerType.MARIADB);
         
-        MariaDbContainerSpec spec = new MariaDbContainerSpec();
+        MariaDBContainerSpec spec = new MariaDBContainerSpec();
         spec.setDatabase("test_db");
         instanceConfig.setMariadb(spec);
         
@@ -241,15 +241,15 @@ class ContainerConfigurationTest {
         ContainerConfiguration.ContainerInstanceConfig config = new ContainerConfiguration.ContainerInstanceConfig();
         config.setType(ContainerType.MARIADB);
         
-        MariaDbContainerSpec mariadbSpec = new MariaDbContainerSpec();
+        MariaDBContainerSpec mariadbSpec = new MariaDBContainerSpec();
         mariadbSpec.setDatabase("test_mariadb");
         config.setMariadb(mariadbSpec);
         
         BaseContainerSpec retrievedSpec = config.getSpecForType();
         
         assertNotNull(retrievedSpec, "Retrieved spec should not be null");
-        assertTrue(retrievedSpec instanceof MariaDbContainerSpec, "Retrieved spec should be MariaDbContainerSpec");
-        assertEquals("test_mariadb", ((MariaDbContainerSpec) retrievedSpec).getDatabase(), "Database should match");
+        assertTrue(retrievedSpec instanceof MariaDBContainerSpec, "Retrieved spec should be MariaDBContainerSpec");
+        assertEquals("test_mariadb", ((MariaDBContainerSpec) retrievedSpec).getDatabase(), "Database should match");
 
         log.info(" Spec for type retrieval works correctly");
     }

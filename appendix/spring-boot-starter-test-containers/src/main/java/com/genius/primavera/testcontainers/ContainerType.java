@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 public enum ContainerType {
-    MARIADB("mariadb:11.4.7", "org.mariadb.jdbc.Driver", MariaDbContainerSpec.class, true),
+    MARIADB("mariadb:11.4.7", "org.mariadb.jdbc.Driver", MariaDBContainerSpec.class, true),
     MYSQL("mysql:8.0", "com.mysql.cj.jdbc.Driver", MySqlContainerSpec.class, true),
     POSTGRESQL("postgres:16", "org.postgresql.Driver", PostgreSqlContainerSpec.class, true),
     REDIS("redis:7-alpine", null, RedisContainerSpec.class, false),

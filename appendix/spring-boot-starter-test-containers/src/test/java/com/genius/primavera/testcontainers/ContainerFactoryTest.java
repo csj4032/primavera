@@ -17,7 +17,7 @@ class ContainerFactoryTest {
     @Test
     @DisplayName("Create MariaDB container with default configuration")
     void testCreateMariaDbDefault() {
-        MariaDbContainerSpec spec = new MariaDbContainerSpec();
+        MariaDBContainerSpec spec = new MariaDBContainerSpec();
         spec.setImage("mariadb:11.4.7");
         spec.setDatabase("testdb");
         spec.setUsername("testuser");
@@ -34,7 +34,7 @@ class ContainerFactoryTest {
     @Test
     @DisplayName("Create MariaDB container with custom configuration")
     void testCreateMariaDbCustom() {
-        MariaDbContainerSpec spec = new MariaDbContainerSpec();
+        MariaDBContainerSpec spec = new MariaDBContainerSpec();
         spec.setImage("mariadb:11.4.7");
         spec.setDatabase("custom_db");
         spec.setUsername("custom_user");
@@ -223,7 +223,7 @@ class ContainerFactoryTest {
     private BaseContainerSpec createSpecForType(ContainerType type) {
         return switch (type) {
             case MARIADB -> {
-                MariaDbContainerSpec spec = new MariaDbContainerSpec();
+                MariaDBContainerSpec spec = new MariaDBContainerSpec();
                 spec.setImage(type.getDefaultImage());
                 spec.setDatabase("testdb");
                 spec.setUsername("testuser");
@@ -273,7 +273,7 @@ class ContainerFactoryTest {
     @Test
     @DisplayName("Apply network aliases when provided")
     void testNetworkAliases() {
-        MariaDbContainerSpec spec = new MariaDbContainerSpec();
+        MariaDBContainerSpec spec = new MariaDBContainerSpec();
         spec.setImage("mariadb:11.4.7");
         spec.setDatabase("testdb");
         spec.setUsername("testuser");
@@ -289,7 +289,7 @@ class ContainerFactoryTest {
     @Test
     @DisplayName("Apply startup timeout when provided")
     void testStartupTimeout() {
-        MariaDbContainerSpec spec = new MariaDbContainerSpec();
+        MariaDBContainerSpec spec = new MariaDBContainerSpec();
         spec.setImage("mariadb:11.4.7");
         spec.setDatabase("testdb");
         spec.setUsername("testuser");

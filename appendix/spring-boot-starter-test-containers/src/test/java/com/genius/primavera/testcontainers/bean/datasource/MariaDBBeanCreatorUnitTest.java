@@ -2,7 +2,7 @@ package com.genius.primavera.testcontainers.bean.datasource;
 
 import com.genius.primavera.testcontainers.ContainerInfo;
 import com.genius.primavera.testcontainers.ContainerType;
-import com.genius.primavera.testcontainers.config.MariaDbContainerSpec;
+import com.genius.primavera.testcontainers.config.MariaDBContainerSpec;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
@@ -39,7 +39,7 @@ class MariaDBBeanCreatorUnitTest {
             return createBaseConfig(containerInfo);
         }
         
-        public void testApplyCommonSettings(HikariConfig config, MariaDbContainerSpec spec) {
+        public void testApplyCommonSettings(HikariConfig config, MariaDBContainerSpec spec) {
             applyCommonSettings(config, spec);
         }
     }
@@ -49,7 +49,7 @@ class MariaDBBeanCreatorUnitTest {
     @Mock
     private GenericContainer<?> mockContainer;
     
-    private MariaDbContainerSpec spec;
+    private MariaDBContainerSpec spec;
 
     @BeforeAll
     void setUp() {
@@ -59,7 +59,7 @@ class MariaDBBeanCreatorUnitTest {
         when(mockContainer.getHost()).thenReturn("localhost");
         when(mockContainer.getFirstMappedPort()).thenReturn(3307);
         
-        spec = new MariaDbContainerSpec();
+        spec = new MariaDBContainerSpec();
         spec.setCharacterSet("utf8mb4");
         spec.setCollation("utf8mb4_unicode_ci");
         spec.setUsername("testuser");
@@ -157,7 +157,7 @@ class MariaDBBeanCreatorUnitTest {
     void testDefaultSettings() {
         beanCreator.setReturnConfigOnly(true);
         
-        MariaDbContainerSpec defaultSpec = new MariaDbContainerSpec();
+        MariaDBContainerSpec defaultSpec = new MariaDBContainerSpec();
         
         ContainerInfo containerInfo = new ContainerInfo(
                 "test-mariadb-defaults",
@@ -182,8 +182,8 @@ class MariaDBBeanCreatorUnitTest {
     void testAdvancedSettings() {
         beanCreator.setReturnConfigOnly(true);
         
-        spec.setSqlMode(MariaDbContainerSpec.SqlMode.STRICT_TRANS_TABLES);
-        spec.setDefaultStorageEngine(MariaDbContainerSpec.StorageEngine.INNODB);
+        spec.setSqlMode(MariaDBContainerSpec.SqlMode.STRICT_TRANS_TABLES);
+        spec.setDefaultStorageEngine(MariaDBContainerSpec.StorageEngine.INNODB);
         
         ContainerInfo containerInfo = new ContainerInfo(
                 "test-mariadb-advanced",

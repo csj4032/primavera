@@ -14,7 +14,7 @@ import java.util.List;
 @Validated
 @ConfigurationProperties
 @EqualsAndHashCode(callSuper = true)
-public class MariaDbContainerSpec extends DatabaseContainerSpec {
+public class MariaDBContainerSpec extends DatabaseContainerSpec {
     
     @Pattern(regexp = "^(utf8|utf8mb4|latin1|ascii|binary)$", message = "Invalid character set")
     private String characterSet = "utf8mb4";

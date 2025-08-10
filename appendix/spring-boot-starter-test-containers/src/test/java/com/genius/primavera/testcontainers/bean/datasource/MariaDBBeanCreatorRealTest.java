@@ -2,7 +2,7 @@ package com.genius.primavera.testcontainers.bean.datasource;
 
 import com.genius.primavera.testcontainers.ContainerInfo;
 import com.genius.primavera.testcontainers.ContainerType;
-import com.genius.primavera.testcontainers.config.MariaDbContainerSpec;
+import com.genius.primavera.testcontainers.config.MariaDBContainerSpec;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
@@ -18,7 +18,7 @@ class MariaDBBeanCreatorRealTest {
 
     private MariaDBBeanCreator beanCreator;
     private MariaDBContainer<?> container;
-    private MariaDbContainerSpec spec;
+    private MariaDBContainerSpec spec;
 
     @BeforeAll
     void setUp() {
@@ -31,7 +31,7 @@ class MariaDBBeanCreatorRealTest {
         
         container.start();
         
-        spec = new MariaDbContainerSpec();
+        spec = new MariaDBContainerSpec();
         spec.setCharacterSet("utf8mb4");
         spec.setCollation("utf8mb4_unicode_ci");
         spec.setUsername("testuser");
@@ -94,7 +94,7 @@ class MariaDBBeanCreatorRealTest {
     @Order(3)
     @DisplayName("MariaDB Endpoint DataSource creation test")
     void testCreateBeanWithDefaults() {
-        MariaDbContainerSpec defaultSpec = new MariaDbContainerSpec();
+        MariaDBContainerSpec defaultSpec = new MariaDBContainerSpec();
         defaultSpec.setUsername("testuser");
         defaultSpec.setPassword("testpass");
         defaultSpec.setDatabase("testdb");

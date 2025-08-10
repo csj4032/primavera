@@ -62,14 +62,14 @@ public class ConfigurationBindingTest {
         ContainerInfo cacheInfo = manager.getContainer("configCache");
 
         assertEquals("mariadb:11.4.7", primaryInfo.spec().getImage(), "Primary DB should use configured image");
-        assertTrue(primaryInfo.spec() instanceof MariaDbContainerSpec, "Primary spec should be MariaDbContainerSpec");
-        MariaDbContainerSpec primarySpec = (MariaDbContainerSpec) primaryInfo.spec();
+        assertTrue(primaryInfo.spec() instanceof MariaDBContainerSpec, "Primary spec should be MariaDBContainerSpec");
+        MariaDBContainerSpec primarySpec = (MariaDBContainerSpec) primaryInfo.spec();
         assertEquals("primary_db", primarySpec.getDatabase(), "Primary DB should use configured database name");
         assertEquals("primary_user", primarySpec.getUsername(), "Primary DB should use configured username");
         assertEquals("primary_pass", primarySpec.getPassword(), "Primary DB should use configured password");
 
-        assertTrue(secondaryInfo.spec() instanceof MariaDbContainerSpec, "Secondary spec should be MariaDbContainerSpec");
-        MariaDbContainerSpec secondarySpec = (MariaDbContainerSpec) secondaryInfo.spec();
+        assertTrue(secondaryInfo.spec() instanceof MariaDBContainerSpec, "Secondary spec should be MariaDBContainerSpec");
+        MariaDBContainerSpec secondarySpec = (MariaDBContainerSpec) secondaryInfo.spec();
         assertEquals("secondary_db", secondarySpec.getDatabase(), "Secondary DB should use configured database name");
         assertEquals("secondary_user", secondarySpec.getUsername(), "Secondary DB should use configured username");
         assertEquals("redis:7-alpine", cacheInfo.spec().getImage(), "Cache should use configured Redis image");

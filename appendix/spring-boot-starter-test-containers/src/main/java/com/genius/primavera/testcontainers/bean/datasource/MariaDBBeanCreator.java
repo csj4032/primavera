@@ -3,7 +3,7 @@ package com.genius.primavera.testcontainers.bean.datasource;
 import com.genius.primavera.testcontainers.ContainerInfo;
 import com.genius.primavera.testcontainers.ContainerType;
 import com.genius.primavera.testcontainers.bean.DataSourceBeanCreator;
-import com.genius.primavera.testcontainers.config.MariaDbContainerSpec;
+import com.genius.primavera.testcontainers.config.MariaDBContainerSpec;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +15,7 @@ public class MariaDBBeanCreator extends DataSourceBeanCreator {
     public Object createBean(ContainerInfo containerInfo) {
         HikariConfig config = createBaseConfig(containerInfo);
         
-        if (containerInfo.spec() instanceof MariaDbContainerSpec spec) {
+        if (containerInfo.spec() instanceof MariaDBContainerSpec spec) {
             applyCommonSettings(config, spec);
             applyMariaDBSpecificSettings(config, spec);
         } else {
@@ -23,7 +23,7 @@ public class MariaDBBeanCreator extends DataSourceBeanCreator {
             config.setPassword("primavera");
             config.setMaximumPoolSize(10);
             config.setConnectionTimeout(30000);
-            log.warn("MariaDbContainerSpec not found for container: {}. Using default settings.", containerInfo.name());
+            log.warn("MariaDBContainerSpec not found for container: {}. Using default settings.", containerInfo.name());
         }
         
         log.info("Creating MariaDB DataSource for container: {} with pool size: {}", 
@@ -32,7 +32,7 @@ public class MariaDBBeanCreator extends DataSourceBeanCreator {
         return new HikariDataSource(config);
     }
     
-    private void applyMariaDBSpecificSettings(HikariConfig config, MariaDbContainerSpec spec) {
+    private void applyMariaDBSpecificSettings(HikariConfig config, MariaDBContainerSpec spec) {
         if (spec.getCharacterSet() != null && !spec.getCharacterSet().isEmpty()) {
             config.addDataSourceProperty("characterEncoding", spec.getCharacterSet());
         }

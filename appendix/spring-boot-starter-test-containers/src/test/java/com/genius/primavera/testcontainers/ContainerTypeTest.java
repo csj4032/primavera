@@ -63,7 +63,7 @@ class ContainerTypeTest {
     @Test
     @DisplayName("Elasticsearch type has correct default image")
     void testElasticsearchDefaultImage() {
-        assertEquals("docker.elastic.co/elasticsearch/elasticsearch:8.12.0", ContainerType.ELASTICSEARCH.getDefaultImage(), "Elasticsearch should have correct default image");
+        assertEquals("docker.elastic.co/elasticsearch/elasticsearch:8.13.4", ContainerType.ELASTICSEARCH.getDefaultImage(), "Elasticsearch should have correct default image");
         log.info(" Elasticsearch default image: {}", ContainerType.ELASTICSEARCH.getDefaultImage());
     }
 

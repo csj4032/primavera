@@ -3,6 +3,7 @@ package com.genius.primavera.testcontainers;
 import com.genius.primavera.testcontainers.config.*;
 import com.genius.primavera.testcontainers.factory.KafkaContainerCreator;
 import com.genius.primavera.testcontainers.factory.VaultContainerCreator;
+import com.genius.primavera.testcontainers.strategy.ContainerTypeStrategyRegistry;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
@@ -54,7 +55,7 @@ public class ContainerConfiguration {
         private ContainerType type;
         
         @Valid
-        private MariaDbContainerSpec mariadb;
+        private MariaDBContainerSpec mariadb;
         
         @Valid
         private MySqlContainerSpec mysql;
@@ -81,18 +82,9 @@ public class ContainerConfiguration {
         private LocalStackContainerSpec localstack;
         
         public BaseContainerSpec getSpecForType() {
-            return switch (type) {
-                case MARIADB -> mariadb;
-                case MYSQL -> mysql;
-                case POSTGRESQL -> postgresql;
-                case REDIS -> redis;
-                case MONGODB -> mongodb;
-                case KAFKA -> kafka;
-                case ELASTICSEARCH -> elasticsearch;
-                case VAULT -> vault;
-                case LOCALSTACK -> localstack;
-                default -> null;
-            };
+            return ContainerTypeStrategyRegistry.getStrategy(type)
+                .map(strategy -> strategy.getSpecFromConfiguration(this))
+                .orElse(null);
         }
         
         public boolean hasSpecForType() {

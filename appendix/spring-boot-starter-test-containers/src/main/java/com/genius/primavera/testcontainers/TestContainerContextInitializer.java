@@ -5,6 +5,7 @@ import com.genius.primavera.testcontainers.config.BaseContainerSpec;
 import com.genius.primavera.testcontainers.config.DatabaseContainerSpec;
 import com.genius.primavera.testcontainers.config.MongoContainerSpec;
 import com.genius.primavera.testcontainers.config.RedisContainerSpec;
+import com.genius.primavera.testcontainers.strategy.ContainerTypeStrategyRegistry;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -96,36 +97,9 @@ public class TestContainerContextInitializer implements ApplicationContextInitia
     }
 
     private void configureSpecificContainerProperties(ContainerInfo containerInfo, Map<String, Object> properties) {
-        switch (containerInfo.type()) {
-            case REDIS -> configureRedisProperties(containerInfo, properties);
-            case MONGODB -> configureMongoProperties(containerInfo, properties);
-            case KAFKA -> configureKafkaProperties(containerInfo, properties);
-            case ELASTICSEARCH -> configureElasticsearchProperties(containerInfo, properties);
-        }
+        ContainerTypeStrategyRegistry.getStrategy(containerInfo.type())
+            .ifPresent(strategy -> strategy.configureSpecificProperties(containerInfo, properties));
     }
 
-    private void configureRedisProperties(ContainerInfo containerInfo, Map<String, Object> properties) {
-        String redisPrefix = "spring.data.redis." + containerInfo.name();
-        properties.put(redisPrefix + ".host", containerInfo.getHost());
-        properties.put(redisPrefix + ".port", containerInfo.getMappedPort());
-
-        if (containerInfo.spec() instanceof RedisContainerSpec redisSpec && redisSpec.getPassword() != null) {
-            properties.put(redisPrefix + ".password", redisSpec.getPassword());
-        }
-    }
-
-    private void configureMongoProperties(ContainerInfo containerInfo, Map<String, Object> properties) {
-        String mongoPrefix = "spring.data.mongodb." + containerInfo.name();
-        properties.put(mongoPrefix + ".uri", containerInfo.getConnectionString());
-    }
-
-    private void configureKafkaProperties(ContainerInfo containerInfo, Map<String, Object> properties) {
-        String kafkaPrefix = "spring.kafka." + containerInfo.name();
-        properties.put(kafkaPrefix + ".bootstrap-servers", containerInfo.getConnectionString());
-    }
-
-    private void configureElasticsearchProperties(ContainerInfo containerInfo, Map<String, Object> properties) {
-        String esPrefix = "spring.elasticsearch." + containerInfo.name();
-        properties.put(esPrefix + ".uris", containerInfo.getConnectionString());
-    }
+    // Removed individual configuration methods - now handled by Strategy pattern
 }

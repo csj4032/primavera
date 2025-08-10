@@ -182,3 +182,25 @@ testcontainers:
         environment:
           LAMBDA_RUNTIME_ENVIRONMENT_TIMEOUT: "30"
           LAMBDA_REMOVE_CONTAINERS: "true"
+          
+    # 테스트용 설정들
+    configPrimaryDb:
+      type: MARIADB
+      mariadb:
+        image: "mariadb:11.4.7"
+        database: "primary_db"
+        username: "primary_user"
+        password: "primary_pass"
+        
+    configSecondaryDb:
+      type: MARIADB
+      mariadb:
+        database: "secondary_db"
+        username: "secondary_user"
+        password: "secondary_pass"
+        
+    configCache:
+      type: REDIS
+      redis:
+        image: "redis:7-alpine"
+        password: "redis_password"

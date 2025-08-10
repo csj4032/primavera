@@ -4,7 +4,7 @@ import com.genius.primavera.testcontainers.ContainerCreator;
 import com.genius.primavera.testcontainers.ContainerType;
 import com.genius.primavera.testcontainers.config.BaseContainerSpec;
 import com.genius.primavera.testcontainers.config.DatabaseContainerSpec;
-import com.genius.primavera.testcontainers.config.MariaDbContainerSpec;
+import com.genius.primavera.testcontainers.config.MariaDBContainerSpec;
 import lombok.extern.slf4j.Slf4j;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.MariaDBContainer;
@@ -25,8 +25,8 @@ public class MariaDBContainerCreator implements ContainerCreator {
         MariaDBContainer<?> container = new MariaDBContainer<>(DockerImageName.parse(image))
                 .withStartupTimeout(Duration.ofSeconds(timeout));
 
-        if (spec instanceof MariaDbContainerSpec mariaDbSpec) {
-            log.info("Using MariaDbContainerSpec {} ", mariaDbSpec.getRootPassword());
+        if (spec instanceof MariaDBContainerSpec mariaDbSpec) {
+            log.info("Using MariaDBContainerSpec {} ", mariaDbSpec.getRootPassword());
             container.withDatabaseName(mariaDbSpec.getDatabase())
                     .withUsername(mariaDbSpec.getUsername())
                     .withPassword(mariaDbSpec.getPassword())
@@ -39,7 +39,7 @@ public class MariaDBContainerCreator implements ContainerCreator {
                 container.withEnv("MARIADB_COLLATION_SERVER", mariaDbSpec.getCollation());
             }
 
-            log.info("MariaDbContainerSpec details:");
+            log.info("MariaDBContainerSpec details:");
             log.info("  - database: {}", mariaDbSpec.getDatabase());
             log.info("  - username: {}", mariaDbSpec.getUsername());
             log.info("  - initScript: {}", mariaDbSpec.getInitScript());
@@ -61,7 +61,7 @@ public class MariaDBContainerCreator implements ContainerCreator {
                 log.info("Final script path: {}", scriptPath);
                 container.withInitScript(scriptPath);
             } else {
-                log.warn("InitScript is null in MariaDbContainerSpec!");
+                log.warn("InitScript is null in MariaDBContainerSpec!");
             }
         } else if (spec instanceof DatabaseContainerSpec dbSpec) {
             log.info("Using DatabaseContainerSpec");

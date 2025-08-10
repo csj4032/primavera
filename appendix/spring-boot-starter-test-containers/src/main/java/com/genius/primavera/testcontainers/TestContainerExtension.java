@@ -63,8 +63,8 @@ public class TestContainerExtension implements TestInstancePreConstructCallback,
     }
 
     private ContainerManager getOrCreateContainerManager(ExtensionContext context,
-                                                         EnableTestContainers annotation,
-                                                         Class<?> testClass) {
+                                                                  EnableTestContainers annotation,
+                                                                  Class<?> testClass) {
         ExtensionContext.Store store = getStore(context);
         return store.getOrComputeIfAbsent(
                 CONTAINER_MANAGER_KEY,
