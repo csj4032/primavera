@@ -37,15 +37,15 @@ spring:
     generate-ddl: false
     hibernate:
       ddl-auto: none
-      naming:
-        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
-        implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
-    properties:
-      globally_quoted_identifiers: true
-      jdbc:
-        fetch_size: 30
-        batch_size: 30
-    open-in-view: false
   elasticsearch:
     connection-timeout: 10000
     socket-timeout: 30000
+
+debezium:
+  enabled: false
+  database:
+    name: primavera
+    hostname: localhost
+    port: 5432
+    user: primavera
+    password: primavera
