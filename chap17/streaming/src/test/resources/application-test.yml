@@ -2,23 +2,34 @@ spring:
   config:
     activate:
       on-profile: test
+    import:
+      - "optional:vault:"
+      - "optional:configserver:"
   cloud:
     config:
       enabled: false
     vault:
       enabled: false
-  r2dbc:
-    url: ${testcontainers.mariadb.r2dbc-url:r2dbc:h2:mem:///testdb}
-    username: ${testcontainers.mariadb.username:sa}
-    password: ${testcontainers.mariadb.password:}
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+  elasticsearch:
+    uris: http://localhost:9200
 
-testcontainers:
-  mariadb:
-    image: mariadb:11.4.7
-    database: primavera
-    username: primavera
-    password: primavera
-    init-script: sql/init.sql
+primavera:
+  testcontainers:
+    elasticsearch:
+      enabled: true
+      dockerImageName: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+      username: 
+      password: 
 
 debezium:
   enabled: false
+
+logging:
+  level:
+    com.genius.primavera: DEBUG
+    org.springframework.data.elasticsearch: DEBUG
+    co.elastic.clients: INFO

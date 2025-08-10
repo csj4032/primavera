@@ -1,7 +1,7 @@
 plugins {
     id 'java'
     id 'jacoco'
-    id 'com.github.kt3k.coveralls' version '2.12.0'
+    id 'com.github.kt3k.coveralls' version "${coverallsPluginVersion}"
     id 'org.springframework.boot' version "${springBootVersion}" apply false
     id 'io.spring.dependency-management' version "${springDependencyManagementVersion}" apply false
 }
@@ -45,6 +45,12 @@ coveralls {
 allprojects {
     repositories {
         mavenCentral()
+        maven {
+            url 'https://repo1.maven.org/maven2'
+        }
+        maven {
+            url 'https://oss.sonatype.org/content/repositories/snapshots'
+        }
     }
 }
 
@@ -60,21 +66,38 @@ subprojects {
 
     repositories {
         mavenCentral()
+        maven {
+            url 'https://repo1.maven.org/maven2'
+        }
+        maven {
+            url 'https://oss.sonatype.org/content/repositories/snapshots'
+        }
     }
 
     dependencyManagement {
         imports {
-            mavenBom "org.springframework.cloud:spring-cloud-dependencies:2023.0.4"
+            mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
         }
     }
 
     dependencies {
+        // Implementation dependencies (alphabetical)
         implementation "org.slf4j:slf4j-api:${slf4jVersion}"
-        compileOnly "org.projectlombok:lombok:${lombokVersion}"
-        annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+        
+        // Compile-only dependencies (alphabetical)
         compileOnly "org.jetbrains:annotations:${jetbrainsAnnotationsVersion}"
+        compileOnly "org.projectlombok:lombok:${lombokVersion}"
+        
+        // Annotation processors
+        annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+        
+        // Test implementation dependencies (alphabetical)
         testImplementation "org.springframework.boot:spring-boot-starter-test"
+        
+        // Test compile-only dependencies (alphabetical)
         testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
+        
+        // Test annotation processors
         testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
     }
 

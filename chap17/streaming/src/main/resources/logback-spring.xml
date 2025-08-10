@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration scan="true">
-    <springProperty scope="context" name="LOG_PATH" source="primavera.logs.path"/>
+    <springProperty scope="context" name="LOG_PATH" source="primavera.config.logs.path"/>
     <timestamp key="BY_DATE" datePattern="yyyy-MM-dd"/>
     <include resource="logging/logback/console-appender.xml"/>
     <include resource="logging/logback/file-debug-appender.xml"/>

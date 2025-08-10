@@ -1,19 +1,20 @@
 dependencies {
-    implementation "org.springframework.boot:spring-boot-starter-web"
-    implementation "org.springframework.boot:spring-boot-starter-actuator"
-    implementation "org.springframework.cloud:spring-cloud-starter-vault-config"
-    implementation "org.springframework.boot:spring-boot-starter-jdbc"
-    implementation "org.mybatis.spring.boot:mybatis-spring-boot-starter:${mybatisSpringBootStarterVersion}"
-    implementation "org.mybatis.dynamic-sql:mybatis-dynamic-sql:${mybatisDynamicSqlVersion}"
-    implementation "org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}"
+    // Implementation dependencies (alphabetical)
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
-    implementation "org.reflections:reflections:0.10.2"
+    implementation "org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}"
+    implementation "org.mybatis.dynamic-sql:mybatis-dynamic-sql:${mybatisDynamicSqlVersion}"
+    implementation "org.mybatis.spring.boot:mybatis-spring-boot-starter:${mybatisSpringBootStarterVersion}"
+    implementation "org.reflections:reflections:${reflectionsVersion}"
+    implementation "org.springframework.boot:spring-boot-starter-actuator"
+    implementation "org.springframework.boot:spring-boot-starter-jdbc"
+    implementation "org.springframework.boot:spring-boot-starter-web"
+    implementation "org.springframework.cloud:spring-cloud-starter-vault-config"
+    
+    // Test implementation dependencies (alphabetical)
+    testImplementation "com.bettercloud:vault-java-driver:${vaultJavaDriverVersion}"
+    testImplementation "org.springframework.boot:spring-boot-starter-jdbc"
+    testImplementation "org.springframework.boot:spring-boot-starter-test"
     testImplementation "org.testcontainers:junit-jupiter:${testContainersVersion}"
     testImplementation "org.testcontainers:mariadb:${testContainersVersion}"
-    testImplementation "com.bettercloud:vault-java-driver:5.1.0"
     testImplementation project(':appendix:spring-boot-starter-test-containers')
-    
-    // TestContainers 사용을 위해 필요한 의존성 직접 추가
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework.boot:spring-boot-starter-jdbc'
 }

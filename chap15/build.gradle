@@ -1,20 +1,22 @@
-
 configurations {
     implementation.exclude group: 'org.springframework.boot', module: 'spring-boot-starter-web'
 }
 
 dependencies {
-    implementation "org.springframework.boot:spring-boot-starter-actuator"
-    implementation "org.springframework.boot:spring-boot-starter-aop"
-    implementation "org.springframework.boot:spring-boot-starter-jdbc"
-    implementation "org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}"
-    implementation "org.springframework.boot:spring-boot-devtools"
+    // Implementation dependencies (alphabetical)
     implementation "com.github.gavlyukovskiy:p6spy-spring-boot-starter:${p6spySpringBootStarterVersion}"
     implementation "org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4.1:${log4jdbcLog4j2Version}"
-    testImplementation "org.testcontainers:junit-jupiter:${testContainersVersion}"
-    testImplementation "org.testcontainers:mariadb:${testContainersVersion}"
+    implementation "org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}"
+    implementation "org.springframework.boot:spring-boot-devtools"
+    implementation "org.springframework.boot:spring-boot-starter-actuator"
+    implementation "org.springframework.boot:spring-boot-starter-aop"
     implementation "org.springframework.boot:spring-boot-starter-data-jpa"
-    implementation "org.springframework.data:spring-data-envers"
+    implementation "org.springframework.boot:spring-boot-starter-jdbc"
     implementation "org.springframework.cloud:spring-cloud-starter-config"
     implementation "org.springframework.cloud:spring-cloud-starter-vault-config:${springCloudVaultVersion}"
+    implementation "org.springframework.data:spring-data-envers"
+    
+    // Test implementation dependencies (alphabetical)
+    testImplementation "org.testcontainers:junit-jupiter:${testContainersVersion}"
+    testImplementation "org.testcontainers:mariadb:${testContainersVersion}"
 }

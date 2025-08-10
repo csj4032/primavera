@@ -10,9 +10,10 @@ dependencyManagement {
     }
 }
 
-// chap18:configuration: Spring Cloud Config Server
 dependencies {
+    // Implementation dependencies (alphabetical)
     implementation "org.springframework.cloud:spring-cloud-config-server"
     
+    // Test implementation dependencies (alphabetical)
     testImplementation "org.springframework.boot:spring-boot-starter-test"
 }

@@ -2,6 +2,9 @@ spring:
   config:
     activate:
       on-profile: local
+    import:
+      - "optional:vault:"
+      - "optional:configserver:"
   cloud:
     vault:
       host: ${VAULT_HOST:localhost}
@@ -9,6 +12,9 @@ spring:
       scheme: ${VAULT_SCHEME:http}
       authentication: TOKEN
       token: ${VAULT_TOKEN:primavera-vault-token}
+      connection-timeout: 5000
+      read-timeout: 15000
+      fail-fast: false
       kv:
         enabled: true
         backend: secret
@@ -26,3 +32,20 @@ spring:
       leak-detection-threshold: 60000
       connection-test-query: "SELECT 1"
       validation-timeout: 5000
+  jpa:
+    show-sql: true
+    generate-ddl: false
+    hibernate:
+      ddl-auto: none
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+        implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
+    properties:
+      globally_quoted_identifiers: true
+      jdbc:
+        fetch_size: 30
+        batch_size: 30
+    open-in-view: false
+  elasticsearch:
+    connection-timeout: 10000
+    socket-timeout: 30000

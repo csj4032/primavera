@@ -16,6 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
+@lombok.EqualsAndHashCode
 public final class ProductDocument {
     private Long productId;
     private String name;
@@ -35,6 +36,7 @@ public final class ProductDocument {
     @NoArgsConstructor
     @AllArgsConstructor
     @ToString
+    @lombok.EqualsAndHashCode
     public static final class SellerInfo {
         private Long id;
         private String name;
@@ -47,6 +49,7 @@ public final class ProductDocument {
     @NoArgsConstructor
     @AllArgsConstructor
     @ToString
+    @lombok.EqualsAndHashCode
     public static final class CategoryInfo {
         private Long id;
         private String name;

@@ -1,16 +1,16 @@
-// chap05: Web + MyBatis + Vault Config
 dependencies {
-    implementation "org.springframework.boot:spring-boot-starter-web"
+    // Implementation dependencies (alphabetical)
+    implementation "org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}"
+    implementation "org.mybatis.dynamic-sql:mybatis-dynamic-sql:${mybatisDynamicSqlVersion}"
+    implementation "org.mybatis.spring.boot:mybatis-spring-boot-starter:${mybatisSpringBootStarterVersion}"
     implementation "org.springframework.boot:spring-boot-starter-actuator"
     implementation "org.springframework.boot:spring-boot-starter-jdbc"
-    implementation "org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}"
-    implementation "org.mybatis.spring.boot:mybatis-spring-boot-starter:${mybatisSpringBootStarterVersion}"
-    implementation "org.mybatis.dynamic-sql:mybatis-dynamic-sql:${mybatisDynamicSqlVersion}"
-    
+    implementation "org.springframework.boot:spring-boot-starter-web"
     implementation "org.springframework.cloud:spring-cloud-starter-config"
     implementation "org.springframework.cloud:spring-cloud-starter-vault-config:${springCloudVaultVersion}"
     implementation "org.springframework.cloud:spring-cloud-vault-config-databases:${springCloudVaultVersion}"
     
+    // Test implementation dependencies (alphabetical)
     testImplementation "org.testcontainers:junit-jupiter:${testContainersVersion}"
     testImplementation "org.testcontainers:mariadb:${testContainersVersion}"
     testImplementation project(':appendix:spring-boot-starter-test-containers')

@@ -1,5 +1,5 @@
 plugins {
-    id 'org.graalvm.buildtools.native' version '0.10.3'
+    id 'org.graalvm.buildtools.native' version "${graalvmNativeBuildToolsVersion}"
 }
 
 configurations {
@@ -9,23 +9,32 @@ configurations {
 }
 
 dependencies {
-    implementation project(':chap17:common')
-    implementation "org.springframework.boot:spring-boot-starter-batch"
-    implementation "org.springframework.boot:spring-boot-starter-web"
-    implementation "org.springframework.boot:spring-boot-starter-data-jpa"
+    // Implementation dependencies (alphabetical)
     implementation "co.elastic.clients:elasticsearch-java:${elasticsearchVersion}"
     implementation "io.debezium:debezium-api:${debeziumVersion}"
     implementation "io.debezium:debezium-embedded:${debeziumVersion}"
+    implementation "org.springframework.boot:spring-boot-starter-batch"
+    implementation "org.springframework.boot:spring-boot-starter-data-jpa"
+    implementation "org.springframework.boot:spring-boot-starter-web"
     implementation "org.springframework.cloud:spring-cloud-starter-config"
     implementation "org.springframework.cloud:spring-cloud-starter-vault-config:${springCloudVaultVersion}"
+    implementation project(':chap17:common')
+    
+    // Runtime-only dependencies (alphabetical)
     runtimeOnly "org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}"
-    testImplementation "org.springframework.boot:spring-boot-starter-test"
+    
+    // Test implementation dependencies (alphabetical)
+    testImplementation "io.rest-assured:rest-assured:${restAssuredVersion}"
+    testImplementation "org.awaitility:awaitility:${awaitilityVersion}"
     testImplementation "org.springframework.batch:spring-batch-test"
-    testImplementation "org.testcontainers:junit-jupiter:${testContainersVersion}"
-    testImplementation "org.testcontainers:mariadb:${testContainersVersion}"
+    testImplementation "org.springframework.boot:spring-boot-starter-test"
+    testImplementation "org.springframework.boot:spring-boot-testcontainers"
     testImplementation "org.testcontainers:elasticsearch:${testContainersVersion}"
-    testImplementation "org.testcontainers:localstack:${testContainersVersion}"
     testImplementation "org.testcontainers:junit-jupiter:${testContainersVersion}"
+    testImplementation "org.testcontainers:kafka:${testContainersVersion}"
+    testImplementation "org.testcontainers:localstack:${testContainersVersion}"
+    testImplementation "org.testcontainers:mariadb:${testContainersVersion}"
+    testImplementation "org.testcontainers:testcontainers:${testContainersVersion}"
     testImplementation project(':appendix:spring-boot-starter-test-containers')
 }
 

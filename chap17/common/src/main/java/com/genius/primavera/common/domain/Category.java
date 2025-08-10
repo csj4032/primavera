@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(of = "id")
 @Entity
 @Table(name = "CATEGORIES")
 @EntityListeners(AuditingEntityListener.class)

@@ -32,19 +32,8 @@ public class ProductSearchService {
     public Flux<ProductDocument> searchProducts(String query, String category, Integer minPrice, Integer maxPrice, int size) {
         BoolQuery.Builder boolQueryBuilder = new BoolQuery.Builder();
 
-        if (query != null && !query.isEmpty()) {
-            boolQueryBuilder.must(QueryBuilders.multiMatch()
-                    .fields("name", "description", "searchKeywords")
-                    .query(query)
-                    .build()._toQuery());
-        }
-
-        if (category != null && !category.isEmpty()) {
-            boolQueryBuilder.filter(QueryBuilders.term()
-                    .field("category.name.keyword")
-                    .value(category)
-                    .build()._toQuery());
-        }
+        if (query != null && !query.isEmpty()) boolQueryBuilder.must(QueryBuilders.multiMatch().fields("name", "description", "searchKeywords").query(query).build()._toQuery());
+        if (category != null && !category.isEmpty()) boolQueryBuilder.filter(QueryBuilders.term().field("category.name.keyword").build()._toQuery());
 
         if (minPrice != null || maxPrice != null) {
             var rangeBuilder = QueryBuilders.range().field("price");
@@ -68,9 +57,7 @@ public class ProductSearchService {
                 .flatMapMany(searchResponse -> {
                     List<ProductDocument> products = new ArrayList<>();
                     for (Hit<ProductDocument> hit : searchResponse.hits().hits()) {
-                        if (hit.source() != null) {
-                            products.add(hit.source());
-                        }
+                        if (hit.source() != null) products.add(hit.source());
                     }
                     log.info("Found {} products matching criteria", products.size());
                     return Flux.fromIterable(products);
@@ -148,7 +135,7 @@ public class ProductSearchService {
                         log.error("Bulk indexing had errors");
                         response.items().forEach(item -> {
                             if (item.error() != null) {
-                                log.error("Error indexing document {}: {}", 
+                                log.error("Error indexing document {}: {}",
                                         item.id(), item.error().reason());
                             }
                         });
@@ -158,5 +145,57 @@ public class ProductSearchService {
                 })
                 .doOnError(error -> log.error("Bulk indexing failed", error))
                 .then();
+    }
+
+    public Flux<ProductDocument> searchAllProducts() {
+        SearchRequest searchRequest = SearchRequest.of(s -> s
+                .index(INDEX_NAME)
+                .query(QueryBuilders.matchAll().build()._toQuery())
+                .size(1000)
+                .trackTotalHits(t -> t.enabled(true))
+        );
+
+        CompletableFuture<SearchResponse<ProductDocument>> searchFuture = elasticsearchAsyncClient.search(searchRequest, ProductDocument.class);
+
+        return Mono.fromFuture(searchFuture)
+                .flatMapMany(searchResponse -> {
+                    List<ProductDocument> products = new ArrayList<>();
+                    for (Hit<ProductDocument> hit : searchResponse.hits().hits()) {
+                        if (hit.source() != null) products.add(hit.source());
+                    }
+                    log.info("Retrieved {} products from index", products.size());
+                    return Flux.fromIterable(products);
+                })
+                .doOnError(error -> log.error("Search all products failed", error));
+    }
+
+    public Mono<BulkResponse> bulkIndexProducts(Flux<ProductDocument> productFlux) {
+        return productFlux
+                .collectList()
+                .flatMap(products -> {
+                    BulkRequest.Builder bulkRequestBuilder = new BulkRequest.Builder();
+
+                    for (ProductDocument product : products) {
+                        bulkRequestBuilder.operations(op -> op
+                                .index(idx -> idx
+                                        .index(INDEX_NAME)
+                                        .id(String.valueOf(product.getProductId()))
+                                        .document(product)
+                                )
+                        );
+                    }
+
+                    CompletableFuture<BulkResponse> bulkFuture = elasticsearchAsyncClient.bulk(bulkRequestBuilder.build());
+
+                    return Mono.fromFuture(bulkFuture)
+                            .doOnSuccess(response -> {
+                                if (response.errors()) {
+                                    log.error("Bulk indexing had errors");
+                                } else {
+                                    log.info("Successfully bulk indexed {} documents", products.size());
+                                }
+                            })
+                            .doOnError(error -> log.error("Bulk indexing failed", error));
+                });
     }
 }

@@ -10,13 +10,15 @@ dependencyManagement {
     }
 }
 
-// chap18:order: WebFlux (Reactive) + JPA
 dependencies {
-    implementation "org.springframework.boot:spring-boot-starter-webflux"
+    // Implementation dependencies (alphabetical)
     implementation "org.springframework.boot:spring-boot-starter-data-jpa"
+    implementation "org.springframework.boot:spring-boot-starter-webflux"
     
+    // Runtime-only dependencies (alphabetical)
     runtimeOnly "org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}"
     
-    testImplementation "org.springframework.boot:spring-boot-starter-test"
+    // Test implementation dependencies (alphabetical)
     testImplementation "io.projectreactor:reactor-test:${reactorTestVersion}"
+    testImplementation "org.springframework.boot:spring-boot-starter-test"
 }

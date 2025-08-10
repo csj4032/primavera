@@ -123,6 +123,13 @@ generate_vault_configs() {
     
     if $has_elasticsearch; then
         main_config+=" \\\\\\n               spring.elasticsearch.uris=http://localhost:9200"
+        main_config+=" \\\\\\n               spring.elasticsearch.username=primavera"
+        main_config+=" \\\\\\n               spring.elasticsearch.password=primavera"
+        main_config+=" \\\\\\n               elasticsearch.host=localhost"
+        main_config+=" \\\\\\n               elasticsearch.port=9200"
+        main_config+=" \\\\\\n               elasticsearch.username=primavera"
+        main_config+=" \\\\\\n               elasticsearch.password=primavera"
+        main_config+=" \\\\\\n               elasticsearch.scheme=http"
     fi
     
     vault_configs="$main_config"
@@ -147,12 +154,35 @@ generate_vault_configs() {
                     fi
                     if $has_elasticsearch; then
                         sub_config+=" \\\\\\n               spring.elasticsearch.uris=http://localhost:9200"
+                        sub_config+=" \\\\\\n               spring.elasticsearch.username=primavera"
+                        sub_config+=" \\\\\\n               spring.elasticsearch.password=primavera"
+                        sub_config+=" \\\\\\n               elasticsearch.host=localhost"
+                        sub_config+=" \\\\\\n               elasticsearch.port=9200"
+                        sub_config+=" \\\\\\n               elasticsearch.username=primavera"
+                        sub_config+=" \\\\\\n               elasticsearch.password=primavera"
+                        sub_config+=" \\\\\\n               elasticsearch.scheme=http"
                     fi
                     ;;
                 streaming)
                     # Streaming 모듈 설정 (WebFlux, 별도 포트)
                     sub_config+=" \\\\\\n               server.port=8081"
                     sub_config+=" \\\\\\n               spring.webflux.base-path=/streaming"
+                    if $has_mariadb; then
+                        sub_config+=" \\\\\\n               spring.datasource.driver-class-name=org.mariadb.jdbc.Driver"
+                        sub_config+=" \\\\\\n               spring.datasource.url=jdbc:mariadb://localhost:3306/primavera"
+                        sub_config+=" \\\\\\n               spring.datasource.username=primavera"
+                        sub_config+=" \\\\\\n               spring.datasource.password=primavera"
+                    fi
+                    if $has_elasticsearch; then
+                        sub_config+=" \\\\\\n               spring.elasticsearch.uris=http://localhost:9200"
+                        sub_config+=" \\\\\\n               spring.elasticsearch.username=primavera"
+                        sub_config+=" \\\\\\n               spring.elasticsearch.password=primavera"
+                        sub_config+=" \\\\\\n               elasticsearch.host=localhost"
+                        sub_config+=" \\\\\\n               elasticsearch.port=9200"
+                        sub_config+=" \\\\\\n               elasticsearch.username=primavera"
+                        sub_config+=" \\\\\\n               elasticsearch.password=primavera"
+                        sub_config+=" \\\\\\n               elasticsearch.scheme=http"
+                    fi
                     ;;
                 account|configuration|front|order|product)
                     # 마이크로서비스 모듈별 설정

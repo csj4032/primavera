@@ -11,7 +11,6 @@ import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.connect.data.Field;
 import org.apache.kafka.connect.data.Struct;
 import org.apache.kafka.connect.source.SourceRecord;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,7 +19,6 @@ import reactor.core.publisher.Sinks;
 
 import java.io.IOException;
 import java.time.Instant;
-import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;

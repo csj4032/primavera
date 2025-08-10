@@ -1,58 +1,28 @@
-plugins {
-    id 'org.graalvm.buildtools.native' version '0.10.3'
-}
-
-configurations {
-    compileOnly {
-        extendsFrom annotationProcessor
-    }
-}
-
 dependencies {
-    implementation project(':chap17:common')
+    implementation "co.elastic.clients:elasticsearch-java:${elasticsearchVersion}"
+    implementation "io.debezium:debezium-embedded:${debeziumVersion}"
+    implementation "org.apache.kafka:connect-api:${kafkaConnectVersion}"
+    implementation "org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}"
     implementation "org.springframework.boot:spring-boot-starter-webflux"
-    implementation "org.springframework.boot:spring-boot-starter-websocket"
-    implementation "org.springframework.boot:spring-boot-starter-data-r2dbc"
-    implementation "org.mariadb:r2dbc-mariadb:${r2dbcMariadbVersion}"
-    implementation "io.r2dbc:r2dbc-pool:${r2dbcPoolVersion}"
-    implementation "co.elastic.clients:elasticsearch-java:8.14.3"
-    testImplementation "org.springframework.boot:spring-boot-starter-test"
-    testImplementation "io.projectreactor:reactor-test:${reactorTestVersion}"
-    testImplementation "org.testcontainers:junit-jupiter:${testContainersVersion}"
-    testImplementation "org.testcontainers:r2dbc:${testContainersVersion}"
-    testImplementation project(':appendix:spring-boot-starter-test-containers')
-}
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
-}
-
-tasks.named('test') {
-    useJUnitPlatform()
-}
-
-graalvmNative {
-    binaries {
-        main {
-            imageName = 'product-streaming-indexer'
-            mainClass = 'com.genius.primavera.streaming.ProductStreamingApplication'
-            useFatJar = false
-        }
+    implementation('org.springframework.boot:spring-boot-starter-websocket') {
+        exclude group: 'org.springframework.boot', module: 'spring-boot-starter-tomcat'
     }
-}
-
-springBoot {
-    mainClass = 'com.genius.primavera.streaming.ProductStreamingApplication'
-    buildInfo()
-}
-
-jar {
-    enabled = false
-    archiveClassifier = ''
-}
-
-bootJar {
-    archiveFileName = 'product-streaming-indexer.jar'
-    launchScript()
+    implementation "org.springframework.cloud:spring-cloud-starter-config"
+    implementation "org.springframework.cloud:spring-cloud-starter-vault-config:${springCloudVaultVersion}"
+    implementation "org.springframework.boot:spring-boot-starter-data-elasticsearch"
+    implementation project(':chap17:common')
+    testImplementation "io.debezium:debezium-embedded:${debeziumVersion}"
+    testImplementation "io.projectreactor:reactor-test:${reactorTestVersion}"
+    testImplementation "io.rest-assured:rest-assured:${restAssuredVersion}"
+    testImplementation "org.awaitility:awaitility:${awaitilityVersion}"
+    testImplementation "org.springframework.boot:spring-boot-starter-test"
+    testImplementation "org.springframework.boot:spring-boot-testcontainers"
+    testImplementation "org.springframework.boot:spring-boot-starter-webflux"
+    testImplementation "org.testcontainers:elasticsearch:${testContainersVersion}"
+    testImplementation "org.testcontainers:junit-jupiter:${testContainersVersion}"
+    testImplementation "org.testcontainers:kafka:${testContainersVersion}"
+    testImplementation "org.testcontainers:mariadb:${testContainersVersion}"
+    testImplementation "org.testcontainers:testcontainers:${testContainersVersion}"
+    testImplementation "org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}"
+    testImplementation project(':appendix:spring-boot-starter-test-containers')
 }

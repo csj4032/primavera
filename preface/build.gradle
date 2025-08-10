@@ -5,10 +5,15 @@ plugins {
 }
 
 dependencies {
-    implementation('org.springframework.boot:spring-boot-starter')
-    implementation('org.springframework.boot:spring-boot-devtools')
-    implementation('org.projectlombok:lombok')
-    annotationProcessor('org.projectlombok:lombok')
+    // Implementation dependencies (alphabetical)
+    implementation 'org.projectlombok:lombok'
+    implementation 'org.springframework.boot:spring-boot-devtools'
+    implementation 'org.springframework.boot:spring-boot-starter'
+    
+    // Annotation processors
+    annotationProcessor 'org.projectlombok:lombok'
+    
+    // Test implementation dependencies (alphabetical)
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude module: 'junit'
     }

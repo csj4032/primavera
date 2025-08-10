@@ -1,9 +1,12 @@
 dependencies {
-    implementation "org.springframework.boot:spring-boot-starter-web"
+    // Implementation dependencies (alphabetical)
+    implementation "commons-io:commons-io:${commonsIoVersion}"
+    implementation "nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:${thymeleafLayoutDialectVersion}"
     implementation "org.springframework.boot:spring-boot-starter-aop"
     implementation "org.springframework.boot:spring-boot-starter-thymeleaf"
-    implementation "nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:${thymeleafLayoutDialectVersion}"
-    implementation "commons-io:commons-io:${commonsIoVersion}"
+    implementation "org.springframework.boot:spring-boot-starter-web"
+    
+    // Test implementation dependencies (alphabetical)
     testImplementation "org.testcontainers:junit-jupiter:${testContainersVersion}"
     testImplementation "org.testcontainers:mariadb:${testContainersVersion}"
 }

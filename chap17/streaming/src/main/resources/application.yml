@@ -15,10 +15,18 @@ spring:
         - console-appender
   jackson:
     time-zone: UTC
+  jmx:
+    enabled: false
 
 logging:
   config: classpath:logback-spring.xml
 
 primavera:
-  logs:
-    path: ./logs
+  config:
+    name: primavera
+    enabled: true
+    logs:
+      path: ./logs
+
+server:
+  port: 8081

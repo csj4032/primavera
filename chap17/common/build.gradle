@@ -5,13 +5,18 @@ plugins {
 }
 
 dependencies {
-    // JPA Entities only (NO WEB, NO BUSINESS LOGIC)
-    api "org.springframework.boot:spring-boot-starter-data-jpa"
+    // API dependencies (alphabetical)
     api "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
     api "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonVersion}"
+    api "org.springframework.boot:spring-boot-starter-data-jpa"
     
+    // Compile-only dependencies (alphabetical)
     compileOnly "org.projectlombok:lombok:${lombokVersion}"
+    
+    // Annotation processors
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+    
+    // Test implementation dependencies (alphabetical)
     testImplementation "org.junit.jupiter:junit-jupiter:${junitJupiterVersion}"
 }
 
