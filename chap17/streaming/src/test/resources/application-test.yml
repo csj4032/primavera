@@ -17,19 +17,44 @@ spring:
   elasticsearch:
     uris: http://localhost:9200
 
-primavera:
-  testcontainers:
+
+testcontainers:
+  defaults:
+    startupTimeout: 60
+    imagePullPolicy: IF_NOT_PRESENT
+    networkMode: BRIDGE
+    environment:
+      TZ: "Asia/Seoul"
+  containers:
+    mariadb:
+      type: MARIADB
+      mariadb:
+        image: "mariadb:11.4.7"
+        database: "primavera"
+        username: "primavera"
+        password: "primavera"
+        rootPassword: "primavera"
+        initScript: "classpath:sql/init.sql"
+        characterSet: "utf8mb4"
+        collation: "utf8mb4_unicode_ci"
+        command:
+          - "--server-id=1"
+          - "--log-bin=mysql-bin"
+          - "--binlog-format=ROW"  
+          - "--binlog-row-image=FULL"
     elasticsearch:
-      enabled: true
-      dockerImageName: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
-      username: 
-      password: 
+      type: ELASTICSEARCH
+      elasticsearch:
+        image: "docker.elastic.co/elasticsearch/elasticsearch:8.13.4"
+        environment:
+          discovery.type: "single-node"
+          xpack.security.enabled: "false"
 
 debezium:
-  enabled: false
-
-logging:
-  level:
-    com.genius.primavera: DEBUG
-    org.springframework.data.elasticsearch: DEBUG
-    co.elastic.clients: INFO
+  enabled: true
+  database:
+    hostname: localhost
+    port: 3306
+    user: primavera
+    password: primavera
+    name: primavera

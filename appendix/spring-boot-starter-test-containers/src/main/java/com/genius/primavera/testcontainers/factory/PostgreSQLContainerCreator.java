@@ -49,10 +49,26 @@ public class PostgreSQLContainerCreator implements ContainerCreator {
             if (pgSpec.getMaxConnections() != null) {
                 container.withEnv("POSTGRES_MAX_CONNECTIONS", pgSpec.getMaxConnections().toString());
             }
+            
+            if (pgSpec.getInitScript() != null) {
+                String scriptPath = pgSpec.getInitScript();
+                if (scriptPath.startsWith("classpath:")) {
+                    scriptPath = scriptPath.substring("classpath:".length());
+                }
+                container.withInitScript(scriptPath);
+            }
         } else if (spec instanceof DatabaseContainerSpec dbSpec) {
             container.withDatabaseName(dbSpec.getDatabase())
                     .withUsername(dbSpec.getUsername())
                     .withPassword(dbSpec.getPassword());
+            
+            if (dbSpec.getInitScript() != null) {
+                String scriptPath = dbSpec.getInitScript();
+                if (scriptPath.startsWith("classpath:")) {
+                    scriptPath = scriptPath.substring("classpath:".length());
+                }
+                container.withInitScript(scriptPath);
+            }
         } else {
             container.withDatabaseName("primavera")
                     .withUsername("primavera")

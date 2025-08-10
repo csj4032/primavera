@@ -10,7 +10,9 @@ import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.utility.DockerImageName;
 
 import java.time.Duration;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class MySQLContainerCreator implements ContainerCreator {
     
     @Override
@@ -42,11 +44,27 @@ public class MySQLContainerCreator implements ContainerCreator {
             if (mysqlSpec.getBinlogEnabled() != null && mysqlSpec.getBinlogEnabled()) {
                 container.withEnv("MYSQL_LOG_BIN", "1");
             }
+            
+            if (mysqlSpec.getInitScript() != null) {
+                String scriptPath = mysqlSpec.getInitScript();
+                if (scriptPath.startsWith("classpath:")) {
+                    scriptPath = scriptPath.substring("classpath:".length());
+                }
+                container.withInitScript(scriptPath);
+            }
         } else if (spec instanceof DatabaseContainerSpec dbSpec) {
             container.withDatabaseName(dbSpec.getDatabase())
                     .withUsername(dbSpec.getUsername())
                     .withPassword(dbSpec.getPassword())
                     .withEnv("MYSQL_ROOT_PASSWORD", dbSpec.getPassword());
+            
+            if (dbSpec.getInitScript() != null) {
+                String scriptPath = dbSpec.getInitScript();
+                if (scriptPath.startsWith("classpath:")) {
+                    scriptPath = scriptPath.substring("classpath:".length());
+                }
+                container.withInitScript(scriptPath);
+            }
         } else {
             container.withDatabaseName("primavera")
                     .withUsername("primavera")

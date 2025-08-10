@@ -11,7 +11,7 @@ public enum ContainerType {
     REDIS("redis:7-alpine", null, RedisContainerSpec.class, false),
     MONGODB("mongo:7", "com.mongodb.MongoClient", MongoContainerSpec.class, false),
     KAFKA("confluentinc/cp-kafka:7.5.0", null, BaseContainerSpec.class, false),
-    ELASTICSEARCH("docker.elastic.co/elasticsearch/elasticsearch:8.12.0", null, BaseContainerSpec.class, false),
+    ELASTICSEARCH("docker.elastic.co/elasticsearch/elasticsearch:8.13.4", null, BaseContainerSpec.class, false),
     VAULT("hashicorp/vault:1.14.0", null, BaseContainerSpec.class, false),
     LOCALSTACK("localstack/localstack:3.0", null, LocalStackContainerSpec.class, false);
 

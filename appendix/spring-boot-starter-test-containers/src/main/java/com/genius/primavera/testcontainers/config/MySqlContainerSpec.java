@@ -7,6 +7,9 @@ import org.springframework.validation.annotation.Validated;
 
 import jakarta.validation.constraints.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ConfigurationProperties
@@ -51,6 +54,13 @@ public class MySqlContainerSpec extends DatabaseContainerSpec {
     private Boolean sslEnabled = false;
     
     private String defaultTimeZone = "Asia/Seoul";
+    
+    @NotNull
+    private List<@NotBlank String> command = new ArrayList<>();
+    
+    // Override initScript field to ensure proper YAML binding
+    @Pattern(regexp = "^(classpath:|file:|http://|https://)?.*\\.(sql|sh)$", message = "Init script must be .sql or .sh file")
+    private String initScript;
     
     public enum SqlMode {
         STRICT_TRANS_TABLES,

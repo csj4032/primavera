@@ -103,8 +103,10 @@ public class ContainerManager {
             try {
                 log.info("Starting {} container: {}", type, name);
 
-                ContainerConfiguration.ContainerInstanceConfig instanceConfig = configuration
-                        .getContainerConfig(name)
+                Optional<ContainerConfiguration.ContainerInstanceConfig> configOpt = configuration.getContainerConfig(name);
+                log.info("Configuration found for container '{}': {}", name, configOpt.isPresent());
+                
+                ContainerConfiguration.ContainerInstanceConfig instanceConfig = configOpt
                         .orElse(createDefaultInstanceConfig(name, type));
                 
                 if (instanceConfig.getType() != type) {
@@ -114,7 +116,9 @@ public class ContainerManager {
                 }
                 
                 BaseContainerSpec spec = instanceConfig.getSpecForType();
+                log.info("Spec for container '{}': {}", name, spec != null ? spec.getClass().getSimpleName() : "null");
                 if (spec == null) {
+                    log.info("Creating default spec for container '{}'", name);
                     spec = createDefaultSpec(type);
                 }
 
@@ -140,9 +144,11 @@ public class ContainerManager {
             PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
 
             String[] yamlFiles = {"application-test.yml", "application-test.yaml"};
+            boolean yamlLoaded = false;
             for (String yamlFile : yamlFiles) {
                 try {
                     Resource resource = resolver.getResource("classpath:" + yamlFile);
+                    log.info("Checking YAML file '{}': exists={}", yamlFile, resource.exists());
                     if (resource.exists()) {
                         YamlPropertySourceLoader yamlLoader = new YamlPropertySourceLoader();
                         List<PropertySource<?>> propertySources = yamlLoader.load(yamlFile, resource);
@@ -150,12 +156,15 @@ public class ContainerManager {
                             environment.getPropertySources().addFirst(propertySource);
                         }
                         log.info("Loaded YAML configuration from '{}'", yamlFile);
+                        yamlLoaded = true;
                         break;
                     }
                 } catch (Exception e) {
                     log.warn("Failed to load YAML configuration from '{}': {}", yamlFile, e.getMessage());
                 }
             }
+            
+            log.info("YAML configuration loaded: {}", yamlLoaded);
 
             String[] propFiles = {"application-test.properties"};
             for (String propFile : propFiles) {
@@ -171,10 +180,18 @@ public class ContainerManager {
                     log.warn("Failed to load properties configuration from '{}': {}", propFile, e.getMessage());
                 }
             }
-
-            return Binder.get(environment)
+            log.info("Properties loaded: {}", yamlLoaded);
+            ContainerConfiguration config = Binder.get(environment)
                     .bind("testcontainers", ContainerConfiguration.class)
                     .orElse(new ContainerConfiguration());
+            
+            log.info("Configuration containers: {}", config.getContainers().keySet());
+            config.getContainers().forEach((name, instanceConfig) -> {
+                log.info("Container '{}' type: {}, spec: {}", name, instanceConfig.getType(), 
+                    instanceConfig.getSpecForType() != null ? instanceConfig.getSpecForType().getClass().getSimpleName() : "null");
+            });
+            
+            return config;
 
         } catch (Exception e) {
             log.warn("Failed to load configuration, using defaults: {}", e.getMessage());
@@ -230,17 +247,33 @@ public class ContainerManager {
                     config.setMongodb(createDefaultMongoSpec());
                 }
             }
+            case KAFKA -> {
+                if (spec instanceof KafkaContainerSpec kafkaSpec) {
+                    config.setKafka(kafkaSpec);
+                } else {
+                    config.setKafka(createDefaultKafkaSpec());
+                }
+            }
+            case ELASTICSEARCH -> {
+                if (spec instanceof ElasticsearchContainerSpec esSpec) {
+                    config.setElasticsearch(esSpec);
+                } else {
+                    config.setElasticsearch(createDefaultElasticsearchSpec());
+                }
+            }
+            case VAULT -> {
+                if (spec instanceof VaultContainerSpec vaultSpec) {
+                    config.setVault(vaultSpec);
+                } else {
+                    config.setVault(createDefaultVaultSpec());
+                }
+            }
             case LOCALSTACK -> {
                 if (spec instanceof LocalStackContainerSpec localStackSpec) {
                     config.setLocalstack(localStackSpec);
                 } else {
                     config.setLocalstack(createDefaultLocalStackSpec());
                 }
-            }
-            default -> {
-                config.setKafka(spec);
-                config.setElasticsearch(spec);
-                config.setVault(spec);
             }
         }
     }
@@ -252,6 +285,9 @@ public class ContainerManager {
             case POSTGRESQL -> createDefaultPostgreSqlSpec();
             case REDIS -> createDefaultRedisSpec();
             case MONGODB -> createDefaultMongoSpec();
+            case KAFKA -> createDefaultKafkaSpec();
+            case ELASTICSEARCH -> createDefaultElasticsearchSpec();
+            case VAULT -> createDefaultVaultSpec();
             case LOCALSTACK -> createDefaultLocalStackSpec();
             default -> createDefaultBaseSpec(type);
         };
@@ -292,6 +328,24 @@ public class ContainerManager {
     private MongoContainerSpec createDefaultMongoSpec() {
         MongoContainerSpec spec = new MongoContainerSpec();
         spec.setImage(ContainerType.MONGODB.getDefaultImage());
+        return spec;
+    }
+    
+    private KafkaContainerSpec createDefaultKafkaSpec() {
+        KafkaContainerSpec spec = new KafkaContainerSpec();
+        spec.setImage(ContainerType.KAFKA.getDefaultImage());
+        return spec;
+    }
+    
+    private ElasticsearchContainerSpec createDefaultElasticsearchSpec() {
+        ElasticsearchContainerSpec spec = new ElasticsearchContainerSpec();
+        spec.setImage(ContainerType.ELASTICSEARCH.getDefaultImage());
+        return spec;
+    }
+    
+    private VaultContainerSpec createDefaultVaultSpec() {
+        VaultContainerSpec spec = new VaultContainerSpec();
+        spec.setImage(ContainerType.VAULT.getDefaultImage());
         return spec;
     }
     

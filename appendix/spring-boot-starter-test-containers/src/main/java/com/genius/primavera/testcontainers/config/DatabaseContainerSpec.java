@@ -23,8 +23,7 @@ public class DatabaseContainerSpec extends BaseContainerSpec {
     @Size(min = 6, message = "Password must be at least 6 characters")
     private String password = "primavera";
     
-    @Pattern(regexp = "^(classpath:|file:|http://|https://)?.*\\.(sql|sh)$", 
-             message = "Init script must be .sql or .sh file")
+    @Pattern(regexp = "^(classpath:|file:|http://|https://)?.*\\.(sql|sh)$", message = "Init script must be .sql or .sh file")
     private String initScript;
     
     @Min(value = 1, message = "Max connections must be at least 1")

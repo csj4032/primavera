@@ -7,10 +7,13 @@ import org.springframework.validation.annotation.Validated;
 
 import jakarta.validation.constraints.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Data
-@EqualsAndHashCode(callSuper = true)
-@ConfigurationProperties
 @Validated
+@ConfigurationProperties
+@EqualsAndHashCode(callSuper = true)
 public class MariaDbContainerSpec extends DatabaseContainerSpec {
     
     @Pattern(regexp = "^(utf8|utf8mb4|latin1|ascii|binary)$", message = "Invalid character set")
@@ -42,6 +45,12 @@ public class MariaDbContainerSpec extends DatabaseContainerSpec {
     private String rootPassword = "root";
     
     private Boolean slowQueryLogEnabled = false;
+    
+    @Pattern(regexp = "^(classpath:|file:|http://|https://)?.*\\.(sql|sh)$", message = "Init script must be .sql or .sh file")
+    private String initScript;
+    
+    @NotNull
+    private List<@NotBlank String> command = new ArrayList<>();
     
     public enum SqlMode {
         STRICT_TRANS_TABLES,

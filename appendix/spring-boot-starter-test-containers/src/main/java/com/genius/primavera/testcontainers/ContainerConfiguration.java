@@ -1,6 +1,8 @@
 package com.genius.primavera.testcontainers;
 
 import com.genius.primavera.testcontainers.config.*;
+import com.genius.primavera.testcontainers.factory.KafkaContainerCreator;
+import com.genius.primavera.testcontainers.factory.VaultContainerCreator;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
@@ -14,8 +16,8 @@ import java.util.Map;
 import java.util.Optional;
 
 @Data
-@ConfigurationProperties(prefix = "testcontainers")
 @Validated
+@ConfigurationProperties(prefix = "testcontainers")
 public class ContainerConfiguration {
     
     @Valid
@@ -67,13 +69,13 @@ public class ContainerConfiguration {
         private MongoContainerSpec mongodb;
         
         @Valid
-        private BaseContainerSpec kafka;
+        private KafkaContainerSpec kafka;
         
         @Valid
-        private BaseContainerSpec elasticsearch;
+        private ElasticsearchContainerSpec elasticsearch;
         
         @Valid
-        private BaseContainerSpec vault;
+        private VaultContainerSpec vault;
         
         @Valid
         private LocalStackContainerSpec localstack;

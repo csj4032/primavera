@@ -22,14 +22,17 @@ import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(classes = ProductElasticsearchTemplateIntegrationTest.TestConfiguration.class)
+@SpringBootTest(classes = {
+    ProductElasticsearchTemplateIntegrationTest.TestConfiguration.class,
+    com.genius.primavera.streaming.config.TestElasticsearchConfig.class
+})
 @ActiveProfiles("test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @DisplayName("ProductElasticsearchTemplate Integration Test with TestContainers")
 @EnableTestContainers({
     @EnableTestContainers.TestContainer(type = ContainerType.ELASTICSEARCH, name = "elasticsearch")
 })
-class ProductElasticsearchTemplateIntegrationTest {
+public class ProductElasticsearchTemplateIntegrationTest {
 
     @Autowired
     private ElasticsearchOperations elasticsearchTemplate;
@@ -43,6 +46,7 @@ class ProductElasticsearchTemplateIntegrationTest {
             elasticsearchTemplate.indexOps(INDEX_COORDINATES).delete();
         }
         elasticsearchTemplate.indexOps(INDEX_COORDINATES).create();
+        elasticsearchTemplate.indexOps(INDEX_COORDINATES).putMapping(ProductDocument.class);
     }
 
     @Test
