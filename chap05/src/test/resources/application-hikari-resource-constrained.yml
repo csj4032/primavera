@@ -9,17 +9,17 @@ spring:
       enabled: false
   datasource:
     hikari:
-      minimum-idle: 2                    # 최소 유휴 연결: 2개 (최소한 확보)
-      maximum-pool-size: 5               # 최대 연결: 5개 (엄격한 제한)
-      idle-timeout: 60000                # 유휴 타임아웃: 1분 (적극적 해제)
-      max-lifetime: 900000               # 연결 수명: 15분 (중간 수명)
-      connection-timeout: 10000          # 연결 타임아웃: 10초 (보통 대기)
+      minimum-idle: 2                    # minimum config_text_2 connection: 2config_text_1 (minimumconfig_text_1 config_text_2)
+      maximum-pool-size: 5               # maximum connection: 5config_text_1 (엄격config_text_1 제config_text_1)
+      idle-timeout: 60000                # config_text_2 config_text_4: 1minute (config_text_3 config_text_2)
+      max-lifetime: 900000               # connection config_text_2: 15minute (config_text_2 config_text_2)
+      connection-timeout: 10000          # connection config_text_4: 10second (config_text_2 waiting)
       pool-name: "ResourceConstrainedPool"
-      leak-detection-threshold: 30000    # 누수 감지: 30초 (엄격한 감지)
+      leak-detection-threshold: 30000    # config_text_2 config_text_2: 30second (엄격config_text_1 config_text_2)
       connection-test-query: "SELECT 1"
-      validation-timeout: 2000           # 검증 타임아웃: 2초 (빠른 검증)
-      initialization-fail-timeout: 1     # 초기화 실패시 즉시 실패
-      register-mbeans: true              # JMX 모니터링 활성화
+      validation-timeout: 2000           # config_text_2 config_text_4: 2second (config_text_2 config_text_2)
+      initialization-fail-timeout: 1     # secondconfig_text_2 failedhour config_text_1hour failed
+      register-mbeans: true              # JMX config_text_4 enabled
 
 primavera:
   testcontainers:

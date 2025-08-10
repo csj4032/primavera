@@ -9,15 +9,15 @@ spring:
       enabled: false
   datasource:
     hikari:
-      minimum-idle: 5                    # 최소 유휴 연결: 5개 (적절한 준비)
-      maximum-pool-size: 10              # 최대 연결: 10개 (일반적 동시성)
-      idle-timeout: 600000               # 유휴 타임아웃: 10분 (안정적)
-      max-lifetime: 1800000              # 연결 수명: 30분 (표준)
-      connection-timeout: 30000          # 연결 타임아웃: 30초 (여유있는 대기)
+      minimum-idle: 5                    # minimum config_text_2 connection: 5config_text_1 (config_text_3 config_text_2)
+      maximum-pool-size: 10              # maximum connection: 10config_text_1 (dayconfig_text_2 config_text_1hourconfig_text_1)
+      idle-timeout: 600000               # config_text_2 config_text_4: 10minute (config_text_3)
+      max-lifetime: 1800000              # connection config_text_2: 30minute (config_text_2)
+      connection-timeout: 30000          # connection config_text_4: 30second (config_text_4 waiting)
       pool-name: "BalancedHikariPool"
-      leak-detection-threshold: 60000    # 누수 감지: 1분 (개발환경 감지)
+      leak-detection-threshold: 60000    # config_text_2 config_text_2: 1minute (developmentenvironment config_text_2)
       connection-test-query: "SELECT 1"
-      validation-timeout: 5000           # 검증 타임아웃: 5초
+      validation-timeout: 5000           # config_text_2 config_text_4: 5second
 
 mybatis:
   configuration:

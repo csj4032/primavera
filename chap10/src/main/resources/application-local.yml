@@ -45,7 +45,7 @@ spring:
   cache:
     type: redis
     redis:
-      time-to-live: 1800000  # 30분 (밀리초)
+      time-to-live: 1800000  # 30minute (config_text_2second)
       cache-null-values: false
     cache-names:
       - oauth2Tokens

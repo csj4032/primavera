@@ -1,11 +1,11 @@
 app:
-  name: Primavera 경량 프레임워크
+  name: Primavera config_text_2 config_text_5
   version: 1.0.0
-  description: Spring Boot 동작 원리를 이해하기 위한 경량 프레임워크 데모
+  description: Spring Boot config_text_2 config_text_3 config_text_4 config_text_2 config_text_2 config_text_5 config_text_2
   welcome:
-    message: 🌸 Primavera 경량 프레임워크에 오신 것을 환영합니다!
+    message: 🌸 Primavera config_text_2 config_text_5에 config_text_2 config_text_2 config_text_5!
   startup:
-    greeting: 안녕하세요! Primavera 프레임워크입니다.
+    greeting: config_text_5! Primavera config_text_5입니다.
 
 logging:
   level:
@@ -19,11 +19,11 @@ system:
     seconds: 30
 
 developer:
-  name: Primavera 개발팀
+  name: Primavera developmentconfig_text_1
   email: team@primavera.com
 
 test:
   korean:
-    message: 한글 인코딩 테스트 메시지입니다
+    message: config_text_2 encoding test config_text_1hourconfig_text_4
   emoji:
-    message: 🌸🌺🌻 이모지와 한글이 함께 표시됩니다 🎉🎊
+    message: 🌸🌺🌻 config_text_4 config_text_2이 config_text_2 config_text_1hourconfig_text_3 🎉🎊

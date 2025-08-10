@@ -9,13 +9,13 @@ spring:
       enabled: false
   datasource:
     hikari:
-      minimum-idle: 1                    # 최소 유휴 연결: 1개 (메모리 절약)
-      maximum-pool-size: 3               # 최대 연결: 3개 (제한적)
-      idle-timeout: 30000                # 유휴 타임아웃: 30초 (빠른 해제)
-      max-lifetime: 300000               # 연결 수명: 5분 (짧은 수명)
-      connection-timeout: 5000           # 연결 타임아웃: 5초 (빠른 실패)
+      minimum-idle: 1                    # minimum config_text_2 connection: 1config_text_1 (memory config_text_2)
+      maximum-pool-size: 3               # maximum connection: 3config_text_1 (config_text_3)
+      idle-timeout: 30000                # config_text_2 config_text_4: 30second (config_text_2 config_text_2)
+      max-lifetime: 300000               # connection config_text_2: 5minute (config_text_2 config_text_2)
+      connection-timeout: 5000           # connection config_text_4: 5second (config_text_2 failed)
       pool-name: "MinimalHikariPool"
-      leak-detection-threshold: 0        # 누수 감지: 비활성화 (성능 우선)
+      leak-detection-threshold: 0        # config_text_2 config_text_2: config_text_1enabled (config_text_2 config_text_2)
 
 primavera:
   testcontainers:

@@ -4,7 +4,7 @@ spring:
   jackson:
     time-zone: UTC
 
-# 챕터별 고유 설정
+# config_text_3 config_text_2 configuration
 app:
   name: Primavera Tutorial
   version: 1.0.0
