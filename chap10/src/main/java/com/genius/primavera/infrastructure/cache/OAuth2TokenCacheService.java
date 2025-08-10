@@ -43,7 +43,7 @@ public class OAuth2TokenCacheService {
 
         tokenStore.put(cacheKey, entry);
         
-        log.info(" OAuth2 translated_text_2 translated_text_2 - user: {}, translated_text_5: {}, translated_text_4: {}", 
+        log.info(" OAuth2 test - user: {}, Endpoint: {}, file: {}", 
                 userId, provider, accessToken.getExpiresAt());
         
         return entry;
@@ -55,17 +55,17 @@ public class OAuth2TokenCacheService {
         TokenCacheEntry entry = tokenStore.get(cacheKey);
         
         if (entry == null) {
-            log.debug(" translated_text_2 translated_text_2 translated_text_2 - user: {}, translated_text_5: {}", userId, provider);
+            log.debug(" test test - user: {}, Endpoint: {}", userId, provider);
             return Optional.empty();
         }
 
         if (isTokenExpired(entry)) {
-            log.warn("⏰ translated_text_3 translated_text_2 translated_text_2 - user: {}, translated_text_5: {}", userId, provider);
+            log.warn("⏰ connection test - user: {}, Endpoint: {}", userId, provider);
             evictToken(userId, provider);
             return Optional.empty();
         }
         
-        log.debug(" translated_text_2 translated_text_2 translated_text_2 - user: {}, translated_text_5: {}", userId, provider);
+        log.debug(" test test - user: {}, Endpoint: {}", userId, provider);
         return Optional.of(entry);
     }
 
@@ -86,7 +86,7 @@ public class OAuth2TokenCacheService {
                                       OAuth2AccessToken newAccessToken,
                                       OAuth2RefreshToken newRefreshToken) {
         
-        log.info(" translated_text_2 translated_text_2 - user: {}, translated_text_5: {}", userId, provider);
+        log.info(" test - user: {}, Endpoint: {}", userId, provider);
         return cacheToken(userId, provider, newAccessToken, newRefreshToken);
     }
 
@@ -95,20 +95,20 @@ public class OAuth2TokenCacheService {
         String cacheKey = generateCacheKey(userId, provider);
         tokenStore.remove(cacheKey);
         
-        log.info(" translated_text_2 translated_text_2 deletion - user: {}, translated_text_5: {}", userId, provider);
+        log.info(" test deletion - user: {}, Endpoint: {}", userId, provider);
     }
 
     @CacheEvict(value = "oauth2Tokens", allEntries = true)
     public void evictAllUserTokens(String userId) {
         tokenStore.entrySet().removeIf(entry -> entry.getKey().startsWith(userId + ":"));
         
-        log.info(" user all translated_text_2 translated_text_2 deletion - user: {}", userId);
+        log.info(" user all test deletion - user: {}", userId);
     }
 
     @CacheEvict(value = "oauth2Tokens", allEntries = true)
     public void evictAllTokens() {
         tokenStore.clear();
-        log.info(" all translated_text_2 translated_text_2 deletion");
+        log.info(" all test deletion");
     }
 
     public CacheStats getCacheStats() {

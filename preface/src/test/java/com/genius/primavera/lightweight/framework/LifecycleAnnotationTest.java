@@ -10,21 +10,21 @@ import static org.junit.jupiter.api.Assertions.*;
 class LifecycleAnnotationTest {
     
     @Test
-    @DisplayName("@PostConstruct translated_text_4 successfully calledtranslated_text_3 test")
+    @DisplayName("@PostConstruct file successfully calledconnection test")
     void shouldCallPostConstructMethod() {
         PrimaveraApplicationContext context = new PrimaveraApplicationContext(
                 "com.genius.primavera.lightweight.framework.lifecycle");
 
         TestLifecycleBean bean = context.getBean(TestLifecycleBean.class);
         assertNotNull(bean);
-        assertTrue(bean.isInitialized(), "@PostConstruct translated_text_4 calledtranslated_text_3 translated_text_1");
-        assertFalse(bean.isDestroyed(), "@PreDestroy translated_text_4 translated_text_2 calledtranslated_text_2 translated_text_3 translated_text_1");
+        assertTrue(bean.isInitialized(), "@PostConstruct file calledconnection should");
+        assertFalse(bean.isDestroyed(), "@PreDestroy file test calledtest connection should");
 
-        assertEquals("translated_text_3 completed!", bean.getMessage());
+        assertEquals("connection completed!", bean.getMessage());
     }
     
     @Test
-    @DisplayName("@PreDestroy translated_text_4 successfully calledtranslated_text_3 test")
+    @DisplayName("@PreDestroy file successfully calledconnection test")
     void shouldCallPreDestroyMethod() {
         PrimaveraApplicationContext context = new PrimaveraApplicationContext(
                 "com.genius.primavera.lightweight.framework.lifecycle");
@@ -35,12 +35,12 @@ class LifecycleAnnotationTest {
 
         context.close();
 
-        assertTrue(bean.isDestroyed(), "@PreDestroy translated_text_4 calledtranslated_text_3 translated_text_1");
-        assertEquals("translated_text_2 completed!", bean.getCleanupMessage());
+        assertTrue(bean.isDestroyed(), "@PreDestroy file calledconnection should");
+        assertEquals("test completed!", bean.getCleanupMessage());
     }
 
     @Test
-    @DisplayName("translated_text_2 translated_text_2 @PostConstruct translated_text_4 translated_text_2 calledtranslated_text_3 test")
+    @DisplayName("test @PostConstruct file test calledconnection test")
     void shouldCallMultiplePostConstructMethods() {
         PrimaveraApplicationContext context = new PrimaveraApplicationContext(
                 "com.genius.primavera.lightweight.framework.lifecycle");
@@ -48,7 +48,7 @@ class LifecycleAnnotationTest {
         MultipleLifecycleBean bean = context.getBean(MultipleLifecycleBean.class);
         assertNotNull(bean);
 
-        assertTrue(bean.isFirstInitCalled(), "translated_text_1 translated_text_2 @PostConstruct translated_text_4 calledtranslated_text_3 translated_text_1");
-        assertTrue(bean.isSecondInitCalled(), "translated_text_1 translated_text_2 @PostConstruct translated_text_4 calledtranslated_text_3 translated_text_1");
+        assertTrue(bean.isFirstInitCalled(), "should test @PostConstruct file calledconnection should");
+        assertTrue(bean.isSecondInitCalled(), "should test @PostConstruct file calledconnection should");
     }
 }

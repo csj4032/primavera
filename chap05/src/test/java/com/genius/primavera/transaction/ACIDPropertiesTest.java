@@ -37,7 +37,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @SpringBootTest
 @EnableTestContainers
 @ActiveProfiles({"test"})
-@DisplayName("ACID translated_text_2 test")
+@DisplayName("ACID test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ACIDPropertiesTest {
 
@@ -68,34 +68,34 @@ public class ACIDPropertiesTest {
 
     @Test
     @Order(1)
-    @DisplayName("translated_text_3(Atomicity) test - translated_text_4 translated_text_2 translated_text_1 all translated_text_5 translated_text_3")
+    @DisplayName("connection(Atomicity) test - file test should all Endpoint connection")
     void testAtomicity() {
         Long userId = userMapper.save(testUser);
         long initialUserCount = userMapper.count();
         long initialWinnerCount = winnerMapper.count();
-        log.info("translated_text_2 translated_text_2 - User translated_text_1: {}, Winner translated_text_1: {}", initialUserCount, initialWinnerCount);
+        log.info("test - User should: {}, Winner should: {}", initialUserCount, initialWinnerCount);
         assertThatThrownBy(() -> {
             transactionTemplate.execute(status -> {
                 User user = userMapper.findById(userId);
                 user.setStatus(UserStatus.INACTIVE);
                 userMapper.update(user);
-                log.info("User translated_text_2 INACTIVEtranslated_text_1 translated_text_2: {}", user.getId());
+                log.info("User test INACTIVEshould test: {}", user.getId());
                 Winner winner = Winner.builder().name("Test Winner").year(2023).sport("Test Sport").prize("Test Prize").amount(new BigDecimal("1000.00")).build();
                 winnerMapper.save(winner);
-                log.info("Winner data translated_text_2: ID={}, Name={}", winner.getId(), winner.getName());
-                throw new RuntimeException("translated_text_4 exception translated_text_2 - translated_text_3 test");
+                log.info("Winner data test: ID={}, Name={}", winner.getId(), winner.getName());
+                throw new RuntimeException("file exception test - connection test");
             });
-        }).isInstanceOf(RuntimeException.class).hasMessage("translated_text_4 exception translated_text_2 - translated_text_3 test");
+        }).isInstanceOf(RuntimeException.class).hasMessage("file exception test - connection test");
         long finalUserCount = userMapper.count();
         long finalWinnerCount = winnerMapper.count();
-        log.info("translated_text_2 translated_text_1 translated_text_2 - User translated_text_1: {}, Winner translated_text_1: {}", finalUserCount, finalWinnerCount);
+        log.info("test should test - User should: {}, Winner should: {}", finalUserCount, finalWinnerCount);
         assertThat(finalUserCount).isEqualTo(initialUserCount);
         assertThat(finalWinnerCount).isEqualTo(initialWinnerCount);
     }
 
     @Test
     @Order(2)
-    @DisplayName("translated_text_3(Consistency) test - translated_text_4 translated_text_2 translated_text_2 translated_text_1 translated_text_4 failure")
+    @DisplayName("connection(Consistency) test - file test should file failure")
     void testConsistency() {
         User duplicateUser = User.builder()
                 .email(testUser.getEmail())
@@ -113,12 +113,12 @@ public class ACIDPropertiesTest {
         }).isInstanceOf(DataAccessException.class);
         long userCount = userMapper.countByEmail(testUser.getEmail());
         assertThat(userCount).isEqualTo(1);
-        log.info("translated_text_3 test translated_text_2 - translated_text_2 translated_text_3 translated_text_2 translated_text_3");
+        log.info("connection test - test connection test connection");
     }
 
     @Test
     @Order(3)
-    @DisplayName("translated_text_3(Isolation) test - translated_text_1 translated_text_4 translated_text_1 translated_text_2")
+    @DisplayName("connection(Isolation) test - should file should test")
     void testIsolation() throws InterruptedException {
         Long userId = userMapper.save(testUser);
         CountDownLatch latch = new CountDownLatch(2);
@@ -141,7 +141,7 @@ public class ACIDPropertiesTest {
         }, executor);
         String result1 = future1.join();
         String result2 = future2.join();
-        log.info("translated_text_3 test result - Thread1: {}, Thread2: {}", result1, result2);
+        log.info("connection test result - Thread1: {}, Thread2: {}", result1, result2);
         assertThat(result1).contains("Transaction1");
         assertThat(result2).contains("Transaction2");
         executor.shutdown();
@@ -149,7 +149,7 @@ public class ACIDPropertiesTest {
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     String isolatedTransaction1(Long userId, CountDownLatch latch) throws InterruptedException {
-        log.info("Transaction1 translated_text_1 - User ID: {}", userId);
+        log.info("Transaction1 should - User ID: {}", userId);
         User user = userMapper.findById(userId);
         user.setNickname("TRANSACTION1_USER");
         userMapper.update(user);
@@ -162,7 +162,7 @@ public class ACIDPropertiesTest {
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     String isolatedTransaction2(Long userId, CountDownLatch latch) throws InterruptedException {
-        log.info("Transaction2 translated_text_1 - User ID: {}", userId);
+        log.info("Transaction2 should - User ID: {}", userId);
         User user = userMapper.findById(userId);
         user.setStatus(UserStatus.INACTIVE);
         userMapper.update(user);
@@ -175,20 +175,20 @@ public class ACIDPropertiesTest {
 
     @Test
     @Order(4)
-    @DisplayName("translated_text_2(Durability) test - translated_text_3 translated_text_4 translated_text_1 translated_text_1 translated_text_1 translated_text_2")
+    @DisplayName("test(Durability) test - connection file needs to be added should test")
     void testDurability() {
         Long userId = userMapper.save(testUser);
         transactionTemplate.execute(status -> {
             User user = userMapper.findById(userId);
-            log.info("translated_text_2 test - translated_text_4 translated_text_1 User translated_text_2: nickname={}, status={}", user.getNickname(), user.getStatus());
+            log.info("test - file should User test: nickname={}, status={}", user.getNickname(), user.getStatus());
             user.setNickname("DURABLE_USER");
             user.setStatus(UserStatus.INACTIVE);
             userMapper.update(user);
-            log.info("translated_text_2 test - User translated_text_4 completed: nickname={}, status={}", user.getNickname(), user.getStatus());
+            log.info("test - User file completed: nickname={}, status={}", user.getNickname(), user.getStatus());
             return null;
         });
         User updatedUser = userMapper.findById(userId);
-        log.info("translated_text_2 test - translated_text_2 translated_text_1 User translated_text_2: nickname={}, status={}", updatedUser.getNickname(), updatedUser.getStatus());
+        log.info("test - test should User test: nickname={}, status={}", updatedUser.getNickname(), updatedUser.getStatus());
         assertThat(updatedUser.getNickname()).isEqualTo("DURABLE_USER");
         assertThat(updatedUser.getStatus()).isEqualTo(UserStatus.INACTIVE);
         TransactionTemplate newTransactionTemplate = new TransactionTemplate(transactionManager);
@@ -197,9 +197,9 @@ public class ACIDPropertiesTest {
             User user = userMapper.findById(userId);
             assertThat(user.getNickname()).isEqualTo("DURABLE_USER");
             assertThat(user.getStatus()).isEqualTo(UserStatus.INACTIVE);
-            log.info("translated_text_1 translated_text_4 verification - translated_text_2 translated_text_3: {}", user.getNickname());
+            log.info("should file verification - test connection: {}", user.getNickname());
             return null;
         });
-        log.info("translated_text_2 test translated_text_2 - translated_text_5 translated_text_3");
+        log.info("test test - Endpoint connection");
     }
 }

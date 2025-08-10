@@ -4,11 +4,11 @@ import lombok.Getter;
 
 @Getter
 public enum ProviderType {
-	UNKNOWN(0, "translated_text_2"),
-	FACEBOOK(1, "translated_text_4"),
-	GITHUB(2, "translated_text_2"),
-	GOOGLE(3, "translated_text_2"),
-	KAKAO(4, "translated_text_3");
+	UNKNOWN(0, "test"),
+	FACEBOOK(1, "file"),
+	GITHUB(2, "test"),
+	GOOGLE(3, "test"),
+	KAKAO(4, "connection");
 
 	private int value;
 	private String name;

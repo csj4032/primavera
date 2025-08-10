@@ -4,14 +4,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 
 @Slf4j
-@DisplayName("N:N translated_text_4 translated_text_3 translated_text_3")
+@DisplayName("N:N file connection")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ManyToManyBidirectionalTest extends ManyToManyTestBase {
 
 	@Test
 	@Order(1)
     @Disabled
-	@DisplayName("translated_text_3, translated_text_3 translated_text_2")
+	@DisplayName("connection, connection test")
 	public void save() {
 		var destination1 = Destination.of("Destination1");
 		var destination2 = Destination.of("Destination2");
@@ -39,7 +39,7 @@ public class ManyToManyBidirectionalTest extends ManyToManyTestBase {
 	@Test
 	@Order(2)
     @Disabled
-	@DisplayName("translated_text_3, translated_text_3 inquiry")
+	@DisplayName("connection, connection inquiry")
 	public void find() {
 		var origin = entityManager.find(Origin.class, 1L);
 		var destination = entityManager.find(Destination.class, 1L);

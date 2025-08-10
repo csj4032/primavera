@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Slf4j
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@DisplayName("LocalStack AWS service translated_text_1 creation test")
+@DisplayName("LocalStack AWS service should creation test")
 class LocalStackBeanCreatorTest {
 
     private LocalStackBeanCreator beanCreator;
@@ -45,29 +45,29 @@ class LocalStackBeanCreatorTest {
         spec.setDebugMode(false);
         spec.setEdgePort(4566);
         
-        log.info("LocalStackBeanCreator test translated_text_3 translated_text_7");
+        log.info("LocalStackBeanCreator test connection logging");
     }
 
     @Test
     @Order(1)
-    @DisplayName("LocalStackBeanCreator translated_text_2 translated_text_2 verification")
+    @DisplayName("LocalStackBeanCreator test verification")
     void testSupportedType() {
         assertEquals(ContainerType.LOCALSTACK, beanCreator.getSupportedType());
-        log.info(" LocalStackBeanCreator translated_text_2 translated_text_2: {}", beanCreator.getSupportedType());
+        log.info(" LocalStackBeanCreator test: {}", beanCreator.getSupportedType());
     }
 
     @Test
     @Order(2)
-    @DisplayName("translated_text_2 AWS service translated_text_2 verification")
+    @DisplayName("test AWS service test verification")
     void testSupportedServices() {
         Set<LocalStackContainerSpec.AwsService> supportedServices = beanCreator.getSupportedServices();
         
-        assertNotNull(supportedServices, "translated_text_2 service translated_text_2translated_text_1 nulltranslated_text_2 translated_text_4");
+        assertNotNull(supportedServices, "test service testshould nulltest file");
         
         if (supportedServices.isEmpty()) {
-            log.info(" AWS SDK dependencytranslated_text_1 translated_text_3 translated_text_2 servicetranslated_text_1 translated_text_4");
+            log.info(" AWS SDK dependencyshould connection test serviceshould file");
         } else {
-            log.info(" translated_text_2 AWS service: {}", supportedServices);
+            log.info(" test AWS service: {}", supportedServices);
         }
         
         for (LocalStackContainerSpec.AwsService service : Set.of(
@@ -78,16 +78,16 @@ class LocalStackBeanCreatorTest {
                 LocalStackContainerSpec.AwsService.LAMBDA
         )) {
             if (beanCreator.isServiceSupported(service)) {
-                log.info(" {} servicetranslated_text_1 translated_text_2 (AWS SDK translated_text_2 translated_text_2)", service);
+                log.info(" {} serviceshould test (AWS SDK test)", service);
             } else {
-                log.info(" {} service translated_text_5 (AWS SDK dependency translated_text_2)", service);
+                log.info(" {} service Endpoint (AWS SDK dependency test)", service);
             }
         }
     }
 
     @Test
     @Order(3)
-    @DisplayName("AWS service translated_text_3 translated_text_4 test")
+    @DisplayName("AWS service connection file test")
     void testGetFactory() {
         for (LocalStackContainerSpec.AwsService service : LocalStackContainerSpec.AwsService.values()) {
             var factoryOpt = beanCreator.getFactory(service);
@@ -95,21 +95,21 @@ class LocalStackBeanCreatorTest {
             if (factoryOpt.isPresent()) {
                 var factory = factoryOpt.get();
                 assertEquals(service, factory.getSupportedService(), 
-                    "translated_text_3 translated_text_2 servicetranslated_text_1 translated_text_4 translated_text_3");
-                assertNotNull(factory.getBeanName(), "translated_text_1 translated_text_1translated_text_1 nulltranslated_text_2 translated_text_4");
-                assertFalse(factory.getBeanName().trim().isEmpty(), "translated_text_1 translated_text_1translated_text_1 translated_text_5 translated_text_4");
+                    "connection test serviceshould file connection");
+                assertNotNull(factory.getBeanName(), "needs to be addedshould nulltest file");
+                assertFalse(factory.getBeanName().trim().isEmpty(), "needs to be addedshould Endpoint file");
                 
-                log.debug(" {} service translated_text_3: {} -> translated_text_1 translated_text_1: '{}'", 
+                log.debug(" {} service connection: {} -> needs to be added: '{}'", 
                     service, factory.getClass().getSimpleName(), factory.getBeanName());
             } else {
-                log.debug(" {} service translated_text_3 translated_text_2 translated_text_1 translated_text_4 (dependency translated_text_2)", service);
+                log.debug(" {} service connection test should file (dependency test)", service);
             }
         }
     }
 
     @Test
     @Order(4)
-    @DisplayName("translated_text_3 translated_text_1 translated_text_2translated_text_1 translated_text_2 exception processing")
+    @DisplayName("connection should testshould test exception processing")
     void testInvalidContainerType() {
         var mockContainer = new org.testcontainers.containers.GenericContainer<>("redis:7-alpine");
         ContainerInfo invalidContainerInfo = new ContainerInfo(
@@ -122,15 +122,15 @@ class LocalStackBeanCreatorTest {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, 
                 () -> beanCreator.createBean(invalidContainerInfo));
         
-        assertTrue(exception.getMessage().contains("LocalStackContainertranslated_text_1 translated_text_3"), 
-                "exception translated_text_1translated_text_1 translated_text_4 translated_text_3");
+        assertTrue(exception.getMessage().contains("LocalStackContainershould connection"), 
+                "exception shouldshould file connection");
         
-        log.info(" translated_text_3 translated_text_1 translated_text_2translated_text_1 translated_text_2 exception processing verification: {}", exception.getMessage());
+        log.info(" connection should testshould test exception processing verification: {}", exception.getMessage());
     }
 
     @Test
     @Order(5)
-    @DisplayName("translated_text_3 translated_text_2 translated_text_2translated_text_1 translated_text_2 exception processing")
+    @DisplayName("connection testshould test exception processing")
     void testInvalidSpecType() {
         var invalidSpec = new com.genius.primavera.testcontainers.config.RedisContainerSpec();
         ContainerInfo invalidSpecInfo = new ContainerInfo(
@@ -143,15 +143,15 @@ class LocalStackBeanCreatorTest {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, 
                 () -> beanCreator.createBean(invalidSpecInfo));
         
-        assertTrue(exception.getMessage().contains("LocalStackContainerSpectranslated_text_1 translated_text_3"), 
-                "exception translated_text_1translated_text_1 translated_text_4 translated_text_3");
+        assertTrue(exception.getMessage().contains("LocalStackContainerSpecshould connection"), 
+                "exception shouldshould file connection");
         
-        log.info(" translated_text_3 translated_text_2 translated_text_2translated_text_1 translated_text_2 exception processing verification: {}", exception.getMessage());
+        log.info(" connection testshould test exception processing verification: {}", exception.getMessage());
     }
 
     @Test
     @Order(6)
-    @DisplayName("AWS servicetranslated_text_1 translated_text_2 translated_text_1 translated_text_2 service translated_text_2")
+    @DisplayName("AWS servicetest should test service test")
     void testDefaultServicesWhenEmpty() {
         LocalStackContainerSpec emptySpec = new LocalStackContainerSpec();
         emptySpec.setServices(Set.of());
@@ -165,34 +165,34 @@ class LocalStackBeanCreatorTest {
 
         Object result = assertDoesNotThrow(() -> beanCreator.createBean(containerInfo));
         
-        assertNotNull(result, "resulttranslated_text_1 nulltranslated_text_2 translated_text_4");
+        assertNotNull(result, "resultshould nulltest file");
         
         if (result instanceof Map) {
             @SuppressWarnings("unchecked")
             Map<String, Object> clientMap = (Map<String, Object>) result;
-            log.info(" translated_text_2 service translated_text_2 translated_text_1 creation translated_text_1: {}", clientMap.keySet());
+            log.info(" test service test should creation should: {}", clientMap.keySet());
         } else {
-            log.info(" translated_text_2 service translated_text_2 result: {}", result.getClass().getSimpleName());
+            log.info(" test service test result: {}", result.getClass().getSimpleName());
         }
     }
 
     @Test
     @Order(7)
-    @DisplayName("translated_text_1 creationtranslated_text_1 translated_text_4 translated_text_16 verification")
+    @DisplayName("should creationshould file should6 verification")
     void testBeanCreatorRegistration() {
         var creatorOpt = com.genius.primavera.testcontainers.bean.BeanCreatorRegistry
                 .findCreator(ContainerType.LOCALSTACK);
         
-        assertTrue(creatorOpt.isPresent(), "LocalStackBeanCreatortranslated_text_1 registeredtranslated_text_1 translated_text_3");
+        assertTrue(creatorOpt.isPresent(), "LocalStackBeanCreatorshould registeredshould connection");
         assertInstanceOf(LocalStackBeanCreator.class, creatorOpt.get(), 
-                "translated_text_13 creatortranslated_text_1 LocalStackBeanCreator translated_text_1 translated_text_3");
+                "created successfully creatorshould LocalStackBeanCreator should connection");
         
-        log.info(" LocalStackBeanCreatortranslated_text_1 BeanCreatorRegistrytranslated_text_1 translated_text_4 translated_text_17");
+        log.info(" LocalStackBeanCreatorshould BeanCreatorRegistryshould file should7");
     }
 
     @Test
     @Order(8)
-    @DisplayName("translated_text_2 AWS service translated_text_2 test")
+    @DisplayName("test AWS service test")
     void testMultipleServiceCombination() {
         Set<LocalStackContainerSpec.AwsService>[] serviceCombinations = new Set[]{
                 Set.of(LocalStackContainerSpec.AwsService.S3),
@@ -217,14 +217,14 @@ class LocalStackBeanCreatorTest {
             );
 
             Object result = assertDoesNotThrow(() -> beanCreator.createBean(containerInfo), 
-                    "service translated_text_2 " + services + " processing translated_text_1 exceptiontranslated_text_1 translated_text_4 translated_text_4");
+                    "service test " + services + " processing should exceptionshould file");
             
-            assertNotNull(result, "resulttranslated_text_1 nulltranslated_text_2 translated_text_4");
+            assertNotNull(result, "resultshould nulltest file");
             
             if (result instanceof Map) {
                 @SuppressWarnings("unchecked")
                 Map<String, Object> clientMap = (Map<String, Object>) result;
-                log.info(" service translated_text_2 {} -> creation translated_text_1: {}", 
+                log.info(" service test {} -> creation should: {}", 
                         services, clientMap.keySet());
             }
         }
@@ -232,6 +232,6 @@ class LocalStackBeanCreatorTest {
 
     @AfterAll
     void tearDown() {
-        log.info("LocalStackBeanCreator testtranslated_text_1 translated_text_14");
+        log.info("LocalStackBeanCreator testneeds to be added4");
     }
 }

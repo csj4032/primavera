@@ -19,13 +19,13 @@ public class YamlPropertyLoader {
                 .getResourceAsStream(resourceName);
         
         if (inputStream == null) {
-            log.warn("YAML translated_text_3 translated_text_2 translated_text_1 translated_text_4: {}", resourceName);
+            log.warn("YAML connection test should file: {}", resourceName);
             return properties;
         }
         
         try (var reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
             parseYaml(reader, properties);
-            log.info("YAML translated_text_2 translated_text_2 completed: {} (UTF-8)", resourceName);
+            log.info("YAML test completed: {} (UTF-8)", resourceName);
         }
         
         return properties;
@@ -49,7 +49,7 @@ public class YamlPropertyLoader {
             try {
                 parseLine(line, keyStack, indentStack, properties);
             } catch (Exception e) {
-                log.warn("YAML translated_text_2 error (translated_text_1 {}): {}", lineNumber, e.getMessage());
+                log.warn("YAML test error (should {}): {}", lineNumber, e.getMessage());
             }
         }
     }
@@ -78,7 +78,7 @@ public class YamlPropertyLoader {
 
                 String fullKey = buildFullKey(keyStack, key);
                 properties.setProperty(fullKey, value);
-                log.debug("YAML translated_text_2 translated_text_2: {} = {}", fullKey, value);
+                log.debug("YAML test: {} = {}", fullKey, value);
             }
         }
     }

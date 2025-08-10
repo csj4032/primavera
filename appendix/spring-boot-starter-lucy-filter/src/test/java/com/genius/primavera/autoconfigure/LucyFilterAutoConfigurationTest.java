@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("Lucy Filter translated_text_2 translated_text_2 test")
+@DisplayName("Lucy Filter test test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class LucyFilterAutoConfigurationTest {
 
@@ -20,7 +20,7 @@ public class LucyFilterAutoConfigurationTest {
 
 	@Test
 	@Order(1)
-	@DisplayName("translated_text_2 translated_text_2translated_text_1 translated_text_5 XssEscapeServletFilter Beantranslated_text_1 translated_text_10")
+	@DisplayName("testshould Endpoint XssEscapeServletFilter Beanneeds to be added0")
 	void shouldCreateXssEscapeServletFilterBean() {
 		contextRunner.run(context -> {
 			assertThat(context).hasSingleBean(XssEscapeServletFilter.class);
@@ -30,7 +30,7 @@ public class LucyFilterAutoConfigurationTest {
 
 	@Test
 	@Order(2)
-	@DisplayName("spring.lucy-filter.enabled=falsetranslated_text_1 translated_text_1 translated_text_2 translated_text_2translated_text_1 translated_text_6")
+	@DisplayName("spring.lucy-filter.enabled=falseneeds to be added testshould return")
 	void shouldNotCreateBeansWhenDisabled() {
 		contextRunner
 				.withPropertyValues("spring.lucy-filter.enabled=false")
@@ -42,7 +42,7 @@ public class LucyFilterAutoConfigurationTest {
 
 	@Test
 	@Order(3)
-	@DisplayName("translated_text_3 translated_text_4 translated_text_2translated_text_1 translated_text_4")
+	@DisplayName("connection file testshould file")
 	void shouldApplyCustomProperties() {
 		contextRunner
 				.withPropertyValues(
@@ -61,7 +61,7 @@ public class LucyFilterAutoConfigurationTest {
 
 	@Test
 	@Order(4)
-	@DisplayName("translated_text_2 translated_text_4 translated_text_1 translated_text_4")
+	@DisplayName("test file should file")
 	void shouldApplyDefaultProperties() {
 		contextRunner.run(context -> {
 			assertThat(context).hasSingleBean(FilterRegistrationBean.class);
@@ -74,7 +74,7 @@ public class LucyFilterAutoConfigurationTest {
 
 	@Test
 	@Order(5)
-	@DisplayName("translated_text_5 translated_text_2 XssEscapeServletFilter Beantranslated_text_1 translated_text_4 translated_text_2 translated_text_2translated_text_1 translated_text_4 translated_text_3")
+	@DisplayName("processing test XssEscapeServletFilter Beanshould file testshould file connection")
 	void shouldBackOffWhenUserDefinesBean() {
 		contextRunner
 				.withUserConfiguration(CustomFilterConfiguration.class)

@@ -31,7 +31,7 @@ import java.util.stream.IntStream;
 @SpringBootTest
 @Testcontainers
 @ActiveProfiles("hikari-minimal")
-@DisplayName("HikariCP translated_text_2 translated_text_2 translated_text_2 test")
+@DisplayName("HikariCP test test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class HikariMinimalPoolTest {
 
@@ -69,14 +69,14 @@ public class HikariMinimalPoolTest {
 
     @Test
     @Order(1)
-    @DisplayName("translated_text_2 translated_text_1 translated_text_2 translated_text_2 verification")
+    @DisplayName("test should test verification")
     void verifyPoolConfiguration() {
-        log.info("=== HikariCP translated_text_2 translated_text_2 translated_text_1 translated_text_2 ===");
-        log.info("translated_text_2 translated_text_1 translated_text_2: {}", hikariDataSource.getMaximumPoolSize());
-        log.info("translated_text_2 translated_text_2 translated_text_2: {}", hikariDataSource.getMinimumIdle());
-        log.info("translated_text_2 translated_text_4: {}ms", hikariDataSource.getConnectionTimeout());
-        log.info("translated_text_2 translated_text_4: {}ms", hikariDataSource.getIdleTimeout());
-        log.info("translated_text_2 translated_text_2 translated_text_2: {}ms", hikariDataSource.getMaxLifetime());
+        log.info("=== HikariCP test should test ===");
+        log.info("test should test: {}", hikariDataSource.getMaximumPoolSize());
+        log.info("test test: {}", hikariDataSource.getMinimumIdle());
+        log.info("test file: {}ms", hikariDataSource.getConnectionTimeout());
+        log.info("test file: {}ms", hikariDataSource.getIdleTimeout());
+        log.info("test test: {}ms", hikariDataSource.getMaxLifetime());
 
         Assertions.assertEquals(3, hikariDataSource.getMaximumPoolSize());
         Assertions.assertEquals(1, hikariDataSource.getMinimumIdle());
@@ -85,7 +85,7 @@ public class HikariMinimalPoolTest {
 
     @Test
     @Order(2)
-    @DisplayName("translated_text_2 translated_text_2 translated_text_2 translated_text_2")
+    @DisplayName("test test")
     void measureSingleConnectionPerformance() {
         Instant start = Instant.now();
 
@@ -96,14 +96,14 @@ public class HikariMinimalPoolTest {
             });
 
         Duration elapsed = Duration.between(start, Instant.now());
-        log.info("translated_text_2 translated_text_2 100translated_text_1 translated_text_2 execution translated_text_2: {}ms", elapsed.toMillis());
+        log.info("test 100should test execution test: {}ms", elapsed.toMillis());
 
-        logPoolStatistics("translated_text_2 translated_text_2 test translated_text_1");
+        logPoolStatistics("test test should");
     }
 
     @Test
     @Order(3)
-    @DisplayName("translated_text_2 translated_text_2 translated_text_2 test")
+    @DisplayName("test test")
     void measureConcurrentConnectionContentionTest() {
         ExecutorService executor = Executors.newFixedThreadPool(10);
         Instant start = Instant.now();
@@ -121,22 +121,22 @@ public class HikariMinimalPoolTest {
         CompletableFuture.allOf(futures).join();
         Duration elapsed = Duration.between(start, Instant.now());
 
-        log.info("=== translated_text_2 translated_text_2 translated_text_2 test result ===");
-        log.info("10translated_text_1 translated_text_3 × 5translated_text_1 translated_text_2 (translated_text_1 50translated_text_1) execution translated_text_2: {}ms", elapsed.toMillis());
-        log.info("translated_text_2 translated_text_2 translated_text_2: {}ms", elapsed.toMillis() / 50.0);
+        log.info("=== test test result ===");
+        log.info("10should connection × 5should test (should 50should) execution test: {}ms", elapsed.toMillis());
+        log.info("test test: {}ms", elapsed.toMillis() / 50.0);
 
-        logPoolStatistics("translated_text_2 translated_text_2 translated_text_2 test translated_text_1");
+        logPoolStatistics("test test should");
         executor.shutdown();
     }
 
     @Test
     @Order(4)
-    @DisplayName("translated_text_2 translated_text_1 translated_text_2 translated_text_2 test")
+    @DisplayName("test should test test")
     void measurePoolSaturationBehavior() {
         ExecutorService executor = Executors.newFixedThreadPool(20);
         Instant start = Instant.now();
 
-        log.info("=== translated_text_2 translated_text_1 translated_text_2 test translated_text_2 (20translated_text_1 translated_text_3 vs 3translated_text_1 translated_text_2 translated_text_2) ===");
+        log.info("=== test should test test (20should connection vs 3should test) ===");
 
         CompletableFuture<Void>[] futures = IntStream.range(0, 20)
             .mapToObj(threadId -> CompletableFuture.runAsync(() -> {
@@ -145,11 +145,11 @@ public class HikariMinimalPoolTest {
                     User user = userMapper.findById(1L);
                     Duration threadElapsed = Duration.between(threadStart, Instant.now());
 
-                    log.info("Thread-{}: translated_text_2 translated_text_2 translated_text_1 translated_text_2 completed translated_text_2: {}ms",
+                    log.info("Thread-{}: test should test completed test: {}ms",
                         threadId, threadElapsed.toMillis());
                     Assertions.assertNotNull(user);
                 } catch (Exception e) {
-                    log.error("Thread-{}: translated_text_2 failure - {}", threadId, e.getMessage());
+                    log.error("Thread-{}: test failure - {}", threadId, e.getMessage());
                 }
             }, executor))
             .toArray(CompletableFuture[]::new);
@@ -157,23 +157,23 @@ public class HikariMinimalPoolTest {
         CompletableFuture.allOf(futures).join();
         Duration totalElapsed = Duration.between(start, Instant.now());
 
-        log.info("=== translated_text_2 translated_text_1 translated_text_2 test completed ===");
-        log.info("translated_text_1 execution translated_text_2: {}ms", totalElapsed.toMillis());
-        log.info("translated_text_2 translated_text_2 translated_text_1 translated_text_4 translated_text_2 translated_text_2 translated_text_2 translated_text_2");
+        log.info("=== test should test completed ===");
+        log.info("should execution test: {}ms", totalElapsed.toMillis());
+        log.info("test should file test test");
 
-        logPoolStatistics("translated_text_1 translated_text_2 test translated_text_1");
+        logPoolStatistics("should test should");
         executor.shutdown();
     }
 
     private void logPoolStatistics(String phase) {
         try {
-            log.info("=== {} translated_text_1 translated_text_2 ===", phase);
-            log.info("translated_text_2 translated_text_2 translated_text_1: {}", poolMXBean.getActiveConnections());
-            log.info("translated_text_2 translated_text_2 translated_text_1: {}", poolMXBean.getIdleConnections());
-            log.info("translated_text_1 translated_text_2 translated_text_1: {}", poolMXBean.getTotalConnections());
-            log.info("translated_text_2 translated_text_2 translated_text_3 translated_text_1: {}", poolMXBean.getThreadsAwaitingConnection());
+            log.info("=== {} should test ===", phase);
+            log.info("test should: {}", poolMXBean.getActiveConnections());
+            log.info("test should: {}", poolMXBean.getIdleConnections());
+            log.info("test should: {}", poolMXBean.getTotalConnections());
+            log.info("test connection should: {}", poolMXBean.getThreadsAwaitingConnection());
         } catch (Exception e) {
-            log.warn("translated_text_1 translated_text_2 translated_text_1 failure: {}", e.getMessage());
+            log.warn("test should failure: {}", e.getMessage());
         }
     }
 }

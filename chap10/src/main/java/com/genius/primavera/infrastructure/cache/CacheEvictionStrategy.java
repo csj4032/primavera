@@ -27,7 +27,7 @@ public class CacheEvictionStrategy implements HealthIndicator {
 
     @Scheduled(cron = "0 0 * * * *")
     public void cleanupExpiredTokens() {
-        log.info("🧹 translated_text_3 translated_text_2 translated_text_2 translated_text_2 translated_text_2...");
+        log.info("🧹 connection test test...");
 
         try {
             OAuth2TokenCacheService.CacheStats beforeStats = tokenCacheService.getCacheStats();
@@ -39,17 +39,17 @@ public class CacheEvictionStrategy implements HealthIndicator {
             cleanupCount.incrementAndGet();
             lastCleanupTime = LocalDateTime.now();
 
-            log.info(" translated_text_2 translated_text_2 translated_text_2 completed - translated_text_3 translated_text_2: {}, translated_text_2 translated_text_2: {}",
+            log.info(" test test completed - connection test: {}, test: {}",
                     expiredTokensRemoved, afterStats.getValidEntries());
 
         } catch (Exception e) {
-            log.error(" translated_text_2 translated_text_2 translated_text_2 failure", e);
+            log.error(" test test failure", e);
         }
     }
 
     @Scheduled(cron = "0 0 0 * * *")
     public void dailyCacheOptimization() {
-        log.info(" translated_text_2 translated_text_2 translated_text_3 translated_text_2...");
+        log.info(" test connection test...");
 
         try {
 
@@ -61,10 +61,10 @@ public class CacheEvictionStrategy implements HealthIndicator {
 
             warmupFrequentlyUsedCache();
 
-            log.info(" translated_text_2 translated_text_2 translated_text_3 completed");
+            log.info(" test connection completed");
 
         } catch (Exception e) {
-            log.error(" translated_text_2 translated_text_2 translated_text_3 failure", e);
+            log.error(" test connection failure", e);
         }
     }
 
@@ -78,20 +78,20 @@ public class CacheEvictionStrategy implements HealthIndicator {
             double memoryUsagePercentage = (double) usedMemory / totalMemory * 100;
 
             if (memoryUsagePercentage > 80.0) {
-                log.warn(" translated_text_2 translated_text_3 translated_text_3 translated_text_2: {:.2f}% - translated_text_2 translated_text_2 translated_text_2 translated_text_2", memoryUsagePercentage);
+                log.warn(" test connection test: {:.2f}% - test test", memoryUsagePercentage);
                 emergencyCacheCleanup();
             } else if (memoryUsagePercentage > 70.0) {
-                log.info(" translated_text_3 translated_text_3: {:.2f}% - translated_text_3 translated_text_2 translated_text_2", memoryUsagePercentage);
+                log.info(" connection: {:.2f}% - connection test", memoryUsagePercentage);
                 proactiveCacheCleanup();
             }
 
         } catch (Exception e) {
-            log.error(" translated_text_2 translated_text_3 translated_text_4 failure", e);
+            log.error(" test connection file failure", e);
         }
     }
 
     public void evictUserCaches(Long userId) {
-        log.info(" user translated_text_2 translated_text_3 translated_text_2 - ID: {}", userId);
+        log.info(" user test connection test - ID: {}", userId);
 
         try {
 
@@ -101,43 +101,43 @@ public class CacheEvictionStrategy implements HealthIndicator {
 
             evictionCount.incrementAndGet();
 
-            log.info(" user translated_text_2 translated_text_3 completed - ID: {}", userId);
+            log.info(" user test connection completed - ID: {}", userId);
 
         } catch (Exception e) {
-            log.error(" user translated_text_2 translated_text_3 failure - ID: {}", userId, e);
+            log.error(" user test connection failure - ID: {}", userId, e);
         }
     }
 
     public void refreshProviderCaches(String provider) {
-        log.info(" translated_text_5 translated_text_2 translated_text_2 - translated_text_5: {}", provider);
+        log.info(" processing test - Endpoint: {}", provider);
 
         try {
             profileCacheService.refreshProviderUsers(provider);
-            log.info(" translated_text_5 translated_text_2 translated_text_2 completed - translated_text_5: {}", provider);
+            log.info(" processing test completed - Endpoint: {}", provider);
 
         } catch (Exception e) {
-            log.error(" translated_text_5 translated_text_2 translated_text_2 failure - translated_text_5: {}", provider, e);
+            log.error(" processing test failure - Endpoint: {}", provider, e);
         }
     }
 
     public void clearAllCaches() {
-        log.warn(" translated_text_2 translated_text_2 translated_text_3 translated_text_2 - translated_text_2 translated_text_2");
+        log.warn(" test connection test - test");
 
         try {
             cacheManager.getCacheNames().forEach(cacheName -> {
                 var cache = cacheManager.getCache(cacheName);
                 if (cache != null) {
                     cache.clear();
-                    log.info(" translated_text_2 translated_text_3: {}", cacheName);
+                    log.info(" test connection: {}", cacheName);
                 }
             });
 
             evictionCount.addAndGet(10);
 
-            log.warn(" translated_text_2 translated_text_2 translated_text_3 completed");
+            log.warn(" test connection completed");
 
         } catch (Exception e) {
-            log.error(" translated_text_2 translated_text_2 translated_text_3 failure", e);
+            log.error(" test connection failure", e);
         }
     }
 
@@ -186,33 +186,33 @@ public class CacheEvictionStrategy implements HealthIndicator {
     }
 
     private void collectCacheStatistics() {
-        log.debug(" translated_text_2 translated_text_2 translated_text_2 translated_text_1...");
+        log.debug(" test test should...");
 
     }
 
     private void cleanupLeastRecentlyUsedEntries() {
-        log.debug("🧹 LRU translated_text_2 translated_text_2 translated_text_2 translated_text_1...");
+        log.debug("🧹 LRU test test should...");
 
     }
 
     private void compressCacheIfNeeded() {
-        log.debug(" translated_text_2 translated_text_2 translated_text_2 translated_text_1...");
+        log.debug(" test test should...");
 
     }
 
     private void warmupFrequentlyUsedCache() {
-        log.debug(" translated_text_2 translated_text_3 translated_text_1...");
+        log.debug(" test connection should...");
 
     }
 
     private void emergencyCacheCleanup() {
-        log.warn(" translated_text_2 translated_text_2 translated_text_2 execution");
+        log.warn(" test test execution");
 
         proactiveCacheCleanup();
     }
 
     private void proactiveCacheCleanup() {
-        log.info("🧹 translated_text_3 translated_text_2 translated_text_2 execution");
+        log.info("🧹 connection test execution");
 
         cleanupExpiredTokens();
     }

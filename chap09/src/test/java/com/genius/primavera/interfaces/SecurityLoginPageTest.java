@@ -64,7 +64,7 @@ public class SecurityLoginPageTest {
 
     @Test
     @Order(1)
-    @DisplayName("translated_text_3 translated_text_2 translated_text_2 translated_text_3 translated_text_4 translated_text_2")
+    @DisplayName("connection test connection file test")
     public void loginPage() throws Exception {
         mockMvc.perform(get("/"))
                 .andDo(print())
@@ -74,7 +74,7 @@ public class SecurityLoginPageTest {
 
     @Test
     @Order(2)
-    @DisplayName("translated_text_3 translated_text_2 success translated_text_1 translated_text_2 translated_text_3 translated_text_2")
+    @DisplayName("connection test success should test connection test")
     public void signInFail() throws Exception {
         mockMvc.perform(post("/signin")
                         .with(csrf())
@@ -87,7 +87,7 @@ public class SecurityLoginPageTest {
 
     @Test
     @Order(3)
-    @DisplayName("USER translated_text_4 translated_text_2 translated_text_3 translated_text_2")
+    @DisplayName("USER file test connection test")
     @WithMockUser(username = "Genius")
     public void index() throws Exception {
         mockMvc.perform(get("/index"))
@@ -97,7 +97,7 @@ public class SecurityLoginPageTest {
 
     @Test
     @Order(4)
-    @DisplayName("USER translated_text_4  Manager translated_text_3 translated_text_2")
+    @DisplayName("USER file  Manager connection test")
     @WithMockUser(username = "Genius", roles = "USER")
     public void manager() throws Exception {
         mockMvc.perform(get("/manager"))

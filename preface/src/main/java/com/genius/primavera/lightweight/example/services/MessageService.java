@@ -12,35 +12,35 @@ public class MessageService {
     private GreetingService greetingService;
 
     public void processWelcomeMessage(String userName) {
-        log.info("translated_text_2 translated_text_3 processing translated_text_2: user = {}", userName);
+        log.info("test connection processing test: user = {}", userName);
         
         String greeting = greetingService.sayHello(userName);
         String timeGreeting = greetingService.sayHelloWithTime(userName);
         
-        log.info("=== translated_text_2 translated_text_3 ===");
+        log.info("=== test connection ===");
         log.info(greeting);
         log.info(timeGreeting);
         log.info("================");
         
-        log.info("translated_text_2 translated_text_3 processing completed");
+        log.info("test connection processing completed");
     }
 
     public void processFarewellMessage(String userName) {
-        log.info("translated_text_2 translated_text_3 processing translated_text_2: user = {}", userName);
+        log.info("test connection processing test: user = {}", userName);
         
         String goodbye = greetingService.sayGoodbye(userName);
         
-        log.info("=== translated_text_2 translated_text_3 ===");
+        log.info("=== test connection ===");
         log.info(goodbye);
         log.info("================");
         
-        log.info("translated_text_2 translated_text_3 processing completed");
+        log.info("test connection processing completed");
     }
 
     public void processCustomMessage(String message) {
-        log.info("translated_text_3 translated_text_3 processing: {}", message);
+        log.info("connection processing: {}", message);
         
-        log.info("=== translated_text_3 translated_text_3 ===");
+        log.info("=== connection ===");
         log.info(" {}", message);
         log.info("==================");
     }

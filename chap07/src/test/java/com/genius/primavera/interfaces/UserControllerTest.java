@@ -29,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @Testcontainers
-@DisplayName("user controller translated_text_2 test")
+@DisplayName("user controller test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class UserControllerTest {
 
@@ -56,7 +56,7 @@ public class UserControllerTest {
 
     @Test
     @Order(1)
-    @DisplayName("user IDtranslated_text_1 inquiry")
+    @DisplayName("user IDshould inquiry")
     public void findByIdTest() throws Exception {
         mockMvc.perform(get("/users/1"))
                 .andExpect(status().isOk())
@@ -66,7 +66,7 @@ public class UserControllerTest {
 
     @Test
     @Order(2)
-    @DisplayName("translated_text_2 registration")
+    @DisplayName("test registration")
     public void saveTest() throws Exception {
         User source = User.builder()
                 .email("newuser@gmail.com")
@@ -85,7 +85,7 @@ public class UserControllerTest {
 
     @Test
     @Order(3)
-    @DisplayName("translated_text_2 modification")
+    @DisplayName("test modification")
     public void updateTest() throws Exception {
         User source = User.builder()
                 .id(1L)
@@ -106,7 +106,7 @@ public class UserControllerTest {
 
     @Test
     @Order(4)
-    @DisplayName("translated_text_3 translated_text_2 modification")
+    @DisplayName("connection test modification")
     public void updateNotFoundUserTest() throws Exception {
         User source = User.builder()
                 .id(1000000L)

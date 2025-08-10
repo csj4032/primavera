@@ -57,7 +57,7 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	public Mono<InventoryReservationResult> processInventoryReservation(OrderCreatedEvent event) {
-		log.info("translated_text_2 translated_text_2 processing translated_text_2: orderId={}, items={}", event.getOrderId(), event.getItems().size());
+		log.info("test processing test: orderId={}, items={}", event.getOrderId(), event.getItems().size());
 		
 		return checkAndReserveInventory(event.getItems())
 				.flatMap(result -> {
@@ -89,7 +89,7 @@ public class ProductServiceImpl implements ProductService {
 									product.setStock(product.getStock() - item.getQuantity());
 									return productRepository.save(product)
 											.doOnSuccess(savedProduct -> 
-												log.info("translated_text_2 translated_text_2 completed: productId={}, quantity={}, remainingStock={}", 
+												log.info("test completed: productId={}, quantity={}, remainingStock={}", 
 														productId, item.getQuantity(), savedProduct.getStock()))
 											.thenReturn(true);
 								} else {
@@ -100,7 +100,7 @@ public class ProductServiceImpl implements ProductService {
 											.availableQuantity(product.getStock().intValue())
 											.build());
 									
-									log.warn("translated_text_2 translated_text_2: productId={}, requested={}, available={}", 
+									log.warn("test: productId={}, requested={}, available={}", 
 											productId, item.getQuantity(), product.getStock());
 									
 									return Mono.just(false);
@@ -114,7 +114,7 @@ public class ProductServiceImpl implements ProductService {
 										.availableQuantity(0)
 										.build());
 								
-								log.warn("translated_text_3 translated_text_2 translated_text_1 translated_text_2: productId={}", productId);
+								log.warn("connection test should test: productId={}", productId);
 							}).thenReturn(false));
 				})
 				.collectList()
@@ -123,7 +123,7 @@ public class ProductServiceImpl implements ProductService {
 						return InventoryReservationResult.success();
 					} else {
 						return InventoryReservationResult.failure(
-								"translated_text_2 translated_text_2 translated_text_3 translated_text_2 translated_text_1 translated_text_4", 
+								"test connection test should file", 
 								insufficientItems);
 					}
 				});

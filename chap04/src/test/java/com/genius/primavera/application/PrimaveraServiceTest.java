@@ -92,7 +92,7 @@ public class PrimaveraServiceTest {
 
     @Test
     @Order(3)
-    @DisplayName("translated_text_4 translated_text_2 failure test (ResourceAccessException)")
+    @DisplayName("file test failure test (ResourceAccessException)")
     public void getNetworkErrorTest() {
         long userId = 100L;
         mockServer.expect(ExpectedCount.once(), requestTo("http://localhost:8080/users/" + userId)).andExpect(method(HttpMethod.GET))

@@ -21,7 +21,7 @@ import java.util.stream.LongStream;
 @Slf4j
 @SpringBootTest
 @ActiveProfiles("test")
-@DisplayName("translated_text_2 translated_text_2 test - translated_text_2 → Redis → MongoDB")
+@DisplayName("test test - test → Redis → MongoDB")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class CacheChainTest implements FullStackIntegrationTest {
 

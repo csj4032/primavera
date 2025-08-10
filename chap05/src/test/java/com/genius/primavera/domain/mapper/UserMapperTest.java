@@ -28,7 +28,7 @@ import static org.mybatis.dynamic.sql.SqlBuilder.select;
 @SpringBootTest
 @ActiveProfiles("test")
 @Testcontainers
-@DisplayName(value = "translated_text_2 translated_text_2 test")
+@DisplayName(value = "test test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class UserMapperTest {
 
@@ -89,14 +89,14 @@ public class UserMapperTest {
 
     @Test
     @Order(1)
-    @DisplayName(value = "translated_text_2 registration")
+    @DisplayName(value = "test registration")
     public void save() {
         users.forEach(e -> userMapper.save(e));
     }
 
     @Test
     @Order(2)
-    @DisplayName(value = "translated_text_2 registration translated_text_1 ID translated_text_1 translated_text_2")
+    @DisplayName(value = "test registration should ID should test")
     public void saveSelectKey() {
         userMapper.save(source);
         User destination = userMapper.findById(source.getId());
@@ -105,7 +105,7 @@ public class UserMapperTest {
 
     @Test
     @Order(3)
-    @DisplayName(value = "translated_text_2 translated_text_3 translated_text_2 translated_text_2")
+    @DisplayName(value = "test connection test")
     public void findById() {
         User user = userMapper.findById(source.getId());
         Assertions.assertEquals(source.getId(), user.getId());
@@ -113,7 +113,7 @@ public class UserMapperTest {
 
     @Test
     @Order(4)
-    @DisplayName(value = "translated_text_2 translated_text_3 translated_text_2 modification")
+    @DisplayName(value = "test connection test modification")
     public void update() {
         source.setNickname("spring");
         source.setUpdatedAt(Instant.now());
@@ -125,7 +125,7 @@ public class UserMapperTest {
 
     @Test
     @Order(5)
-    @DisplayName(value = "translated_text_2 translated_text_3 translated_text_2 deletion")
+    @DisplayName(value = "test connection test deletion")
     public void deleteById() {
         int count = userMapper.deleteById(source.getId());
         Assertions.assertEquals(1, count);
@@ -133,7 +133,7 @@ public class UserMapperTest {
 
     @Test
     @Order(6)
-    @DisplayName(value = "translated_text_2 translated_text_2 translated_text_2 translated_text_2")
+    @DisplayName(value = "test test")
     public void saveRoles() {
         for (User user : users)
             userRoleMapper.save(new UserRole(user.getId(), 1L));
@@ -141,24 +141,24 @@ public class UserMapperTest {
 
     @Test
     @Order(7)
-    @DisplayName(value = "all translated_text_2 translated_text_2 translated_text_2 translated_text_2")
+    @DisplayName(value = "all test test")
     public void findAllWithRoles() {
         List<User> destination = userMapper.findAll();
 
         Assertions.assertTrue(destination.size() >= users.size(),
-                "translated_text_2 translated_text_2 translated_text_2 translated_text_4 translated_text_4. translated_text_2: " + users.size() + ", translated_text_2: " + destination.size());
+                "test test file. test: " + users.size() + ", test: " + destination.size());
 
         for (User expectedUser : users) {
             boolean found = destination.stream()
                     .anyMatch(user -> user.getEmail().equals(expectedUser.getEmail()));
             Assertions.assertTrue(found,
-                    "translated_text_9 translated_text_2 translated_text_2 translated_text_1 translated_text_4: " + expectedUser.getEmail());
+                    "should not test should file: " + expectedUser.getEmail());
         }
     }
 
     @Test
     @Order(8)
-    @DisplayName(value = "translated_text_2 translated_text_3 translated_text_2 result translated_text_2")
+    @DisplayName(value = "test connection test result test")
     public void findUserByRequestUser() {
 
         List<Long> validUserIds = users.stream()
@@ -167,7 +167,7 @@ public class UserMapperTest {
                 .collect(toList());
 
         if (validUserIds.isEmpty()) {
-            log.warn("translated_text_3 user IDtranslated_text_1 translated_text_4. test translated_text_5.");
+            log.warn("connection user IDshould file. test Endpoint.");
             return;
         }
 
@@ -180,20 +180,20 @@ public class UserMapperTest {
         List<User> destination = userMapper.findByRequestUser(selectStatement);
 
         Assertions.assertEquals(validUserIds.size(), destination.size(),
-                "translated_text_3 translated_text_2 translated_text_1 translated_text_2 translated_text_2 translated_text_2 translated_text_4. translated_text_2: " + validUserIds.size() + ", translated_text_2: " + destination.size());
+                "connection test should test test file. test: " + validUserIds.size() + ", test: " + destination.size());
 
         for (User returnedUser : destination) {
             boolean found = validUserIds.contains(returnedUser.getId());
             Assertions.assertTrue(found,
-                    "translated_text_2 translated_text_2 translated_text_2translated_text_1 translated_text_2: " + returnedUser.getEmail() + " (ID: " + returnedUser.getId() + ")");
+                    "test testshould test: " + returnedUser.getEmail() + " (ID: " + returnedUser.getId() + ")");
         }
 
-        log.info("translated_text_2 translated_text_2 result: {}", destination);
+        log.info("test result: {}", destination);
     }
 
     @Test
     @Order(9)
-    @DisplayName(value = "translated_text_2 translated_text_2 registration")
+    @DisplayName(value = "test registration")
     public void bulkSave() {
         userMapper.saveAll(bulkUsers);
         bulkUsers.stream().forEach(System.out::println);

@@ -40,14 +40,14 @@ public class ProductIndexingServiceTest {
     void setUp() {
         Category category = Category.builder()
                 .id(1L)
-                .name("translated_text_4")
+                .name("file")
                 .level(1)
                 .createdAt(LocalDateTime.now())
                 .build();
 
         Seller seller = Seller.builder()
                 .id(1L)
-                .name("test translated_text_3")
+                .name("test connection")
                 .email("seller@test.com")
                 .rating(4.5)
                 .createdAt(LocalDateTime.now())
@@ -55,8 +55,8 @@ public class ProductIndexingServiceTest {
 
         testProduct = Product.builder()
                 .id(1L)
-                .name("test translated_text_4")
-                .description("translated_text_2 translated_text_3 translated_text_3 translated_text_4")
+                .name("test file")
+                .description("test connection file")
                 .price(899000)
                 .status(ProductStatus.ACTIVE)
                 .category(category)
@@ -68,24 +68,24 @@ public class ProductIndexingServiceTest {
 
     @Test
     @Order(1)
-    @DisplayName("Products translated_text_4 translated_text_9 translated_text_1 exists")
+    @DisplayName("Products file should not should exists")
     void shouldCreateProductsIndex() throws IOException {
         productIndexingService.createProductsIndexIfNotExists();
-        log.info("Products translated_text_3 creation test completed");
+        log.info("Products connection creation test completed");
     }
 
     @Test
     @Order(2) 
-    @DisplayName("Producttranslated_text_1 Elasticsearchtranslated_text_1 translated_text_4 translated_text_1 exists")
+    @DisplayName("Productshould Elasticsearchshould file should exists")
     void shouldIndexProduct() throws IOException {
         productIndexingService.createProductsIndexIfNotExists();
         productIndexingService.indexProduct(testProduct);
-        log.info("translated_text_2 translated_text_3 test completed - Product ID: {}", testProduct.getId());
+        log.info("test connection test completed - Product ID: {}", testProduct.getId());
     }
 
     @Test
     @Order(3)
-    @DisplayName("translated_text_3 Producttranslated_text_1 translated_text_3 translated_text_1 exists") 
+    @DisplayName("connection Productshould connection should exists") 
     void shouldSearchProducts() throws IOException {
         productIndexingService.createProductsIndexIfNotExists();
         productIndexingService.indexProduct(testProduct);
@@ -96,28 +96,28 @@ public class ProductIndexingServiceTest {
             Thread.currentThread().interrupt();
         }
 
-        SearchResponse<ProductDocument> response = productIndexingService.searchProducts("translated_text_4");
-        assertNotNull(response, "translated_text_2 translated_text_3 nulltranslated_text_1 translated_text_4 translated_text_2");
-        assertNotNull(response.hits(), "translated_text_2 translated_text_7 translated_text_3 translated_text_2");
-        assertTrue(response.hits().total().value() > 0, "translated_text_2 translated_text_3 translated_text_3 translated_text_2");
+        SearchResponse<ProductDocument> response = productIndexingService.searchProducts("file");
+        assertNotNull(response, "test connection nullshould file test");
+        assertNotNull(response.hits(), "test logging connection test");
+        assertTrue(response.hits().total().value() > 0, "test connection test");
         Hit<ProductDocument> hit = response.hits().hits().get(0);
         ProductDocument document = hit.source();
-        assertNotNull(document, "translated_text_2 translated_text_3 translated_text_3 translated_text_2");
+        assertNotNull(document, "test connection test");
 
-        assertEquals(testProduct.getName(), document.getName(), "translated_text_2translated_text_1 translated_text_4 translated_text_2");
-        assertEquals(testProduct.getDescription(), document.getDescription(), "translated_text_2 translated_text_2translated_text_1 translated_text_4 translated_text_2");
-        assertEquals(testProduct.getPrice(), document.getPrice(), "translated_text_2 translated_text_1 translated_text_4 translated_text_2");
-        assertEquals(testProduct.getStatus().name(), document.getStatus(), "translated_text_2 translated_text_3 translated_text_4 translated_text_2");
-        assertEquals(testProduct.getSeller().getName(), document.getSellerName(), "translated_text_3translated_text_1 translated_text_4 translated_text_2");
-        assertEquals(testProduct.getCategory().getName(), document.getCategoryName(), "translated_text_5translated_text_1 translated_text_4 translated_text_2");
+        assertEquals(testProduct.getName(), document.getName(), "testshould file test");
+        assertEquals(testProduct.getDescription(), document.getDescription(), "testshould file test");
+        assertEquals(testProduct.getPrice(), document.getPrice(), "test should file test");
+        assertEquals(testProduct.getStatus().name(), document.getStatus(), "test connection file test");
+        assertEquals(testProduct.getSeller().getName(), document.getSellerName(), "connectionshould file test");
+        assertEquals(testProduct.getCategory().getName(), document.getCategoryName(), "Endpointshould file test");
 
-        log.info("translated_text_2 translated_text_2 test completed - translated_text_2 translated_text_2 translated_text_1: {}", response.hits().total().value());
-        log.info("translated_text_2 translated_text_2: {}", document.getName());
+        log.info("test test completed - test should: {}", response.hits().total().value());
+        log.info("test: {}", document.getName());
     }
 
     @Test
     @Order(4)
-    @DisplayName("translated_text_3 translated_text_3 Producttranslated_text_1 translated_text_3 translated_text_1 exists")
+    @DisplayName("connection Productshould connection should exists")
     void shouldSearchProductsByDifferentFields() throws IOException {
         productIndexingService.createProductsIndexIfNotExists();
         productIndexingService.indexProduct(testProduct);
@@ -128,16 +128,16 @@ public class ProductIndexingServiceTest {
             Thread.currentThread().interrupt();
         }
 
-        SearchResponse<ProductDocument> sellerResponse = productIndexingService.searchProducts("test translated_text_3");
-        assertTrue(sellerResponse.hits().total().value() > 0, "translated_text_3 translated_text_2translated_text_1 translated_text_4 translated_text_2");
-        SearchResponse<ProductDocument> categoryResponse = productIndexingService.searchProducts("translated_text_4");
-        assertTrue(categoryResponse.hits().total().value() > 0, "translated_text_7 translated_text_2translated_text_1 translated_text_4 translated_text_2");
-        SearchResponse<ProductDocument> descriptionResponse = productIndexingService.searchProducts("translated_text_2 translated_text_2");
-        assertTrue(descriptionResponse.hits().total().value() > 0, "translated_text_4 translated_text_2translated_text_1 translated_text_4 translated_text_2");
+        SearchResponse<ProductDocument> sellerResponse = productIndexingService.searchProducts("test connection");
+        assertTrue(sellerResponse.hits().total().value() > 0, "connection testshould file test");
+        SearchResponse<ProductDocument> categoryResponse = productIndexingService.searchProducts("file");
+        assertTrue(categoryResponse.hits().total().value() > 0, "logging testshould file test");
+        SearchResponse<ProductDocument> descriptionResponse = productIndexingService.searchProducts("test");
+        assertTrue(descriptionResponse.hits().total().value() > 0, "file testshould file test");
         
-        log.info("translated_text_2 translated_text_2 translated_text_2 test completed");
-        log.info("- translated_text_3 translated_text_2: {}translated_text_1", sellerResponse.hits().total().value());
-        log.info("- translated_text_5 translated_text_2: {}translated_text_1", categoryResponse.hits().total().value());
-        log.info("- translated_text_2 translated_text_2: {}translated_text_1", descriptionResponse.hits().total().value());
+        log.info("test test completed");
+        log.info("- connection test: {}should", sellerResponse.hits().total().value());
+        log.info("- processing test: {}should", categoryResponse.hits().total().value());
+        log.info("- test: {}should", descriptionResponse.hits().total().value());
     }
 }

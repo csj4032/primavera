@@ -8,12 +8,12 @@ import org.junit.jupiter.api.Test;
 class RoleTest {
 
     @Test
-    @DisplayName("Role translated_text_3 successfully translated_text_11 translated_text_2")
+    @DisplayName("Role connection successfully processing test")
     void roleCreationTest() {
 
         long id = 1L;
         String name = "ADMIN";
-        String description = "translated_text_3 translated_text_3";
+        String description = "connection";
 
         Role role = new Role(id, name, description);
 
@@ -23,12 +23,12 @@ class RoleTest {
     }
 
     @Test
-    @DisplayName("Role Buildertranslated_text_1 translated_text_4 translated_text_1 successfully translated_text_10 translated_text_2")
+    @DisplayName("Role Buildershould file should successfully successfully test")
     void roleBuilderTest() {
 
         long id = 1L;
         String name = "ADMIN";
-        String description = "translated_text_3 translated_text_3";
+        String description = "connection";
 
         Role role = Role.builder()
                 .id(id)
@@ -42,7 +42,7 @@ class RoleTest {
     }
 
     @Test
-    @DisplayName("translated_text_3 idtranslated_text_1 nametranslated_text_1 translated_text_2 Role translated_text_3 equals translated_text_4 truetranslated_text_1 translated_text_4 translated_text_2")
+    @DisplayName("connection idshould nameshould test Role connection equals file trueshould file test")
     void roleEqualsTest() {
 
         Role role1 = Role.builder()
@@ -53,14 +53,14 @@ class RoleTest {
         Role role2 = Role.builder()
                 .id(1L)
                 .name("ADMIN")
-                .description("translated_text_2 translated_text_2")
+                .description("test")
                 .build();
 
         assertThat(role1).isEqualTo(role2);
     }
 
     @Test
-    @DisplayName("translated_text_2 idtranslated_text_1 nametranslated_text_1 translated_text_2 Role translated_text_3 equals translated_text_4 falsetranslated_text_1 translated_text_4 translated_text_2")
+    @DisplayName("test idshould nameshould test Role connection equals file falseshould file test")
     void roleNotEqualsTest() {
 
         Role role1 = Role.builder()
@@ -83,7 +83,7 @@ class RoleTest {
     }
 
     @Test
-    @DisplayName("Role translated_text_2 translated_text_10 translated_text_9 translated_text_3 successfully translated_text_4 translated_text_2")
+    @DisplayName("Role test successfully should not connection successfully file test")
     void roleDefaultConstructorTest() {
 
         Role role = new Role();

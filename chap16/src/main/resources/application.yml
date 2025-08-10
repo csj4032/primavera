@@ -29,8 +29,9 @@ primavera:
     enabled: true
     logs:
       path: ./logs
+
 sentry:
   dns: ${SENTRY_DSN:}
   environment: ${SENTRY_ENVIRONMENT:local}
-  release: ${SENTRY_RELEASE:1.0.0}
+  release: ${SENTRY_RELEASE:0.0.1-SNAPSHOT}
   servername: ${SENTRY_SERVER_NAME:FileProcessingMonitoringApplication}

@@ -40,14 +40,14 @@ public class CommentRepositoryTest {
 	@Order(1)
 	@Rollback(false)
 	@Transactional
-	@DisplayName("translated_text_3 1translated_text_1 translated_text_2 translated_text_2 test")
+	@DisplayName("connection 1should test test")
 	public void writeComment() {
 		Article article = articleRepository.findById(1).orElseThrow();
 		Comment comment = new Comment();
 		comment.setArticleId(article.getId());
 		comment.setLevel(0);
 		comment.setStep(0);
-		comment.setComment("translated_text_2.");
+		comment.setComment("test.");
 		comment.setAuthor(userRepository.findById(1l).get());
 		comment.setStatus(ArticleStatus.PUBLIC);
 		commentRepository.save(comment);

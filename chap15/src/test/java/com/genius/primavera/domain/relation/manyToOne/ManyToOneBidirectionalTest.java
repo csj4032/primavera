@@ -5,13 +5,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 
 @Slf4j
-@DisplayName("N:1 translated_text_3 translated_text_2 translated_text_3  : translated_text_2 translated_text_3 translated_text_4 translated_text_3 translated_text_2")
+@DisplayName("N:1 connection test connection  : test connection file connection test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ManyToOneBidirectionalTest extends JpaTestBase {
 
 	@Test
 	@Order(1)
-	@DisplayName("translated_text_2, translated_text_2 translated_text_2")
+	@DisplayName("test, test")
 	public void save() {
 		var department = Department.of("Department1");
 
@@ -33,7 +33,7 @@ public class ManyToOneBidirectionalTest extends JpaTestBase {
 
 	@Test
 	@Order(2)
-	@DisplayName("translated_text_2, translated_text_2 inquiry")
+	@DisplayName("test, test inquiry")
 	public void find() {
 		var employee1 = entityManager.find(Employee.class, 1l);
 		var employee2 = entityManager.find(Employee.class, 2l);
@@ -47,7 +47,7 @@ public class ManyToOneBidirectionalTest extends JpaTestBase {
 
 	@Test
 	@Order(3)
-	@DisplayName("translated_text_2 translated_text_2 information modification")
+	@DisplayName("test information modification")
 	public void employeeUpdate() {
 		var employee1 = entityManager.find(Employee.class, 1l);
 		var department = Department.of("department2");

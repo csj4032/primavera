@@ -29,7 +29,7 @@ public class SecurityUtils {
 			props = new Properties();
 			props.load(SecurityUtils.class.getClassLoader().getResourceAsStream(EXTENSION_PROPERTIES));
 		} catch (Exception e) {
-			System.out.println(EXTENSION_PROPERTIES + " translated_text_3 translated_text_2 translated_text_5.");
+			System.out.println(EXTENSION_PROPERTIES + " connection test Endpoint.");
 		}
     }
 

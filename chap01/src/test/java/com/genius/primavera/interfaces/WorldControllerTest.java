@@ -21,7 +21,7 @@ public class WorldControllerTest {
     private WorldService worldService;
 
     @Test
-    @DisplayName("world() translated_text_4 'World!!! Hello'translated_text_1 translated_text_4 translated_text_2")
+    @DisplayName("world() file 'World!!! Hello'should file test")
     void worldTest() {
         when(worldService.world()).thenReturn("World!!!");
         when(helloService.hello()).thenReturn("Hello");
@@ -31,7 +31,7 @@ public class WorldControllerTest {
     }
 
     @Test
-    @DisplayName("WorldControllertranslated_text_1 successfully translated_text_11 translated_text_2")
+    @DisplayName("WorldControllershould successfully processing test")
     void constructorTest() {
         WorldController worldController = new WorldController(helloService, worldService);
         assertThat(worldController).isNotNull();

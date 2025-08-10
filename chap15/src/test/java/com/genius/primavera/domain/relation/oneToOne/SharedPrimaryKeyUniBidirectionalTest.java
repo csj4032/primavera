@@ -5,13 +5,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 
 @Slf4j
-@DisplayName("1:1 translated_text_2 translated_text_4 translated_text_2 translated_text_1 translated_text_3")
+@DisplayName("1:1 test file test should connection")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class SharedPrimaryKeyUniBidirectionalTest extends JpaTestBase {
 
 	@Test
 	@Order(1)
-	@DisplayName("translated_text_2, translated_text_2 translated_text_2")
+	@DisplayName("test, test")
 	public void save() {
 		var member = Member.of("member");
 		var address = Address.of("address");
@@ -23,7 +23,7 @@ public class SharedPrimaryKeyUniBidirectionalTest extends JpaTestBase {
 
 	@Test
 	@Order(2)
-	@DisplayName("translated_text_2, translated_text_2 inquiry")
+	@DisplayName("test, test inquiry")
 	public void find() {
 		var member = entityManager.find(Member.class, 1l);
 		var address = entityManager.find(Address.class, 1l);

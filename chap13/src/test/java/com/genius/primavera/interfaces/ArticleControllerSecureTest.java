@@ -20,7 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     org.springframework.boot.autoconfigure.security.oauth2.client.servlet.OAuth2ClientAutoConfiguration.class,
     org.springframework.boot.autoconfigure.security.oauth2.resource.servlet.OAuth2ResourceServerAutoConfiguration.class
 })
-@DisplayName("ArticleController translated_text_2 translated_text_2 translated_text_2 test")
+@DisplayName("ArticleController test test")
 public class ArticleControllerSecureTest {
 
     @Autowired
@@ -30,13 +30,13 @@ public class ArticleControllerSecureTest {
     static void verifyTestEnvironment() {
 
         TestDataConstants.Security.ensureTestEnvironment();
-        log.info(" test translated_text_2 validation completed - translated_text_3 test execution");
+        log.info(" test validation completed - connection test execution");
     }
 
     @Test
     @Order(1)
     @WithTestUser(role = WithTestUser.Role.GENIUS)
-    @DisplayName("translated_text_3 translated_text_4 translated_text_3 translated_text_2 inquiry")
+    @DisplayName("connection file connection test inquiry")
     void shouldAllowAdminToViewArticles() throws Exception {
 
         mockMvc.perform(get("/articles"))
@@ -44,7 +44,7 @@ public class ArticleControllerSecureTest {
             .andExpect(view().name("article/list"))
             .andExpect(model().attributeExists("articles"))
             .andDo(result -> {
-                log.info(" translated_text_3({}) translated_text_4 translated_text_3 translated_text_2 inquiry success", 
+                log.info(" connection({}) file connection test inquiry success", 
                     TestDataConstants.TestUsers.GENIUS_EMAIL);
             });
     }
@@ -52,14 +52,14 @@ public class ArticleControllerSecureTest {
     @Test
     @Order(2)
     @WithTestUser(role = WithTestUser.Role.USER)
-    @DisplayName("translated_text_2 user translated_text_4 translated_text_3 inquiry")
+    @DisplayName("test user file connection inquiry")
     void shouldAllowUserToViewArticles() throws Exception {
 
         mockMvc.perform(get("/articles"))
             .andExpect(status().isOk())
             .andExpect(view().name("article/list"))
             .andDo(result -> {
-                log.info(" translated_text_2 user({}) translated_text_4 translated_text_3 inquiry success", 
+                log.info(" test user({}) file connection inquiry success", 
                     TestDataConstants.TestUsers.USER_EMAIL);
             });
     }
@@ -67,11 +67,11 @@ public class ArticleControllerSecureTest {
     @Test
     @Order(3)
     @WithTestUser(role = WithTestUser.Role.GENIUS)
-    @DisplayName("translated_text_3 translated_text_4 translated_text_3 translated_text_2")
+    @DisplayName("connection file connection test")
     void shouldAllowAdminToCreateArticle() throws Exception {
 
-        String title = "translated_text_2 translated_text_2 test translated_text_3";
-        String content = "translated_text_1 translated_text_3 translated_text_2translated_text_1 translated_text_2 test translated_text_2.";
+        String title = "test test connection";
+        String content = "should connection testshould test test.";
 
         mockMvc.perform(post("/articles")
                 .param("title", title)
@@ -80,7 +80,7 @@ public class ArticleControllerSecureTest {
             .andExpect(status().is3xxRedirection())
             .andExpected(redirectedUrl("/articles"))
             .andDo(result -> {
-                log.info(" translated_text_3({}) translated_text_4 translated_text_3 translated_text_2 success: {}", 
+                log.info(" connection({}) file connection test success: {}", 
                     TestDataConstants.TestUsers.GENIUS_EMAIL, title);
             });
     }
@@ -88,13 +88,13 @@ public class ArticleControllerSecureTest {
     @Test
     @Order(4)
     @WithTestUser(role = WithTestUser.Role.USER)
-    @DisplayName("translated_text_2 user translated_text_3 translated_text_2 test")
+    @DisplayName("test user connection test")
     void shouldRestrictUserPermissions() throws Exception {
 
         mockMvc.perform(get("/admin/articles"))
             .andExpect(status().isForbidden())
             .andDo(result -> {
-                log.info(" translated_text_2 user({}) translated_text_3 translated_text_2 translated_text_2 translated_text_3", 
+                log.info(" test user({}) connection test connection", 
                     TestDataConstants.TestUsers.USER_EMAIL);
             });
     }
@@ -102,7 +102,7 @@ public class ArticleControllerSecureTest {
     @Test
     @Order(5)
     @WithTestUser(email = "custom@test.primavera.local")
-    @DisplayName("translated_text_3 test user translated_text_2")
+    @DisplayName("connection test user test")
     void shouldWorkWithCustomTestUser() throws Exception {
 
         String customEmail = "custom@test.primavera.local";
@@ -110,13 +110,13 @@ public class ArticleControllerSecureTest {
         mockMvc.perform(get("/articles"))
             .andExpect(status().isOk())
             .andDo(result -> {
-                log.info(" translated_text_3 test user({}) translated_text_2 success", customEmail);
+                log.info(" connection test user({}) test success", customEmail);
             });
     }
 
     @Test
     @Order(6)
-    @DisplayName("translated_text_4 translated_text_2 user translated_text_2 translated_text_2")
+    @DisplayName("file test user test")
     void shouldRestrictUnauthenticatedAccess() throws Exception {
 
         mockMvc.perform(post("/articles")
@@ -124,17 +124,17 @@ public class ArticleControllerSecureTest {
                 .param("content", "This should fail"))
             .andExpect(status().is3xxRedirection())
             .andDo(result -> {
-                log.info(" translated_text_4 translated_text_2 translated_text_2 translated_text_3 - translated_text_3 translated_text_1 translated_text_1");
+                log.info(" file test connection - connection needs to be added");
             });
     }
 
     @AfterAll
     static void securityReport() {
-        log.info(" translated_text_2 translated_text_2 test completed translated_text_2:");
-        log.info("   test translated_text_2 translated_text_3 translated_text_2: *.test.primavera.local");
-        log.info("   translated_text_5 user information translated_text_2");
-        log.info("   translated_text_2 translated_text_2 translated_text_2 validation");
-        log.info("   test translated_text_2 translated_text_2 validation");
-        log.info("   TestContainer translated_text_2 translated_text_2");
+        log.info(" test test completed test:");
+        log.info("   test connection test: *.test.primavera.local");
+        log.info("   Endpoint user information test");
+        log.info("   test test validation");
+        log.info("   test test validation");
+        log.info("   TestContainer test");
     }
 }

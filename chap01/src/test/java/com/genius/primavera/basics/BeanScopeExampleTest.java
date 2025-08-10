@@ -16,7 +16,7 @@ class BeanScopeExampleTest {
     private ApplicationContext context;
     
     @Test
-    @DisplayName("Singleton Beantranslated_text_1 translated_text_2 translated_text_1 translated_text_5 translated_text_2")
+    @DisplayName("Singleton Beantest should processing test")
     void testSingletonScope() {
         var bean1 = context.getBean(BeanScopeExample.SingletonBean.class);
         var bean2 = context.getBean(BeanScopeExample.SingletonBean.class);
@@ -25,7 +25,7 @@ class BeanScopeExampleTest {
     }
     
     @Test
-    @DisplayName("Prototype Beantranslated_text_1 translated_text_2 translated_text_3 translated_text_5 creation")
+    @DisplayName("Prototype Beanshould test connection Endpoint creation")
     void testPrototypeScope() {
         var bean1 = context.getBean(BeanScopeExample.PrototypeBean.class);
         var bean2 = context.getBean(BeanScopeExample.PrototypeBean.class);

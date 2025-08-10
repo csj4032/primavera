@@ -5,13 +5,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 
 @Slf4j
-@DisplayName("1:N translated_text_3 translated_text_3 translated_text_3")
+@DisplayName("1:N connection connection")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class OneToManyBidirectionalTest extends JpaTestBase {
 
 	@Test
 	@Order(1)
-	@DisplayName("translated_text_2, translated_text_3 translated_text_2")
+	@DisplayName("test, connection test")
 	public void save() {
 		var customer = Customer.of("customer1");
 		var contact1 = new Contact(null, Contact.Type.EMAIL, "csj4032", customer);
@@ -28,7 +28,7 @@ public class OneToManyBidirectionalTest extends JpaTestBase {
 
 	@Test
 	@Order(2)
-	@DisplayName("translated_text_2, translated_text_3 inquiry")
+	@DisplayName("test, connection inquiry")
 	public void find() {
 		var contact1 = entityManager.find(Contact.class, 1l);
 		var contact2 = entityManager.find(Contact.class, 2l);
@@ -40,7 +40,7 @@ public class OneToManyBidirectionalTest extends JpaTestBase {
 
 	@Test
 	@Order(3)
-	@DisplayName("translated_text_2 translated_text_3 translated_text_2")
+	@DisplayName("test connection test")
 	public void update() {
 		var customer = entityManager.find(Customer.class, 1l);
 		var contact3 = new Contact(null, Contact.Type.PHONE, "csj4032", customer);
@@ -53,7 +53,7 @@ public class OneToManyBidirectionalTest extends JpaTestBase {
 
 	@Test
 	@Order(4)
-	@DisplayName("translated_text_2 translated_text_3 translated_text_1 translated_text_2 modification translated_text_1 translated_text_2 inquiry")
+	@DisplayName("test connection should test modification should test inquiry")
 	public void updateContact() {
 		var contact1 = entityManager.find(Contact.class, 1l);
 		contact1.setType(Contact.Type.PHONE);
@@ -66,7 +66,7 @@ public class OneToManyBidirectionalTest extends JpaTestBase {
 
 	@Test
 	@Order(5)
-	@DisplayName("translated_text_3 translated_text_2 modification inquiry")
+	@DisplayName("connection test modification inquiry")
 	public void updateCustomByContact() {
 		var contact1 = entityManager.find(Contact.class, 1l);
 		var customer2 = Customer.of("custom2");

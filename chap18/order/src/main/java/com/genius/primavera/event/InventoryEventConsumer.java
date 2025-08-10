@@ -29,7 +29,7 @@ public class InventoryEventConsumer {
             Acknowledgment ack) {
         
         try {
-            log.info("translated_text_2 translated_text_3 translated_text_2: eventType={}, topic={}", eventType, topic);
+            log.info("test connection test: eventType={}, topic={}", eventType, topic);
             
             switch (eventType) {
                 case "INVENTORY_RESERVED" -> {
@@ -40,37 +40,37 @@ public class InventoryEventConsumer {
                     InventoryInsufficientEvent insufficientEvent = (InventoryInsufficientEvent) event;
                     handleInventoryInsufficientEvent(insufficientEvent);
                 }
-                default -> log.warn("translated_text_1 translated_text_1 translated_text_2 translated_text_3 translated_text_2: {}", eventType);
+                default -> log.warn("needs to be added test connection test: {}", eventType);
             }
             
             ack.acknowledge();
             
         } catch (Exception e) {
-            log.error("translated_text_2 translated_text_3 processing translated_text_1 error: eventType={}, error={}", eventType, e.getMessage(), e);
+            log.error("test connection processing should error: eventType={}, error={}", eventType, e.getMessage(), e);
             ack.acknowledge();
         }
     }
     
     private void handleInventoryReservedEvent(InventoryReservedEvent event) {
-        log.info("translated_text_2 translated_text_2 completed: orderId={}, items={}", 
+        log.info("test completed: orderId={}, items={}", 
                 event.getOrderId(), event.getReservedItems().size());
 
         orderService.confirmInventory(event.getOrderId())
-                .doOnSuccess(order -> log.info("translated_text_2 translated_text_2 translated_text_4 completed: orderId={}, status={}", 
+                .doOnSuccess(order -> log.info("test file completed: orderId={}, status={}", 
                         order.getOrderId(), order.getStatus()))
-                .doOnError(error -> log.error("translated_text_2 translated_text_2 translated_text_4 failure: orderId={}, error={}", 
+                .doOnError(error -> log.error("test file failure: orderId={}, error={}", 
                         event.getOrderId(), error.getMessage()))
                 .subscribe();
     }
     
     private void handleInventoryInsufficientEvent(InventoryInsufficientEvent event) {
-        log.warn("translated_text_2 translated_text_4 translated_text_2 translated_text_2: orderId={}, reason={}, insufficientItems={}", 
+        log.warn("test file test: orderId={}, reason={}, insufficientItems={}", 
                 event.getOrderId(), event.getReason(), event.getInsufficientItems().size());
 
         orderService.cancelOrder(event.getOrderId(), event.getReason())
-                .doOnSuccess(order -> log.info("translated_text_2 translated_text_2 completed: orderId={}, status={}", 
+                .doOnSuccess(order -> log.info("test completed: orderId={}, status={}", 
                         order.getOrderId(), order.getStatus()))
-                .doOnError(error -> log.error("translated_text_2 translated_text_2 failure: orderId={}, error={}", 
+                .doOnError(error -> log.error("test failure: orderId={}, error={}", 
                         event.getOrderId(), error.getMessage()))
                 .subscribe();
     }

@@ -31,11 +31,11 @@ public class WebBasicsController {
     @Data
     public static class User {
         private Long id;
-        @NotBlank(message = "translated_text_3 translated_text_5")
+        @NotBlank(message = "connection Endpoint")
         private String name;
-        @Email(message = "translated_text_3 translated_text_3 translated_text_3 translated_text_5")
+        @Email(message = "connection connection Endpoint")
         private String email;
-        @Size(min = 10, max = 200, message = "translated_text_3 10-200translated_text_1 translated_text_4 translated_text_3")
+        @Size(min = 10, max = 200, message = "connection 10-200should file connection")
         private String bio;
         private LocalDateTime createdAt;
         private LocalDateTime updatedAt;
@@ -52,7 +52,7 @@ public class WebBasicsController {
     public ResponseEntity<User> getUser(@PathVariable Long id) {
         User user = userRepository.get(id);
         if (user == null) {
-            throw new UserNotFoundException("translated_text_1 translated_text_2 translated_text_1 translated_text_4: " + id);
+            throw new UserNotFoundException("test should file: " + id);
         }
         return ResponseEntity.ok(user);
     }
@@ -63,7 +63,7 @@ public class WebBasicsController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String name) {
         
-        log.info("translated_text_1 translated_text_2 inquiry - page: {}, size: {}, name: {}", page, size, name);
+        log.info("should test inquiry - page: {}, size: {}, name: {}", page, size, name);
         
         List<User> users = new ArrayList<>(userRepository.values());
         if (name != null) {
@@ -84,7 +84,7 @@ public class WebBasicsController {
         user.setUpdatedAt(LocalDateTime.now());
         
         userRepository.put(user.getId(), user);
-        log.info("translated_text_1 translated_text_1 creation: {}", user);
+        log.info("needs to be added creation: {}", user);
         
         return ResponseEntity
             .created(URI.create("/api/v1/basics/users/" + user.getId()))
@@ -98,7 +98,7 @@ public class WebBasicsController {
         
         User existingUser = userRepository.get(id);
         if (existingUser == null) {
-            throw new UserNotFoundException("translated_text_1 translated_text_2 translated_text_1 translated_text_4: " + id);
+            throw new UserNotFoundException("test should file: " + id);
         }
         
         existingUser.setName(updatedUser.getName());
@@ -106,7 +106,7 @@ public class WebBasicsController {
         existingUser.setBio(updatedUser.getBio());
         existingUser.setUpdatedAt(LocalDateTime.now());
         
-        log.info("translated_text_1 translated_text_1: {}", existingUser);
+        log.info("needs to be added: {}", existingUser);
         
         return ResponseEntity.ok(existingUser);
     }
@@ -115,10 +115,10 @@ public class WebBasicsController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteUser(@PathVariable Long id) {
         if (!userRepository.containsKey(id)) {
-            throw new UserNotFoundException("translated_text_1 translated_text_2 translated_text_1 translated_text_4: " + id);
+            throw new UserNotFoundException("test should file: " + id);
         }
         userRepository.remove(id);
-        log.info("translated_text_1 deletion: {}", id);
+        log.info("should deletion: {}", id);
     }
     
     @GetMapping("/headers")
@@ -140,8 +140,8 @@ public class WebBasicsController {
     
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGenericException(Exception e) {
-        log.error("translated_text_3 translated_text_2 error translated_text_2", e);
-        ErrorResponse error = new ErrorResponse("translated_text_2 error translated_text_2", 500);
+        log.error("connection test error test", e);
+        ErrorResponse error = new ErrorResponse("test error test", 500);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
     

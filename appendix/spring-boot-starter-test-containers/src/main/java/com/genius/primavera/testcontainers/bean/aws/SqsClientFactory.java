@@ -16,7 +16,7 @@ public class SqsClientFactory extends AwsServiceClientFactory {
     @Override
     public Object createClient(LocalStackContainer container) {
         if (!isAvailable()) {
-            throw new IllegalStateException("AWS SQS SDKtranslated_text_1 translated_text_6 translated_text_4. AWS SDK v2 dependencytranslated_text_1 translated_text_1.");
+            throw new IllegalStateException("AWS SQS SDK is not available in classpath. AWS SDK v2  dependency needs to be added.");
         }
 
         try {
@@ -47,11 +47,11 @@ public class SqsClientFactory extends AwsServiceClientFactory {
 
             Object sqsClient = builder.getClass().getMethod("build").invoke(builder);
 
-            log.info(" SqsClienttranslated_text_1 translated_text_10 translated_text_13. translated_text_5: {}", endpointUrl);
+            log.info(" SqsClient created successfully. Endpoint: {}", endpointUrl);
             return sqsClient;
 
         } catch (Exception e) {
-            log.error("SqsClient creation translated_text_1 error translated_text_2", e);
+            log.error("SqsClient creation failed with error", e);
             throw new RuntimeException("SqsClient creation failure", e);
         }
     }

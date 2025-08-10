@@ -22,7 +22,7 @@ public class PrimaveraPropertiesTest {
     private PrimaveraProperties properties;
 
     @Test
-    @DisplayName("translated_text_2 translated_text_3 translated_text_4 translated_text_6 validation")
+    @DisplayName("test connection file with validation")
     void basicPropertiesBinding() {
         String databaseUsername = properties.getDatabase().getUsername();
         String databaseUrl = properties.getDatabase().getUrl();
@@ -33,7 +33,7 @@ public class PrimaveraPropertiesTest {
     }
 
     @Test
-    @DisplayName("translated_text_3 translated_text_3 translated_text_4 translated_text_6 validation")
+    @DisplayName("connection file with validation")
     void nestedObjectBinding() {
         PrimaveraProperties.Search search = properties.getSearch();
         String keyword = search.getParams().getKeyword();
@@ -45,7 +45,7 @@ public class PrimaveraPropertiesTest {
     }
 
     @Test
-    @DisplayName("translated_text_3 translated_text_2 translated_text_3 translated_text_4 translated_text_6 validation")
+    @DisplayName("connection test connection file with validation")
     void listPropertyBinding() {
         List<PrimaveraProperties.User> users = properties.getUsers();
         assertThat(users).hasSize(2);
@@ -60,7 +60,7 @@ public class PrimaveraPropertiesTest {
     }
 
     @Test
-    @DisplayName("translated_text_5 translated_text_2 translated_text_6 translated_text_5 validation")
+    @DisplayName("processing test with Endpoint validation")
     void profileSpecificPropertyOverride() {
         PrimaveraProperties.Cache cache = properties.getCache();
         assertThat(cache.isEnabled()).isTrue();
@@ -69,14 +69,14 @@ public class PrimaveraPropertiesTest {
     }
 
     @Test
-    @DisplayName("translated_text_2 translated_text_3(kebab-case) translated_text_2 translated_text_3(camelCase)translated_text_1 translated_text_5 validation")
+    @DisplayName("test connection(kebab-case) test connection(camelCase)should Endpoint validation")
     void kebabCaseToCamelCaseConversion() {
         PrimaveraProperties.Search.Params searchParams = properties.getSearch().getParams();
         assertThat(searchParams.getEnableHighlight()).isTrue();
     }
 
     @Test
-    @DisplayName("Map translated_text_2 translated_text_3 translated_text_4 translated_text_6 validation")
+    @DisplayName("Map test connection file with validation")
     void mapPropertyBinding() {
         Map<String, String> features = properties.getFeatures();
         assertThat(features).containsEntry("darkMode", "enabled");
@@ -85,7 +85,7 @@ public class PrimaveraPropertiesTest {
     }
 
     @Test
-    @DisplayName("Duration translated_text_2 translated_text_3 translated_text_4 translated_text_6 validation")
+    @DisplayName("Duration test connection file with validation")
     void durationPropertyBinding() {
         Duration timeToLive = properties.getCache().getTimeToLive();
         assertThat(timeToLive).isEqualTo(Duration.ofMinutes(5));

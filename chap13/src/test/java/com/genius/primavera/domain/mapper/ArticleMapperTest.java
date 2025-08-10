@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @Slf4j
 @SpringBootTest
 @ActiveProfiles("test")
-@DisplayName("ArticleMapper translated_text_2 test")
+@DisplayName("ArticleMapper test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @Testcontainers
 public class ArticleMapperTest {
@@ -68,14 +68,14 @@ public class ArticleMapperTest {
 
     @Test
     @Order(1)
-    @DisplayName("translated_text_3 translated_text_10 translated_text_4")
+    @DisplayName("connection successfully file")
     void shouldSaveMainArticleSuccessfully() {
         article1 = Article.builder()
                 .pId(0L)
                 .step(1)
                 .level(1)
                 .author(user)
-                .subject("translated_text_3 1translated_text_1")
+                .subject("connection 1should")
                 .status(ArticleStatus.PUBLIC)
                 .createdAt(Instant.now())
                 .build();
@@ -85,7 +85,7 @@ public class ArticleMapperTest {
 
     @Test
     @Order(2)
-    @DisplayName("translated_text_3 translated_text_10 translated_text_4")
+    @DisplayName("connection successfully file")
     void shouldSaveReplyArticleSuccessfully() {
         article1_1 = Article.builder()
                 .parent(article1)
@@ -94,7 +94,7 @@ public class ArticleMapperTest {
                 .step(2)
                 .level(2)
                 .author(user)
-                .subject("translated_text_3 1translated_text_1_1translated_text_1")
+                .subject("connection 1should_1should")
                 .status(ArticleStatus.PUBLIC)
                 .createdAt(Instant.now())
                 .build();
@@ -104,7 +104,7 @@ public class ArticleMapperTest {
 
     @Test
     @Order(3)
-    @DisplayName("translated_text_3 translated_text_3 translated_text_10 translated_text_4")
+    @DisplayName("connection successfully file")
     void shouldSaveNestedRepliesSuccessfully() {
         article1_1_1 = Article.builder()
                 .parent(article1_1)
@@ -113,7 +113,7 @@ public class ArticleMapperTest {
                 .step(3)
                 .level(3)
                 .author(user)
-                .subject("translated_text_3 1translated_text_1_1translated_text_1_1translated_text_1")
+                .subject("connection 1should_1should_1should")
                 .status(ArticleStatus.PUBLIC)
                 .createdAt(Instant.now())
                 .build();
@@ -124,7 +124,7 @@ public class ArticleMapperTest {
                 .step(4)
                 .level(3)
                 .author(user)
-                .subject("translated_text_3 1translated_text_1_1translated_text_1_2translated_text_1")
+                .subject("connection 1should_1should_2should")
                 .status(ArticleStatus.PUBLIC)
                 .createdAt(Instant.now())
                 .build();
@@ -136,14 +136,14 @@ public class ArticleMapperTest {
 
     @Test
     @Order(4)
-    @DisplayName("translated_text_1 translated_text_1 translated_text_3 translated_text_10 translated_text_4")
+    @DisplayName("needs to be added connection successfully file")
     void shouldSaveSecondMainArticleSuccessfully() {
         article2 = Article.builder()
                 .pId(0L)
                 .step(1)
                 .level(1)
                 .author(user)
-                .subject("translated_text_3 2translated_text_1")
+                .subject("connection 2should")
                 .status(ArticleStatus.PUBLIC)
                 .createdAt(Instant.now())
                 .build();
@@ -153,7 +153,7 @@ public class ArticleMapperTest {
 
     @Test
     @Order(5)
-    @DisplayName("translated_text_1 translated_text_1 translated_text_3 translated_text_3 translated_text_10 translated_text_4")
+    @DisplayName("needs to be added connection successfully file")
     void shouldSaveSecondArticleReplySuccessfully() {
         article2_1 = Article.builder()
                 .parent(article2)
@@ -162,7 +162,7 @@ public class ArticleMapperTest {
                 .step(2)
                 .level(2)
                 .author(user)
-                .subject("translated_text_3 2translated_text_1_1translated_text_1")
+                .subject("connection 2should_1should")
                 .status(ArticleStatus.PUBLIC)
                 .createdAt(Instant.now())
                 .build();
@@ -172,7 +172,7 @@ public class ArticleMapperTest {
 
     @Test
     @Order(6)
-    @DisplayName("all translated_text_3 translated_text_10 translated_text_9")
+    @DisplayName("all connection successfully should not")
     void shouldFindAllArticlesSuccessfully() {
         List<Article> articles = articleMapper.findAll();
         assertEquals(30, articles.size());

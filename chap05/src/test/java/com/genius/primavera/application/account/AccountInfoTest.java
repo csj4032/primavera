@@ -4,13 +4,13 @@ import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@DisplayName("translated_text_2 information test")
+@DisplayName("test information test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class AccountInfoTest {
 
     @Test
     @Order(1)
-    @DisplayName("translated_text_2 information creation translated_text_1 validation")
+    @DisplayName("test information creation should validation")
     public void accountInfoCreationTest() {
         var date = java.time.LocalDate.of(2023, 1, 1);
         long amount = 100000L;

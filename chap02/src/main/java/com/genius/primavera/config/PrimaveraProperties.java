@@ -39,18 +39,18 @@ public class PrimaveraProperties {
 
     @Data
     public static class Database {
-        @NotBlank(message = "translated_text_7 translated_text_6 translated_text_5")
+        @NotBlank(message = "logging with Endpoint")
         private String username;
 
-        @NotBlank(message = "translated_text_7 translated_text_5 translated_text_5")
-        @Size(min = 8, message = "translated_text_5 translated_text_2 8translated_text_1 translated_text_5 translated_text_3")
+        @NotBlank(message = "logging Endpoint Endpoint")
+        @Size(min = 8, message = "processing test 8should Endpoint connection")
         private String password;
 
-        @NotBlank(message = "translated_text_7 URLtranslated_text_1 translated_text_5")
-        @Pattern(regexp = "^jdbc:.*", message = "translated_text_3 JDBC URL translated_text_3 translated_text_4")
+        @NotBlank(message = "logging URLshould Endpoint")
+        @Pattern(regexp = "^jdbc:.*", message = "connection JDBC URL connection file")
         private String url;
 
-        @NotEmpty(message = "translated_text_2 translated_text_3 translated_text_3 translated_text_3 translated_text_3")
+        @NotEmpty(message = "test connection connection")
         private List<String> tables = new ArrayList<>();
     }
 
@@ -62,7 +62,7 @@ public class PrimaveraProperties {
         public static class Params {
             private String keyword;
 
-            @Min(value = 1, message = "translated_text_3 translated_text_3 1 translated_text_5 translated_text_3")
+            @Min(value = 1, message = "connection 1 Endpoint connection")
             private Integer page = 1;
 
             private String sort = "asc";
@@ -77,8 +77,8 @@ public class PrimaveraProperties {
     public static class User {
         private Long id;
 
-        @NotBlank(message = "translated_text_3translated_text_1 translated_text_5")
-        @Pattern(regexp = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$", message = "translated_text_3 translated_text_3 translated_text_3 translated_text_4")
+        @NotBlank(message = "connectionshould Endpoint")
+        @Pattern(regexp = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$", message = "connection connection file")
         private String email;
 
         private String role = "USER";
@@ -92,7 +92,7 @@ public class PrimaveraProperties {
         private Duration timeToLive = Duration.ofMinutes(5);
         private String type = "local";
 
-        @Min(value = 1, message = "translated_text_2 translated_text_2 translated_text_2 1 translated_text_5 translated_text_3")
+        @Min(value = 1, message = "test test 1 Endpoint connection")
         private int maxEntries = 1000;
     }
 }

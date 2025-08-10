@@ -19,7 +19,7 @@ public class PrimaveraApplication {
         printBanner();
         
         long startTime = System.currentTimeMillis();
-        log.info(" Primavera translated_text_6 translated_text_2 translated_text_1...");
+        log.info(" Primavera with test should...");
         
         try {
 
@@ -31,13 +31,13 @@ public class PrimaveraApplication {
             runApplicationRunners();
             
             long endTime = System.currentTimeMillis();
-            log.info(" Primavera translated_text_6 translated_text_2 completed! (translated_text_4: {}ms)", endTime - startTime);
+            log.info(" Primavera with test completed! (file: {}ms)", endTime - startTime);
 
             printApplicationInfo();
             
         } catch (Exception e) {
-            log.error("translated_text_6 translated_text_2 translated_text_1 error translated_text_2", e);
-            throw new RuntimeException("translated_text_6 translated_text_2 failure", e);
+            log.error("with test failed with error", e);
+            throw new RuntimeException("with test failure", e);
         }
         
         return applicationContext;
@@ -57,7 +57,7 @@ public class PrimaveraApplication {
                                                                                            
                         :: Spring Boot Educational Framework ::            v1.0.0     
                                                                                            
-                          "translated_text_3 translated_text_2 translated_text_2" - Learning Spring Begins           
+                          "connection test" - Learning Spring Begins           
                                                                                            
                      DI & IoC • Lifecycle • Configuration • Testing • Architecture    
                                                                                            
@@ -73,21 +73,21 @@ public class PrimaveraApplication {
         try {
 
             if (loadYamlConfiguration()) {
-                log.info("translated_text_2 translated_text_2 translated_text_2 completed: application.yml (UTF-8)");
+                log.info("test test completed: application.yml (UTF-8)");
             } 
 
             else if (loadPropertiesConfiguration()) {
-                log.info("translated_text_2 translated_text_2 translated_text_2 completed: application.properties (UTF-8)");
+                log.info("test test completed: application.properties (UTF-8)");
             } 
 
             else {
-                log.info("application.yml translated_text_2 application.properties translated_text_3 translated_text_4. translated_text_2 translated_text_2 translated_text_5.");
+                log.info("application.yml test application.properties connection file. test Endpoint.");
             }
 
             environment.putAll(System.getProperties());
             
         } catch (Exception e) {
-            log.warn("translated_text_2 translated_text_2 translated_text_2 translated_text_1 error translated_text_2: {}", e.getMessage());
+            log.warn("test test failed with error: {}", e.getMessage());
         }
     }
 
@@ -99,7 +99,7 @@ public class PrimaveraApplication {
                 return true;
             }
         } catch (Exception e) {
-            log.debug("YAML translated_text_2 translated_text_2 failure: {}", e.getMessage());
+            log.debug("YAML test failure: {}", e.getMessage());
         }
         return false;
     }
@@ -116,7 +116,7 @@ public class PrimaveraApplication {
                 }
             }
         } catch (Exception e) {
-            log.debug("Properties translated_text_2 translated_text_2 failure: {}", e.getMessage());
+            log.debug("Properties test failure: {}", e.getMessage());
         }
         return false;
     }
@@ -133,20 +133,20 @@ public class PrimaveraApplication {
                 }
             }
         } catch (Exception e) {
-            log.error("ApplicationRunner execution translated_text_1 error translated_text_2", e);
+            log.error("ApplicationRunner execution failed with error", e);
         }
     }
 
     private static void printApplicationInfo() {
         String startTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         
-        log.info("=== Primavera translated_text_6 information ===");
-        log.info("translated_text_2 translated_text_2: {}", startTime);
-        log.info("Java translated_text_2: {}", System.getProperty("java.version"));
-        log.info("translated_text_13 Bean translated_text_1: {}", applicationContext.getBeanNames().size());
+        log.info("=== Primavera with information ===");
+        log.info("test: {}", startTime);
+        log.info("Java test: {}", System.getProperty("java.version"));
+        log.info("created successfully Bean should: {}", applicationContext.getBeanNames().size());
         
         if (environment != null) {
-            log.info("translated_text_2 translated_text_2 translated_text_1: {}", environment.size());
+            log.info("test should: {}", environment.size());
         }
         
         log.info("================================");

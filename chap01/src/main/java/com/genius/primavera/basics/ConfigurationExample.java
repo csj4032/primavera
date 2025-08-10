@@ -32,12 +32,12 @@ public class ConfigurationExample {
         private String featuresString;
         
         public void printConfiguration() {
-            log.info("=== @Value annotation translated_text_2 ===");
-            log.info("translated_text_1 translated_text_2: {}", appName);
-            log.info("translated_text_2: {}", appVersion);
-            log.info("translated_text_3 translated_text_2: {}", debug);
-            log.info("translated_text_2 user: {}", maxUsers);
-            log.info("translated_text_2 translated_text_2: {}", getFeatures());
+            log.info("=== @Value annotation test ===");
+            log.info("should test: {}", appName);
+            log.info("test: {}", appVersion);
+            log.info("connection test: {}", debug);
+            log.info("test user: {}", maxUsers);
+            log.info("test: {}", getFeatures());
         }
         
         public String getAppName() { return appName; }

@@ -28,7 +28,7 @@ public class ExcelImportServiceImplTest {
 
 	@Test
 	@Order(1)
-	@DisplayName("translated_text_2 translated_text_3 test")
+	@DisplayName("test connection test")
 	public void fileSizeZeroTest() throws IOException {
 		ExcelImportRequest excelImportRequest = new ExcelImportRequest();
 		long size = excelImportService.getFileSize(excelImportRequest);
@@ -39,7 +39,7 @@ public class ExcelImportServiceImplTest {
 
 	@Test
 	@Order(2)
-	@DisplayName("translated_text_2 translated_text_2 translated_text_3 test")
+	@DisplayName("test connection test")
 	public void textFileTest() throws IOException {
 		Resource resource = resourceLoader.getResource("classpath:20191225.txt");
 		MockMultipartFile multipartFile = new MockMultipartFile("file", resource.getInputStream());
@@ -50,7 +50,7 @@ public class ExcelImportServiceImplTest {
 
 	@Test
 	@Order(3)
-	@DisplayName("translated_text_2 translated_text_2 translated_text_2 test")
+	@DisplayName("test test")
 	public void excelFileTest() throws IOException {
 		Resource resource = resourceLoader.getResource("classpath:20191225.xlsx");
 		MockMultipartFile multipartFile = new MockMultipartFile("file", resource.getInputStream());
@@ -61,7 +61,7 @@ public class ExcelImportServiceImplTest {
 
 	@Test
 	@Order(4)
-	@DisplayName("translated_text_2 translated_text_2 translated_text_2 translated_text_3 test")
+	@DisplayName("test test connection test")
 	public void excelFileRowCount() throws IOException {
 		Resource resource = resourceLoader.getResource("classpath:20191225.xlsx");
 		MockMultipartFile multipartFile = new MockMultipartFile("file", resource.getInputStream());

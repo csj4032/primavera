@@ -4,13 +4,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 
 @Slf4j
-@DisplayName("N:N translated_text_3 translated_text_3 translated_text_2")
+@DisplayName("N:N connection test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ManyToManyCompositeKeyTest extends ManyToManyTestBase {
 
 	@Test
 	@Order(1)
-	@DisplayName("translated_text_3, translated_text_3 translated_text_4 translated_text_2")
+	@DisplayName("connection, connection file test")
 	public void save() {
 		var sender1 = Sender.of("Sender1");
 		var sender2 = Sender.of("Sender2");
@@ -36,7 +36,7 @@ public class ManyToManyCompositeKeyTest extends ManyToManyTestBase {
 
 	@Test
 	@Order(2)
-	@DisplayName("translated_text_3, translated_text_3 translated_text_4 inquiry")
+	@DisplayName("connection, connection file inquiry")
 	public void find() {
 		LetterId letterId = new LetterId(1L, 1L);
 		Letter letter = entityManager.find(Letter.class, letterId);

@@ -15,55 +15,34 @@ public class LambdaClientFactory extends AwsServiceClientFactory {
 
     @Override
     public Object createClient(LocalStackContainer container) {
-        if (!isAvailable()) {
-            throw new IllegalStateException("AWS Lambda SDKtranslated_text_1 translated_text_6 translated_text_4. AWS SDK v2 dependencytranslated_text_1 translated_text_1.");
-        }
-
+        if (!isAvailable()) throw new IllegalStateException("AWS Lambda SDK is not available in classpath. AWS SDK v2  dependency needs to be added.");
         try {
             Class<?> lambdaClientClass = Class.forName(LAMBDA_CLIENT_CLASS);
             Class<?> awsCredentialsClass = Class.forName(AWS_CREDENTIALS_CLASS);
             Class<?> credentialsProviderClass = Class.forName(AWS_CREDENTIALS_PROVIDER_CLASS);
-
-            Object credentials = awsCredentialsClass.getMethod("create", String.class, String.class)
-                    .invoke(null, getAccessKey(container), getSecretKey(container));
-
+            Object credentials = awsCredentialsClass.getMethod("create", String.class, String.class).invoke(null, getAccessKey(container), getSecretKey(container));
             Class<?> awsCredentialsInterface = Class.forName("software.amazon.awssdk.auth.credentials.AwsCredentials");
-            Object credentialsProvider = credentialsProviderClass.getMethod("create", awsCredentialsInterface)
-                    .invoke(null, credentials);
-
+            Object credentialsProvider = credentialsProviderClass.getMethod("create", awsCredentialsInterface).invoke(null, credentials);
             Object builder = lambdaClientClass.getMethod("builder").invoke(null);
-
             String endpointUrl = getEndpointUrl(container, LocalStackContainer.Service.LAMBDA);
-            builder.getClass().getMethod("endpointOverride", URI.class)
-                    .invoke(builder, URI.create(endpointUrl));
-
+            builder.getClass().getMethod("endpointOverride", URI.class).invoke(builder, URI.create(endpointUrl));
             Class<?> awsCredentialsProviderInterface = Class.forName("software.amazon.awssdk.auth.credentials.AwsCredentialsProvider");
-            builder.getClass().getMethod("credentialsProvider", awsCredentialsProviderInterface)
-                    .invoke(builder, credentialsProvider);
-
+            builder.getClass().getMethod("credentialsProvider", awsCredentialsProviderInterface).invoke(builder, credentialsProvider);
             Class<?> regionClass = Class.forName("software.amazon.awssdk.regions.Region");
             Object region = regionClass.getMethod("of", String.class).invoke(null, getRegion(container));
             builder.getClass().getMethod("region", regionClass).invoke(builder, region);
-
             Object lambdaClient = builder.getClass().getMethod("build").invoke(builder);
-
-            log.info(" LambdaClienttranslated_text_1 translated_text_10 translated_text_13. translated_text_5: {}", endpointUrl);
+            log.info(" LambdaClient created successfully. Endpoint: {}", endpointUrl);
             return lambdaClient;
-
         } catch (Exception e) {
-            log.error("LambdaClient creation translated_text_1 error translated_text_2", e);
+            log.error("LambdaClient creation failed with error", e);
             throw new RuntimeException("LambdaClient creation failure", e);
         }
     }
 
     @Override
     public boolean isAvailable() {
-        return areClassesAvailable(
-                LAMBDA_CLIENT_CLASS,
-                AWS_CREDENTIALS_CLASS,
-                AWS_CREDENTIALS_PROVIDER_CLASS,
-                "software.amazon.awssdk.regions.Region"
-        );
+        return areClassesAvailable(LAMBDA_CLIENT_CLASS, AWS_CREDENTIALS_CLASS, AWS_CREDENTIALS_PROVIDER_CLASS, "software.amazon.awssdk.regions.Region");
     }
 
     @Override

@@ -233,7 +233,7 @@ public final class XssConfiguration {
 					Object obj = Class.forName(className.trim()).newInstance();
 					rule.addListener(ElementListener.class.cast(obj));
 				} catch (Exception ex) {
-					System.out.println(name + "translated_text_3 " + className + "(ElementListener) translated_text_2 translated_text_1 error translated_text_2. xml translated_text_2 translated_text_15. " + ex.toString());
+					System.out.println(name + "connection " + className + "(ElementListener) test failed with error. xml test should5. " + ex.toString());
 
 				}
 			}
@@ -300,7 +300,7 @@ public final class XssConfiguration {
 					Object obj = Class.forName(className.trim()).newInstance();
 					rule.addListener(AttributeListener.class.cast(obj));
 				} catch (Exception ex) {
-					System.out.println(name + "translated_text_3 " + className + "(AttributeListener) translated_text_2 translated_text_1 error translated_text_2. xml translated_text_2 translated_text_15. " + ex.toString());
+					System.out.println(name + "connection " + className + "(AttributeListener) test failed with error. xml test should5. " + ex.toString());
 
 				}
 			}

@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @EnableTestContainers
 @ActiveProfiles("test")
-@DisplayName(value = "translated_text_2 translated_text_2 test")
+@DisplayName(value = "test test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class RoleMapperTest {
 
@@ -31,44 +31,44 @@ public class RoleMapperTest {
 
     @Test
     @Order(1)
-    @DisplayName("translated_text_2 translated_text_2 data translated_text_2")
+    @DisplayName("test data test")
     public void insertRoleData() {
         try {
             long result = roleMapper.save(Role.builder().type(RoleType.ETC).build());
-            log.info("ETC translated_text_2 translated_text_10 translated_text_7. result: {}", result);
+            log.info("ETC test successfully logging. result: {}", result);
             assertEquals(1, result);
         } catch (Exception e) {
-            log.info("ETC translated_text_2 translated_text_2 translated_text_1 exception translated_text_2: {}", e.getMessage());
-            log.info("exception translated_text_2: {}", e.getClass().getSimpleName());
+            log.info("ETC test should exception test: {}", e.getMessage());
+            log.info("exception test: {}", e.getClass().getSimpleName());
             if (e.getCause() != null) {
-                log.info("translated_text_2: {}", e.getCause().getMessage());
+                log.info("test: {}", e.getCause().getMessage());
             }
-            assertTrue(true, "ETC translated_text_2 translated_text_2 translated_text_8 translated_text_3 translated_text_5.");
+            assertTrue(true, "ETC test configuration connection Endpoint.");
         }
     }
 
     @Test
     @Order(2)
-    @DisplayName("translated_text_2 data verification")
+    @DisplayName("test data verification")
     public void verifyRoleData() {
         List<Role> roles = roleMapper.selectAll();
         log.info(roles.toString());
-        assertNotNull(roles, "translated_text_2 data nulltranslated_text_4 translated_text_1 translated_text_3.");
-        assertFalse(roles.isEmpty(), "translated_text_2 data translated_text_6 translated_text_1 translated_text_3.");
+        assertNotNull(roles, "test data nullfile should connection.");
+        assertFalse(roles.isEmpty(), "test data with should connection.");
         for (Role role : roles) {
             log.info("Role ID: {}, Type: {}, Name: {}", role.getId(), role.getType().getValue(), role.getType().getName());
-            assertNotNull(role.getType(), "translated_text_2 translated_text_2 nulltranslated_text_4 translated_text_1 translated_text_3.");
-            assertNotNull(role.getType().getName(), "translated_text_2 translated_text_3 nulltranslated_text_4 translated_text_1 translated_text_3.");
+            assertNotNull(role.getType(), "test nullfile should connection.");
+            assertNotNull(role.getType().getName(), "test connection nullfile should connection.");
         }
     }
 
     @Test
     @Order(3)
-    @DisplayName("translated_text_2 data deletion")
+    @DisplayName("test data deletion")
     public void deleteRoleData() {
         roleMapper.deleteAll();
         List<Role> roles = roleMapper.selectAll();
-        log.info("translated_text_2 data deletion translated_text_1 verification: {}", roles);
-        assertTrue(roles.isEmpty(), "translated_text_2 data translated_text_5 translated_text_3.");
+        log.info("test data deletion should verification: {}", roles);
+        assertTrue(roles.isEmpty(), "test data Endpoint connection.");
     }
 }

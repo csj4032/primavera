@@ -14,7 +14,7 @@ import java.util.List;
 class UserTest {
 
     @Test
-    @DisplayName("User translated_text_3 successfully translated_text_11 translated_text_2")
+    @DisplayName("User connection successfully processing test")
     void userCreationTest() {
 
         long id = 1L;
@@ -36,7 +36,7 @@ class UserTest {
     }
 
     @Test
-    @DisplayName("User Buildertranslated_text_1 translated_text_4 translated_text_1 successfully translated_text_10 translated_text_2")
+    @DisplayName("User Buildershould file should successfully successfully test")
     void userBuilderTest() {
 
         long id = 1L;
@@ -66,7 +66,7 @@ class UserTest {
     }
 
     @Test
-    @DisplayName("translated_text_3 idtranslated_text_1 emailtranslated_text_1 translated_text_2 User translated_text_3 equals translated_text_4 truetranslated_text_1 translated_text_4 translated_text_2")
+    @DisplayName("connection idshould emailshould test User connection equals file trueshould file test")
     void userEqualsTest() {
 
         User user1 = User.builder()
@@ -85,7 +85,7 @@ class UserTest {
     }
 
     @Test
-    @DisplayName("translated_text_2 idtranslated_text_1 emailtranslated_text_1 translated_text_2 User translated_text_3 equals translated_text_4 falsetranslated_text_1 translated_text_4 translated_text_2")
+    @DisplayName("test idshould emailshould test User connection equals file falseshould file test")
     void userNotEqualsTest() {
 
         User user1 = User.builder()
@@ -108,7 +108,7 @@ class UserTest {
     }
 
     @Test
-    @DisplayName("User translated_text_2 translated_text_10 translated_text_9 translated_text_3 setter translated_text_4 successfully translated_text_4 translated_text_2")
+    @DisplayName("User test successfully should not connection setter file successfully file test")
     void userSetterMethodsTest() {
 
         User user = new User();
@@ -142,7 +142,7 @@ class UserTest {
     }
 
     @Test
-    @DisplayName("User translated_text_2 id translated_text_10 translated_text_9 translated_text_3 setter translated_text_4 successfully translated_text_4 translated_text_2")
+    @DisplayName("User test id successfully should not connection setter file successfully file test")
     void userSingleIdConstructorSetterTest() {
 
         User user = new User(1L);
@@ -166,7 +166,7 @@ class UserTest {
     }
 
     @Test
-    @DisplayName("User translated_text_2 translated_text_10 translated_text_10 null translated_text_1 translated_text_3 successfully translated_text_4 translated_text_2")
+    @DisplayName("User test successfully successfully null should connection successfully file test")
     void userSetterWithNullValuesTest() {
 
         User user = new User();
@@ -189,7 +189,7 @@ class UserTest {
     }
 
     @Test
-    @DisplayName("User translated_text_2 translated_text_1 translated_text_2 id translated_text_10 successfully translated_text_4 translated_text_2")
+    @DisplayName("User test should test id successfully successfully file test")
     void userConstructorTest() {
 
         User defaultUser = new User();

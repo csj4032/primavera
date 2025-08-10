@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ActiveProfiles("test")
-@DisplayName("translated_text_4 translated_text_2 test")
+@DisplayName("file test")
 @WebMvcTest(ExcelImportController.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestInstance(value = TestInstance.Lifecycle.PER_CLASS)
@@ -48,7 +48,7 @@ public class ExcelImportControllerTest {
     private MultiValueMap<String, String> multiValueMap;
 
     @Test
-    @DisplayName("translated_text_4 translated_text_2 test")
+    @DisplayName("file test")
     public void getResourceTest() {
         resource = resourceLoader.getResource("classpath:./data/20191225.txt");
         assertTrue(resource.exists());
@@ -90,7 +90,7 @@ public class ExcelImportControllerTest {
 
     @Test
     @Order(3)
-    @DisplayName("excel translated_text_2 translated_text_2 verification test")
+    @DisplayName("excel test verification test")
     public void isExcelFile() {
 
     }

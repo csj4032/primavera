@@ -15,6 +15,7 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-data-r2dbc"
     implementation "org.mariadb:r2dbc-mariadb:${r2dbcMariadbVersion}"
     implementation "io.r2dbc:r2dbc-pool:${r2dbcPoolVersion}"
+    implementation "co.elastic.clients:elasticsearch-java:8.14.3"
     testImplementation "org.springframework.boot:spring-boot-starter-test"
     testImplementation "io.projectreactor:reactor-test:${reactorTestVersion}"
     testImplementation "org.testcontainers:junit-jupiter:${testContainersVersion}"

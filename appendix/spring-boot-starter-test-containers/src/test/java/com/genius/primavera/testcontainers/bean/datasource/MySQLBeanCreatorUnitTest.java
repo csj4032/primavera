@@ -69,20 +69,20 @@ class MySQLBeanCreatorUnitTest {
         spec.setConnectionTimeout(10000);
         spec.setSslEnabled(false);
         
-        log.info("MySQL translated_text_2 test translated_text_2 completed");
+        log.info("MySQL test test completed");
     }
 
     @Test
     @Order(1)
-    @DisplayName("MySQL BeanCreator translated_text_2 translated_text_2 verification")
+    @DisplayName("MySQL BeanCreator test verification")
     void testSupportedType() {
         assertEquals(ContainerType.MYSQL, beanCreator.getSupportedType());
-        log.info(" MySQL BeanCreator translated_text_2 translated_text_2: {}", beanCreator.getSupportedType());
+        log.info(" MySQL BeanCreator test: {}", beanCreator.getSupportedType());
     }
 
     @Test
     @Order(2)
-    @DisplayName("translated_text_2 HikariConfig creation translated_text_1 translated_text_2 validation")
+    @DisplayName("test HikariConfig creation should test validation")
     void testCreateBaseConfig() {
         ContainerInfo containerInfo = new ContainerInfo(
                 "test-mysql",
@@ -93,21 +93,21 @@ class MySQLBeanCreatorUnitTest {
 
         HikariConfig config = beanCreator.testCreateBaseConfig(containerInfo);
         
-        assertNotNull(config, "HikariConfigtranslated_text_1 creation translated_text_3");
-        assertTrue(config.getJdbcUrl().contains("mysql"), "JDBC URLtranslated_text_1 mysqltranslated_text_1 translated_text_4 translated_text_3");
-        assertTrue(config.getJdbcUrl().contains("localhost:3308"), "JDBC URLtranslated_text_1 translated_text_4 translated_text_3 translated_text_4 translated_text_3");
+        assertNotNull(config, "HikariConfigshould creation connection");
+        assertTrue(config.getJdbcUrl().contains("mysql"), "JDBC URLshould mysqlshould file connection");
+        assertTrue(config.getJdbcUrl().contains("localhost:3308"), "JDBC URLshould file connection file connection");
         assertEquals("test-mysql-pool", config.getPoolName());
         assertEquals(2, config.getMinimumIdle());
         assertEquals(600000, config.getIdleTimeout());
         
-        log.info(" translated_text_2 HikariConfig creation success");
+        log.info(" test HikariConfig creation success");
         log.info("  - JDBC URL: {}", config.getJdbcUrl());
         log.info("  - Pool Name: {}", config.getPoolName());
     }
 
     @Test
     @Order(3)
-    @DisplayName("translated_text_2 translated_text_2 translated_text_2 validation")
+    @DisplayName("test test validation")
     void testApplyCommonSettings() {
         ContainerInfo containerInfo = new ContainerInfo(
                 "test-mysql-common",
@@ -124,14 +124,14 @@ class MySQLBeanCreatorUnitTest {
         assertEquals(5, config.getMaximumPoolSize());
         assertEquals(10000, config.getConnectionTimeout());
         
-        log.info(" translated_text_2 translated_text_2 translated_text_2 success");
+        log.info(" test test success");
         log.info("  - Username: {}", config.getUsername());
         log.info("  - Pool Size: {}", config.getMaximumPoolSize());
     }
 
     @Test
     @Order(4)
-    @DisplayName("translated_text_2 validation (translated_text_2 translated_text_2)")
+    @DisplayName("test validation (test)")
     void testConfigurationOnly() {
         beanCreator.setReturnConfigOnly(true);
         
@@ -144,18 +144,18 @@ class MySQLBeanCreatorUnitTest {
 
         Object result = beanCreator.createBean(containerInfo);
         
-        assertNotNull(result, "translated_text_1 nulltranslated_text_1 translated_text_4 translated_text_3");
-        assertInstanceOf(String.class, result, "String translated_text_6 translated_text_3");
-        assertTrue(result.toString().contains("test-mysql-config-only"), "translated_text_1 translated_text_1translated_text_1 translated_text_5 translated_text_3");
+        assertNotNull(result, "should nullshould file connection");
+        assertInstanceOf(String.class, result, "String with connection");
+        assertTrue(result.toString().contains("test-mysql-config-only"), "needs to be addedshould Endpoint connection");
         
-        log.info(" translated_text_2 validation completed (translated_text_2 translated_text_2): {}", result);
+        log.info(" test validation completed (test): {}", result);
         
         beanCreator.setReturnConfigOnly(false);
     }
 
     @Test
     @Order(5)
-    @DisplayName("translated_text_2 translated_text_2 validation")
+    @DisplayName("test validation")
     void testDefaultSettings() {
         beanCreator.setReturnConfigOnly(true);
         
@@ -170,17 +170,17 @@ class MySQLBeanCreatorUnitTest {
 
         Object result = beanCreator.createBean(containerInfo);
         
-        assertNotNull(result, "translated_text_1 creation translated_text_3");
-        assertTrue(result.toString().contains("test-mysql-defaults"), "translated_text_1 translated_text_1translated_text_1 translated_text_5 translated_text_3");
+        assertNotNull(result, "should creation connection");
+        assertTrue(result.toString().contains("test-mysql-defaults"), "needs to be addedshould Endpoint connection");
         
-        log.info(" translated_text_2 translated_text_2 validation success: {}", result);
+        log.info(" test validation success: {}", result);
         
         beanCreator.setReturnConfigOnly(false);
     }
 
     @Test
     @Order(6)
-    @DisplayName("MySQL translated_text_2 translated_text_2 validation")
+    @DisplayName("MySQL test validation")
     void testAdvancedSettings() {
         beanCreator.setReturnConfigOnly(true);
         
@@ -195,11 +195,11 @@ class MySQLBeanCreatorUnitTest {
         );
 
         Object result = beanCreator.createBean(containerInfo);
-        assertNotNull(result, "translated_text_1 creation translated_text_3");
+        assertNotNull(result, "should creation connection");
         
-        assertTrue(result.toString().contains("test-mysql-advanced"), "translated_text_1 translated_text_1translated_text_1 translated_text_5 translated_text_3");
+        assertTrue(result.toString().contains("test-mysql-advanced"), "needs to be addedshould Endpoint connection");
         
-        log.info(" translated_text_2 translated_text_2 validation completed: {}", result);
+        log.info(" test validation completed: {}", result);
         log.info("  - SQL Mode: {}", spec.getSqlMode());
         log.info("  - Storage Engine: {}", spec.getDefaultStorageEngine());
         log.info("  - Character Set: {}", spec.getCharacterSet());
@@ -211,7 +211,7 @@ class MySQLBeanCreatorUnitTest {
 
     @Test
     @Order(7)
-    @DisplayName("MySQL translated_text_3 translated_text_1 translated_text_3 translated_text_2 validation")
+    @DisplayName("MySQL connection should connection test validation")
     void testTimezoneAndCharsetSettings() {
         beanCreator.setReturnConfigOnly(true);
         
@@ -232,9 +232,9 @@ class MySQLBeanCreatorUnitTest {
             );
 
             Object result = beanCreator.createBean(containerInfo);
-            assertNotNull(result, "translated_text_1 creation translated_text_3: " + timezones[i]);
+            assertNotNull(result, "should creation connection: " + timezones[i]);
             
-            log.info(" translated_text_3 {} / translated_text_3 {} translated_text_2 validation completed", 
+            log.info(" connection {} / connection {} test validation completed", 
                     timezones[i], i < charsets.length ? charsets[i] : "default");
         }
         
@@ -243,7 +243,7 @@ class MySQLBeanCreatorUnitTest {
 
     @Test
     @Order(8)
-    @DisplayName("MySQL SSL translated_text_2 validation")
+    @DisplayName("MySQL SSL test validation")
     void testSslSettings() {
         beanCreator.setReturnConfigOnly(true);
         
@@ -256,9 +256,9 @@ class MySQLBeanCreatorUnitTest {
         );
 
         Object result = beanCreator.createBean(containerInfo);
-        assertNotNull(result, "SSL translated_text_4 translated_text_2translated_text_1 creation translated_text_3");
+        assertNotNull(result, "SSL file testshould creation connection");
         
-        log.info(" SSL translated_text_4 translated_text_2 validation completed");
+        log.info(" SSL file test validation completed");
         
         spec.setSslEnabled(true);
         containerInfo = new ContainerInfo(
@@ -269,9 +269,9 @@ class MySQLBeanCreatorUnitTest {
         );
 
         result = beanCreator.createBean(containerInfo);
-        assertNotNull(result, "SSL translated_text_3 translated_text_2translated_text_1 creation translated_text_3");
+        assertNotNull(result, "SSL connection testshould creation connection");
         
-        log.info(" SSL translated_text_3 translated_text_2 validation completed");
+        log.info(" SSL connection test validation completed");
         
         beanCreator.setReturnConfigOnly(false);
     }

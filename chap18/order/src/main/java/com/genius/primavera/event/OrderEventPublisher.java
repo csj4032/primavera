@@ -35,10 +35,10 @@ public class OrderEventPublisher {
             
             future.whenComplete((result, throwable) -> {
                 if (throwable != null) {
-                    log.error("translated_text_2 creation translated_text_3 translated_text_2 failure: orderId={}, error={}", 
+                    log.error("test creation connection test failure: orderId={}, error={}", 
                             event.getOrderId(), throwable.getMessage());
                 } else {
-                    log.info("translated_text_2 creation translated_text_3 translated_text_2 success: orderId={}, partition={}, offset={}", 
+                    log.info("test creation connection test success: orderId={}, partition={}, offset={}", 
                             event.getOrderId(),
                             result.getRecordMetadata().partition(),
                             result.getRecordMetadata().offset());
@@ -64,10 +64,10 @@ public class OrderEventPublisher {
             
             future.whenComplete((result, throwable) -> {
                 if (throwable != null) {
-                    log.error("translated_text_2 translated_text_2 translated_text_3 translated_text_2 failure: orderId={}, error={}", 
+                    log.error("test connection test failure: orderId={}, error={}", 
                             orderId, throwable.getMessage());
                 } else {
-                    log.info("translated_text_2 translated_text_2 translated_text_3 translated_text_2 success: orderId={}, reason={}", 
+                    log.info("test connection test success: orderId={}, reason={}", 
                             orderId, reason);
                 }
             });

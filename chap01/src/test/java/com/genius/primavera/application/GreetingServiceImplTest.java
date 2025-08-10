@@ -8,7 +8,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class GreetingServiceImplTest {
 
     @Test
-    @DisplayName("hello() translated_text_4 'Hello'translated_text_1 translated_text_4 translated_text_2")
+    @DisplayName("hello() file 'Hello'should file test")
     void helloTest() {
         HelloService greetingService = new HelloServiceImpl();
         String result = greetingService.hello();

@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
 @ActiveProfiles("test")
-@DisplayName("Elasticsearch translated_text_2 test")
+@DisplayName("Elasticsearch test")
 @SpringBootTest(classes = {com.genius.primavera.batch.config.ElasticsearchConfiguration.class})
 @EnableTestContainers(value = {@EnableTestContainers.TestContainer(type = ContainerType.ELASTICSEARCH, name = "elasticsearch")})
 public class ElasticsearchConnectionTest {
@@ -29,18 +29,18 @@ public class ElasticsearchConnectionTest {
     private Environment environment;
 
     @Test
-    @DisplayName("Elasticsearch translated_text_6 successfully translated_text_4")
+    @DisplayName("Elasticsearch with successfully file")
     void shouldInjectElasticsearchClient() {
-        assertNotNull(elasticsearchClient, "ElasticsearchClienttranslated_text_1 translated_text_5 translated_text_2");
-        log.info("ElasticsearchClient translated_text_2 success: {}", elasticsearchClient.getClass().getSimpleName());
+        assertNotNull(elasticsearchClient, "ElasticsearchClientshould processing test");
+        log.info("ElasticsearchClient test success: {}", elasticsearchClient.getClass().getSimpleName());
         String host = environment.getProperty("elasticsearch.host");
         String port = environment.getProperty("elasticsearch.port");
         String scheme = environment.getProperty("elasticsearch.scheme");
-        log.info("Environment translated_text_2:");
+        log.info("Environment test:");
         log.info("  elasticsearch.host: {}", host);
         log.info("  elasticsearch.port: {}", port);
         log.info("  elasticsearch.scheme: {}", scheme);
-        log.info("all TestContainer translated_text_2 verification:");
+        log.info("all TestContainer test verification:");
         String[] tcProperties = {
             "testcontainer.runtime.elasticsearch.host",
             "testcontainer.runtime.elasticsearch.port",
@@ -56,24 +56,24 @@ public class ElasticsearchConnectionTest {
     }
 
     @Test
-    @DisplayName("Elasticsearch translated_text_4 translated_text_3 verification translated_text_1 exists")
+    @DisplayName("Elasticsearch file connection verification should exists")
     void shouldCheckElasticsearchHealth() throws Exception {
         HealthResponse healthResponse = elasticsearchClient.cluster().health();
-        assertNotNull(healthResponse, "Health responsetranslated_text_1 nulltranslated_text_1 translated_text_4 translated_text_2");
-        assertNotNull(healthResponse.status(), "translated_text_4 translated_text_2translated_text_1 translated_text_3 translated_text_2");
-        log.info("Elasticsearch translated_text_4 translated_text_2: {}", healthResponse.status());
-        log.info("translated_text_4 translated_text_1: {}", healthResponse.clusterName());
-        log.info("translated_text_2 translated_text_1: {}", healthResponse.numberOfNodes());
+        assertNotNull(healthResponse, "Health responseshould nullshould file test");
+        assertNotNull(healthResponse.status(), "file testshould connection test");
+        log.info("Elasticsearch file test: {}", healthResponse.status());
+        log.info("file should: {}", healthResponse.clusterName());
+        log.info("test should: {}", healthResponse.numberOfNodes());
     }
 
     @Test
-    @DisplayName("Elasticsearch translated_text_4 translated_text_12 translated_text_8 translated_text_1 exists")
+    @DisplayName("Elasticsearch file operation configuration should exists")
     void shouldRetrieveClusterInfo() throws Exception {
         var infoResponse = elasticsearchClient.info();
-        assertNotNull(infoResponse, "Info responsetranslated_text_1 nulltranslated_text_1 translated_text_4 translated_text_2");
-        assertNotNull(infoResponse.version(), "translated_text_2 translated_text_1 translated_text_3 translated_text_2");
-        log.info("Elasticsearch translated_text_2: {}", infoResponse.version().number());
-        log.info("translated_text_4 UUID: {}", infoResponse.clusterUuid());
-        log.info("translated_text_4 translated_text_1: {}", infoResponse.clusterName());
+        assertNotNull(infoResponse, "Info responseshould nullshould file test");
+        assertNotNull(infoResponse.version(), "test should connection test");
+        log.info("Elasticsearch test: {}", infoResponse.version().number());
+        log.info("file UUID: {}", infoResponse.clusterUuid());
+        log.info("file should: {}", infoResponse.clusterName());
     }
 }

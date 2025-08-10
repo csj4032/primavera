@@ -25,7 +25,7 @@ public class HelloControllerTest {
     private HelloController helloController;
 
     @Test
-    @DisplayName("greeting() translated_text_4 'Hello World!!!'translated_text_1 translated_text_4 translated_text_2")
+    @DisplayName("greeting() file 'Hello World!!!'should file test")
     void greetingTest() {
         when(greetingService.hello()).thenReturn("Hello");
         when(worldService.world()).thenReturn("World");
@@ -34,7 +34,7 @@ public class HelloControllerTest {
     }
 
     @Test
-    @DisplayName("hello() translated_text_4 GreetingServicetranslated_text_1 hello() translated_text_3 translated_text_1 translated_text_4 translated_text_2")
+    @DisplayName("hello() file GreetingServiceshould hello() connection should file test")
     void helloTest() {
         when(greetingService.hello()).thenReturn("Hello");
         when(worldService.world()).thenReturn("World");
@@ -43,7 +43,7 @@ public class HelloControllerTest {
     }
 
     @Test
-    @DisplayName("world() translated_text_4 WorldServicetranslated_text_1 world() translated_text_3 translated_text_1 translated_text_4 translated_text_2")
+    @DisplayName("world() file WorldServiceshould world() connection should file test")
     void worldTest() {
         when(worldService.world()).thenReturn("World");
         String result = helloController.world();

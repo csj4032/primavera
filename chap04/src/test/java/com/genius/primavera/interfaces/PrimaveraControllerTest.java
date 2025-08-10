@@ -50,7 +50,7 @@ public class PrimaveraControllerTest {
 
     @Test
     @Order(1)
-    @DisplayName("translated_text_2 translated_text_1 translated_text_3 translated_text_5 test")
+    @DisplayName("test should connection processing test")
     public void testIndex() throws Exception {
         given(dataSource.getCatalog()).willReturn("test_catalog");
         mockMvc.perform(get("/")).andDo(print()).andExpect(status().isOk()).andExpect(content().string("test_catalog"));
@@ -59,7 +59,7 @@ public class PrimaveraControllerTest {
 
     @Test
     @Order(2)
-    @DisplayName("user translated_text_2 inquiry test")
+    @DisplayName("user test inquiry test")
     void testGetUsers() throws Exception {
         User user1 = User.builder()
                 .id(1L)
@@ -95,7 +95,7 @@ public class PrimaveraControllerTest {
 
     @Test
     @Order(3)
-    @DisplayName("translated_text_2 user inquiry success test")
+    @DisplayName("test user inquiry success test")
     void testGetUserByIdSuccess() throws Exception {
         long userId = 1L;
         User expectedUser = User.builder()
@@ -121,7 +121,7 @@ public class PrimaveraControllerTest {
 
     @Test
     @Order(4)
-    @DisplayName("translated_text_2 user inquiry failure test (user translated_text_2)")
+    @DisplayName("test user inquiry failure test (user test)")
     void testGetUserByIdNotFound() throws Exception {
         long userId = 99999L;
         given(userDao.findById(userId)).willReturn(Optional.empty());
@@ -130,7 +130,7 @@ public class PrimaveraControllerTest {
 
     @Test
     @Order(5)
-    @DisplayName("user translated_text_2 inquiry - result translated_text_2 test")
+    @DisplayName("user test inquiry - result test")
     void testGetUsersEmpty() throws Exception {
         given(userDao.getUsers()).willReturn(Collections.emptyList());
         mockMvc.perform(get("/users").contentType(MediaType.APPLICATION_JSON))

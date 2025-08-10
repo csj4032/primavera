@@ -43,28 +43,28 @@ class PostgreSQLBeanCreatorRealTest {
         spec.setMaxConnections(5);
         spec.setConnectionTimeout(10000);
         
-        log.info("PostgreSQL test translated_text_4 translated_text_3: {}", container.getJdbcUrl());
+        log.info("PostgreSQL test file connection: {}", container.getJdbcUrl());
     }
 
     @AfterAll
     void tearDown() {
         if (container != null) {
             container.stop();
-            log.info("PostgreSQL test translated_text_4 translated_text_3");
+            log.info("PostgreSQL test file connection");
         }
     }
 
     @Test
     @Order(1)
-    @DisplayName("PostgreSQL BeanCreator translated_text_2 translated_text_2 verification")
+    @DisplayName("PostgreSQL BeanCreator test verification")
     void testSupportedType() {
         assertEquals(ContainerType.POSTGRESQL, beanCreator.getSupportedType());
-        log.info(" PostgreSQL BeanCreator translated_text_2 translated_text_2: {}", beanCreator.getSupportedType());
+        log.info(" PostgreSQL BeanCreator test: {}", beanCreator.getSupportedType());
     }
 
     @Test
     @Order(2)
-    @DisplayName("PostgreSQL DataSource translated_text_1 creation translated_text_1 translated_text_2 translated_text_2 test")
+    @DisplayName("PostgreSQL DataSource should creation should test test")
     void testCreateBeanWithRealConnection() {
         ContainerInfo containerInfo = new ContainerInfo(
                 "test-postgresql",
@@ -75,27 +75,27 @@ class PostgreSQLBeanCreatorRealTest {
         
         HikariDataSource dataSource = (HikariDataSource) assertDoesNotThrow(() -> beanCreator.createBean(containerInfo));
         
-        assertNotNull(dataSource, "creation DataSourcetranslated_text_1 nulltranslated_text_1 translated_text_4 translated_text_3");
-        assertInstanceOf(HikariDataSource.class, dataSource, "HikariDataSource translated_text_6 translated_text_3");
+        assertNotNull(dataSource, "creation DataSourceshould nullshould file connection");
+        assertInstanceOf(HikariDataSource.class, dataSource, "HikariDataSource with connection");
         
         assertDoesNotThrow(() -> {
             try (var connection = dataSource.getConnection()) {
-                assertTrue(connection.isValid(5), "translated_text_2translated_text_1 translated_text_4 translated_text_3");
+                assertTrue(connection.isValid(5), "testshould file connection");
                 var statement = connection.createStatement();
                 var resultSet = statement.executeQuery("SELECT 1");
-                assertTrue(resultSet.next(), "translated_text_2 translated_text_1 translated_text_3 translated_text_3");
-                assertEquals(1, resultSet.getInt(1), "translated_text_1 1translated_text_1 translated_text_3");
-                log.info(" PostgreSQL translated_text_2 test success");
+                assertTrue(resultSet.next(), "test should connection");
+                assertEquals(1, resultSet.getInt(1), "should 1should connection");
+                log.info(" PostgreSQL test success");
             }
-        }, "PostgreSQL translated_text_2translated_text_1 success translated_text_3");
+        }, "PostgreSQL testshould success connection");
         
         dataSource.close();
-        log.info(" PostgreSQL DataSource creation translated_text_1 translated_text_2 test success");
+        log.info(" PostgreSQL DataSource creation should test success");
     }
 
     @Test
     @Order(3)
-    @DisplayName("PostgreSQL SSL translated_text_4 translated_text_2 test")
+    @DisplayName("PostgreSQL SSL file test")
     void testSslDisabledSetting() {
         spec.setSslMode(PostgreSqlContainerSpec.SslMode.DISABLE);
         
@@ -107,15 +107,15 @@ class PostgreSQLBeanCreatorRealTest {
         );
 
         HikariDataSource dataSource = (HikariDataSource) beanCreator.createBean(containerInfo);
-        assertNotNull(dataSource, "DataSourcetranslated_text_1 creation translated_text_3");
+        assertNotNull(dataSource, "DataSourceshould creation connection");
         
         assertDoesNotThrow(() -> {
             try (var connection = dataSource.getConnection()) {
-                assertTrue(connection.isValid(3), "SSL translated_text_4 translated_text_2translated_text_1 translated_text_4 translated_text_3");
+                assertTrue(connection.isValid(3), "SSL file testshould file connection");
             }
         });
         
         dataSource.close();
-        log.info(" SSL translated_text_4 translated_text_2 translated_text_1 translated_text_2 validation completed");
+        log.info(" SSL file test should test validation completed");
     }
 }

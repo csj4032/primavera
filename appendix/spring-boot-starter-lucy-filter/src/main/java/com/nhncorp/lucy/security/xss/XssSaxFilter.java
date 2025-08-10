@@ -496,7 +496,7 @@ public final class XssSaxFilter implements LucyXssFilter {
 						this.serialize(writer, enableHtmlAccess, neloLogWriter);
 						break;
 					default:
-						System.out.println("translated_text_2 translated_text_1 translated_text_1 translated_text_2 translated_text_5.");
+						System.out.println("test needs to be added test Endpoint.");
 				}
 			}
 		}

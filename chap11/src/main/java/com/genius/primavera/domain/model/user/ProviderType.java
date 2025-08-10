@@ -4,9 +4,9 @@ import lombok.Getter;
 
 @Getter
 public enum  ProviderType {
-    FACEBOOK(1, "translated_text_4"),
-    GITHUB(2, "translated_text_2"),
-    GOOGLE(3, "translated_text_2");
+    FACEBOOK(1, "file"),
+    GITHUB(2, "test"),
+    GOOGLE(3, "test");
 
     private int value;
     private String name;

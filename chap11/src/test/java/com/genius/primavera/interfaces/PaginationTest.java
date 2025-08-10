@@ -26,7 +26,7 @@ public class PaginationTest {
 
     @Test
     @Order(1)
-    @DisplayName("translated_text_1 95 translated_text_3, 6translated_text_3, translated_text_3 translated_text_3 5")
+    @DisplayName("should 95 connection, 6connection, connection 5")
     public void page6Size5() {
         PageRequest pageRequest = PageRequest.of(6, 5);
         List<Post> contents = posts.stream().skip(pageRequest.getOffset()).limit(pageRequest.getRowNumber()).collect(Collectors.toList());
@@ -41,7 +41,7 @@ public class PaginationTest {
 
     @Test
     @Order(2)
-    @DisplayName("translated_text_1 95 translated_text_3, 2translated_text_3,  translated_text_3translated_text_3 10")
+    @DisplayName("should 95 connection, 2connection,  connectionconnection 10")
     public void page2Size10() {
         PageRequest pageRequest = PageRequest.of(2);
         List<Post> contents = posts.stream().skip(pageRequest.getOffset()).limit(pageRequest.getRowNumber()).collect(Collectors.toList());
@@ -56,7 +56,7 @@ public class PaginationTest {
 
     @Test
     @Order(3)
-    @DisplayName("translated_text_1 95 translated_text_3, 3translated_text_3, translated_text_3translated_text_3 20")
+    @DisplayName("should 95 connection, 3connection, connectionconnection 20")
     public void page3Size20() {
         PageRequest pageRequest = PageRequest.of(3, 20);
         List<Post> contents = posts.stream().skip(pageRequest.getOffset()).limit(pageRequest.getRowNumber()).collect(Collectors.toList());
@@ -71,7 +71,7 @@ public class PaginationTest {
 
     @Test
     @Order(4)
-    @DisplayName("translated_text_1 95 translated_text_3,  5translated_text_3, translated_text_3translated_text_3 5, translated_text_3translated_text_3 20")
+    @DisplayName("should 95 connection,  5connection, connectionconnection 5, connectionconnection 20")
     public void page5Size20Total20() {
         PageRequest pageRequest = PageRequest.of(5, 20, 20);
         List<Post> contents = posts.stream().skip(pageRequest.getOffset()).limit(pageRequest.getRowNumber()).collect(Collectors.toList());
@@ -86,7 +86,7 @@ public class PaginationTest {
 
     @Test
     @Order(5)
-    @DisplayName("translated_text_1 95 translated_text_3,  5translated_text_3, translated_text_3translated_text_3 5, translated_text_3translated_text_3 3")
+    @DisplayName("should 95 connection,  5connection, connectionconnection 5, connectionconnection 3")
     public void page4Size20Total5() {
         PageRequest pageRequest = PageRequest.of(4, 20, 3);
         List<Post> contents = posts.stream().skip(pageRequest.getOffset()).limit(pageRequest.getRowNumber()).collect(Collectors.toList());
@@ -103,7 +103,7 @@ public class PaginationTest {
 
     @Test
     @Order(6)
-    @DisplayName("translated_text_1 95 translated_text_3, 10translated_text_3, translated_text_3translated_text_3 1, translated_text_3translated_text_3 20")
+    @DisplayName("should 95 connection, 10connection, connectionconnection 1, connectionconnection 20")
     public void page10Size1Total20() {
         PageRequest pageRequest = PageRequest.of(10, 1, 20);
         List<Post> contents = posts.stream().skip(pageRequest.getOffset()).limit(pageRequest.getRowNumber()).collect(Collectors.toList());
@@ -122,7 +122,7 @@ public class PaginationTest {
 
     @Test
     @Order(7)
-    @DisplayName("translated_text_1 95 translated_text_3, 10translated_text_3, translated_text_3translated_text_3 10, translated_text_3translated_text_3 10")
+    @DisplayName("should 95 connection, 10connection, connectionconnection 10, connectionconnection 10")
     public void page10Size10Total10() {
         PageRequest pageRequest = PageRequest.of(10, 10, 10);
         List<Post> contents = posts.stream().skip(pageRequest.getOffset()).limit(pageRequest.getRowNumber()).collect(Collectors.toList());

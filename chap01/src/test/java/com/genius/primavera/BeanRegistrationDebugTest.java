@@ -21,30 +21,30 @@ public class BeanRegistrationDebugTest {
     private ApplicationContext context;
 
     @Test
-    @DisplayName("all translated_text_13 Bean translated_text_2 translated_text_2")
+    @DisplayName("all created successfully Bean test")
     void listAllBeans() {
         String[] beanNames = context.getBeanDefinitionNames();
-        log.info("=== translated_text_13 all Bean translated_text_2 ===");
+        log.info("=== created successfully all Bean test ===");
         Arrays.stream(beanNames)
                 .filter(name -> name.contains("world") || name.contains("hello") || name.contains("greeting"))
                 .sorted()
                 .forEach(name -> log.info("Bean: {}", name));
         
-        log.info("=== translated_text_2 Bean translated_text_2: {} ===", beanNames.length);
+        log.info("=== test Bean test: {} ===", beanNames.length);
 
         try {
             Object worldController = context.getBean("worldController");
-            log.info("worldController Bean translated_text_2: {}", worldController.getClass().getName());
+            log.info("worldController Bean test: {}", worldController.getClass().getName());
             assertThat(worldController).isNotNull();
         } catch (Exception e) {
-            log.error("worldController Bean translated_text_2 translated_text_1 translated_text_2: {}", e.getMessage());
+            log.error("worldController Bean test should test: {}", e.getMessage());
         }
 
         try {
             Object helloService = context.getBean("helloService");
-            log.info("helloService Bean translated_text_2: {}", helloService.getClass().getName());
+            log.info("helloService Bean test: {}", helloService.getClass().getName());
         } catch (Exception e) {
-            log.error("helloService Bean translated_text_2 translated_text_1 translated_text_2: {}", e.getMessage());
+            log.error("helloService Bean test should test: {}", e.getMessage());
         }
 
         Arrays.stream(beanNames)

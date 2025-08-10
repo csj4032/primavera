@@ -36,7 +36,7 @@ public class PostingControllerTest {
 
 	@Test
 	@Order(1)
-	@DisplayName("translated_text_3 registration translated_text_2 translated_text_2")
+	@DisplayName("connection registration test")
 	@WithUserDetails(value = "csj4032@gmail.com", userDetailsServiceBeanName = "primaveraUserDetailsService")
 	public void form() throws Exception {
 		mockMvc.perform(get("/posts/form")).andExpect(status().isOk());
@@ -44,37 +44,37 @@ public class PostingControllerTest {
 
 	@Test
 	@Order(2)
-	@DisplayName("translated_text_3 translated_text_2 translated_text_1 translated_text_2 translated_text_2")
+	@DisplayName("connection test should test")
 	@WithUserDetails(value = "csj4032@gmail.com", userDetailsServiceBeanName = "primaveraUserDetailsService")
 	public void save() throws Exception {
 		MultiValueMap params = new LinkedMultiValueMap();
-		params.set("subject", "translated_text_3 translated_text_2");
-		params.set("contents", "translated_text_5 translated_text_6 translated_text_5 translated_text_3 translated_text_3 translated_text_4 translated_text_4 translated_text_3 translated_text_2 <translated_text_3 translated_text_3> translated_text_1 translated_text_3 translated_text_3.");
+		params.set("subject", "connection test");
+		params.set("contents", "file exists Endpoint connection file connection test <connection> should connection.");
 		params.set("writer", "1");
 		mockMvc.perform(post("/posts/save").params(params)).andExpect(status().is3xxRedirection());
 	}
 
 	@Test
 	@Order(3)
-	@DisplayName("translated_text_3 translated_text_2 translated_text_2 translated_text_2")
+	@DisplayName("connection test test")
 	@WithUserDetails(value = "csj4032@gmail.com", userDetailsServiceBeanName = "primaveraUserDetailsService")
 	public void detail() throws Exception {
 		mockMvc.perform(get("/posts/1").accept(MediaType.TEXT_HTML))
 				.andExpect(status().isOk())
-				.andExpect(content().string(containsString("translated_text_5")))
-				.andExpect(content().string(containsString("translated_text_6")))
+				.andExpect(content().string(containsString("Endpoint")))
+				.andExpect(content().string(containsString("with")))
 				.andExpect(content().string(containsString("Genius")));
 	}
 
 	@Test
 	@Order(4)
-	@DisplayName("translated_text_3 translated_text_3 translated_text_2 translated_text_2")
+	@DisplayName("connection test")
 	@WithUserDetails(value = "csj4032@gmail.com", userDetailsServiceBeanName = "primaveraUserDetailsService")
 	public void listForPageable() throws Exception {
 		mockMvc.perform(get("/posts")
 				.param("page", "1")
 				.param("size", "10")
-				.param("keyword", "translated_text_3")
+				.param("keyword", "connection")
 				.accept(MediaType.TEXT_HTML))
 				.andExpect(status().isOk());
 	}

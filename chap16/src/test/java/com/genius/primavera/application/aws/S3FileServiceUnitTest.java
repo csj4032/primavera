@@ -54,7 +54,7 @@ public class S3FileServiceUnitTest {
 
     @Test
     @Order(1)
-    @DisplayName("MultipartFile translated_text_3 success")
+    @DisplayName("MultipartFile connection success")
     void uploadMultipartFile_Success() throws Exception {
         MockMultipartFile file = new MockMultipartFile("file", "test.txt", "text/plain", FILE_CONTENT.getBytes(StandardCharsets.UTF_8));
         when(s3Template.upload(eq(BUCKET_NAME), eq(FILE_KEY), any(InputStream.class), any(ObjectMetadata.class))).thenReturn(s3Resource);
@@ -66,7 +66,7 @@ public class S3FileServiceUnitTest {
 
     @Test
     @Order(2)
-    @DisplayName("InputStream translated_text_3 success")
+    @DisplayName("InputStream connection success")
     void uploadInputStream_Success() throws Exception {
         InputStream inputStream = new ByteArrayInputStream(FILE_CONTENT.getBytes(StandardCharsets.UTF_8));
         when(s3Template.upload(eq(BUCKET_NAME), eq(FILE_KEY), eq(inputStream), any(ObjectMetadata.class))).thenReturn(s3Resource);
@@ -78,7 +78,7 @@ public class S3FileServiceUnitTest {
 
     @Test
     @Order(3)
-    @DisplayName("translated_text_2 translated_text_4 success")
+    @DisplayName("test file success")
     void downloadFile_Success() throws Exception {
         InputStream expectedStream = new ByteArrayInputStream(FILE_CONTENT.getBytes(StandardCharsets.UTF_8));
         when(s3Template.download(BUCKET_NAME, FILE_KEY)).thenReturn(s3Resource);
@@ -92,7 +92,7 @@ public class S3FileServiceUnitTest {
 
     @Test
     @Order(4)
-    @DisplayName("translated_text_4 translated_text_2 translated_text_2 translated_text_4")
+    @DisplayName("file test file")
     void downloadFile_FileNotExists() {
         when(s3Template.download(BUCKET_NAME, FILE_KEY)).thenReturn(s3Resource);
         when(s3Resource.exists()).thenReturn(false);
@@ -103,7 +103,7 @@ public class S3FileServiceUnitTest {
 
     @Test
     @Order(5)
-    @DisplayName("translated_text_2 deletion success")
+    @DisplayName("test deletion success")
     void deleteFile_Success() {
         doNothing().when(s3Template).deleteObject(BUCKET_NAME, FILE_KEY);
         boolean result = s3FileService.deleteFile(FILE_KEY);
@@ -113,7 +113,7 @@ public class S3FileServiceUnitTest {
 
     @Test
     @Order(6)
-    @DisplayName("translated_text_2 translated_text_2 verification - translated_text_2")
+    @DisplayName("test verification - test")
     void fileExists_True() {
         HeadObjectResponse response = HeadObjectResponse.builder().build();
         when(s3Client.headObject(any(HeadObjectRequest.class))).thenReturn(response);
@@ -124,7 +124,7 @@ public class S3FileServiceUnitTest {
 
     @Test
     @Order(7)
-    @DisplayName("translated_text_2 translated_text_2 verification - translated_text_4 translated_text_2")
+    @DisplayName("test verification - file test")
     void fileExists_False() {
         when(s3Client.headObject(any(HeadObjectRequest.class))).thenThrow(NoSuchKeyException.builder().build());
         boolean result = s3FileService.fileExists(FILE_KEY);
@@ -134,7 +134,7 @@ public class S3FileServiceUnitTest {
 
     @Test
     @Order(8)
-    @DisplayName("translated_text_2 translated_text_2 inquiry success")
+    @DisplayName("test inquiry success")
     void listFiles_Success() {
         S3Object s3Object1 = S3Object.builder().key("test/file1.txt").build();
         S3Object s3Object2 = S3Object.builder().key("test/file2.txt").build();
@@ -148,7 +148,7 @@ public class S3FileServiceUnitTest {
 
     @Test
     @Order(9)
-    @DisplayName("translated_text_2 translated_text_6 inquiry success")
+    @DisplayName("test with inquiry success")
     void getFileMetadata_Success() {
         Instant lastModified = Instant.now();
         HeadObjectResponse response = HeadObjectResponse.builder().contentLength((long) FILE_CONTENT.length()).lastModified(lastModified).contentType("text/plain").eTag("\"etag123\"").build();
@@ -165,7 +165,7 @@ public class S3FileServiceUnitTest {
 
     @Test
     @Order(10)
-    @DisplayName("translated_text_4 translated_text_2 translated_text_2 translated_text_6 inquiry")
+    @DisplayName("file test with inquiry")
     void getFileMetadata_FileNotExists() {
         when(s3Client.headObject(any(HeadObjectRequest.class))).thenThrow(NoSuchKeyException.builder().build());
         Optional<S3FileMetadata> result = s3FileService.getFileMetadata(FILE_KEY);

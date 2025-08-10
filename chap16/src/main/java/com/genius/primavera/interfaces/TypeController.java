@@ -19,6 +19,6 @@ public class TypeController {
     @PostMapping(value = "/type", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> type(@RequestParam List<Long> strings) {
         log.info("Received strings: {}", strings);
-        return new ResponseEntity<>("{\"name\":\"genius.choi\"}", HttpStatus.OK);
+        return new ResponseEntity<>("{\"name\":\"genius\"}", HttpStatus.OK);
     }
 }

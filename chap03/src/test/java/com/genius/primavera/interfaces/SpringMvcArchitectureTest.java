@@ -35,7 +35,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 @AutoConfigureWebMvc
 @ActiveProfiles("test")
-@DisplayName("Spring MVC translated_text_4 translated_text_2 test")
+@DisplayName("Spring MVC file test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class SpringMvcArchitectureTest {
 
@@ -49,22 +49,22 @@ public class SpringMvcArchitectureTest {
 
     @Test
     @Order(1)
-    @DisplayName("DispatcherServlet translated_text_2 translated_text_1 translated_text_2 test")
+    @DisplayName("DispatcherServlet test should test")
     void testDispatcherServletConfiguration() throws Exception {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
         Map<String, DispatcherServlet> dispatcherServlets = webApplicationContext.getBeansOfType(DispatcherServlet.class);
         assertThat(dispatcherServlets).isNotEmpty();
-        log.info(" DispatcherServlet translated_text_2 verification: {}", dispatcherServlets.keySet());
-        log.info(" DispatcherServlet translated_text_2:");
-        log.info("  - HTTP translated_text_3 translated_text_2 translated_text_3 (Front Controller translated_text_2)");
-        log.info("  - translated_text_3 Handler(Controller) translated_text_2");
+        log.info(" DispatcherServlet test verification: {}", dispatcherServlets.keySet());
+        log.info(" DispatcherServlet test:");
+        log.info("  - HTTP connection test connection (Front Controller test)");
+        log.info("  - connection Handler(Controller) test");
         log.info("  - View Resolution processing");
-        log.info("  - exception processing translated_text_1 translated_text_2 creation");
+        log.info("  - exception processing should test creation");
     }
 
     @Test
     @Order(2)
-    @DisplayName("HandlerMapping translated_text_2 test")
+    @DisplayName("HandlerMapping test")
     void testHandlerMapping() throws Exception {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
         List<User> mockUsers = Arrays.asList(User.builder().id(1L).name("User1").email("user1@test.com").build());
@@ -73,17 +73,17 @@ public class SpringMvcArchitectureTest {
         Object handler = result.getHandler();
         assertThat(handler).isNotNull();
         log.info(" HandlerMapping result:");
-        log.info("  - translated_text_3 Handler: {}", handler.getClass().getSimpleName());
-        log.info("  - translated_text_2 URL '/hello'translated_text_1 HelloController.helloWorld()translated_text_1 translated_text_3");
-        log.info(" HandlerMapping translated_text_2:");
-        log.info("  - RequestMappingHandlerMapping: @RequestMapping annotation translated_text_2");
-        log.info("  - BeanNameUrlHandlerMapping: Bean translated_text_3 URL translated_text_2");
-        log.info("  - SimpleUrlHandlerMapping: translated_text_2 URL translated_text_2 translated_text_2");
+        log.info("  - connection Handler: {}", handler.getClass().getSimpleName());
+        log.info("  - test URL '/hello'should HelloController.helloWorld()should connection");
+        log.info(" HandlerMapping test:");
+        log.info("  - RequestMappingHandlerMapping: @RequestMapping annotation test");
+        log.info("  - BeanNameUrlHandlerMapping: Bean connection URL test");
+        log.info("  - SimpleUrlHandlerMapping: test URL test");
     }
 
     @Test
     @Order(3)
-    @DisplayName("Controller-Service-Repository translated_text_2 translated_text_2 test")
+    @DisplayName("Controller-Service-Repository test test")
     void testLayeredArchitecture() throws Exception {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
         Long userId = 1L;
@@ -99,22 +99,22 @@ public class SpringMvcArchitectureTest {
                 .andExpect(view().name("world"))
                 .andExpect(model().attributeExists("user"))
                 .andDo(result -> {
-                    log.info(" translated_text_2 translated_text_2 translated_text_2:");
-                    log.info("  1. Controller translated_text_2 - HTTP translated_text_2/translated_text_2 processing");
+                    log.info(" test test:");
+                    log.info("  1. Controller test - HTTP test/test processing");
                     log.info("      HelloController.helloWorldById()");
-                    log.info("  2. Service translated_text_2 - translated_text_4 translated_text_2 processing");
+                    log.info("  2. Service test - file test processing");
                     log.info("      HelloService.getUserById()");
-                    log.info("  3. Repository translated_text_2 - data translated_text_2 (translated_text_3 Mock)");
-                    log.info("      data translated_text_5 translated_text_4");
+                    log.info("  3. Repository test - data test (connection Mock)");
+                    log.info("      data Endpoint file");
                 })
                 .andDo(print());
 
-        log.info(" translated_text_2 translated_text_2 test completed");
+        log.info(" test test completed");
     }
 
     @Test
     @Order(4)
-    @DisplayName("ViewResolver translated_text_2 test")
+    @DisplayName("ViewResolver test")
     void testViewResolver() throws Exception {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
         when(helloService.getUsers()).thenReturn(Arrays.asList());
@@ -123,19 +123,19 @@ public class SpringMvcArchitectureTest {
         assertThat(viewName).isEqualTo("hello");
         Map<String, ViewResolver> viewResolvers = webApplicationContext.getBeansOfType(ViewResolver.class);
         assertThat(viewResolvers).isNotEmpty();
-        log.info(" ViewResolver translated_text_2:");
-        log.info("  - translated_text_3 translated_text_1 translated_text_2: '{}'", viewName);
-        log.info("  - translated_text_13 ViewResolver translated_text_1: {}", viewResolvers.size());
-        log.info("  - ViewResolver translated_text_2: {}", viewResolvers.keySet());
-        log.info(" ViewResolver translated_text_2:");
-        log.info("  - translated_text_3 translated_text_1 translated_text_2 translated_text_2 translated_text_1 translated_text_4 translated_text_2");
-        log.info("  - translated_text_3 translated_text_2(Thymeleaf, JSP translated_text_1)translated_text_1 translated_text_2");
-        log.info("  - translated_text_1 translated_text_2 translated_text_1 translated_text_2 translated_text_3");
+        log.info(" ViewResolver test:");
+        log.info("  - connection should test: '{}'", viewName);
+        log.info("  - created successfully ViewResolver should: {}", viewResolvers.size());
+        log.info("  - ViewResolver test: {}", viewResolvers.keySet());
+        log.info(" ViewResolver test:");
+        log.info("  - connection should test should file test");
+        log.info("  - connection test(Thymeleaf, JSP should)should test");
+        log.info("  - test should test connection");
     }
 
     @Test
     @Order(5)
-    @DisplayName("Modeltranslated_text_1 View data translated_text_3 test")
+    @DisplayName("Modelshould View data connection test")
     void testModelViewDataBinding() throws Exception {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 
@@ -154,23 +154,23 @@ public class SpringMvcArchitectureTest {
         List<User> modelUsers = (List<User>) model.get("users");
         assertThat(modelUsers).hasSize(2);
 
-        log.info(" Model-View data translated_text_3:");
-        log.info("  - Model translated_text_2 translated_text_1: {}", model.size());
-        log.info("  - 'hello' translated_text_2: {} translated_text_2 User translated_text_2", modelUsers.size());
-        log.info("  - translated_text_1 translated_text_2: '{}'", result.getModelAndView().getViewName());
+        log.info(" Model-View data connection:");
+        log.info("  - Model test should: {}", model.size());
+        log.info("  - 'hello' test: {} test User test", modelUsers.size());
+        log.info("  - should test: '{}'", result.getModelAndView().getViewName());
 
-        log.info(" data translated_text_3 translated_text_4:");
-        log.info("  1. Controllertranslated_text_1 Modeltranslated_text_1 data translated_text_1");
-        log.info("  2. ModelAndView translated_text_2 creation");
-        log.info("  3. ViewResolvertranslated_text_1 View translated_text_2");
-        log.info("  4. Viewtranslated_text_1 Model data translated_text_3");
+        log.info(" data connection file:");
+        log.info("  1. Controllershould Modelshould data should");
+        log.info("  2. ModelAndView test creation");
+        log.info("  3. ViewResolvershould View test");
+        log.info("  4. Viewshould Model data connection");
 
-        log.info(" Model-View data translated_text_3 test completed");
+        log.info(" Model-View data connection test completed");
     }
 
     @Test
     @Order(6)
-    @DisplayName("HTTP translated_text_4 translated_text_2 test")
+    @DisplayName("HTTP file test")
     void testHttpMethodMapping() throws Exception {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
         when(helloService.getUsers()).thenReturn(List.of());
@@ -178,24 +178,24 @@ public class SpringMvcArchitectureTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("hello"))
                 .andDo(result -> {
-                    log.info(" HTTP translated_text_3 translated_text_2:");
+                    log.info(" HTTP connection test:");
                     log.info("  - GET /hello -> HelloController.helloWorld()");
-                    log.info("  - @GetMapping annotation translated_text_2");
+                    log.info("  - @GetMapping annotation test");
                 });
 
-        log.info(" HTTP translated_text_3 translated_text_2 translated_text_2:");
+        log.info(" HTTP connection test:");
         log.info("  - @GetMapping: data inquiry");
         log.info("  - @PostMapping: data creation");
-        log.info("  - @PutMapping: data translated_text_2 translated_text_1");
-        log.info("  - @PatchMapping: data translated_text_2 translated_text_1");
+        log.info("  - @PutMapping: data test should");
+        log.info("  - @PatchMapping: data test should");
         log.info("  - @DeleteMapping: data deletion");
 
-        log.info(" HTTP translated_text_3 translated_text_2 test completed");
+        log.info(" HTTP connection test completed");
     }
 
     @Test
     @Order(7)
-    @DisplayName("MVC translated_text_2 translated_text_2 translated_text_2 validation")
+    @DisplayName("MVC test test validation")
     void testMvcPatternComponents() throws Exception {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
         Long userId = 100L;
@@ -208,25 +208,25 @@ public class SpringMvcArchitectureTest {
         assertThat(handler).isNotNull();
         assertThat(viewName).isEqualTo("world");
         assertThat(model).containsKey("user");
-        log.info(" MVC translated_text_2 translated_text_2 translated_text_2:");
+        log.info(" MVC test test:");
         log.info("   Model (data):");
-        log.info("    - translated_text_4 data: User translated_text_2");
-        log.info("    - translated_text_1translated_text_1 translated_text_3 data translated_text_2");
-        log.info("    - data translated_text_3 translated_text_4 translated_text_2 translated_text_2");
-        log.info("   View (translated_text_2):");
-        log.info("    - translated_text_2 translated_text_5");
-        log.info("    - translated_text_3: {}.html", viewName);
-        log.info("    - Model data translated_text_5 translated_text_2");
-        log.info("   Controller (translated_text_2):");
-        log.info("    - translated_text_2 translated_text_2 processing");
-        log.info("    - translated_text_4 translated_text_2 called");
-        log.info("    - Modeltranslated_text_1 View translated_text_2 translated_text_2");
-        log.info(" MVC translated_text_2 translated_text_2 translated_text_2 validation completed");
+        log.info("    - file data: User test");
+        log.info("    - shouldshould connection data test");
+        log.info("    - data connection file test");
+        log.info("   View (test):");
+        log.info("    - test Endpoint");
+        log.info("    - connection: {}.html", viewName);
+        log.info("    - Model data processing test");
+        log.info("   Controller (test):");
+        log.info("    - test processing");
+        log.info("    - file test called");
+        log.info("    - Modelshould View test");
+        log.info(" MVC test test validation completed");
     }
 
     @Test
     @Order(8)
-    @DisplayName("Spring MVC translated_text_2 translated_text_1 translated_text_2 validation")
+    @DisplayName("Spring MVC test should test validation")
     void testSpringMvcConfiguration() {
         String[] beanNames = webApplicationContext.getBeanDefinitionNames();
         long mvcBeanCount = Arrays.stream(beanNames)
@@ -236,15 +236,15 @@ public class SpringMvcArchitectureTest {
                 .count();
 
         assertThat(mvcBeanCount).isGreaterThan(0);
-        log.info(" Spring MVC translated_text_2 validation:");
-        log.info("  - translated_text_2 Bean translated_text_1: {}", beanNames.length);
-        log.info("  - MVC translated_text_2 Bean translated_text_1: {}", mvcBeanCount);
-        log.info(" translated_text_2 MVC translated_text_2 translated_text_2:");
-        log.info("  - DispatcherServlet: translated_text_2 translated_text_2 processing");
-        log.info("  - HandlerMapping: URLtranslated_text_1 Handler translated_text_2");
-        log.info("  - ViewResolver: translated_text_1 translated_text_2 translated_text_2");
-        log.info("  - MessageConverter: HTTP translated_text_3 translated_text_2");
+        log.info(" Spring MVC test validation:");
+        log.info("  - test Bean should: {}", beanNames.length);
+        log.info("  - MVC test Bean should: {}", mvcBeanCount);
+        log.info(" test MVC test:");
+        log.info("  - DispatcherServlet: test processing");
+        log.info("  - HandlerMapping: URLshould Handler test");
+        log.info("  - ViewResolver: should test");
+        log.info("  - MessageConverter: HTTP connection test");
         log.info("  - ExceptionResolver: exception processing");
-        log.info(" Spring MVC translated_text_2 validation completed");
+        log.info(" Spring MVC test validation completed");
     }
 }

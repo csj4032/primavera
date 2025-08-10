@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 @SpringBootTest
 @Testcontainers
 @ActiveProfiles("test")
-@DisplayName("translated_text_3 translated_text_2 test")
+@DisplayName("connection test")
 public class MessageConfigTest {
 
     @Container
@@ -48,22 +48,22 @@ public class MessageConfigTest {
     private MessageSource messageSource;
 
     @Test
-    @DisplayName("MessageSource Beantranslated_text_1 successfully translated_text_11 verification")
+    @DisplayName("MessageSource Beanshould successfully processing verification")
     void shouldCreateMessageSourceBean() {
         assertThat(messageSource).isNotNull();
     }
 
     @Nested
-    @DisplayName("translated_text_3 translated_text_3 test")
+    @DisplayName("connection test")
     class MultiLanguageMessageTests {
 
         static Stream<Arguments> provideMultiLanguageMessages() {
             return Stream.of(
 
-                    Arguments.of(Locale.KOREAN, "user.registration.success", "translated_text_1 translated_text_10 translated_text_14."),
-                    Arguments.of(Locale.KOREAN, "label.email", "translated_text_1"),
-                    Arguments.of(Locale.KOREAN, "button.save", "translated_text_2"),
-                    Arguments.of(Locale.KOREAN, "com.genius.primavera.validate.nickname.message", "translated_text_4 translated_text_2 translated_text_5. (2-20translated_text_1, translated_text_2/translated_text_2/translated_text_1 translated_text_2)"),
+                    Arguments.of(Locale.KOREAN, "user.registration.success", "needs to be added0 registered."),
+                    Arguments.of(Locale.KOREAN, "label.email", "should"),
+                    Arguments.of(Locale.KOREAN, "button.save", "test"),
+                    Arguments.of(Locale.KOREAN, "com.genius.primavera.validate.nickname.message", "file test Endpoint. (2-20should, test/test/should test)"),
 
                     Arguments.of(Locale.ENGLISH, "user.registration.success", "Registration completed successfully."),
                     Arguments.of(Locale.ENGLISH, "label.email", "Email"),
@@ -81,7 +81,7 @@ public class MessageConfigTest {
 
         @ParameterizedTest
         @MethodSource("provideMultiLanguageMessages")
-        @DisplayName("translated_text_4 translated_text_3 translated_text_3 translated_text_5 verification")
+        @DisplayName("file connection Endpoint verification")
         void shouldLoadCorrectMessageForEachLocale(Locale locale, String messageKey, String expectedMessage) {
             String actualMessage = messageSource.getMessage(messageKey, null, locale);
             assertThat(actualMessage).isEqualTo(expectedMessage);
@@ -91,9 +91,9 @@ public class MessageConfigTest {
     static Stream<Arguments> provideBeanValidationMessages() {
         return Stream.of(
 
-                Arguments.of(Locale.KOREAN, "jakarta.validation.constraints.Email.message", "translated_text_3 translated_text_1 translated_text_1 translated_text_4."),
-                Arguments.of(Locale.KOREAN, "jakarta.validation.constraints.NotBlank.message", "translated_text_2 translated_text_2 translated_text_5."),
-                Arguments.of(Locale.KOREAN, "jakarta.validation.constraints.NotNull.message", "translated_text_2 translated_text_2 translated_text_5."),
+                Arguments.of(Locale.KOREAN, "jakarta.validation.constraints.Email.message", "connection needs to be added file."),
+                Arguments.of(Locale.KOREAN, "jakarta.validation.constraints.NotBlank.message", "test Endpoint."),
+                Arguments.of(Locale.KOREAN, "jakarta.validation.constraints.NotNull.message", "test Endpoint."),
 
                 Arguments.of(Locale.ENGLISH, "jakarta.validation.constraints.Email.message", "Invalid email format."),
                 Arguments.of(Locale.ENGLISH, "jakarta.validation.constraints.NotBlank.message", "This field is required."),
@@ -107,7 +107,7 @@ public class MessageConfigTest {
 
     @ParameterizedTest
     @MethodSource("provideBeanValidationMessages")
-    @DisplayName("Bean Validation translated_text_2 translated_text_3 translated_text_4 translated_text_6 verification")
+    @DisplayName("Bean Validation test connection file with verification")
     void shouldOverrideBeanValidationMessages(Locale locale, String messageKey, String expectedMessage) {
         String actualMessage = messageSource.getMessage(messageKey, null, locale);
         assertThat(actualMessage).isEqualTo(expectedMessage);
@@ -116,10 +116,10 @@ public class MessageConfigTest {
     static Stream<Arguments> provideUserStatusMessages() {
         return Stream.of(
 
-                Arguments.of(Locale.KOREAN, "user.status.active", "translated_text_2"),
-                Arguments.of(Locale.KOREAN, "user.status.inactive", "translated_text_2"),
-                Arguments.of(Locale.KOREAN, "user.status.suspended", "translated_text_2"),
-                Arguments.of(Locale.KOREAN, "user.status.pending", "translated_text_2 translated_text_2"),
+                Arguments.of(Locale.KOREAN, "user.status.active", "test"),
+                Arguments.of(Locale.KOREAN, "user.status.inactive", "test"),
+                Arguments.of(Locale.KOREAN, "user.status.suspended", "test"),
+                Arguments.of(Locale.KOREAN, "user.status.pending", "test"),
 
                 Arguments.of(Locale.ENGLISH, "user.status.active", "Active"),
                 Arguments.of(Locale.ENGLISH, "user.status.inactive", "Inactive"),
@@ -135,14 +135,14 @@ public class MessageConfigTest {
 
     @ParameterizedTest
     @MethodSource("provideUserStatusMessages")
-    @DisplayName("translated_text_1 translated_text_2 translated_text_3 translated_text_3 translated_text_5 verification")
+    @DisplayName("should test connection Endpoint verification")
     void shouldTranslateUserStatusMessages(Locale locale, String messageKey, String expectedMessage) {
         String actualMessage = messageSource.getMessage(messageKey, null, locale);
         assertThat(actualMessage).isEqualTo(expectedMessage);
     }
 
     @Test
-    @DisplayName("translated_text_4 translated_text_2 translated_text_3 translated_text_2 translated_text_2 translated_text_10 translated_text_4 translated_text_2 verification")
+    @DisplayName("file test connection test successfully file test verification")
     void shouldHandleNonExistentMessageKey() {
         String nonExistentKey = "non.existent.message.key";
         assertDoesNotThrow(() -> {
@@ -152,12 +152,12 @@ public class MessageConfigTest {
     }
 
     @Test
-    @DisplayName("translated_text_5 translated_text_2 translated_text_3 translated_text_3 translated_text_13 verification")
+    @DisplayName("processing test connection created successfully verification")
     void shouldHandleParameterizedMessages() {
         Object[] args = {5};
 
         String koreanMessage = messageSource.getMessage("jakarta.validation.constraints.Min.message", args, Locale.KOREAN);
-        assertThat(koreanMessage).isEqualTo("translated_text_2 5 translated_text_1translated_text_1 translated_text_3.");
+        assertThat(koreanMessage).isEqualTo("test 5 shouldshould connection.");
 
         String englishMessage = messageSource.getMessage("jakarta.validation.constraints.Min.message", args, Locale.ENGLISH);
         assertThat(englishMessage).isEqualTo("Must be at least 5.");
@@ -167,12 +167,12 @@ public class MessageConfigTest {
     }
 
     @Test
-    @DisplayName("Size validation translated_text_3 translated_text_4 processing verification")
+    @DisplayName("Size validation connection file processing verification")
     void shouldHandleSizeValidationParameters() {
         Object[] args = {2, 10};
 
         String koreanMessage = messageSource.getMessage("jakarta.validation.constraints.Size.message", args, Locale.KOREAN);
-        assertThat(koreanMessage).isEqualTo("translated_text_2 translated_text_3 2translated_text_1 translated_text_1 10translated_text_1 translated_text_1 translated_text_3.");
+        assertThat(koreanMessage).isEqualTo("test connection 2needs to be added 10needs to be added connection.");
 
         String englishMessage = messageSource.getMessage("jakarta.validation.constraints.Size.message", args, Locale.ENGLISH);
         assertThat(englishMessage).isEqualTo("Must contain between 2 and 10 items.");
@@ -182,12 +182,12 @@ public class MessageConfigTest {
     }
 
     @Test
-    @DisplayName("translated_text_2 translated_text_2 translated_text_3 all translated_text_3 translated_text_5 verification")
+    @DisplayName("test connection all connection Endpoint verification")
     void shouldProvideRoleMessagesInAllLanguages() {
 
-        assertThat(messageSource.getMessage("role.administrator", null, Locale.KOREAN)).isEqualTo("translated_text_1");
-        assertThat(messageSource.getMessage("role.manager", null, Locale.KOREAN)).isEqualTo("translated_text_3");
-        assertThat(messageSource.getMessage("role.user", null, Locale.KOREAN)).isEqualTo("translated_text_2 translated_text_1");
+        assertThat(messageSource.getMessage("role.administrator", null, Locale.KOREAN)).isEqualTo("should");
+        assertThat(messageSource.getMessage("role.manager", null, Locale.KOREAN)).isEqualTo("connection");
+        assertThat(messageSource.getMessage("role.user", null, Locale.KOREAN)).isEqualTo("test should");
 
         assertThat(messageSource.getMessage("role.administrator", null, Locale.ENGLISH)).isEqualTo("Administrator");
         assertThat(messageSource.getMessage("role.manager", null, Locale.ENGLISH)).isEqualTo("Manager");
@@ -199,12 +199,12 @@ public class MessageConfigTest {
     }
 
     @Test
-    @DisplayName("translated_text_2 translated_text_1 translated_text_3 all translated_text_3 translated_text_5 verification")
+    @DisplayName("test should connection all connection Endpoint verification")
     void shouldProvideErrorPageMessagesInAllLanguages() {
 
-        assertThat(messageSource.getMessage("error.400.message", null, Locale.KOREAN)).isEqualTo("translated_text_3 translated_text_5.");
-        assertThat(messageSource.getMessage("error.404.message", null, Locale.KOREAN)).isEqualTo("translated_text_1 translated_text_2 translated_text_1 translated_text_4.");
-        assertThat(messageSource.getMessage("error.500.message", null, Locale.KOREAN)).isEqualTo("translated_text_2 translated_text_2 translated_text_6 translated_text_6.");
+        assertThat(messageSource.getMessage("error.400.message", null, Locale.KOREAN)).isEqualTo("connection Endpoint.");
+        assertThat(messageSource.getMessage("error.404.message", null, Locale.KOREAN)).isEqualTo("test should file.");
+        assertThat(messageSource.getMessage("error.500.message", null, Locale.KOREAN)).isEqualTo("test with with.");
 
         assertThat(messageSource.getMessage("error.400.message", null, Locale.ENGLISH)).isEqualTo("Bad Request.");
         assertThat(messageSource.getMessage("error.404.message", null, Locale.ENGLISH)).isEqualTo("Page Not Found.");

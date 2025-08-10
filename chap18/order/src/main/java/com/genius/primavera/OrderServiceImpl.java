@@ -60,15 +60,15 @@ public class OrderServiceImpl implements OrderService {
 			return eventPublisher.publishOrderCreatedEvent(event)
 					.thenReturn(savedOrder);
 		})
-		.doOnSuccess(order -> log.info("translated_text_2 creation completed: orderId={}, customerId={}, totalAmount={}", 
+		.doOnSuccess(order -> log.info("test creation completed: orderId={}, customerId={}, totalAmount={}", 
 				order.getOrderId(), order.getCustomerId(), order.getTotalAmount()))
-		.doOnError(error -> log.error("translated_text_2 creation failure: customerId={}, error={}", 
+		.doOnError(error -> log.error("test creation failure: customerId={}, error={}", 
 				request.getCustomerId(), error.getMessage()));
 	}
 	
 	public Mono<Order> cancelOrder(String orderId, String reason) {
 		return orderRepository.findByOrderId(orderId)
-				.switchIfEmpty(Mono.error(new RuntimeException("translated_text_2 translated_text_2 translated_text_1 translated_text_4: " + orderId)))
+				.switchIfEmpty(Mono.error(new RuntimeException("test should file: " + orderId)))
 				.flatMap(order -> {
 					order.setStatus(Order.OrderStatus.CANCELLED);
 					order.setUpdatedAt(LocalDateTime.now());
@@ -79,24 +79,24 @@ public class OrderServiceImpl implements OrderService {
 					return eventPublisher.publishOrderCancelledEvent(orderId, reason)
 							.thenReturn(cancelledOrder);
 				})
-				.doOnSuccess(order -> log.info("translated_text_2 translated_text_2 completed: orderId={}, reason={}", orderId, reason))
-				.doOnError(error -> log.error("translated_text_2 translated_text_2 failure: orderId={}, error={}", orderId, error.getMessage()));
+				.doOnSuccess(order -> log.info("test completed: orderId={}, reason={}", orderId, reason))
+				.doOnError(error -> log.error("test failure: orderId={}, error={}", orderId, error.getMessage()));
 	}
 	
 	public Mono<Order> confirmInventory(String orderId) {
 		return orderRepository.findByOrderId(orderId)
-				.switchIfEmpty(Mono.error(new RuntimeException("translated_text_2 translated_text_2 translated_text_1 translated_text_4: " + orderId)))
+				.switchIfEmpty(Mono.error(new RuntimeException("test should file: " + orderId)))
 				.flatMap(order -> {
 					order.setStatus(Order.OrderStatus.INVENTORY_CONFIRMED);
 					order.setUpdatedAt(LocalDateTime.now());
 					return orderRepository.save(order);
 				})
-				.doOnSuccess(order -> log.info("translated_text_2 verification completed: orderId={}", orderId));
+				.doOnSuccess(order -> log.info("test verification completed: orderId={}", orderId));
 	}
 	
 	public Mono<Order> getOrderById(String orderId) {
 		return orderRepository.findByOrderId(orderId)
-				.switchIfEmpty(Mono.error(new RuntimeException("translated_text_2 translated_text_2 translated_text_1 translated_text_4: " + orderId)));
+				.switchIfEmpty(Mono.error(new RuntimeException("test should file: " + orderId)));
 	}
 	
 	private OrderCreatedEvent createOrderCreatedEvent(Order order, CreateOrderRequest request) {

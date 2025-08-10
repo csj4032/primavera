@@ -21,9 +21,3 @@ spring:
         profile-separator: '/'
         default-context: JpaAdvancedMappingApplication
         application-name: JpaAdvancedMappingApplication
-
-sentry:
-  dns: https://4084f8500752461897ebbfe3a067d36c@sentry.io/5166811
-  environment: local
-  servername: FileProcessingMonitoringApplication
-  release: 0.0.1-SNAPSHOT

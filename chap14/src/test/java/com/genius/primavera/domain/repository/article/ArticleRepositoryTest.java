@@ -52,7 +52,7 @@ public class ArticleRepositoryTest {
 
 	@Test
 	@Order(1)
-	@DisplayName("translated_text_3 translated_text_2 translated_text_3 Truncate")
+	@DisplayName("connection test connection Truncate")
 	public void cleanUp() {
 		entityManager.createNativeQuery("TRUNCATE ARTICLE").executeUpdate();
 		entityManager.createNativeQuery("TRUNCATE ARTICLE_ATTACHMENT").executeUpdate();
@@ -61,7 +61,7 @@ public class ArticleRepositoryTest {
 
 	@Test
 	@Order(2)
-	@DisplayName("translated_text_3 translated_text_2 test")
+	@DisplayName("connection test")
 	@Rollback(false)
 	@Transactional
 	public void writeArticleTest() {
@@ -70,21 +70,21 @@ public class ArticleRepositoryTest {
 		article.setReference(0);
 		article.setStep(0);
 		article.setAuthor(userRepository.findById(1l).orElse(null));
-		article.setSubject("translated_text_3 translated_text_5. 1");
+		article.setSubject("connection Endpoint. 1");
 		article.setStatus(ArticleStatus.PUBLIC);
-		article.setContent(Content.builder().contents("translated_text_3 translated_text_5. 1").build());
+		article.setContent(Content.builder().contents("connection Endpoint. 1").build());
 		article.setAttachments(List.of(Attachment.builder().name("file1.txt").path("/path").size(100).build()));
 		articleRepository.save(article);
 	}
 
 	@Test
 	@Order(3)
-	@DisplayName("translated_text_3 inquiry test [1translated_text_1 translated_text_1]")
+	@DisplayName("connection inquiry test [1needs to be added]")
 	public void findByIdTest() {
 		Article article = articleRepository.findById(1l).orElse(null);
 
 		assertNotNull(article);
-		assertEquals("translated_text_3 translated_text_5. 1", article.getSubject());
+		assertEquals("connection Endpoint. 1", article.getSubject());
 		assertEquals("Genius", article.getAuthorName());
 
 		assertNotNull(article.getComments());
@@ -97,26 +97,26 @@ public class ArticleRepositoryTest {
 
 	@Test
 	@Order(4)
-	@DisplayName("translated_text_3 modification test [1translated_text_1 translated_text_1]")
+	@DisplayName("connection modification test [1needs to be added]")
 	@Rollback(false)
 	@Transactional
 	public void updateArticleTest() {
 		Article article = articleRepository.findById(1).orElse(null);
-		article.setSubject("translated_text_3 translated_text_5.(modification) 1");
+		article.setSubject("connection Endpoint.(modification) 1");
 		Content content = article.getContent();
-		content.setContents("translated_text_3 translated_text_5.(modification) 1");
+		content.setContents("connection Endpoint.(modification) 1");
 		article.getAttachments().add(Attachment.builder().name("file2.txt").path("/path").size(100).build());
 		articleRepository.save(article);
 	}
 
 	@Test
 	@Order(5)
-	@DisplayName("translated_text_3 modification translated_text_1 inquiry test [1translated_text_1 translated_text_1]")
+	@DisplayName("connection modification should inquiry test [1needs to be added]")
 	public void updateAfterFindByIdTest() {
 		Article article = articleRepository.findById(1l).orElse(null);
 		assertNotNull(article);
-		assertEquals("translated_text_3 translated_text_5.(modification) 1", article.getSubject());
-		assertEquals("translated_text_3 translated_text_5.(modification) 1", article.getContents());
+		assertEquals("connection Endpoint.(modification) 1", article.getSubject());
+		assertEquals("connection Endpoint.(modification) 1", article.getContents());
 
 		assertNotNull(article.getAttachments());
 		assertTrue(article.getAttachments().size() == 2);

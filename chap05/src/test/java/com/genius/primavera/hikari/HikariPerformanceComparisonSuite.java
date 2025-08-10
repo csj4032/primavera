@@ -5,38 +5,38 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 @Slf4j
-@DisplayName("HikariCP translated_text_3 translated_text_2 translated_text_2 translated_text_3")
+@DisplayName("HikariCP connection test connection")
 public class HikariPerformanceComparisonSuite {
 
     @Test
-    @DisplayName("HikariCP translated_text_2 translated_text_2 test translated_text_3")
+    @DisplayName("HikariCP test test connection")
     void performanceComparisonGuide() {
-        log.info("=== HikariCP translated_text_2 translated_text_2 test translated_text_3 ===");
+        log.info("=== HikariCP test test connection ===");
         log.info("");
-        log.info(" test translated_text_3 translated_text_2 translated_text_3:");
+        log.info(" test connection test connection:");
         log.info("");
-        log.info("1.  Minimal Pool (translated_text_2 translated_text_2)");
+        log.info("1.  Minimal Pool (test)");
         log.info("   - Pool Size: 1~3 connections");
-        log.info("   - translated_text_2: translated_text_3 translated_text_2, translated_text_3 translated_text_2");
-        log.info("   - translated_text_2: translated_text_4 translated_text_2 translated_text_2 translated_text_2");
+        log.info("   - test: connection test, connection test");
+        log.info("   - test: file test test");
         log.info("");
-        log.info("2. 🟢 Balanced Pool (translated_text_2 translated_text_2)");
+        log.info("2. 🟢 Balanced Pool (test)");
         log.info("   - Pool Size: 5~10 connections");
-        log.info("   - translated_text_2: translated_text_2 translated_text_4 translated_text_2");
-        log.info("   - translated_text_2: translated_text_4 translated_text_2 translated_text_2");
+        log.info("   - test: test file test");
+        log.info("   - test: file test");
         log.info("");
-        log.info("3. 🟠 Performance Pool (translated_text_2 translated_text_2)");
+        log.info("3. 🟠 Performance Pool (test)");
         log.info("   - Pool Size: 10~20 connections");
-        log.info("   - translated_text_2: translated_text_2 translated_text_11, translated_text_2 translated_text_3 translated_text_2");
-        log.info("   - translated_text_2: translated_text_2 translated_text_2 translated_text_2");
+        log.info("   - test: test processing, test connection test");
+        log.info("   - test: test test");
         log.info("");
-        log.info("4.  Resource-Constrained Pool (translated_text_3 translated_text_2)");
+        log.info("4.  Resource-Constrained Pool (connection test)");
         log.info("   - Pool Size: 2~5 connections");
-        log.info("   - translated_text_2: translated_text_2 translated_text_3, translated_text_3 translated_text_2");
-        log.info("   - translated_text_2: translated_text_5 translated_text_4 translated_text_2");
+        log.info("   - test: test connection, connection test");
+        log.info("   - test: Endpoint file test");
         log.info("");
-        log.info(" translated_text_1 test translated_text_2 translated_text_11 translated_text_3 translated_text_2 translated_text_3 translated_text_2!");
-        log.info(" translated_text_4 translated_text_11(queries/sec), translated_text_4, translated_text_1 translated_text_3 translated_text_15!");
+        log.info(" should test processing connection test connection test!");
+        log.info(" file processing(queries/sec), file, should connection should5!");
         log.info("");
     }
 }

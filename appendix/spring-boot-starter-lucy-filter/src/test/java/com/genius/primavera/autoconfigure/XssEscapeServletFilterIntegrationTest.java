@@ -5,7 +5,7 @@ import org.springframework.boot.test.context.runner.WebApplicationContextRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("XSS Escape Servlet Filter translated_text_2 test")
+@DisplayName("XSS Escape Servlet Filter test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class XssEscapeServletFilterIntegrationTest {
 
@@ -16,7 +16,7 @@ class XssEscapeServletFilterIntegrationTest {
 
     @Test
     @Order(1)
-    @DisplayName("translated_text_1 translated_text_6 translated_text_6 Beantranslated_text_1 translated_text_4 translated_text_11 verification")
+    @DisplayName("should return with Beanshould file processing verification")
     void shouldCreateBeansInWebContext() {
         contextRunner
                 .withPropertyValues("spring.lucy-filter.enabled=true")
@@ -28,7 +28,7 @@ class XssEscapeServletFilterIntegrationTest {
 
     @Test
     @Order(2)
-    @DisplayName("translated_text_4 translated_text_1 Beantranslated_text_1 translated_text_10 translated_text_3 verification")
+    @DisplayName("file should Beanneeds to be added0 connection verification")
     void shouldNotCreateBeansWhenDisabled() {
         contextRunner
                 .withPropertyValues("spring.lucy-filter.enabled=false")

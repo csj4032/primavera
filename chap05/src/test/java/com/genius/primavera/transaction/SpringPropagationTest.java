@@ -66,18 +66,18 @@ public class SpringPropagationTest {
 
     @Test
     @Order(1)
-    @DisplayName("REQUIRED - translated_text_2 translated_text_2 translated_text_5 translated_text_3 translated_text_2, translated_text_3 translated_text_2 translated_text_2")
+    @DisplayName("REQUIRED - test Endpoint connection test, connection test")
     public void testRequired() {
-        log.info("=== REQUIRED test translated_text_2 ===");
+        log.info("=== REQUIRED test ===");
         Long userId = userMapper.save(testUser);
         requiredMethod(userId, "Case1_NoTransaction");
         User user = userMapper.findById(userId);
         assertThat(user.getNickname()).isEqualTo("Case1_NoTransaction");
-        log.info("Case 1 translated_text_2 - translated_text_4 translated_text_2 called translated_text_1 translated_text_1 translated_text_4 translated_text_2");
+        log.info("Case 1 test - file test called needs to be added file test");
         transactionalMethodWithRequired(userId);
         User updatedUser = userMapper.findById(userId);
         assertThat(updatedUser.getNickname()).isEqualTo("Case2_WithTransaction");
-        log.info("Case 2 translated_text_2 - translated_text_2 translated_text_4 translated_text_2");
+        log.info("Case 2 test - test file test");
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
@@ -85,19 +85,19 @@ public class SpringPropagationTest {
         User user = userMapper.findById(userId);
         user.setNickname(nickname);
         userMapper.update(user);
-        log.info("REQUIRED translated_text_3 execution - {}", nickname);
+        log.info("REQUIRED connection execution - {}", nickname);
     }
 
     @Transactional
     public void transactionalMethodWithRequired(Long userId) {
         requiredMethod(userId, "Case2_WithTransaction");
-        log.info("translated_text_2 translated_text_4 translated_text_3 REQUIRED translated_text_3 called");
+        log.info("test file connection REQUIRED connection called");
     }
 
     @Test
-    @DisplayName("REQUIRES_NEW - translated_text_2 translated_text_1 translated_text_4 translated_text_2, translated_text_2 translated_text_4 translated_text_1 translated_text_2")
+    @DisplayName("REQUIRES_NEW - test should file test, test file should test")
     public void testRequiresNew() {
-        log.info("=== REQUIRES_NEW test translated_text_2 ===");
+        log.info("=== REQUIRES_NEW test ===");
         Long userId = userMapper.save(testUser);
         assertThatThrownBy(() -> {
             transactionTemplate.execute(status -> {
@@ -109,24 +109,24 @@ public class SpringPropagationTest {
                         .amount(new BigDecimal("100000.00"))
                         .build();
                 winnerMapper.save(winner);
-                log.info("translated_text_2 translated_text_4 - Winner creation: {}", winner.getId());
+                log.info("test file - Winner creation: {}", winner.getId());
                 TransactionTemplate requiresNewTemplate = new TransactionTemplate(transactionManager);
                 requiresNewTemplate.setPropagationBehavior(Propagation.REQUIRES_NEW.value());
                 requiresNewTemplate.execute(innerStatus -> {
                     User user = userMapper.findById(userId);
                     user.setNickname("REQUIRES_NEW_COMMITTED");
                     userMapper.update(user);
-                    log.info("REQUIRES_NEW translated_text_3 execution - translated_text_1 translated_text_4 {}", "REQUIRES_NEW_COMMITTED");
+                    log.info("REQUIRES_NEW connection execution - should file {}", "REQUIRES_NEW_COMMITTED");
                     return null;
                 });
-                throw new RuntimeException("translated_text_2 translated_text_4 exception translated_text_2");
+                throw new RuntimeException("test file exception test");
             });
-        }).isInstanceOf(RuntimeException.class).hasMessage("translated_text_2 translated_text_4 exception translated_text_2");
+        }).isInstanceOf(RuntimeException.class).hasMessage("test file exception test");
         User user = userMapper.findById(userId);
         assertThat(user.getNickname()).isEqualTo("REQUIRES_NEW_COMMITTED");
         long winnerCount = winnerMapper.countByName("REQUIRES_NEW Winner");
         assertThat(winnerCount).isEqualTo(0);
-        log.info("REQUIRES_NEW test translated_text_2 - translated_text_2 translated_text_4 translated_text_2, translated_text_2 translated_text_4 translated_text_2");
+        log.info("REQUIRES_NEW test - test file test, test file test");
     }
 
     @Transactional
@@ -139,9 +139,9 @@ public class SpringPropagationTest {
                 .amount(new BigDecimal("100000.00"))
                 .build();
         winnerMapper.save(winner);
-        log.info("translated_text_2 translated_text_4 - Winner creation: {}", winner.getId());
+        log.info("test file - Winner creation: {}", winner.getId());
         requiresNewMethod(userId, "REQUIRES_NEW_COMMITTED");
-        throw new RuntimeException("translated_text_2 translated_text_4 exception translated_text_2");
+        throw new RuntimeException("test file exception test");
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -149,22 +149,22 @@ public class SpringPropagationTest {
         User user = userMapper.findById(userId);
         user.setNickname(nickname);
         userMapper.update(user);
-        log.info("REQUIRES_NEW translated_text_3 execution - translated_text_1 translated_text_4 {}", nickname);
+        log.info("REQUIRES_NEW connection execution - should file {}", nickname);
     }
 
     @Test
-    @DisplayName("SUPPORTS - translated_text_5 translated_text_3 translated_text_2, translated_text_3 translated_text_4 translated_text_2 execution")
+    @DisplayName("SUPPORTS - Endpoint connection test, connection file test execution")
     public void testSupports() {
-        log.info("=== SUPPORTS test translated_text_2 ===");
+        log.info("=== SUPPORTS test ===");
         Long userId = userMapper.save(testUser);
         supportsMethod(userId, "SUPPORTS_NO_TX");
         User user = userMapper.findById(userId);
         assertThat(user.getNickname()).isEqualTo("SUPPORTS_NO_TX");
-        log.info("Case 1 translated_text_2 - translated_text_4 translated_text_2 execution");
+        log.info("Case 1 test - file test execution");
         transactionalMethodWithSupports(userId);
         User updatedUser = userMapper.findById(userId);
         assertThat(updatedUser.getNickname()).isEqualTo("SUPPORTS_WITH_TX");
-        log.info("Case 2 translated_text_2 - translated_text_2 translated_text_4 translated_text_2");
+        log.info("Case 2 test - test file test");
     }
 
     @Transactional(propagation = Propagation.SUPPORTS)
@@ -172,19 +172,19 @@ public class SpringPropagationTest {
         User user = userMapper.findById(userId);
         user.setNickname(nickname);
         userMapper.update(user);
-        log.info("SUPPORTS translated_text_3 execution - {}", nickname);
+        log.info("SUPPORTS connection execution - {}", nickname);
     }
 
     @Transactional
     public void transactionalMethodWithSupports(Long userId) {
         supportsMethod(userId, "SUPPORTS_WITH_TX");
-        log.info("translated_text_4 translated_text_3 SUPPORTS translated_text_3 called");
+        log.info("file connection SUPPORTS connection called");
     }
 
     @Test
-    @DisplayName("NOT_SUPPORTED - translated_text_4 translated_text_2 execution, translated_text_2 translated_text_4 translated_text_1 translated_text_2")
+    @DisplayName("NOT_SUPPORTED - file test execution, test file should test")
     public void testNotSupported() {
-        log.info("=== NOT_SUPPORTED test translated_text_2 ===");
+        log.info("=== NOT_SUPPORTED test ===");
         Long userId = userMapper.save(testUser);
         assertThatThrownBy(() -> {
             transactionTemplate.execute(status -> {
@@ -196,24 +196,24 @@ public class SpringPropagationTest {
                         .amount(new BigDecimal("200000.00"))
                         .build();
                 winnerMapper.save(winner);
-                log.info("translated_text_2 translated_text_4 - Winner creation: {}", winner.getId());
+                log.info("test file - Winner creation: {}", winner.getId());
                 TransactionTemplate notSupportedTemplate = new TransactionTemplate(transactionManager);
                 notSupportedTemplate.setPropagationBehavior(Propagation.NOT_SUPPORTED.value());
                 notSupportedTemplate.execute(innerStatus -> {
                     User user = userMapper.findById(userId);
                     user.setNickname("NOT_SUPPORTED_COMMITTED");
                     userMapper.update(user);
-                    log.info("NOT_SUPPORTED translated_text_3 execution - translated_text_4 translated_text_2 {}", "NOT_SUPPORTED_COMMITTED");
+                    log.info("NOT_SUPPORTED connection execution - file test {}", "NOT_SUPPORTED_COMMITTED");
                     return null;
                 });
-                throw new RuntimeException("translated_text_2 translated_text_4 exception translated_text_2");
+                throw new RuntimeException("test file exception test");
             });
-        }).isInstanceOf(RuntimeException.class).hasMessage("translated_text_2 translated_text_4 exception translated_text_2");
+        }).isInstanceOf(RuntimeException.class).hasMessage("test file exception test");
         User user = userMapper.findById(userId);
         assertThat(user.getNickname()).isEqualTo("NOT_SUPPORTED_COMMITTED");
         long winnerCount = winnerMapper.countByName("NOT_SUPPORTED Winner");
         assertThat(winnerCount).isEqualTo(0);
-        log.info("NOT_SUPPORTED test translated_text_2 - translated_text_4 translated_text_2 execution translated_text_5 translated_text_2");
+        log.info("NOT_SUPPORTED test - file test execution processing test");
     }
 
     @Transactional
@@ -226,9 +226,9 @@ public class SpringPropagationTest {
                 .amount(new BigDecimal("200000.00"))
                 .build();
         winnerMapper.save(winner);
-        log.info("translated_text_2 translated_text_4 - Winner creation: {}", winner.getId());
+        log.info("test file - Winner creation: {}", winner.getId());
         notSupportedMethod(userId, "NOT_SUPPORTED_COMMITTED");
-        throw new RuntimeException("translated_text_2 translated_text_4 exception translated_text_2");
+        throw new RuntimeException("test file exception test");
     }
 
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
@@ -236,13 +236,13 @@ public class SpringPropagationTest {
         User user = userMapper.findById(userId);
         user.setNickname(nickname);
         userMapper.update(user);
-        log.info("NOT_SUPPORTED translated_text_3 execution - translated_text_4 translated_text_2 {}", nickname);
+        log.info("NOT_SUPPORTED connection execution - file test {}", nickname);
     }
 
     @Test
-    @DisplayName("MANDATORY - translated_text_1 translated_text_2 translated_text_4 translated_text_3 execution, translated_text_3 exception")
+    @DisplayName("MANDATORY - should test file connection execution, connection exception")
     public void testMandatory() {
-        log.info("=== MANDATORY test translated_text_2 ===");
+        log.info("=== MANDATORY test ===");
         Long userId = userMapper.save(testUser);
         assertThatThrownBy(() -> {
             TransactionTemplate mandatoryTemplate = new TransactionTemplate(transactionManager);
@@ -251,11 +251,11 @@ public class SpringPropagationTest {
                 User user = userMapper.findById(userId);
                 user.setNickname("MANDATORY_FAIL");
                 userMapper.update(user);
-                log.info("MANDATORY translated_text_3 execution - {}", "MANDATORY_FAIL");
+                log.info("MANDATORY connection execution - {}", "MANDATORY_FAIL");
                 return null;
             });
         }).isInstanceOf(IllegalTransactionStateException.class);
-        log.info("Case 1 translated_text_2 - translated_text_4 translated_text_2 called translated_text_1 exception translated_text_2");
+        log.info("Case 1 test - file test called should exception test");
         transactionTemplate.execute(status -> {
             TransactionTemplate mandatoryTemplate = new TransactionTemplate(transactionManager);
             mandatoryTemplate.setPropagationBehavior(Propagation.MANDATORY.value());
@@ -263,14 +263,14 @@ public class SpringPropagationTest {
                 User user = userMapper.findById(userId);
                 user.setNickname("MANDATORY_SUCCESS");
                 userMapper.update(user);
-                log.info("MANDATORY translated_text_3 execution - {}", "MANDATORY_SUCCESS");
-                log.info("translated_text_4 translated_text_3 MANDATORY translated_text_3 called");
+                log.info("MANDATORY connection execution - {}", "MANDATORY_SUCCESS");
+                log.info("file connection MANDATORY connection called");
                 return null;
             });
         });
         User user = userMapper.findById(userId);
         assertThat(user.getNickname()).isEqualTo("MANDATORY_SUCCESS");
-        log.info("Case 2 translated_text_2 - translated_text_4 translated_text_3 translated_text_2 execution");
+        log.info("Case 2 test - file connection test execution");
     }
 
     @Transactional(propagation = Propagation.MANDATORY)
@@ -278,39 +278,39 @@ public class SpringPropagationTest {
         User user = userMapper.findById(userId);
         user.setNickname(nickname);
         userMapper.update(user);
-        log.info("MANDATORY translated_text_3 execution - {}", nickname);
+        log.info("MANDATORY connection execution - {}", nickname);
     }
 
     @Transactional
     public void transactionalMethodWithMandatory(Long userId) {
         mandatoryMethod(userId, "MANDATORY_SUCCESS");
-        log.info("translated_text_4 translated_text_3 MANDATORY translated_text_3 called");
+        log.info("file connection MANDATORY connection called");
     }
 
     @Test
-    @DisplayName("NEVER - translated_text_1 translated_text_4 translated_text_2 execution, translated_text_5 translated_text_3 exception")
+    @DisplayName("NEVER - should file test execution, Endpoint connection exception")
     public void testNever() {
-        log.info("=== NEVER test translated_text_2 ===");
+        log.info("=== NEVER test ===");
         Long userId = userMapper.save(testUser);
         neverMethod(userId, "NEVER_SUCCESS");
         User user = userMapper.findById(userId);
         assertThat(user.getNickname()).isEqualTo("NEVER_SUCCESS");
-        log.info("Case 1 translated_text_2 - translated_text_4 translated_text_2 translated_text_2 execution");
+        log.info("Case 1 test - file test execution");
         assertThatThrownBy(() -> {
             transactionTemplate.execute(status -> {
-                log.info("translated_text_2 translated_text_4 translated_text_2");
+                log.info("test file test");
                 TransactionTemplate neverTransactionTemplate = new TransactionTemplate(transactionManager);
                 neverTransactionTemplate.setPropagationBehavior(Propagation.NEVER.value());
                 return neverTransactionTemplate.execute(neverStatus -> {
                     User neverUser = userMapper.findById(userId);
                     neverUser.setNickname("NEVER_FAIL");
                     userMapper.update(neverUser);
-                    log.info("translated_text_1 translated_text_3 translated_text_4 translated_text_3 translated_text_1");
+                    log.info("should connection file connection should");
                     return null;
                 });
             });
         }).isInstanceOf(IllegalTransactionStateException.class);
-        log.info("Case 2 translated_text_2 - translated_text_4 translated_text_3 NEVER called translated_text_1 exception translated_text_2");
+        log.info("Case 2 test - file connection NEVER called should exception test");
     }
 
     @Transactional(propagation = Propagation.NEVER)
@@ -318,20 +318,20 @@ public class SpringPropagationTest {
         User user = userMapper.findById(userId);
         user.setNickname(nickname);
         userMapper.update(user);
-        log.info("NEVER translated_text_3 execution - {}", nickname);
+        log.info("NEVER connection execution - {}", nickname);
     }
 
     @Test
-    @DisplayName("NESTED - translated_text_2 translated_text_4, translated_text_2 translated_text_4 translated_text_2translated_text_1 translated_text_2 translated_text_2 translated_text_2")
+    @DisplayName("NESTED - test file, test file testshould test test")
     public void testNested() {
-        log.info("=== NESTED test translated_text_2 ===");
+        log.info("=== NESTED test ===");
         Long userId = userMapper.save(testUser);
         transactionTemplate.execute(status -> {
 
             User user = userMapper.findById(userId);
             user.setNickname("OUTER_TRANSACTION");
             userMapper.update(user);
-            log.info("translated_text_2 translated_text_4 - User translated_text_1: {}", user.getNickname());
+            log.info("test file - User should: {}", user.getNickname());
             try {
                 TransactionTemplate nestedTemplate = new TransactionTemplate(transactionManager);
                 nestedTemplate.setPropagationBehavior(Propagation.NESTED.value());
@@ -344,20 +344,20 @@ public class SpringPropagationTest {
                             .amount(new BigDecimal("300000.00"))
                             .build();
                     winnerMapper.save(winner);
-                    log.info("translated_text_2 translated_text_4 - Winner creation: {}", winner.getId());
-                    throw new RuntimeException("translated_text_2 translated_text_4 exception translated_text_2");
+                    log.info("test file - Winner creation: {}", winner.getId());
+                    throw new RuntimeException("test file exception test");
                 });
             } catch (RuntimeException e) {
-                log.info("translated_text_2 translated_text_4 exception processing: {}", e.getMessage());
+                log.info("test file exception processing: {}", e.getMessage());
             }
-            log.info("translated_text_2 translated_text_4 translated_text_2 translated_text_2");
+            log.info("test file test");
             return null;
         });
         User user = userMapper.findById(userId);
         assertThat(user.getNickname()).isEqualTo("OUTER_TRANSACTION");
         long winnerCount = winnerMapper.countByName("NESTED Winner");
         assertThat(winnerCount).isEqualTo(0);
-        log.info("NESTED test translated_text_2 - translated_text_2 translated_text_4 translated_text_2, translated_text_2 translated_text_2 translated_text_4 translated_text_2");
+        log.info("NESTED test - test file test, test file test");
     }
 
     @Transactional
@@ -365,13 +365,13 @@ public class SpringPropagationTest {
         User user = userMapper.findById(userId);
         user.setNickname("OUTER_TRANSACTION");
         userMapper.update(user);
-        log.info("translated_text_2 translated_text_4 - User translated_text_1: {}", user.getNickname());
+        log.info("test file - User should: {}", user.getNickname());
         try {
             nestedMethod(userId);
         } catch (RuntimeException e) {
-            log.info("translated_text_2 translated_text_4 exception processing: {}", e.getMessage());
+            log.info("test file exception processing: {}", e.getMessage());
         }
-        log.info("translated_text_2 translated_text_4 translated_text_2 translated_text_2");
+        log.info("test file test");
     }
 
     @Transactional(propagation = Propagation.NESTED)
@@ -384,7 +384,7 @@ public class SpringPropagationTest {
                 .amount(new BigDecimal("300000.00"))
                 .build();
         winnerMapper.save(winner);
-        log.info("translated_text_2 translated_text_4 - Winner creation: {}", winner.getId());
-        throw new RuntimeException("translated_text_2 translated_text_4 exception translated_text_2");
+        log.info("test file - Winner creation: {}", winner.getId());
+        throw new RuntimeException("test file exception test");
     }
 }

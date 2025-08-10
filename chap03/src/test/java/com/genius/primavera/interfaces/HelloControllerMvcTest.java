@@ -44,7 +44,7 @@ public class HelloControllerMvcTest {
 
     @Test
     @Order(1)
-    @DisplayName("GET /hello - translated_text_2 MVC translated_text_2 test")
+    @DisplayName("GET /hello - test MVC test")
     void testHelloWorldMapping() throws Exception {
         List<User> mockUsers = List.of(
                 User.builder().id(1L).name("User1").email("user1@test.com").build(),
@@ -56,12 +56,12 @@ public class HelloControllerMvcTest {
                 .andExpect(model().attributeExists("users"))
                 .andExpect(model().attribute("users", mockUsers))
                 .andDo(print());
-        log.info(" translated_text_2 MVC translated_text_2 test completed");
+        log.info(" test MVC test completed");
     }
 
     @Test
     @Order(2)
-    @DisplayName("GET /world/{id} - translated_text_2 translated_text_2 translated_text_3 test")
+    @DisplayName("GET /world/{id} - test connection test")
     void testPathVariableBinding() throws Exception {
         Long userId = 123L;
         User mockUser = User.builder()
@@ -78,7 +78,7 @@ public class HelloControllerMvcTest {
                 .andExpect(model().attribute("user", mockUser))
                 .andDo(print());
 
-        log.info(" translated_text_2 translated_text_2 translated_text_3 test completed");
+        log.info(" test connection test completed");
     }
 
     @Test
@@ -91,10 +91,10 @@ public class HelloControllerMvcTest {
 
     @Test
     @Order(4)
-    @DisplayName("GET /order - translated_text_2 translated_text_1 translated_text_2 test")
+    @DisplayName("GET /order - test should test")
     void testSimpleViewReturn() throws Exception {
         mockMvc.perform(get("/order")).andExpect(status().isOk()).andExpect(view().name("hello")).andDo(print());
-        log.info(" translated_text_2 translated_text_1 translated_text_2 test completed");
+        log.info(" test should test completed");
     }
 
     @Test
@@ -118,7 +118,7 @@ public class HelloControllerMvcTest {
 
     @Test
     @Order(6)
-    @DisplayName("translated_text_2 translated_text_5 translated_text_2 translated_text_2 translated_text_2 test")
+    @DisplayName("test processing test test")
     void testComplexRequestMapping() throws Exception {
         Long userId = 456L;
         User mockUser = User.builder().id(userId).name("Complex User").build();
@@ -129,12 +129,12 @@ public class HelloControllerMvcTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("world"))
                 .andDo(print());
-        log.info(" translated_text_2 translated_text_2 translated_text_2 test completed");
+        log.info(" test test completed");
     }
 
     @Test
     @Order(7)
-    @DisplayName("MVC translated_text_4 translated_text_4 validation")
+    @DisplayName("MVC file validation")
     void testMvcArchitectureComponents() throws Exception {
         when(helloService.getUsers()).thenReturn(Collections.emptyList());
         MvcResult result = mockMvc.perform(get("/hello")).andExpect(status().isOk()).andReturn();
@@ -142,12 +142,12 @@ public class HelloControllerMvcTest {
         assertThat(result.getModelAndView()).isNotNull();
         assertThat(result.getModelAndView().getViewName()).isEqualTo("hello");
         assertThat(result.getModelAndView().getModel()).isNotEmpty();
-        log.info(" MVC translated_text_4 translated_text_4 validation completed");
+        log.info(" MVC file validation completed");
     }
 
     @Test
     @Order(8)
-    @DisplayName("Spring MVC translated_text_2 processing translated_text_2 test")
+    @DisplayName("Spring MVC test processing test")
     void testMvcRequestProcessingFlow() throws Exception {
         Long userId = 789L;
         User mockUser = User.builder().id(userId).name("Flow Test User").build();
@@ -157,16 +157,16 @@ public class HelloControllerMvcTest {
                 .andExpect(view().name("world"))
                 .andExpect(model().attributeExists("user"))
                 .andDo(result -> {
-                    log.info(" MVC translated_text_2 processing translated_text_2:");
-                    log.info("  1. DispatcherServlet -> translated_text_2 translated_text_2");
-                    log.info("  2. HandlerMapping -> Controller translated_text_2");
-                    log.info("  3. Controller -> translated_text_4 translated_text_2 processing");
-                    log.info("  4. ModelAndView -> translated_text_1 translated_text_2 data creation");
-                    log.info("  5. ViewResolver -> translated_text_1 translated_text_2");
-                    log.info("  6. View -> translated_text_2 translated_text_2 translated_text_3");
+                    log.info(" MVC test processing test:");
+                    log.info("  1. DispatcherServlet -> test");
+                    log.info("  2. HandlerMapping -> Controller test");
+                    log.info("  3. Controller -> file test processing");
+                    log.info("  4. ModelAndView -> should test data creation");
+                    log.info("  5. ViewResolver -> should test");
+                    log.info("  6. View -> test connection");
                 })
                 .andDo(print());
 
-        log.info(" Spring MVC translated_text_2 processing translated_text_2 test completed");
+        log.info(" Spring MVC test processing test completed");
     }
 }

@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class InvalidLifecycleValidationTest {
 
     @Test
-    @DisplayName("translated_text_3 @PostConstruct translated_text_3 (translated_text_4 translated_text_2)translated_text_1 translated_text_10 translated_text_6 test")
+    @DisplayName("connection @PostConstruct connection (file test)needs to be added0 with test")
     void shouldThrowExceptionForInvalidPostConstructMethod() {
         assertThrows(RuntimeException.class, () -> {
             new PrimaveraApplicationContext("com.genius.primavera.lightweight.framework.invalid");

@@ -62,7 +62,7 @@ public class S3FileServiceVaultIntegrationTest {
 
     @Test
     @Order(1)
-    @DisplayName("Vaulttranslated_text_2 AWS translated_text_5 translated_text_3 S3 translated_text_2 translated_text_4 translated_text_4")
+    @DisplayName("Vaulttest AWS Endpoint connection S3 test file")
     void uploadFileWithVaultCredentials() {
         MockMultipartFile file = new MockMultipartFile("file", "vault-test.txt", "text/plain", TEST_FILE_CONTENT.getBytes(StandardCharsets.UTF_8));
         String fileUrl = s3FileService.uploadFile(TEST_FILE_KEY, file);
@@ -73,7 +73,7 @@ public class S3FileServiceVaultIntegrationTest {
 
     @Test
     @Order(2)
-    @DisplayName("Vault translated_text_6 translated_text_4 translated_text_2 translated_text_5 translated_text_1 exists")
+    @DisplayName("Vault with file test Endpoint should exists")
     void downloadFileWithVaultCredentials() throws Exception {
         var downloadedStream = s3FileService.downloadFile(TEST_FILE_KEY);
         assertThat(downloadedStream).isPresent();
@@ -85,7 +85,7 @@ public class S3FileServiceVaultIntegrationTest {
 
     @Test
     @Order(3)
-    @DisplayName("Vault translated_text_6 translated_text_2 translated_text_7 translated_text_8 translated_text_1 exists")
+    @DisplayName("Vault with test logging configuration should exists")
     void getFileMetadataWithVaultCredentials() {
         var metadata = s3FileService.getFileMetadata(TEST_FILE_KEY);
         assertThat(metadata).isPresent();
@@ -95,7 +95,7 @@ public class S3FileServiceVaultIntegrationTest {
 
     @Test
     @Order(4)
-    @DisplayName("Vault translated_text_6 translated_text_2 translated_text_9 translated_text_1 exists")
+    @DisplayName("Vault with test should not should exists")
     void deleteFileWithVaultCredentials() {
         boolean deleted = s3FileService.deleteFile(TEST_FILE_KEY);
         assertThat(deleted).isTrue();

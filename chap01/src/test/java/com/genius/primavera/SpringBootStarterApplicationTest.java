@@ -33,7 +33,7 @@ public class SpringBootStarterApplicationTest {
     }
 
     @Test
-    @DisplayName("WorldService bean is successfully registered and hello()translated_text_1 'Hello'translated_text_1 returns.")
+    @DisplayName("WorldService bean is successfully registered and hello()should 'Hello'should return.")
     void worldServiceBeanIsRegistered() {
         WorldService worldService = context.getBean(WorldService.class);
         String helloResult = worldService.hello();
@@ -42,7 +42,7 @@ public class SpringBootStarterApplicationTest {
     }
 
     @Test
-    @DisplayName("HelloController bean is successfully registered and hello(), world()translated_text_1 translated_text_2 'Hello World!!!', 'World!!!'translated_text_1 returns.")
+    @DisplayName("HelloController bean is successfully registered and hello(), world()should test 'Hello World!!!', 'World!!!'should return.")
     void helloControllerBeanIsRegistered() {
         HelloController helloController = context.getBean(HelloController.class);
         String helloResult = helloController.hello();
@@ -64,7 +64,7 @@ public class SpringBootStarterApplicationTest {
     }
 
     @Test
-    @DisplayName("WorldService's world() method 'World!!!'translated_text_1 returns.")
+    @DisplayName("WorldService's world() method 'World!!!'should return.")
     void worldServiceWorldMethodReturnsExpectedValue() {
         WorldService worldService = context.getBean(WorldService.class);
         String worldResult = worldService.world();
@@ -72,14 +72,14 @@ public class SpringBootStarterApplicationTest {
     }
 
     @Test
-    @DisplayName("HelloControllertranslated_text_1 annotation based successfully translated_text_14.")
+    @DisplayName("HelloControllershould annotation based successfully registered.")
     void helloControllerConstructorInjection() {
         HelloController helloController = context.getBean(HelloController.class);
         assertThat(helloController).isNotNull();
     }
 
     @Test
-    @DisplayName("WorldControllertranslated_text_1 programmatic method successfully registered and dependency injection works.")
+    @DisplayName("WorldControllershould programmatic method successfully registered and dependency injection works.")
     void worldControllerConstructorInjection() {
         WorldController worldController = context.getBean(WorldController.class);
         assertThat(worldController).isNotNull();

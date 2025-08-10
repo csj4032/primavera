@@ -5,13 +5,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 
 @Slf4j
-@DisplayName("1:N translated_text_3 translated_text_2 translated_text_3")
+@DisplayName("1:N connection test connection")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class OneToManyUnidirectionalTest extends JpaTestBase {
 
 	@Test
 	@Order(1)
-	@DisplayName("translated_text_2, translated_text_2 translated_text_2")
+	@DisplayName("test, test")
 	public void save() {
 		var student1 = new Student(null, "student1");
 		var student2 = new Student(null, "student2");
@@ -28,7 +28,7 @@ public class OneToManyUnidirectionalTest extends JpaTestBase {
 
 	@Test
 	@Order(2)
-	@DisplayName("translated_text_2, translated_text_2 inquiry")
+	@DisplayName("test, test inquiry")
 	public void find() {
 		var student1 = entityManager.find(Student.class, 1l);
 		var student2 = entityManager.find(Student.class, 2l);

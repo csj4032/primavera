@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Slf4j
 @SpringBootTest
 @ActiveProfiles("test")
-@DisplayName("Product Indexing Job translated_text_3 test")
+@DisplayName("Product Indexing Job connection test")
 @EnableTestContainers(value = {@EnableTestContainers.TestContainer(type = ContainerType.MARIADB, name = "primavera")})
 public class SimpleProductTest {
 
@@ -26,10 +26,10 @@ public class SimpleProductTest {
     private ProductRepository productRepository;
 
     @Test
-    @DisplayName("translated_text_9 translated_text_2 translated_text_5 translated_text_8 translated_text_1 exists")
+    @DisplayName("should not test Endpoint configuration should exists")
     void shouldFindProductsInDatabase() {
         List<Product> products = productRepository.findAll();
-        assertFalse(products.isEmpty(), "translated_text_2 translated_text_5 translated_text_4 translated_text_2");
+        assertFalse(products.isEmpty(), "test Endpoint file test");
         log.info("Found {} products in database", products.size());
         products.forEach(product -> {
             assertNotNull(product.getId());

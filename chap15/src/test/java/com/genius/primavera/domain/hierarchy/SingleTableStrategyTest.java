@@ -6,15 +6,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 
 @Slf4j
-@DisplayName("translated_text_2 translated_text_3 translated_text_2 translated_text_2")
+@DisplayName("test connection test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class SingleTableStrategyTest extends BaseHierarchyJpaTest {
 
 	@Test
 	@Order(1)
-	@DisplayName("translated_text_3 translated_text_2")
+	@DisplayName("connection test")
 	public void save() {
-		var album = new Album("translated_text_2", 100, "album");
+		var album = new Album("test", 100, "album");
 		entityTransaction.begin();
 		entityManager.persist(album);
 		entityTransaction.commit();
@@ -23,7 +23,7 @@ public class SingleTableStrategyTest extends BaseHierarchyJpaTest {
 
 	@Test
 	@Order(2)
-	@DisplayName("translated_text_3 inquiry")
+	@DisplayName("connection inquiry")
 	public void find() {
 		var album = entityManager.find(Album.class, 1L);
 		log.info("album : {}", album);

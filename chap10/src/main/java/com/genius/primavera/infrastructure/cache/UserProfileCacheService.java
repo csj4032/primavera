@@ -34,7 +34,7 @@ public class UserProfileCacheService {
 
         profileStore.put(String.valueOf(user.getId()), entry);
 
-        log.info(" user translated_text_3 translated_text_2 - ID: {}, translated_text_3: {}, translated_text_5: {}", 
+        log.info(" user connection test - ID: {}, connection: {}, Endpoint: {}", 
                 user.getId(), user.getEmail(), providerType);
 
         return entry;
@@ -45,11 +45,11 @@ public class UserProfileCacheService {
         UserProfileCacheEntry entry = profileStore.get(String.valueOf(userId));
         
         if (entry == null) {
-            log.debug(" user translated_text_3 translated_text_2 translated_text_2 - ID: {}", userId);
+            log.debug(" user connection test - ID: {}", userId);
             return Optional.empty();
         }
 
-        log.debug(" user translated_text_3 translated_text_2 translated_text_2 - ID: {}", userId);
+        log.debug(" user connection test - ID: {}", userId);
         return Optional.of(entry);
     }
 
@@ -80,7 +80,7 @@ public class UserProfileCacheService {
         UserProfileCacheEntry updatedEntry = builder.build();
         profileStore.put(String.valueOf(userId), updatedEntry);
 
-        log.info(" user translated_text_3 translated_text_4 - ID: {}, translated_text_3: {}", userId, updatedUser.getEmail());
+        log.info(" user connection file - ID: {}, connection: {}", userId, updatedUser.getEmail());
         return updatedEntry;
     }
 
@@ -89,7 +89,7 @@ public class UserProfileCacheService {
         Optional<UserProfileCacheEntry> existingEntry = getUserProfile(userId);
         
         if (existingEntry.isEmpty()) {
-            log.warn(" translated_text_3 translated_text_4 failure - translated_text_3 translated_text_2: {}", userId);
+            log.warn(" connection file failure - connection test: {}", userId);
             return null;
         }
 
@@ -102,7 +102,7 @@ public class UserProfileCacheService {
 
         profileStore.put(String.valueOf(userId), updatedEntry);
 
-        log.info(" translated_text_3 translated_text_2 translated_text_4 - ID: {}, translated_text_5: {}, translated_text_3 translated_text_2: {}", 
+        log.info(" connection test file - ID: {}, Endpoint: {}, connection test: {}", 
                 userId, providerType, updatedEntry.getLoginCount());
 
         return updatedEntry;
@@ -111,13 +111,13 @@ public class UserProfileCacheService {
     @CacheEvict(value = "userProfiles", key = "#userId")
     public void evictUserProfile(Long userId) {
         profileStore.remove(String.valueOf(userId));
-        log.info(" user translated_text_3 translated_text_2 deletion - ID: {}", userId);
+        log.info(" user connection test deletion - ID: {}", userId);
     }
 
     @CacheEvict(value = "userProfiles", allEntries = true)
     public void evictAllUserProfiles() {
         profileStore.clear();
-        log.info(" all user translated_text_3 translated_text_2 deletion");
+        log.info(" all user connection test deletion");
     }
 
     public void refreshProviderUsers(String providerType) {
@@ -129,7 +129,7 @@ public class UserProfileCacheService {
                 })
                 .count();
 
-        log.info(" translated_text_5 user translated_text_2 translated_text_2 - translated_text_5: {}, translated_text_2 translated_text_1: {}", providerType, refreshCount);
+        log.info(" Endpoint user test - Endpoint: {}, test should: {}", providerType, refreshCount);
     }
 
     public ProfileCacheStats getCacheStats() {

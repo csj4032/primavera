@@ -20,14 +20,14 @@ public class PrimaveraApplicationContextTest {
 
     @Test
     @Order(1)
-    @DisplayName("ApplicationContext is successfully translated_text_11 test")
+    @DisplayName("ApplicationContext is successfully processing test")
     void shouldCreateApplicationContext() {
         assertNotNull(context);
     }
 
     @Test
     @Order(2)
-    @DisplayName("@PrimaveraComponenttranslated_text_1 translated_text_2 translated_text_1 Beantranslated_text_2 translated_text_15 test")
+    @DisplayName("@PrimaveraComponenttest should Beantest should5 test")
     void shouldRegisterComponentAsBean() {
         assertTrue(context.containsBean("testService"));
         TestService testService = context.getBean("testService");
@@ -37,7 +37,7 @@ public class PrimaveraApplicationContextTest {
 
     @Test
     @Order(3)
-    @DisplayName("dependency injection successfully translated_text_5 test")
+    @DisplayName("dependency injection successfully processing test")
     void shouldInjectDependencies() {
         TestController controller = context.getBean("testController");
         assertNotNull(controller);
@@ -47,7 +47,7 @@ public class PrimaveraApplicationContextTest {
 
     @Test
     @Order(4)
-    @DisplayName("Beantranslated_text_1 translated_text_2 translated_text_8 translated_text_1 translated_text_3 test")
+    @DisplayName("Beanshould test configuration should connection test")
     void shouldGetBeanByType() {
         TestService service = context.getBean(TestService.class);
         assertNotNull(service);
@@ -56,7 +56,7 @@ public class PrimaveraApplicationContextTest {
 
     @Test
     @Order(5)
-    @DisplayName("translated_text_4 translated_text_2 Bean inquiry translated_text_1 translated_text_1 translated_text_5 test")
+    @DisplayName("file test Bean inquiry needs to be added processing test")
     void shouldThrowExceptionForNonExistentBean() {
         assertThrows(RuntimeException.class, () -> {
             context.getBean("nonExistentBean");

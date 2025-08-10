@@ -6,13 +6,13 @@ import org.junit.jupiter.api.*;
 import java.util.List;
 
 @Slf4j
-@DisplayName("N:N translated_text_3 translated_text_2 translated_text_3  : translated_text_5 translated_text_2 translated_text_3")
+@DisplayName("N:N connection test connection  : processing test connection")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ManyToManyUnidirectionalTest extends ManyToManyTestBase {
 
 	@Test
 	@Order(1)
-	@DisplayName("translated_text_2, translated_text_2 translated_text_2")
+	@DisplayName("test, test")
 	public void save() {
 		var subscriber1 = new Subscriber(null, "Subscriber1");
 		var subscriber2 = new Subscriber(null, "Subscriber2");
@@ -28,7 +28,7 @@ public class ManyToManyUnidirectionalTest extends ManyToManyTestBase {
 
 	@Test
 	@Order(2)
-	@DisplayName("translated_text_2, translated_text_2 inquiry")
+	@DisplayName("test, test inquiry")
 	public void find() {
 		Publisher publisher = entityManager.find(Publisher.class, 1l);
 		List<Subscriber> subscribers = publisher.getSubscribers();

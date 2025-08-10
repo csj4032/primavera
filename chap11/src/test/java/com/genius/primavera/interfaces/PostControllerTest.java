@@ -44,10 +44,10 @@ public class PostControllerTest {
 
     @Test
     @Order(1)
-    @DisplayName("translated_text_3 translated_text_2 translated_text_2 translated_text_2")
+    @DisplayName("connection test test")
     @Disabled("Integration test with authentication - requires complex setup")
     public void postForm() throws Exception {
         String body = restTemplate.getForObject("/posts/1", String.class);
-        Assertions.assertTrue(body.contains("translated_text_4"));
+        Assertions.assertTrue(body.contains("file"));
     }
 }

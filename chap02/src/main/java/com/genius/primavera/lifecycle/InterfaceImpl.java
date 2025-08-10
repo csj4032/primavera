@@ -11,11 +11,11 @@ public class InterfaceImpl implements InitializingBean, DisposableBean {
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		log.info("Interface bean creation translated_text_1 translated_text_3 : init() calledtranslated_text_1");
+		log.info("Interface bean creation should connection : init() calledshould");
 	}
 
 	@Override
 	public void destroy() throws Exception {
-		log.info("Interface bean creation translated_text_2 : destroy calledtranslated_text_1");
+		log.info("Interface bean creation test : destroy calledshould");
 	}
 }

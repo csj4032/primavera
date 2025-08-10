@@ -7,13 +7,13 @@ import org.junit.jupiter.api.*;
 import java.io.IOException;
 
 @Slf4j
-@DisplayName("translated_text_2 translated_text_2 translated_text_3 test")
+@DisplayName("test connection test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class AccountGodClassTest {
 
     @Test
     @Order(1)
-    @DisplayName("translated_text_2 translated_text_2 translated_text_1 translated_text_3 translated_text_2")
+    @DisplayName("test should connection test")
     public void accountGodClassTest() throws IOException {
         String path = "/accountInfo.csv";
         AccountGodClass accountTransaction = new AccountGodClass(path);
@@ -24,7 +24,7 @@ public class AccountGodClassTest {
 
     @Test
     @Order(2)
-    @DisplayName("translated_text_2 translated_text_2 translated_text_1 translated_text_3 translated_text_2 failure")
+    @DisplayName("test should connection test failure")
     public void accountGodClassTestFail() {
         Assertions.assertThrows(IOException.class, () -> {
             String path = "/nonExistentFile.csv";

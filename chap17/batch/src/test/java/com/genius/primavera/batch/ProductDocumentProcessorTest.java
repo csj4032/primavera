@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
 @ExtendWith(MockitoExtension.class)
-@DisplayName("ProductDocumentProcessor translated_text_2 test")
+@DisplayName("ProductDocumentProcessor test")
 class ProductDocumentProcessorTest {
 
     private ProductDocumentProcessor processor;
@@ -34,7 +34,7 @@ class ProductDocumentProcessorTest {
 
         testSeller = Seller.builder()
                 .id(1L)
-                .name("test translated_text_3")
+                .name("test connection")
                 .email("test@seller.com")
                 .rating(4.5)
                 .createdAt(LocalDateTime.now())
@@ -42,15 +42,15 @@ class ProductDocumentProcessorTest {
 
         testCategory = Category.builder()
                 .id(1L)
-                .name("translated_text_4")
+                .name("file")
                 .level(1)
                 .createdAt(LocalDateTime.now())
                 .build();
 
         testProduct = Product.builder()
                 .id(100L)
-                .name("MacBook Pro 16translated_text_2 M3 Pro")
-                .description("Appletranslated_text_1 translated_text_2 MacBook Pro 16translated_text_2 translated_text_3 M3 Pro translated_text_3 translated_text_6.")
+                .name("MacBook Pro 16test M3 Pro")
+                .description("Appleshould test MacBook Pro 16test connection M3 Pro connection with.")
                 .price(3200000)
                 .status(ProductStatus.ACTIVE)
                 .seller(testSeller)
@@ -61,70 +61,70 @@ class ProductDocumentProcessorTest {
     }
 
     @Test
-    @DisplayName("Producttranslated_text_1 ProductDocumenttranslated_text_1 translated_text_2 translated_text_4")
+    @DisplayName("Productshould ProductDocumentshould test file")
     void shouldProcessProductToDocumentSuccessfully() throws Exception {
         ProductDocument result = processor.process(testProduct);
 
-        assertNotNull(result, "processing translated_text_7 nulltranslated_text_1 translated_text_4 translated_text_2");
-        assertEquals(testProduct.getId(), result.getProductId(), "translated_text_2 IDtranslated_text_1 translated_text_4 translated_text_2");
-        assertEquals(testProduct.getName(), result.getName(), "translated_text_2translated_text_1 translated_text_4 translated_text_2");
-        assertEquals(testProduct.getDescription(), result.getDescription(), "translated_text_2 translated_text_1 translated_text_4 translated_text_2");
-        assertEquals(testProduct.getPrice(), result.getPrice(), "translated_text_1translated_text_1 translated_text_4 translated_text_2");
-        assertEquals(testProduct.getStatus().name(), result.getStatus(), "translated_text_2translated_text_1 translated_text_4 translated_text_2");
+        assertNotNull(result, "processing logging nullshould file test");
+        assertEquals(testProduct.getId(), result.getProductId(), "test IDshould file test");
+        assertEquals(testProduct.getName(), result.getName(), "testshould file test");
+        assertEquals(testProduct.getDescription(), result.getDescription(), "test should file test");
+        assertEquals(testProduct.getPrice(), result.getPrice(), "shouldshould file test");
+        assertEquals(testProduct.getStatus().name(), result.getStatus(), "testshould file test");
         
         log.info("processing ProductDocument: {}", result);
     }
 
     @Test
-    @DisplayName("translated_text_3 informationtranslated_text_1 translated_text_4 translated_text_4")
+    @DisplayName("connection informationshould file")
     void shouldMapSellerInfoCorrectly() throws Exception {
         ProductDocument result = processor.process(testProduct);
 
-        assertNotNull(result.getSeller(), "translated_text_3 informationtranslated_text_1 translated_text_4 translated_text_2");
-        assertEquals(testSeller.getId(), result.getSeller().getId(), "translated_text_3 IDtranslated_text_1 translated_text_4 translated_text_2");
-        assertEquals(testSeller.getName(), result.getSeller().getName(), "translated_text_3translated_text_1 translated_text_4 translated_text_2");
-        assertEquals(testSeller.getEmail(), result.getSeller().getEmail(), "translated_text_3 translated_text_1translated_text_1 translated_text_4 translated_text_2");
-        assertEquals(testSeller.getRating(), result.getSeller().getRating(), "translated_text_3 translated_text_1 translated_text_4 translated_text_2");
+        assertNotNull(result.getSeller(), "connection informationshould file test");
+        assertEquals(testSeller.getId(), result.getSeller().getId(), "connection IDshould file test");
+        assertEquals(testSeller.getName(), result.getSeller().getName(), "connectionshould file test");
+        assertEquals(testSeller.getEmail(), result.getSeller().getEmail(), "connection shouldshould file test");
+        assertEquals(testSeller.getRating(), result.getSeller().getRating(), "connection should file test");
         
-        log.info("translated_text_3 information: {}", result.getSeller());
+        log.info("connection information: {}", result.getSeller());
     }
 
     @Test
-    @DisplayName("translated_text_4 informationtranslated_text_1 translated_text_4 translated_text_4")
+    @DisplayName("file informationshould file")
     void shouldMapCategoryInfoCorrectly() throws Exception {
         ProductDocument result = processor.process(testProduct);
 
-        assertNotNull(result.getCategory(), "translated_text_4 informationtranslated_text_1 translated_text_4 translated_text_2");
-        assertEquals(testCategory.getId(), result.getCategory().getId(), "translated_text_4 IDtranslated_text_1 translated_text_4 translated_text_2");
-        assertEquals(testCategory.getName(), result.getCategory().getName(), "translated_text_4translated_text_1 translated_text_4 translated_text_2");
-        assertEquals(testCategory.getLevel(), result.getCategory().getLevel(), "translated_text_4 translated_text_1 translated_text_4 translated_text_2");
-        assertEquals("translated_text_4 > translated_text_3 > " + testCategory.getName(), 
-                result.getCategory().getFullPath(), "translated_text_4 translated_text_2 translated_text_1translated_text_1 translated_text_4 translated_text_11 translated_text_2");
+        assertNotNull(result.getCategory(), "file informationshould file test");
+        assertEquals(testCategory.getId(), result.getCategory().getId(), "file IDshould file test");
+        assertEquals(testCategory.getName(), result.getCategory().getName(), "fileshould file test");
+        assertEquals(testCategory.getLevel(), result.getCategory().getLevel(), "file should file test");
+        assertEquals("file > connection > " + testCategory.getName(), 
+                result.getCategory().getFullPath(), "file test shouldshould file processing test");
         
-        log.info("translated_text_4 information: {}", result.getCategory());
+        log.info("file information: {}", result.getCategory());
     }
 
     @Test
-    @DisplayName("translated_text_2 translated_text_3translated_text_1 translated_text_2 translated_text_4")
+    @DisplayName("test connectionshould test file")
     void shouldExtractSearchKeywordsFromProductName() throws Exception {
         ProductDocument result = processor.process(testProduct);
 
-        assertNotNull(result.getSearchKeywords(), "translated_text_2 translated_text_3translated_text_1 translated_text_4 translated_text_2");
-        assertFalse(result.getSearchKeywords().isEmpty(), "translated_text_2 translated_text_3translated_text_1 translated_text_4 translated_text_3 translated_text_2");
+        assertNotNull(result.getSearchKeywords(), "test connectionshould file test");
+        assertFalse(result.getSearchKeywords().isEmpty(), "test connectionshould file connection test");
         
-        assertTrue(result.getSearchKeywords().contains("MacBook"), "MacBook translated_text_3translated_text_1 translated_text_5 translated_text_2");
-        assertTrue(result.getSearchKeywords().contains("Pro"), "Pro translated_text_3translated_text_1 translated_text_5 translated_text_2");
+        assertTrue(result.getSearchKeywords().contains("MacBook"), "MacBook connectionshould processing test");
+        assertTrue(result.getSearchKeywords().contains("Pro"), "Pro connectionshould processing test");
         
-        log.info("translated_text_2 translated_text_3: {}", result.getSearchKeywords());
+        log.info("test connection: {}", result.getSearchKeywords());
     }
 
     @Test
-    @DisplayName("translated_text_1 translated_text_2translated_text_1 translated_text_4 translated_text_4")
+    @DisplayName("should testshould file")
     void shouldDeterminePriceRangeCorrectly() throws Exception {
         testProduct = Product.builder()
                 .id(1L)
-                .name("translated_text_1 translated_text_2")
-                .description("translated_text_1 translated_text_2")
+                .name("should test")
+                .description("should test")
                 .price(300000)
                 .status(ProductStatus.ACTIVE)
                 .seller(testSeller)
@@ -134,69 +134,69 @@ class ProductDocumentProcessorTest {
                 .build();
         
         ProductDocument lowPriceResult = processor.process(testProduct);
-        assertEquals("LOW", lowPriceResult.getPriceRange(), "30translated_text_3 LOW translated_text_1 translated_text_2");
+        assertEquals("LOW", lowPriceResult.getPriceRange(), "30connection LOW should test");
 
         testProduct.setPrice(700000);
         ProductDocument mediumPriceResult = processor.process(testProduct);
-        assertEquals("MEDIUM", mediumPriceResult.getPriceRange(), "70translated_text_3 MEDIUM translated_text_1 translated_text_2");
+        assertEquals("MEDIUM", mediumPriceResult.getPriceRange(), "70connection MEDIUM should test");
 
         testProduct.setPrice(1200000);
         ProductDocument highPriceResult = processor.process(testProduct);
-        assertEquals("HIGH", highPriceResult.getPriceRange(), "120translated_text_3 HIGH translated_text_1 translated_text_2");
+        assertEquals("HIGH", highPriceResult.getPriceRange(), "120connection HIGH should test");
         
-        log.info("translated_text_1 translated_text_2 - LOW: {}, MEDIUM: {}, HIGH: {}", 
+        log.info("should test - LOW: {}, MEDIUM: {}, HIGH: {}", 
                 lowPriceResult.getPriceRange(), 
                 mediumPriceResult.getPriceRange(), 
                 highPriceResult.getPriceRange());
     }
 
     @Test
-    @DisplayName("translated_text_2 informationtranslated_text_1 translated_text_4 translated_text_4")
+    @DisplayName("test informationshould file")
     void shouldConvertDateTimeCorrectly() throws Exception {
         ProductDocument result = processor.process(testProduct);
 
-        assertNotNull(result.getIndexedAt(), "translated_text_2 translated_text_2translated_text_1 translated_text_5 translated_text_2");
-        assertNotNull(result.getLastModified(), "translated_text_3 modification translated_text_2translated_text_1 translated_text_5 translated_text_2");
+        assertNotNull(result.getIndexedAt(), "testshould processing test");
+        assertNotNull(result.getLastModified(), "connection modification testshould processing test");
         
-        log.info("translated_text_2 translated_text_2: {}, translated_text_3 modification: {}", 
+        log.info("test: {}, connection modification: {}", 
                 result.getIndexedAt(), result.getLastModified());
     }
 
     @Test
-    @DisplayName("null translated_text_2 translated_text_2 translated_text_1 translated_text_5")
+    @DisplayName("null test should Endpoint")
     void shouldThrowExceptionForNullProduct() {
         assertThrows(Exception.class, () -> processor.process(null), 
-                "null translated_text_2 translated_text_2 translated_text_1 translated_text_4 translated_text_2");
+                "null test should file test");
     }
 
     @Test
-    @DisplayName("translated_text_3 translated_text_2translated_text_1 translated_text_2 processing translated_text_1 exists")
+    @DisplayName("connection testshould test processing should exists")
     void shouldProcessDifferentProductStatuses() throws Exception {
         for (ProductStatus status : ProductStatus.values()) {
             testProduct.setStatus(status);
             ProductDocument result = processor.process(testProduct);
             
             assertEquals(status.name(), result.getStatus(), 
-                    "translated_text_2 translated_text_2translated_text_1 translated_text_4 translated_text_5 translated_text_2: " + status);
+                    "testshould file processing test: " + status);
             
-            log.info("translated_text_2 translated_text_2 processing: {} -> {}", status, result.getStatus());
+            log.info("test processing: {} -> {}", status, result.getStatus());
         }
     }
 
     @Test
-    @DisplayName("translated_text_2 translated_text_2translated_text_1 translated_text_4 processing")
+    @DisplayName("testshould file processing")
     void shouldProcessKoreanProductName() throws Exception {
-        testProduct.setName("translated_text_2 translated_text_3 S24 translated_text_3 translated_text_4");
+        testProduct.setName("test connection S24 connection file");
         
         ProductDocument result = processor.process(testProduct);
         
-        assertEquals("translated_text_2 translated_text_3 S24 translated_text_3 translated_text_4", result.getName(), 
-                "translated_text_2 translated_text_2translated_text_1 translated_text_4 processing translated_text_2");
+        assertEquals("test connection S24 connection file", result.getName(), 
+                "testshould file processing test");
         
         assertFalse(result.getSearchKeywords().isEmpty(), 
-                "translated_text_2 translated_text_2 translated_text_3translated_text_1 translated_text_5 translated_text_2");
+                "test connectionshould processing test");
         
-        log.info("translated_text_2 translated_text_2 processing result: {}", result.getName());
-        log.info("translated_text_2 translated_text_3: {}", result.getSearchKeywords());
+        log.info("test processing result: {}", result.getName());
+        log.info("test connection: {}", result.getSearchKeywords());
     }
 }

@@ -30,7 +30,7 @@ import java.util.stream.IntStream;
 @Slf4j
 @SpringBootTest
 @Testcontainers
-@DisplayName("HikariCP translated_text_2 translated_text_3 translated_text_2 test")
+@DisplayName("HikariCP test connection test")
 @ActiveProfiles("hikari-performance-focused")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class HikariPerformancePoolTest {
@@ -69,15 +69,15 @@ class HikariPerformancePoolTest {
 
     @Test
     @Order(1)
-    @DisplayName("translated_text_2 translated_text_3 translated_text_2 translated_text_1 translated_text_2 verification")
+    @DisplayName("test connection test should test verification")
     void verifyPerformancePoolConfiguration() {
-        log.info("=== HikariCP translated_text_2 translated_text_3 translated_text_2 translated_text_1 translated_text_2 ===");
-        log.info("translated_text_2 translated_text_1 translated_text_2: {}", hikariDataSource.getMaximumPoolSize());
-        log.info("translated_text_2 translated_text_2 translated_text_2: {}", hikariDataSource.getMinimumIdle());
-        log.info("translated_text_2 translated_text_4: {}ms", hikariDataSource.getConnectionTimeout());
-        log.info("translated_text_2 translated_text_4: {}ms", hikariDataSource.getIdleTimeout());
-        log.info("translated_text_2 translated_text_2 translated_text_2: {}ms", hikariDataSource.getMaxLifetime());
-        log.info("translated_text_2 translated_text_2 translated_text_3: {}ms (0=translated_text_4)", hikariDataSource.getLeakDetectionThreshold());
+        log.info("=== HikariCP test connection test should test ===");
+        log.info("test should test: {}", hikariDataSource.getMaximumPoolSize());
+        log.info("test test: {}", hikariDataSource.getMinimumIdle());
+        log.info("test file: {}ms", hikariDataSource.getConnectionTimeout());
+        log.info("test file: {}ms", hikariDataSource.getIdleTimeout());
+        log.info("test test: {}ms", hikariDataSource.getMaxLifetime());
+        log.info("test connection: {}ms (0=file)", hikariDataSource.getLeakDetectionThreshold());
 
         Assertions.assertEquals(20, hikariDataSource.getMaximumPoolSize());
         Assertions.assertEquals(10, hikariDataSource.getMinimumIdle());
@@ -87,11 +87,11 @@ class HikariPerformancePoolTest {
 
     @Test
     @Order(2)
-    @DisplayName("translated_text_2 translated_text_2 translated_text_2 processing test")
+    @DisplayName("test test processing test")
     void measureHighVolumeQueryPerformance() {
         final int QUERY_COUNT = 1000;
         Instant start = Instant.now();
-        log.info("=== translated_text_2 translated_text_2 translated_text_2 test translated_text_2: {}translated_text_1 translated_text_2 ===", QUERY_COUNT);
+        log.info("=== test test test: {}should test ===", QUERY_COUNT);
         IntStream.rangeClosed(1, QUERY_COUNT)
                 .parallel()
                 .forEach(i -> {
@@ -104,22 +104,22 @@ class HikariPerformancePoolTest {
 
         Duration elapsed = Duration.between(start, Instant.now());
         double queriesPerSecond = QUERY_COUNT / (elapsed.toMillis() / 1000.0);
-        log.info("=== translated_text_2 translated_text_2 translated_text_2 test result ===");
-        log.info("{}translated_text_1 translated_text_2 execution translated_text_2: {}ms", QUERY_COUNT, elapsed.toMillis());
-        log.info("translated_text_2 translated_text_2 translated_text_2: {}ms", elapsed.toMillis() / (double) QUERY_COUNT);
+        log.info("=== test test result ===");
+        log.info("{}should test execution test: {}ms", QUERY_COUNT, elapsed.toMillis());
+        log.info("test test: {}ms", elapsed.toMillis() / (double) QUERY_COUNT);
         log.info("processing: {} queries/sec", String.format("%.2f", queriesPerSecond));
-        logPoolStatistics("translated_text_2 translated_text_2 test translated_text_1");
+        logPoolStatistics("test test should");
     }
 
     @Test
     @Order(3)
-    @DisplayName("translated_text_2 translated_text_3 translated_text_4 test")
+    @DisplayName("test connection file test")
     void measureMaximumConcurrencyStressTest() {
         final int THREAD_COUNT = 30;
         final int QUERIES_PER_THREAD = 20;
         ExecutorService executor = Executors.newFixedThreadPool(THREAD_COUNT);
         Instant start = Instant.now();
-        log.info("=== translated_text_2 translated_text_3 translated_text_4 test translated_text_2: {}translated_text_1 translated_text_3 × {}translated_text_1 translated_text_2 ===", THREAD_COUNT, QUERIES_PER_THREAD);
+        log.info("=== test connection file test: {}should connection × {}should test ===", THREAD_COUNT, QUERIES_PER_THREAD);
         CompletableFuture<ThreadResult>[] futures = IntStream.range(0, THREAD_COUNT)
                 .mapToObj(threadId -> CompletableFuture.supplyAsync(() -> {
                     Instant threadStart = Instant.now();
@@ -149,24 +149,24 @@ class HikariPerformancePoolTest {
         int totalErrors = java.util.Arrays.stream(results).mapToInt(r -> r.errorCount).sum();
         double avgThreadTime = java.util.Arrays.stream(results).mapToLong(r -> r.duration.toMillis()).average().orElse(0.0);
         double totalQueriesPerSecond = totalSuccess / (totalElapsed.toMillis() / 1000.0);
-        log.info("=== translated_text_2 translated_text_3 translated_text_4 test result ===");
-        log.info("translated_text_1 execution translated_text_2: {}ms", totalElapsed.toMillis());
-        log.info("translated_text_2 translated_text_3 execution translated_text_2: {}ms", String.format("%.2f", avgThreadTime));
-        log.info("translated_text_8 translated_text_2: {}translated_text_1", totalSuccess);
-        log.info("translated_text_8 translated_text_2: {}translated_text_1", totalErrors);
-        log.info("translated_text_8: {}%", String.format("%.2f", (totalSuccess * 100.0) / (totalSuccess + totalErrors)));
-        log.info("translated_text_2 processing: {} queries/sec", String.format("%.2f", totalQueriesPerSecond));
-        logPoolStatistics("translated_text_2 translated_text_3 test translated_text_1");
+        log.info("=== test connection file test result ===");
+        log.info("should execution test: {}ms", totalElapsed.toMillis());
+        log.info("test connection execution test: {}ms", String.format("%.2f", avgThreadTime));
+        log.info("configuration test: {}should", totalSuccess);
+        log.info("configuration test: {}should", totalErrors);
+        log.info("configuration: {}%", String.format("%.2f", (totalSuccess * 100.0) / (totalSuccess + totalErrors)));
+        log.info("test processing: {} queries/sec", String.format("%.2f", totalQueriesPerSecond));
+        logPoolStatistics("test connection test should");
         executor.shutdown();
-        Assertions.assertTrue(totalQueriesPerSecond > 50, "translated_text_2 translated_text_3 translated_text_2 50 queries/sec translated_text_2 processing translated_text_2");
+        Assertions.assertTrue(totalQueriesPerSecond > 50, "test connection test 50 queries/sec test processing test");
     }
 
     @Test
     @Order(4)
-    @DisplayName("translated_text_2 creation translated_text_4 translated_text_2 verification")
+    @DisplayName("test creation file test verification")
     void verifyMinimalConnectionCreationOverhead() {
-        log.info("=== translated_text_2 creation translated_text_4 translated_text_2 test ===");
-        logPoolStatistics("test translated_text_2 translated_text_1 (translated_text_1 creation translated_text_2 verification)");
+        log.info("=== test creation file test ===");
+        logPoolStatistics("test should (should creation test verification)");
         long[] queryTimes = new long[10];
         for (int i = 0; i < 10; i++) {
             Instant queryStart = Instant.now();
@@ -174,30 +174,30 @@ class HikariPerformancePoolTest {
             Duration queryTime = Duration.between(queryStart, Instant.now());
             queryTimes[i] = queryTime.toMillis();
             Assertions.assertNotNull(user);
-            log.debug("translated_text_2 translated_text_2 {}: {}ms", i + 1, queryTime.toMillis());
+            log.debug("test {}: {}ms", i + 1, queryTime.toMillis());
         }
 
         double avgQueryTime = java.util.Arrays.stream(queryTimes).average().orElse(0.0);
         long maxQueryTime = java.util.Arrays.stream(queryTimes).max().orElse(0L);
         long minQueryTime = java.util.Arrays.stream(queryTimes).min().orElse(0L);
-        log.info("=== translated_text_2 creation translated_text_4 test result ===");
-        log.info("translated_text_2 translated_text_2 translated_text_2: {}ms", String.format("%.2f", avgQueryTime));
-        log.info("translated_text_2 translated_text_2 translated_text_2: {}ms", maxQueryTime);
-        log.info("translated_text_2 translated_text_2 translated_text_2: {}ms", minQueryTime);
-        log.info("translated_text_2 translated_text_2: {}ms", maxQueryTime - minQueryTime);
-        logPoolStatistics("translated_text_2 translated_text_4 test translated_text_1");
-        Assertions.assertTrue(avgQueryTime < 50, "translated_text_1 creation translated_text_2 translated_text_2 translated_text_2 50ms translated_text_2 translated_text_2 translated_text_2 translated_text_2");
+        log.info("=== test creation file test result ===");
+        log.info("test test: {}ms", String.format("%.2f", avgQueryTime));
+        log.info("test test: {}ms", maxQueryTime);
+        log.info("test test: {}ms", minQueryTime);
+        log.info("test: {}ms", maxQueryTime - minQueryTime);
+        logPoolStatistics("test file test should");
+        Assertions.assertTrue(avgQueryTime < 50, "should creation test test 50ms test test");
     }
 
     private void logPoolStatistics(String phase) {
         try {
-            log.info("=== {} translated_text_1 translated_text_2 ===", phase);
-            log.info("translated_text_2 translated_text_2 translated_text_1: {}", poolMXBean.getActiveConnections());
-            log.info("translated_text_2 translated_text_2 translated_text_1: {}", poolMXBean.getIdleConnections());
-            log.info("translated_text_1 translated_text_2 translated_text_1: {}", poolMXBean.getTotalConnections());
-            log.info("translated_text_2 translated_text_2 translated_text_3 translated_text_1: {}", poolMXBean.getThreadsAwaitingConnection());
+            log.info("=== {} should test ===", phase);
+            log.info("test should: {}", poolMXBean.getActiveConnections());
+            log.info("test should: {}", poolMXBean.getIdleConnections());
+            log.info("test should: {}", poolMXBean.getTotalConnections());
+            log.info("test connection should: {}", poolMXBean.getThreadsAwaitingConnection());
         } catch (Exception e) {
-            log.warn("translated_text_1 translated_text_2 inquiry failure: {}", e.getMessage());
+            log.warn("should test inquiry failure: {}", e.getMessage());
         }
     }
 

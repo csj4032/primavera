@@ -12,12 +12,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@DisplayName("Lucy XSS translated_text_2 translated_text_2 test")
+@DisplayName("Lucy XSS test test")
 public class LucyXssFilterTest {
 
     @Test
     @Order(1)
-    @DisplayName(value = "translated_text_2 translated_text_2 XssPreventer translated_text_2")
+    @DisplayName(value = "test XssPreventer test")
     public void testXssPreventer() {
         String dirty = "\"><script>alert('xss');</script>";
         String clean = XssPreventer.escape(dirty);
@@ -27,7 +27,7 @@ public class LucyXssFilterTest {
 
     @Test
     @Order(2)
-    @DisplayName(value = "translated_text_2 translated_text_2 XssPreventer translated_text_2 - translated_text_1 translated_text_3")
+    @DisplayName(value = "test XssPreventer test - should connection")
     public void testXssPreventerEmpty() {
         String dirty = "";
         String clean = XssPreventer.escape(dirty);
@@ -37,7 +37,7 @@ public class LucyXssFilterTest {
 
     @Test
     @Order(3)
-    @DisplayName(value = "translated_text_2 translated_text_2 XssPreventer translated_text_2 - null")
+    @DisplayName(value = "test XssPreventer test - null")
     public void testXssPreventerNull() {
         String dirty = null;
         String clean = XssPreventer.escape(dirty);
@@ -47,7 +47,7 @@ public class LucyXssFilterTest {
 
     @Test
     @Order(4)
-    @DisplayName(value = "translated_text_2 translated_text_2 XssPreventer translated_text_2 - translated_text_2")
+    @DisplayName(value = "test XssPreventer test - test")
     public void testXssPreventerWhitespace() {
         String dirty = "   ";
         String clean = XssPreventer.escape(dirty);
@@ -57,7 +57,7 @@ public class LucyXssFilterTest {
 
     @Test
     @Order(5)
-    @DisplayName(value = "translated_text_2 translated_text_2 XssPreventer translated_text_2 - translated_text_4")
+    @DisplayName(value = "test XssPreventer test - file")
     public void testXssPreventerSpecialChars() {
         String dirty = "!@#$%^&*()_+|{}[]:;\"'<>,.?/~`";
         String clean = XssPreventer.escape(dirty);

@@ -8,13 +8,13 @@ import java.math.BigDecimal;
 @Data
 public class CreateOrderItemRequest {
     
-    @NotBlank(message = "translated_text_2 IDtranslated_text_1 translated_text_5")
+    @NotBlank(message = "test IDshould Endpoint")
     private String productId;
     
-    @Positive(message = "translated_text_3 1translated_text_1 translated_text_5 translated_text_3")
+    @Positive(message = "connection 1should Endpoint connection")
     private int quantity;
     
-    @Positive(message = "translated_text_1 0translated_text_2 translated_text_2 translated_text_3")
+    @Positive(message = "should 0test connection")
     private BigDecimal unitPrice;
     
     private String productName;

@@ -22,31 +22,31 @@ public class LoggingDemoController {
 
     @GetMapping("/demo")
     public Map<String, Object> demonstrateLogging() {
-        log.trace("TRACE translated_text_2 - translated_text_2 translated_text_3 information");
-        log.debug("DEBUG translated_text_2 - translated_text_3 information");
-        log.info("INFO translated_text_2 - translated_text_2 information translated_text_3");
-        log.warn("WARN translated_text_2 - translated_text_2 translated_text_3");
-        log.error("ERROR translated_text_2 - translated_text_2 translated_text_3");
+        log.trace("TRACE test - test connection information");
+        log.debug("DEBUG test - connection information");
+        log.info("INFO test - test information connection");
+        log.warn("WARN test - test connection");
+        log.error("ERROR test - test connection");
         String user = "user";
         LocalDateTime now = LocalDateTime.now();
-        log.info("user [{}]translated_text_1 {}translated_text_1 translated_text_2 translated_text_3 translated_text_13", user, now);
+        log.info("user [{}]should {}should test connection created successfully", user, now);
         try {
-            throw new RuntimeException("translated_text_4 exception translated_text_2");
+            throw new RuntimeException("file exception test");
         } catch (Exception e) {
-            log.error("exceptiontranslated_text_1 translated_text_2", e);
+            log.error("exceptionshould test", e);
         }
-        return Map.of("activeProfile", activeProfile, "logPath", logPath, "timestamp", now, "message", "translated_text_2 translated_text_3 translated_text_15: " + logPath);
+        return Map.of("activeProfile", activeProfile, "logPath", logPath, "timestamp", now, "message", "test connection should5: " + logPath);
     }
 
     @GetMapping("/profile-info")
     public Map<String, Object> getProfileInfo() {
-        log.info("translated_text_2 translated_text_2 translated_text_4: {}", activeProfile);
-        log.info("translated_text_2 translated_text_2: {}", logPath);
+        log.info("test file: {}", activeProfile);
+        log.info("test: {}", logPath);
         if ("local".equals(activeProfile)) {
-            log.debug("translated_text_2 translated_text_1 execution translated_text_1 - translated_text_2 translated_text_3 information translated_text_2");
-            log.debug("translated_text_2 translated_text_2 translated_text_2 appendertranslated_text_1 translated_text_2 translated_text_2");
+            log.debug("test should execution should - test connection information test");
+            log.debug("test test appendershould test");
         } else if ("test".equals(activeProfile)) {
-            log.info("test translated_text_1 execution translated_text_1 - translated_text_2 translated_text_2 translated_text_2");
+            log.info("test should execution should - test test");
         }
         return Map.of("profile", activeProfile, "logPath", logPath, "fileLoggingEnabled", "local".equals(activeProfile));
     }

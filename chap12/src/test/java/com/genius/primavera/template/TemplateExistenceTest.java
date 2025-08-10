@@ -13,7 +13,7 @@ public class TemplateExistenceTest {
 
     @Test
     @Order(1)
-    @DisplayName("translated_text_3 translated_text_2 translated_text_3 translated_text_4 translated_text_5 verification")
+    @DisplayName("connection test connection file Endpoint verification")
     public void articleTemplatesExist() {
         assertTemplateExists("templates/article/list.html");
         assertTemplateExists("templates/article/detail.html");
@@ -22,7 +22,7 @@ public class TemplateExistenceTest {
 
     @Test
     @Order(2)
-    @DisplayName("translated_text_2 translated_text_3 translated_text_4 translated_text_5 verification")
+    @DisplayName("test connection file Endpoint verification")
     public void commonTemplatesExist() {
         assertTemplateExists("templates/fragments/header.html");
         assertTemplateExists("templates/fragments/footer.html");
@@ -32,7 +32,7 @@ public class TemplateExistenceTest {
 
     @Test
     @Order(3)
-    @DisplayName("translated_text_2 translated_text_3 translated_text_3 translated_text_5 verification")
+    @DisplayName("test connection Endpoint verification")
     public void basicTemplatesExist() {
         assertTemplateExists("templates/index.html");
         assertTemplateExists("templates/login.html");

@@ -10,7 +10,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-@DisplayName("Bean translated_text_4 test")
+@DisplayName("Bean file test")
 class BeanLifecycleExampleTest {
 
     @Autowired
@@ -20,7 +20,7 @@ class BeanLifecycleExampleTest {
     private BeanLifecycleExample beanLifecycleExample;
 
     @Test
-    @DisplayName("Beantranslated_text_1 successfully created and translated_text_7 verification")
+    @DisplayName("Beanshould successfully created and logging verification")
     void testBeanLifecycle() {
         assertThat(beanLifecycleExample).isNotNull();
         assertThat(beanLifecycleExample.getStatus()).isEqualTo("POST_CONSTRUCT");
@@ -29,7 +29,7 @@ class BeanLifecycleExampleTest {
     }
 
     @Test
-    @DisplayName("Beantranslated_text_1 translated_text_4 translated_text_3 translated_text_4 translated_text_1 translated_text_2 translated_text_2 verification")
+    @DisplayName("Beanshould file connection file should test verification")
     public void testBeanDestruction() {
         assertThat(beanLifecycleExample.getStatus()).isEqualTo("POST_CONSTRUCT");
         assertThat(context.containsBean("beanLifecycleExample")).isTrue();

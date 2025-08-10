@@ -38,7 +38,7 @@ public class CacheConfiguration {
     @Primary
     @ConditionalOnProperty(name = "spring.cache.type", havingValue = "redis", matchIfMissing = true)
     public CacheManager redisCacheManager(RedisConnectionFactory redisConnectionFactory) {
-        log.info(" Redis translated_text_2 translated_text_3 translated_text_3 translated_text_1...");
+        log.info(" Redis test connection should...");
 
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
@@ -66,7 +66,7 @@ public class CacheConfiguration {
         cacheConfigurations.put("userSessions", defaultConfig
                 .entryTtl(Duration.ofMinutes(30)));
 
-        log.info(" Redis translated_text_2 translated_text_2 completed - translated_text_1 {}translated_text_1 translated_text_2 translated_text_2", cacheConfigurations.size());
+        log.info(" Redis test completed - should {}should test", cacheConfigurations.size());
         
         return RedisCacheManager.builder(redisConnectionFactory)
                 .cacheDefaults(defaultConfig)
@@ -77,7 +77,7 @@ public class CacheConfiguration {
     @Bean
     @ConditionalOnProperty(name = "spring.cache.type", havingValue = "caffeine")
     public CacheManager caffeineCacheManager() {
-        log.info(" Caffeine translated_text_2 translated_text_2 translated_text_3 translated_text_3 translated_text_1...");
+        log.info(" Caffeine test connection should...");
         
         CaffeineCacheManager cacheManager = new CaffeineCacheManager();
 
@@ -91,7 +91,7 @@ public class CacheConfiguration {
                 "oauth2Tokens", "userProfiles", "socialProviders", "userSessions"
         ));
         
-        log.info(" Caffeine translated_text_2 translated_text_2 completed");
+        log.info(" Caffeine test completed");
         return cacheManager;
     }
 

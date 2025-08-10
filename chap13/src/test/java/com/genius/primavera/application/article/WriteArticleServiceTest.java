@@ -64,14 +64,14 @@ public class WriteArticleServiceTest {
     public static void setUp() {
         writeRequestArticle = new ArticleDto.WriteArticle();
         writeRequestArticle.setPId(0);
-        writeRequestArticle.setSubject("translated_text_2_1");
-        writeRequestArticle.setContents("translated_text_2");
+        writeRequestArticle.setSubject("test_1");
+        writeRequestArticle.setContents("test");
         writeRequestArticle.setWriteType(WriteType.FORM);
     }
 
     @Test
     @Order(1)
-    @DisplayName("Mock translated_text_1 translated_text_2")
+    @DisplayName("Mock should test")
     public void mockWriteTest() {
         mockWriteArticleService = Mockito.mock(WriteArticleService.class);
         Article mockArticle = new Article();
@@ -81,7 +81,7 @@ public class WriteArticleServiceTest {
 
     @Test
     @Order(2)
-    @DisplayName("translated_text_2 translated_text_3 translated_text_2")
+    @DisplayName("test connection test")
     @WithMockPrimaveraUserDetails
     public void writeTest() {
         article_1 = writeArticleService.save(writeRequestArticle);
@@ -92,13 +92,13 @@ public class WriteArticleServiceTest {
 
     @Test
     @Order(3)
-    @DisplayName("translated_text_2 translated_text_3 translated_text_1 translated_text_2")
+    @DisplayName("test connection should test")
     @WithUserDetails(value = "genius@primavera.com", userDetailsServiceBeanName = "primaveraUserDetailsService")
     public void writeFirstReplyTest() {
         Article origin = writeArticleService.findById(article_1.getId());
         writeRequestArticle.setPId(origin.getId());
         writeRequestArticle.setSubject(origin.getSubject() + "_1");
-        writeRequestArticle.setContents("translated_text_2 translated_text_3 translated_text_1 translated_text_2");
+        writeRequestArticle.setContents("test connection should test");
         writeRequestArticle.setWriteType(WriteType.REPLY);
         article_1_1 = writeArticleService.save(writeRequestArticle);
         assertEquals(article_1.getReference(), article_1_1.getReference());
@@ -108,13 +108,13 @@ public class WriteArticleServiceTest {
 
     @Test
     @Order(4)
-    @DisplayName("translated_text_2 translated_text_3 translated_text_1 translated_text_2")
+    @DisplayName("test connection should test")
     @WithUserDetails(value = "genius@primavera.com", userDetailsServiceBeanName = "primaveraUserDetailsService")
     public void writeSecondReplyTest() {
         Article origin = writeArticleService.findById(article_1.getId());
         writeRequestArticle.setPId(origin.getId());
         writeRequestArticle.setSubject(origin.getSubject() + "_2");
-        writeRequestArticle.setContents("translated_text_2 translated_text_3 translated_text_3 translated_text_1 translated_text_2");
+        writeRequestArticle.setContents("test connection should test");
         writeRequestArticle.setWriteType(WriteType.REPLY);
         article_1_2 = writeArticleService.save(writeRequestArticle);
         assertEquals(article_1.getReference(), article_1_2.getReference());
@@ -124,13 +124,13 @@ public class WriteArticleServiceTest {
 
     @Test
     @Order(5)
-    @DisplayName("translated_text_2 translated_text_3 translated_text_1 translated_text_3 translated_text_1 translated_text_2")
+    @DisplayName("test connection should connection should test")
     @WithUserDetails(value = "genius@primavera.com", userDetailsServiceBeanName = "primaveraUserDetailsService")
     public void writeFirst_FirstReplyTest() {
         Article origin = writeArticleService.findById(article_1_1.getId());
         writeRequestArticle.setPId(origin.getId());
         writeRequestArticle.setSubject(origin.getSubject() + "_1");
-        writeRequestArticle.setContents("translated_text_2 translated_text_3 translated_text_1 translated_text_3 translated_text_1 translated_text_2");
+        writeRequestArticle.setContents("test connection should connection should test");
         writeRequestArticle.setWriteType(WriteType.REPLY);
         article_1_1_1 = writeArticleService.save(writeRequestArticle);
         assertEquals(article_1.getReference(), article_1_1_1.getReference());
@@ -140,12 +140,12 @@ public class WriteArticleServiceTest {
 
     @Test
     @Order(6)
-    @DisplayName("translated_text_2 translated_text_3 translated_text_2")
+    @DisplayName("test connection test")
     @WithUserDetails(value = "genius@primavera.com", userDetailsServiceBeanName = "primaveraUserDetailsService")
     public void writeSecondTest() {
         writeRequestArticle.setPId(0);
-        writeRequestArticle.setSubject("translated_text_2_2");
-        writeRequestArticle.setContents("translated_text_2");
+        writeRequestArticle.setSubject("test_2");
+        writeRequestArticle.setContents("test");
         writeRequestArticle.setWriteType(WriteType.FORM);
         article_2 = writeArticleService.save(writeRequestArticle);
         article_2 = writeArticleService.findById(article_2.getId());
@@ -155,13 +155,13 @@ public class WriteArticleServiceTest {
 
     @Test
     @Order(7)
-    @DisplayName("translated_text_2 translated_text_3 translated_text_1 translated_text_3 translated_text_1 translated_text_3 translated_text_1 translated_text_2")
+    @DisplayName("test connection should connection should connection should test")
     @WithUserDetails(value = "genius@primavera.com", userDetailsServiceBeanName = "primaveraUserDetailsService")
     public void writeFirst_FirstReply_FirstReplyTest() {
         Article origin = writeArticleService.findById(article_1_1_1.getId());
         writeRequestArticle.setPId(origin.getId());
         writeRequestArticle.setSubject(origin.getSubject() + "_1");
-        writeRequestArticle.setContents("translated_text_2 translated_text_3 translated_text_1 translated_text_3 translated_text_1 translated_text_3 translated_text_1 translated_text_2");
+        writeRequestArticle.setContents("test connection should connection should connection should test");
         writeRequestArticle.setWriteType(WriteType.REPLY);
         article_1_1_1_1 = writeArticleService.save(writeRequestArticle);
         assertEquals(4, article_1_1_1_1.getLevel());
@@ -170,13 +170,13 @@ public class WriteArticleServiceTest {
 
     @Test
     @Order(8)
-    @DisplayName("translated_text_2 translated_text_3 translated_text_1 translated_text_3 translated_text_1 translated_text_3 translated_text_1 translated_text_2")
+    @DisplayName("test connection should connection should connection should test")
     @WithUserDetails(value = "genius@primavera.com", userDetailsServiceBeanName = "primaveraUserDetailsService")
     public void writeFirst_FirstReply_SecondReplyTest() {
         Article origin = writeArticleService.findById(article_1_1.getId());
         writeRequestArticle.setPId(origin.getId());
         writeRequestArticle.setSubject(origin.getSubject() + "_2");
-        writeRequestArticle.setContents("translated_text_2 translated_text_3 translated_text_1 translated_text_3 translated_text_1 translated_text_2");
+        writeRequestArticle.setContents("test connection should connection should test");
         writeRequestArticle.setWriteType(WriteType.REPLY);
         article_1_1_2 = writeArticleService.save(writeRequestArticle);
         assertEquals(article_1.getReference(), article_1_1_2.getReference());
@@ -186,13 +186,13 @@ public class WriteArticleServiceTest {
 
     @Test
     @Order(9)
-    @DisplayName("translated_text_2 translated_text_3 translated_text_1 translated_text_3 translated_text_2")
+    @DisplayName("test connection should connection test")
     @WithUserDetails(value = "genius@primavera.com", userDetailsServiceBeanName = "primaveraUserDetailsService")
     public void writeSecond_FirstReply_Test() {
         Article origin = writeArticleService.findById(article_2.getId());
         writeRequestArticle.setPId(origin.getId());
         writeRequestArticle.setSubject(origin.getSubject() + "_1");
-        writeRequestArticle.setContents("translated_text_2 translated_text_3 translated_text_1 translated_text_3 translated_text_2");
+        writeRequestArticle.setContents("test connection should connection test");
         article_2_1 = writeArticleService.save(writeRequestArticle);
         assertEquals(article_2.getReference(), article_2_1.getReference());
         assertEquals(2, article_2_1.getLevel());
@@ -201,13 +201,13 @@ public class WriteArticleServiceTest {
 
     @Test
     @Order(10)
-    @DisplayName("translated_text_2 translated_text_3 translated_text_1 translated_text_3 translated_text_2")
+    @DisplayName("test connection should connection test")
     @WithUserDetails(value = "genius@primavera.com", userDetailsServiceBeanName = "primaveraUserDetailsService")
     public void writeSecond_SecondReply_Test() {
         Article origin = writeArticleService.findById(article_2.getId());
         writeRequestArticle.setPId(origin.getId());
         writeRequestArticle.setSubject(origin.getSubject() + "_2");
-        writeRequestArticle.setContents("translated_text_2 translated_text_3 translated_text_1 translated_text_3 translated_text_2");
+        writeRequestArticle.setContents("test connection should connection test");
         writeRequestArticle.setWriteType(WriteType.REPLY);
         article_2_2 = writeArticleService.save(writeRequestArticle);
         assertEquals(article_2.getReference(), article_2_2.getReference());
@@ -217,14 +217,14 @@ public class WriteArticleServiceTest {
 
     @Test
     @Order(11)
-    @DisplayName("translated_text_2 translated_text_3 translated_text_1 translated_text_3 translated_text_2")
+    @DisplayName("test connection should connection test")
     @WithUserDetails(value = "genius@primavera.com", userDetailsServiceBeanName = "primaveraUserDetailsService")
     public void writeSecond_ThirdReply_Test() {
         Article origin = writeArticleService.findById(article_2.getId());
         writeRequestArticle.setPId(origin.getId());
         writeRequestArticle.setSubject(origin.getSubject() + "_3");
         writeRequestArticle.setWriteType(WriteType.REPLY);
-        writeRequestArticle.setContents("translated_text_2 translated_text_3 translated_text_1 translated_text_3 translated_text_2");
+        writeRequestArticle.setContents("test connection should connection test");
         article_2_3 = writeArticleService.save(writeRequestArticle);
         assertEquals(article_2.getReference(), article_2_3.getReference());
         assertEquals(2, article_2_3.getLevel());

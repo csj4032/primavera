@@ -16,37 +16,37 @@ class GreetingServiceTest {
     }
     
     @Test
-    @DisplayName("translated_text_2 translated_text_4 translated_text_4 translated_text_11 test")
+    @DisplayName("test file processing test")
     void shouldSayHello() {
-        String result = greetingService.sayHello("translated_text_3");
+        String result = greetingService.sayHello("connection");
         
         assertNotNull(result);
-        assertTrue(result.contains("translated_text_3"));
-        assertTrue(result.contains("translated_text_5"));
+        assertTrue(result.contains("connection"));
+        assertTrue(result.contains("Endpoint"));
     }
     
     @Test
-    @DisplayName("translated_text_3 translated_text_3 translated_text_4 translated_text_4 translated_text_11 test")
+    @DisplayName("connection file processing test")
     void shouldSayHelloWithTime() {
-        String result = greetingService.sayHelloWithTime("translated_text_3");
+        String result = greetingService.sayHelloWithTime("connection");
         
         assertNotNull(result);
-        assertTrue(result.contains("translated_text_3"));
-        assertTrue(result.contains("translated_text_2 translated_text_2"));
+        assertTrue(result.contains("connection"));
+        assertTrue(result.contains("test"));
     }
     
     @Test
-    @DisplayName("translated_text_2 translated_text_3 translated_text_4 translated_text_11 test")
+    @DisplayName("test connection file processing test")
     void shouldSayGoodbye() {
-        String result = greetingService.sayGoodbye("translated_text_3");
+        String result = greetingService.sayGoodbye("connection");
         
         assertNotNull(result);
-        assertTrue(result.contains("translated_text_3"));
-        assertTrue(result.contains("translated_text_3 translated_text_3"));
+        assertTrue(result.contains("connection"));
+        assertTrue(result.contains("connection"));
     }
     
     @Test
-    @DisplayName("null translated_text_4 translated_text_3 creation translated_text_1 exception processing test")
+    @DisplayName("null file connection creation should exception processing test")
     void shouldHandleNullName() {
 
         assertDoesNotThrow(() -> {

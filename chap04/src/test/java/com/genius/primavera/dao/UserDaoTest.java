@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @SpringBootTest
 @EnableTestContainers
 @ActiveProfiles("test")
-@DisplayName("UserDao translated_text_2 test")
+@DisplayName("UserDao test")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class UserDaoTest {
@@ -30,29 +30,29 @@ public class UserDaoTest {
 
     @Test
     @Order(1)
-    @DisplayName("user translated_text_2 test")
+    @DisplayName("user test")
     public void saveUser() {
         User newUser = User.builder().email("email").password("password").nickname("nickname").createdAt(Instant.now()).updatedAt(Instant.now()).build();
         User savedUSer = userDao.save(newUser);
-        assertNotNull(savedUSer, "translated_text_2 usertranslated_text_1 nulltranslated_text_3.");
+        assertNotNull(savedUSer, "test usershould nullconnection.");
     }
 
     @Test
     @Order(2)
-    @DisplayName("user translated_text_2 translated_text_1 IDtranslated_text_1 translated_text_6 verification")
+    @DisplayName("user test should IDshould return verification")
     public void saveUserIdCheck() {
         User newUser = User.builder().email("email2").password("password2").nickname("nickname2").createdAt(Instant.now()).updatedAt(Instant.now()).build();
         User savedUser = userDao.save(newUser);
-        assertNotNull(savedUser, "translated_text_2 usertranslated_text_1 nulltranslated_text_3.");
-        assertEquals(8, savedUser.getId(), "translated_text_2 user IDtranslated_text_1 translated_text_3 translated_text_4 translated_text_4.");
+        assertNotNull(savedUser, "test usershould nullconnection.");
+        assertEquals(8, savedUser.getId(), "test user IDshould connection file.");
     }
 
     @Test
     @Order(3)
-    @DisplayName("user translated_text_2 inquiry test")
+    @DisplayName("user test inquiry test")
     public void getAllUser() {
         List<User> users = userDao.getUsers();
-        assertEquals(8, users.size(), "user translated_text_1 translated_text_4 translated_text_4.");
+        assertEquals(8, users.size(), "user should file.");
     }
 
     @Test
@@ -63,7 +63,7 @@ public class UserDaoTest {
         Optional<User> optionalUser = userDao.findById(userId);
         Assertions.assertTrue(optionalUser.isPresent());
         User user = optionalUser.get();
-        assertEquals(userId, user.getId(), "inquiry user IDtranslated_text_1 translated_text_4 translated_text_4.");
+        assertEquals(userId, user.getId(), "inquiry user IDshould file.");
     }
 
     @Test
@@ -71,6 +71,6 @@ public class UserDaoTest {
     @DisplayName("user deletion test")
     public void deleteAll() {
         int deletedCount = userDao.deleteAll();
-        assertEquals(8, deletedCount, "deletion user translated_text_1 translated_text_4 translated_text_4.");
+        assertEquals(8, deletedCount, "deletion user should file.");
     }
 }

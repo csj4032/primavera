@@ -23,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @Testcontainers
-@DisplayName("Primavera Filter translated_text_2 test")
+@DisplayName("Primavera Filter test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class PrimaveraFilterTest {
 
@@ -47,7 +47,7 @@ class PrimaveraFilterTest {
 
     @Test
     @Order(1)
-    @DisplayName("Primavera Filter translated_text_2 verification")
+    @DisplayName("Primavera Filter test verification")
     void shouldAddPrimaveraHeaderToLoginPage() throws Exception {
         mockMvc.perform(get("/login"))
                 .andDo(print())
@@ -57,7 +57,7 @@ class PrimaveraFilterTest {
 
     @Test
     @Order(2)
-    @DisplayName("translated_text_3 translated_text_6 translated_text_3 success")
+    @DisplayName("connection with connection success")
     void shouldAuthenticateWithValidCredentials() throws Exception {
         HttpSession httpSession = mockMvc.perform(post("/login")
                         .param("email", "genius@gmail.com")
@@ -75,7 +75,7 @@ class PrimaveraFilterTest {
 
     @Test
     @Order(3)
-    @DisplayName("translated_text_4 translated_text_1 translated_text_3 translated_text_4 translated_text_5")
+    @DisplayName("file should connection file Endpoint")
     void shouldRedirectToLoginAfterLogout() throws Exception {
         HttpSession httpSession = mockMvc.perform(get("/logout"))
                 .andDo(print())

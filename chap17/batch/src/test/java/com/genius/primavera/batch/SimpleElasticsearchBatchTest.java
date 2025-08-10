@@ -74,31 +74,31 @@ public class SimpleElasticsearchBatchTest {
 
         if (exists) {
             elasticsearchClient.indices().delete(d -> d.index(PRODUCTS_INDEX));
-            log.info("translated_text_2 translated_text_3 deletion completed");
+            log.info("test connection deletion completed");
         }
     }
 
     @Test
     @Order(1)
-    @DisplayName("translated_text_8 translated_text_5 translated_text_4 Elasticsearchtranslated_text_1 translated_text_4 translated_text_1 exists")
+    @DisplayName("configuration Endpoint file Elasticsearchshould file should exists")
     void shouldSaveDataAndIndexToElasticsearch() throws Exception {
 
         Category category = categoryRepository.save(Category.builder()
-                .name("translated_text_3")
+                .name("connection")
                 .level(1)
                 .createdAt(LocalDateTime.now())
                 .build());
 
         Seller seller = sellerRepository.save(Seller.builder()
-                .name("translated_text_2 translated_text_3")
+                .name("test connection")
                 .email("tech@store.com")
                 .rating(4.5)
                 .createdAt(LocalDateTime.now())
                 .build());
 
         Product product = productRepository.save(Product.builder()
-                .name("MacBook Pro 16translated_text_2")
-                .description("Apple M3 Pro translated_text_2 translated_text_2 translated_text_2 translated_text_2 translated_text_2")
+                .name("MacBook Pro 16test")
+                .description("Apple M3 Pro test test test")
                 .price(3500000)
                 .status(ProductStatus.ACTIVE)
                 .category(category)
@@ -107,10 +107,10 @@ public class SimpleElasticsearchBatchTest {
                 .updatedAt(LocalDateTime.now())
                 .build());
 
-        log.info("translated_text_8 translated_text_2 completed:");
-        log.info("- translated_text_4: {}", category.getName());
-        log.info("- translated_text_3: {}", seller.getName());
-        log.info("- translated_text_2: {} (ID: {})", product.getName(), product.getId());
+        log.info("configuration test completed:");
+        log.info("- file: {}", category.getName());
+        log.info("- connection: {}", seller.getName());
+        log.info("- test: {} (ID: {})", product.getName(), product.getId());
 
         productIndexingService.createProductsIndexIfNotExists();
 
@@ -120,54 +120,54 @@ public class SimpleElasticsearchBatchTest {
 
         SearchResponse<ProductDocument> searchResponse = productIndexingService.searchProducts("MacBook");
         
-        assertNotNull(searchResponse, "translated_text_2 translated_text_3 nulltranslated_text_1 translated_text_4 translated_text_2");
-        assertTrue(searchResponse.hits().total().value() > 0, "MacBook translated_text_2 translated_text_7 translated_text_3 translated_text_2");
+        assertNotNull(searchResponse, "test connection nullshould file test");
+        assertTrue(searchResponse.hits().total().value() > 0, "MacBook test logging connection test");
         
         ProductDocument doc = searchResponse.hits().hits().get(0).source();
-        assertNotNull(doc, "translated_text_3 translated_text_4 translated_text_2");
-        assertEquals(product.getName(), doc.getName(), "translated_text_2translated_text_1 translated_text_4 translated_text_2");
-        assertEquals(product.getPrice(), doc.getPrice(), "translated_text_1 translated_text_4 translated_text_2");
-        assertEquals(seller.getName(), doc.getSellerName(), "translated_text_3translated_text_1 translated_text_4 translated_text_2");
-        assertEquals(category.getName(), doc.getCategoryName(), "translated_text_4translated_text_1 translated_text_4 translated_text_2");
+        assertNotNull(doc, "connection file test");
+        assertEquals(product.getName(), doc.getName(), "testshould file test");
+        assertEquals(product.getPrice(), doc.getPrice(), "should file test");
+        assertEquals(seller.getName(), doc.getSellerName(), "connectionshould file test");
+        assertEquals(category.getName(), doc.getCategoryName(), "fileshould file test");
         
-        log.info("Elasticsearch translated_text_3 translated_text_1 translated_text_2 success");
-        log.info("translated_text_2 translated_text_2: {}", doc.getName());
+        log.info("Elasticsearch connection should test success");
+        log.info("test: {}", doc.getName());
     }
 
     @Test
     @Order(2)
-    @DisplayName("translated_text_2 translated_text_2 translated_text_8 translated_text_4 translated_text_2 translated_text_4 translated_text_1 exists")
+    @DisplayName("test configuration file test file should exists")
     void shouldBatchIndexMultipleProducts() throws Exception {
 
         Category laptop = categoryRepository.save(Category.builder()
-                .name("translated_text_3-" + System.currentTimeMillis())
+                .name("connection-" + System.currentTimeMillis())
                 .level(1)
                 .createdAt(LocalDateTime.now())
                 .build());
         
         Category phone = categoryRepository.save(Category.builder()
-                .name("translated_text_4-" + System.currentTimeMillis())
+                .name("file-" + System.currentTimeMillis())
                 .level(1)
                 .createdAt(LocalDateTime.now())
                 .build());
 
         Seller techStore = sellerRepository.save(Seller.builder()
-                .name("translated_text_2 translated_text_3-" + System.currentTimeMillis())
+                .name("test connection-" + System.currentTimeMillis())
                 .email("tech" + System.currentTimeMillis() + "@store.com")
                 .rating(4.5)
                 .createdAt(LocalDateTime.now())
                 .build());
         
         Seller digitalMall = sellerRepository.save(Seller.builder()
-                .name("translated_text_3 translated_text_1-" + System.currentTimeMillis())
+                .name("connection should-" + System.currentTimeMillis())
                 .email("digital" + System.currentTimeMillis() + "@mall.com")
                 .rating(4.2)
                 .createdAt(LocalDateTime.now())
                 .build());
 
         Product macbook = productRepository.save(Product.builder()
-                .name("MacBook Pro 16translated_text_2")
-                .description("Apple M3 Pro translated_text_2 translated_text_2")
+                .name("MacBook Pro 16test")
+                .description("Apple M3 Pro test")
                 .price(3500000)
                 .status(ProductStatus.ACTIVE)
                 .category(laptop)
@@ -178,7 +178,7 @@ public class SimpleElasticsearchBatchTest {
         
         Product dell = productRepository.save(Product.builder()
                 .name("Dell XPS 15")
-                .description("translated_text_2 13translated_text_2 translated_text_2 translated_text_2")
+                .description("test 13test test")
                 .price(2500000)
                 .status(ProductStatus.ACTIVE)
                 .category(laptop)
@@ -189,7 +189,7 @@ public class SimpleElasticsearchBatchTest {
         
         Product iphone = productRepository.save(Product.builder()
                 .name("iPhone 15 Pro Max")
-                .description("translated_text_2 A17 Pro translated_text_2 translated_text_2")
+                .description("test A17 Pro test")
                 .price(1900000)
                 .status(ProductStatus.ACTIVE)
                 .category(phone)
@@ -200,7 +200,7 @@ public class SimpleElasticsearchBatchTest {
         
         Product galaxy = productRepository.save(Product.builder()
                 .name("Galaxy S24 Ultra")
-                .description("translated_text_5 8 Gen 3 translated_text_2")
+                .description("Endpoint 8 Gen 3 test")
                 .price(1800000)
                 .status(ProductStatus.ACTIVE)
                 .category(phone)
@@ -209,7 +209,7 @@ public class SimpleElasticsearchBatchTest {
                 .updatedAt(LocalDateTime.now())
                 .build());
 
-        log.info("translated_text_8 {}translated_text_1 translated_text_2 translated_text_2 completed", 4);
+        log.info("configuration {}should test completed", 4);
 
         productIndexingService.createProductsIndexIfNotExists();
 
@@ -220,38 +220,38 @@ public class SimpleElasticsearchBatchTest {
 
         Thread.sleep(2000);
 
-        SearchResponse<ProductDocument> laptopSearch = productIndexingService.searchProducts("translated_text_3");
-        assertTrue(laptopSearch.hits().total().value() >= 2, "translated_text_3 translated_text_4 translated_text_2translated_text_1 2translated_text_1 translated_text_1 translated_text_2 translated_text_2");
-        log.info("translated_text_3 translated_text_2 result: {}translated_text_1", laptopSearch.hits().total().value());
+        SearchResponse<ProductDocument> laptopSearch = productIndexingService.searchProducts("connection");
+        assertTrue(laptopSearch.hits().total().value() >= 2, "connection file testshould 2needs to be added test");
+        log.info("connection test result: {}should", laptopSearch.hits().total().value());
         
-        SearchResponse<ProductDocument> phoneSearch = productIndexingService.searchProducts("translated_text_4");
-        assertTrue(phoneSearch.hits().total().value() >= 2, "translated_text_4 translated_text_4 translated_text_2translated_text_1 2translated_text_1 translated_text_1 translated_text_2 translated_text_2");
-        log.info("translated_text_4 translated_text_2 result: {}translated_text_1", phoneSearch.hits().total().value());
+        SearchResponse<ProductDocument> phoneSearch = productIndexingService.searchProducts("file");
+        assertTrue(phoneSearch.hits().total().value() >= 2, "file testshould 2needs to be added test");
+        log.info("file test result: {}should", phoneSearch.hits().total().value());
 
-        SearchResponse<ProductDocument> techStoreSearch = productIndexingService.searchProducts("translated_text_2");
-        assertTrue(techStoreSearch.hits().total().value() >= 2, "translated_text_2 translated_text_3 translated_text_2 translated_text_2translated_text_1 2translated_text_1 translated_text_1 translated_text_2 translated_text_2");
-        log.info("translated_text_2 translated_text_3 translated_text_2 result: {}translated_text_1", techStoreSearch.hits().total().value());
+        SearchResponse<ProductDocument> techStoreSearch = productIndexingService.searchProducts("test");
+        assertTrue(techStoreSearch.hits().total().value() >= 2, "test connection testshould 2needs to be added test");
+        log.info("test connection test result: {}should", techStoreSearch.hits().total().value());
 
         CountResponse countResponse = elasticsearchClient.count(c -> c.index(PRODUCTS_INDEX));
-        assertEquals(4, countResponse.count(), "translated_text_1 4translated_text_1 translated_text_3 translated_text_3 translated_text_2");
-        log.info("translated_text_2 translated_text_3 translated_text_2 translated_text_1: {}", countResponse.count());
+        assertEquals(4, countResponse.count(), "should 4should connection test");
+        log.info("test connection test should: {}", countResponse.count());
     }
 
     @Test
     @Order(3)
-    @DisplayName("translated_text_8 all translated_text_2 translated_text_9 translated_text_4 translated_text_1 exists")
+    @DisplayName("configuration all test should not file should exists")
     @Transactional
     void shouldIndexAllProductsFromDatabase() throws Exception {
 
         long timestamp = System.currentTimeMillis();
         Category category = categoryRepository.save(Category.builder()
-                .name("translated_text_4-" + timestamp)
+                .name("file-" + timestamp)
                 .level(1)
                 .createdAt(LocalDateTime.now())
                 .build());
         
         Seller seller = sellerRepository.save(Seller.builder()
-                .name("translated_text_2 translated_text_2-" + timestamp)
+                .name("test-" + timestamp)
                 .email("general" + timestamp + "@electronics.com")
                 .rating(4.3)
                 .createdAt(LocalDateTime.now())
@@ -259,8 +259,8 @@ public class SimpleElasticsearchBatchTest {
 
         for (int i = 1; i <= 5; i++) {
             productRepository.save(Product.builder()
-                    .name("translated_text_4 " + timestamp + "-" + i)
-                    .description("translated_text_3 translated_text_4 #" + i)
+                    .name("file " + timestamp + "-" + i)
+                    .description("connection file #" + i)
                     .price(100000 * i)
                     .status(ProductStatus.ACTIVE)
                     .category(category)
@@ -270,7 +270,7 @@ public class SimpleElasticsearchBatchTest {
                     .build());
         }
         
-        log.info("translated_text_8 5translated_text_1 translated_text_2 translated_text_2 completed");
+        log.info("configuration 5should test completed");
 
         Iterable<Product> allProducts = productRepository.findAll();
 
@@ -285,16 +285,16 @@ public class SimpleElasticsearchBatchTest {
             count++;
         }
         
-        log.info("{}translated_text_1 translated_text_2 translated_text_3 completed", count);
+        log.info("{}should test connection completed", count);
 
         Thread.sleep(2000);
 
         CountResponse countResponse = elasticsearchClient.count(c -> c.index(PRODUCTS_INDEX));
-        assertEquals(5, countResponse.count(), "5translated_text_1 translated_text_3 translated_text_3 translated_text_2");
-        log.info("Elasticsearch translated_text_2 translated_text_1: {}", countResponse.count());
+        assertEquals(5, countResponse.count(), "5should connection test");
+        log.info("Elasticsearch test should: {}", countResponse.count());
 
         long dbCount = productRepository.count();
-        assertEquals(dbCount, countResponse.count(), "translated_text_1translated_text_1 Elasticsearch translated_text_2 translated_text_1 translated_text_4 translated_text_2");
-        log.info("translated_text_1 translated_text_3 verification - DB: {}, ES: {}", dbCount, countResponse.count());
+        assertEquals(dbCount, countResponse.count(), "shouldshould Elasticsearch test should file test");
+        log.info("should connection verification - DB: {}, ES: {}", dbCount, countResponse.count());
     }
 }

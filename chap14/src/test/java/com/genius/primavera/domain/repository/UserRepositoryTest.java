@@ -83,7 +83,7 @@ public class UserRepositoryTest {
 
 	@Test
 	@Order(2)
-	@DisplayName("user translated_text_4 translated_text_3 inquiry test")
+	@DisplayName("user file connection inquiry test")
 	public void findByEmail() {
 		var user = userRepository.findByEmail(EMAIL).get();
 		assertEquals(user.getNickname(), "Genius");
@@ -95,7 +95,7 @@ public class UserRepositoryTest {
 
 	@Test
 	@Order(3)
-	@DisplayName("user translated_text_4 translated_text_3 inquiry test [Projections]")
+	@DisplayName("user file connection inquiry test [Projections]")
 	public void findByNickname() {
 		List<UserDto> users = userRepository.findByNickname("Genius", UserDto.class);
 		users.stream().forEach(e -> log.info("user : {}", e));
@@ -106,7 +106,7 @@ public class UserRepositoryTest {
 	@Order(4)
 	@Rollback(false)
 	@Transactional
-	@DisplayName("user information translated_text_2 test")
+	@DisplayName("user information test")
 	public void userUpdate() {
 		var user = userRepository.findByEmail(EMAIL).get();
 		user.setStatus(UserStatus.BLOCK);
@@ -120,7 +120,7 @@ public class UserRepositoryTest {
 
 	@Test
 	@Order(5)
-	@DisplayName("user translated_text_2 translated_text_3 Truncate")
+	@DisplayName("user test connection Truncate")
 	public void cleanUp() {
 		entityManager.createNativeQuery("TRUNCATE USER").executeUpdate();
 		entityManager.createNativeQuery("TRUNCATE USER_CONNECTION").executeUpdate();

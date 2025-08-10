@@ -21,7 +21,7 @@ public class LocalStackBeanCreator implements BeanCreator {
     }
 
     private void initializeFactories() {
-        log.debug("LocalStack AWS service translated_text_5 translated_text_5 translated_text_6...");
+        log.debug("LocalStack AWS service Endpoint file exists...");
 
         registerFactory(new S3ClientFactory());
         registerFactory(new DynamoDbClientFactory());
@@ -29,58 +29,58 @@ public class LocalStackBeanCreator implements BeanCreator {
         registerFactory(new SnsClientFactory());
         registerFactory(new LambdaClientFactory());
 
-        log.info(" {}translated_text_2 AWS service translated_text_5 translated_text_4 translated_text_17", clientFactories.size());
+        log.info(" {}test AWS service Endpoint file should7", clientFactories.size());
     }
 
     private void registerFactory(AwsServiceClientFactory factory) {
         if (factory.isAvailable()) {
             clientFactories.put(factory.getSupportedService(), factory);
-            log.debug(" {} translated_text_4 translated_text_17 (dependency translated_text_2 translated_text_2)", factory.getSupportedService());
+            log.debug(" {} file should7 (dependency test)", factory.getSupportedService());
         } else {
-            log.debug(" {} translated_text_4 translated_text_5 (dependency translated_text_2)", factory.getSupportedService());
+            log.debug(" {} file Endpoint (dependency test)", factory.getSupportedService());
         }
     }
 
     @Override
     public Object createBean(ContainerInfo containerInfo) {
         if (!(containerInfo.container() instanceof LocalStackContainer)) {
-            throw new IllegalArgumentException("LocalStackContainertranslated_text_1 translated_text_5: " + containerInfo.container().getClass());
+            throw new IllegalArgumentException("LocalStackContainershould Endpoint: " + containerInfo.container().getClass());
         }
 
         if (!(containerInfo.spec() instanceof LocalStackContainerSpec)) {
-            throw new IllegalArgumentException("LocalStackContainerSpectranslated_text_1 translated_text_5: " + containerInfo.spec().getClass());
+            throw new IllegalArgumentException("LocalStackContainerSpecshould Endpoint: " + containerInfo.spec().getClass());
         }
 
         LocalStackContainer container = (LocalStackContainer) containerInfo.container();
         LocalStackContainerSpec spec = (LocalStackContainerSpec) containerInfo.spec();
 
-        log.info("LocalStack translated_text_1 '{}' translated_text_2 translated_text_4 AWS servicetranslated_text_1 translated_text_2 translated_text_5 translated_text_3 translated_text_11", 
+        log.info("LocalStack should '{}' test file AWS serviceshould test Endpoint connection processing", 
                 containerInfo.name());
 
         Map<String, Object> awsClients = new LinkedHashMap<>();
         Set<LocalStackContainerSpec.AwsService> activeServices = spec.getServices();
 
         if (activeServices == null || activeServices.isEmpty()) {
-            log.warn("translated_text_4 AWS servicetranslated_text_1 translated_text_4. translated_text_2 servicetranslated_text_1 translated_text_2.");
+            log.warn("file AWS serviceshould file. test serviceshould test.");
             activeServices = getDefaultServices();
         }
 
-        log.debug("translated_text_4 AWS service: {}", activeServices);
+        log.debug("file AWS service: {}", activeServices);
 
         for (LocalStackContainerSpec.AwsService service : activeServices) {
             try {
                 createClientForService(service, container, awsClients);
             } catch (Exception e) {
-                log.warn("AWS service {} translated_text_5 creation failure: {}", service, e.getMessage(), e);
+                log.warn("AWS service {} Endpoint creation failure: {}", service, e.getMessage(), e);
             }
         }
 
         if (awsClients.isEmpty()) {
-            log.warn("creation AWS translated_text_5translated_text_1 translated_text_4. AWS SDK dependencytranslated_text_1 translated_text_16.");
+            log.warn("creation AWS Endpointshould file. AWS SDK  dependency needs to be added6.");
             return Collections.emptyMap();
         }
 
-        log.info(" {}translated_text_2 AWS translated_text_5translated_text_1 translated_text_10 creation: {}", 
+        log.info(" {}test AWS Endpointneeds to be added0 creation: {}", 
                 awsClients.size(), awsClients.keySet());
         
         return awsClients;
@@ -93,12 +93,12 @@ public class LocalStackBeanCreator implements BeanCreator {
         AwsServiceClientFactory factory = clientFactories.get(service);
         
         if (factory == null) {
-            log.debug("service {}translated_text_1 translated_text_2 translated_text_4 translated_text_1 translated_text_1 translated_text_4. translated_text_4 translated_text_2 servicetranslated_text_1 dependencytranslated_text_1 translated_text_4.", service);
+            log.debug("service {}should test file needs to be added file. file test serviceshould dependencyshould file.", service);
             return;
         }
 
         if (!factory.isAvailable()) {
-            log.debug("service {} translated_text_4 dependencytranslated_text_1 translated_text_2 translated_text_1 translated_text_4.", service);
+            log.debug("service {} file dependencytest should file.", service);
             return;
         }
 
@@ -108,12 +108,12 @@ public class LocalStackBeanCreator implements BeanCreator {
             
             awsClients.put(beanName, client);
             
-            log.debug(" {}({}) translated_text_5translated_text_1 creation '{}' translated_text_1 translated_text_17", 
+            log.debug(" {}({}) Endpointshould creation '{}' needs to be added7", 
                     service, client.getClass().getSimpleName(), beanName);
                     
         } catch (Exception e) {
-            log.error("service {} translated_text_5 creation translated_text_1 exception translated_text_2", service, e);
-            throw new RuntimeException("AWS " + service + " translated_text_5 creation failure", e);
+            log.error("service {} Endpoint creation should exception test", service, e);
+            throw new RuntimeException("AWS " + service + " Endpoint creation failure", e);
         }
     }
 

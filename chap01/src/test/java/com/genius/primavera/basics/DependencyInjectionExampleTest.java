@@ -34,8 +34,8 @@ public class DependencyInjectionExampleTest {
 
     @BeforeEach
     void setup() {
-        when(emailService.getMessage()).thenReturn("Mocked Email translated_text_3");
-        when(smsService.getMessage()).thenReturn("Mocked SMS translated_text_3");
+        when(emailService.getMessage()).thenReturn("Mocked Email connection");
+        when(smsService.getMessage()).thenReturn("Mocked SMS connection");
     }
 
     @Nested
@@ -45,7 +45,7 @@ public class DependencyInjectionExampleTest {
         @DisplayName("ConstructorInjection should use the primary service")
         void constructorInjectionUsesPrimaryService() {
             constructorInjection.sendMessage();
-            assertThat(emailService.getMessage()).isEqualTo("Mocked Email translated_text_3");
+            assertThat(emailService.getMessage()).isEqualTo("Mocked Email connection");
         }
     }
 
@@ -56,7 +56,7 @@ public class DependencyInjectionExampleTest {
         @DisplayName("SetterInjection should use the primary service")
         void setterInjectionUsesPrimaryService() {
             setterInjection.sendMessage();
-            assertThat(emailService.getMessage()).isEqualTo("Mocked Email translated_text_3");
+            assertThat(emailService.getMessage()).isEqualTo("Mocked Email connection");
         }
     }
 
@@ -67,7 +67,7 @@ public class DependencyInjectionExampleTest {
         @DisplayName("FieldInjection should use the primary service")
         void fieldInjectionUsesPrimaryService() {
             fieldInjection.sendMessage();
-            assertThat(emailService.getMessage()).isEqualTo("Mocked Email translated_text_3");
+            assertThat(emailService.getMessage()).isEqualTo("Mocked Email connection");
         }
     }
 
@@ -78,8 +78,8 @@ public class DependencyInjectionExampleTest {
         @DisplayName("QualifierInjection should use the correct services")
         void qualifierInjectionUsesCorrectServices() {
             qualifierInjection.sendMessages();
-            assertThat(smsService.getMessage()).isEqualTo("Mocked SMS translated_text_3");
-            assertThat(emailService.getMessage()).isEqualTo("Mocked Email translated_text_3");
+            assertThat(smsService.getMessage()).isEqualTo("Mocked SMS connection");
+            assertThat(emailService.getMessage()).isEqualTo("Mocked Email connection");
         }
     }
 }

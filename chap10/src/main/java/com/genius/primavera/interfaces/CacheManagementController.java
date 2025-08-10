@@ -29,7 +29,7 @@ public class CacheManagementController {
 
     @GetMapping("/dashboard")
     public ResponseEntity<Map<String, Object>> getCacheDashboard() {
-        log.info(" translated_text_2 translated_text_4 inquiry translated_text_2");
+        log.info(" test file inquiry test");
         
         Map<String, Object> dashboard = new HashMap<>();
         
@@ -72,15 +72,15 @@ public class CacheManagementController {
             return ResponseEntity.ok(dashboard);
             
         } catch (Exception e) {
-            log.error(" translated_text_2 translated_text_4 inquiry failure", e);
+            log.error(" test file inquiry failure", e);
             return ResponseEntity.internalServerError()
-                    .body(Map.of("error", "translated_text_2 translated_text_4 inquiry failure: " + e.getMessage()));
+                    .body(Map.of("error", "test file inquiry failure: " + e.getMessage()));
         }
     }
 
     @GetMapping("/{cacheName}/details")
     public ResponseEntity<Map<String, Object>> getCacheDetails(@PathVariable String cacheName) {
-        log.info(" translated_text_2 translated_text_2 information inquiry - translated_text_2: {}", cacheName);
+        log.info(" test information inquiry - test: {}", cacheName);
         
         var cache = cacheManager.getCache(cacheName);
         if (cache == null) {
@@ -110,21 +110,21 @@ public class CacheManagementController {
 
     @DeleteMapping("/users/{userId}")
     public ResponseEntity<Map<String, String>> evictUserCache(@PathVariable Long userId) {
-        log.info(" user translated_text_2 translated_text_3 translated_text_2 - ID: {}", userId);
+        log.info(" user test connection test - ID: {}", userId);
         
         try {
             cacheEvictionStrategy.evictUserCaches(userId);
             return ResponseEntity.ok(Map.of(
                     "status", "success",
-                    "message", "user translated_text_2 translated_text_10 translated_text_3.",
+                    "message", "user test successfully connection.",
                     "userId", userId.toString()
             ));
         } catch (Exception e) {
-            log.error(" user translated_text_2 translated_text_3 failure - ID: {}", userId, e);
+            log.error(" user test connection failure - ID: {}", userId, e);
             return ResponseEntity.internalServerError()
                     .body(Map.of(
                             "status", "error",
-                            "message", "user translated_text_2 translated_text_3 failure: " + e.getMessage(),
+                            "message", "user test connection failure: " + e.getMessage(),
                             "userId", userId.toString()
                     ));
         }
@@ -132,7 +132,7 @@ public class CacheManagementController {
 
     @DeleteMapping("/{cacheName}")
     public ResponseEntity<Map<String, String>> clearCache(@PathVariable String cacheName) {
-        log.info(" translated_text_2 translated_text_3 translated_text_2 - translated_text_2: {}", cacheName);
+        log.info(" test connection test - test: {}", cacheName);
         
         try {
             var cache = cacheManager.getCache(cacheName);
@@ -144,15 +144,15 @@ public class CacheManagementController {
             
             return ResponseEntity.ok(Map.of(
                     "status", "success",
-                    "message", "translated_text_2 translated_text_10 translated_text_3.",
+                    "message", "test successfully connection.",
                     "cacheName", cacheName
             ));
         } catch (Exception e) {
-            log.error(" translated_text_2 translated_text_3 failure - translated_text_2: {}", cacheName, e);
+            log.error(" test connection failure - test: {}", cacheName, e);
             return ResponseEntity.internalServerError()
                     .body(Map.of(
                             "status", "error",
-                            "message", "translated_text_2 translated_text_3 failure: " + e.getMessage(),
+                            "message", "test connection failure: " + e.getMessage(),
                             "cacheName", cacheName
                     ));
         }
@@ -160,44 +160,44 @@ public class CacheManagementController {
 
     @DeleteMapping("/all")
     public ResponseEntity<Map<String, Object>> clearAllCaches() {
-        log.warn(" translated_text_2 translated_text_2 translated_text_3 translated_text_2");
+        log.warn(" test connection test");
         
         try {
             cacheEvictionStrategy.clearAllCaches();
             
             return ResponseEntity.ok(Map.of(
                     "status", "success",
-                    "message", "all translated_text_2 translated_text_10 translated_text_3.",
+                    "message", "all test successfully connection.",
                     "clearedCaches", cacheManager.getCacheNames()
             ));
         } catch (Exception e) {
-            log.error(" translated_text_2 translated_text_2 translated_text_3 failure", e);
+            log.error(" test connection failure", e);
             return ResponseEntity.internalServerError()
                     .body(Map.of(
                             "status", "error",
-                            "message", "translated_text_2 translated_text_2 translated_text_3 failure: " + e.getMessage()
+                            "message", "test connection failure: " + e.getMessage()
                     ));
         }
     }
 
     @PostMapping("/refresh/provider/{provider}")
     public ResponseEntity<Map<String, String>> refreshProviderCache(@PathVariable String provider) {
-        log.info(" translated_text_5 translated_text_2 translated_text_2 translated_text_2 - translated_text_5: {}", provider);
+        log.info(" processing test test - Endpoint: {}", provider);
         
         try {
             cacheEvictionStrategy.refreshProviderCaches(provider);
             
             return ResponseEntity.ok(Map.of(
                     "status", "success",
-                    "message", "translated_text_5 translated_text_2 translated_text_10 translated_text_2.",
+                    "message", "processing test successfully test.",
                     "provider", provider
             ));
         } catch (Exception e) {
-            log.error(" translated_text_5 translated_text_2 translated_text_2 failure - translated_text_5: {}", provider, e);
+            log.error(" processing test failure - Endpoint: {}", provider, e);
             return ResponseEntity.internalServerError()
                     .body(Map.of(
                             "status", "error",
-                            "message", "translated_text_5 translated_text_2 translated_text_2 failure: " + e.getMessage(),
+                            "message", "processing test failure: " + e.getMessage(),
                             "provider", provider
                     ));
         }
@@ -205,18 +205,18 @@ public class CacheManagementController {
 
     @GetMapping("/statistics/export")
     public ResponseEntity<String> exportCacheStatistics() {
-        log.info(" translated_text_2 translated_text_2 CSV translated_text_4 translated_text_2");
+        log.info(" test CSV file test");
         
         try {
             StringBuilder csv = new StringBuilder();
-            csv.append("translated_text_2,translated_text_3,translated_text_3,translated_text_2\n");
+            csv.append("test,connection,connection,test\n");
 
             OAuth2TokenCacheService.CacheStats tokenStats = tokenCacheService.getCacheStats();
-            csv.append(String.format("oauth2Tokens,%d,%.2f%%,translated_text_2\n", 
+            csv.append(String.format("oauth2Tokens,%d,%.2f%%,test\n", 
                     tokenStats.getTotalEntries(), tokenStats.getHitRatio() * 100));
 
             UserProfileCacheService.ProfileCacheStats profileStats = profileCacheService.getCacheStats();
-            csv.append(String.format("userProfiles,%d,N/A,translated_text_2\n", profileStats.getTotalProfiles()));
+            csv.append(String.format("userProfiles,%d,N/A,test\n", profileStats.getTotalProfiles()));
             
             return ResponseEntity.ok()
                     .header("Content-Type", "text/csv; charset=UTF-8")
@@ -224,37 +224,37 @@ public class CacheManagementController {
                     .body(csv.toString());
                     
         } catch (Exception e) {
-            log.error(" translated_text_2 translated_text_2 translated_text_4 failure", e);
+            log.error(" test file failure", e);
             return ResponseEntity.internalServerError()
-                    .body("translated_text_2 translated_text_2 translated_text_4 failure: " + e.getMessage());
+                    .body("test file failure: " + e.getMessage());
         }
     }
 
     @PostMapping("/cleanup/manual")
     public ResponseEntity<Map<String, String>> triggerManualCleanup() {
-        log.info("🧹 translated_text_2 translated_text_2 translated_text_2 translated_text_3");
+        log.info("🧹 test test connection");
         
         try {
 
             new Thread(() -> {
                 try {
                     cacheEvictionStrategy.cleanupExpiredTokens();
-                    log.info(" translated_text_2 translated_text_2 translated_text_2 completed");
+                    log.info(" test test completed");
                 } catch (Exception e) {
-                    log.error(" translated_text_2 translated_text_2 translated_text_2 failure", e);
+                    log.error(" test test failure", e);
                 }
             }).start();
             
             return ResponseEntity.ok(Map.of(
                     "status", "success",
-                    "message", "translated_text_2 translated_text_2 translated_text_7 translated_text_7."
+                    "message", "test logging logging."
             ));
         } catch (Exception e) {
-            log.error(" translated_text_2 translated_text_2 translated_text_2 translated_text_3 failure", e);
+            log.error(" test test connection failure", e);
             return ResponseEntity.internalServerError()
                     .body(Map.of(
                             "status", "error",
-                            "message", "translated_text_2 translated_text_2 translated_text_3 failure: " + e.getMessage()
+                            "message", "test connection failure: " + e.getMessage()
                     ));
         }
     }

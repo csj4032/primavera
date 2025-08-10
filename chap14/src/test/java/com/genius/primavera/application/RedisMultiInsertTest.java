@@ -23,7 +23,7 @@ import java.util.Map;
 @Execution(value = ExecutionMode.CONCURRENT)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@DisplayName("Redis translated_text_2 translated_text_2 translated_text_2 test")
+@DisplayName("Redis test test")
 public class RedisMultiInsertTest implements MariaDBAndRedisIntegrationTest {
 
     static {

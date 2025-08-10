@@ -10,13 +10,13 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("Lucy Filter translated_text_4 translated_text_2 test")
+@DisplayName("Lucy Filter file test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class LucyFilterDelegatingPropertiesTest {
 
     @Test
     @Order(1)
-    @DisplayName("translated_text_2 translated_text_2 translated_text_4 translated_text_2")
+    @DisplayName("test file test")
     void shouldHaveDefaultValues() {
         LucyFilterDelegatingProperties properties = new LucyFilterDelegatingProperties();
         
@@ -28,7 +28,7 @@ class LucyFilterDelegatingPropertiesTest {
 
     @Test
     @Order(2)
-    @DisplayName("translated_text_4 translated_text_4 translated_text_4 works")
+    @DisplayName("file file works")
     void shouldBindPropertiesCorrectly() {
         Map<String, Object> map = new HashMap<>();
         map.put("spring.lucy-filter.enabled", "false");
@@ -51,7 +51,7 @@ class LucyFilterDelegatingPropertiesTest {
 
     @Test
     @Order(3)
-    @DisplayName("URL translated_text_2 translated_text_3 translated_text_4 translated_text_4")
+    @DisplayName("URL test connection file")
     void shouldParseUrlPatternsArray() {
         Map<String, Object> map = new HashMap<>();
         map.put("spring.lucy-filter.add-url-patterns[0]", "/api/*");
@@ -72,7 +72,7 @@ class LucyFilterDelegatingPropertiesTest {
 
     @Test
     @Order(4)
-    @DisplayName("translated_text_4 translated_text_4 translated_text_2 translated_text_4 translated_text_2 translated_text_4")
+    @DisplayName("file test file test file")
     void shouldKeepDefaultsForUnsetProperties() {
         Map<String, Object> map = new HashMap<>();
         map.put("spring.lucy-filter.name", "myFilter");
@@ -92,7 +92,7 @@ class LucyFilterDelegatingPropertiesTest {
 
     @Test
     @Order(5)
-    @DisplayName("settertranslated_text_1 translated_text_2 translated_text_4 translated_text_13 translated_text_4")
+    @DisplayName("settershould test file created successfully file")
     void shouldAllowPropertyModification() {
         LucyFilterDelegatingProperties properties = new LucyFilterDelegatingProperties();
         

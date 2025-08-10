@@ -70,20 +70,20 @@ class PostgreSQLBeanCreatorUnitTest {
         spec.setMaxConnections(5);
         spec.setConnectionTimeout(10000);
         
-        log.info("PostgreSQL translated_text_2 test translated_text_2 completed");
+        log.info("PostgreSQL test test completed");
     }
 
     @Test
     @Order(1)
-    @DisplayName("PostgreSQL BeanCreator translated_text_2 translated_text_2 verification")
+    @DisplayName("PostgreSQL BeanCreator test verification")
     void testSupportedType() {
         assertEquals(ContainerType.POSTGRESQL, beanCreator.getSupportedType());
-        log.info(" PostgreSQL BeanCreator translated_text_2 translated_text_2: {}", beanCreator.getSupportedType());
+        log.info(" PostgreSQL BeanCreator test: {}", beanCreator.getSupportedType());
     }
 
     @Test
     @Order(2)
-    @DisplayName("translated_text_2 HikariConfig creation translated_text_1 translated_text_2 validation")
+    @DisplayName("test HikariConfig creation should test validation")
     void testCreateBaseConfig() {
         ContainerInfo containerInfo = new ContainerInfo(
                 "test-postgresql",
@@ -94,21 +94,21 @@ class PostgreSQLBeanCreatorUnitTest {
 
         HikariConfig config = beanCreator.testCreateBaseConfig(containerInfo);
         
-        assertNotNull(config, "HikariConfigtranslated_text_1 creation translated_text_3");
-        assertTrue(config.getJdbcUrl().contains("postgresql"), "JDBC URLtranslated_text_1 postgresqltranslated_text_1 translated_text_4 translated_text_3");
-        assertTrue(config.getJdbcUrl().contains("localhost:5433"), "JDBC URLtranslated_text_1 translated_text_4 translated_text_3 translated_text_4 translated_text_3");
+        assertNotNull(config, "HikariConfigshould creation connection");
+        assertTrue(config.getJdbcUrl().contains("postgresql"), "JDBC URLshould postgresqlshould file connection");
+        assertTrue(config.getJdbcUrl().contains("localhost:5433"), "JDBC URLshould file connection file connection");
         assertEquals("test-postgresql-pool", config.getPoolName());
         assertEquals(2, config.getMinimumIdle());
         assertEquals(600000, config.getIdleTimeout());
         
-        log.info(" translated_text_2 HikariConfig creation success");
+        log.info(" test HikariConfig creation success");
         log.info("  - JDBC URL: {}", config.getJdbcUrl());
         log.info("  - Pool Name: {}", config.getPoolName());
     }
 
     @Test
     @Order(3)
-    @DisplayName("translated_text_2 translated_text_2 translated_text_2 validation")
+    @DisplayName("test test validation")
     void testApplyCommonSettings() {
         ContainerInfo containerInfo = new ContainerInfo(
                 "test-postgresql-common",
@@ -125,14 +125,14 @@ class PostgreSQLBeanCreatorUnitTest {
         assertEquals(5, config.getMaximumPoolSize());
         assertEquals(10000, config.getConnectionTimeout());
         
-        log.info(" translated_text_2 translated_text_2 translated_text_2 success");
+        log.info(" test test success");
         log.info("  - Username: {}", config.getUsername());
         log.info("  - Pool Size: {}", config.getMaximumPoolSize());
     }
 
     @Test
     @Order(4)
-    @DisplayName("translated_text_2 validation (translated_text_2 translated_text_2)")
+    @DisplayName("test validation (test)")
     void testConfigurationOnly() {
         beanCreator.setReturnConfigOnly(true);
         
@@ -145,18 +145,18 @@ class PostgreSQLBeanCreatorUnitTest {
 
         Object result = beanCreator.createBean(containerInfo);
         
-        assertNotNull(result, "translated_text_1 nulltranslated_text_1 translated_text_4 translated_text_3");
-        assertInstanceOf(String.class, result, "String translated_text_6 translated_text_3");
-        assertTrue(result.toString().contains("test-postgresql-config-only"), "translated_text_1 translated_text_1translated_text_1 translated_text_5 translated_text_3");
+        assertNotNull(result, "should nullshould file connection");
+        assertInstanceOf(String.class, result, "String with connection");
+        assertTrue(result.toString().contains("test-postgresql-config-only"), "needs to be addedshould Endpoint connection");
         
-        log.info(" translated_text_2 validation completed (translated_text_2 translated_text_2): {}", result);
+        log.info(" test validation completed (test): {}", result);
         
         beanCreator.setReturnConfigOnly(false);
     }
 
     @Test
     @Order(5)
-    @DisplayName("translated_text_2 translated_text_2 validation")
+    @DisplayName("test validation")
     void testDefaultSettings() {
         beanCreator.setReturnConfigOnly(true);
         
@@ -171,17 +171,17 @@ class PostgreSQLBeanCreatorUnitTest {
 
         Object result = beanCreator.createBean(containerInfo);
         
-        assertNotNull(result, "translated_text_1 creation translated_text_3");
-        assertTrue(result.toString().contains("test-postgresql-defaults"), "translated_text_1 translated_text_1translated_text_1 translated_text_5 translated_text_3");
+        assertNotNull(result, "should creation connection");
+        assertTrue(result.toString().contains("test-postgresql-defaults"), "needs to be addedshould Endpoint connection");
         
-        log.info(" translated_text_2 translated_text_2 validation success: {}", result);
+        log.info(" test validation success: {}", result);
         
         beanCreator.setReturnConfigOnly(false);
     }
 
     @Test
     @Order(6)
-    @DisplayName("PostgreSQL translated_text_2 translated_text_2 validation")
+    @DisplayName("PostgreSQL test validation")
     void testAdvancedSettings() {
         beanCreator.setReturnConfigOnly(true);
         
@@ -198,11 +198,11 @@ class PostgreSQLBeanCreatorUnitTest {
         );
 
         Object result = beanCreator.createBean(containerInfo);
-        assertNotNull(result, "translated_text_1 creation translated_text_3");
+        assertNotNull(result, "should creation connection");
         
-        assertTrue(result.toString().contains("test-postgresql-advanced"), "translated_text_1 translated_text_1translated_text_1 translated_text_5 translated_text_3");
+        assertTrue(result.toString().contains("test-postgresql-advanced"), "needs to be addedshould Endpoint connection");
         
-        log.info(" translated_text_2 translated_text_2 validation completed: {}", result);
+        log.info(" test validation completed: {}", result);
         log.info("  - SSL Mode: {}", spec.getSslMode());
         log.info("  - Shared Buffers: {}", spec.getSharedBuffers());
         log.info("  - Work Mem: {}", spec.getWorkMem());
@@ -213,7 +213,7 @@ class PostgreSQLBeanCreatorUnitTest {
 
     @Test
     @Order(7)
-    @DisplayName("PostgreSQL SSL translated_text_2 translated_text_2 validation")
+    @DisplayName("PostgreSQL SSL test validation")
     void testSslModeSettings() {
         beanCreator.setReturnConfigOnly(true);
         
@@ -234,9 +234,9 @@ class PostgreSQLBeanCreatorUnitTest {
             );
 
             Object result = beanCreator.createBean(containerInfo);
-            assertNotNull(result, "translated_text_1 creation translated_text_3: " + sslMode);
+            assertNotNull(result, "should creation connection: " + sslMode);
             
-            log.info(" SSL translated_text_2 {} translated_text_2 validation completed", sslMode);
+            log.info(" SSL test {} test validation completed", sslMode);
         }
         
         beanCreator.setReturnConfigOnly(false);
@@ -244,7 +244,7 @@ class PostgreSQLBeanCreatorUnitTest {
 
     @Test
     @Order(8)
-    @DisplayName("PostgreSQL translated_text_3 translated_text_1 translated_text_3 translated_text_2 validation")
+    @DisplayName("PostgreSQL connection should connection test validation")
     void testLocaleAndEncodingSettings() {
         beanCreator.setReturnConfigOnly(true);
         
@@ -265,9 +265,9 @@ class PostgreSQLBeanCreatorUnitTest {
             );
 
             Object result = beanCreator.createBean(containerInfo);
-            assertNotNull(result, "translated_text_1 creation translated_text_3");
+            assertNotNull(result, "should creation connection");
             
-            log.info(" translated_text_3 {} / translated_text_3 {} translated_text_2 validation completed", 
+            log.info(" connection {} / connection {} test validation completed", 
                     locales[i], i < encodings.length ? encodings[i] : "default");
         }
         
@@ -276,7 +276,7 @@ class PostgreSQLBeanCreatorUnitTest {
 
     @Test
     @Order(9)
-    @DisplayName("PostgreSQL translated_text_3 translated_text_1 translated_text_2 translated_text_2 validation")
+    @DisplayName("PostgreSQL connection should test validation")
     void testMemoryAndPerformanceSettings() {
         beanCreator.setReturnConfigOnly(true);
         
@@ -294,9 +294,9 @@ class PostgreSQLBeanCreatorUnitTest {
         );
 
         Object result = beanCreator.createBean(containerInfo);
-        assertNotNull(result, "translated_text_1 creation translated_text_3");
+        assertNotNull(result, "should creation connection");
         
-        log.info(" translated_text_3 translated_text_1 translated_text_2 translated_text_2 validation completed: {}", result);
+        log.info(" connection should test validation completed: {}", result);
         log.info("  - Shared Buffers: {}", spec.getSharedBuffers());
         log.info("  - Work Mem: {}", spec.getWorkMem());
         log.info("  - Maintenance Work Mem: {}", spec.getMaintenanceWorkMem());
@@ -307,7 +307,7 @@ class PostgreSQLBeanCreatorUnitTest {
 
     @Test
     @Order(10)
-    @DisplayName("PostgreSQL translated_text_3 translated_text_1 translated_text_2 translated_text_3 translated_text_2 validation")
+    @DisplayName("PostgreSQL connection should test connection test validation")
     void testTimezoneAndDateStyleSettings() {
         beanCreator.setReturnConfigOnly(true);
         
@@ -328,9 +328,9 @@ class PostgreSQLBeanCreatorUnitTest {
             );
 
             Object result = beanCreator.createBean(containerInfo);
-            assertNotNull(result, "translated_text_1 creation translated_text_3: " + timezones[i]);
+            assertNotNull(result, "should creation connection: " + timezones[i]);
             
-            log.info(" translated_text_3 {} / translated_text_2 translated_text_3 {} translated_text_2 validation completed", 
+            log.info(" connection {} / test connection {} test validation completed", 
                     timezones[i], i < dateStyles.length ? dateStyles[i] : "default");
         }
         

@@ -9,7 +9,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class WorldServiceImplTest {
 
     @Test
-    @DisplayName("hello() translated_text_4 'Hello'translated_text_1 translated_text_4 translated_text_2")
+    @DisplayName("hello() file 'Hello'should file test")
     public void hello() {
         WorldService worldService = new WorldServiceImpl();
         String result = worldService.hello();
@@ -17,7 +17,7 @@ public class WorldServiceImplTest {
     }
 
     @Test
-    @DisplayName("world() translated_text_4 'World'translated_text_1 translated_text_4 translated_text_2")
+    @DisplayName("world() file 'World'should file test")
     public void world() {
         WorldService worldService = new WorldServiceImpl();
         String result = worldService.world();
@@ -25,7 +25,7 @@ public class WorldServiceImplTest {
     }
 
     @Test
-    @DisplayName("hello()translated_text_1 world() translated_text_4 translated_text_2 'Hello'translated_text_1 'World'translated_text_1 translated_text_4 translated_text_2")
+    @DisplayName("hello()should world() file test 'Hello'should 'World'should file test")
     public void helloAndWorld() {
         WorldService worldService = new WorldServiceImpl();
         String hello = worldService.hello();

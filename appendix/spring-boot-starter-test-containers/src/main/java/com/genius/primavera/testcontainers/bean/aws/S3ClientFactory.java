@@ -16,7 +16,7 @@ public class S3ClientFactory extends AwsServiceClientFactory {
     @Override
     public Object createClient(LocalStackContainer container) {
         if (!isAvailable()) {
-            throw new IllegalStateException("AWS S3 SDKtranslated_text_1 translated_text_6 translated_text_4. AWS SDK v2 dependencytranslated_text_1 translated_text_1.");
+            throw new IllegalStateException("AWS S3 SDK is not available in classpath. AWS SDK v2  dependency needs to be added.");
         }
 
         try {
@@ -62,11 +62,11 @@ public class S3ClientFactory extends AwsServiceClientFactory {
 
             Object s3Client = builder.getClass().getMethod("build").invoke(builder);
 
-            log.info(" S3Clienttranslated_text_1 translated_text_10 translated_text_13. translated_text_5: {}", endpointUrl);
+            log.info(" S3Client created successfully. Endpoint: {}", endpointUrl);
             return s3Client;
 
         } catch (Exception e) {
-            log.error("S3Client creation translated_text_1 error translated_text_2", e);
+            log.error("S3Client creation failed with error", e);
             throw new RuntimeException("S3Client creation failure", e);
         }
     }

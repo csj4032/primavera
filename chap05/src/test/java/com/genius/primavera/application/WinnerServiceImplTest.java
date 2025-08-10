@@ -23,7 +23,7 @@ public class WinnerServiceImplTest {
 
     @Test
     @Order(1)
-    @DisplayName("save translated_text_3 test")
+    @DisplayName("save connection test")
     public void save() {
         Winner winner = Winner.builder().name("John Doe").year(2023).sport("Basketball").prize("Gold Medal").amount(new BigDecimal("10000.00")).build();
         int result = winnerService.save(winner);
@@ -32,7 +32,7 @@ public class WinnerServiceImplTest {
 
     @Test
     @Order(2)
-    @DisplayName("saveAndNew translated_text_3 test")
+    @DisplayName("saveAndNew connection test")
     public void saveAndNew() {
         Winner winner1 = Winner.builder().name("Alice Smith").year(2023).sport("Tennis").prize("Silver Medal").amount(new BigDecimal("5000.00")).build();
         Winner winner2 = Winner.builder().name("Bob Johnson").year(2023).sport("Football").prize("Bronze Medal").amount(new BigDecimal("3000.00")).build();
@@ -43,7 +43,7 @@ public class WinnerServiceImplTest {
 
     @Test
     @Order(3)
-    @DisplayName("saveAndNested translated_text_3 test - REQUIRES_NEWtranslated_text_1 translated_text_2")
+    @DisplayName("saveAndNested connection test - REQUIRES_NEWshould test")
     public void saveAndNested() {
         Winner winner1 = Winner.builder().name("David Wilson").year(2023).sport("Athletics").prize("Gold Medal").amount(new BigDecimal("12000.00")).build();
         Winner winner2 = Winner.builder().name("Eva Green").year(2023).sport("Cycling").prize("Silver Medal").amount(new BigDecimal("8000.00")).build();
@@ -54,7 +54,7 @@ public class WinnerServiceImplTest {
 
     @Test
     @Order(4)
-    @DisplayName("saveAndNotSupported translated_text_3 test")
+    @DisplayName("saveAndNotSupported connection test")
     public void saveAndNotSupported() {
         Winner winner1 = Winner.builder().name("Grace Lee").year(2023).sport("Volleyball").prize("Gold Medal").amount(new BigDecimal("11000.00")).build();
         Winner winner2 = Winner.builder().name("Hank Kim").year(2023).sport("Baseball").prize("Silver Medal").amount(new BigDecimal("6000.00")).build();
@@ -65,7 +65,7 @@ public class WinnerServiceImplTest {
 
     @Test
     @Order(5)
-    @DisplayName("saveNotSupported translated_text_3 test - NOT_SUPPORTED translated_text_4")
+    @DisplayName("saveNotSupported connection test - NOT_SUPPORTED file")
     public void saveNotSupported() {
         Winner winner = Winner.builder()
                 .name("Test Not Supported Winner")
@@ -80,7 +80,7 @@ public class WinnerServiceImplTest {
 
     @Test
     @Order(6)
-    @DisplayName("saveNested translated_text_3 test - REQUIRES_NEW translated_text_4")
+    @DisplayName("saveNested connection test - REQUIRES_NEW file")
     public void saveNested() {
         Winner winner = Winner.builder()
                 .name("Test Nested Winner")
@@ -95,7 +95,7 @@ public class WinnerServiceImplTest {
 
     @Test
     @Order(7)
-    @DisplayName("saveRequiresNew translated_text_3 test - REQUIRES_NEW translated_text_4")
+    @DisplayName("saveRequiresNew connection test - REQUIRES_NEW file")
     public void saveRequiresNew() {
         Winner winner = Winner.builder()
                 .name("Test Requires New Winner")
@@ -110,7 +110,7 @@ public class WinnerServiceImplTest {
 
     @Test
     @Order(8)
-    @DisplayName("saveAll translated_text_3 test - REQUIRES_NEW translated_text_4")
+    @DisplayName("saveAll connection test - REQUIRES_NEW file")
     public void saveAll() {
         var winners = java.util.List.of(
                 Winner.builder().name("Winner 1").year(2023).sport("Sport 1").prize("Prize 1").amount(new BigDecimal("1000.00")).build(),
@@ -122,7 +122,7 @@ public class WinnerServiceImplTest {
 
     @Test
     @Order(9)
-    @DisplayName("saveAllNested translated_text_3 test - REQUIRES_NEWtranslated_text_1 translated_text_2")
+    @DisplayName("saveAllNested connection test - REQUIRES_NEWshould test")
     void saveAllNested() {
         var winners = java.util.List.of(
                 Winner.builder().name("Winner 1").year(2023).sport("Sport 1").prize("Prize 1").amount(new BigDecimal("1000.00")).build(),
@@ -134,7 +134,7 @@ public class WinnerServiceImplTest {
 
     @Test
     @Order(10)
-    @DisplayName("innerSave translated_text_3 test - REQUIRES_NEW translated_text_4")
+    @DisplayName("innerSave connection test - REQUIRES_NEW file")
     public void innerSave() {
         var winners = java.util.List.of(
                 Winner.builder().name("Inner Winner 1").year(2023).sport("Sport 1").prize("Prize 1").amount(new BigDecimal("1000.00")).build(),
@@ -146,7 +146,7 @@ public class WinnerServiceImplTest {
 
     @Test
     @Order(11)
-    @DisplayName("innerSaveNew translated_text_3 test - REQUIRES_NEW translated_text_4")
+    @DisplayName("innerSaveNew connection test - REQUIRES_NEW file")
     public void innerSaveNew() {
         var winners = java.util.List.of(
                 Winner.builder().name("Inner New Winner 1").year(2023).sport("Sport 1").prize("Prize 1").amount(new BigDecimal("1000.00")).build(),
@@ -158,7 +158,7 @@ public class WinnerServiceImplTest {
 
     @Test
     @Order(12)
-    @DisplayName("innerNotSupported translated_text_3 test - NOT_SUPPORTED translated_text_4")
+    @DisplayName("innerNotSupported connection test - NOT_SUPPORTED file")
     public void innerNotSupported() {
         var winners = java.util.List.of(
                 Winner.builder().name("Inner Not Supported Winner 1").year(2023).sport("Sport 1").prize("Prize 1").amount(new BigDecimal("1000.00")).build(),
@@ -170,7 +170,7 @@ public class WinnerServiceImplTest {
 
     @Test
     @Order(13)
-    @DisplayName("findAllUncommitted translated_text_3 test")
+    @DisplayName("findAllUncommitted connection test")
     public void findAllUncommitted() {
         var winners = winnerService.findAllUncommitted();
         assertNotNull(winners, "Winners should be found with uncommitted isolation level");
@@ -185,7 +185,7 @@ public class WinnerServiceImplTest {
 
     @Test
     @Order(14)
-    @DisplayName("findAllCommitted translated_text_3 test")
+    @DisplayName("findAllCommitted connection test")
     public void findAllCommitted() {
         var winners = winnerService.findAllCommitted();
         assertNotNull(winners, "Winners should be found with committed isolation level");
@@ -200,7 +200,7 @@ public class WinnerServiceImplTest {
 
     @Test
     @Order(15)
-    @DisplayName("findAllByIdReadCommitted translated_text_3 test")
+    @DisplayName("findAllByIdReadCommitted connection test")
     public void findAllByIdReadCommitted() {
         Long id = 1L;
         Winner winner = winnerService.findAllByIdReadCommitted(id);
@@ -213,7 +213,7 @@ public class WinnerServiceImplTest {
 
     @Test
     @Order(16)
-    @DisplayName("findAllByIdRepeatableRead translated_text_3 test")
+    @DisplayName("findAllByIdRepeatableRead connection test")
     public void findAllByIdRepeatableRead() {
         Long id = 1L;
         Winner winner = winnerService.findAllByIdRepeatableRead(id);

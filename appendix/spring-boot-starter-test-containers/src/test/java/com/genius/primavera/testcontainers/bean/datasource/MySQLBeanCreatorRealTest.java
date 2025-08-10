@@ -42,28 +42,28 @@ class MySQLBeanCreatorRealTest {
         spec.setConnectionTimeout(10000);
         spec.setSslEnabled(false);
         
-        log.info("MySQL test translated_text_4 translated_text_3: {}", container.getJdbcUrl());
+        log.info("MySQL test file connection: {}", container.getJdbcUrl());
     }
 
     @AfterAll
     void tearDown() {
         if (container != null) {
             container.stop();
-            log.info("MySQL test translated_text_4 translated_text_3");
+            log.info("MySQL test file connection");
         }
     }
 
     @Test
     @Order(1)
-    @DisplayName("MySQL BeanCreator translated_text_2 translated_text_2 verification")
+    @DisplayName("MySQL BeanCreator test verification")
     void testSupportedType() {
         assertEquals(ContainerType.MYSQL, beanCreator.getSupportedType());
-        log.info(" MySQL BeanCreator translated_text_2 translated_text_2: {}", beanCreator.getSupportedType());
+        log.info(" MySQL BeanCreator test: {}", beanCreator.getSupportedType());
     }
 
     @Test
     @Order(2)
-    @DisplayName("MySQL DataSource translated_text_1 creation translated_text_1 translated_text_2 translated_text_2 test")
+    @DisplayName("MySQL DataSource should creation should test test")
     void testCreateBeanWithRealConnection() {
         ContainerInfo containerInfo = new ContainerInfo(
                 "test-mysql",
@@ -74,27 +74,27 @@ class MySQLBeanCreatorRealTest {
 
         HikariDataSource dataSource = (HikariDataSource) assertDoesNotThrow(() -> beanCreator.createBean(containerInfo));
         
-        assertNotNull(dataSource, "creation DataSourcetranslated_text_1 nulltranslated_text_1 translated_text_4 translated_text_3");
-        assertInstanceOf(HikariDataSource.class, dataSource, "HikariDataSource translated_text_6 translated_text_3");
+        assertNotNull(dataSource, "creation DataSourceshould nullshould file connection");
+        assertInstanceOf(HikariDataSource.class, dataSource, "HikariDataSource with connection");
         
         assertDoesNotThrow(() -> {
             try (var connection = dataSource.getConnection()) {
-                assertTrue(connection.isValid(5), "translated_text_2translated_text_1 translated_text_4 translated_text_3");
+                assertTrue(connection.isValid(5), "testshould file connection");
                 var statement = connection.createStatement();
                 var resultSet = statement.executeQuery("SELECT 1");
-                assertTrue(resultSet.next(), "translated_text_2 translated_text_1 translated_text_3 translated_text_3");
-                assertEquals(1, resultSet.getInt(1), "translated_text_1 1translated_text_1 translated_text_3");
-                log.info(" MySQL translated_text_2 test success");
+                assertTrue(resultSet.next(), "test should connection");
+                assertEquals(1, resultSet.getInt(1), "should 1should connection");
+                log.info(" MySQL test success");
             }
-        }, "MySQL translated_text_2translated_text_1 success translated_text_3");
+        }, "MySQL testshould success connection");
         
         dataSource.close();
-        log.info(" MySQL DataSource creation translated_text_1 translated_text_2 test success");
+        log.info(" MySQL DataSource creation should test success");
     }
 
     @Test
     @Order(3)
-    @DisplayName("MySQL SSL translated_text_4 translated_text_2 test")
+    @DisplayName("MySQL SSL file test")
     void testSslDisabledSetting() {
         spec.setSslEnabled(false);
         
@@ -106,14 +106,14 @@ class MySQLBeanCreatorRealTest {
         );
 
         HikariDataSource dataSource = (HikariDataSource) beanCreator.createBean(containerInfo);
-        assertNotNull(dataSource, "SSL translated_text_4 DataSourcetranslated_text_1 creation translated_text_3");
+        assertNotNull(dataSource, "SSL file DataSourceshould creation connection");
         
         assertDoesNotThrow(() -> {
             try (var connection = dataSource.getConnection()) {
-                assertTrue(connection.isValid(3), "SSL translated_text_4 translated_text_2translated_text_1 translated_text_4 translated_text_3");
+                assertTrue(connection.isValid(3), "SSL file testshould file connection");
             }
         });
         dataSource.close();
-        log.info(" SSL translated_text_4 translated_text_2 translated_text_1 translated_text_2 validation completed");
+        log.info(" SSL file test should test validation completed");
     }
 }

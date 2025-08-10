@@ -27,9 +27,7 @@ public class S3FileController {
     private final S3FileService s3FileService;
 
     @PostMapping("/upload")
-    public ResponseEntity<FileUploadResponse> uploadFile(
-            @RequestParam("file") MultipartFile file,
-            @RequestParam(value = "folder", defaultValue = "uploads") String folder) {
+    public ResponseEntity<FileUploadResponse> uploadFile(@RequestParam("file") MultipartFile file, @RequestParam(value = "folder", defaultValue = "uploads") String folder) {
         try {
             String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
             String keyName = String.format("%s/%s_%s", folder, timestamp, file.getOriginalFilename());
@@ -37,8 +35,7 @@ public class S3FileController {
             return ResponseEntity.ok(new FileUploadResponse(keyName, fileUrl, file.getSize(), file.getContentType(), "Upload successful"));
         } catch (Exception e) {
             log.error("Failed to upload file: {}", file.getOriginalFilename(), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new FileUploadResponse(null, null, 0, null, "Upload failed: " + e.getMessage()));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new FileUploadResponse(null, null, 0, null, "Upload failed: " + e.getMessage()));
         }
     }
 
@@ -47,14 +44,14 @@ public class S3FileController {
         try {
             Optional<InputStream> fileStream = s3FileService.downloadFile(keyName);
             if (fileStream.isEmpty()) return ResponseEntity.notFound().build();
-            
+
             Optional<S3FileMetadata> metadata = s3FileService.getFileMetadata(keyName);
             HttpHeaders headers = new HttpHeaders();
             metadata.ifPresent(meta -> {
                 headers.setContentLength(meta.size());
                 if (meta.contentType() != null) headers.setContentType(MediaType.parseMediaType(meta.contentType()));
             });
-            
+
             String fileName = keyName.substring(keyName.lastIndexOf('/') + 1);
             headers.setContentDispositionFormData("attachment", fileName);
             return ResponseEntity.ok().headers(headers).body(new InputStreamResource(fileStream.get()));
@@ -77,8 +74,7 @@ public class S3FileController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<FileListResponse> listFiles(
-            @RequestParam(value = "prefix", required = false) String prefix) {
+    public ResponseEntity<FileListResponse> listFiles(@RequestParam(value = "prefix", required = false) String prefix) {
         try {
             List<String> files = s3FileService.listFiles(prefix);
             return ResponseEntity.ok(new FileListResponse(files, files.size(), prefix));
@@ -91,9 +87,7 @@ public class S3FileController {
     @GetMapping("/metadata/{*keyName}")
     public ResponseEntity<S3FileMetadata> getFileMetadata(@PathVariable String keyName) {
         try {
-            return s3FileService.getFileMetadata(keyName)
-                    .map(ResponseEntity::ok)
-                    .orElse(ResponseEntity.notFound().build());
+            return s3FileService.getFileMetadata(keyName).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
         } catch (Exception e) {
             log.error("Failed to get file metadata: {}", keyName, e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -111,26 +105,30 @@ public class S3FileController {
     }
 
     public record FileUploadResponse(
-        String key,
-        String url,
-        long size,
-        String contentType,
-        String message
-    ) {}
+            String key,
+            String url,
+            long size,
+            String contentType,
+            String message
+    ) {
+    }
 
     public record FileOperationResponse(
-        String key,
-        String message
-    ) {}
+            String key,
+            String message
+    ) {
+    }
 
     public record FileListResponse(
-        List<String> files,
-        int count,
-        String prefix
-    ) {}
+            List<String> files,
+            int count,
+            String prefix
+    ) {
+    }
 
     public record FileExistsResponse(
-        String key,
-        boolean exists
-    ) {}
+            String key,
+            boolean exists
+    ) {
+    }
 }

@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Slf4j
 @ActiveProfiles("test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@DisplayName("Elasticsearch translated_text_3 translated_text_2 test")
+@DisplayName("Elasticsearch connection test")
 @SpringBootTest(classes = {com.genius.primavera.batch.config.ElasticsearchConfiguration.class})
 @EnableTestContainers(value = {@EnableTestContainers.TestContainer(type = ContainerType.ELASTICSEARCH, name = "elasticsearch")})
 public class ElasticsearchIndexTest {
@@ -40,37 +40,37 @@ public class ElasticsearchIndexTest {
 
     @Test
     @Order(1)
-    @DisplayName("translated_text_3 translated_text_9 translated_text_1 exists")
+    @DisplayName("connection should not should exists")
     void shouldCreateIndex() throws IOException {
         Map<String, Property> properties = new HashMap<>();
         properties.put("name", Property.of(p -> p.text(TextProperty.of(t -> t.analyzer("standard")))));
         properties.put("description", Property.of(p -> p.text(TextProperty.of(t -> t.analyzer("standard")))));
         properties.put("price", Property.of(p -> p.integer(i -> i)));
         CreateIndexResponse response = elasticsearchClient.indices().create(c -> c.index(TEST_INDEX).mappings(m -> m.properties(properties)));
-        assertTrue(response.acknowledged(), "translated_text_3 translated_text_9 translated_text_9 translated_text_2");
-        log.info("translated_text_3 creation success: {}", TEST_INDEX);
+        assertTrue(response.acknowledged(), "connection should not should not test");
+        log.info("connection creation success: {}", TEST_INDEX);
         boolean exists = elasticsearchClient.indices().exists(ExistsRequest.of(e -> e.index(TEST_INDEX))).value();
-        assertTrue(exists, "creation translated_text_3translated_text_1 translated_text_4 translated_text_2");
-        log.info("translated_text_3 translated_text_2 verification: {}", exists);
+        assertTrue(exists, "creation connectionshould file test");
+        log.info("connection test verification: {}", exists);
     }
 
     @Test
     @Order(2)
-    @DisplayName("translated_text_3 translated_text_4 translated_text_1 exists")
+    @DisplayName("connection file should exists")
     void shouldIndexDocument() throws IOException {
         Map<String, Object> document = new HashMap<>();
-        document.put("name", "test translated_text_2");
-        document.put("description", "translated_text_3 test translated_text_2");
+        document.put("name", "test");
+        document.put("description", "connection test");
         document.put("price", 10000);
         IndexResponse response = elasticsearchClient.index(i -> i.index(TEST_INDEX).id("1").document(document));
-        assertNotNull(response.id(), "translated_text_2 IDtranslated_text_1 translated_text_5 translated_text_2");
-        assertEquals("1", response.id(), "translated_text_3 IDtranslated_text_1 translated_text_5 translated_text_2");
-        log.info("translated_text_2 translated_text_3 success - ID: {}, Result: {}", response.id(), response.result());
+        assertNotNull(response.id(), "test IDshould processing test");
+        assertEquals("1", response.id(), "connection IDshould processing test");
+        log.info("test connection success - ID: {}, Result: {}", response.id(), response.result());
     }
 
     @Test
     @Order(3)
-    @DisplayName("translated_text_3 translated_text_3 translated_text_3 translated_text_1 exists")
+    @DisplayName("connection connection should exists")
     void shouldSearchDocument() throws IOException {
         try {
             Thread.sleep(1000);
@@ -88,30 +88,30 @@ public class ElasticsearchIndexTest {
                 ), ObjectNode.class
         );
 
-        assertNotNull(response.hits(), "translated_text_2 translated_text_1 translated_text_3 translated_text_2");
-        assertTrue(response.hits().total().value() > 0, "translated_text_2 translated_text_2translated_text_1 translated_text_3 translated_text_2");
+        assertNotNull(response.hits(), "test should connection test");
+        assertTrue(response.hits().total().value() > 0, "testshould connection test");
         
         Hit<ObjectNode> hit = response.hits().hits().get(0);
-        assertEquals("1", hit.id(), "translated_text_2 translated_text_2 IDtranslated_text_1 translated_text_4 translated_text_2");
+        assertEquals("1", hit.id(), "test IDshould file test");
         
         ObjectNode source = hit.source();
-        assertNotNull(source, "translated_text_2 translated_text_1 translated_text_3 translated_text_2");
-        assertEquals("test translated_text_2", source.get("name").asText(), "translated_text_2 name translated_text_1 translated_text_4 translated_text_2");
-        assertEquals(10000, source.get("price").asInt(), "translated_text_2 price translated_text_1 translated_text_4 translated_text_2");
+        assertNotNull(source, "test should connection test");
+        assertEquals("test", source.get("name").asText(), "test name should file test");
+        assertEquals(10000, source.get("price").asInt(), "test price should file test");
 
-        log.info("translated_text_2 success - translated_text_1 {}translated_text_1 translated_text_2 translated_text_2", response.hits().total().value());
-        log.info("translated_text_1 translated_text_2 translated_text_2: {}", source.toString());
+        log.info("test success - should {}should test", response.hits().total().value());
+        log.info("should test: {}", source.toString());
     }
 
     @Test
     @Order(4)
-    @DisplayName("translated_text_3 translated_text_9 translated_text_1 exists")
+    @DisplayName("connection should not should exists")
     void shouldDeleteIndex() throws IOException {
         DeleteIndexResponse response = elasticsearchClient.indices().delete(d -> d.index(TEST_INDEX));
-        assertTrue(response.acknowledged(), "translated_text_3 deletiontranslated_text_1 translated_text_9 translated_text_2");
-        log.info("translated_text_3 deletion success: {}", TEST_INDEX);
+        assertTrue(response.acknowledged(), "connection deletionshould should not test");
+        log.info("connection deletion success: {}", TEST_INDEX);
         boolean exists = elasticsearchClient.indices().exists(ExistsRequest.of(e -> e.index(TEST_INDEX))).value();
-        assertFalse(exists, "deletion translated_text_3 translated_text_2 translated_text_3 translated_text_2");
-        log.info("translated_text_3 deletion verification: exists = {}", exists);
+        assertFalse(exists, "deletion connection test connection test");
+        log.info("connection deletion verification: exists = {}", exists);
     }
 }

@@ -28,7 +28,7 @@ class PlantServiceTest {
 
     @Test
     @Order(1)
-    @DisplayName("translated_text_4 translated_text_4 translated_text_2 test")
+    @DisplayName("file test")
     public void getPlants() throws IOException {
         Plant mockPlant = new Plant();
         given(plantRepository.getPlant("Oak")).willReturn(Collections.singletonList(mockPlant));
@@ -39,7 +39,7 @@ class PlantServiceTest {
 
     @Test
     @Order(2)
-    @DisplayName("translated_text_4 translated_text_4 translated_text_2 test : MalformedJsonException translated_text_2")
+    @DisplayName("file test : MalformedJsonException test")
     public void getEmptyResultPlants() throws IOException {
         given(plantRepository.getPlant("abc")).willThrow(new MalformedJsonException("Invalid JSON"));
         Assertions.assertThrows(MalformedJsonException.class, () -> plantService.fetchPlants("abc"));

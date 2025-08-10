@@ -15,7 +15,7 @@ import java.sql.SQLException;
 @SpringBootTest
 @EnableTestContainers
 @ActiveProfiles("test")
-@DisplayName("HikariDataSource translated_text_2 test")
+@DisplayName("HikariDataSource test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class HikariDataSourceTest {
 
@@ -46,14 +46,14 @@ public class HikariDataSourceTest {
 
     @Test
     @Order(3)
-    @DisplayName("HikariDataSource translated_text_3 test")
+    @DisplayName("HikariDataSource connection test")
     public void testConnection() throws SQLException {
         try (var connection = dataSource.getConnection()) {
-            log.info("translated_text_3 translated_text_10 translated_text_13.");
-            log.info("translated_text_3 URL: {}", connection.getMetaData().getURL());
-            log.info("translated_text_3 user translated_text_2: {}", connection.getMetaData().getUserName());
+            log.info("connection created successfully.");
+            log.info("connection URL: {}", connection.getMetaData().getURL());
+            log.info("connection user test: {}", connection.getMetaData().getUserName());
         } catch (SQLException e) {
-            log.error("translated_text_3 creation translated_text_1 error translated_text_2: {}", e.getMessage());
+            log.error("connection creation failed with error: {}", e.getMessage());
             throw e;
         }
     }

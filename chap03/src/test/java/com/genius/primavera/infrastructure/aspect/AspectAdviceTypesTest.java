@@ -22,7 +22,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @SpringBootTest
 @ActiveProfiles("test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@DisplayName("AOP Advice translated_text_3 translated_text_2 test")
+@DisplayName("AOP Advice connection test")
 public class AspectAdviceTypesTest {
 
     @Autowired
@@ -38,106 +38,106 @@ public class AspectAdviceTypesTest {
 
     @Test
     @Order(1)
-    @DisplayName("@Before - translated_text_3 execution translated_text_1 processing test")
+    @DisplayName("@Before - connection execution should processing test")
     void testBeforeAdvice() {
         var userId = 1L;
         var result = helloService.getUserById(userId);
         assertThat(result).isNotNull();
         assertThat(result.getId()).isEqualTo(userId);
-        log.info(" @Before Advice - translated_text_3 execution translated_text_1 translated_text_2 completed");
+        log.info(" @Before Advice - connection execution should test completed");
     }
 
     @Test
     @Order(2)
-    @DisplayName("@After - translated_text_3 execution translated_text_1 translated_text_2 processing test")
+    @DisplayName("@After - connection execution should test processing test")
     void testAfterAdvice() {
         var userId = 2L;
         var result = helloService.getUserById(userId);
         assertThat(result).isNotNull();
-        log.info(" @After Advice - translated_text_3 execution translated_text_1 translated_text_2 translated_text_2 completed");
+        log.info(" @After Advice - connection execution should test completed");
     }
 
     @Test
     @Order(3)
-    @DisplayName("@AfterReturning - translated_text_2 translated_text_2 translated_text_3 processing test")
+    @DisplayName("@AfterReturning - test connection processing test")
     void testAfterReturningAdvice() {
         var userId = 3L;
         var result = helloService.getUserById(userId);
         assertThat(result).isNotNull();
         assertThat(result.getName()).isEqualTo("Charlie");
-        log.info(" @AfterReturning Advice - translated_text_2 translated_text_2 translated_text_1 translated_text_1processing completed");
+        log.info(" @AfterReturning Advice - test needs to be addedprocessing completed");
     }
 
     @Test
     @Order(4)
-    @DisplayName("@Around - translated_text_3 execution translated_text_1translated_text_1 translated_text_1 translated_text_2 test")
+    @DisplayName("@Around - connection execution shouldneeds to be added test")
     void testAroundAdvice() {
         var userId = 4L;
         var startTime = System.currentTimeMillis();
         var result = helloService.getUserById(userId);
         var endTime = System.currentTimeMillis();
         assertThat(result).isNotNull();
-        log.info(" @Around Advice - execution translated_text_1 translated_text_2: {}ms", endTime - startTime);
+        log.info(" @Around Advice - execution should test: {}ms", endTime - startTime);
     }
 
     @Test
     @Order(5)
-    @DisplayName("translated_text_2 Advice translated_text_2 translated_text_2 test")
+    @DisplayName("test Advice test test")
     void testMultipleAdviceExecution() {
         var userId = 5L;
         var result = helloService.getUserById(userId);
         assertThat(result).isNotNull();
-        log.info(" translated_text_2 Advice execution translated_text_2 test completed");
+        log.info(" test Advice execution test completed");
     }
 
     @Test
     @Order(6)
-    @DisplayName("Pointcut translated_text_3 translated_text_3 translated_text_2 test")
+    @DisplayName("Pointcut connection test")
     void testPointcutExpressions() {
         var userId = 6L;
         var result = helloService.getUserById(userId);
         assertThat(result).isNotNull();
-        log.info(" translated_text_3 Pointcut translated_text_3 test completed");
+        log.info(" connection Pointcut connection test completed");
     }
 
     @Test
     @Order(7)
-    @DisplayName("AOP Proxy translated_text_4 test")
+    @DisplayName("AOP Proxy file test")
     void testAOPProxyMechanism() {
         var userId = 7L;
         var result = helloService.getUserById(userId);
         var proxyClass = helloService.getClass().getName();
         assertThat(result).isNotNull();
         assertThat(proxyClass.contains("$Proxy") || proxyClass.contains("$$")).isTrue();
-        log.info(" AOP Proxy translated_text_3: {}", proxyClass);
-        log.info(" AOP Proxy translated_text_4 test completed");
+        log.info(" AOP Proxy connection: {}", proxyClass);
+        log.info(" AOP Proxy file test completed");
     }
 
     @Test
     @Order(8)
-    @DisplayName("JoinPoint translated_text_6 translated_text_2 test")
+    @DisplayName("JoinPoint with test")
     void testJoinPointMetadata() {
         var userId = 8L;
         var result = helloService.getUserById(userId);
         assertThat(result).isNotNull();
-        log.info(" JoinPoint translated_text_6 translated_text_2 test completed");
+        log.info(" JoinPoint with test completed");
     }
 
     @Test
     @Order(9)
-    @DisplayName("AOPtranslated_text_1 translated_text_2 translated_text_2 translated_text_3 translated_text_2 translated_text_1")
+    @DisplayName("AOPshould test connection test should")
     void testCrossCuttingConcerns() {
         var userId = 9L;
         for (int i = 0; i < 3; i++) {
             var result = helloService.getUserById(userId + i);
             assertThat(result).isNotNull();
         }
-        log.info(" translated_text_2 translated_text_3 translated_text_2 translated_text_1 completed");
+        log.info(" test connection test should completed");
     }
 
     @Test
     @Order(10)
-    @DisplayName("AOP translated_text_2 translated_text_3 test")
+    @DisplayName("AOP test connection test")
     void testAOPPerformanceImpact() {
         var userId = 10L;
         var iterations = 1000;
@@ -154,10 +154,10 @@ public class AspectAdviceTypesTest {
         
         assertThat(averageTime).isLessThan(1.0);
         
-        log.info(" AOP translated_text_2 translated_text_2 result:");
-        log.info("  - translated_text_1 execution translated_text_1: {}ms", totalTime / 1_000_000);
-        log.info("  - translated_text_2 execution translated_text_1: {}ms", averageTime);
-        log.info("  - translated_text_1 called translated_text_2: {}", iterations);
-        log.info(" AOP translated_text_2 translated_text_3 test completed");
+        log.info(" AOP test result:");
+        log.info("  - should execution should: {}ms", totalTime / 1_000_000);
+        log.info("  - test execution should: {}ms", averageTime);
+        log.info("  - should called test: {}", iterations);
+        log.info(" AOP test connection test completed");
     }
 }

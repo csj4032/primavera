@@ -37,10 +37,10 @@ public class InventoryEventPublisher {
             
             future.whenComplete((result, throwable) -> {
                 if (throwable != null) {
-                    log.error("translated_text_2 translated_text_2 translated_text_3 translated_text_2 failure: orderId={}, error={}", 
+                    log.error("test connection test failure: orderId={}, error={}", 
                             orderId, throwable.getMessage());
                 } else {
-                    log.info("translated_text_2 translated_text_2 translated_text_3 translated_text_2 success: orderId={}", orderId);
+                    log.info("test connection test success: orderId={}", orderId);
                 }
             });
             
@@ -64,10 +64,10 @@ public class InventoryEventPublisher {
             
             future.whenComplete((result, throwable) -> {
                 if (throwable != null) {
-                    log.error("translated_text_2 translated_text_2 translated_text_3 translated_text_2 failure: orderId={}, error={}", 
+                    log.error("test connection test failure: orderId={}, error={}", 
                             orderId, throwable.getMessage());
                 } else {
-                    log.info("translated_text_2 translated_text_2 translated_text_3 translated_text_2 success: orderId={}, reason={}", orderId, reason);
+                    log.info("test connection test success: orderId={}, reason={}", orderId, reason);
                 }
             });
             

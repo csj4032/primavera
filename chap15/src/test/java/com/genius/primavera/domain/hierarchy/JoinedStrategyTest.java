@@ -8,13 +8,13 @@ import org.junit.jupiter.api.*;
 import java.time.Instant;
 
 @Slf4j
-@DisplayName("translated_text_2 translated_text_2 translated_text_2")
+@DisplayName("test test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class JoinedStrategyTest extends BaseHierarchyJpaTest {
 
     @Test
     @Order(1)
-    @DisplayName("translated_text_3 translated_text_2")
+    @DisplayName("connection test")
     public void save() {
         var address = new Address();
         address.setCountry("country");
@@ -43,7 +43,7 @@ public class JoinedStrategyTest extends BaseHierarchyJpaTest {
 
     @Test
     @Order(2)
-    @DisplayName("translated_text_3 inquiry")
+    @DisplayName("connection inquiry")
     public void find() {
         var contact = entityManager.find(Address.class, 1L);
         log.info("contact : {}", contact);

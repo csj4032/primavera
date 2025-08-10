@@ -20,7 +20,7 @@ public class OrderController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Mono<Order> createOrder(@Valid @RequestBody CreateOrderRequest request) {
-        log.info("translated_text_2 creation translated_text_2: customerId={}, items={}", 
+        log.info("test creation test: customerId={}, items={}", 
                 request.getCustomerId(), request.getItems().size());
         
         return orderService.createOrder(request);
@@ -33,8 +33,8 @@ public class OrderController {
     
     @PostMapping("/{orderId}/cancel")
     public Mono<Order> cancelOrder(@PathVariable String orderId, 
-                                   @RequestParam(defaultValue = "user translated_text_2") String reason) {
-        log.info("translated_text_2 translated_text_2 translated_text_2: orderId={}, reason={}", orderId, reason);
+                                   @RequestParam(defaultValue = "user test") String reason) {
+        log.info("test test: orderId={}, reason={}", orderId, reason);
         
         return orderService.cancelOrder(orderId, reason);
     }

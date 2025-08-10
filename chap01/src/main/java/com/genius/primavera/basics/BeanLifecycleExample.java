@@ -16,13 +16,13 @@ public class BeanLifecycleExample implements InitializingBean, DisposableBean {
     private String status = "NOT_INITIALIZED";
     
     public BeanLifecycleExample() {
-        log.info("1. Constructor called - Bean translated_text_4 creation");
+        log.info("1. Constructor called - Bean file creation");
         this.status = "CONSTRUCTED";
     }
     
     @PostConstruct
     public void postConstruct() {
-        log.info("2. @PostConstruct called - dependency translated_text_2 completed translated_text_1");
+        log.info("2. @PostConstruct called - dependency test completed should");
         this.status = "POST_CONSTRUCT";
     }
     
@@ -34,7 +34,7 @@ public class BeanLifecycleExample implements InitializingBean, DisposableBean {
     
     @PreDestroy
     public void preDestroy() {
-        log.info("4. @PreDestroy called - Bean translated_text_2 translated_text_1");
+        log.info("4. @PreDestroy called - Bean test should");
         this.status = "PRE_DESTROY";
     }
     
@@ -49,6 +49,6 @@ public class BeanLifecycleExample implements InitializingBean, DisposableBean {
     }
     
     public void doSomething() {
-        log.info("Beantranslated_text_1 translated_text_4 translated_text_3 translated_text_5. translated_text_2 translated_text_2: {}", status);
+        log.info("Beanshould file connection Endpoint. test: {}", status);
     }
 }

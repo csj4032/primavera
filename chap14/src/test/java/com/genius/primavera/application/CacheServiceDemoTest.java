@@ -20,7 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @ActiveProfiles("test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@DisplayName("translated_text_2 service translated_text_2 test - Redis + MariaDB + MockMvc")
+@DisplayName("test service test - Redis + MariaDB + MockMvc")
 public class CacheServiceDemoTest implements WebCacheIntegrationTest {
 
     static {
@@ -35,7 +35,7 @@ public class CacheServiceDemoTest implements WebCacheIntegrationTest {
 
     @Test
     @Order(1)
-    @DisplayName("Redis translated_text_2 translated_text_1 translated_text_2 translated_text_2 verification")
+    @DisplayName("Redis test should test verification")
     void shouldConnectToRedisAndPerformBasicOperations() {
 
         assertThat(redisTemplate.getConnectionFactory()).isNotNull();
@@ -48,12 +48,12 @@ public class CacheServiceDemoTest implements WebCacheIntegrationTest {
         String retrievedValue = redisTemplate.opsForValue().get(testKey);
         assertThat(retrievedValue).isEqualTo(testValue);
         
-        log.info(" Redis translated_text_2 translated_text_2 verification: {} = {}", testKey, retrievedValue);
+        log.info(" Redis test verification: {} = {}", testKey, retrievedValue);
     }
 
     @Test
     @Order(2)
-    @DisplayName("translated_text_2 translated_text_2 translated_text_2 test")
+    @DisplayName("test test")
     void shouldRespectCacheExpiration() throws InterruptedException {
 
         String cacheKey = "test:expiration";
@@ -67,12 +67,12 @@ public class CacheServiceDemoTest implements WebCacheIntegrationTest {
 
         assertThat(redisTemplate.opsForValue().get(cacheKey)).isNull();
         
-        log.info("⏰ translated_text_2 translated_text_2 translated_text_2 verification completed");
+        log.info("⏰ test test verification completed");
     }
 
     @Test
     @Order(3)
-    @DisplayName("translated_text_2 data translated_text_2 translated_text_2 test")
+    @DisplayName("test data test test")
     void shouldHandleComplexDataTypes() {
 
         String hashKey = "user:1001";
@@ -90,12 +90,12 @@ public class CacheServiceDemoTest implements WebCacheIntegrationTest {
         assertThat(userHash).hasSize(3);
         assertThat(userHash).containsEntry("name", "test");
         
-        log.info(" translated_text_2 data translated_text_2 verification: {}", userHash);
+        log.info(" test data test verification: {}", userHash);
     }
 
     @Test
     @Order(4)
-    @DisplayName("translated_text_1 translated_text_3 translated_text_2 translated_text_2 test")
+    @DisplayName("should connection test test")
     void shouldIntegrateWebRequestsWithCache() throws Exception {
 
         String apiCacheKey = "api:posts:list";
@@ -116,13 +116,13 @@ public class CacheServiceDemoTest implements WebCacheIntegrationTest {
 
                 String cached = redisTemplate.opsForValue().get(apiCacheKey);
                 assertThat(cached).isNotNull();
-                log.info(" translated_text_1 translated_text_3 translated_text_2 translated_text_2 verification - translated_text_2 data translated_text_3");
+                log.info(" should connection test verification - test data connection");
             });
     }
 
     @Test
     @Order(5)
-    @DisplayName("translated_text_2 translated_text_3 translated_text_2 translated_text_2")
+    @DisplayName("test connection test")
     void shouldCompareCachePatterns() {
 
         String patternKey = "performance:test";
@@ -140,9 +140,9 @@ public class CacheServiceDemoTest implements WebCacheIntegrationTest {
         }
         long getDuration = System.nanoTime() - startTime;
 
-        log.info(" translated_text_2 translated_text_2 translated_text_2 result:");
-        log.info("   SET translated_text_2 {} translated_text_1: {}ms", iterations, setDuration / 1_000_000);
-        log.info("   GET translated_text_2 {} translated_text_1: {}ms", iterations, getDuration / 1_000_000);
+        log.info(" test test result:");
+        log.info("   SET test {} should: {}ms", iterations, setDuration / 1_000_000);
+        log.info("   GET test {} should: {}ms", iterations, getDuration / 1_000_000);
 
         assertThat(setDuration).isLessThan(TimeUnit.SECONDS.toNanos(5));
         assertThat(getDuration).isLessThan(TimeUnit.SECONDS.toNanos(5));
@@ -152,11 +152,11 @@ public class CacheServiceDemoTest implements WebCacheIntegrationTest {
     void cleanupCache() {
 
         redisTemplate.getConnectionFactory().getConnection().flushAll();
-        log.debug("🧹 test translated_text_1 Redis translated_text_2 translated_text_3");
+        log.debug("🧹 test should Redis test connection");
     }
 
     @AfterAll
     static void tearDown() {
-        log.info(" translated_text_2 service translated_text_2 test completed - TestContainers translated_text_2 translated_text_3");
+        log.info(" test service test completed - TestContainers test connection");
     }
 }

@@ -30,17 +30,17 @@ public class InventoryEventConsumer {
             Acknowledgment ack) {
         
         try {
-            log.info("translated_text_2 creation translated_text_3 translated_text_2: orderId={}, items={}, topic={}, partition={}, offset={}", 
+            log.info("test creation connection test: orderId={}, items={}, topic={}, partition={}, offset={}", 
                     event.getOrderId(), event.getItems().size(), topic, partition, offset);
 
             productService.processInventoryReservation(event)
                     .doOnSuccess(result -> {
-                        log.info("translated_text_2 processing completed: orderId={}, success={}", 
+                        log.info("test processing completed: orderId={}, success={}", 
                                 event.getOrderId(), result.isSuccess());
                         ack.acknowledge();
                     })
                     .doOnError(error -> {
-                        log.error("translated_text_2 processing translated_text_1 error: orderId={}, error={}", 
+                        log.error("test processing should error: orderId={}, error={}", 
                                 event.getOrderId(), error.getMessage(), error);
 
                         ack.acknowledge();
@@ -48,7 +48,7 @@ public class InventoryEventConsumer {
                     .subscribe();
             
         } catch (Exception e) {
-            log.error("translated_text_3 processing translated_text_1 exception translated_text_2: orderId={}, error={}", 
+            log.error("connection processing should exception test: orderId={}, error={}", 
                     event.getOrderId(), e.getMessage(), e);
             ack.acknowledge();
         }

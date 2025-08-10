@@ -8,7 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-@DisplayName("translated_text_2 translated_text_2 test")
+@DisplayName("test test")
 public class ConfigurationExampleTest {
     
     @Autowired
@@ -18,14 +18,14 @@ public class ConfigurationExampleTest {
     private ConfigurationExample.AppProperties appProperties;
     
     @Test
-    @DisplayName("@Value annotationtranslated_text_2 translated_text_2 translated_text_2")
+    @DisplayName("@Value annotationtest test")
     void testValueAnnotation() {
         assertThat(valueExample).isNotNull();
         valueExample.printConfiguration();
     }
     
     @Test
-    @DisplayName("@ConfigurationPropertiestranslated_text_1 translated_text_2 translated_text_3 translated_text_2")
+    @DisplayName("@ConfigurationPropertiesshould test connection test")
     void testConfigurationProperties() {
         assertThat(appProperties).isNotNull();
         assertThat(appProperties.getName()).isEqualTo("Primavera Tutorial");

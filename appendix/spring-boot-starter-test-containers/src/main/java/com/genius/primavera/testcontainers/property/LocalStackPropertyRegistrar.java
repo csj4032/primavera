@@ -20,12 +20,12 @@ public class LocalStackPropertyRegistrar {
         var localStackInfo = containerManager.getContainer(containerName);
         
         if (localStackInfo == null) {
-            log.warn("LocalStack translated_text_5 translated_text_2 translated_text_1 translated_text_4: {}", containerName);
+            log.warn("LocalStack processing test should file: {}", containerName);
             return;
         }
         
         if (!(localStackInfo.container() instanceof LocalStackContainer)) {
-            log.warn("translated_text_5 LocalStackContainer translated_text_3 translated_text_4: {}", containerName);
+            log.warn("Endpoint LocalStackContainer connection file: {}", containerName);
             return;
         }
         
@@ -35,7 +35,7 @@ public class LocalStackPropertyRegistrar {
         
         registerCustomProperties(registry, container);
         
-        log.info(" LocalStack translated_text_5 translated_text_5 translated_text_17: {}", container.getEndpoint());
+        log.info(" LocalStack Endpoint Endpoint should7: {}", container.getEndpoint());
     }
     
     private static void registerAwsCloudProperties(DynamicPropertyRegistry registry, LocalStackContainer container) {
@@ -70,11 +70,11 @@ public class LocalStackPropertyRegistrar {
         var localStackInfo = containerManager.getContainer(containerName);
         
         if (localStackInfo == null) {
-            throw new IllegalStateException("LocalStack translated_text_5 translated_text_2 translated_text_1 translated_text_4: " + containerName);
+            throw new IllegalStateException("LocalStack processing test should file: " + containerName);
         }
         
         if (!(localStackInfo.container() instanceof LocalStackContainer)) {
-            throw new IllegalStateException("translated_text_5 LocalStackContainer translated_text_3 translated_text_4: " + containerName);
+            throw new IllegalStateException("Endpoint LocalStackContainer connection file: " + containerName);
         }
         
         return (LocalStackContainer) localStackInfo.container();

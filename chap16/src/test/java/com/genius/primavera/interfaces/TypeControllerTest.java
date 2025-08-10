@@ -16,7 +16,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(TypeController.class)
 @TestInstance(value = TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@DisplayName("translated_text_2 test")
+@DisplayName("test")
 public class TypeControllerTest {
 
 	@Autowired

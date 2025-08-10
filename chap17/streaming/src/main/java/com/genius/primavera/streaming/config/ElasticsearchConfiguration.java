@@ -40,15 +40,10 @@ public class ElasticsearchConfiguration {
     @Bean
     public RestClient elasticsearchRestClient() {
         final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-        credentialsProvider.setCredentials(AuthScope.ANY,
-                new UsernamePasswordCredentials(username, password));
-
-        RestClient restClient = RestClient.builder(
-                        new HttpHost(host, port, scheme))
-                .setHttpClientConfigCallback(httpAsyncClientBuilder ->
-                        httpAsyncClientBuilder.setDefaultCredentialsProvider(credentialsProvider))
+        credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(username, password));
+        RestClient restClient = RestClient.builder(new HttpHost(host, port, scheme))
+                .setHttpClientConfigCallback(httpAsyncClientBuilder -> httpAsyncClientBuilder.setDefaultCredentialsProvider(credentialsProvider))
                 .build();
-
         log.info("Elasticsearch RestClient configured: {}://{}:{}", scheme, host, port);
         return restClient;
     }

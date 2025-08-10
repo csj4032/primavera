@@ -21,7 +21,7 @@ public class SpringBootConfigurationTest {
     private ApplicationContext applicationContext;
 
     @Test
-    @DisplayName("@SpringBootConfigurationtranslated_text_1 translated_text_3 translated_text_4 translated_text_3 translated_text_2 translated_text_4 translated_text_2")
+    @DisplayName("@SpringBootConfigurationshould connection file connection test file test")
     void shouldHaveExactlyOneSpringBootConfiguration() {
         String[] configBeanNames = applicationContext.getBeanNamesForAnnotation(SpringBootConfiguration.class);
         assertThat(configBeanNames).hasSize(1);
@@ -29,7 +29,7 @@ public class SpringBootConfigurationTest {
     }
 
     @Test
-    @DisplayName("@SpringBootConfigurationtranslated_text_1 translated_text_3 translated_text_4 @Configuration translated_text_3 translated_text_3 translated_text_2")
+    @DisplayName("@SpringBootConfigurationshould connection file @Configuration connection test")
     void shouldHaveConfigurationCharacteristics() {
         String[] configBeanNames = applicationContext.getBeanNamesForAnnotation(Configuration.class);
         String[] springBootConfigBeanNames = applicationContext.getBeanNamesForAnnotation(SpringBootConfiguration.class);
@@ -37,7 +37,7 @@ public class SpringBootConfigurationTest {
     }
 
     @Test
-    @DisplayName("@SpringBootConfigurationtranslated_text_1 proxyBeanMethods translated_text_1 translated_text_2 translated_text_4 translated_text_2")
+    @DisplayName("@SpringBootConfigurationshould proxyBeanMethods should test file test")
     void shouldRespectProxyBeanMethodsAttribute() {
         String configClassName = applicationContext.getBeanNamesForAnnotation(SpringBootConfiguration.class)[0];
         Object configBean = applicationContext.getBean(configClassName);
@@ -45,7 +45,7 @@ public class SpringBootConfigurationTest {
     }
 
     @Test
-    @DisplayName("translated_text_2 translated_text_1 translated_text_4 translated_text_1 translated_text_1 registeredtranslated_text_1 translated_text_2")
+    @DisplayName("test should file needs to be added registeredshould test")
     void shouldRegisterBeansDefinedInConfiguration() {
         boolean hasApplicationRunner = applicationContext.containsBean("applicationRunner");
         boolean hasCommandLineRunner = applicationContext.containsBean("commandLineRunner");
@@ -62,14 +62,14 @@ public class SpringBootConfigurationTest {
     }
 
     @Test
-    @DisplayName("translated_text_2 @Configuration translated_text_4 @SpringBootConfigurationtranslated_text_1 translated_text_2 translated_text_4 translated_text_2")
+    @DisplayName("test @Configuration file @SpringBootConfigurationshould test file test")
     void shouldWorkWithNestedConfigurations() {
         boolean hasInnerConfigBean = applicationContext.containsBean("innerConfigBean");
         assertThat(hasInnerConfigBean).isTrue();
     }
 
     @Test
-    @DisplayName("@SpringBootConfigurationtranslated_text_1 translated_text_4 translated_text_1 translated_text_1 translated_text_1 translated_text_2")
+    @DisplayName("@SpringBootConfigurationshould file needs to be added should test")
     void shouldBeComponentScanningStartingPoint() {
         boolean hasWorldServiceImpl = applicationContext.containsBean("worldServiceImpl");
         boolean hasHelloServiceImpl = applicationContext.containsBean("helloServiceImpl");
@@ -78,7 +78,7 @@ public class SpringBootConfigurationTest {
     }
 
     @Test
-    @DisplayName("@SpringBootConfigurationtranslated_text_1 @Configurationtranslated_text_1 translated_text_2 annotationtranslated_text_2 translated_text_1 translated_text_2")
+    @DisplayName("@SpringBootConfigurationshould @Configurationshould test annotationtest should test")
     void shouldHaveConfigurationAsMetaAnnotation() {
         Class<SpringBootConfiguration> annotationClass = SpringBootConfiguration.class;
         boolean hasConfigurationAnnotation = annotationClass.isAnnotationPresent(Configuration.class);
@@ -86,7 +86,7 @@ public class SpringBootConfigurationTest {
     }
 
     @Test
-    @DisplayName("@SpringBootConfigurationtranslated_text_1 translated_text_3 translated_text_4 translated_text_2 translated_text_1 @Bean translated_text_4 translated_text_1 translated_text_2")
+    @DisplayName("@SpringBootConfigurationshould connection file test should @Bean file should test")
     void shouldCacheBeanMethods() {
         String configClassName = applicationContext.getBeanNamesForAnnotation(SpringBootConfiguration.class)[0];
         Object configBean = applicationContext.getBean(configClassName);

@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ActiveProfiles("test")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@DisplayName("error processing translated_text_1 translated_text_2 test")
+@DisplayName("error processing should test")
 @EnableTestContainers({
     @EnableTestContainers.TestContainer(type = ContainerType.MARIADB, name = "resilientDb"),
     @EnableTestContainers.TestContainer(type = ContainerType.REDIS, name = "resilientCache")
@@ -51,45 +51,45 @@ class ErrorHandlingRecoveryTest {
 
         resilientJdbc.update("INSERT INTO error_test (data) VALUES (?)", "Initial test data");
 
-        log.info("error processing test translated_text_2 translated_text_3 completed");
+        log.info("error processing test connection completed");
     }
 
     @Test
     @Order(1)
-    @DisplayName("translated_text_3 SQL translated_text_2 error processing")
+    @DisplayName("connection SQL test error processing")
     void testInvalidSqlErrorHandling() {
         assertThrows(DataAccessException.class, () -> {
             resilientJdbc.execute("SELCT * FROM error_test");
-        }, "translated_text_3 SQL translated_text_4 translated_text_10 translated_text_4 translated_text_1");
+        }, "connection SQL file successfully file should");
 
         assertThrows(DataAccessException.class, () -> {
             resilientJdbc.queryForObject("SELECT COUNT(*) FROM non_existent_table", Integer.class);
-        }, "translated_text_4 translated_text_2 translated_text_3 translated_text_2 translated_text_10 translated_text_4 translated_text_1");
+        }, "file test connection test successfully file should");
 
         assertThrows(DataAccessException.class, () -> {
             resilientJdbc.update("INSERT INTO error_test (id, data) VALUES (?, ?)", "invalid_id", "test data");
-        }, "data translated_text_2 translated_text_4 translated_text_10 translated_text_4 translated_text_1");
+        }, "data test file successfully file should");
 
         Integer count = resilientJdbc.queryForObject("SELECT COUNT(*) FROM error_test", Integer.class);
-        assertNotNull(count, "translated_text_4 translated_text_2 translated_text_3 translated_text_4 translated_text_1");
-        assertTrue(count > 0, "test data translated_text_4 translated_text_1");
+        assertNotNull(count, "file test connection file should");
+        assertTrue(count > 0, "test data file should");
 
-        log.info("translated_text_3 SQL translated_text_2 error processing test completed");
+        log.info("connection SQL test error processing test completed");
     }
 
     @Test
     @Order(2)
-    @DisplayName("translated_text_2 translated_text_2 translated_text_2 error processing")
+    @DisplayName("test test error processing")
     void testConstraintViolationErrorHandling() {
         assertThrows(DataAccessException.class, () -> {
             resilientJdbc.update("INSERT INTO error_test (id, data) VALUES (?, ?)", 1, "Duplicate key test");
-        }, "PRIMARY KEY translated_text_4 translated_text_10 translated_text_4 translated_text_1");
+        }, "PRIMARY KEY file successfully file should");
 
         resilientJdbc.execute("ALTER TABLE error_test MODIFY data VARCHAR(500) NOT NULL");
         
         assertThrows(DataAccessException.class, () -> {
             resilientJdbc.update("INSERT INTO error_test (data) VALUES (NULL)");
-        }, "NOT NULL translated_text_2 translated_text_2 translated_text_2 translated_text_10 translated_text_4 translated_text_1");
+        }, "NOT NULL test test successfully file should");
 
         resilientJdbc.execute("""
             CREATE TABLE parent_table (
@@ -111,38 +111,38 @@ class ErrorHandlingRecoveryTest {
 
         assertThrows(DataAccessException.class, () -> {
             resilientJdbc.update("INSERT INTO child_table (parent_id, data) VALUES (?, ?)", 999, "Invalid FK");
-        }, "translated_text_2 translated_text_1 translated_text_2 translated_text_2 translated_text_2 translated_text_10 translated_text_4 translated_text_1");
+        }, "test should test test successfully file should");
 
         int result = resilientJdbc.update("INSERT INTO child_table (parent_id, data) VALUES (?, ?)", 1, "Valid FK");
-        assertEquals(1, result, "translated_text_4 translated_text_2 translated_text_1 translated_text_3 translated_text_9 translated_text_1");
+        assertEquals(1, result, "file test should connection should not should");
 
-        log.info("translated_text_2 translated_text_2 translated_text_2 error processing test completed");
+        log.info("test test error processing test completed");
     }
 
     @Test
     @Order(3)
-    @DisplayName("translated_text_2 translated_text_4 translated_text_1 translated_text_2 test")
+    @DisplayName("test file should test")
     void testConnectionTimeoutAndRecovery() throws InterruptedException {
         Integer initialCount = resilientJdbc.queryForObject("SELECT COUNT(*) FROM error_test", Integer.class);
-        assertNotNull(initialCount, "translated_text_2 translated_text_2 successfully translated_text_4 translated_text_1");
+        assertNotNull(initialCount, "test successfully file should");
 
         assertThrows(DataAccessException.class, () -> {
             resilientJdbc.queryForObject("SELECT SLEEP(31)", Integer.class);
-        }, "translated_text_2 translated_text_4 translated_text_10 translated_text_4 translated_text_1");
+        }, "test file successfully file should");
 
         Thread.sleep(1000);
 
         assertDoesNotThrow(() -> {
             Integer count = resilientJdbc.queryForObject("SELECT COUNT(*) FROM error_test", Integer.class);
-            assertNotNull(count, "translated_text_4 translated_text_3 translated_text_1 translated_text_2 translated_text_2 translated_text_4 translated_text_1");
-        }, "translated_text_4 translated_text_1 translated_text_2 translated_text_2 translated_text_5 translated_text_1");
+            assertNotNull(count, "file connection should test file should");
+        }, "file should test Endpoint should");
 
-        log.info("translated_text_2 translated_text_4 translated_text_1 translated_text_2 test completed");
+        log.info("test file should test completed");
     }
 
     @Test
     @Order(4) 
-    @DisplayName("translated_text_4 translated_text_2 translated_text_1 error processing")
+    @DisplayName("file test should error processing")
     void testTransactionRollbackErrorHandling() {
         Integer beforeCount = resilientJdbc.queryForObject("SELECT COUNT(*) FROM error_test", Integer.class);
 
@@ -158,75 +158,75 @@ class ErrorHandlingRecoveryTest {
                 resilientJdbc.execute("ROLLBACK");
                 throw e;
             }
-        }, "translated_text_4 translated_text_1 translated_text_2 translated_text_2 translated_text_2 translated_text_10 translated_text_4 translated_text_1");
+        }, "file should test test successfully file should");
 
         Integer afterCount = resilientJdbc.queryForObject("SELECT COUNT(*) FROM error_test", Integer.class);
-        assertEquals(beforeCount, afterCount, "translated_text_4 translated_text_2 data translated_text_4 translated_text_3 translated_text_1");
+        assertEquals(beforeCount, afterCount, "file test data file connection should");
 
         resilientJdbc.execute("START TRANSACTION");
         resilientJdbc.update("INSERT INTO error_test (data) VALUES (?)", "After rollback test");
         resilientJdbc.execute("COMMIT");
 
         Integer finalCount = resilientJdbc.queryForObject("SELECT COUNT(*) FROM error_test", Integer.class);
-        assertEquals(beforeCount + 1, finalCount, "translated_text_2 translated_text_1 translated_text_4 translated_text_4 translated_text_4 translated_text_1");
+        assertEquals(beforeCount + 1, finalCount, "test should file file should");
 
-        log.info("translated_text_4 translated_text_2 error processing test completed");
+        log.info("file test error processing test completed");
     }
 
     @Test
     @Order(5)
-    @DisplayName("data translated_text_2 translated_text_1 translated_text_1 translated_text_2 translated_text_2")
+    @DisplayName("data test needs to be added test")
     void testDatabaseConnectionInterruptionAndRecovery() throws InterruptedException {
         ContainerInfo containerInfo = containerManager.getContainer("resilientDb");
-        assertNotNull(containerInfo, "translated_text_4 translated_text_12 translated_text_4 translated_text_1");
+        assertNotNull(containerInfo, "file operation file should");
         
         GenericContainer<?> container = containerInfo.container();
-        assertTrue(container.isRunning(), "translated_text_4 execution translated_text_1 translated_text_1");
+        assertTrue(container.isRunning(), "file execution needs to be added");
 
         resilientJdbc.update("INSERT INTO error_test (data) VALUES (?)", "Before container stop");
         
         Integer beforeStopCount = resilientJdbc.queryForObject("SELECT COUNT(*) FROM error_test", Integer.class);
 
-        log.info("translated_text_4 translated_text_2 translated_text_1 translated_text_5 translated_text_2");
+        log.info("file test should processing test");
         
         container.getDockerClient().pauseContainerCmd(container.getContainerId()).exec();
 
         assertThrows(Exception.class, () -> {
             resilientJdbc.queryForObject("SELECT COUNT(*) FROM error_test", Integer.class);
-        }, "translated_text_4 translated_text_1 translated_text_1 translated_text_2 translated_text_9 translated_text_1");
+        }, "file needs to be added test should not should");
 
         container.getDockerClient().unpauseContainerCmd(container.getContainerId()).exec();
         
         Thread.sleep(2000);
 
-        log.info("translated_text_4 translated_text_2 translated_text_1 translated_text_2 translated_text_3");
+        log.info("file test should test connection");
 
         boolean recovered = false;
         for (int i = 0; i < 10; i++) {
             try {
                 Integer afterResumeCount = resilientJdbc.queryForObject("SELECT COUNT(*) FROM error_test", Integer.class);
-                assertEquals(beforeStopCount, afterResumeCount, "data translated_text_5 translated_text_1");
+                assertEquals(beforeStopCount, afterResumeCount, "data Endpoint should");
                 recovered = true;
                 break;
             } catch (Exception e) {
-                log.warn("translated_text_2 translated_text_2 {}/10 failure: {}", i + 1, e.getMessage());
+                log.warn("test {}/10 failure: {}", i + 1, e.getMessage());
                 Thread.sleep(1000);
             }
         }
 
-        assertTrue(recovered, "translated_text_4 translated_text_2 translated_text_1 translated_text_2 translated_text_5 translated_text_1");
+        assertTrue(recovered, "file test should test Endpoint should");
 
         resilientJdbc.update("INSERT INTO error_test (data) VALUES (?)", "After container resume");
         
         Integer finalCount = resilientJdbc.queryForObject("SELECT COUNT(*) FROM error_test", Integer.class);
-        assertEquals(beforeStopCount + 1, finalCount, "translated_text_2 translated_text_1 translated_text_1 translated_text_3 translated_text_4 translated_text_1");
+        assertEquals(beforeStopCount + 1, finalCount, "test needs to be added connection file should");
 
-        log.info("data translated_text_2 translated_text_1 translated_text_1 translated_text_2 translated_text_2 test completed");
+        log.info("data test needs to be added test test completed");
     }
 
     @Test
     @Order(6)
-    @DisplayName("translated_text_3 translated_text_2 translated_text_5 error processing")
+    @DisplayName("connection test Endpoint error processing")
     void testOutOfMemoryErrorHandling() {
         String largeData = "X".repeat(1000000);
 
@@ -234,18 +234,18 @@ class ErrorHandlingRecoveryTest {
             for (int i = 0; i < 100; i++) {
                 resilientJdbc.update("INSERT INTO error_test (data) VALUES (?)", largeData + i);
             }
-        }, "translated_text_3 data translated_text_4 translated_text_2 error translated_text_3 translated_text_1 translated_text_2");
+        }, "connection data file test error connection should test");
 
         assertDoesNotThrow(() -> {
             resilientJdbc.update("INSERT INTO error_test (data) VALUES (?)", "Small data after memory test");
-        }, "translated_text_3 error translated_text_3 translated_text_4 translated_text_3 translated_text_4 translated_text_1");
+        }, "connection error connection file connection file should");
 
-        log.info("translated_text_3 translated_text_2 translated_text_2 error processing test completed");
+        log.info("connection test error processing test completed");
     }
 
     @Test
     @Order(7)
-    @DisplayName("translated_text_3 error translated_text_2 processing")
+    @DisplayName("connection error test processing")
     void testConcurrencyErrorHandling() throws InterruptedException {
         resilientJdbc.update("INSERT INTO error_test (id, data) VALUES (?, ?)", 1000, "Concurrency test");
 
@@ -292,14 +292,14 @@ class ErrorHandlingRecoveryTest {
         String finalData = resilientJdbc.queryForObject(
             "SELECT data FROM error_test WHERE id = ?", String.class, 1000);
         
-        assertTrue(finalData.contains("Updated by thread"), "translated_text_3 translated_text_2 translated_text_2 data translated_text_7 translated_text_1");
+        assertTrue(finalData.contains("Updated by thread"), "connection test data logging should");
 
-        log.info("translated_text_3 error translated_text_2 processing test completed: translated_text_2 data = {}", finalData);
+        log.info("connection error test processing test completed: test data = {}", finalData);
     }
 
     @Test
     @Order(8)
-    @DisplayName("translated_text_2 translated_text_1 translated_text_2 translated_text_5 translated_text_2")
+    @DisplayName("test should test processing test")
     void testConnectionPoolExhaustionRecovery() throws InterruptedException {
         java.util.List<Connection> connections = new java.util.ArrayList<>();
         
@@ -317,7 +317,7 @@ class ErrorHandlingRecoveryTest {
 
             assertThrows(SQLException.class, () -> {
                 resilientDataSource.getConnection();
-            }, "translated_text_2 translated_text_1 translated_text_2 translated_text_1 translated_text_1 translated_text_2 translated_text_9 translated_text_1");
+            }, "test should test needs to be added test should not should");
 
         } finally {
             for (int i = 0; i < connections.size() / 2; i++) {
@@ -333,9 +333,9 @@ class ErrorHandlingRecoveryTest {
         
         assertDoesNotThrow(() -> {
             try (Connection conn = resilientDataSource.getConnection()) {
-                assertNotNull(conn, "translated_text_2 translated_text_1 translated_text_2 translated_text_1 translated_text_1 translated_text_2 translated_text_2 translated_text_1 translated_text_3 translated_text_1");
+                assertNotNull(conn, "test should test needs to be added test should connection should");
             }
-        }, "translated_text_2 translated_text_1 translated_text_2 translated_text_1 translated_text_4 translated_text_2 translated_text_4 translated_text_1");
+        }, "test should file test file should");
 
         for (Connection conn : connections) {
             try {
@@ -346,6 +346,6 @@ class ErrorHandlingRecoveryTest {
             }
         }
 
-        log.info("translated_text_2 translated_text_1 translated_text_2 translated_text_1 translated_text_2 test completed");
+        log.info("test should test completed");
     }
 }

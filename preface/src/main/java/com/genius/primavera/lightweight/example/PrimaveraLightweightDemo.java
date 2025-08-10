@@ -10,10 +10,10 @@ public class PrimaveraLightweightDemo {
     public static void main(String[] args) {
         try {
             PrimaveraApplicationContext context = PrimaveraApplication.run(PrimaveraLightweightDemo.class, args);
-            log.info(" translated_text_7 execution translated_text_4. translated_text_5 Ctrl+Ctranslated_text_1 translated_text_4.");
+            log.info(" logging execution file. Endpoint Ctrl+Cshould file.");
             Thread.currentThread().join();
         } catch (Exception e) {
-            log.error("translated_text_6 execution translated_text_1 error translated_text_2", e);
+            log.error("with execution failed with error", e);
             System.exit(1);
         }
     }

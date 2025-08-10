@@ -16,7 +16,7 @@ import java.time.Month;
 import java.util.List;
 
 @Slf4j
-@DisplayName("translated_text_2 translated_text_2 translated_text_3 test")
+@DisplayName("test connection test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class AccountCSVParserTest {
 
@@ -24,7 +24,7 @@ public class AccountCSVParserTest {
 
 	@Test
     @Order(1)
-	@DisplayName("translated_text_2 translated_text_2 translated_text_3 translated_text_2")
+	@DisplayName("test connection test")
 	public void accountCSVParsing() throws IOException {
 		String fileName = "accountInfo.csv";
 		List<String> lines = Files.readAllLines(Path.of(resource + fileName));
@@ -39,7 +39,7 @@ public class AccountCSVParserTest {
 
     @Test
     @Order(2)
-    @DisplayName("translated_text_2 translated_text_2 translated_text_3 translated_text_2 failure")
+    @DisplayName("test connection test failure")
     public void accountCSVParsingFail() {
         Assertions.assertThrows(IOException.class, () -> {
             String fileName = "nonExistentFile.csv";
@@ -51,11 +51,11 @@ public class AccountCSVParserTest {
 
     @Test
     @Order(3)
-    @DisplayName("translated_text_2 translated_text_2 translated_text_3 CSV translated_text_2")
+    @DisplayName("test connection CSV test")
     public void accountCSVParserTest() throws IOException {
         AccountCSVParser accountCSVParser = new AccountCSVParser();
         var lines = Files.readAllLines(Path.of(resource + "accountInfo.csv"));
         var accountInfos = accountCSVParser.parseLinesFormCVS(lines);
-        Assertions.assertFalse(accountInfos.isEmpty(), "CSV translated_text_2 translated_text_7 translated_text_4 translated_text_3 translated_text_3.");
+        Assertions.assertFalse(accountInfos.isEmpty(), "CSV test logging file connection.");
     }
 }

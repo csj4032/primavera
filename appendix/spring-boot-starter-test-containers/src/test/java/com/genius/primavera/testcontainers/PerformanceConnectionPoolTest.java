@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ActiveProfiles("test")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@DisplayName("translated_text_2 translated_text_1 translated_text_2 translated_text_1 translated_text_2 test")
+@DisplayName("test should test")
 @EnableTestContainers({
         @EnableTestContainers.TestContainer(type = ContainerType.MARIADB, name = "performanceDb"),
         @EnableTestContainers.TestContainer(type = ContainerType.POSTGRESQL, name = "benchmarkDb")
@@ -69,7 +69,7 @@ public class PerformanceConnectionPoolTest {
 
         benchmarkJdbc.execute("CREATE INDEX idx_created_at ON performance_test(created_at)");
 
-        log.info("translated_text_2 test translated_text_2 translated_text_3 completed");
+        log.info("test test connection completed");
     }
 
     @AfterAll
@@ -88,26 +88,26 @@ public class PerformanceConnectionPoolTest {
 
     @Test
     @Order(1)
-    @DisplayName("HikariCP translated_text_2 translated_text_1 translated_text_2 validation")
+    @DisplayName("HikariCP test should test validation")
     void testConnectionPoolConfiguration() {
-        assertTrue(performanceDataSource instanceof HikariDataSource, "HikariCP translated_text_8 translated_text_1");
+        assertTrue(performanceDataSource instanceof HikariDataSource, "HikariCP configuration should");
 
         HikariDataSource hikariDs = (HikariDataSource) performanceDataSource;
 
-        assertTrue(hikariDs.getMaximumPoolSize() > 0, "translated_text_2 translated_text_1 translated_text_3 translated_text_2 translated_text_1");
-        assertTrue(hikariDs.getMinimumIdle() >= 0, "translated_text_2 translated_text_2 translated_text_2 translated_text_2 translated_text_2 translated_text_1");
-        assertTrue(hikariDs.getConnectionTimeout() > 0, "translated_text_2 translated_text_5 translated_text_2 translated_text_1");
-        assertTrue(hikariDs.getIdleTimeout() > 0, "translated_text_2 translated_text_5 translated_text_2 translated_text_1");
-        assertTrue(hikariDs.getMaxLifetime() > 0, "translated_text_2 translated_text_5 translated_text_2 translated_text_1");
+        assertTrue(hikariDs.getMaximumPoolSize() > 0, "test should connection test should");
+        assertTrue(hikariDs.getMinimumIdle() >= 0, "test test test should");
+        assertTrue(hikariDs.getConnectionTimeout() > 0, "test processing test should");
+        assertTrue(hikariDs.getIdleTimeout() > 0, "test processing test should");
+        assertTrue(hikariDs.getMaxLifetime() > 0, "test processing test should");
 
-        log.info("HikariCP translated_text_2 - MaxPool: {}, MinIdle: {}, ConnTimeout: {}ms, IdleTimeout: {}ms",
+        log.info("HikariCP test - MaxPool: {}, MinIdle: {}, ConnTimeout: {}ms, IdleTimeout: {}ms",
                 hikariDs.getMaximumPoolSize(), hikariDs.getMinimumIdle(),
                 hikariDs.getConnectionTimeout(), hikariDs.getIdleTimeout());
     }
 
     @Test
     @Order(2)
-    @DisplayName("translated_text_2 translated_text_2 processing test")
+    @DisplayName("test processing test")
     void testConcurrentConnections() throws InterruptedException {
         int threadCount = 20;
         int operationsPerThread = 10;
@@ -147,23 +147,23 @@ public class PerformanceConnectionPoolTest {
         long startTime = System.currentTimeMillis();
         startLatch.countDown();
 
-        assertTrue(completeLatch.await(30, TimeUnit.SECONDS), "all translated_text_3 30translated_text_1 translated_text_2 completed translated_text_1");
+        assertTrue(completeLatch.await(30, TimeUnit.SECONDS), "all connection 30should test completed should");
         long endTime = System.currentTimeMillis();
 
         int expectedOperations = threadCount * operationsPerThread;
-        assertEquals(expectedOperations, successCount.get(), "all translated_text_2 translated_text_3 translated_text_9 translated_text_1");
-        assertEquals(0, errorCount.get(), "translated_text_2 translated_text_6 translated_text_3 translated_text_1");
+        assertEquals(expectedOperations, successCount.get(), "all test connection should not should");
+        assertEquals(0, errorCount.get(), "test with connection should");
 
         Integer recordCount = performanceJdbc.queryForObject("SELECT COUNT(*) FROM performance_test", Integer.class);
-        assertEquals(expectedOperations, recordCount, "all translated_text_5 DBtranslated_text_1 translated_text_5 translated_text_1");
+        assertEquals(expectedOperations, recordCount, "all Endpoint DBshould Endpoint should");
 
-        log.info("translated_text_2 translated_text_2 test completed - translated_text_3: {}, translated_text_2/translated_text_3: {}, translated_text_1 success: {}, translated_text_4: {}ms",
+        log.info("test test completed - connection: {}, test/connection: {}, should success: {}, file: {}ms",
                 threadCount, operationsPerThread, successCount.get(), endTime - startTime);
     }
 
     @Test
     @Order(3)
-    @DisplayName("translated_text_3 data translated_text_2 translated_text_2 test")
+    @DisplayName("connection data test test")
     void testBulkInsertPerformance() {
         int batchSize = 1000;
         int totalRecords = 5000;
@@ -186,18 +186,18 @@ public class PerformanceConnectionPoolTest {
         long duration = endTime - startTime;
 
         Integer finalCount = performanceJdbc.queryForObject("SELECT COUNT(*) FROM performance_test", Integer.class);
-        assertTrue(finalCount >= totalRecords, "translated_text_2 " + totalRecords + "translated_text_2 translated_text_4 translated_text_3 translated_text_1");
+        assertTrue(finalCount >= totalRecords, "test " + totalRecords + "test file connection should");
 
         double recordsPerSecond = (double) totalRecords / (duration / 1000.0);
-        assertTrue(recordsPerSecond > 100, "translated_text_1 100translated_text_1 translated_text_3 translated_text_4 processing translated_text_1");
+        assertTrue(recordsPerSecond > 100, "should 100should connection file processing should");
 
-        log.info("translated_text_3 translated_text_2 translated_text_2 - translated_text_1 translated_text_3: {}, translated_text_4: {}ms, processing: {:.2f} records/sec",
+        log.info("connection test - should connection: {}, file: {}ms, processing: {:.2f} records/sec",
                 totalRecords, duration, recordsPerSecond);
     }
 
     @Test
     @Order(4)
-    @DisplayName("translated_text_2 translated_text_2 translated_text_4 (MariaDB vs PostgreSQL)")
+    @DisplayName("test file (MariaDB vs PostgreSQL)")
     void testQueryPerformanceBenchmark() {
         int testDataSize = 1000;
 
@@ -229,7 +229,7 @@ public class PerformanceConnectionPoolTest {
             List<String> results = performanceJdbc.queryForList(
                     "SELECT data FROM performance_test WHERE data LIKE ? ORDER BY created_at DESC LIMIT 10",
                     String.class, pattern);
-            assertFalse(results.isEmpty(), "translated_text_2 translated_text_7 translated_text_3 translated_text_1");
+            assertFalse(results.isEmpty(), "test logging connection should");
         }
         long mariaDbQueryTime = System.currentTimeMillis() - mariaDbQueryStart;
 
@@ -239,23 +239,23 @@ public class PerformanceConnectionPoolTest {
             List<String> results = benchmarkJdbc.queryForList(
                     "SELECT data FROM performance_test WHERE data LIKE ? ORDER BY created_at DESC LIMIT 10",
                     String.class, pattern);
-            assertFalse(results.isEmpty(), "translated_text_2 translated_text_7 translated_text_3 translated_text_1");
+            assertFalse(results.isEmpty(), "test logging connection should");
         }
         long pgQueryTime = System.currentTimeMillis() - pgQueryStart;
 
-        log.info("translated_text_2 translated_text_4 result:");
-        log.info("MariaDB - translated_text_2: {}ms, inquiry: {}ms", mariaDbInsertTime, mariaDbQueryTime);
-        log.info("PostgreSQL - translated_text_2: {}ms, inquiry: {}ms", pgInsertTime, pgQueryTime);
+        log.info("test file result:");
+        log.info("MariaDB - test: {}ms, inquiry: {}ms", mariaDbInsertTime, mariaDbQueryTime);
+        log.info("PostgreSQL - test: {}ms, inquiry: {}ms", pgInsertTime, pgQueryTime);
 
-        assertTrue(mariaDbInsertTime < 10000, "MariaDB translated_text_2 10translated_text_1 translated_text_2 completed translated_text_1");
-        assertTrue(pgInsertTime < 10000, "PostgreSQL translated_text_2 10translated_text_1 translated_text_2 completed translated_text_1");
-        assertTrue(mariaDbQueryTime < 5000, "MariaDB inquiry 5translated_text_1 translated_text_2 completed translated_text_1");
-        assertTrue(pgQueryTime < 5000, "PostgreSQL inquiry 5translated_text_1 translated_text_2 completed translated_text_1");
+        assertTrue(mariaDbInsertTime < 10000, "MariaDB test 10should test completed should");
+        assertTrue(pgInsertTime < 10000, "PostgreSQL test 10should test completed should");
+        assertTrue(mariaDbQueryTime < 5000, "MariaDB inquiry 5should test completed should");
+        assertTrue(pgQueryTime < 5000, "PostgreSQL inquiry 5should test completed should");
     }
 
     @Test
     @Order(5)
-    @DisplayName("translated_text_2 translated_text_2 translated_text_2 test")
+    @DisplayName("test test")
     void testConnectionLeakDetection() throws InterruptedException, SQLException {
         HikariDataSource hikariDs = (HikariDataSource) performanceDataSource;
 
@@ -279,9 +279,9 @@ public class PerformanceConnectionPoolTest {
 
             int activeConnections = hikariDs.getHikariPoolMXBean().getActiveConnections();
             assertTrue(activeConnections >= initialActiveConnections,
-                    "translated_text_2 translated_text_2 translated_text_2 translated_text_4 translated_text_1");
+                    "test test file should");
 
-            log.info("translated_text_2 translated_text_2 - translated_text_1: {}, translated_text_2: {}, translated_text_1translated_text_1: {}",
+            log.info("test - should: {}, test: {}, shouldshould: {}",
                     initialActiveConnections, activeConnections, hikariDs.getHikariPoolMXBean().getTotalConnections());
 
         } finally {
@@ -299,14 +299,14 @@ public class PerformanceConnectionPoolTest {
 
         int finalActiveConnections = hikariDs.getHikariPoolMXBean().getActiveConnections();
         assertEquals(initialActiveConnections, finalActiveConnections,
-                "all translated_text_2 translated_text_4 translated_text_1 translated_text_2 translated_text_4 translated_text_1");
+                "all test file should test file should");
 
-        log.info("translated_text_2 translated_text_2 test completed - translated_text_2 translated_text_2 translated_text_2: {}", finalActiveConnections);
+        log.info("test test completed - test test: {}", finalActiveConnections);
     }
 
     @Test
     @Order(6)
-    @DisplayName("translated_text_3 translated_text_2 test")
+    @DisplayName("connection test")
     void testSimpleLoadTest() throws InterruptedException {
         int threadCount = 10;
         int operationsPerThread = 50;
@@ -346,7 +346,7 @@ public class PerformanceConnectionPoolTest {
         startLatch.countDown();
 
         assertTrue(completeLatch.await(60, TimeUnit.SECONDS),
-                "all translated_text_3 60translated_text_1 translated_text_2 completed translated_text_1");
+                "all connection 60should test completed should");
 
         long endTime = System.currentTimeMillis();
         long duration = endTime - startTime;
@@ -355,11 +355,11 @@ public class PerformanceConnectionPoolTest {
         int errors = errorCount.get();
         double operationsPerSecond = (double) operations / (duration / 1000.0);
 
-        assertTrue(operations > threadCount * operationsPerThread * 0.8, "80% translated_text_3 translated_text_3 translated_text_9 translated_text_1");
-        assertTrue(operationsPerSecond > 10, "translated_text_1 10translated_text_1 translated_text_3 translated_text_3 processing translated_text_1");
-        assertTrue(errors < operations * 0.1, "translated_text_7 10% translated_text_5 translated_text_1");
+        assertTrue(operations > threadCount * operationsPerThread * 0.8, "80% connection should not should");
+        assertTrue(operationsPerSecond > 10, "should 10should connection processing should");
+        assertTrue(errors < operations * 0.1, "logging 10% Endpoint should");
 
-        log.info("translated_text_2 test completed - translated_text_4: {}ms, translated_text_1 translated_text_2: {}, error: {}, processing: {:.2f} ops/sec",
+        log.info("test completed - file: {}ms, should test: {}, error: {}, processing: {:.2f} ops/sec",
                 duration, operations, errors, operationsPerSecond);
     }
 }

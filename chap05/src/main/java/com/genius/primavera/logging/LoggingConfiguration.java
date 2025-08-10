@@ -22,7 +22,7 @@ public class LoggingConfiguration {
     public void logActiveProfiles() {
         String[] activeProfiles = environment.getActiveProfiles();
         String logPath = environment.getProperty("primavera.logs.path", "./logs");
-        log.info("translated_text_7 translated_text_7. translated_text_2 translated_text_4: {}", Arrays.toString(activeProfiles));
-        log.info("translated_text_2 translated_text_2 translated_text_2: {}", logPath);
+        log.info("logging logging. test file: {}", Arrays.toString(activeProfiles));
+        log.info("test test: {}", logPath);
     }
 }

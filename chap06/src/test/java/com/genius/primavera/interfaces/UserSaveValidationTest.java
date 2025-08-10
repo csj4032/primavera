@@ -23,7 +23,7 @@ import java.util.List;
 
 @Testcontainers
 @ActiveProfiles("test")
-@DisplayName("user registration translated_text_3 validation test")
+@DisplayName("user registration connection validation test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class UserSaveValidationTest {
@@ -51,7 +51,7 @@ public class UserSaveValidationTest {
 
     @Test
     @Order(1)
-    @DisplayName("user IDtranslated_text_1 inquiry test")
+    @DisplayName("user IDshould inquiry test")
     public void getUserById() {
         long body = restTemplate.getForObject("/users/1", long.class);
         Assertions.assertEquals(1L, body);
@@ -59,7 +59,7 @@ public class UserSaveValidationTest {
 
     @Test
     @Order(2)
-    @DisplayName("translated_text_3 translated_text_3 translated_text_2 translated_text_3 validation")
+    @DisplayName("connection test connection validation")
     public void saveAndReturnUserIllegalEmail() {
         User source = User.builder().id(1L).email("genius@").password("Secret0!").nickname("genius").roles(List.of(new Role(1, RoleType.USER))).build();
         saveUser(source);
@@ -67,7 +67,7 @@ public class UserSaveValidationTest {
 
     @Test
     @Order(3)
-    @DisplayName("translated_text_4 translated_text_3 translated_text_2 translated_text_2 validation")
+    @DisplayName("file connection test validation")
     public void saveAndReturnUserIllegalPassword() {
         User source = User.builder().id(1L).email("genius@gmail.com").password("Secret0").nickname("genius").roles(List.of(new Role(1, RoleType.USER))).build();
         saveUser(source);
@@ -75,7 +75,7 @@ public class UserSaveValidationTest {
 
     @Test
     @Order(4)
-    @DisplayName("translated_text_3 translated_text_2 translated_text_2 translated_text_2 validation")
+    @DisplayName("connection test test validation")
     public void saveAndReturnUserIllegalLongNickname() {
         String nickname = "1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111";
         User source = User.builder().id(1L).email("genius@gmail.com").password("Secret0!").nickname(nickname).roles(List.of(new Role(1, RoleType.USER))).build();
@@ -84,7 +84,7 @@ public class UserSaveValidationTest {
 
     @Test
     @Order(5)
-    @DisplayName("translated_text_3 translated_text_2 translated_text_2 translated_text_2 validation")
+    @DisplayName("connection test test validation")
     public void saveAndReturnUserIllegalShortNickname() {
         String nickname = "1";
         User source = User.builder().id(1L).email("genius@gmail.com").password("Secret0!").nickname(nickname).roles(List.of(new Role(1, RoleType.USER))).build();
@@ -93,7 +93,7 @@ public class UserSaveValidationTest {
 
     @Test
     @Order(6)
-    @DisplayName("user translated_text_2 translated_text_2 validation")
+    @DisplayName("user test validation")
     public void saveAndReturnUserNotRole() {
         User source = User.builder().id(1L).email("genius@gmail.com").password("Secret0!").nickname("genius").roles(null).build();
         saveUser(source);
@@ -101,7 +101,7 @@ public class UserSaveValidationTest {
 
     @Test
     @Order(7)
-    @DisplayName("translated_text_3 translated_text_2 ID validation")
+    @DisplayName("connection test ID validation")
     public void saveAndReturnUserIllegalRoleId() {
         User source = User.builder().id(1L).email("genius@gmail.com").password("Secret0!").nickname("genius").roles(List.of(new Role(0, RoleType.USER))).build();
         saveUser(source);
@@ -109,7 +109,7 @@ public class UserSaveValidationTest {
 
     @Test
     @Order(8)
-    @DisplayName("translated_text_2 translated_text_2 translated_text_2 validation")
+    @DisplayName("test test validation")
     public void saveAndReturnUserNullRoleType() {
         User source = User.builder()
                 .id(1L)
@@ -125,7 +125,7 @@ public class UserSaveValidationTest {
 
     @Test
     @Order(10)
-    @DisplayName("translated_text_2 user registration translated_text_2 - all translated_text_2 translated_text_3 translated_text_1 200 OK translated_text_2")
+    @DisplayName("test user registration test - all test connection should 200 OK test")
     public void saveAndReturnUserValid() {
         String password = "ValidPass1!";
         User source = User.builder()
@@ -144,12 +144,12 @@ public class UserSaveValidationTest {
         HttpEntity<User> httpEntity = new HttpEntity<>(source, headers);
         ResponseEntity<String> destination = restTemplate.exchange("/users/save", HttpMethod.POST, httpEntity, String.class, source);
         int actualStatus = destination.getStatusCode().value();
-        Assertions.assertTrue(actualStatus == 200 || actualStatus == 201, "translated_text_2 registration translated_text_1 200 translated_text_2 201 translated_text_2");
+        Assertions.assertTrue(actualStatus == 200 || actualStatus == 201, "test registration should 200 test 201 test");
     }
 
     @Test
     @Order(12)
-    @DisplayName("translated_text_2 translated_text_4 translated_text_4 translated_text_1 400 Bad Request translated_text_2")
+    @DisplayName("test file should 400 Bad Request test")
     public void saveAndReturnUserEmptyRoles() {
         User source = User.builder()
                 .id(4L)
@@ -163,7 +163,7 @@ public class UserSaveValidationTest {
 
     @Test
     @Order(13)
-    @DisplayName("translated_text_2 nulltranslated_text_1 translated_text_1 400 Bad Request translated_text_2")
+    @DisplayName("test nullneeds to be added 400 Bad Request test")
     public void saveAndReturnUserNullRoles() {
         User source = User.builder()
                 .id(5L)
@@ -177,7 +177,7 @@ public class UserSaveValidationTest {
 
     @Test
     @Order(14)
-    @DisplayName("translated_text_3 nulltranslated_text_1 translated_text_1 400 Bad Request translated_text_2")
+    @DisplayName("connection nullneeds to be added 400 Bad Request test")
     public void saveAndReturnUserNullEmail() {
         User source = User.builder()
                 .id(6L)
@@ -191,7 +191,7 @@ public class UserSaveValidationTest {
 
     @Test
     @Order(15)
-    @DisplayName("translated_text_4translated_text_1 nulltranslated_text_1 translated_text_1 400 Bad Request translated_text_2")
+    @DisplayName("fileshould nullneeds to be added 400 Bad Request test")
     public void saveAndReturnUserNullPassword() {
         User source = User.builder()
                 .id(7L)
@@ -205,7 +205,7 @@ public class UserSaveValidationTest {
 
     @Test
     @Order(16)
-    @DisplayName("translated_text_3 nulltranslated_text_1 translated_text_1 400 Bad Request translated_text_2")
+    @DisplayName("connection nullneeds to be added 400 Bad Request test")
     public void saveAndReturnUserNullNickname() {
         User source = User.builder()
                 .id(8L)
@@ -219,7 +219,7 @@ public class UserSaveValidationTest {
 
     @Test
     @Order(17)
-    @DisplayName("translated_text_3 translated_text_4 translated_text_2 translated_text_1 400 Bad Request translated_text_2")
+    @DisplayName("connection file test should 400 Bad Request test")
     public void saveAndReturnUserNicknameWithSpecialChars() {
         User source = User.builder()
                 .id(9L)
@@ -233,7 +233,7 @@ public class UserSaveValidationTest {
 
     @Test
     @Order(18)
-    @DisplayName("translated_text_3 translated_text_2 translated_text_2 translated_text_1 400 Bad Request translated_text_2")
+    @DisplayName("connection test should 400 Bad Request test")
     public void saveAndReturnUserNicknameWithSpaces() {
         User source = User.builder()
                 .id(10L)
@@ -247,7 +247,7 @@ public class UserSaveValidationTest {
 
     @Test
     @Order(19)
-    @DisplayName("translated_text_4translated_text_1 translated_text_2 translated_text_1 (7translated_text_1) 400 Bad Request translated_text_2")
+    @DisplayName("filetest should (7should) 400 Bad Request test")
     public void saveAndReturnUserPasswordTooShort() {
         User source = User.builder()
                 .id(11L)
@@ -261,7 +261,7 @@ public class UserSaveValidationTest {
 
     @Test
     @Order(20)
-    @DisplayName("translated_text_4translated_text_1 translated_text_1 translated_text_1 (21translated_text_1) 400 Bad Request translated_text_2")
+    @DisplayName("fileneeds to be added should (21should) 400 Bad Request test")
     public void saveAndReturnUserPasswordTooLong() {
         User source = User.builder()
                 .id(12L)
@@ -275,7 +275,7 @@ public class UserSaveValidationTest {
 
     @Test
     @Order(21)
-    @DisplayName("translated_text_4 translated_text_1 translated_text_2 translated_text_1 400 Bad Request translated_text_2")
+    @DisplayName("file test should 400 Bad Request test")
     public void saveAndReturnUserPasswordNoDigit() {
         User source = User.builder()
                 .id(13L)
@@ -289,7 +289,7 @@ public class UserSaveValidationTest {
 
     @Test
     @Order(22)
-    @DisplayName("translated_text_4 translated_text_1 translated_text_2 translated_text_1 400 Bad Request translated_text_2")
+    @DisplayName("file test should 400 Bad Request test")
     public void saveAndReturnUserPasswordNoLowercase() {
         User source = User.builder()
                 .id(14L)
@@ -303,7 +303,7 @@ public class UserSaveValidationTest {
 
     @Test
     @Order(23)
-    @DisplayName("translated_text_4 translated_text_1 translated_text_2 translated_text_1 400 Bad Request translated_text_2")
+    @DisplayName("file test should 400 Bad Request test")
     public void saveAndReturnUserPasswordNoUppercase() {
         User source = User.builder()
                 .id(15L)
@@ -317,7 +317,7 @@ public class UserSaveValidationTest {
 
     @Test
     @Order(24)
-    @DisplayName("translated_text_4 translated_text_4 translated_text_2 translated_text_1 400 Bad Request translated_text_2")
+    @DisplayName("file test should 400 Bad Request test")
     public void saveAndReturnUserPasswordNoSpecialChar() {
         User source = User.builder()
                 .id(16L)
@@ -331,7 +331,7 @@ public class UserSaveValidationTest {
 
     @Test
     @Order(25)
-    @DisplayName("translated_text_4 translated_text_2 translated_text_2 translated_text_1 400 Bad Request translated_text_2")
+    @DisplayName("file test should 400 Bad Request test")
     public void saveAndReturnUserPasswordWithSpaces() {
         User source = User.builder()
                 .id(17L)
@@ -345,7 +345,7 @@ public class UserSaveValidationTest {
 
     @Test
     @Order(26)
-    @DisplayName("translated_text_2 IDtranslated_text_1 0translated_text_1 translated_text_1 400 Bad Request translated_text_2")
+    @DisplayName("test IDshould 0needs to be added 400 Bad Request test")
     public void saveAndReturnUserRoleIdZero() {
         User source = User.builder()
                 .id(18L)
@@ -359,7 +359,7 @@ public class UserSaveValidationTest {
 
     @Test
     @Order(27)
-    @DisplayName("translated_text_2 IDtranslated_text_1 translated_text_1 translated_text_1 400 Bad Request translated_text_2")
+    @DisplayName("test IDneeds to be added should 400 Bad Request test")
     public void saveAndReturnUserRoleIdNegative() {
         User source = User.builder()
                 .id(19L)
@@ -373,7 +373,7 @@ public class UserSaveValidationTest {
 
     @Test
     @Order(28)
-    @DisplayName("translated_text_2 translated_text_3 translated_text_2 processing")
+    @DisplayName("test connection test processing")
     public void saveAndReturnUserKoreanNickname() {
         String password = "Secret0!";
         User source = User.builder()
@@ -381,7 +381,7 @@ public class UserSaveValidationTest {
                 .email("korean" + System.currentTimeMillis() + "@gmail.com")
                 .password(password)
                 .passwordConfirm(password)
-                .nickname("translated_text_2translated_text_3")
+                .nickname("testconnection")
                 .roles(List.of(new Role(1, RoleType.USER)))
                 .build();
         HttpHeaders headers = new HttpHeaders();
@@ -389,7 +389,7 @@ public class UserSaveValidationTest {
         HttpEntity<User> httpEntity = new HttpEntity<>(source, headers);
         ResponseEntity<String> destination = restTemplate.exchange("/users/save", HttpMethod.POST, httpEntity, String.class, source);
         int actualStatus = destination.getStatusCode().value();
-        Assertions.assertTrue(actualStatus == 200 || actualStatus == 201, "translated_text_2 translated_text_3 translated_text_2 processing translated_text_1");
+        Assertions.assertTrue(actualStatus == 200 || actualStatus == 201, "test connection test processing should");
     }
 
     private void saveUser(User source) {

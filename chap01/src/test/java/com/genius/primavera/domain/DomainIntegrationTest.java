@@ -14,26 +14,26 @@ import java.util.List;
 class DomainIntegrationTest {
 
     @Test
-    @DisplayName("User, Role, Plant translated_text_2 translated_text_2 translated_text_5 successfully translated_text_5 translated_text_2")
+    @DisplayName("User, Role, Plant test Endpoint successfully processing test")
     void domainIntegrationTest() {
 
         Role adminRole = Role.builder()
                 .id(1L)
                 .name("ADMIN")
-                .description("translated_text_3 translated_text_3")
+                .description("connection")
                 .build();
 
         Role managerRole = Role.builder()
                 .id(2L)
                 .name("PLANT_MANAGER")
-                .description("translated_text_2 translated_text_3")
+                .description("test connection")
                 .build();
 
         User manager = User.builder()
                 .id(101L)
                 .email("manager@example.com")
                 .password("securePassword123")
-                .nickname("translated_text_2")
+                .nickname("test")
                 .roles(Arrays.asList(adminRole, managerRole))
                 .createdAt(Instant.now())
                 .updatedAt(Instant.now())
@@ -41,8 +41,8 @@ class DomainIntegrationTest {
 
         Plant plant = Plant.builder()
                 .id(1L)
-                .name("translated_text_2 translated_text_2")
-                .location("translated_text_2 translated_text_3")
+                .name("test")
+                .location("test connection")
                 .manager(manager)
                 .establishedDate(LocalDateTime.of(2020, 1, 1, 0, 0).toInstant(ZoneOffset.UTC))
                 .build();
@@ -59,20 +59,20 @@ class DomainIntegrationTest {
     }
 
     @Test
-    @DisplayName("translated_text_2 translated_text_2 translated_text_4 translated_text_3 translated_text_2 test")
+    @DisplayName("test file connection test")
     void multiPlantManagerTest() {
 
         Role multiManagerRole = Role.builder()
                 .id(3L)
                 .name("MULTI_PLANT_MANAGER")
-                .description("translated_text_2 translated_text_2 translated_text_3")
+                .description("test connection")
                 .build();
 
         User manager = User.builder()
                 .id(102L)
                 .email("multi.manager@example.com")
                 .password("securePassword456")
-                .nickname("translated_text_5")
+                .nickname("Endpoint")
                 .roles(Arrays.asList(multiManagerRole))
                 .createdAt(Instant.now())
                 .updatedAt(Instant.now())
@@ -80,16 +80,16 @@ class DomainIntegrationTest {
 
         Plant seoulPlant = Plant.builder()
                 .id(1L)
-                .name("translated_text_2 translated_text_2")
-                .location("translated_text_2 translated_text_3")
+                .name("test")
+                .location("test connection")
                 .manager(manager)
                 .establishedDate(LocalDateTime.of(2020, 1, 1, 0, 0).toInstant(ZoneOffset.UTC))
                 .build();
 
         Plant busanPlant = Plant.builder()
                 .id(2L)
-                .name("translated_text_2 translated_text_2")
-                .location("translated_text_2 translated_text_4")
+                .name("test")
+                .location("test file")
                 .manager(manager)
                 .establishedDate(LocalDateTime.of(2021, 5, 15, 0, 0).toInstant(ZoneOffset.UTC))
                 .build();
@@ -105,13 +105,13 @@ class DomainIntegrationTest {
     }
 
     @Test
-    @DisplayName("translated_text_3 translated_text_2 translated_text_3 toString translated_text_3 test")
+    @DisplayName("connection test connection toString connection test")
     void domainToStringTest() {
 
         Role role = Role.builder()
                 .id(1L)
                 .name("ADMIN")
-                .description("translated_text_3")
+                .description("connection")
                 .build();
 
         User user = User.builder()
@@ -126,7 +126,7 @@ class DomainIntegrationTest {
                 .manager(user)
                 .build();
 
-        assertThat(role.toString()).contains("id=1", "name=ADMIN", "description=translated_text_3");
+        assertThat(role.toString()).contains("id=1", "name=ADMIN", "description=connection");
         assertThat(user.toString()).contains("id=1", "email=test@example.com");
         assertThat(plant.toString()).contains("id=1", "name=Test Plant");
 

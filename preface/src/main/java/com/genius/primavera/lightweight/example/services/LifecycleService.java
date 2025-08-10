@@ -28,7 +28,7 @@ public class LifecycleService {
 
     @PrimaveraPostConstruct
     public void initialize() {
-        log.info(" LifecycleService translated_text_3 translated_text_2...");
+        log.info(" LifecycleService connection test...");
 
         startTime = LocalDateTime.now();
 
@@ -39,19 +39,19 @@ public class LifecycleService {
         startPeriodicHealthCheck();
 
         String welcomeMessage = greetingService.sayHello("LifecycleService");
-        processedMessages.add("translated_text_3: " + welcomeMessage);
+        processedMessages.add("connection: " + welcomeMessage);
         
-        log.info(" LifecycleService translated_text_3 completed! translated_text_2 translated_text_2: {}", startTime.format(formatter));
+        log.info(" LifecycleService connection completed! test: {}", startTime.format(formatter));
 
-        log.info("=== LifecycleService translated_text_3 completed ===");
-        log.info("translated_text_2 translated_text_2: {}", startTime.format(formatter));
-        log.info("translated_text_2 translated_text_3 translated_text_1: {}", processedMessages.size());
+        log.info("=== LifecycleService connection completed ===");
+        log.info("test: {}", startTime.format(formatter));
+        log.info("test connection should: {}", processedMessages.size());
         log.info("================================");
     }
 
     @PrimaveraPreDestroy
     public void cleanup() {
-        log.info("🧹 LifecycleService translated_text_2 translated_text_2...");
+        log.info("🧹 LifecycleService test...");
         
         LocalDateTime endTime = LocalDateTime.now();
         long uptime = java.time.Duration.between(startTime, endTime).toSeconds();
@@ -62,32 +62,32 @@ public class LifecycleService {
                 if (!scheduler.awaitTermination(5, TimeUnit.SECONDS)) {
                     scheduler.shutdownNow();
                 }
-                log.info("🧹 translated_text_4 translated_text_2 translated_text_2");
+                log.info("🧹 file test");
             } catch (InterruptedException e) {
                 scheduler.shutdownNow();
                 Thread.currentThread().interrupt();
-                log.warn("🧹 translated_text_4 translated_text_2 translated_text_2");
+                log.warn("🧹 file test");
             }
         }
 
         String farewellMessage = greetingService.sayGoodbye("LifecycleService");
-        processedMessages.add("translated_text_2: " + farewellMessage);
+        processedMessages.add("test: " + farewellMessage);
 
-        log.info("=== LifecycleService translated_text_2 completed ===");
-        log.info("translated_text_2 translated_text_2: {}", endTime.format(formatter));
-        log.info("translated_text_1 execution translated_text_2: {}translated_text_1", uptime);
-        log.info("translated_text_11 translated_text_3 translated_text_1: {}", processedMessages.size());
-        log.info("translated_text_3 translated_text_3: {}", getLastMessage());
+        log.info("=== LifecycleService test completed ===");
+        log.info("test: {}", endTime.format(formatter));
+        log.info("should execution test: {}should", uptime);
+        log.info("processing connection should: {}", processedMessages.size());
+        log.info("connection: {}", getLastMessage());
         log.info("===============================");
         
-        log.info("🧹 LifecycleService translated_text_2 completed! translated_text_1 execution translated_text_2: {}translated_text_1, translated_text_11 translated_text_3: {}translated_text_1", 
+        log.info("🧹 LifecycleService test completed! should execution test: {}should, processing connection: {}should", 
                 uptime, processedMessages.size());
     }
 
     private void startPeriodicHealthCheck() {
         scheduler.scheduleAtFixedRate(() -> {
             try {
-                String statusMessage = String.format("translated_text_2 translated_text_2 - translated_text_2 translated_text_2: %s, translated_text_3 translated_text_1: %d", 
+                String statusMessage = String.format("test - test: %s, connection should: %d", 
                         LocalDateTime.now().format(formatter), 
                         processedMessages.size());
                 
@@ -97,24 +97,24 @@ public class LifecycleService {
                 if (processedMessages.size() > 50) {
                     int removed = processedMessages.size() - 25;
                     processedMessages = processedMessages.subList(processedMessages.size() - 25, processedMessages.size());
-                    log.debug("🧹 translated_text_3 translated_text_3 {}translated_text_1 translated_text_2", removed);
+                    log.debug("🧹 connection {}should test", removed);
                 }
                 
             } catch (Exception e) {
-                log.error(" translated_text_2 translated_text_2 translated_text_1 error translated_text_2", e);
+                log.error(" test failed with error", e);
             }
         }, 10, 30, TimeUnit.SECONDS);
         
-        log.info(" translated_text_2 translated_text_2 translated_text_2 translated_text_2 translated_text_2 (30translated_text_1 translated_text_2)");
+        log.info(" test test test (30should test)");
     }
 
     public String getServiceStatus() {
         if (startTime == null) {
-            return "translated_text_8 translated_text_2 translated_text_3 translated_text_5.";
+            return "configuration test connection Endpoint.";
         }
         
         long uptime = java.time.Duration.between(startTime, LocalDateTime.now()).toSeconds();
-        return String.format("service execution translated_text_1 - execution translated_text_2: %dtranslated_text_1, translated_text_11 translated_text_3: %dtranslated_text_1", 
+        return String.format("service execution should - execution test: %dshould, processing connection: %dshould", 
                 uptime, processedMessages.size());
     }
 
@@ -123,7 +123,7 @@ public class LifecycleService {
                 LocalDateTime.now().format(formatter), message);
         
         processedMessages.add(processedMessage);
-        log.info(" translated_text_3 processing: {}", processedMessage);
+        log.info(" connection processing: {}", processedMessage);
         
         log.debug(" {}", processedMessage);
     }
@@ -133,7 +133,7 @@ public class LifecycleService {
     }
 
     public String getLastMessage() {
-        return processedMessages.isEmpty() ? "translated_text_11 translated_text_3 translated_text_4." : 
+        return processedMessages.isEmpty() ? "processing connection file." : 
                processedMessages.get(processedMessages.size() - 1);
     }
 

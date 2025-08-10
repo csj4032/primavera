@@ -62,28 +62,28 @@ public class ArticleMapperTest {
 
     @Test
     @Order(1)
-    @DisplayName("translated_text_3 1translated_text_1 translated_text_2")
+    @DisplayName("connection 1should test")
     public void saveArticle1() {
-        article1 = Article.builder().author(user).subject("translated_text_3 1translated_text_1").status(ArticleStatus.PUBLIC).createdAt(Instant.now()).build();
+        article1 = Article.builder().author(user).subject("connection 1should").status(ArticleStatus.PUBLIC).createdAt(Instant.now()).build();
         int count = articleMapper.save(article1);
         assertEquals(1, count);
     }
 
     @Test
     @Order(2)
-    @DisplayName("translated_text_3 1translated_text_1_1translated_text_1 translated_text_2")
+    @DisplayName("connection 1should_1should test")
     public void saveArticle1_1() {
-        article1_1 = Article.builder().parent(article1).pId(article1.getId()).reference(article1.getId()).step(1).level(1).author(user).subject("translated_text_3 1translated_text_1_1translated_text_1").status(ArticleStatus.PUBLIC).createdAt(Instant.now()).build();
+        article1_1 = Article.builder().parent(article1).pId(article1.getId()).reference(article1.getId()).step(1).level(1).author(user).subject("connection 1should_1should").status(ArticleStatus.PUBLIC).createdAt(Instant.now()).build();
         int count = articleMapper.save(article1_1);
         assertEquals(1, count);
     }
 
     @Test
     @Order(3)
-    @DisplayName("translated_text_3 1translated_text_1_1translated_text_1_1translated_text_1, 1translated_text_1_1translated_text_1_2translated_text_1 translated_text_2")
+    @DisplayName("connection 1should_1should_1should, 1should_1should_2should test")
     public void saveArticle1_1_1() {
-        article1_1_1 = Article.builder().parent(article1_1).pId(article1_1.getId()).reference(article1.getId()).step(2).level(2).author(user).subject("translated_text_3 1translated_text_1_1translated_text_1_1translated_text_1").status(ArticleStatus.PUBLIC).createdAt(Instant.now()).build();
-        article1_1_2 = Article.builder().parent(article1_1).pId(article1_1.getId()).reference(article1.getId()).step(3).level(2).author(user).subject("translated_text_3 1translated_text_1_1translated_text_1_2translated_text_1").status(ArticleStatus.PUBLIC).createdAt(Instant.now()).build();
+        article1_1_1 = Article.builder().parent(article1_1).pId(article1_1.getId()).reference(article1.getId()).step(2).level(2).author(user).subject("connection 1should_1should_1should").status(ArticleStatus.PUBLIC).createdAt(Instant.now()).build();
+        article1_1_2 = Article.builder().parent(article1_1).pId(article1_1.getId()).reference(article1.getId()).step(3).level(2).author(user).subject("connection 1should_1should_2should").status(ArticleStatus.PUBLIC).createdAt(Instant.now()).build();
         int count = articleMapper.save(article1_1_1);
         assertEquals(1, count);
         count = articleMapper.save(article1_1_2);
@@ -92,25 +92,25 @@ public class ArticleMapperTest {
 
     @Test
     @Order(4)
-    @DisplayName("translated_text_3 2translated_text_1 translated_text_2")
+    @DisplayName("connection 2should test")
     public void saveArticle2() {
-        article2 = Article.builder().author(user).subject("translated_text_3 2translated_text_1").status(ArticleStatus.PUBLIC).createdAt(Instant.now()).build();
+        article2 = Article.builder().author(user).subject("connection 2should").status(ArticleStatus.PUBLIC).createdAt(Instant.now()).build();
         int count = articleMapper.save(article2);
         assertEquals(1, count);
     }
 
     @Test
     @Order(5)
-    @DisplayName("translated_text_3 2translated_text_1 translated_text_2")
+    @DisplayName("connection 2should test")
     public void saveArticle2_1() {
-        article2_1 = Article.builder().parent(article2).pId(article2.getId()).reference(article2.getId()).step(1).level(1).author(user).subject("translated_text_3 2translated_text_1_1translated_text_1").status(ArticleStatus.PUBLIC).createdAt(Instant.now()).build();
+        article2_1 = Article.builder().parent(article2).pId(article2.getId()).reference(article2.getId()).step(1).level(1).author(user).subject("connection 2should_1should").status(ArticleStatus.PUBLIC).createdAt(Instant.now()).build();
         int count = articleMapper.save(article2_1);
         assertEquals(1, count);
     }
 
     @Test
     @Order(6)
-    @DisplayName("translated_text_3 inquiry")
+    @DisplayName("connection inquiry")
     public void findAllArticle() {
         List<Article> articles = articleMapper.findAll();
         articles.forEach(article -> {
@@ -120,9 +120,9 @@ public class ArticleMapperTest {
                 System.out.println(" Author is null for article ID: " + article.getId());
             }
         });
-        assertTrue(articles.size() >= 6, "translated_text_2 6translated_text_2 translated_text_4 translated_text_3 translated_text_3. translated_text_2: " + articles.size());
+        assertTrue(articles.size() >= 6, "test 6test file connection. test: " + articles.size());
         Article firstArticle = articles.get(0);
-        Assertions.assertNotNull(firstArticle.getAuthor(), "Articletranslated_text_1 authortranslated_text_1 nulltranslated_text_2 translated_text_4");
-        Assertions.assertNotNull(firstArticle.getAuthor().getNickname(), "Authortranslated_text_1 nicknametranslated_text_1 nulltranslated_text_2 translated_text_4");
+        Assertions.assertNotNull(firstArticle.getAuthor(), "Articleshould authorshould nulltest file");
+        Assertions.assertNotNull(firstArticle.getAuthor().getNickname(), "Authorshould nicknameshould nulltest file");
     }
 }

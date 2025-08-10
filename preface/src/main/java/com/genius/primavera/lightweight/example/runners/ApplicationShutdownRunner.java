@@ -15,13 +15,13 @@ public class ApplicationShutdownRunner implements PrimaveraApplicationRunner {
     
     @Override
     public void run() throws Exception {
-        log.info(" ApplicationShutdownRunner execution translated_text_2");
+        log.info(" ApplicationShutdownRunner execution test");
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            log.info(" translated_text_6 translated_text_2 translated_text_1...");
+            log.info(" with test should...");
             messageService.processFarewellMessage("Primavera user");
-            messageService.processCustomMessage("translated_text_2 translated_text_6 translated_text_4 translated_text_2. translated_text_3 translated_text_3!");
-            log.info(" translated_text_6 translated_text_2 completed");
+            messageService.processCustomMessage("test with file test. connection!");
+            log.info(" with test completed");
         }));
         
         log.info(" Shutdown Hook registration completed");
