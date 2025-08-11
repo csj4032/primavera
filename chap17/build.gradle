@@ -1,0 +1,10 @@
+// chap17 is a parent project for batch, common, and streaming modules
+// No main class needed for this parent project
+
+bootJar {
+    enabled = false
+}
+
+jar {
+    enabled = false
+}
