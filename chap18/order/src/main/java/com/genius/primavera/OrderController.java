@@ -11,18 +11,16 @@ import jakarta.validation.Valid;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/v1/orders")
 @RequiredArgsConstructor
+@RequestMapping("/api/v1/orders")
 public class OrderController {
     
-    private final OrderServiceImpl orderService;
+    private final OrderService orderService;
     
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Mono<Order> createOrder(@Valid @RequestBody CreateOrderRequest request) {
-        log.info("test creation test: customerId={}, items={}", 
-                request.getCustomerId(), request.getItems().size());
-        
+        log.info("test creation test: customerId={}, items={}", request.getCustomerId(), request.getItems().size());
         return orderService.createOrder(request);
     }
     

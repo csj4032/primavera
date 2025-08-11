@@ -8,10 +8,10 @@ import java.math.BigDecimal;
 @Data
 public class CreateOrderItemRequest {
     
-    @NotBlank(message = "test IDshould Endpoint")
+    @NotBlank(message = "test ID should Endpoint")
     private String productId;
     
-    @Positive(message = "connection 1should Endpoint connection")
+    @Positive(message = "connection 1 should Endpoint connection")
     private int quantity;
     
     @Positive(message = "should 0test connection")

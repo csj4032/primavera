@@ -11,14 +11,18 @@ dependencyManagement {
 }
 
 dependencies {
-    // Implementation dependencies (alphabetical)
-    implementation "org.springframework.boot:spring-boot-starter-data-jpa"
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jdk8"
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
+    implementation "com.fasterxml.jackson.module:jackson-module-parameter-names"
+    implementation "org.projectlombok:lombok:${lombokVersion}"
+    implementation "org.springframework.boot:spring-boot-configuration-processor"
+    implementation "org.springframework.boot:spring-boot-starter-data-redis-reactive"
     implementation "org.springframework.boot:spring-boot-starter-webflux"
-    
-    // Runtime-only dependencies (alphabetical)
+    implementation "org.springframework.cloud:spring-cloud-starter-bootstrap"
+    implementation "org.springframework.cloud:spring-cloud-starter-config"
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
     runtimeOnly "org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}"
-    
-    // Test implementation dependencies (alphabetical)
     testImplementation "io.projectreactor:reactor-test:${reactorTestVersion}"
     testImplementation "org.springframework.boot:spring-boot-starter-test"
 }

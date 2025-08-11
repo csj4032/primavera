@@ -1,6 +1,10 @@
-db = db.getSiblingDB('admin');
-db = db.getSiblingDB('primavera');
+// MongoDB initialization script for Chapter 18 - Microservices
+// Creates users and sample data for product microservice
 
+// Switch to admin database first for user creation
+db = db.getSiblingDB('admin');
+
+// Create main primavera user in admin database
 db.createUser({
     user: 'primavera',
     pwd: 'primavera',
@@ -15,6 +19,21 @@ db.createUser({
         }
     ]
 });
+
+// Create product service specific user
+db.createUser({
+    user: 'productservice',
+    pwd: 'productservice123',
+    roles: [
+        {
+            role: 'readWrite',
+            db: 'primavera'
+        }
+    ]
+});
+
+// Switch to primavera database for data setup
+db = db.getSiblingDB('primavera');
 
 db.createCollection("products", {
     validator: {
@@ -130,18 +149,6 @@ db.products.createIndex({"status": 1});
 db.products.createIndex({"price": 1});
 db.products.createIndex({"tags": 1});
 db.products.createIndex({"name": "text", "description": "text"});
-
-// Create user for product service
-db.createUser({
-    user: "productservice",
-    pwd: "primavera123",
-    roles: [
-        {
-            role: "readWrite",
-            db: "primavera"
-        }
-    ]
-});
 
 print("MongoDB initialization completed for chap18");
 print("Database: primavera");

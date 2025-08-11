@@ -1,24 +1,11 @@
-
-plugins {
-    id 'org.springframework.boot' version "${springBootVersion}"
-    id 'io.spring.dependency-management' version "${springDependencyManagementVersion}"
-}
-
-dependencyManagement {
-    imports {
-        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
-    }
-}
-
 dependencies {
-    // Implementation dependencies (alphabetical)
-    implementation "org.springframework.boot:spring-boot-starter-data-jpa"
+    implementation "org.projectlombok:lombok:${lombokVersion}"
+    implementation "org.springframework.boot:spring-boot-starter-web"
     implementation "org.springframework.boot:spring-boot-starter-webflux"
-    
-    // Runtime-only dependencies (alphabetical)
+    implementation "org.springframework.cloud:spring-cloud-starter-bootstrap"
+    implementation "org.springframework.cloud:spring-cloud-starter-config"
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
     runtimeOnly "org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}"
-    
-    // Test implementation dependencies (alphabetical)
     testImplementation "io.projectreactor:reactor-test:${reactorTestVersion}"
     testImplementation "org.springframework.boot:spring-boot-starter-test"
 }

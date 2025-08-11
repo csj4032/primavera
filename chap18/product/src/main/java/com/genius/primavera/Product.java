@@ -12,9 +12,9 @@ import java.time.Instant;
 @Setter
 @Builder
 @ToString
-@Document(collection = "product")
 @NoArgsConstructor
 @AllArgsConstructor
+@Document(collection = "product")
 public class Product {
 	@Id
 	@Field(name = "id")

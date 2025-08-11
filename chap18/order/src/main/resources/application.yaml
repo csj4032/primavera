@@ -1,9 +1,6 @@
 spring:
   application:
-    name: order
-  banner:
-    charset: UTF-8
-    location: classpath:primavera.txt
+    name: OrderApplication
   profiles:
     active: local
     group:
@@ -19,7 +16,16 @@ spring:
     time-zone: UTC
   cloud:
     config:
-      uri: http://localhost:8888
+      uri: http://localhost:8081
+    pool:
+      initial-size: 10
+      max-size: 20
+      max-idle-time: 300m
+      validation-query: SELECT 1
+  r2dbc:
+    url: r2dbc:mariadb://localhost:3306/primavera
+    username: root
+    password: root
     pool:
       initial-size: 10
       max-size: 20
@@ -49,20 +55,17 @@ kafka:
     inventory-events: inventory-events
 
 server:
-  port: 8082
+  port: 8083
   tomcat:
     threads:
       max: 1
-
-lucy-filter:
-  enabled: true
-  name: lucyXssFilter
-  order: 1
-  addUrlPatterns: /*
 
 logging:
   config: classpath:logback-spring.xml
 
 primavera:
-  logs:
-    path: ./logs
+  config:
+    name: order
+    enabled: true
+    logs:
+      path: ./logs/${primavera.config.name}

@@ -1,8 +1,3 @@
--- ==============================================
--- Database: primavera (Chapter 18: Complex Microservices)
--- ==============================================
-
--- 주문 서비스용 테이블들
 CREATE TABLE IF NOT EXISTS ORDERS (
     ID BIGINT AUTO_INCREMENT PRIMARY KEY,
     USER_ID VARCHAR(100) NOT NULL,
@@ -28,7 +23,6 @@ CREATE TABLE IF NOT EXISTS ORDER_ITEMS (
     INDEX IDX_PRODUCT_ID (PRODUCT_ID)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- 샘플 데이터
 INSERT INTO ORDERS (ID, USER_ID, TOTAL_AMOUNT, STATUS) VALUES
 (1, 'user001', 150000.00, 'COMPLETED'),
 (2, 'user002', 89000.00, 'PENDING'),
@@ -43,6 +37,5 @@ INSERT INTO ORDER_ITEMS (ID, ORDER_ID, PRODUCT_ID, QUANTITY, UNIT_PRICE, TOTAL_P
 (4, 4, 'prod004', 3, 15000.00, 45000.00)
 ON DUPLICATE KEY UPDATE ORDER_ID = VALUES(ORDER_ID);
 
--- 인덱스 최적화
 ANALYZE TABLE ORDERS;
 ANALYZE TABLE ORDER_ITEMS;

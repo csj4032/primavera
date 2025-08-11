@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class FrontController {
 
 	private final FrontService frontService;
-	private final Config config;
+	private final PrimaveraConfiguration config;
 
 	@GetMapping(value = "/users/{userId}/orders")
 	public FrontOrder getUserOrders(@PathVariable("userId") String userId) {

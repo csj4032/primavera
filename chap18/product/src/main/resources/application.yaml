@@ -1,9 +1,6 @@
 spring:
   application:
-    name: product
-  banner:
-    charset: UTF-8
-    location: classpath:primavera.txt
+    name: productApplication
   profiles:
     active: local
     group:
@@ -19,7 +16,7 @@ spring:
     time-zone: UTC
   cloud:
     config:
-      uri: http://localhost:8888
+      uri: http://localhost:8081
   data:
     mongodb:
       host: localhost
@@ -55,17 +52,15 @@ server:
   tomcat:
     threads:
       max: 1
-  port: 8083
+  port: 8084
 
-lucy-filter:
-  enabled: true
-  name: lucyXssFilter
-  order: 1
-  addUrlPatterns: /*
 
 logging:
   config: classpath:logback-spring.xml
 
 primavera:
-  logs:
-    path: ./logs
+  config:
+    name: product
+    enabled: true
+    logs:
+      path: ./logs/${primavera.config.name}

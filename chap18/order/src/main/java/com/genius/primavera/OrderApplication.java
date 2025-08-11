@@ -1,15 +1,21 @@
 package com.genius.primavera;
 
 import com.genius.primavera.event.OrderEventPublisher;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.web.reactive.function.server.RouterFunction;
 
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 
@@ -17,6 +23,7 @@ import static org.springframework.web.reactive.function.server.RouterFunctions.r
 import static org.springframework.web.reactive.function.server.ServerResponse.ok;
 
 @Slf4j
+@ComponentScan
 @SpringBootConfiguration
 @EnableAutoConfiguration
 public class OrderApplication {
@@ -46,4 +53,17 @@ public class OrderApplication {
             orderRepository.saveAll(LongStream.rangeClosed(1, 100).mapToObj(p -> new Order(u, p, 100L)).collect(Collectors.toList())).subscribe();
         });
     }
+}
+
+@Getter
+@Setter
+@ToString
+@Configuration
+@NoArgsConstructor
+@AllArgsConstructor
+@ConfigurationProperties("primavera.config")
+class PrimaveraConfiguration {
+    private String name;
+    private boolean enabled;
+    private Map<String, String> logs;
 }

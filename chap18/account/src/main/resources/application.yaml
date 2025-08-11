@@ -1,9 +1,6 @@
 spring:
   application:
-    name: account
-  banner:
-    charset: UTF-8
-    location: classpath:primavera.txt
+    name: AccountApplication
   profiles:
     active: local
     group:
@@ -19,23 +16,20 @@ spring:
     time-zone: UTC
   cloud:
     config:
-      uri: http://localhost:8888
+      uri: http://localhost:8081
 
 server:
-  port: 8081
+  port: 8080
   tomcat:
     threads:
       max: 1
-
-lucy-filter:
-  enabled: true
-  name: lucyXssFilter
-  order: 1
-  addUrlPatterns: /*
 
 logging:
   config: classpath:logback-spring.xml
 
 primavera:
-  logs:
-    path: ./logs
+  config:
+    name: account
+    enabled: true
+    logs:
+      path: ./logs/${primavera.config.name}
