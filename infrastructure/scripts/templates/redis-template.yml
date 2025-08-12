@@ -6,9 +6,13 @@
       - "${REDIS_PORT}:6379"
     volumes:
       - redis-${CHAPTER}-data:/data
-    command: redis-server --appendonly yes --requirepass primavera
+    command: >
+      sh -c "echo 'user primavera on >primavera ~* &* +@all' > /tmp/redis.conf &&
+             echo 'appendonly yes' >> /tmp/redis.conf &&
+             echo 'requirepass primavera' >> /tmp/redis.conf &&
+             redis-server /tmp/redis.conf"
     healthcheck:
-      test: ["CMD", "redis-cli", "-a", "primavera", "ping"]
+      test: ["CMD", "redis-cli", "-u", "primavera", "-a", "primavera", "ping"]
       interval: 10s
       timeout: 5s
       retries: 5

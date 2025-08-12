@@ -12,11 +12,12 @@ spring:
         - file-warn-appender
       test:
         - console-appender
-  jackson:
-    time-zone: UTC
   cloud:
     config:
       uri: http://localhost:8081
+      fail-fast: true
+  jackson:
+    time-zone: UTC
 
 server:
   port: 8080
