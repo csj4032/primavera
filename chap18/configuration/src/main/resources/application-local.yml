@@ -5,6 +5,7 @@ spring:
   cloud:
     config:
       server:
+        bootstrap: true
         vault:
           host: localhost
           port: 8200

@@ -22,6 +22,7 @@ dependencies {
     implementation "org.springframework.cloud:spring-cloud-starter-config"
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+    runtimeOnly "io.netty:netty-resolver-dns-native-macos:4.1.115.Final:osx-aarch_64"
     runtimeOnly "org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}"
     testImplementation "io.projectreactor:reactor-test:${reactorTestVersion}"
     testImplementation "org.springframework.boot:spring-boot-starter-test"

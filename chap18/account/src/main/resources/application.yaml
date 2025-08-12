@@ -12,10 +12,6 @@ spring:
         - file-warn-appender
       test:
         - console-appender
-  cloud:
-    config:
-      uri: http://localhost:8081
-      fail-fast: true
   jackson:
     time-zone: UTC
 

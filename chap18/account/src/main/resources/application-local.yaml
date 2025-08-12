@@ -1,4 +1,10 @@
 spring:
+  config:
+    import: optional:configserver:http://localhost:8081
+  cloud:
+    config:
+      uri: http://localhost:8081
+      fail-fast: false
   data:
     redis:
       host: localhost
