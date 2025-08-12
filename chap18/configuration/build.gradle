@@ -11,9 +11,8 @@ dependencyManagement {
 }
 
 dependencies {
-    // Implementation dependencies (alphabetical)
     implementation "org.springframework.cloud:spring-cloud-config-server"
-    
-    // Test implementation dependencies (alphabetical)
+    implementation "org.springframework.cloud:spring-cloud-starter-config"
+    implementation "org.springframework.cloud:spring-cloud-starter-vault-config:${springCloudVaultVersion}"
     testImplementation "org.springframework.boot:spring-boot-starter-test"
 }

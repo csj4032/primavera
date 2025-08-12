@@ -1,0 +1,27 @@
+spring:
+  config:
+    activate:
+      on-profile: local
+  cloud:
+    config:
+      server:
+        vault:
+          host: localhost
+          port: 8200
+          scheme: http
+          authentication: TOKEN
+          token: primavera-vault-token
+          backend: secret
+          defaultKey: application
+          profileSeparator: '/'
+          kvVersion: 2
+        git:
+          uri: https://github.com/csj4032/config-repo.git
+          search-paths: account, front, order, product
+          default-label: main
+    vault:
+      host: localhost
+      port: 8200
+      scheme: http
+      authentication: TOKEN
+      token: primavera-vault-token

@@ -7,7 +7,6 @@
     <include resource="logging/logback/file-error-appender.xml"/>
     <include resource="logging/logback/file-info-appender.xml"/>
     <include resource="logging/logback/file-warn-appender.xml"/>
-    <include resource="logging/logback/sentry-appender.xml"/>
 
     <logger name="com.genius.primavera" level="DEBUG"/>
 

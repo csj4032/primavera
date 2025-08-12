@@ -14,23 +14,19 @@ spring:
         - console-appender
   jackson:
     time-zone: UTC
-  cloud:
-    config:
-      server:
-        encrypt:
-          enabled: false
-        git:
-          uri: git@github.com:csj4032/config-repo.git
-          search-paths: account, front, order, product
+  jmx:
+    enabled: false
+
+management:
+  endpoints:
+    jmx:
+      exposure:
+        exclude: '*'
+  jmx:
+    enabled: false
 
 server:
   port: 8081
-
-lucy-filter:
-  enabled: true
-  name: lucyXssFilter
-  order: 1
-  addUrlPatterns: /*
 
 logging:
   config: classpath:logback-spring.xml
