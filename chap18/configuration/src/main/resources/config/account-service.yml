@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: AccountApplication
+  jackson:
+    time-zone: UTC
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      username: primavera
+      password: primavera
+
+server:
+  port: 8080
+  tomcat:
+    threads:
+      max: 1
+
+logging:
+  level:
+    root: INFO
+    com.genius.primavera: DEBUG
+
+primavera:
+  config:
+    name: account
+    enabled: true
+    logs:
+      path: ./logs/account

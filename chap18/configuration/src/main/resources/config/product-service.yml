@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: productApplication
+  jackson:
+    time-zone: UTC
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: primavera_products
+      username: root
+      password: primavera
+      authentication-database: admin
+
+server:
+  port: 8083
+  tomcat:
+    threads:
+      max: 1
+
+logging:
+  level:
+    root: INFO
+    com.genius.primavera: DEBUG
+
+primavera:
+  config:
+    name: product
+    enabled: true
+    logs:
+      path: ./logs/product

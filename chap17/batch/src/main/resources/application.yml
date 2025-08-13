@@ -10,7 +10,6 @@ spring:
         - file-error-appender
         - file-info-appender
         - file-warn-appender
-        - sentry-appender
       test:
         - console-appender
   jackson:

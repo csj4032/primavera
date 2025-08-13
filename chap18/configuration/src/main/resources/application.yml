@@ -2,9 +2,9 @@ spring:
   application:
     name: ConfigurationApplication
   profiles:
-    active: local
+    active: native
     group:
-      local:
+      native:
         - console-appender
         - file-debug-appender
         - file-error-appender
@@ -12,27 +12,14 @@ spring:
         - file-warn-appender
       test:
         - console-appender
-  jackson:
-    time-zone: UTC
-  jmx:
-    enabled: false
-
-management:
-  endpoints:
-    jmx:
-      exposure:
-        exclude: '*'
-  jmx:
-    enabled: false
-
-server:
-  port: 8888
+  cloud:
+    config:
+      server:
+        native:
+          search-locations: classpath:/config
 
 logging:
   config: classpath:logback-spring.xml
 
-primavera:
-  config:
-    name: configuration
-    logs:
-      path: ./logs/${primavera.config.name}
+server:
+  port: 8888

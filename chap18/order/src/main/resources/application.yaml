@@ -1,71 +1,12 @@
 spring:
   application:
-    name: OrderApplication
-  profiles:
-    active: local
-    group:
-      local:
-        - console-appender
-        - file-debug-appender
-        - file-error-appender
-        - file-info-appender
-        - file-warn-appender
-      test:
-        - console-appender
-  jackson:
-    time-zone: UTC
+    name: order-service
+  config:
+    import: optional:configserver:http://localhost:8888
   cloud:
     config:
-      uri: http://localhost:8888
-    pool:
-      initial-size: 10
-      max-size: 20
-      max-idle-time: 300m
-      validation-query: SELECT 1
-  r2dbc:
-    url: r2dbc:mariadb://localhost:3306/primavera
-    username: root
-    password: root
-    pool:
-      initial-size: 10
-      max-size: 20
-      max-idle-time: 300m
-      validation-query: SELECT 1
-  kafka:
-    bootstrap-servers: localhost:9092
-    consumer:
-      group-id: order-service
-      auto-offset-reset: earliest
-      enable-auto-commit: false
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
-      properties:
-        spring.json.trusted.packages: "*"
-    producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-      acks: all
-      retries: 3
-      properties:
-        enable.idempotence: true
-
-kafka:
-  topics:
-    order-events: order-events
-    inventory-events: inventory-events
-
-server:
-  port: 8082
-  tomcat:
-    threads:
-      max: 1
-
-logging:
-  config: classpath:logback-spring.xml
-
-primavera:
-  config:
-    name: order
-    enabled: true
-    logs:
-      path: ./logs/${primavera.config.name}
+      fail-fast: false
+      retry:
+        initial-interval: 1000
+        max-interval: 2000
+        max-attempts: 5

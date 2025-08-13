@@ -1,37 +1,9 @@
 spring:
-  config:
-    activate:
-      on-profile: local
   cloud:
     config:
       server:
-        bootstrap: true
-        composite:
-          - type: vault
-            host: localhost
-            port: 8200
-            scheme: http
-            authentication: TOKEN
-            token: primavera-vault-token
-            backend: secret
-            defaultKey: application
-            profileSeparator: '/'
-            kvVersion: 2
-            order: 1
-          - type: git
-            uri: https://github.com/csj4032/config-repo.git
-            search-paths: account, front, order, product
-            default-label: main
-            order: 2
-    vault:
-      host: localhost
-      port: 8200
-      scheme: http
-      authentication: TOKEN
-      token: primavera-vault-token
-      kv:
-        enabled: true
-        backend: secret
-        profile-separator: '/'
-        default-context: application
-        application-name: ${spring.application.name}
+        native:
+          search-locations: classpath:/config
+        # local 프로파일에서 native 백엔드 사용
+        default-label: main
+        bootstrap: false

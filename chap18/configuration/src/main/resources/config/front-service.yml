@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: FrontApplication
+  jackson:
+    time-zone: UTC
+
+server:
+  port: 8081
+  tomcat:
+    threads:
+      max: 1
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh
+
+logging:
+  level:
+    root: INFO
+    com.genius.primavera: DEBUG
+
+primavera:
+  config:
+    name: front
+    enabled: true
+    logs:
+      path: ./logs/front

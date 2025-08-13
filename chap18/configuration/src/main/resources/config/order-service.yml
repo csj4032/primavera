@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: OrderApplication
+  jackson:
+    time-zone: UTC
+  r2dbc:
+    url: r2dbc:mariadb://localhost:3318/order_service
+    username: primavera
+    password: primavera
+    pool:
+      initial-size: 10
+      max-size: 20
+      max-idle-time: 300m
+      validation-query: "SELECT 1"
+
+server:
+  port: 8082
+  tomcat:
+    threads:
+      max: 1
+
+logging:
+  level:
+    root: INFO
+    com.genius.primavera: DEBUG
+
+primavera:
+  config:
+    name: order
+    enabled: true
+    logs:
+      path: ./logs/order

@@ -103,7 +103,8 @@
       "Bash(VAULT_TOKEN=primavera-vault-token SPRING_PROFILES_ACTIVE=local gtimeout 30 ./gradlew :chap17:streaming:bootRun)",
       "Bash(VAULT_TOKEN=primavera-vault-token SPRING_PROFILES_ACTIVE=local gtimeout 15 ./gradlew :chap17:streaming:bootRun --info)",
       "Bash(VAULT_TOKEN=primavera-vault-token SPRING_PROFILES_ACTIVE=local /opt/homebrew/bin/gtimeout 15 ./gradlew :chap17:streaming:bootRun --info)",
-      "WebFetch(domain:docs.spring.io)"
+      "WebFetch(domain:docs.spring.io)",
+      "Bash(SPRING_PROFILES_ACTIVE=native ./gradlew :chap18:configuration:bootRun)"
     ],
     "deny": []
   }
