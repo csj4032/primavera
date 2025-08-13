@@ -16,7 +16,7 @@ spring:
     time-zone: UTC
   cloud:
     config:
-      uri: http://localhost:8081
+      uri: http://localhost:8888
   data:
     mongodb:
       host: localhost
@@ -52,7 +52,7 @@ server:
   tomcat:
     threads:
       max: 1
-  port: 8084
+  port: 8083
 
 
 logging:

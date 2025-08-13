@@ -16,7 +16,7 @@ spring:
     time-zone: UTC
   cloud:
     config:
-      uri: http://localhost:8081
+      uri: http://localhost:8888
     pool:
       initial-size: 10
       max-size: 20
@@ -55,7 +55,7 @@ kafka:
     inventory-events: inventory-events
 
 server:
-  port: 8083
+  port: 8082
   tomcat:
     threads:
       max: 1

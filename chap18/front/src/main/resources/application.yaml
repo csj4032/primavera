@@ -16,10 +16,10 @@ spring:
     time-zone: UTC
   cloud:
     config:
-      uri: http://localhost:8081
+      uri: http://localhost:8888
 
 server:
-  port: 8082
+  port: 8081
   tomcat:
     threads:
       max: 1
