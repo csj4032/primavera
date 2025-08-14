@@ -1,10 +1,25 @@
 spring:
   application:
-    name: order-service
+    name: OrderApplication
+  profiles:
+    active: local
+    group:
+      local:
+        - console-appender
+        - file-debug-appender
+        - file-error-appender
+        - file-info-appender
+        - file-warn-appender
+      test:
+        - console-appender
   config:
     import: optional:configserver:http://localhost:8888
   cloud:
     config:
+      name: order
+      profile: ${spring.profiles.active:local}
+      label: master
+      uri: http://localhost:8888
       fail-fast: false
       retry:
         initial-interval: 1000

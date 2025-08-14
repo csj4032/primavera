@@ -6,7 +6,7 @@ spring:
   cloud:
     config:
       name: account
-      profile: ${spring.profiles.active:default}
+      profile: ${spring.profiles.active:local}
       label: master
       uri: http://localhost:8888
       fail-fast: false

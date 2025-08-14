@@ -1,10 +1,14 @@
 spring:
   application:
-    name: product-service
+    name: ProductApplication
   config:
     import: optional:configserver:http://localhost:8888
   cloud:
     config:
+      name: product
+      profile: ${spring.profiles.active:local}
+      label: master
+      uri: http://localhost:8888
       fail-fast: false
       retry:
         initial-interval: 1000

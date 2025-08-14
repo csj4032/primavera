@@ -2,9 +2,9 @@ spring:
   application:
     name: ConfigurationApplication
   profiles:
-    active: vault
+    active: composite
     group:
-      local:
+      native:
         - console-appender
         - file-debug-appender
         - file-error-appender
@@ -17,7 +17,34 @@ spring:
       server:
         native:
           search-locations: classpath:/config
+        composite:
+          - type: vault
+            host: localhost
+            port: 8200
+            scheme: http
+            backend: secret
+            profile-separator: '/'
+            kv-version: 2
+            order: 1
+          - type: git
+            uri: https://github.com/csj4032/config-repo.git
+            default-label: master
+            search-paths: account, front, order, product
+            clone-on-start: true
+            force-pull: true
+            order: 2
+          - type: native
+            search-locations: classpath:/config
+            order: 3
         bootstrap: false
+    vault:
+      uri: http://localhost:8200
+      token: primavera-vault-token
+      kv:
+        enabled: true
+        backend: secret
+        profile-separator: '/'
+        application-name: application
 
 logging:
   config: classpath:logback-spring.xml

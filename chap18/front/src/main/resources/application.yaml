@@ -9,7 +9,7 @@ spring:
       name: front  # 또는 front,common 처럼 여러 개 지정 가능
       
       # 프로파일 설정 (local, dev, prod 등)
-      profile: ${spring.profiles.active:default}
+      profile: ${spring.profiles.active:local}
       
       # Git 브랜치 또는 레이블
       label: master
