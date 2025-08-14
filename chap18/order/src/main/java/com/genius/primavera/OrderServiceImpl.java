@@ -31,7 +31,7 @@ public class OrderServiceImpl implements OrderService {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        return orderRepository.findByUserId(Long.valueOf(userId));
+        return orderRepository.findByUserId(userId);
     }
 
     public Mono<Order> createOrder(CreateOrderRequest request) {

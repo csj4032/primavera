@@ -17,10 +17,9 @@ import java.time.LocalDateTime;
 @Table(value = "ORDERS")
 public class Order {
 
-	public Order(Long userId, Long productId, Long amount) {
+	public Order(String userId, BigDecimal totalAmount) {
 		this.userId = userId;
-		this.productId = productId;
-		this.amount = amount;
+		this.totalAmount = totalAmount;
 	}
 
 	@Id
@@ -31,16 +30,11 @@ public class Order {
 	private String orderId;
 	
 	@Column("USER_ID")
-	private Long userId;
+	private String userId;
 	
 	@Column("CUSTOMER_ID")
 	private String customerId;
 	
-	@Column("PRODUCT_ID")
-	private Long productId;
-	
-	@Column("AMOUNT")
-	private Long amount;
 	
 	@Column("TOTAL_AMOUNT")
 	private BigDecimal totalAmount;

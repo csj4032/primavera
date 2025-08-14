@@ -14,6 +14,8 @@ import org.springframework.context.event.EventListener;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.web.reactive.function.server.RouterFunction;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -49,8 +51,17 @@ public class OrderApplication {
         log.debug("OrderApplication Start... {}", applicationReadyEvent);
         var orderRepository = applicationReadyEvent.getApplicationContext().getBean(OrderRepository.class);
         orderRepository.deleteAll().subscribe();
-        LongStream.rangeClosed(1, 100).forEach(u -> {
-            orderRepository.saveAll(LongStream.rangeClosed(1, 100).mapToObj(p -> new Order(u, p, 100L)).collect(Collectors.toList())).subscribe();
+        LongStream.rangeClosed(1, 10).forEach(u -> {
+            orderRepository.saveAll(LongStream.rangeClosed(1, 10).mapToObj(p -> 
+                Order.builder()
+                    .orderId("ORD-" + u + "-" + p)
+                    .userId("user" + String.format("%03d", u))
+                    .totalAmount(BigDecimal.valueOf(p * 10000))
+                    .status(Order.OrderStatus.PENDING)
+                    .createdAt(LocalDateTime.now())
+                    .updatedAt(LocalDateTime.now())
+                    .build()
+            ).collect(Collectors.toList())).subscribe();
         });
     }
 }
