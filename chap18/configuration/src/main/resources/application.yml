@@ -2,9 +2,9 @@ spring:
   application:
     name: ConfigurationApplication
   profiles:
-    active: native
+    active: local
     group:
-      native:
+      local:
         - console-appender
         - file-debug-appender
         - file-error-appender

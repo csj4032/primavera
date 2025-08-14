@@ -9,6 +9,8 @@
     <include resource="logging/logback/file-warn-appender.xml"/>
 
     <logger name="com.genius.primavera" level="DEBUG"/>
+    <logger name="org.springframework.cloud.config" level="DEBUG"/>
+    <logger name="org.springframework.vault" level="DEBUG"/>
 
     <root level="DEBUG">
         <appender-ref ref="CONSOLE"/>

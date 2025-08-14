@@ -1,10 +1,14 @@
 spring:
   application:
-    name: account-service
+    name: AccountApplication
   config:
     import: optional:configserver:http://localhost:8888
   cloud:
     config:
+      name: account
+      profile: ${spring.profiles.active:default}
+      label: master
+      uri: http://localhost:8888
       fail-fast: false
       retry:
         initial-interval: 1000

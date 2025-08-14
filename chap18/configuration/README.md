@@ -34,25 +34,27 @@ public class ConfigurationApplication {
 }
 ```
 
-### 2. 마이크로서비스 설정 중앙화
+### 2. Composite Backend (Vault + Native)
 ```yaml
-# application.yml
-server:
-  port: 8888  # Config Server 기본 포트
-
+# application-local.yml
 spring:
   cloud:
     config:
       server:
-        git:
-          uri: https://github.com/your-org/config-repo
-          search-paths: configs/{application}
-          default-label: main
-        health:
-          repositories:
-            config-repo:
-              label: main
-              name: account,product,order,front
+        composite:
+          - type: vault  # 민감한 정보 (DB 암호, API 키 등)
+            host: localhost
+            port: 8200
+            backend: secret
+            token: primavera-vault-token
+          - type: native  # 일반 설정
+            searchLocations: classpath:/config
+    vault:
+      enabled: true
+      host: localhost
+      port: 8200
+      authentication: TOKEN
+      token: primavera-vault-token
 ```
 
 ### 3. 환경별 설정 구조
@@ -164,34 +166,43 @@ spring:
 - **Spring Cloud**: 2023.0.3
 
 ### 설정 저장소
-- **Git Repository**: 설정 파일 버전 관리
-- **Local File System**: 로컬 개발 환경
-- **Vault Integration**: 민감 정보 보안 관리
+- **HashiCorp Vault**: 민감한 정보 (DB 암호, API 키) 보안 관리
+- **Native File System**: 일반 설정 파일 관리
+- **Composite Mode**: Vault와 파일 시스템을 동시에 사용
 
 ## 🚀 실행 방법
 
-### 1. Config Server 실행
+### 1. Vault 서버 시작
 ```bash
-# Config Server 시작
-./gradlew :chap18:configuration:bootRun
+# Docker로 Vault 실행
+docker run -d --name vault \
+  -p 8200:8200 \
+  -e VAULT_DEV_ROOT_TOKEN_ID=primavera-vault-token \
+  hashicorp/vault:latest
 
-# 특정 포트로 실행
-./gradlew :chap18:configuration:bootRun -Dserver.port=8888
+# Vault 초기화
+cd chap18/infrastructure
+./vault-init.sh
 ```
 
-### 2. 설정 조회 API
+### 2. Config Server 실행
 ```bash
-# 특정 애플리케이션의 설정 조회
-curl http://localhost:8888/account/local
+# Composite 모드로 실행 (Vault + Native)
+./gradlew :chap18:configuration:bootRun -Dspring.profiles.active=local
+```
 
-# 운영 환경 설정 조회
-curl http://localhost:8888/account/prod
+### 3. 설정 조회 API
+```bash
+# 파일 시스템 설정 조회
+curl http://localhost:8888/front-service/default
+curl http://localhost:8888/order-service/default
 
-# JSON 형식으로 설정 조회
-curl http://localhost:8888/account/local/main
+# Vault 설정 조회 (민감한 정보)
+curl http://localhost:8888/front/default  # Vault에서 가져옴
+curl http://localhost:8888/application/prod  # 운영 환경 설정
 
-# 특정 설정 파일 조회
-curl http://localhost:8888/account-local.yml
+# 복합 설정 (Vault + File)
+curl http://localhost:8888/product-service/default
 ```
 
 ### 3. 설정 갱신 확인

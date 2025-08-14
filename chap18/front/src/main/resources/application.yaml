@@ -5,6 +5,18 @@ spring:
     import: optional:configserver:http://localhost:8888
   cloud:
     config:
+      # Config Server에서 사용할 설정 이름
+      name: front  # 또는 front,common 처럼 여러 개 지정 가능
+      
+      # 프로파일 설정 (local, dev, prod 등)
+      profile: ${spring.profiles.active:default}
+      
+      # Git 브랜치 또는 레이블
+      label: master
+      
+      # Config Server URI
+      uri: http://localhost:8888
+      
       fail-fast: false
       retry:
         initial-interval: 1000
