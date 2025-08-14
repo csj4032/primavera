@@ -3,11 +3,14 @@ server:
 
 spring:
   application:
-    name: config-server
+    name: ConfigurationApplication
   cloud:
     config:
       server:
         composite:
+          - type: native
+            search-locations: classpath:/config
+            order: 1
           - type: vault
             host: 127.0.0.1
             port: 8200
@@ -17,19 +20,14 @@ spring:
             default-key: application
             authentication: TOKEN
             token: primavera-vault-token
-          - type: git
-            uri: https://github.com/csj4032/primavera
-            search-paths: account,front,order,product
-            default-label: master
-            clone-on-start: false
-          - type: native
-            searchLocations: classpath:/config
-        default-label: main
+            order: 2
         bootstrap: false
-    vault:
-      enabled: true
-      host: 127.0.0.1
-      port: 8200
-      scheme: http
-      authentication: TOKEN
-      token: primavera-vault-token
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,refresh
+  endpoint:
+    health:
+      show-details: always

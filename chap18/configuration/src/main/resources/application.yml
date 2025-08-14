@@ -2,7 +2,7 @@ spring:
   application:
     name: ConfigurationApplication
   profiles:
-    active: local
+    active: native
     group:
       local:
         - console-appender
@@ -17,6 +17,7 @@ spring:
       server:
         native:
           search-locations: classpath:/config
+        bootstrap: false
 
 logging:
   config: classpath:logback-spring.xml

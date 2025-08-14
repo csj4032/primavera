@@ -4,7 +4,7 @@ spring:
   jackson:
     time-zone: UTC
   r2dbc:
-    url: r2dbc:mariadb://localhost:3318/order_service
+    url: r2dbc:mariadb://localhost:3318/primavera
     username: primavera
     password: primavera
     pool:
@@ -12,6 +12,17 @@ spring:
       max-size: 20
       max-idle-time: 300m
       validation-query: "SELECT 1"
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      group-id: order-service
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
 
 server:
   port: 8082
@@ -23,6 +34,20 @@ logging:
   level:
     root: INFO
     com.genius.primavera: DEBUG
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always
+
+kafka:
+  topics:
+    order-events: order-events
+    inventory-events: inventory-events
 
 primavera:
   config:

@@ -1,6 +1,6 @@
 spring:
   application:
-    name: productApplication
+    name: ProductApplication
   jackson:
     time-zone: UTC
   data:
@@ -22,6 +22,32 @@ logging:
   level:
     root: INFO
     com.genius.primavera: DEBUG
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always
+
+spring.kafka:
+  bootstrap-servers: localhost:9092
+  producer:
+    key-serializer: org.apache.kafka.common.serialization.StringSerializer
+    value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+  consumer:
+    group-id: product-service
+    key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+    properties:
+      spring.json.trusted.packages: "*"
+
+kafka:
+  topics:
+    order-events: order-events
+    inventory-events: inventory-events
 
 primavera:
   config:
