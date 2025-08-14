@@ -5,29 +5,23 @@ spring:
   application:
     name: ConfigurationApplication
   cloud:
+    vault:
+      uri: http://localhost:8200
+      token: primavera-vault-token
+      kv:
+        enabled: true
+        backend: secret
+        profile-separator: '/'
+        application-name: application
     config:
       server:
-        composite:
-          - type: native
-            search-locations: classpath:/config
-            order: 1
-          - type: vault
-            host: 127.0.0.1
-            port: 8200
-            scheme: http
-            backend: secret
-            profile-separator: /
-            default-key: application
-            authentication: TOKEN
-            token: primavera-vault-token
-            order: 2
+        vault:
+          host: localhost
+          port: 8200
+          scheme: http
+          backend: secret
+          profile-separator: '/'
+          kv-version: 2
+        native:
+          search-locations: classpath:/config
         bootstrap: false
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info,refresh
-  endpoint:
-    health:
-      show-details: always

@@ -2,7 +2,7 @@ spring:
   application:
     name: ConfigurationApplication
   profiles:
-    active: native
+    active: vault
     group:
       local:
         - console-appender
