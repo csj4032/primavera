@@ -4,7 +4,7 @@ spring:
   jackson:
     time-zone: UTC
   r2dbc:
-    url: r2dbc:mariadb://localhost:3318/primavera
+    url: r2dbc:mariadb://localhost:3306/primavera
     username: primavera
     password: primavera
     pool:

@@ -2,7 +2,7 @@ spring:
   application:
     name: ConfigurationApplication
   profiles:
-    active: composite
+    active: native
     group:
       native:
         - console-appender
