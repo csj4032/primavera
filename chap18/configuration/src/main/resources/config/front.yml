@@ -11,6 +11,11 @@ management:
     health:
       show-details: always
 
+server:
+  tomcat:
+    threads:
+      max: 1
+
 primavera:
   config:
     name: front

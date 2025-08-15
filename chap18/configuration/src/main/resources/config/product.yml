@@ -12,11 +12,6 @@ spring:
       password: root
       authentication-database: admin
 
-logging:
-  level:
-    root: INFO
-    com.genius.primavera: DEBUG
-
 management:
   endpoints:
     web:

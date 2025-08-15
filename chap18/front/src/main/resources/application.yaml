@@ -27,11 +27,5 @@ spring:
         max-interval: 2000
         max-attempts: 5
 
-server:
-  port: 8081
-  tomcat:
-    threads:
-      max: 1
-
 logging:
   config: classpath:logback-spring.xml
