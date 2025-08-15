@@ -47,5 +47,10 @@ spring:
 logging:
   config: classpath:logback-spring.xml
 
+primavera:
+  config:
+    logs:
+      path: ./logs/configuration
+
 server:
   port: 8888
