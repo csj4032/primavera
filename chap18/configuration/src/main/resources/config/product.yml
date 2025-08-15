@@ -9,7 +9,7 @@ spring:
       port: 27017
       database: primavera_products
       username: root
-      password: primavera
+      password: root
       authentication-database: admin
 
 server:

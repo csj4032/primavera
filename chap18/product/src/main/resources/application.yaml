@@ -1,6 +1,17 @@
 spring:
   application:
     name: ProductApplication
+  profiles:
+    active: local
+    group:
+      local:
+        - console-appender
+        - file-debug-appender
+        - file-error-appender
+        - file-info-appender
+        - file-warn-appender
+      test:
+        - console-appender
   config:
     import: optional:configserver:http://localhost:8888
   cloud:
@@ -14,3 +25,6 @@ spring:
         initial-interval: 1000
         max-interval: 2000
         max-attempts: 5
+
+logging:
+  config: classpath:logback-spring.xml
