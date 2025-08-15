@@ -21,15 +21,6 @@ spring:
   cloud:
     config:
       server:
-        native:
-          search-locations: classpath:/config
-        vault:
-          host: localhost
-          port: 8200
-          scheme: http
-          backend: secret
-          profile-separator: '/'
-          kv-version: 2
         composite:
           - type: vault
             host: localhost

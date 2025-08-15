@@ -18,6 +18,7 @@ spring:
     config:
       name: account
       profile: ${spring.profiles.active:local}
+      token: ${VAULT_TOKEN:primavera-config-token}
       label: master
       uri: http://localhost:8888
       fail-fast: false

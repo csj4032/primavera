@@ -24,12 +24,6 @@ spring:
       properties:
         spring.json.trusted.packages: "*"
 
-server:
-  port: 8082
-  tomcat:
-    threads:
-      max: 1
-
 management:
   endpoints:
     web:

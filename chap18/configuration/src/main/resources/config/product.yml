@@ -12,12 +12,6 @@ spring:
       password: root
       authentication-database: admin
 
-server:
-  port: 8083
-  tomcat:
-    threads:
-      max: 1
-
 logging:
   level:
     root: INFO

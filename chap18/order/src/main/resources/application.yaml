@@ -18,6 +18,7 @@ spring:
     config:
       name: order
       profile: ${spring.profiles.active:local}
+      token: ${VAULT_TOKEN:primavera-config-token}
       label: master
       uri: http://localhost:8888
       fail-fast: false
@@ -25,6 +26,12 @@ spring:
         initial-interval: 1000
         max-interval: 2000
         max-attempts: 5
+
+server:
+  port: 8082
+  tomcat:
+    threads:
+      max: 1
 
 logging:
   config: classpath:logback-spring.xml
