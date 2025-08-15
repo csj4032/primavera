@@ -13,6 +13,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -20,21 +21,22 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class FrontServiceImpl implements FrontService {
 
-	private static final String ACCOUNT_URL = "http://localhost:8081/accounts/{userId}";
-	private static final String ORDER_URL = "http://localhost:8082/users/{userId}/orders";
-	private static final String PRODUCT_URL = "http://localhost:8083/products/{productId}";
-
 	private final RestTemplate restTemplate;
+	private final ServiceUrlConfig serviceUrlConfig;
 	private final ParameterizedTypeReference<List<Order>> responseType = new ParameterizedTypeReference<>() {
 	};
 
 	@Override
 	public FrontOrder findAllOrders(String userId) {
+		String accountUrl = serviceUrlConfig.getAccountUrl() + "/users/{userId}";
+		String orderUrl = serviceUrlConfig.getOrderUrl() + "/users/{userId}/orders";
+		String productUrl = serviceUrlConfig.getProductUrl() + "/products/{productId}";
+		
 		return new FrontOrder(
-				restTemplate.getForObject(ACCOUNT_URL, User.class, userId),
-				restTemplate.exchange(ORDER_URL, HttpMethod.GET, null, responseType, userId).getBody()
+				restTemplate.getForObject(accountUrl, User.class, userId),
+				Objects.requireNonNull(restTemplate.exchange(orderUrl, HttpMethod.GET, null, responseType, userId).getBody())
 						.stream()
-						.peek(order -> order.setProduct(restTemplate.getForObject(PRODUCT_URL, Product.class, order.getProductId())))
+						.peek(order -> order.setProduct(restTemplate.getForObject(productUrl, Product.class, order.getProductId())))
 						.collect(Collectors.toList()));
 	}
 }

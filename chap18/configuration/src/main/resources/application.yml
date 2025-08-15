@@ -2,7 +2,7 @@ spring:
   application:
     name: ConfigurationApplication
   profiles:
-    active: native
+    active: composite
     group:
       native:
         - console-appender
@@ -30,6 +30,19 @@ spring:
           backend: secret
           profile-separator: '/'
           kv-version: 2
+        composite:
+          - type: vault
+            host: localhost
+            port: 8200
+            scheme: http
+            backend: secret
+            profile-separator: '/'
+            kv-version: 2
+            order: 1
+            token: ${VAULT_TOKEN:primavera-vault-token}
+          - type: native
+            search-locations: classpath:/config
+            order: 2
         bootstrap: false
     vault:
       uri: http://localhost:8200

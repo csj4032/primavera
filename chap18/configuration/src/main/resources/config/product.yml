@@ -8,7 +8,7 @@ spring:
       host: localhost
       port: 27017
       database: primavera_products
-      username: root
+      username: primavera
       password: root
       authentication-database: admin
 

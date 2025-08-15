@@ -1,14 +1,6 @@
 spring:
-  application:
-    name: FrontApplication
   jackson:
     time-zone: UTC
-
-server:
-  port: 8080
-  tomcat:
-    threads:
-      max: 1
 
 management:
   endpoints:
@@ -18,11 +10,6 @@ management:
   endpoint:
     health:
       show-details: always
-
-logging:
-  level:
-    root: INFO
-    com.genius.primavera: DEBUG
 
 primavera:
   config:

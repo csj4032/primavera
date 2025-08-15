@@ -9,17 +9,6 @@ spring:
       port: 6379
       password: primavera
 
-server:
-  port: 8081
-  tomcat:
-    threads:
-      max: 1
-
-logging:
-  level:
-    root: INFO
-    com.genius.primavera: DEBUG
-
 management:
   endpoints:
     web:

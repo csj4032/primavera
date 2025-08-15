@@ -30,11 +30,6 @@ server:
     threads:
       max: 1
 
-logging:
-  level:
-    root: INFO
-    com.genius.primavera: DEBUG
-
 management:
   endpoints:
     web:

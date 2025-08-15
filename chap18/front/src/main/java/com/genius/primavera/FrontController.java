@@ -16,8 +16,7 @@ public class FrontController {
 
 	@GetMapping(value = "/users/{userId}/orders")
 	public FrontOrder getUserOrders(@PathVariable("userId") String userId) {
-		FrontOrder frontOrder = frontService.findAllOrders(userId);
-		return frontOrder;
+        return frontService.findAllOrders(userId);
 	}
 
 	@GetMapping(value = "/config")
