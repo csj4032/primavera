@@ -106,6 +106,7 @@
       "WebFetch(domain:docs.spring.io)",
       "Bash(SPRING_PROFILES_ACTIVE=native ./gradlew :chap18:configuration:bootRun)"
     ],
-    "deny": []
+    "deny": [],
+    "defaultMode": "acceptEdits"
   }
 }

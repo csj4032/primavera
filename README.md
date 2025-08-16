@@ -9,7 +9,7 @@ Primavera는 기본 개념부터 고급 마이크로서비스 아키텍처까지
 
 ## 🎯 프로젝트 개요
 
-**27개 모듈**로 구성된 점진적 학습용 Spring Boot 교육 프로젝트로, 각 단계별로 독립적인 애플리케이션을 제공하여 체계적인 학습이 가능합니다.
+**27개 모듈**로 구성된 점진적 학습용 Spring Boot 교육 프로젝트로, 기초 개념부터 **완전한 마이크로서비스 아키텍처**까지 각 단계별로 독립적인 애플리케이션을 제공하여 체계적인 학습이 가능합니다.
 
 ### 📚 학습 단계
 
@@ -59,11 +59,16 @@ Phase 5: 아키텍처 (chap17-18) ← Phase 4: 고급 (chap13-16) ← Phase 3: �
 | **[chap17:common](./chap17/common)** | 공통 도메인 모델 **(NO WEB)** | JPA Entities, 공통 라이브러리 |
 | **[chap17:batch](./chap17/batch)** | **Spring Batch** 배치 처리 | **Spring Batch**, GraalVM |
 | **[chap17:streaming](./chap17/streaming)** | 실시간 스트리밍, WebSocket | **WebFlux**, WebSocket |
-| **[chap18:configuration](./chap18/configuration)** | 마이크로서비스 설정 중앙화 | Spring Cloud Config |
-| **[chap18:account](./chap18/account)** | 계정 관리 마이크로서비스 | **WebFlux**, JPA |
-| **[chap18:product](./chap18/product)** | 상품 관리 마이크로서비스 | **WebFlux**, JPA |
-| **[chap18:order](./chap18/order)** | 주문 관리 마이크로서비스 | **WebFlux**, JPA |
-| **[chap18:front](./chap18/front)** | API Gateway 프론트엔드 | **WebFlux**, Gateway |
+| **[chap18](./chap18)** | **완전한 마이크로서비스 아키텍처** | **Spring Cloud**, **Kafka**, **Multiple DBs** |
+
+#### chap18 마이크로서비스 구성
+| 서비스 | 포트 | 주요 학습 내용 | 기술 스택 |
+|--------|------|---------------|----------|
+| **[configuration](./chap18/configuration)** | 8888 | 중앙화된 설정 관리 | **Spring Cloud Config**, Vault |
+| **[account](./chap18/account)** | 8080 | 반응형 사용자 관리 | **WebFlux**, Redis, Reactive Streams |
+| **[front](./chap18/front)** | 8081 | API Gateway & 오케스트레이션 | **WebFlux**, Service Orchestration |
+| **[order](./chap18/order)** | 8082 | 주문 처리 & 할인 정책 엔진 | **WebFlux**, **R2DBC**, **Kafka**, Strategy Pattern |
+| **[product](./chap18/product)** | 8083 | 상품 관리 & 고급 캐싱 | **AOP**, **MongoDB**, Custom Annotations |
 
 ### 유틸리티 모듈
 | 모듈 | 주요 기능 | 기술 스택 |
@@ -100,6 +105,11 @@ cd primavera
 
 # Reactive 예제
 ./gradlew :chap13:bootRun
+
+# 마이크로서비스 아키텍처 (인프라 먼저 시작 필요)
+./docker-manager.sh start chap18
+SPRING_PROFILES_ACTIVE=native ./gradlew :chap18:configuration:bootRun &
+VAULT_TOKEN=primavera-vault-token ./gradlew :chap18:account:bootRun
 ```
 
 ## 🛠️ 기술 스택
@@ -112,13 +122,15 @@ cd primavera
 - **테스팅**: JUnit 5, Mockito, TestContainers
 
 ### 주요 라이브러리
-- **ORM**: JPA/Hibernate, MyBatis 3.0.4
-- **보안**: Spring Security 6.4.4, OAuth2
+- **ORM**: JPA/Hibernate, MyBatis 3.0.4, R2DBC (반응형)
+- **보안**: Spring Security 6.4.4, OAuth2, Vault (암호화)
 - **템플릿**: Thymeleaf 3.4.0
-- **캐싱**: Redis, Caffeine
-- **반응형**: WebFlux (Reactor)
-- **배치**: Spring Batch
+- **캐싱**: Redis, Caffeine, AOP 기반 커스텀 캐싱
+- **반응형**: WebFlux (Reactor), Reactive Streams
+- **배치**: Spring Batch, 실시간 스트리밍
 - **클라우드**: Spring Cloud Config, Vault
+- **메시징**: Apache Kafka, 이벤트 기반 아키텍처
+- **데이터베이스**: MariaDB 11.4.7, MongoDB 7.0, Redis 7.0
 
 ## 🧪 테스트 전략
 
@@ -158,6 +170,7 @@ cd primavera
 - **chap05**: MariaDB 3309
 - **chap06**: MariaDB 3310
 - *... (각 모듈별 독립 포트)*
+- **chap18**: MariaDB 3306, MongoDB 27017, Redis 6379, Kafka 9092, Vault 8200
 
 ## 📖 학습 가이드
 
@@ -194,12 +207,19 @@ cd primavera
 ### 전통적 MVC → Reactive → Microservices
 ```
 Traditional MVC (chap01-12)
-    ↓
+    ↓ 점진적 복잡성 증가
 Reactive Programming (chap13-14)
-    ↓
+    ↓ WebFlux, MongoDB, Redis
 Batch & Streaming (chap17)
-    ↓
-Microservices Architecture (chap18)
+    ↓ 실시간 처리, WebSocket
+Complete Microservices (chap18)
+    ↓ 5개 서비스, 이벤트 기반 아키텍처
+┌─────────────────────────────────┐
+│  Front(8081) → Account(8080)    │
+│              → Order(8082)      │
+│              → Product(8083)    │
+│  Config(8888) ← All Services    │
+└─────────────────────────────────┘
 ```
 
 ## 📋 주요 명령어
@@ -217,6 +237,11 @@ Microservices Architecture (chap18)
 
 # 테스트 실행
 ./gradlew :chap04:test --tests PrimaveraServiceTest
+
+# 마이크로서비스 전체 시작 (chap18)
+./docker-manager.sh start chap18
+SPRING_PROFILES_ACTIVE=native ./gradlew :chap18:configuration:bootRun &
+sleep 10 && VAULT_TOKEN=primavera-vault-token ./gradlew :chap18:account:bootRun
 ```
 
 ### Docker 관리
