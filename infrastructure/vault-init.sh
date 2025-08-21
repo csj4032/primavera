@@ -180,6 +180,25 @@ vault kv put secret/FileProcessingMonitoringApplication/local \
     aws.s3.endpoint= \
     aws.s3.path-style-access=false
 
+# chap19: PrimaveraPerformanceApplication
+vault kv put secret/PrimaveraPerformanceApplication/local \
+    spring.datasource.url=jdbc:mariadb://localhost:3320/primavera_performance \
+    spring.datasource.username=primavera \
+    spring.datasource.password=primavera \
+    spring.datasource.driver-class-name=org.mariadb.jdbc.Driver \
+    spring.data.redis.host=localhost \
+    spring.data.redis.port=6380 \
+    spring.data.redis.password=primavera \
+    performance.monitoring.enabled=true \
+    performance.cache.warmup.enabled=true \
+    jvm.gc.type=G1 \
+    jvm.memory.initial=1g \
+    jvm.memory.max=2g \
+    jvm.threads.virtual.enabled=true \
+    jvm.threads.virtual.parallelism=1000 \
+    management.endpoints.web.exposure.include=* \
+    management.endpoint.health.show-details=always
+
 # chap17: FileProcessingMonitoringApplication (Data Pipeline)
 vault kv put secret/FileProcessingMonitoringApplication/local \
     spring.datasource.url=jdbc:mariadb://localhost:3306/primavera \
@@ -271,6 +290,9 @@ path "secret/data/JpaAdvancedMappingApplication/*" {
   capabilities = ["read", "list"]
 }
 path "secret/data/FileProcessingMonitoringApplication/*" {
+  capabilities = ["read", "list"]
+}
+path "secret/data/PrimaveraPerformanceApplication/*" {
   capabilities = ["read", "list"]
 }
 path "secret/data/ProductBatchApplication/*" {

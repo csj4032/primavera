@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Primavera Multi-Module Docker Configuration Generator
-# 완전한 멀티모듈 아키텍처 지원 (chap17, chap18 포함)
+# 완전한 멀티모듈 아키텍처 지원 (chap17, chap18, chap19 포함)
 
 set -e
 
@@ -38,6 +38,7 @@ declare -A single_modules=(
     ["chap14"]="AdvancedJpaApplication:mariadb,mongodb,vault"
     ["chap15"]="JpaAdvancedMappingApplication:vault"
     ["chap16"]="FileProcessingMonitoringApplication:mariadb,vault"
+    ["chap19"]="PrimaveraPerformanceApplication:mariadb,redis,vault"
 )
 
 # 멀티모듈 아키텍처 정의 (chap17, chap18)

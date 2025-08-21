@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Primavera Multi-Module Docker Infrastructure Manager
-# 완전한 멀티모듈 아키텍처 지원 (chap17, chap18 포함)
+# 완전한 멀티모듈 아키텍처 지원 (chap17, chap18, chap19 포함)
 
 set -e
 
@@ -41,6 +41,7 @@ show_usage() {
     echo "  $0 start chap13                # Reactive + MongoDB + Redis"
     echo "  $0 start chap17                # Multi-module + Elasticsearch + CDC"
     echo "  $0 start chap18                # Complete Microservices + Full Stack"
+    echo "  $0 start chap19                # Performance Optimization + Monitoring"
     echo "  $0 status chap17               # Check chap17 with sub-modules status"
     echo "  $0 info chap17                 # Show chap17 detailed information"
     echo "  $0 logs chap17 vault           # Show vault logs for chap17"
@@ -52,6 +53,7 @@ show_usage() {
     echo "  chap13-16: Advanced Features (Reactive, JPA, Cloud)"
     echo "  chap17:    Multi-Module Architecture (batch + streaming)"
     echo "  chap18:    Complete Microservices (5 services)"
+    echo "  chap19:    Performance Optimization (Virtual Threads + Caching)"
     echo "  preface:   Framework fundamentals"
 }
 
@@ -603,6 +605,14 @@ show_post_start_info() {
             chap16)
                 echo "   🌐 File Processing & Monitoring: http://localhost:8080"
                 echo "   📁 File upload functionality enabled"
+                echo "   💡 Run: ./gradlew :${chapter}:bootRun"
+                ;;
+            chap19)
+                echo "   🌐 Performance Application: http://localhost:8019"
+                echo "   📊 Management/Metrics: http://localhost:9019/actuator"
+                echo "   ⚡ Virtual Threads + Multi-layer Caching enabled"
+                echo "   🔍 Prometheus Metrics: http://localhost:9091"
+                echo "   🗄️  Vault UI: http://localhost:8201"
                 echo "   💡 Run: ./gradlew :${chapter}:bootRun"
                 ;;
         esac

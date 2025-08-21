@@ -1,0 +1,143 @@
+spring:
+  application:
+    name: primavera-performance
+    
+  profiles:
+    active: local
+    
+  # Infrastructure services (managed by docker-compose)
+  datasource:
+    url: jdbc:mariadb://localhost:3320/primavera_performance
+    username: primavera
+    password: primavera
+    driver-class-name: org.mariadb.jdbc.Driver
+    hikari:
+      maximum-pool-size: 50
+      minimum-idle: 10
+      connection-timeout: 10000
+      idle-timeout: 300000
+      max-lifetime: 600000
+      connection-test-query: SELECT 1
+      
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          batch_size: 100
+          order_inserts: true
+          order_updates: true
+        query:
+          in_clause_parameter_padding: true
+          plan_cache_max_size: 2048
+        connection:
+          provider_disables_autocommit: true
+          
+  cache:
+    type: caffeine
+    caffeine:
+      spec: maximumSize=10000,expireAfterWrite=5m,recordStats
+    cache-names:
+      - users
+      - products
+      - sessions
+      - performance-metrics
+      
+  data:
+    redis:
+      host: localhost
+      port: 6380  # chap19 dedicated Redis port
+      lettuce:
+        pool:
+          max-active: 30
+          max-idle: 10
+          min-idle: 5
+          
+  threads:
+    virtual:
+      enabled: true
+      
+  # Vault Configuration (for sensitive data)
+  cloud:
+    vault:
+      enabled: true
+      host: localhost
+      port: 8201
+      scheme: http
+      authentication: TOKEN
+      token: primavera-vault-token-chap19
+      kv:
+        enabled: true
+        backend: secret
+        application-name: PrimaveraPerformanceApplication
+      
+server:
+  port: 8019
+  tomcat:
+    threads:
+      max: 1000
+      min-spare: 50
+    accept-count: 200
+    max-connections: 10000
+    
+management:
+  server:
+    port: 9019  # Dedicated management port
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: always
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+        step: 10s
+    tags:
+      application: ${spring.application.name}
+      chapter: chap19
+      environment: ${spring.profiles.active}
+      
+logging:
+  level:
+    com.genius.primavera: DEBUG
+    org.springframework.web: INFO
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql: TRACE
+    org.springframework.cloud.vault: INFO
+  pattern:
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: logs/primavera-performance.log
+    
+performance:
+  monitoring:
+    enabled: true
+    interval: 10s
+    jfr:
+      enabled: true
+      profile: continuous
+  cache:
+    warmup:
+      enabled: true
+      keys:
+        - user:popular:*
+        - product:featured:*
+        - config:system:*
+  optimization:
+    query:
+      slow-query-threshold: 100ms
+      explain-analyze: true
+    jvm:
+      gc-tuning: true
+      virtual-threads: true
+      memory-optimization: true

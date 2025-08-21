@@ -1,0 +1,48 @@
+spring:
+  application:
+    name: primavera-performance-test
+    
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: 
+    
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+        
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      
+  cache:
+    type: caffeine
+    caffeine:
+      spec: maximumSize=1000,expireAfterWrite=1m
+      
+  threads:
+    virtual:
+      enabled: true
+      
+logging:
+  level:
+    com.genius.primavera: DEBUG
+    org.hibernate.SQL: WARN
+    io.lettuce: WARN
+    
+performance:
+  monitoring:
+    enabled: true
+    interval: 5s
+  cache:
+    warmup:
+      enabled: false
+  optimization:
+    query:
+      slow-query-threshold: 50ms

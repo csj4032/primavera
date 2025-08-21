@@ -1,0 +1,48 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+rule_files:
+  # - "first_rules.yml"
+  # - "second_rules.yml"
+
+scrape_configs:
+  # Chapter 19 Performance Application
+  - job_name: 'primavera-performance'
+    static_configs:
+      - targets: ['host.docker.internal:9019']  # Management port
+    metrics_path: '/actuator/prometheus'
+    scrape_interval: 5s
+    scrape_timeout: 5s
+
+  # JVM Metrics
+  - job_name: 'jvm-metrics'
+    static_configs:
+      - targets: ['host.docker.internal:9019']
+    metrics_path: '/actuator/prometheus'
+    scrape_interval: 10s
+
+  # Cache Metrics
+  - job_name: 'cache-metrics'
+    static_configs:
+      - targets: ['host.docker.internal:9019']
+    metrics_path: '/actuator/prometheus'
+    scrape_interval: 5s
+
+  # Database Metrics (if exposed)
+  - job_name: 'mariadb-metrics'
+    static_configs:
+      - targets: ['mariadb-chap19:3306']
+    scrape_interval: 30s
+    
+  # Redis Metrics (if redis-exporter is available)
+  - job_name: 'redis-metrics'
+    static_configs:
+      - targets: ['redis-chap19:6379']
+    scrape_interval: 30s
+
+  # System Metrics
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['host.docker.internal:9100']
+    scrape_interval: 15s
